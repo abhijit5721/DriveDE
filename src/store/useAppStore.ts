@@ -74,6 +74,7 @@ export const useAppStore = create<AppState>()(
       toggleDarkMode: () =>
         set((state) => {
           const nextState = { ...state, darkMode: !state.darkMode };
+          console.log('Toggling dark mode to:', nextState.darkMode);
           void ensureProfileFromState(nextState as AppState);
           return { darkMode: !state.darkMode };
         }),

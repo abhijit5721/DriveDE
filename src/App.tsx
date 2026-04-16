@@ -4,6 +4,7 @@ import { hydrateFromSupabase } from './services/supabaseSync';
 import { getCurrentSession, signOut, subscribeToAuthChanges } from './services/auth';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
+import { DesktopNav } from './components/DesktopNav';
 import { Dashboard } from './components/Dashboard';
 import { Curriculum } from './components/Curriculum';
 import { Maneuvers } from './components/Maneuvers';
@@ -185,11 +186,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />
-      <main className="mx-auto max-w-lg px-4 py-4 pb-24 print:max-w-none print:px-0 print:py-0 print:pb-0">
-        {renderContent()}
-      </main>
-      <BottomNav activeTab={activeTab} onTabChange={handleNavigate} />
+      <div className="flex min-h-screen">
+        <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
+        <div className="flex flex-1 flex-col">
+          <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />
+          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6">
+            <div className="mx-auto max-w-4xl">
+              {renderContent()}
+            </div>
+          </main>
+        </div>
+      </div>
+      <div className="lg:hidden">
+        <BottomNav activeTab={activeTab} onTabChange={handleNavigate} />
+      </div>
 
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
 
