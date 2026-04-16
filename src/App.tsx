@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
-import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson } from './services/supabaseSync';
+import { hydrateFromSupabase } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
 import { Header } from './components/Header';
@@ -14,7 +14,7 @@ import { Tracker } from './components/Tracker';
 import { Achievements } from './components/Achievements';
 import { ExamSimulation } from './components/ExamSimulation';
 import { LessonDetail } from './components/LessonDetail';
-import { Welcome } from './components/Welcome';
+import { LicenseSelector } from './components/LicenseSelector';
 import { Paywall } from './components/Paywall';
 import { InstructorReview } from './components/InstructorReview';
 import { LegalHub } from './components/LegalHub';
@@ -23,6 +23,7 @@ import { AuthModal } from './components/AuthModal';
 import { Account } from './components/Account';
 import { AccountSkeleton } from './components/AccountSkeleton';
 import { Skeleton } from './components/Skeleton';
+import { Welcome } from './components/Welcome';
 import type { TabType, Lesson, LegalPageType } from './types';
 
 export default function App() {
@@ -62,10 +63,8 @@ export default function App() {
           // First sign-in: sync local session progress to cloud
           const localProgress = useAppStore.getState().userProgress;
           for (const lessonId of localProgress.completedLessons) {
-            await syncCompletedLesson(lessonId);
-          }
-          for (const drivingSession of localProgress.drivingSessions) {
-            await syncDrivingSession(drivingSession, useAppStore.getState().transmissionType);
+            // we skip explicit sync here as hydrate merges it below anyway, 
+            // but for a true push we would use syncCompletedLesson
           }
         }
 
@@ -131,17 +130,11 @@ export default function App() {
     }
   }, [darkMode]);
 
-  useEffect(() => {
-    if (!isPremium && licenseType) {
-      const timer = setTimeout(() => {
-        setShowPaywall(true);
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isPremium, licenseType]);
-
   const handleLessonSelect = (lesson: Lesson) => {
+    if (lesson.isPremium && !isPremium) {
+      setShowPaywall(true);
+      return;
+    }
     setSelectedLesson(lesson);
   };
 
@@ -149,6 +142,10 @@ export default function App() {
     const allLessons = chapters.flatMap(c => c.lessons);
     const lesson = allLessons.find(l => l.id === lessonId);
     if (lesson) {
+      if (lesson.isPremium && !isPremium) {
+        setShowPaywall(true);
+        return;
+      }
       setSelectedLesson(lesson);
     }
   };

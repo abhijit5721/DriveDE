@@ -312,13 +312,24 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'drivede-storage',
-      storage: createJSONStorage(() => {
-        const state = useAppStore.getState();
-        if (state.authStatus === 'signed_in') {
-          return localStorage;
-        }
-        return sessionStorage;
-      }),
+      storage: createJSONStorage(() => ({
+        getItem: (name) => {
+          return localStorage.getItem(name) || sessionStorage.getItem(name);
+        },
+        setItem: (name, value) => {
+          const state = JSON.parse(value);
+          if (state.state.authStatus === 'signed_in') {
+            localStorage.setItem(name, value);
+            sessionStorage.removeItem(name);
+          } else {
+            sessionStorage.setItem(name, value);
+          }
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
+          sessionStorage.removeItem(name);
+        },
+      })),
     }
   )
 );

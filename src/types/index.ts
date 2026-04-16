@@ -47,6 +47,7 @@ export interface Lesson {
   learningPath?: 'standard' | 'umschreibung' | 'both';
   manualOnly?: boolean;
   automaticOnly?: boolean;
+  isPremium?: boolean;
 }
 
 export interface ManeuverStep {

@@ -1,20 +1,20 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Check, Lock, Cog, Zap, Settings2, BadgeCheck, BookOpen } from 'lucide-react';
+import { ChevronRight, ChevronDown, Check, Lock, Cog, Zap, Settings2, BadgeCheck, BookOpen, Crown } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { chapters } from '../data/curriculum';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../utils/license';
 import { filterChaptersForSelection } from '../utils/contentFilter';
 import { EmptyState } from './EmptyState';
-import type { Lesson, Chapter } from '../types';
+import type { Lesson, Chapter } from '@/types';
 
 interface CurriculumProps {
   onLessonSelect: (lesson: Lesson) => void;
 }
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
-  const { language, userProgress, licenseType, setLicenseType } = useAppStore();
+  const { language, userProgress, licenseType, setLicenseType, isPremium } = useAppStore();
   const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const isDE = language === 'de';
@@ -41,11 +41,11 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   };
 
   const getLessonBadge = (lesson: Lesson) => {
-    if (lesson.id === 'basics-1a') {
+    if (lesson.isPremium) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
-          <BadgeCheck className="h-3 w-3" />
-          {isDE ? 'Prüfung' : 'Exam'}
+          <Crown className="h-3 w-3" />
+          Pro
         </span>
       );
     }
@@ -393,15 +393,16 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         const isPreviousCompleted = lessonIndex === 0 ||
                           userProgress.completedLessons.includes(chapter.lessons[lessonIndex - 1].id);
                         const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted;
+                        const isLockedForFreeUser = lesson.isPremium && !isPremium;
 
                         return (
                           <motion.button
                             key={lesson.id}
-                            onClick={() => isLessonUnlocked && onLessonSelect(lesson)}
-                            disabled={!isLessonUnlocked}
+                            onClick={() => isLessonUnlocked && !isLockedForFreeUser && onLessonSelect(lesson)}
+                            disabled={!isLessonUnlocked || isLockedForFreeUser}
                             className={cn(
                               'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all',
-                              isLessonUnlocked
+                              isLessonUnlocked && !isLockedForFreeUser
                                 ? 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700'
                                 : 'bg-slate-50 opacity-50 dark:bg-slate-800/50'
                             )}
@@ -412,14 +413,14 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
                                 isLessonCompleted
                                   ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
-                                  : isLessonUnlocked
+                                  : isLessonUnlocked && !isLockedForFreeUser
                                   ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
                                   : 'bg-slate-200 text-slate-400 dark:bg-slate-700'
                               )}
                             >
                               {isLessonCompleted ? (
                                 <Check className="h-4 w-4" />
-                              ) : isLessonUnlocked ? (
+                              ) : isLessonUnlocked && !isLockedForFreeUser ? (
                                 <span className="text-sm font-medium">{lessonIndex + 1}</span>
                               ) : (
                                 <Lock className="h-4 w-4" />
@@ -436,7 +437,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                                 {isDE ? lesson.descriptionDe : lesson.descriptionEn}
                               </p>
                             </div>
-                            {isLessonUnlocked && (
+                            {isLessonUnlocked && !isLockedForFreeUser && (
                               <ChevronRight className="h-4 w-4 text-slate-400" />
                             )}
                           </motion.button>
