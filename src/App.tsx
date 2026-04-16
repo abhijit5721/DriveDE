@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
-import { hydrateFromSupabase } from './services/supabaseSync';
+import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
 import { Header } from './components/Header';
@@ -62,8 +62,10 @@ export default function App() {
           // First sign-in: sync local session progress to cloud
           const localProgress = useAppStore.getState().userProgress;
           for (const lessonId of localProgress.completedLessons) {
-            // we skip explicit sync here as hydrate merges it below anyway, 
-            // but for a true push we would use syncCompletedLesson
+            await syncCompletedLesson(lessonId);
+          }
+          for (const drivingSession of localProgress.drivingSessions) {
+            await syncDrivingSession(drivingSession, useAppStore.getState().transmissionType);
           }
         }
 

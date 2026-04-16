@@ -7,7 +7,7 @@ import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../utils/license';
 import { filterChaptersForSelection } from '../utils/contentFilter';
 import { EmptyState } from './EmptyState';
-import type { Lesson, Chapter } from '@/types';
+import type { Lesson, Chapter } from '../types';
 
 interface CurriculumProps {
   onLessonSelect: (lesson: Lesson) => void;
@@ -398,7 +398,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         return (
                           <motion.button
                             key={lesson.id}
-                            onClick={() => isLessonUnlocked && !isLockedForFreeUser && onLessonSelect(lesson)}
+                            onClick={() => isLessonUnlocked && onLessonSelect(lesson)}
                             disabled={!isLessonUnlocked || isLockedForFreeUser}
                             className={cn(
                               'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all',
