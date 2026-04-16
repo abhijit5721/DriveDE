@@ -11,6 +11,7 @@ import { Curriculum } from './components/Curriculum';
 import { Maneuvers } from './components/Maneuvers';
 import { Tracker } from './components/Tracker';
 import { Achievements } from './components/Achievements';
+import { ExamSimulation } from './components/ExamSimulation';
 import { LessonDetail } from './components/LessonDetail';
 import { LicenseSelector } from './components/LicenseSelector';
 import { Paywall } from './components/Paywall';
@@ -29,6 +30,7 @@ export default function App() {
   const [selectedLegalPage, setSelectedLegalPage] = useState<LegalPageType | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showExamSimulation, setShowExamSimulation] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
@@ -137,6 +139,10 @@ export default function App() {
     return <LicenseSelector />;
   }
 
+  if (showExamSimulation) {
+    return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
+  }
+
   const renderContent = () => {
     if (isAuthLoading) {
       if (activeTab === 'account') {
@@ -170,6 +176,7 @@ export default function App() {
             onChangePath={handleChangePath}
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
+            onStartSimulation={() => setShowExamSimulation(true)}
           />
         );
       case 'curriculum':
@@ -199,6 +206,7 @@ export default function App() {
             onChangePath={handleChangePath}
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
+            onStartSimulation={() => setShowExamSimulation(true)}
           />
         );
     }
