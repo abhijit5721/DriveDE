@@ -395,9 +395,11 @@ export function Tracker() {
 
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
-          <div className="flex h-full w-full max-w-md flex-col bg-white dark:bg-slate-800 sm:h-auto sm:max-h-[80vh] sm:rounded-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-0">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 max-h-[85vh]">
+            
+            {/* Header (Sticky) */}
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {isDE ? 'Fahrstunde eintragen' : 'Log Driving Session'}
               </h3>
@@ -409,7 +411,8 @@ export function Tracker() {
               </button>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto p-4">
+            {/* Scrollable Form Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   {isDE ? 'Datum' : 'Date'}
@@ -483,8 +486,9 @@ export function Tracker() {
                 />
               </div>
             </div>
-            
-            <div className="p-4">
+
+            {/* Footer (Sticky) */}
+            <div className="shrink-0 border-t border-slate-200 p-4 dark:border-slate-700">
               <button
                 onClick={handleAddSession}
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
@@ -492,6 +496,7 @@ export function Tracker() {
                 {isDE ? 'Fahrstunde speichern' : 'Save Session'}
               </button>
             </div>
+
           </div>
         </div>
       )}
