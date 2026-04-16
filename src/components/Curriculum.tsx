@@ -386,72 +386,64 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </button>
 
                   {/* Lessons List */}
-                  <AnimatePresence>
-                    {isExpanded && isUnlocked && (
-                      <motion.div
-                        className="ml-14 mt-2 space-y-2 origin-top"
-                        initial={{ opacity: 0, scaleY: 0.8 }}
-                        animate={{ opacity: 1, scaleY: 1 }}
-                        exit={{ opacity: 0, scaleY: 0.8 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {chapter.lessons.map((lesson, lessonIndex) => {
-                          const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
-                          const isPreviousCompleted = lessonIndex === 0 ||
-                            userProgress.completedLessons.includes(chapter.lessons[lessonIndex - 1].id);
-                          const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted;
+                  {isExpanded && isUnlocked && (
+                    <div className="ml-14 mt-2 space-y-2">
+                      {chapter.lessons.map((lesson, lessonIndex) => {
+                        const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
+                        const isPreviousCompleted = lessonIndex === 0 ||
+                          userProgress.completedLessons.includes(chapter.lessons[lessonIndex - 1].id);
+                        const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted;
 
-                          return (
-                            <motion.button
-                              key={lesson.id}
-                              onClick={() => isLessonUnlocked && onLessonSelect(lesson)}
-                              disabled={!isLessonUnlocked}
+                        return (
+                          <motion.button
+                            key={lesson.id}
+                            onClick={() => isLessonUnlocked && onLessonSelect(lesson)}
+                            disabled={!isLessonUnlocked}
+                            className={cn(
+                              'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all',
+                              isLessonUnlocked
+                                ? 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700'
+                                : 'bg-slate-50 opacity-50 dark:bg-slate-800/50'
+                            )}
+                            variants={itemVariants}
+                          >
+                            <div
                               className={cn(
-                                'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all',
-                                isLessonUnlocked
-                                  ? 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700'
-                                  : 'bg-slate-50 opacity-50 dark:bg-slate-800/50'
+                                'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                                isLessonCompleted
+                                  ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
+                                  : isLessonUnlocked
+                                  ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
+                                  : 'bg-slate-200 text-slate-400 dark:bg-slate-700'
                               )}
-                              variants={itemVariants}
                             >
-                              <div
-                                className={cn(
-                                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
-                                  isLessonCompleted
-                                    ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
-                                    : isLessonUnlocked
-                                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400'
-                                    : 'bg-slate-200 text-slate-400 dark:bg-slate-700'
-                                )}
-                              >
-                                {isLessonCompleted ? (
-                                  <Check className="h-4 w-4" />
-                                ) : isLessonUnlocked ? (
-                                  <span className="text-sm font-medium">{lessonIndex + 1}</span>
-                                ) : (
-                                  <Lock className="h-4 w-4" />
-                                )}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center">
-                                  <h4 className="text-sm font-medium text-slate-900 dark:text-white">
-                                    {isDE ? lesson.titleDe : lesson.titleEn}
-                                  </h4>
-                                  {getLessonBadge(lesson)}
-                                </div>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                  {isDE ? lesson.descriptionDe : lesson.descriptionEn}
-                                </p>
-                              </div>
-                              {isLessonUnlocked && (
-                                <ChevronRight className="h-4 w-4 text-slate-400" />
+                              {isLessonCompleted ? (
+                                <Check className="h-4 w-4" />
+                              ) : isLessonUnlocked ? (
+                                <span className="text-sm font-medium">{lessonIndex + 1}</span>
+                              ) : (
+                                <Lock className="h-4 w-4" />
                               )}
-                            </motion.button>
-                          );
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center">
+                                <h4 className="text-sm font-medium text-slate-900 dark:text-white">
+                                  {isDE ? lesson.titleDe : lesson.titleEn}
+                                </h4>
+                                {getLessonBadge(lesson)}
+                              </div>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {isDE ? lesson.descriptionDe : lesson.descriptionEn}
+                              </p>
+                            </div>
+                            {isLessonUnlocked && (
+                              <ChevronRight className="h-4 w-4 text-slate-400" />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </motion.div>
               );
             })}
