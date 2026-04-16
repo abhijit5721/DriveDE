@@ -96,6 +96,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
+      viewport={{ once: true }}
     >
       {/* License Type Indicator */}
       <motion.button
@@ -303,8 +304,6 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
         <motion.div 
           className="relative mb-6"
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
         >
           <div className="absolute left-6 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-700" />
           <div className="relative space-y-4">
