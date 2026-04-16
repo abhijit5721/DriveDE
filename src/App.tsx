@@ -44,15 +44,60 @@ export default function App() {
     setAuthState,
     hasVisited,
     setHasVisited,
+    resetProgress,
   } = useAppStore();
 
   useEffect(() => {
-    const { unsubscribe } = subscribeToAuthChanges((session) => {
+    const unsubscribe = subscribeToAuthChanges(async (session) => {
       if (session?.user) {
         const { user } = session;
-        const displayName = user.user_metadata?.full_name || user.email;
-        setAuthState(user.email, 'signed_in', displayName);
-        void hydrateFromSupabase();
+        const displayName = user.user_metadata?.full_name || user.email || null;
+        setAuthState(user.email || null, 'signed_in', displayName);
+        
+        const remoteData = await hydrateFromSupabase();
+        if (remoteData && useAppStore.getState().authStatus === 'signed_in') {
+            useAppStore.setState((state) => {
+                const combinedCompletedLessons = Array.from(new Set([
+                    ...state.userProgress.completedLessons,
+                    ...remoteData.lessons.map(l => l.lesson_id)
+                ]));
+                
+                const localSessionIds = new Set(state.userProgress.drivingSessions.map(s => s.id));
+                const remoteSessions = remoteData.sessions
+                    .filter(s => !localSessionIds.has(s.id))
+                    .map(s => ({
+                        id: s.id,
+                        date: s.session_date,
+                        duration: s.duration_minutes,
+                        type: s.category,
+                        notes: s.notes || '',
+                        instructorName: '' 
+                    }));
+
+                const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
+                
+                let totalDrivingMinutes = 0;
+                let specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
+                
+                combinedSessions.forEach(s => {
+                    totalDrivingMinutes += s.duration;
+                    if (s.type === 'ueberland') specialDrivingMinutes.ueberland += s.duration;
+                    if (s.type === 'autobahn') specialDrivingMinutes.autobahn += s.duration;
+                    if (s.type === 'nacht') specialDrivingMinutes.nacht += s.duration;
+                });
+
+                return {
+                    userProgress: {
+                        ...state.userProgress,
+                        completedLessons: combinedCompletedLessons,
+                        drivingSessions: combinedSessions,
+                        totalDrivingMinutes,
+                        specialDrivingMinutes
+                    }
+                };
+            });
+        }
+
       } else {
         setAuthState(null, 'guest', null);
       }
@@ -131,11 +176,30 @@ export default function App() {
   const handleSignOut = async () => {
     await signOut();
     setAuthState(null, 'guest', null);
+    resetProgress();
     setHasVisited(false);
   };
 
   if (!hasVisited) {
     return <Welcome />;
+  }
+
+  const hasCompleteSelection =
+    licenseType === 'manual' ||
+    licenseType === 'automatic' ||
+    licenseType === 'umschreibung-manual' ||
+    licenseType === 'umschreibung-automatic';
+
+  if (isAuthLoading && !hasCompleteSelection) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Skeleton className="h-32 w-64 rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (!hasCompleteSelection) {
+    return <LicenseSelector />;
   }
 
   if (showExamSimulation) {

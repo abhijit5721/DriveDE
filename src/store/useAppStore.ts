@@ -8,11 +8,12 @@ import type {
   LicenseType,
   LearningPathType,
   TransmissionType,
-} from '../types';
+} from '@/types';
 import {
   ensureProfileFromState,
   syncCompletedLesson,
   syncDrivingSession,
+  deleteDrivingSessionFromCloud,
   syncQuizAttempt,
 } from '../services/supabaseSync';
 
@@ -264,29 +265,31 @@ export const useAppStore = create<AppState>()(
         checkAndUnlockAchievements();
       },
 
-      removeDrivingSession: (sessionId: string) =>
-        set((state) => {
-          const session = state.userProgress.drivingSessions.find((s) => s.id === sessionId);
-          if (!session) return state;
+      removeDrivingSession: (sessionId: string) => {
+        const state = get();
+        const session = state.userProgress.drivingSessions.find((s) => s.id === sessionId);
+        if (!session) return;
 
-          const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
-          if (session.type === 'ueberland') {
-            newSpecialMinutes.ueberland -= session.duration;
-          } else if (session.type === 'autobahn') {
-            newSpecialMinutes.autobahn -= session.duration;
-          } else if (session.type === 'nacht') {
-            newSpecialMinutes.nacht -= session.duration;
-          }
+        void deleteDrivingSessionFromCloud(sessionId);
 
-          return {
-            userProgress: {
-              ...state.userProgress,
-              drivingSessions: state.userProgress.drivingSessions.filter((s) => s.id !== sessionId),
-              totalDrivingMinutes: state.userProgress.totalDrivingMinutes - session.duration,
-              specialDrivingMinutes: newSpecialMinutes,
-            },
-          };
-        }),
+        const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
+        if (session.type === 'ueberland') {
+          newSpecialMinutes.ueberland -= session.duration;
+        } else if (session.type === 'autobahn') {
+          newSpecialMinutes.autobahn -= session.duration;
+        } else if (session.type === 'nacht') {
+          newSpecialMinutes.nacht -= session.duration;
+        }
+
+        set({
+          userProgress: {
+            ...state.userProgress,
+            drivingSessions: state.userProgress.drivingSessions.filter((s) => s.id !== sessionId),
+            totalDrivingMinutes: state.userProgress.totalDrivingMinutes - session.duration,
+            specialDrivingMinutes: newSpecialMinutes,
+          },
+        });
+      },
 
       setQuizScore: (quizId: string, score: number) =>
         set((state) => {
