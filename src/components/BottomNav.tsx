@@ -21,7 +21,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95">
-      <div className="mx-auto max-w-lg overflow-x-auto px-2 py-2 scrollbar-hide">
+      <div className="mx-auto overflow-x-auto px-2 py-2 scrollbar-hide">
         <div className="flex min-w-max items-center justify-between gap-1">
           {tabs.map((tab) => (
             <button
