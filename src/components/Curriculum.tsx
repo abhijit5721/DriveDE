@@ -73,7 +73,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
       },
     },
   };
@@ -388,12 +388,12 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   {/* Lessons List */}
                   <AnimatePresence>
                     {isExpanded && isUnlocked && (
-                      <motion.div 
-                        key={chapter.id}
-                        className="ml-14 mt-2 space-y-2"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                      <motion.div
+                        className="ml-14 mt-2 space-y-2 origin-top"
+                        initial={{ opacity: 0, scaleY: 0.8 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        exit={{ opacity: 0, scaleY: 0.8 }}
+                        transition={{ duration: 0.2 }}
                       >
                         {chapter.lessons.map((lesson, lessonIndex) => {
                           const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
