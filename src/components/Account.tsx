@@ -4,6 +4,7 @@ import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { signInWithProvider } from '../services/auth';
+import GoogleLogo from '../assets/google-logo.svg';
 
 interface AccountProps {
   onOpenAuth: () => void;
@@ -149,7 +150,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                   disabled={authLoading}
                   className="inline-flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[13px] font-bold text-slate-700">G</span>
+                  <img src={GoogleLogo} alt="Google" className="h-5 w-5" />
                   {authLoading
                     ? isDE
                       ? 'Google wird geöffnet …'
