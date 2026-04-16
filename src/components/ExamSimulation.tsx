@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Volume2, ChevronLeft } from 'lucide-react';
+import { Play, Square, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { examCommands } from '../data/examCommands';
 
