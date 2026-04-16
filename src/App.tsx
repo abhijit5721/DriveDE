@@ -10,6 +10,7 @@ import { Dashboard } from './components/Dashboard';
 import { Curriculum } from './components/Curriculum';
 import { Maneuvers } from './components/Maneuvers';
 import { Tracker } from './components/Tracker';
+import { Achievements } from './components/Achievements';
 import { LessonDetail } from './components/LessonDetail';
 import { LicenseSelector } from './components/LicenseSelector';
 import { Paywall } from './components/Paywall';
@@ -177,6 +178,8 @@ export default function App() {
         return <Maneuvers onLessonSelect={handleLessonSelect} />;
       case 'tracker':
         return <Tracker />;
+      case 'achievements':
+        return <Achievements />;
       case 'review':
         return <InstructorReview onBack={() => setActiveTab('home')} />;
       case 'account':

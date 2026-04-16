@@ -1,4 +1,4 @@
-import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound } from 'lucide-react';
+import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Trophy } from 'lucide-react';
 import type { TabType } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
@@ -11,7 +11,7 @@ interface BottomNavProps {
 const tabs: { id: TabType; labelDe: string; labelEn: string; icon: React.ReactNode }[] = [
   { id: 'home', labelDe: 'Start', labelEn: 'Home', icon: <Home className="h-5 w-5" /> },
   { id: 'curriculum', labelDe: 'Plan', labelEn: 'Plan', icon: <BookOpen className="h-5 w-5" /> },
-  { id: 'maneuvers', labelDe: 'Manöver', labelEn: 'Maneuvers', icon: <ParkingSquare className="h-5 w-5" /> },
+  { id: 'achievements', labelDe: 'Erfolge', labelEn: 'Awards', icon: <Trophy className="h-5 w-5" /> },
   { id: 'tracker', labelDe: 'Log', labelEn: 'Log', icon: <ClipboardList className="h-5 w-5" /> },
   { id: 'account', labelDe: 'Konto', labelEn: 'Account', icon: <UserRound className="h-5 w-5" /> },
 ];

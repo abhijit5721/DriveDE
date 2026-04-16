@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
   AppState,
   DrivingSession,
@@ -25,6 +26,7 @@ const initialProgress = {
     autobahn: 0,
     nacht: 0,
   },
+  unlockedAchievements: [],
 };
 
 const deriveSelectionState = (type: LicenseType) => {
@@ -53,7 +55,7 @@ const deriveSelectionState = (type: LicenseType) => {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       language: 'de',
       darkMode: false,
       licenseType: null,
@@ -157,51 +159,66 @@ export const useAppStore = create<AppState>()(
           authDisplayName,
         })),
 
-      completeLesson: (lessonId: string) =>
-        set((state) => {
-          const completedLessons = state.userProgress.completedLessons.includes(lessonId)
-            ? state.userProgress.completedLessons
-            : [...state.userProgress.completedLessons, lessonId];
+      unlockAchievement: (achievementId: string) =>
+        set((state) => ({
+          userProgress: {
+            ...state.userProgress,
+            unlockedAchievements: [
+              ...state.userProgress.unlockedAchievements,
+              achievementId,
+            ],
+          },
+        })),
 
-          if (!state.userProgress.completedLessons.includes(lessonId)) {
-            void syncCompletedLesson(lessonId);
-          }
+      completeLesson: (lessonId: string) => {
+        const state = get();
+        const completedLessons = state.userProgress.completedLessons.includes(lessonId)
+          ? state.userProgress.completedLessons
+          : [...state.userProgress.completedLessons, lessonId];
 
-          return {
-            userProgress: {
-              ...state.userProgress,
-              completedLessons,
-            },
-          };
-        }),
+        if (!state.userProgress.completedLessons.includes(lessonId)) {
+          void syncCompletedLesson(lessonId);
+        }
 
-      addDrivingSession: (session: Omit<DrivingSession, 'id'>) =>
-        set((state) => {
-          const newSession: DrivingSession = {
-            ...session,
-            id: Date.now().toString(),
-          };
+        set({
+          userProgress: {
+            ...state.userProgress,
+            completedLessons,
+          },
+        });
+        
+        checkAndUnlockAchievements();
+      },
 
-          const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
-          if (session.type === 'ueberland') {
-            newSpecialMinutes.ueberland += session.duration;
-          } else if (session.type === 'autobahn') {
-            newSpecialMinutes.autobahn += session.duration;
-          } else if (session.type === 'nacht') {
-            newSpecialMinutes.nacht += session.duration;
-          }
+      addDrivingSession: (session: Omit<DrivingSession, 'id'>) => {
+        const state = get();
+        const newSession: DrivingSession = {
+          ...session,
+          id: Date.now().toString(),
+        };
 
-          void syncDrivingSession(newSession, state.transmissionType);
+        const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
+        if (session.type === 'ueberland') {
+          newSpecialMinutes.ueberland += session.duration;
+        } else if (session.type === 'autobahn') {
+          newSpecialMinutes.autobahn += session.duration;
+        } else if (session.type === 'nacht') {
+          newSpecialMinutes.nacht += session.duration;
+        }
 
-          return {
-            userProgress: {
-              ...state.userProgress,
-              drivingSessions: [...state.userProgress.drivingSessions, newSession],
-              totalDrivingMinutes: state.userProgress.totalDrivingMinutes + session.duration,
-              specialDrivingMinutes: newSpecialMinutes,
-            },
-          };
-        }),
+        void syncDrivingSession(newSession, state.transmissionType);
+
+        set({
+          userProgress: {
+            ...state.userProgress,
+            drivingSessions: [...state.userProgress.drivingSessions, newSession],
+            totalDrivingMinutes: state.userProgress.totalDrivingMinutes + session.duration,
+            specialDrivingMinutes: newSpecialMinutes,
+          },
+        });
+
+        checkAndUnlockAchievements();
+      },
 
       removeDrivingSession: (sessionId: string) =>
         set((state) => {

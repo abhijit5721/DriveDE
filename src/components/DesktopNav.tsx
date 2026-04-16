@@ -1,4 +1,4 @@
-import { Home, BookOpen, Wrench, ClipboardList, User, Star } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { TabType } from '../types';
 
@@ -15,6 +15,7 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
     { id: 'home', label: isDE ? 'Übersicht' : 'Dashboard', icon: Home },
     { id: 'curriculum', label: isDE ? 'Lehrplan' : 'Curriculum', icon: BookOpen },
     { id: 'maneuvers', label: isDE ? 'Manöver' : 'Maneuvers', icon: Wrench },
+    { id: 'achievements', label: isDE ? 'Erfolge' : 'Achievements', icon: Trophy },
     { id: 'tracker', label: isDE ? 'Fahrtenbuch' : 'Tracker', icon: ClipboardList },
     { id: 'review', label: isDE ? 'Review' : 'Review', icon: Star },
     { id: 'account', label: isDE ? 'Konto' : 'Account', icon: User },
