@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
-import { hydrateFromSupabase } from './services/supabaseSync';
+import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
 import { Header } from './components/Header';
@@ -49,12 +49,26 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges(async (session) => {
+      const isNewUser = !useAppStore.getState().authEmail && !!session?.user;
+      
       if (session?.user) {
         const { user } = session;
         const displayName = user.user_metadata?.full_name || user.email || null;
         setAuthState(user.email || null, 'signed_in', displayName);
         
         const remoteData = await hydrateFromSupabase();
+        
+        if (isNewUser) {
+          // First sign-in: sync local session progress to cloud
+          const localProgress = useAppStore.getState().userProgress;
+          for (const lessonId of localProgress.completedLessons) {
+            await syncCompletedLesson(lessonId);
+          }
+          for (const drivingSession of localProgress.drivingSessions) {
+            await syncDrivingSession(drivingSession, useAppStore.getState().transmissionType);
+          }
+        }
+
         if (remoteData && useAppStore.getState().authStatus === 'signed_in') {
             useAppStore.setState((state) => {
                 const combinedCompletedLessons = Array.from(new Set([

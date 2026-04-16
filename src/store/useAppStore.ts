@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
   AppState,
@@ -312,6 +312,13 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'drivede-storage',
+      storage: createJSONStorage(() => {
+        const state = useAppStore.getState();
+        if (state.authStatus === 'signed_in') {
+          return localStorage;
+        }
+        return sessionStorage;
+      }),
     }
   )
 );
