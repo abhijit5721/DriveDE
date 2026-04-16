@@ -202,7 +202,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="h-screen bg-slate-50 dark:bg-slate-900">
       <Toaster
         position="bottom-center"
         toastOptions={{
@@ -212,9 +212,9 @@ export default function App() {
           },
         }}
       />
-      <div className="flex min-h-screen">
+      <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
-        <div className="flex flex-1 flex-col">
+        <div className="flex h-screen flex-1 flex-col overflow-y-auto">
           <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6">
             <div className="mx-auto max-w-4xl">
