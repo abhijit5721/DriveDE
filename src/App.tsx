@@ -14,7 +14,7 @@ import { Tracker } from './components/Tracker';
 import { Achievements } from './components/Achievements';
 import { ExamSimulation } from './components/ExamSimulation';
 import { LessonDetail } from './components/LessonDetail';
-import { LicenseSelector } from './components/LicenseSelector';
+import { Welcome } from './components/Welcome';
 import { Paywall } from './components/Paywall';
 import { InstructorReview } from './components/InstructorReview';
 import { LegalHub } from './components/LegalHub';
@@ -23,7 +23,6 @@ import { AuthModal } from './components/AuthModal';
 import { Account } from './components/Account';
 import { AccountSkeleton } from './components/AccountSkeleton';
 import { Skeleton } from './components/Skeleton';
-import { Welcome } from './components/Welcome';
 import type { TabType, Lesson, LegalPageType } from './types';
 
 export default function App() {
