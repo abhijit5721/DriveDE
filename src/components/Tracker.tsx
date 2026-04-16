@@ -395,8 +395,8 @@ export function Tracker() {
 
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 dark:bg-slate-800">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 pt-12 sm:items-center sm:pt-4">
+          <div className="w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 dark:bg-slate-800">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {isDE ? 'Fahrstunde eintragen' : 'Log Driving Session'}

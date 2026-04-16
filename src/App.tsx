@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
+import { chapters } from './data/curriculum';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { DesktopNav } from './components/DesktopNav';
@@ -81,6 +82,14 @@ export default function App() {
 
   const handleLessonSelect = (lesson: Lesson) => {
     setSelectedLesson(lesson);
+  };
+
+  const handleDirectLessonSelect = (lessonId: string) => {
+    const allLessons = chapters.flatMap(c => c.lessons);
+    const lesson = allLessons.find(l => l.id === lessonId);
+    if (lesson) {
+      setSelectedLesson(lesson);
+    }
   };
 
   const handleLessonBack = () => {
@@ -177,6 +186,7 @@ export default function App() {
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
             onStartSimulation={() => setShowExamSimulation(true)}
+            onDirectLessonSelect={handleDirectLessonSelect}
           />
         );
       case 'curriculum':
@@ -207,6 +217,7 @@ export default function App() {
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
             onStartSimulation={() => setShowExamSimulation(true)}
+            onDirectLessonSelect={handleDirectLessonSelect}
           />
         );
     }

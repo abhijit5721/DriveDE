@@ -11,10 +11,11 @@ interface DashboardProps {
   onChangePath: () => void;
   onOpenPaywall: () => void;
   onStartSimulation: () => void;
+  onDirectLessonSelect: (lessonId: string) => void;
   onOpenAuth?: () => void;
 }
 
-export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onOpenAuth }: DashboardProps) {
+export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, authStatus, authEmail } = useAppStore();
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -281,7 +282,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
       {isUmschreibung && (
         <button
-          onClick={() => onNavigate('curriculum')}
+          onClick={() => onDirectLessonSelect('basics-0')}
           className="w-full rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-purple-900/40 dark:from-purple-900/20 dark:to-indigo-900/10"
         >
           <div className="flex items-start gap-3">
@@ -354,7 +355,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </button>
 
         <button
-          onClick={() => onNavigate('curriculum')}
+          onClick={() => onDirectLessonSelect('basics-1a')}
           className="w-full rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-amber-900/40 dark:from-amber-900/20 dark:to-orange-900/10"
         >
           <div className="flex items-start gap-3">
