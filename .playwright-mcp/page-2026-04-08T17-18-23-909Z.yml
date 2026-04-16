@@ -1,0 +1,319 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+              - generic [ref=e417]:
+                - link "main Production" [ref=e418] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - generic "main" [ref=e419]
+                  - generic [ref=e420]: Production
+                - button [ref=e421] [cursor=pointer]:
+                  - img [ref=e423]
+          - button "Connect" [ref=e54] [cursor=pointer]:
+            - img [ref=e56]
+            - generic [ref=e58]: Connect
+        - generic [ref=e59]:
+          - generic [ref=e61] [cursor=pointer]: Feedback
+          - generic [ref=e62]:
+            - button "Search..." [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - paragraph [ref=e68]: Search...
+              - generic [ref=e70]: Ctrl K
+            - button [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+            - button [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+            - button [ref=e81] [cursor=pointer]:
+              - img [ref=e83]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e89]
+          - link "Upgrade to Pro" [ref=e426] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+            - generic [ref=e427]: Upgrade to Pro
+          - button [ref=e92] [cursor=pointer]:
+            - figure [ref=e94]:
+              - img [ref=e95]
+    - generic [ref=e97]:
+      - generic [ref=e101]:
+        - list [ref=e104]:
+          - generic [ref=e105]:
+            - listitem [ref=e106]:
+              - link "Project Overview" [ref=e107] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e108]
+                - generic: Project Overview
+            - listitem [ref=e111]:
+              - link "Table Editor" [ref=e112] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e113]
+                - generic: Table Editor
+            - listitem [ref=e116]:
+              - link "SQL Editor" [ref=e117] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e118]
+                - generic: SQL Editor
+          - generic [ref=e121]:
+            - listitem [ref=e122]:
+              - link "Database" [ref=e123] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e124]
+                - generic: Database
+            - listitem [ref=e129]:
+              - link "Authentication" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e131]
+                - generic: Authentication
+            - listitem [ref=e134]:
+              - link "Storage" [ref=e135] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e136]
+                - generic: Storage
+            - listitem [ref=e139]:
+              - link "Edge Functions" [ref=e140] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e141]
+                - generic: Edge Functions
+            - listitem [ref=e147]:
+              - link "Realtime" [ref=e148] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e149]
+                - generic: Realtime
+          - generic [ref=e152]:
+            - listitem [ref=e154]:
+              - link "Advisors" [ref=e155] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e156]
+                - generic: Advisors
+            - listitem [ref=e159]:
+              - link "Observability" [ref=e160] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e161]
+                - generic: Observability
+            - listitem [ref=e170]:
+              - link "Logs" [ref=e171] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e172]
+                - generic: Logs
+            - listitem [ref=e174]:
+              - link "Integrations" [ref=e175] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e176]
+                - generic: Integrations
+          - listitem [ref=e181]:
+            - link "Project Settings" [ref=e182] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e183]
+              - generic: Project Settings
+        - button [ref=e189] [cursor=pointer]:
+          - img [ref=e191]
+      - generic [ref=e580]:
+        - generic [ref=e584]:
+          - heading "Settings" [level=4] [ref=e586]
+          - menu "Sidebar" [disabled] [ref=e589]:
+            - list [ref=e590]:
+              - generic [ref=e593]:
+                - generic [ref=e597]: Configuration
+                - generic [ref=e598]:
+                  - link "General" [disabled] [ref=e599] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+                    - menuitem "General" [disabled] [ref=e600]:
+                      - generic "General" [ref=e603]:
+                        - generic [ref=e604]: General
+                  - link "Compute and Disk" [disabled] [ref=e605] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/compute-and-disk
+                    - menuitem "Compute and Disk" [disabled] [ref=e606]:
+                      - generic "Compute and Disk" [ref=e609]:
+                        - generic [ref=e610]: Compute and Disk
+                  - link "Infrastructure" [disabled] [ref=e611] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/infrastructure
+                    - menuitem "Infrastructure" [disabled] [ref=e612]:
+                      - generic "Infrastructure" [ref=e615]:
+                        - generic [ref=e616]: Infrastructure
+                  - link "Integrations" [disabled] [ref=e617] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/integrations
+                    - menuitem "Integrations" [disabled] [ref=e618]:
+                      - generic "Integrations" [ref=e621]:
+                        - generic [ref=e622]: Integrations
+                  - link "API Keys" [disabled] [ref=e623] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/api-keys/new
+                    - menuitem "API Keys" [disabled] [ref=e624]:
+                      - generic "API Keys" [ref=e627]:
+                        - generic [ref=e628]: API Keys
+                  - link "JWT Keys" [disabled] [ref=e629] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/jwt
+                    - menuitem "JWT Keys" [disabled] [ref=e630]:
+                      - generic "JWT Keys" [ref=e633]:
+                        - generic [ref=e634]: JWT Keys
+                  - link "Log Drains" [disabled] [ref=e635] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/log-drains
+                    - menuitem "Log Drains" [disabled] [ref=e636]:
+                      - generic "Log Drains" [ref=e639]:
+                        - generic [ref=e640]: Log Drains
+                  - link "Add-ons" [disabled] [ref=e641] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/addons
+                    - menuitem "Add-ons" [disabled] [ref=e642]:
+                      - generic "Add-ons" [ref=e645]:
+                        - generic [ref=e646]: Add-ons
+              - generic [ref=e650]:
+                - generic [ref=e654]: Integrations
+                - generic [ref=e655]:
+                  - link "Data API" [disabled] [ref=e656] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/overview
+                    - menuitem "Data API" [disabled] [ref=e657]:
+                      - generic [ref=e659]:
+                        - generic "Data API" [ref=e660]:
+                          - generic [ref=e661]: Data API
+                        - img [ref=e663]
+                  - link "Vault Beta" [disabled] [ref=e666] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/vault/overview
+                    - menuitem "Vault Beta" [disabled] [ref=e667]:
+                      - generic [ref=e669]:
+                        - generic "Vault" [ref=e670]:
+                          - generic [ref=e671]: Vault
+                          - generic [ref=e672]: Beta
+                        - img [ref=e674]
+              - generic [ref=e680]:
+                - generic [ref=e684]: Billing
+                - generic [ref=e685]:
+                  - link "Subscription" [disabled] [ref=e686] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing
+                    - menuitem "Subscription" [disabled] [ref=e687]:
+                      - generic [ref=e689]:
+                        - generic "Subscription" [ref=e690]:
+                          - generic [ref=e691]: Subscription
+                        - img [ref=e693]
+                  - link "Usage" [disabled] [ref=e696] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/usage?projectRef=zgmhkvpctiineanjmvga
+                    - menuitem "Usage" [disabled] [ref=e697]:
+                      - generic [ref=e699]:
+                        - generic "Usage" [ref=e700]:
+                          - generic [ref=e701]: Usage
+                        - img [ref=e703]
+        - separator [disabled] [ref=e706]:
+          - img [ref=e708]
+        - main [ref=e717]:
+          - generic [ref=e718]:
+            - generic [ref=e719]:
+              - generic [ref=e721]:
+                - generic [ref=e724]:
+                  - heading "API Keys" [level=1] [ref=e725]
+                  - paragraph [ref=e726]: Configure API keys to securely control access to your project
+                - link "Docs" [ref=e729] [cursor=pointer]:
+                  - /url: https://supabase.com/docs/guides/api/api-keys
+                  - img [ref=e731]
+                  - generic [ref=e734]: Docs
+              - navigation [ref=e735]:
+                - menu [ref=e736]:
+                  - listitem [ref=e737]:
+                    - link "Publishable and secret API keys" [ref=e738] [cursor=pointer]:
+                      - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/api-keys
+                  - listitem [ref=e739]:
+                    - link "Legacy anon, service_role API keys" [ref=e740] [cursor=pointer]:
+                      - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/api-keys/legacy
+            - generic [ref=e741]:
+              - generic [ref=e742]:
+                - generic [ref=e743]:
+                  - paragraph [ref=e744]: Your new API keys are here
+                  - paragraph [ref=e745]:
+                    - text: We've updated our API keys to better support your application needs.
+                    - link "Join the discussion on GitHub" [ref=e746] [cursor=pointer]:
+                      - /url: https://github.com/orgs/supabase/discussions/29260
+                      - text: Join the discussion on GitHub
+                      - img [ref=e747]
+                - paragraph [ref=e752]:
+                  - text: Having trouble with the new API keys?
+                  - link "Contact support" [ref=e753] [cursor=pointer]:
+                    - /url: /dashboard/support/new?category=Problem&subject=Help+with+API+keys
+                - button "Dismiss notification" [ref=e755] [cursor=pointer]:
+                  - img [ref=e757]
+              - generic [ref=e760]:
+                - generic [ref=e761]:
+                  - generic [ref=e762]:
+                    - generic [ref=e763]:
+                      - heading "Publishable key" [level=3] [ref=e764]
+                      - paragraph [ref=e765]: This key is safe to use in a browser if you have enabled Row Level Security (RLS) for your tables and configured policies.
+                    - button "New publishable key" [ref=e767] [cursor=pointer]:
+                      - img [ref=e769]
+                      - generic [ref=e770]: New publishable key
+                  - table [ref=e774]:
+                    - rowgroup [ref=e775]:
+                      - row "Name API Key" [ref=e776]:
+                        - columnheader "Name" [ref=e777]
+                        - columnheader "API Key" [ref=e778]
+                        - columnheader [ref=e779]
+                    - rowgroup [ref=e780]:
+                      - row "default No description sb_publishable_au6DMNH90xW4M7bW6MVZTw_ORZYpFS8" [ref=e781]:
+                        - cell "default No description" [ref=e782]:
+                          - generic [ref=e783]:
+                            - generic [ref=e784]: default
+                            - generic [ref=e785]: No description
+                        - cell "sb_publishable_au6DMNH90xW4M7bW6MVZTw_ORZYpFS8" [ref=e786]:
+                          - generic [ref=e787]:
+                            - generic "sb_publishable_au6DMNH90xW4M7bW6MVZTw_ORZYpFS8" [ref=e789]
+                            - button [ref=e790] [cursor=pointer]:
+                              - img [ref=e792]
+                        - cell [ref=e795]:
+                          - button [ref=e797] [cursor=pointer]:
+                            - img [ref=e799]
+                    - rowgroup [ref=e803]:
+                      - row "Publishable keys can be safely shared publicly" [ref=e804]:
+                        - cell "Publishable keys can be safely shared publicly" [ref=e805]:
+                          - paragraph [ref=e806]: Publishable keys can be safely shared publicly
+                - generic [ref=e807]:
+                  - generic [ref=e808]:
+                    - generic [ref=e809]:
+                      - heading "Secret keys" [level=3] [ref=e810]
+                      - paragraph [ref=e811]: These API keys allow privileged access to your project's APIs. Use in servers, functions, workers or other backend components of your application.
+                    - button "New secret key" [ref=e813] [cursor=pointer]:
+                      - img [ref=e815]
+                      - generic [ref=e816]: New secret key
+                  - table [ref=e820]:
+                    - rowgroup [ref=e821]:
+                      - row "Name API Key" [ref=e822]:
+                        - columnheader "Name" [ref=e823]
+                        - columnheader "API Key" [ref=e824]
+                        - columnheader [ref=e825]
+                    - rowgroup [ref=e826]:
+                      - row "default No description sb_secret_tyOC6 ••••••••••••••••" [ref=e827]:
+                        - cell "default No description" [ref=e828]:
+                          - generic [ref=e829]:
+                            - generic [ref=e830]: default
+                            - generic [ref=e831]: No description
+                        - cell "sb_secret_tyOC6 ••••••••••••••••" [ref=e832]:
+                          - generic [ref=e833]:
+                            - generic [ref=e834]:
+                              - generic [ref=e835]: sb_secret_tyOC6
+                              - generic [ref=e836]: ••••••••••••••••
+                            - button [ref=e837] [cursor=pointer]:
+                              - img [ref=e839]
+                            - button [ref=e842] [cursor=pointer]:
+                              - img [ref=e844]
+                        - cell [ref=e847]:
+                          - button [ref=e849] [cursor=pointer]:
+                            - img [ref=e851]
+  - alert [ref=e416]: API Keys | Settings | DriveDE | Supabase

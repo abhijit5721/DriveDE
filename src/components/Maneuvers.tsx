@@ -1,0 +1,198 @@
+import { Play, Film } from 'lucide-react';
+import { useState } from 'react';
+import { useAppStore } from '../store/useAppStore';
+import { chapters } from '../data/curriculum';
+import { cn } from '../utils/cn';
+import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../utils/license';
+import { filterLessonsForSelection } from '../utils/contentFilter';
+import type { Lesson } from '../types';
+import AnimatedManeuver from './AnimatedManeuver';
+
+interface ManeuversProps {
+  onLessonSelect: (lesson: Lesson) => void;
+}
+
+type AnimationType = 'parallel-parking' | 'reverse-parking' | 'three-point-turn' | 'emergency-brake' | 'roundabout' | 'highway-merge';
+
+export function Maneuvers({ onLessonSelect }: ManeuversProps) {
+  const { language, licenseType } = useAppStore();
+  const isDE = language === 'de';
+  const [selectedAnimation, setSelectedAnimation] = useState<AnimationType | null>(null);
+  const transmissionType = getTransmissionFromLicenseType(licenseType);
+  const learningPath = getLearningPathFromLicenseType(licenseType);
+
+  // Get only maneuver lessons (chapter 2)
+  const maneuverChapter = chapters.find(ch => ch.id === 'chapter-2');
+  const maneuvers = filterLessonsForSelection(maneuverChapter?.lessons || [], transmissionType, learningPath);
+
+  const getManeuverIcon = (lessonId: string) => {
+    switch (lessonId) {
+      case 'maneuver-1': return '🅿️'; // Parallel parking
+      case 'maneuver-2': return '⬇️'; // Reverse parking
+      case 'maneuver-3': return '🔄'; // Three-point turn
+      case 'maneuver-4': return '🛑'; // Emergency braking
+      default: return '🚗';
+    }
+  };
+
+  const getManeuverColor = (lessonId: string) => {
+    switch (lessonId) {
+      case 'maneuver-1': return 'from-blue-500 to-blue-600';
+      case 'maneuver-2': return 'from-purple-500 to-purple-600';
+      case 'maneuver-3': return 'from-orange-500 to-orange-600';
+      case 'maneuver-4': return 'from-red-500 to-red-600';
+      default: return 'from-slate-500 to-slate-600';
+    }
+  };
+
+  return (
+    <div className="space-y-6 pb-6">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+          {isDE ? 'Grundfahraufgaben' : 'Basic Maneuvers'}
+        </h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {isDE
+            ? 'Schritt-für-Schritt Anleitungen für die Prüfung'
+            : 'Step-by-step guides for the exam'}
+        </p>
+      </div>
+
+      {/* Maneuver Cards Grid */}
+      <div className="grid grid-cols-2 gap-3">
+        {maneuvers.map((maneuver) => (
+          <button
+            key={maneuver.id}
+            onClick={() => onLessonSelect(maneuver)}
+            className="group relative overflow-hidden rounded-2xl p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <div className={cn(
+              'absolute inset-0 bg-gradient-to-br opacity-90',
+              getManeuverColor(maneuver.id)
+            )} />
+            <div className="relative z-10">
+              <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
+              <h3 className="font-semibold text-white">
+                {isDE ? maneuver.titleDe : maneuver.titleEn}
+              </h3>
+              <p className="mt-1 text-xs text-white/80">
+                {maneuver.steps?.length || 0} {isDE ? 'Schritte' : 'steps'}
+              </p>
+              <div className="mt-3 flex items-center gap-1 text-xs font-medium text-white">
+                <Play className="h-3 w-3" />
+                {isDE ? 'Starten' : 'Start'}
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Quick Tips Section */}
+      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
+        <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
+          {isDE ? 'Wichtige Hinweise' : 'Important Tips'}
+        </h3>
+        
+        <div className="space-y-3">
+          <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
+            <span className="text-xl">👀</span>
+            <div>
+              <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                {isDE ? 'Rundum-Blick + Schulterblick!' : '360° check + shoulder check!'}
+              </p>
+              <p className="mt-0.5 text-xs text-red-700 dark:text-red-400">
+                {isDE
+                  ? 'Vor jedem Rückwärtsweg Rundum-Blick, bei Spurwechsel und Richtungswechsel klarer Schulterblick'
+                  : 'Before every reverse movement use a 360° check; for lane or direction changes show a clear shoulder check'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-lg bg-amber-50 p-3 dark:bg-amber-900/20">
+            <span className="text-xl">🐌</span>
+            <div>
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                {isDE ? 'Langsam fahren' : 'Drive Slowly'}
+              </p>
+              <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
+                {isDE
+                  ? 'Bei Manövern gilt: Geschwindigkeit = Kontrolle'
+                  : 'For maneuvers: Speed = Control'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
+            <span className="text-xl">✅</span>
+            <div>
+              <p className="text-sm font-medium text-green-800 dark:text-green-300">
+                {isDE ? 'Korrigieren erlaubt' : 'Corrections Allowed'}
+              </p>
+              <p className="mt-0.5 text-xs text-green-700 dark:text-green-400">
+                {isDE
+                  ? 'Rangieren ist bei der Prüfung kein Problem'
+                  : 'Adjusting position is fine in the exam'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Exam Checklist */}
+      <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+        <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
+          {isDE ? 'Prüfungs-Checkliste' : 'Exam Checklist'}
+        </h3>
+        <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+          {[
+            { de: '✓ Beobachten → Blinken → Schulterblick → Manöver', en: '✓ Observe → Signal → Shoulder check → Maneuver' },
+            { de: '✓ Kupplung am Schleifpunkt halten', en: '✓ Hold clutch at biting point' },
+            { de: '✓ Orientierungspunkte nutzen', en: '✓ Use reference points' },
+            { de: '✓ Ruhe bewahren, Zeit lassen', en: '✓ Stay calm, take your time' },
+          ].map((item, idx) => (
+            <li key={idx}>{isDE ? item.de : item.en}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Video Animations Section */}
+      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
+        <div className="flex items-center gap-2 mb-4">
+          <Film className="h-5 w-5 text-blue-500" />
+          <h3 className="font-semibold text-slate-900 dark:text-white">
+            {isDE ? 'Animierte Anleitungen' : 'Animated Guides'}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[
+            { id: 'parallel-parking' as AnimationType, label: isDE ? 'Einparken' : 'Parallel', icon: '🅿️' },
+            { id: 'reverse-parking' as AnimationType, label: isDE ? 'Rückwärts' : 'Reverse', icon: '⬇️' },
+            { id: 'three-point-turn' as AnimationType, label: isDE ? 'Wenden' : '3-Point', icon: '🔄' },
+            { id: 'emergency-brake' as AnimationType, label: isDE ? 'Notbremse' : 'Emergency', icon: '🛑' },
+            { id: 'roundabout' as AnimationType, label: isDE ? 'Kreisverkehr' : 'Roundabout', icon: '🔵' },
+            { id: 'highway-merge' as AnimationType, label: isDE ? 'Autobahn' : 'Highway', icon: '🛣️' },
+          ].map((anim) => (
+            <button
+              key={anim.id}
+              onClick={() => setSelectedAnimation(selectedAnimation === anim.id ? null : anim.id)}
+              className={cn(
+                'flex flex-col items-center gap-1 rounded-lg p-3 transition-all',
+                selectedAnimation === anim.id
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+              )}
+            >
+              <span className="text-xl">{anim.icon}</span>
+              <span className="text-xs font-medium">{anim.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {selectedAnimation && (
+          <AnimatedManeuver type={selectedAnimation} language={language} />
+        )}
+      </div>
+    </div>
+  );
+}

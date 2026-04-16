@@ -1,0 +1,226 @@
+openapi: 3.1.0
+info:
+  title: DriveDE Backend API
+  version: 0.1.0
+  description: Draft API contract for DriveDE user sync, tracker, progress, and quiz services.
+servers:
+  - url: https://api.example.com
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /profiles/me:
+    get:
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+    patch:
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        '200':
+          description: Updated profile
+  /progress/lessons:
+    get:
+      summary: Get lesson progress for current user
+      responses:
+        '200':
+          description: Lesson progress list
+    upsert:
+      summary: Upsert lesson progress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonProgressUpsert'
+      responses:
+        '200':
+          description: Progress saved
+  /tracker/sessions:
+    get:
+      summary: Get driving sessions for current user
+      responses:
+        '200':
+          description: Driving session list
+    post:
+      summary: Create a driving session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrivingSessionCreate'
+      responses:
+        '201':
+          description: Session created
+  /tracker/sessions/{sessionId}:
+    patch:
+      summary: Update a driving session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrivingSessionUpdate'
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Delete a driving session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+  /quiz/attempts:
+    get:
+      summary: Get quiz attempts for current user
+      responses:
+        '200':
+          description: Attempt list
+    post:
+      summary: Submit a quiz attempt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAttemptCreate'
+      responses:
+        '201':
+          description: Attempt stored
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        learningPath:
+          type: string
+          enum: [standard, conversion]
+        transmissionType:
+          type: string
+          enum: [manual, automatic]
+        language:
+          type: string
+          enum: [de, en]
+        theme:
+          type: string
+          enum: [light, dark, system]
+    ProfileUpdate:
+      type: object
+      properties:
+        displayName:
+          type: string
+        learningPath:
+          type: string
+          enum: [standard, conversion]
+        transmissionType:
+          type: string
+          enum: [manual, automatic]
+        language:
+          type: string
+          enum: [de, en]
+        theme:
+          type: string
+          enum: [light, dark, system]
+    LessonProgressUpsert:
+      type: object
+      required: [lessonId, status]
+      properties:
+        lessonId:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        confidenceRating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+    DrivingSessionCreate:
+      type: object
+      required: [date, durationMinutes, category, transmissionType]
+      properties:
+        date:
+          type: string
+          format: date
+        durationMinutes:
+          type: integer
+          minimum: 1
+        category:
+          type: string
+          enum: [normal, ueberland, autobahn, night]
+        transmissionType:
+          type: string
+          enum: [manual, automatic]
+        notes:
+          type: string
+          nullable: true
+    DrivingSessionUpdate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        durationMinutes:
+          type: integer
+          minimum: 1
+        category:
+          type: string
+          enum: [normal, ueberland, autobahn, night]
+        transmissionType:
+          type: string
+          enum: [manual, automatic]
+        notes:
+          type: string
+          nullable: true
+    QuizAttemptCreate:
+      type: object
+      required: [questionId, selectedOptionId, isCorrect]
+      properties:
+        questionId:
+          type: string
+        selectedOptionId:
+          type: string
+        isCorrect:
+          type: boolean
+        lessonId:
+          type: string
+          nullable: true
+        attemptedAt:
+          type: string
+          format: date-time

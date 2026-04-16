@@ -1,0 +1,250 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+              - generic [ref=e52]:
+                - link "main Production" [ref=e53] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - generic "main" [ref=e54]
+                  - generic [ref=e55]: Production
+                - button [ref=e56] [cursor=pointer]:
+                  - img [ref=e58]
+          - button "Connect" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]: Connect
+        - generic [ref=e67]:
+          - generic [ref=e69] [cursor=pointer]: Feedback
+          - generic [ref=e70]:
+            - button "Search..." [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - paragraph [ref=e76]: Search...
+              - generic [ref=e78]: Ctrl K
+            - button [ref=e79] [cursor=pointer]:
+              - img [ref=e81]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+            - button [ref=e89] [cursor=pointer]:
+              - img [ref=e91]
+            - button [ref=e93] [cursor=pointer]:
+              - img [ref=e97]
+          - button [ref=e100] [cursor=pointer]:
+            - figure [ref=e102]:
+              - img [ref=e103]
+    - generic [ref=e105]:
+      - generic [ref=e109]:
+        - list [ref=e112]:
+          - generic [ref=e113]:
+            - listitem [ref=e114]:
+              - link "Project Overview" [ref=e115] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e116]
+                - generic: Project Overview
+            - listitem [ref=e118]:
+              - link "Table Editor" [ref=e119] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e120]
+                - generic: Table Editor
+            - listitem [ref=e122]:
+              - link "SQL Editor" [ref=e123] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e124]
+                - generic: SQL Editor
+          - generic [ref=e126]:
+            - listitem [ref=e127]:
+              - link "Database" [ref=e128] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e129]
+                - generic: Database
+            - listitem [ref=e133]:
+              - link "Authentication" [ref=e134] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e135]
+                - generic: Authentication
+            - listitem [ref=e137]:
+              - link "Storage" [ref=e138] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e139]
+                - generic: Storage
+            - listitem [ref=e141]:
+              - link "Edge Functions" [ref=e142] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e143]
+                - generic: Edge Functions
+            - listitem [ref=e148]:
+              - link "Realtime" [ref=e149] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e150]
+                - generic: Realtime
+          - generic [ref=e152]:
+            - listitem [ref=e154]:
+              - link "Advisors" [ref=e155] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e156]
+                - generic: Advisors
+            - listitem [ref=e158]:
+              - link "Observability" [ref=e159] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e160]
+                - generic: Observability
+            - listitem [ref=e168]:
+              - link "Logs" [ref=e169] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e170]
+                - generic: Logs
+            - listitem [ref=e171]:
+              - link "Integrations" [ref=e172] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e173]
+                - generic: Integrations
+          - listitem [ref=e177]:
+            - link "Project Settings" [ref=e178] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e179]
+              - generic: Project Settings
+        - button [ref=e184] [cursor=pointer]:
+          - img [ref=e186]
+      - main [ref=e196]:
+        - generic [ref=e197]:
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - generic [ref=e204]:
+                - generic [ref=e205]:
+                  - heading "DriveDE" [level=1] [ref=e206]
+                  - generic [ref=e210]: nano
+                - generic [ref=e211]:
+                  - generic [ref=e212]: https://zgmhkvpctiineanjmvga.supabase.co
+                  - button "Copy" [ref=e213] [cursor=pointer]:
+                    - generic [ref=e214]: Copy
+                    - img [ref=e216]
+              - generic [ref=e220]:
+                - button "Status Healthy" [ref=e221] [cursor=pointer]:
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: Status
+                    - generic [ref=e234]: Healthy
+                - link "Last migration" [ref=e235] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/migrations
+                  - generic [ref=e236]:
+                    - img [ref=e238]
+                    - generic [ref=e243]: Last migration
+                - link "Last backup No backups" [ref=e246] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/backups/scheduled
+                  - generic [ref=e247]:
+                    - img [ref=e249]
+                    - generic [ref=e252]:
+                      - generic [ref=e253]: Last backup
+                      - paragraph [ref=e255]: No backups
+                - link "Recent branch No branches" [ref=e256] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/branches
+                  - generic [ref=e257]:
+                    - img [ref=e259]
+                    - generic [ref=e263]:
+                      - generic [ref=e264]: Recent branch
+                      - paragraph [ref=e266]: No branches
+            - application [ref=e271]:
+              - group [ref=e274] [cursor=pointer]:
+                - generic [ref=e277]:
+                  - generic [ref=e278]:
+                    - img [ref=e280]
+                    - generic [ref=e284]:
+                      - paragraph [ref=e285]: Primary Database
+                      - paragraph [ref=e286]:
+                        - generic [ref=e287]: West EU (Ireland)
+                      - paragraph [ref=e288]:
+                        - generic [ref=e289]: eu-west-1
+                        - generic [ref=e290]: ·
+                        - generic [ref=e291]: t4g.nano
+                  - img "region icon" [ref=e292]
+              - img
+          - generic [ref=e296]:
+            - generic [ref=e297]:
+              - button "Drag to reorder section" [ref=e298]:
+                - img [ref=e299]
+              - generic [ref=e307]:
+                - heading "Get connected" [level=3] [ref=e309]
+                - generic [ref=e314]:
+                  - button "Framework Use a client library" [ref=e315] [cursor=pointer]:
+                    - img [ref=e317]
+                    - generic [ref=e320]:
+                      - paragraph [ref=e321]: Framework
+                      - paragraph [ref=e322]: Use a client library
+                    - img [ref=e323]
+                  - button "Direct Connection string" [ref=e325] [cursor=pointer]:
+                    - img [ref=e327]
+                    - generic [ref=e331]:
+                      - paragraph [ref=e332]: Direct
+                      - paragraph [ref=e333]: Connection string
+                    - img [ref=e334]
+                  - button "ORM Third-party library" [ref=e336] [cursor=pointer]:
+                    - img [ref=e338]
+                    - generic [ref=e344]:
+                      - paragraph [ref=e345]: ORM
+                      - paragraph [ref=e346]: Third-party library
+                    - img [ref=e347]
+                  - button "MCP Connect your agent" [ref=e349] [cursor=pointer]:
+                    - img [ref=e351]
+                    - generic [ref=e353]:
+                      - paragraph [ref=e354]: MCP
+                      - paragraph [ref=e355]: Connect your agent
+                    - img [ref=e356]
+                  - button "API Keys Manage project keys" [ref=e358] [cursor=pointer]:
+                    - img [ref=e360]
+                    - generic [ref=e363]:
+                      - paragraph [ref=e364]: API Keys
+                      - paragraph [ref=e365]: Manage project keys
+                    - img [ref=e366]
+            - button "Drag to reorder section" [ref=e370]:
+              - img [ref=e371]
+            - generic [ref=e387]:
+              - button "Drag to reorder section" [ref=e388]:
+                - img [ref=e389]
+              - generic [ref=e397]:
+                - generic [ref=e398]:
+                  - heading "Advisor found no issues" [level=2] [ref=e399]
+                  - button "Ask Assistant" [ref=e400] [cursor=pointer]:
+                    - img [ref=e404]
+                    - generic [ref=e407]: Ask Assistant
+                - generic [ref=e409]:
+                  - img [ref=e410]
+                  - paragraph [ref=e412]: No security or performance errors found
+            - generic [ref=e414]:
+              - button "Drag to reorder section" [ref=e415]:
+                - img [ref=e416]
+              - generic [ref=e424]:
+                - generic [ref=e425]:
+                  - heading "Reports" [level=3] [ref=e426]
+                  - button "Add block" [ref=e428] [cursor=pointer]:
+                    - img [ref=e430]
+                    - generic [ref=e431]: Add block
+                - generic [ref=e433]:
+                  - heading "Build a custom report" [level=4] [ref=e434]
+                  - paragraph [ref=e435]: Keep track of your most important metrics
+                  - button "Add your first block" [ref=e436] [cursor=pointer]:
+                    - generic [ref=e437]: Add your first block
+                    - img [ref=e439]
+            - status [ref=e440]
+  - alert [ref=e441]: Supabase

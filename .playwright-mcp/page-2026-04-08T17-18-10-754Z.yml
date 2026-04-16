@@ -1,0 +1,214 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+          - button "Connect" [ref=e54] [cursor=pointer]:
+            - img [ref=e56]
+            - generic [ref=e58]: Connect
+        - generic [ref=e59]:
+          - generic [ref=e61] [cursor=pointer]: Feedback
+          - generic [ref=e62]:
+            - button "Search..." [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - paragraph [ref=e68]: Search...
+              - generic [ref=e70]: Ctrl K
+            - button [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+            - button [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+            - button [ref=e81] [cursor=pointer]:
+              - img [ref=e83]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e89]
+          - button [ref=e92] [cursor=pointer]:
+            - figure [ref=e94]:
+              - img [ref=e95]
+    - generic [ref=e97]:
+      - generic [ref=e101]:
+        - list [ref=e104]:
+          - generic [ref=e105]:
+            - listitem [ref=e106]:
+              - link "Project Overview" [ref=e107] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e108]
+                - generic [ref=e110]: Project Overview
+            - listitem [ref=e111]:
+              - link "Table Editor" [ref=e112] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e113]
+                - generic [ref=e115]: Table Editor
+            - listitem [ref=e116]:
+              - link "SQL Editor" [ref=e117] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e118]
+                - generic [ref=e120]: SQL Editor
+          - generic [ref=e121]:
+            - listitem [ref=e122]:
+              - link "Database" [ref=e123] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e124]
+                - generic [ref=e128]: Database
+            - listitem [ref=e129]:
+              - link "Authentication" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e131]
+                - generic [ref=e133]: Authentication
+            - listitem [ref=e134]:
+              - link "Storage" [ref=e135] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e136]
+                - generic [ref=e138]: Storage
+            - listitem [ref=e139]:
+              - link "Edge Functions" [ref=e140] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e141]
+                - generic [ref=e146]: Edge Functions
+            - listitem [ref=e147]:
+              - link "Realtime" [ref=e148] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e149]
+                - generic [ref=e151]: Realtime
+          - generic [ref=e152]:
+            - listitem [ref=e154]:
+              - link "Advisors" [ref=e155] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e156]
+                - generic [ref=e158]: Advisors
+            - listitem [ref=e159]:
+              - link "Observability" [ref=e160] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e161]
+                - generic [ref=e169]: Observability
+            - listitem [ref=e170]:
+              - link "Logs" [ref=e171] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e172]
+                - generic [ref=e173]: Logs
+            - listitem [ref=e174]:
+              - link "Integrations" [ref=e175] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e176]
+                - generic [ref=e179]: Integrations
+          - listitem [ref=e181]:
+            - link "Project Settings" [ref=e182] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e183]
+              - generic [ref=e186]: Project Settings
+        - button [ref=e189] [cursor=pointer]:
+          - img [ref=e191]
+      - main [ref=e201]:
+        - generic [ref=e202]:
+          - generic [ref=e206]:
+            - generic [ref=e207]:
+              - generic [ref=e209]:
+                - generic [ref=e210]:
+                  - heading "DriveDE" [level=1] [ref=e211]
+                  - generic [ref=e215]: nano
+                - button "Copy" [ref=e218] [cursor=pointer]:
+                  - generic [ref=e219]: Copy
+                  - img [ref=e221]
+              - generic [ref=e225]:
+                - button "Status Checking..." [ref=e226] [cursor=pointer]:
+                  - generic [ref=e236]:
+                    - generic [ref=e237]: Status
+                    - generic [ref=e239]: Checking...
+                - link "Last migration" [ref=e240] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/migrations
+                  - generic [ref=e241]:
+                    - img [ref=e243]
+                    - generic [ref=e248]: Last migration
+                - link "Last backup" [ref=e251] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/backups/scheduled
+                  - generic [ref=e252]:
+                    - img [ref=e254]
+                    - generic [ref=e258]: Last backup
+                - link "Recent branch" [ref=e261] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/branches
+                  - generic [ref=e262]:
+                    - img [ref=e264]
+                    - generic [ref=e269]: Recent branch
+            - application [ref=e276]:
+              - img
+          - generic [ref=e281]:
+            - generic [ref=e282]:
+              - button "Drag to reorder section" [ref=e283]:
+                - img [ref=e284]
+              - generic [ref=e292]:
+                - heading "Get connected" [level=3] [ref=e294]
+                - generic [ref=e299]:
+                  - button "Framework Use a client library" [ref=e300] [cursor=pointer]:
+                    - img [ref=e302]
+                    - generic [ref=e305]:
+                      - paragraph [ref=e306]: Framework
+                      - paragraph [ref=e307]: Use a client library
+                    - img [ref=e308]
+                  - button "Direct Connection string" [ref=e310] [cursor=pointer]:
+                    - img [ref=e312]
+                    - generic [ref=e316]:
+                      - paragraph [ref=e317]: Direct
+                      - paragraph [ref=e318]: Connection string
+                    - img [ref=e319]
+                  - button "ORM Third-party library" [ref=e321] [cursor=pointer]:
+                    - img [ref=e323]
+                    - generic [ref=e329]:
+                      - paragraph [ref=e330]: ORM
+                      - paragraph [ref=e331]: Third-party library
+                    - img [ref=e332]
+                  - button "MCP Connect your agent" [ref=e334] [cursor=pointer]:
+                    - img [ref=e336]
+                    - generic [ref=e338]:
+                      - paragraph [ref=e339]: MCP
+                      - paragraph [ref=e340]: Connect your agent
+                    - img [ref=e341]
+                  - button "API Keys Manage project keys" [ref=e343] [cursor=pointer]:
+                    - img [ref=e345]
+                    - generic [ref=e348]:
+                      - paragraph [ref=e349]: API Keys
+                      - paragraph [ref=e350]: Manage project keys
+                    - img [ref=e351]
+            - button "Drag to reorder section" [ref=e355]:
+              - img [ref=e356]
+            - button "Drag to reorder section" [ref=e373]:
+              - img [ref=e374]
+            - generic [ref=e389]:
+              - button "Drag to reorder section" [ref=e390]:
+                - img [ref=e391]
+              - generic [ref=e399]:
+                - generic [ref=e400]:
+                  - heading "Reports" [level=3] [ref=e401]
+                  - button "Add block" [ref=e403] [cursor=pointer]:
+                    - img [ref=e405]
+                    - generic [ref=e406]: Add block
+                - generic [ref=e408]:
+                  - heading "Build a custom report" [level=4] [ref=e409]
+                  - paragraph [ref=e410]: Keep track of your most important metrics
+                  - button "Add your first block" [ref=e411] [cursor=pointer]:
+                    - generic [ref=e412]: Add your first block
+                    - img [ref=e414]
+            - status [ref=e415]
+  - alert [ref=e416]: Supabase

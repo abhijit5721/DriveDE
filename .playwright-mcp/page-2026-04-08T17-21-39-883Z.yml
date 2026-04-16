@@ -1,0 +1,206 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - banner [ref=e6]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - link "Supabase" [ref=e9] [cursor=pointer]:
+              - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+              - img "Supabase" [ref=e10]
+            - generic [ref=e11]:
+              - img [ref=e13]
+              - generic [ref=e15]:
+                - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                  - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                  - img [ref=e17]
+                  - generic [ref=e27]: DriveDE
+                  - generic [ref=e28]: Free
+                - button [ref=e29] [cursor=pointer]:
+                  - img [ref=e31]
+              - generic [ref=e34]:
+                - img [ref=e36]
+                - generic [ref=e38]:
+                  - link "DriveDE" [ref=e39] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                    - img [ref=e40]
+                    - generic "DriveDE" [ref=e43]
+                  - button [ref=e44] [cursor=pointer]:
+                    - img [ref=e46]
+                - img [ref=e50]
+                - generic [ref=e52]:
+                  - link "main Production" [ref=e53] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                    - generic "main" [ref=e54]
+                    - generic [ref=e55]: Production
+                  - button [ref=e56] [cursor=pointer]:
+                    - img [ref=e58]
+            - button "Connect" [ref=e62] [cursor=pointer]:
+              - img [ref=e64]
+              - generic [ref=e66]: Connect
+          - generic [ref=e67]:
+            - generic [ref=e69] [cursor=pointer]: Feedback
+            - generic [ref=e70]:
+              - button "Search..." [ref=e71] [cursor=pointer]:
+                - generic [ref=e72]:
+                  - img [ref=e73]
+                  - paragraph [ref=e76]: Search...
+                - generic [ref=e78]: Ctrl K
+              - button [ref=e79] [cursor=pointer]:
+                - img [ref=e81]
+              - button [ref=e85] [cursor=pointer]:
+                - img [ref=e87]
+              - button [ref=e89] [cursor=pointer]:
+                - img [ref=e91]
+              - button [ref=e93] [cursor=pointer]:
+                - img [ref=e97]
+            - link "Upgrade to Pro" [ref=e100] [cursor=pointer]:
+              - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+              - generic [ref=e101]: Upgrade to Pro
+            - button [ref=e102] [cursor=pointer]:
+              - figure [ref=e104]:
+                - img [ref=e105]
+      - generic [ref=e107]:
+        - generic [ref=e111]:
+          - list [ref=e114]:
+            - generic [ref=e115]:
+              - listitem [ref=e116]:
+                - link "Project Overview" [ref=e117] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e118]
+                  - generic: Project Overview
+              - listitem [ref=e120]:
+                - link "Table Editor" [ref=e121] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                  - img [ref=e122]
+                  - generic: Table Editor
+              - listitem [ref=e124]:
+                - link "SQL Editor" [ref=e125] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                  - img [ref=e126]
+                  - generic: SQL Editor
+            - generic [ref=e128]:
+              - listitem [ref=e129]:
+                - link "Database" [ref=e130] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                  - img [ref=e131]
+                  - generic: Database
+              - listitem [ref=e135]:
+                - link "Authentication" [ref=e136] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                  - img [ref=e137]
+                  - generic: Authentication
+              - listitem [ref=e139]:
+                - link "Storage" [ref=e140] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                  - img [ref=e141]
+                  - generic: Storage
+              - listitem [ref=e143]:
+                - link "Edge Functions" [ref=e144] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                  - img [ref=e145]
+                  - generic: Edge Functions
+              - listitem [ref=e150]:
+                - link "Realtime" [ref=e151] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                  - img [ref=e152]
+                  - generic: Realtime
+            - generic [ref=e154]:
+              - listitem [ref=e156]:
+                - link "Advisors" [ref=e157] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                  - img [ref=e158]
+                  - generic: Advisors
+              - listitem [ref=e160]:
+                - link "Observability" [ref=e161] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                  - img [ref=e162]
+                  - generic: Observability
+              - listitem [ref=e170]:
+                - link "Logs" [ref=e171] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                  - img [ref=e172]
+                  - generic: Logs
+              - listitem [ref=e173]:
+                - link "Integrations" [ref=e174] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                  - img [ref=e175]
+                  - generic: Integrations
+            - listitem [ref=e179]:
+              - link "Project Settings" [ref=e180] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+                - img [ref=e181]
+                - generic: Project Settings
+          - button [ref=e186] [cursor=pointer]:
+            - img [ref=e188]
+        - generic [ref=e195]:
+          - generic [ref=e199]:
+            - heading "Table Editor" [level=4] [ref=e201]
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - button "schema public" [ref=e206] [cursor=pointer]:
+                  - generic [ref=e208]:
+                    - paragraph [ref=e209]: schema
+                    - paragraph [ref=e210]: public
+                  - img [ref=e212]
+                - button "New table" [ref=e216] [cursor=pointer]:
+                  - img [ref=e218]
+                  - generic [ref=e219]: New table
+              - generic [ref=e221]:
+                - generic [ref=e222]:
+                  - generic [ref=e223]: Search tables
+                  - textbox "Search tables..." [active] [ref=e224]
+                  - button [ref=e225] [cursor=pointer]:
+                    - img [ref=e226]
+                  - img [ref=e229]
+                - button [ref=e232] [cursor=pointer]:
+                  - img [ref=e234]
+          - separator [ref=e252]:
+            - img [ref=e254]
+          - main [ref=e263]:
+            - generic [ref=e264]:
+              - button [ref=e266] [cursor=pointer]:
+                - img [ref=e267]
+              - generic [ref=e272]:
+                - generic [ref=e275] [cursor=pointer]:
+                  - img [ref=e277]
+                  - generic [ref=e279]:
+                    - heading "Create a table" [level=3] [ref=e280]
+                    - paragraph [ref=e281]: Design and create a new database table
+                - generic [ref=e282]:
+                  - heading "Recent items" [level=2] [ref=e283]
+                  - generic [ref=e285]:
+                    - img [ref=e286]
+                    - generic [ref=e288]:
+                      - paragraph [ref=e289]: No recent items yet
+                      - paragraph [ref=e290]: Items will appear here as you browse through your project
+    - generic [ref=e292]:
+      - generic:
+        - generic:
+          - generic:
+            - img "Background pattern"
+          - generic:
+            - generic:
+              - button "Close banner":
+                - generic:
+                  - img
+            - generic:
+              - generic:
+                - generic: New
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic: name·where id = 10
+                  - generic:
+                    - generic:
+                      - generic: "-"
+                      - generic: Red
+                    - generic:
+                      - generic: +
+                      - generic: Blue
+              - generic:
+                - paragraph: Queue row edits in Table Editor
+                - paragraph: Batch multiple row edits and review them before saving to your database
+              - link "Enable in preferences":
+                - /url: /dashboard/account/me#dashboard
+                - generic: Enable in preferences
+  - alert [ref=e293]: Table Editor | Supabase

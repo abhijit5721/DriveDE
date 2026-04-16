@@ -1,0 +1,257 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+              - generic [ref=e52]:
+                - link "main Production" [ref=e53] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - generic "main" [ref=e54]
+                  - generic [ref=e55]: Production
+                - button [ref=e56] [cursor=pointer]:
+                  - img [ref=e58]
+          - button "Connect" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]: Connect
+        - generic [ref=e67]:
+          - generic [ref=e69] [cursor=pointer]: Feedback
+          - generic [ref=e70]:
+            - button "Search..." [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - paragraph [ref=e76]: Search...
+              - generic [ref=e78]: Ctrl K
+            - button [ref=e79] [cursor=pointer]:
+              - img [ref=e81]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+            - button [ref=e89] [cursor=pointer]:
+              - img [ref=e91]
+            - button [ref=e93] [cursor=pointer]:
+              - img [ref=e97]
+          - link "Upgrade to Pro" [ref=e100] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+            - generic [ref=e101]: Upgrade to Pro
+          - button [ref=e102] [cursor=pointer]:
+            - figure [ref=e104]:
+              - img [ref=e105]
+    - generic [ref=e107]:
+      - generic [ref=e111]:
+        - list [ref=e114]:
+          - generic [ref=e115]:
+            - listitem [ref=e116]:
+              - link "Project Overview" [ref=e117] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e118]
+                - generic: Project Overview
+            - listitem [ref=e120]:
+              - link "Table Editor" [ref=e121] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e122]
+                - generic: Table Editor
+            - listitem [ref=e124]:
+              - link "SQL Editor" [ref=e125] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e126]
+                - generic: SQL Editor
+          - generic [ref=e128]:
+            - listitem [ref=e129]:
+              - link "Database" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e131]
+                - generic: Database
+            - listitem [ref=e135]:
+              - link "Authentication" [ref=e136] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e137]
+                - generic: Authentication
+            - listitem [ref=e139]:
+              - link "Storage" [ref=e140] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e141]
+                - generic: Storage
+            - listitem [ref=e143]:
+              - link "Edge Functions" [ref=e144] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e145]
+                - generic: Edge Functions
+            - listitem [ref=e150]:
+              - link "Realtime" [ref=e151] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e152]
+                - generic: Realtime
+          - generic [ref=e154]:
+            - listitem [ref=e156]:
+              - link "Advisors" [ref=e157] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e158]
+                - generic: Advisors
+            - listitem [ref=e160]:
+              - link "Observability" [ref=e161] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e162]
+                - generic: Observability
+            - listitem [ref=e170]:
+              - link "Logs" [ref=e171] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e172]
+                - generic: Logs
+            - listitem [ref=e173]:
+              - link "Integrations" [ref=e174] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e175]
+                - generic: Integrations
+          - listitem [ref=e179]:
+            - link "Project Settings" [ref=e180] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e181]
+              - generic: Project Settings
+        - button [ref=e186] [cursor=pointer]:
+          - img [ref=e188]
+      - generic [ref=e195]:
+        - generic [ref=e199]:
+          - heading "SQL Editor" [level=4] [ref=e201]
+          - generic [ref=e203]:
+            - generic [ref=e204]:
+              - generic [ref=e205]:
+                - generic [ref=e207]:
+                  - generic [ref=e208]: Search queries
+                  - textbox "Search queries..." [ref=e209]
+                  - button [ref=e210] [cursor=pointer]:
+                    - img [ref=e211]
+                  - img [ref=e214]
+                - button [ref=e217] [cursor=pointer]:
+                  - img [ref=e219]
+              - button "Shared" [ref=e222] [cursor=pointer]:
+                - img [ref=e223]
+                - generic [ref=e225]: Shared
+              - button "Favorites" [ref=e228] [cursor=pointer]:
+                - img [ref=e229]
+                - generic [ref=e231]: Favorites
+              - generic [ref=e233]:
+                - button "PRIVATE" [expanded] [ref=e234] [cursor=pointer]:
+                  - img [ref=e235]
+                  - generic [ref=e237]: PRIVATE
+                - generic [ref=e240]:
+                  - paragraph [ref=e241]: No private queries created yet
+                  - paragraph [ref=e242]: Queries will be automatically saved once you start writing in the editor
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                      - generic:
+                        - generic "dummy_query_1":
+                          - generic:
+                            - img
+                            - generic: dummy_query_1
+                      - generic:
+                        - generic "dummy_query_2":
+                          - generic:
+                            - img
+                            - generic: dummy_query_2
+                      - generic:
+                        - generic "dummy_query_3":
+                          - generic:
+                            - img
+                            - generic: dummy_query_3
+                      - generic:
+                        - generic "dummy_query_4":
+                          - generic:
+                            - img
+                            - generic: dummy_query_4
+              - generic [ref=e244]:
+                - button "Community" [expanded] [ref=e245] [cursor=pointer]:
+                  - img [ref=e246]
+                  - generic [ref=e248]: Community
+                - generic [ref=e249]:
+                  - link "templates" [ref=e250] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql/templates
+                    - img [ref=e251]
+                    - text: templates
+                  - link "quickstarts" [ref=e253] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql/quickstarts
+                    - img [ref=e254]
+                    - text: quickstarts
+            - button "View running queries" [ref=e258] [cursor=pointer]:
+              - generic [ref=e259]: View running queries
+        - separator [ref=e260]:
+          - img [ref=e262]
+        - main [ref=e271]:
+          - generic [ref=e272]:
+            - generic [ref=e273]:
+              - generic [ref=e274]:
+                - button [ref=e275] [cursor=pointer]:
+                  - img [ref=e276]
+                - tablist [ref=e279]:
+                  - tab "New" [selected] [ref=e280] [cursor=pointer]:
+                    - img [ref=e281]
+                    - generic [ref=e283]: New
+                    - button [ref=e284]:
+                      - img [ref=e285]
+              - status [ref=e290]
+            - generic [ref=e293]:
+              - code [ref=e300]:
+                - generic [ref=e301]:
+                  - generic [ref=e306]: "1"
+                  - textbox "Editor content" [active] [ref=e316]
+                  - generic:
+                    - generic: Hit CTRL+K to generate query or just start typing
+              - separator [ref=e317]:
+                - img [ref=e319]
+              - generic [ref=e328]:
+                - tablist [ref=e329]:
+                  - generic [ref=e330]:
+                    - tab "Results" [selected] [ref=e331] [cursor=pointer]:
+                      - generic [ref=e332]: Results
+                    - tab "Explain" [ref=e333] [cursor=pointer]:
+                      - generic [ref=e334]: Explain
+                    - tab "Chart" [ref=e335] [cursor=pointer]:
+                      - generic [ref=e336]: Chart
+                  - generic [ref=e337]:
+                    - button [ref=e338] [cursor=pointer]:
+                      - img [ref=e340]
+                    - generic [ref=e345]:
+                      - generic [ref=e346] [cursor=pointer]:
+                        - generic [ref=e347]: Source
+                        - button "Primary database" [ref=e348]:
+                          - generic [ref=e349]: Primary database
+                          - img [ref=e351]
+                      - button "Role postgres" [ref=e353] [cursor=pointer]:
+                        - generic [ref=e355]:
+                          - generic [ref=e356]: Role
+                          - generic [ref=e357]: postgres
+                          - img [ref=e358]
+                      - button "Run Ctrl ↵" [ref=e360] [cursor=pointer]:
+                        - generic [ref=e361]: Run
+                        - generic [ref=e363]: Ctrl ↵
+                - paragraph [ref=e365]:
+                  - text: Click
+                  - code [ref=e366]: Run
+                  - text: to execute your query.
+  - alert [ref=e368]: SQL Editor | DriveDE | Supabase
+  - generic [ref=e369]:
+    - alert
+    - alert

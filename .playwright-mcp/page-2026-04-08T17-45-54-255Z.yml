@@ -1,0 +1,704 @@
+- generic:
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - banner:
+            - generic:
+              - generic:
+                - link:
+                  - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                  - img
+                - generic:
+                  - generic:
+                    - img
+                  - generic:
+                    - link:
+                      - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                      - img
+                      - generic: DriveDE
+                      - generic: Free
+                    - button:
+                      - generic:
+                        - img
+                  - generic:
+                    - generic:
+                      - img
+                    - generic:
+                      - link:
+                        - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                        - img
+                        - generic: DriveDE
+                      - button:
+                        - generic:
+                          - img
+                    - generic:
+                      - img
+                    - generic:
+                      - link:
+                        - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                        - generic: main
+                        - generic: Production
+                      - button:
+                        - generic:
+                          - img
+                - button [ref=e695] [cursor=pointer]:
+                  - img [ref=e64]
+                  - generic [ref=e66]: Connect
+              - generic:
+                - generic:
+                  - generic: Feedback
+                - generic:
+                  - button:
+                    - generic:
+                      - img
+                      - paragraph: Search...
+                    - generic:
+                      - generic: Ctrl K
+                  - button [ref=e79] [cursor=pointer]:
+                    - img [ref=e81]
+                  - button [ref=e85] [cursor=pointer]:
+                    - img [ref=e87]
+                  - button [ref=e89] [cursor=pointer]:
+                    - img [ref=e91]
+                  - button [ref=e93] [cursor=pointer]:
+                    - img [ref=e97]
+                - link:
+                  - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+                  - generic: Upgrade to Pro
+                - button [ref=e102] [cursor=pointer]:
+                  - figure [ref=e104]:
+                    - img [ref=e105]
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - list:
+                      - generic:
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                            - img
+                      - generic:
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                            - img
+                      - generic:
+                        - generic:
+                          - listitem:
+                            - link:
+                              - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                              - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                            - img
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                            - img
+                      - generic:
+                        - listitem:
+                          - link:
+                            - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+                            - img
+                - generic:
+                  - generic:
+                    - button:
+                      - generic:
+                        - img
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - heading [level=4]: Authentication
+                              - generic:
+                                - generic:
+                                  - menu [disabled]:
+                                    - list:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic: Manage
+                                            - generic:
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Users
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/oauth-apps
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: OAuth Apps
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic: Notifications
+                                            - generic:
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/templates
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Email
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic: Configuration
+                                            - generic:
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/policies
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Policies
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/providers
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Sign In / Providers
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/oauth-server
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: OAuth Server
+                                                        - generic: Beta
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/sessions
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Sessions
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/rate-limits
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Rate Limits
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/mfa
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Multi-Factor
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/url-configuration
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: URL Configuration
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/protection
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Attack Protection
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/hooks
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Auth Hooks
+                                                        - generic: Beta
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/audit-logs
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Audit Logs
+                                              - link [disabled]:
+                                                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/performance
+                                                - menuitem [disabled]:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic: Performance
+                      - separator [disabled]:
+                        - generic:
+                          - img
+                      - generic:
+                        - generic:
+                          - main:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - heading [level=1]: Sign In / Providers
+                                          - paragraph: Configure authentication providers and login methods for your users
+                                - navigation:
+                                  - menu:
+                                    - listitem:
+                                      - link:
+                                        - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/providers
+                                        - text: Supabase Auth
+                                    - listitem:
+                                      - link:
+                                        - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/third-party
+                                        - text: Third-Party Auth
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - heading [level=2]: User Signups
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - switch [checked]
+                                                - checkbox [checked]
+                                              - generic:
+                                                - generic:
+                                                  - generic: Allow new users to sign up
+                                                - generic: If this is disabled, new users will not be able to sign up to your application
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - switch
+                                                - checkbox
+                                              - generic:
+                                                - generic:
+                                                  - generic: Allow manual linking
+                                                - generic:
+                                                  - text: Enable
+                                                  - link:
+                                                    - /url: https://supabase.com/docs/guides/auth/auth-identity-linking#manual-linking-beta
+                                                    - text: manual linking APIs
+                                                  - text: for your project
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - switch
+                                                - checkbox
+                                              - generic:
+                                                - generic:
+                                                  - generic: Allow anonymous sign-ins
+                                                - generic:
+                                                  - text: Enable
+                                                  - link:
+                                                    - /url: https://supabase.com/docs/guides/auth/auth-anonymous
+                                                    - text: anonymous sign-ins
+                                                  - text: for your project
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - switch [checked]
+                                                - checkbox [checked]
+                                              - generic:
+                                                - generic:
+                                                  - generic: Confirm email
+                                                - generic: Users will need to confirm their email address before signing in for the first time
+                                        - generic:
+                                          - button [disabled]:
+                                            - generic: Save changes
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - heading [level=2]: Auth Providers
+                                        - generic: Authenticate your users through a suite of providers and login methods
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Email
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - img
+                                                - generic: Enabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Phone
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: SAML 2.0
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Web3 Wallet
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Apple
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Azure
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Bitbucket
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Discord
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Facebook
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Figma
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: GitHub
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: GitLab
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Google
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - img
+                                                - generic: Enabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Kakao
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: KeyCloak
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: LinkedIn (OIDC)
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Notion
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Twitch
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: X / Twitter (OAuth 2.0)
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Twitter (Deprecated)
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Slack (OIDC)
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Slack (Deprecated)
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Spotify
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: WorkOS
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                          - generic:
+                                            - generic:
+                                              - img
+                                            - generic: Zoom
+                                            - generic:
+                                              - generic: Disabled
+                                            - img
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - heading [level=2]: Custom Providers
+                                          - generic: New
+                                        - generic: Configure OAuth/OIDC providers for this project using your own issuer or endpoints.
+                                      - generic:
+                                        - link:
+                                          - /url: https://supabase.com/docs/guides/auth/custom-oauth-providers
+                                          - generic:
+                                            - img
+                                          - generic: Docs
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - textbox:
+                                                    - /placeholder: Search custom providers
+                                                  - generic:
+                                                    - img
+                                          - generic:
+                                            - generic: Provider Type
+                                            - generic:
+                                              - img
+                                          - generic:
+                                            - generic: Status
+                                            - generic:
+                                              - img
+                                        - generic:
+                                          - button:
+                                            - generic:
+                                              - img
+                                            - generic: New Provider
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - table:
+                                                - rowgroup:
+                                                  - row:
+                                                    - columnheader:
+                                                      - button:
+                                                        - text: Name
+                                                        - generic:
+                                                          - img
+                                                          - img
+                                                          - img
+                                                    - columnheader:
+                                                      - button:
+                                                        - text: Identifier
+                                                        - generic:
+                                                          - img
+                                                          - img
+                                                          - img
+                                                    - columnheader:
+                                                      - button:
+                                                        - text: Type
+                                                        - generic:
+                                                          - img
+                                                          - img
+                                                          - img
+                                                    - columnheader: Enabled
+                                                    - columnheader
+                                                - rowgroup:
+                                                  - row:
+                                                    - cell:
+                                                      - paragraph: No custom providers found
+    - status [ref=e829]:
+      - button [ref=e830] [cursor=pointer]:
+        - img [ref=e831]
+      - img [ref=e835]
+      - generic [ref=e838]: Successfully updated settings
+  - generic:
+    - alert: Sign In / Providers | Authentication | DriveDE | Supabase
+  - dialog "Google" [active] [ref=e697]:
+    - generic [ref=e698]:
+      - img "Google auth icon" [ref=e699]
+      - heading "Google" [level=2] [ref=e700]
+    - generic [ref=e701]:
+      - generic [ref=e704]:
+        - generic [ref=e839]: Enable Sign in with Google
+        - generic [ref=e708]:
+          - generic [ref=e709]:
+            - switch [checked] [ref=e710] [cursor=pointer]
+            - checkbox [checked]
+          - paragraph [ref=e714]: Enables Sign in with Google on the web using OAuth or One Tap, or in Android apps or Chrome extensions.
+      - generic [ref=e717]:
+        - generic [ref=e840]: Client IDs
+        - generic [ref=e721]:
+          - textbox [ref=e723]: 712119605930-vchjs6suufvh4v46qq93ma7pot111sqh.apps.googleusercontent.com
+          - paragraph [ref=e726]: Comma-separated list of client IDs for Web, OAuth, Android apps, One Tap, and Chrome extensions.
+      - generic [ref=e729]:
+        - generic [ref=e841]: Client Secret (for OAuth)
+        - generic [ref=e733]:
+          - group [ref=e735]:
+            - textbox [ref=e736]: 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
+            - group [ref=e737]:
+              - button "Reveal" [ref=e738] [cursor=pointer]:
+                - generic [ref=e739]: Reveal
+          - paragraph [ref=e742]: Client Secret to use with the OAuth flow on the web.
+      - generic [ref=e745]:
+        - generic [ref=e842]: Skip nonce checks
+        - generic [ref=e749]:
+          - generic [ref=e750]:
+            - switch [ref=e751] [cursor=pointer]
+            - checkbox
+          - paragraph [ref=e755]: Allows ID tokens with any nonce to be accepted, which is less secure. Useful in situations where you don't have access to the nonce used to issue the ID token, such as with iOS.
+      - generic [ref=e758]:
+        - generic [ref=e843]: Allow users without an email
+        - generic [ref=e762]:
+          - generic [ref=e763]:
+            - switch [ref=e764] [cursor=pointer]
+            - checkbox
+          - paragraph [ref=e768]: Allows the user to successfully authenticate when the provider does not return an email address.
+      - generic [ref=e771]:
+        - generic [ref=e844]: Callback URL (for OAuth)
+        - generic [ref=e775]:
+          - group [ref=e777]:
+            - textbox [ref=e778]: https://zgmhkvpctiineanjmvga.supabase.co/auth/v1/callback
+            - group [ref=e779]:
+              - button "Copy" [ref=e780] [cursor=pointer]:
+                - img [ref=e782]
+                - generic [ref=e785]: Copy
+          - paragraph [ref=e788]:
+            - text: Register this callback URL when using Sign-in with Google on the web using OAuth.
+            - link "Learn more" [ref=e845] [cursor=pointer]:
+              - /url: https://supabase.com/docs/guides/auth/social-login/auth-google#configure-your-services-id
+    - generic [ref=e791]:
+      - link "Docs" [ref=e792] [cursor=pointer]:
+        - /url: https://supabase.com/docs/guides/auth/social-login/auth-google
+        - img [ref=e794]
+        - generic [ref=e797]: Docs
+      - generic [ref=e798]:
+        - button "Cancel" [ref=e799] [cursor=pointer]:
+          - generic [ref=e800]: Cancel
+        - button "Save" [disabled] [ref=e801]:
+          - generic [ref=e802]: Save
+    - button "Close" [ref=e803] [cursor=pointer]:
+      - img [ref=e804]
+      - generic [ref=e807]: Close

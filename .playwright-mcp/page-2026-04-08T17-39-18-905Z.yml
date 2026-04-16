@@ -1,0 +1,247 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - alertdialog "Free trial dialog" [ref=e334]:
+      - generic [ref=e335]:
+        - generic [ref=e336]:
+          - img [ref=e339]
+          - generic [ref=e342]:
+            - text: Start your Free Trial with $300 in credit. Don’t worry—you won’t be charged if you run out of credits.
+            - link "Learn more about the free trial program. external, opens new window" [ref=e343] [cursor=pointer]:
+              - /url: https://cloud.google.com/free/
+              - text: Learn more
+              - img "external, opens new window" [ref=e344]:
+                - img [ref=e345]
+        - generic [ref=e347]:
+          - button "Dismiss full account activation banner" [ref=e348]:
+            - generic [ref=e349]: Dismiss
+          - button "Start free" [ref=e350]:
+            - generic [ref=e351]: Start free
+    - generic [ref=e4]:
+      - complementary "Skip links" [ref=e5]:
+        - link "Skip to main content" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button "Keyboard shortcuts" [ref=e8]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link "Accessibility Help external, opens new window" [ref=e10] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - generic "external, opens new window" [ref=e12]:
+              - img "external, opens new window" [ref=e13]:
+                - img [ref=e14]
+        - link "Accessibility Feedback external, opens new window" [ref=e16] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - generic "external, opens new window" [ref=e18]:
+              - img "external, opens new window" [ref=e19]:
+                - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button "Navigation menu (.)" [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+          - link "Google Cloud Platform Home" [ref=e32] [cursor=pointer]:
+            - /url: /
+            - generic:
+              - img
+          - button "You're currently working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e40]:
+            - generic [ref=e41]:
+              - img [ref=e43]
+              - generic [ref=e46]: DriveDE
+        - button "Open search" [ref=e53] [cursor=pointer]:
+          - img [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - button "Open or close Gemini Cloud Assist chat (Alt G)" [ref=e62] [cursor=pointer]:
+              - img [ref=e64]
+            - button "Activate Cloud Shell (G then S)" [ref=e352] [cursor=pointer]:
+              - img [ref=e354]
+            - button "Task in progress. Open notifications" [ref=e1367] [cursor=pointer]:
+              - generic:
+                - progressbar:
+                  - generic:
+                    - img
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                      - generic:
+                        - img
+                      - generic:
+                        - img
+                - generic:
+                  - generic:
+                    - img
+            - button "Settings and utilities" [ref=e80] [cursor=pointer]:
+              - img [ref=e82]
+          - 'button "Account: Abhishek Sahoo (abhishek572021@gmail.com)" [ref=e358]':
+            - img [ref=e359]
+    - main [ref=e107]:
+      - generic [ref=e1177]:
+        - generic [ref=e1180]:
+          - button "Back to previous page" [ref=e1184] [cursor=pointer]:
+            - img [ref=e1186]
+          - heading "Product details" [level=1] [ref=e1190]:
+            - generic [ref=e1191]: Product details
+        - generic [ref=e1195]:
+          - generic [ref=e1200]:
+            - img [ref=e1203]
+            - generic [ref=e1204]:
+              - heading "Google+ API" [level=1] [ref=e1205]
+              - paragraph [ref=e1206]:
+                - link "Google" [ref=e1208] [cursor=pointer]:
+                  - /url: /marketplace/browse?filter=partner:Google&project=drivede-492717
+              - paragraph [ref=e1209]: The Google+ API enables developers to build on top of the Google+ platform.
+              - progressbar "Loading" [active] [ref=e1368]:
+                - generic [ref=e1369]:
+                  - img [ref=e1370]:
+                    - img [ref=e1372]
+                    - generic [ref=e1375]:
+                      - img [ref=e1377]
+                      - img [ref=e1380]
+                      - img [ref=e1383]
+                  - generic [ref=e1385]: Loading
+          - navigation "Product Information" [ref=e1218]:
+            - generic [ref=e1219]:
+              - tablist [ref=e1220]:
+                - generic [ref=e1223]:
+                  - tab "Overview" [selected] [ref=e1224] [cursor=pointer]:
+                    - generic [ref=e1226]: Overview
+                  - tab "Documentation" [ref=e1227] [cursor=pointer]:
+                    - generic [ref=e1229]: Documentation
+                  - tab "Related Products" [ref=e1230] [cursor=pointer]:
+                    - generic [ref=e1232]: Related Products
+              - tabpanel "Overview"
+          - generic [ref=e1233]:
+            - generic [ref=e1234]:
+              - heading "Overview" [level=2] [ref=e1235]
+              - generic [ref=e1236]:
+                - generic [ref=e1239]:
+                  - generic [ref=e1240]: The Google+ API enables developers to build on top of the Google+ platform.
+                  - generic [ref=e1241]:
+                    - heading "About Google" [level=3] [ref=e1242]
+                    - generic [ref=e1243]: Google's mission is to organize the world's information and make it universally accessible and useful. Through products and platforms like Search, Maps, Gmail, Android, Google Play, Chrome and YouTube, Google plays a meaningful role in the daily lives of billions of people.
+                - generic [ref=e1245]:
+                  - heading "Additional details" [level=3] [ref=e1246]
+                  - list [ref=e1247]:
+                    - listitem [ref=e1248]:
+                      - generic [ref=e1249]:
+                        - generic [ref=e1250]: "Type:"
+                        - link "Browse all SaaS & APIs products" [ref=e1252] [cursor=pointer]:
+                          - /url: /apis/library/browse?filter=solution-type:saas&project=drivede-492717
+                          - text: SaaS & APIs
+                    - listitem [ref=e1253]:
+                      - generic [ref=e1254]:
+                        - generic [ref=e1255]: "Last product update:"
+                        - text: 7/22/22
+                    - listitem [ref=e1256]:
+                      - generic [ref=e1257]:
+                        - generic [ref=e1258]: "Category:"
+                        - link "Browse all Social products" [ref=e1260] [cursor=pointer]:
+                          - /url: /apis/library/browse?filter=category:social&project=drivede-492717
+                          - text: Social
+                    - listitem [ref=e1261]:
+                      - generic [ref=e1262]:
+                        - generic [ref=e1263]: "Service name:"
+                        - generic [ref=e1264]: plus.googleapis.com
+                    - listitem
+            - generic [ref=e1266]:
+              - heading "Tutorials and documentation" [level=3] [ref=e1267]
+              - link "Learn more external, opens new window" [ref=e1270] [cursor=pointer]:
+                - /url: http://developers.google.com/+/api/?hl=en_US
+                - generic [ref=e1271]: Learn more
+                - img "external, opens new window" [ref=e1272]:
+                  - img [ref=e1273]
+            - generic [ref=e1276]:
+              - heading "Terms of Service" [level=3] [ref=e1277]
+              - paragraph [ref=e1279]:
+                - text: "By using this product you agree to the terms and conditions of the following licenses:"
+                - generic [ref=e1280]:
+                  - link "Google APIs Terms of Service" [ref=e1281] [cursor=pointer]:
+                    - /url: /tos?id=universal
+                  - text: ","
+                - generic [ref=e1282]:
+                  - link "Google+ API" [ref=e1283] [cursor=pointer]:
+                    - /url: /tos?id=plus
+                  - text: .
+            - generic [ref=e1286]:
+              - heading "Related Products" [level=2] [ref=e1287]
+              - heading "Customers who use this product also use the following products" [level=2] [ref=e1289]
+              - region [ref=e1291]:
+                - list [ref=e1292]:
+                  - listitem [ref=e1293]:
+                    - 'link "Google People API: Provides access to information about profiles and contacts." [ref=e1294] [cursor=pointer]':
+                      - /url: /apis/library/people.googleapis.com?project=drivede-492717
+                      - generic [ref=e1295]:
+                        - img [ref=e1297]
+                        - heading "Google People API" [level=2] [ref=e1298]
+                        - generic [ref=e1299]:
+                          - text: Google Enterprise API
+                          - button "Help popup" [ref=e1301]:
+                            - img [ref=e1303]
+                        - paragraph [ref=e1305]: Provides access to information about profiles and contacts.
+                  - listitem [ref=e1306]:
+                    - 'link "Gmail API: View and manage Gmail mailbox data." [ref=e1307] [cursor=pointer]':
+                      - /url: /apis/library/gmail.googleapis.com?project=drivede-492717
+                      - generic [ref=e1308]:
+                        - img [ref=e1310]
+                        - heading "Gmail API" [level=2] [ref=e1311]
+                        - generic [ref=e1312]:
+                          - text: Google Enterprise API
+                          - button "Help popup" [ref=e1314]:
+                            - img [ref=e1316]
+                        - paragraph [ref=e1318]: View and manage Gmail mailbox data.
+                  - listitem [ref=e1319]:
+                    - 'link "Google Drive API: Create and manage resources in Google Drive." [ref=e1320] [cursor=pointer]':
+                      - /url: /apis/library/drive.googleapis.com?project=drivede-492717
+                      - generic [ref=e1321]:
+                        - img [ref=e1323]
+                        - heading "Google Drive API" [level=2] [ref=e1324]
+                        - generic [ref=e1325]:
+                          - text: Google Enterprise API
+                          - button "Help popup" [ref=e1327]:
+                            - img [ref=e1329]
+                        - paragraph [ref=e1331]: Create and manage resources in Google Drive.
+                  - listitem [ref=e1332]:
+                    - 'link "Google Calendar API: Manage calendars and events in Google Calendar." [ref=e1333] [cursor=pointer]':
+                      - /url: /apis/library/calendar-json.googleapis.com?project=drivede-492717
+                      - generic [ref=e1334]:
+                        - img [ref=e1336]
+                        - heading "Google Calendar API" [level=2] [ref=e1337]
+                        - generic [ref=e1338]:
+                          - text: Google Enterprise API
+                          - button "Help popup" [ref=e1340]:
+                            - img [ref=e1342]
+                        - paragraph [ref=e1344]: Manage calendars and events in Google Calendar.
+                  - listitem [ref=e1345]:
+                    - 'link "Google Sheets API: Read and write Google Sheets data" [ref=e1346] [cursor=pointer]':
+                      - /url: /apis/library/sheets.googleapis.com?project=drivede-492717
+                      - generic [ref=e1347]:
+                        - img [ref=e1349]
+                        - heading "Google Sheets API" [level=2] [ref=e1350]
+                        - generic [ref=e1351]:
+                          - text: Google Enterprise API
+                          - button "Help popup" [ref=e1353]:
+                            - img [ref=e1355]
+                        - paragraph [ref=e1357]: Read and write Google Sheets data
+                  - listitem [ref=e1358]:
+                    - 'link "YouTube Data API v3: The YouTube Data API v3 is an API that provides access to YouTube data, such as videos, playlists,…" [ref=e1359] [cursor=pointer]':
+                      - /url: /apis/library/youtube.googleapis.com?project=drivede-492717
+                      - generic [ref=e1360]:
+                        - img [ref=e1362]
+                        - heading "YouTube Data API v3" [level=2] [ref=e1363]
+                        - generic [ref=e1364]: Google
+                        - paragraph [ref=e1365]: The YouTube Data API v3 is an API that provides access to YouTube data, such as videos, playlists,…
+  - iframe [ref=e331]:
+    
+  - iframe [ref=e360]:
+    
+  - iframe [ref=e361]:
+    
+  - iframe [ref=e379]:
+    
+  - iframe [ref=e1168]:
+    
+  - paragraph [ref=e1386]: Loading

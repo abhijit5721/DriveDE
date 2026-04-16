@@ -1,0 +1,255 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+              - generic [ref=e52]:
+                - link "main Production" [ref=e53] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - generic "main" [ref=e54]
+                  - generic [ref=e55]: Production
+                - button [ref=e56] [cursor=pointer]:
+                  - img [ref=e58]
+          - button "Connect" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]: Connect
+        - generic [ref=e67]:
+          - generic [ref=e69] [cursor=pointer]: Feedback
+          - generic [ref=e70]:
+            - button "Search..." [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]:
+                - img [ref=e73]
+                - paragraph [ref=e76]: Search...
+              - generic [ref=e78]: Ctrl K
+            - button [ref=e79] [cursor=pointer]:
+              - img [ref=e81]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+            - button [ref=e89] [cursor=pointer]:
+              - img [ref=e91]
+            - button [ref=e93] [cursor=pointer]:
+              - img [ref=e97]
+          - link "Upgrade to Pro" [ref=e100] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+            - generic [ref=e101]: Upgrade to Pro
+          - button [ref=e102] [cursor=pointer]:
+            - figure [ref=e104]:
+              - img [ref=e105]
+    - generic [ref=e107]:
+      - generic [ref=e111]:
+        - list [ref=e114]:
+          - generic [ref=e115]:
+            - listitem [ref=e116]:
+              - link "Project Overview" [ref=e117] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e118]
+                - generic: Project Overview
+            - listitem [ref=e120]:
+              - link "Table Editor" [ref=e121] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e122]
+                - generic: Table Editor
+            - listitem [ref=e124]:
+              - link "SQL Editor" [ref=e125] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e126]
+                - generic: SQL Editor
+          - generic [ref=e128]:
+            - listitem [ref=e129]:
+              - link "Database" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e131]
+                - generic: Database
+            - listitem [ref=e135]:
+              - link "Authentication" [ref=e136] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e137]
+                - generic: Authentication
+            - listitem [ref=e139]:
+              - link "Storage" [ref=e140] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e141]
+                - generic: Storage
+            - listitem [ref=e143]:
+              - link "Edge Functions" [ref=e144] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e145]
+                - generic: Edge Functions
+            - listitem [ref=e150]:
+              - link "Realtime" [ref=e151] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e152]
+                - generic: Realtime
+          - generic [ref=e154]:
+            - listitem [ref=e156]:
+              - link "Advisors" [ref=e157] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e158]
+                - generic: Advisors
+            - listitem [ref=e160]:
+              - link "Observability" [ref=e161] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e162]
+                - generic: Observability
+            - listitem [ref=e170]:
+              - link "Logs" [ref=e171] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e172]
+                - generic: Logs
+            - listitem [ref=e173]:
+              - link "Integrations" [ref=e174] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e175]
+                - generic: Integrations
+          - listitem [ref=e179]:
+            - link "Project Settings" [ref=e180] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e181]
+              - generic: Project Settings
+        - button [ref=e186] [cursor=pointer]:
+          - img [ref=e188]
+      - generic [ref=e195]:
+        - generic [ref=e199]:
+          - heading "Integrations" [level=4] [ref=e201]
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - generic [ref=e205]: Explore
+              - generic [ref=e206]:
+                - link "All" [disabled] [ref=e207] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                  - menuitem "All" [disabled] [ref=e208]:
+                    - generic "All" [ref=e211]:
+                      - generic [ref=e212]: All
+                - link "Wrappers" [disabled] [ref=e213] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations?category=wrapper
+                  - menuitem "Wrappers" [disabled] [ref=e214]:
+                    - generic "Wrappers" [ref=e217]:
+                      - generic [ref=e218]: Wrappers
+                - link "Postgres Modules" [disabled] [ref=e219] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations?category=postgres_extension
+                  - menuitem "Postgres Modules" [disabled] [ref=e220]:
+                    - generic "Postgres Modules" [ref=e223]:
+                      - generic [ref=e224]: Postgres Modules
+            - generic [ref=e225]:
+              - generic [ref=e227]: Installed
+              - generic [ref=e228]:
+                - link "Data API" [disabled] [ref=e229] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/overview
+                  - menuitem "Data API" [disabled] [ref=e230]:
+                    - img [ref=e233]
+                    - generic "Data API" [ref=e239]:
+                      - generic [ref=e240]: Data API
+                - link "GraphiQL GraphQL" [disabled] [ref=e241] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/graphiql/overview
+                  - menuitem "GraphiQL GraphQL" [disabled] [ref=e242]:
+                    - img "GraphiQL" [ref=e245]
+                    - generic "GraphQL" [ref=e248]:
+                      - generic [ref=e249]: GraphQL
+                - link "Vault beta" [disabled] [ref=e250] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/vault/overview
+                  - menuitem "Vault beta" [disabled] [ref=e251]:
+                    - img [ref=e254]
+                    - generic "Vault" [ref=e267]:
+                      - generic [ref=e268]: Vault
+                      - generic [ref=e269]: beta
+        - separator [disabled] [ref=e270]:
+          - img [ref=e272]
+        - main [ref=e281]:
+          - generic [ref=e282]:
+            - navigation "breadcrumb" [ref=e284]:
+              - list [ref=e285]:
+                - listitem [ref=e286]:
+                  - link "Integrations" [ref=e287] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - listitem [ref=e288]:
+                  - img [ref=e289]
+                - listitem [ref=e291]:
+                  - link "Data API" [disabled] [ref=e292]
+            - generic [ref=e294]:
+              - img [ref=e297]
+              - generic [ref=e301]:
+                - heading "Data API" [level=1] [ref=e302]
+                - generic [ref=e303]: Auto-generate an API directly from your database schema
+            - navigation [ref=e306]:
+              - menu [ref=e307]:
+                - listitem [ref=e308]:
+                  - link "Overview" [ref=e309] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/overview
+                - listitem [ref=e310]:
+                  - link "Settings" [ref=e311] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/settings
+                - listitem [ref=e312]:
+                  - link "Docs" [ref=e313] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/docs
+          - generic [ref=e314]:
+            - generic [ref=e315]:
+              - generic [ref=e316]:
+                - generic [ref=e317]: BUILT BY
+                - generic [ref=e318]: Supabase
+              - generic [ref=e319]:
+                - generic [ref=e320]: DOCS
+                - link "Supabase Docs" [ref=e321] [cursor=pointer]:
+                  - /url: https://supabase.com/docs/guides/api
+                  - img [ref=e322]
+                  - text: Supabase Docs
+              - generic [ref=e324]:
+                - generic [ref=e325]: WEBSITE
+                - link "supabase.com" [ref=e326] [cursor=pointer]:
+                  - /url: https://supabase.com
+            - generic [ref=e328]:
+              - paragraph [ref=e331]: The Supabase Data API exposes REST endpoints for your project's databases, including read replicas and load balancers. Configure the API base URL, custom domains, and PostgREST settings for your project.
+              - button "Read more" [ref=e334] [cursor=pointer]
+            - generic [ref=e336]:
+              - generic [ref=e338]:
+                - generic [ref=e340]:
+                  - generic [ref=e341]:
+                    - heading "API URL" [level=2] [ref=e342]
+                    - generic [ref=e343]: RESTful endpoint for querying and managing your database
+                  - generic [ref=e345] [cursor=pointer]:
+                    - generic [ref=e346]: Source
+                    - button "Primary database" [ref=e347]:
+                      - generic [ref=e348]: Primary database
+                      - img [ref=e350]
+                - group [ref=e353]:
+                  - textbox [ref=e354]: https://zgmhkvpctiineanjmvga.supabase.co
+                  - group [ref=e355]:
+                    - button "Copy" [ref=e356] [cursor=pointer]:
+                      - img [ref=e358]
+                      - generic [ref=e361]: Copy
+              - generic [ref=e363]:
+                - generic [ref=e367]:
+                  - generic [ref=e368]:
+                    - switch [checked] [ref=e369] [cursor=pointer]
+                    - checkbox [checked]
+                  - generic [ref=e370]:
+                    - generic [ref=e372]: Enable Data API
+                    - generic [ref=e373]: When enabled you will be able to use any Supabase client library and PostgREST endpoints with any schema configured in the Settings tab.
+                - generic [ref=e376]:
+                  - button "Cancel" [disabled]:
+                    - generic: Cancel
+                  - button "Save" [disabled]:
+                    - generic: Save
+  - alert [ref=e377]: Integrations | Supabase

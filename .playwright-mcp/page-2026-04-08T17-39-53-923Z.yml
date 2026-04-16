@@ -1,0 +1,214 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - alertdialog "Free trial dialog" [ref=e479]:
+      - generic [ref=e480]:
+        - generic [ref=e481]:
+          - img [ref=e484]
+          - generic [ref=e487]:
+            - text: Start your Free Trial with $300 in credit. Don’t worry—you won’t be charged if you run out of credits.
+            - link "Learn more about the free trial program. external, opens new window" [ref=e488] [cursor=pointer]:
+              - /url: https://cloud.google.com/free/
+              - text: Learn more
+              - img "external, opens new window" [ref=e489]:
+                - img [ref=e490]
+        - generic [ref=e492]:
+          - button "Dismiss full account activation banner" [ref=e493]:
+            - generic [ref=e494]: Dismiss
+          - button "Start free" [ref=e495]:
+            - generic [ref=e496]: Start free
+    - generic [ref=e4]:
+      - complementary "Skip links" [ref=e5]:
+        - link "Skip to main content" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button "Keyboard shortcuts" [ref=e8]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link "Accessibility Help external, opens new window" [ref=e10] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - generic "external, opens new window" [ref=e12]:
+              - img "external, opens new window" [ref=e13]:
+                - img [ref=e14]
+        - link "Accessibility Feedback external, opens new window" [ref=e16] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - generic "external, opens new window" [ref=e18]:
+              - img "external, opens new window" [ref=e19]:
+                - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button "Navigation menu (.)" [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+          - link "Google Cloud Platform Home" [ref=e32] [cursor=pointer]:
+            - /url: /
+            - generic:
+              - img
+          - button "You're currently working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e232]:
+            - generic [ref=e233]:
+              - img [ref=e235]
+              - generic [ref=e238]: DriveDE
+        - button "Open search" [ref=e47] [cursor=pointer]:
+          - img [ref=e49]
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - button "Open or close Gemini Cloud Assist chat (Alt G)" [ref=e242] [cursor=pointer]:
+              - img [ref=e244]
+            - button "Activate Cloud Shell (G then S)" [ref=e497] [cursor=pointer]:
+              - img [ref=e499]
+            - button "2 unread notifications. Open notifications" [ref=e59] [cursor=pointer]:
+              - generic [ref=e62]: "2"
+            - button "Settings and utilities" [ref=e67] [cursor=pointer]:
+              - img [ref=e69]
+          - 'button "Account: Abhishek Sahoo (abhishek572021@gmail.com)" [ref=e503]':
+            - img [ref=e504]
+    - generic [ref=e82]:
+      - navigation "Breadcrumb" [ref=e509]:
+        - link "Google Auth Platform" [ref=e512] [cursor=pointer]:
+          - /url: /auth?project=drivede-492717
+          - img [ref=e515]
+          - generic [ref=e519]: Google Auth Platform
+        - list [ref=e520]:
+          - listitem [ref=e521]:
+            - generic [ref=e522]: /
+            - link "Overview" [ref=e525] [cursor=pointer]:
+              - /url: /auth/overview?project=drivede-492717
+              - generic [ref=e527]: Overview
+          - listitem [ref=e708]:
+            - generic [ref=e709]: /
+            - link "Create branding" [ref=e712] [cursor=pointer]:
+              - /url: /auth/overview/create?project=drivede-492717
+              - generic [ref=e714]: Create branding
+      - generic [ref=e93]:
+        - navigation "Google Auth Platform" [ref=e528]:
+          - generic [ref=e101]:
+            - list "Overview, 1 of 7 More options Branding, 2 of 7 More options Audience, 3 of 7 More options Clients, 4 of 7 More options Data Access, 5 of 7 More options Verification Center, 6 of 7 More options Settings, 7 of 7 More options" [ref=e530]:
+              - listitem [ref=e531]:
+                - generic [ref=e534]:
+                  - link "Overview, 1 of 7" [ref=e535] [cursor=pointer]:
+                    - /url: /auth/overview?project=drivede-492717
+                    - generic [ref=e536]:
+                      - img [ref=e539]
+                      - generic [ref=e541]: Overview
+                  - button "More options" [ref=e543] [cursor=pointer]:
+                    - img [ref=e545]
+              - listitem [ref=e547]:
+                - generic [ref=e550]:
+                  - link "Branding, 2 of 7" [ref=e551] [cursor=pointer]:
+                    - /url: /auth/branding?project=drivede-492717
+                    - generic [ref=e552]:
+                      - img [ref=e555]
+                      - generic [ref=e561]: Branding
+                  - button "More options" [ref=e563] [cursor=pointer]:
+                    - img [ref=e565]
+              - listitem [ref=e567]:
+                - generic [ref=e570]:
+                  - link "Audience, 3 of 7" [ref=e571] [cursor=pointer]:
+                    - /url: /auth/audience?project=drivede-492717
+                    - generic [ref=e572]:
+                      - img [ref=e575]
+                      - generic [ref=e577]: Audience
+                  - button "More options" [ref=e579] [cursor=pointer]:
+                    - img [ref=e581]
+              - listitem [ref=e583]:
+                - generic [ref=e586]:
+                  - link "Clients, 4 of 7" [ref=e587] [cursor=pointer]:
+                    - /url: /auth/clients?project=drivede-492717
+                    - generic [ref=e588]:
+                      - img [ref=e591]
+                      - generic [ref=e593]: Clients
+                  - button "More options" [ref=e595] [cursor=pointer]:
+                    - img [ref=e597]
+              - listitem [ref=e599]:
+                - generic [ref=e602]:
+                  - link "Data Access, 5 of 7" [ref=e603] [cursor=pointer]:
+                    - /url: /auth/scopes?project=drivede-492717
+                    - generic [ref=e604]:
+                      - img [ref=e607]
+                      - generic [ref=e610]: Data Access
+                  - button "More options" [ref=e612] [cursor=pointer]:
+                    - img [ref=e614]
+              - listitem [ref=e616]:
+                - generic [ref=e619]:
+                  - link "Verification Center, 6 of 7" [ref=e620] [cursor=pointer]:
+                    - /url: /auth/verification?project=drivede-492717
+                    - generic [ref=e621]:
+                      - img [ref=e624]
+                      - generic [ref=e627]: Verification Center
+                  - button "More options" [ref=e629] [cursor=pointer]:
+                    - img [ref=e631]
+              - listitem [ref=e633]:
+                - generic [ref=e636]:
+                  - link "Settings, 7 of 7" [ref=e637] [cursor=pointer]:
+                    - /url: /auth/settings?project=drivede-492717
+                    - generic [ref=e638]:
+                      - img [ref=e641]
+                      - generic [ref=e643]: Settings
+                  - button "More options" [ref=e645] [cursor=pointer]:
+                    - img [ref=e647]
+            - button "Toggle Google Auth Platform navigation menu" [pressed] [ref=e649] [cursor=pointer]:
+              - img [ref=e202]
+        - main [active] [ref=e205]:
+          - generic [ref=e715]:
+            - heading "Project configuration" [level=1] [ref=e721]:
+              - generic [ref=e722]: Project configuration
+            - generic [ref=e732]:
+              - generic [ref=e734]:
+                - heading "App Information, step 1 of 4, in progress" [level=2] [ref=e736]:
+                  - button "App Information, step 1 of 4, in progress" [expanded] [ref=e737] [cursor=pointer]:
+                    - generic [ref=e738]:
+                      - generic [ref=e741]: "1"
+                      - generic [ref=e742]: App Information
+                - generic [ref=e745]:
+                  - generic [ref=e746]:
+                    - generic [ref=e747]:
+                      - generic [ref=e749] [cursor=pointer]:
+                        - generic [ref=e750]:
+                          - text: App name
+                          - generic [ref=e751]: "*"
+                        - textbox "App name" [ref=e753]
+                      - generic [ref=e756]: The name of the app asking for consent
+                    - generic [ref=e758]:
+                      - generic [ref=e760] [cursor=pointer]:
+                        - generic [ref=e761]:
+                          - text: User support email
+                          - generic [ref=e762]: "*"
+                        - combobox "User support email" [ref=e764]:
+                          - img [ref=e768]
+                      - generic [ref=e772]:
+                        - text: For users to contact you with questions about their consent.
+                        - link "Learn more about the user support email external, opens new window" [ref=e773] [cursor=pointer]:
+                          - /url: https://support.google.com/cloud/answer/10311615#user-support-email
+                          - text: Learn more
+                          - img "external, opens new window" [ref=e774]:
+                            - img [ref=e775]
+                  - button "Next" [ref=e779]:
+                    - generic [ref=e780]: Next
+              - heading "Audience, step 2 of 4, unavailable until current step completion" [level=2] [ref=e785]:
+                - generic [ref=e786]:
+                  - generic [ref=e789]: "2"
+                  - generic [ref=e790]: Audience
+              - generic [ref=e794]:
+                - heading "Contact Information, step 3 of 4, unavailable until current step completion" [level=2] [ref=e797]:
+                  - generic [ref=e798]:
+                    - generic [ref=e801]: "3"
+                    - generic [ref=e802]: Contact Information
+                - generic [ref=e803]: "*"
+              - heading "Finish, step 4 of 4, unavailable until current step completion" [level=2] [ref=e809]:
+                - generic [ref=e810]:
+                  - generic [ref=e813]: "4"
+                  - generic [ref=e814]: Finish
+              - generic [ref=e816]:
+                - button "Create" [ref=e819]:
+                  - generic [ref=e820]: Create
+                - button "Cancel" [ref=e821]:
+                  - generic [ref=e822]: Cancel
+  - iframe [ref=e229]:
+    
+  - iframe [ref=e231]:
+    
+  - iframe [ref=e690]:
+    
+  - paragraph [ref=e824]: Project configuration – Google Auth Platform – DriveDE – Google Cloud console

@@ -1,0 +1,309 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - alertdialog [ref=e616]:
+      - generic [ref=e270]:
+        - generic [ref=e271]:
+          - img [ref=e274]
+          - generic [ref=e277]:
+            - text: Start your Free Trial with $300 in credit. Don’t worry—you won’t be charged if you run out of credits.
+            - link [ref=e617] [cursor=pointer]:
+              - /url: https://cloud.google.com/free/
+              - text: Learn more
+              - img [ref=e618]:
+                - img [ref=e280]
+        - generic [ref=e282]:
+          - button [ref=e619]:
+            - generic [ref=e284]: Dismiss
+          - button [ref=e620]:
+            - generic [ref=e286]: Start free
+    - generic [ref=e4]:
+      - complementary [ref=e621]:
+        - link [ref=e622] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button [ref=e623]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link [ref=e624] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - img [ref=e626]:
+              - img [ref=e14]
+        - link [ref=e627] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - img [ref=e629]:
+              - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button [ref=e630] [cursor=pointer]:
+              - img [ref=e30]
+          - link [ref=e631] [cursor=pointer]:
+            - /url: /?project=drivede-492717
+            - generic:
+              - img
+          - button [ref=e632]:
+            - generic [ref=e288]:
+              - img [ref=e290]
+              - generic [ref=e293]: DriveDE
+        - button [ref=e633] [cursor=pointer]:
+          - img [ref=e49]
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - button [ref=e634] [cursor=pointer]:
+              - img [ref=e299]
+            - button [ref=e635] [cursor=pointer]:
+              - img [ref=e303]
+            - button [ref=e636] [cursor=pointer]:
+              - generic [ref=e62]: "2"
+            - button [ref=e637] [cursor=pointer]:
+              - img [ref=e69]
+          - button [ref=e638]:
+            - img [ref=e308]
+    - generic [ref=e82]:
+      - navigation [ref=e639]:
+        - link [ref=e640] [cursor=pointer]:
+          - /url: /auth?project=drivede-492717
+          - img [ref=e319]
+          - generic [ref=e323]: Google Auth Platform
+        - list [ref=e324]:
+          - listitem [ref=e325]:
+            - generic [ref=e326]: /
+            - link [ref=e641] [cursor=pointer]:
+              - /url: /auth/clients?project=drivede-492717
+              - generic [ref=e331]: Clients
+          - listitem [ref=e433]:
+            - generic [ref=e434]: /
+            - link [ref=e642] [cursor=pointer]:
+              - /url: /auth/clients/create?project=drivede-492717
+              - generic [ref=e439]: Create client
+      - generic [ref=e93]:
+        - navigation [ref=e643]:
+          - generic [ref=e101]:
+            - list [ref=e644]:
+              - listitem [ref=e116]:
+                - generic [ref=e119]:
+                  - link [ref=e645] [cursor=pointer]:
+                    - /url: /auth/overview?project=drivede-492717
+                    - generic [ref=e121]:
+                      - img [ref=e124]
+                      - generic [ref=e126]: Overview
+                  - button [ref=e646] [cursor=pointer]:
+                    - img [ref=e130]
+              - listitem [ref=e132]:
+                - generic [ref=e135]:
+                  - link [ref=e647] [cursor=pointer]:
+                    - /url: /auth/branding?project=drivede-492717
+                    - generic [ref=e137]:
+                      - img [ref=e140]
+                      - generic [ref=e146]: Branding
+                  - button [ref=e648] [cursor=pointer]:
+                    - img [ref=e150]
+              - listitem [ref=e152]:
+                - generic [ref=e155]:
+                  - link [ref=e649] [cursor=pointer]:
+                    - /url: /auth/audience?project=drivede-492717
+                    - generic [ref=e157]:
+                      - img [ref=e160]
+                      - generic [ref=e162]: Audience
+                  - button [ref=e650] [cursor=pointer]:
+                    - img [ref=e166]
+              - listitem [ref=e168]:
+                - generic [ref=e171]:
+                  - link [ref=e651] [cursor=pointer]:
+                    - /url: /auth/clients?project=drivede-492717
+                    - generic [ref=e173]:
+                      - img [ref=e176]
+                      - generic [ref=e178]: Clients
+                  - button [ref=e652] [cursor=pointer]:
+                    - img [ref=e182]
+              - listitem [ref=e184]:
+                - generic [ref=e187]:
+                  - link [ref=e653] [cursor=pointer]:
+                    - /url: /auth/scopes?project=drivede-492717
+                    - generic [ref=e189]:
+                      - img [ref=e192]
+                      - generic [ref=e195]: Data Access
+                  - button [ref=e654] [cursor=pointer]:
+                    - img [ref=e199]
+              - listitem [ref=e201]:
+                - generic [ref=e204]:
+                  - link [ref=e655] [cursor=pointer]:
+                    - /url: /auth/verification?project=drivede-492717
+                    - generic [ref=e206]:
+                      - img [ref=e209]
+                      - generic [ref=e212]: Verification Center
+                  - button [ref=e656] [cursor=pointer]:
+                    - img [ref=e216]
+              - listitem [ref=e218]:
+                - generic [ref=e221]:
+                  - link [ref=e657] [cursor=pointer]:
+                    - /url: /auth/settings?project=drivede-492717
+                    - generic [ref=e223]:
+                      - img [ref=e226]
+                      - generic [ref=e228]: Settings
+                  - button [ref=e658] [cursor=pointer]:
+                    - img [ref=e232]
+            - button [pressed] [ref=e659] [cursor=pointer]:
+              - img [ref=e239]
+        - main [ref=e242]:
+          - generic [ref=e445]:
+            - generic [ref=e448]:
+              - button [ref=e660] [cursor=pointer]:
+                - img [ref=e454]
+              - heading [level=1] [ref=e661]:
+                - generic [ref=e459]: Create OAuth client ID
+            - generic [ref=e461]:
+              - paragraph [ref=e462]:
+                - text: A client ID is used to identify a single app to Google's OAuth servers. If your app runs on multiple platforms, each will need its own client ID. See
+                - link [ref=e662] [cursor=pointer]:
+                  - /url: https://developers.google.com/identity/protocols/oauth2/
+                  - text: Setting up OAuth 2.0
+                  - img [ref=e663]:
+                    - img [ref=e465]
+                - text: for more information.
+                - link [ref=e664] [cursor=pointer]:
+                  - /url: https://support.google.com/cloud/answer/6158849
+                  - text: Learn more
+                  - img [ref=e665]:
+                    - img [ref=e469]
+                - text: about OAuth client types.
+              - generic [ref=e471]:
+                - generic [ref=e474] [cursor=pointer]:
+                  - generic [ref=e475]:
+                    - text: Application type
+                    - generic [ref=e476]: "*"
+                  - combobox [ref=e666]:
+                    - generic [ref=e479]:
+                      - generic [ref=e519]: Web application
+                      - img [ref=e482]
+                - generic [ref=e521]:
+                  - generic [ref=e523]:
+                    - generic [ref=e524]:
+                      - generic [ref=e526] [cursor=pointer]:
+                        - generic [ref=e527]:
+                          - text: Name
+                          - generic [ref=e528]: "*"
+                        - textbox [ref=e667]: DriveDE Web Client
+                      - generic [ref=e533]: The name of your OAuth 2.0 client. This name is only used to identify the client in the console and will not be shown to end users.
+                    - generic [ref=e535]:
+                      - generic [ref=e537]:
+                        - img [ref=e668]:
+                          - img [ref=e539]
+                        - generic [ref=e543]:
+                          - text: The domains of the URIs you add below will be automatically added to your
+                          - link [ref=e669] [cursor=pointer]:
+                            - /url: /auth/branding?project=drivede-492717
+                            - text: OAuth consent screen
+                          - text: as
+                          - link [ref=e670] [cursor=pointer]:
+                            - /url: https://support.google.com/cloud/answer/6158849#authorized-domains
+                            - text: authorized domains
+                            - img [ref=e671]:
+                              - img [ref=e547]
+                          - text: .
+                      - group [ref=e672]:
+                        - generic [ref=e673]:
+                          - heading [level=2] [ref=e674]: Authorized JavaScript origins
+                          - button [ref=e675] [cursor=pointer]:
+                            - img [ref=e558]
+                        - generic [ref=e561]: For use with requests from a browser
+                        - group [ref=e676]:
+                          - button [ref=e677]:
+                            - generic [ref=e567]:
+                              - img [ref=e569]
+                              - text: Add URI
+                      - group [ref=e678]:
+                        - generic [ref=e679]:
+                          - heading [level=2] [ref=e680]: Authorized redirect URIs
+                          - button [ref=e681] [cursor=pointer]:
+                            - img [ref=e580]
+                        - generic [ref=e583]: For use with requests from a web server
+                        - group [ref=e682]:
+                          - group [ref=e683]:
+                            - generic [ref=e605] [cursor=pointer]:
+                              - generic [ref=e606]:
+                                - generic [ref=e607]: URIs 1
+                                - generic [ref=e608]: "*"
+                              - textbox [ref=e684]:
+                                - /placeholder: https://www.example.com
+                                - text: https://zgmhkvpctiineanjmvga.supabase.co/auth/v1/callback
+                            - button [ref=e685] [cursor=pointer]:
+                              - img [ref=e614]
+                          - button [ref=e686]:
+                            - generic [ref=e589]:
+                              - img [ref=e591]
+                              - text: Add URI
+                  - paragraph [ref=e593]: "Note: It may take 5 minutes to a few hours for settings to take effect"
+                  - button [ref=e687]:
+                    - generic [ref=e597]: Create
+                  - button [ref=e688]:
+                    - generic [ref=e599]: Cancel
+          - dialog "notification" [ref=e689]:
+            - generic [ref=e694]:
+              - generic "OAuth client created" [ref=e696]
+              - button "Close message" [ref=e697] [cursor=pointer]:
+                - img [ref=e699]:
+                  - img [ref=e700]
+  - iframe [ref=e266]:
+    
+  - iframe [ref=e432]:
+    
+  - dialog "OAuth client created" [ref=e706]:
+    - generic [ref=e709]:
+      - heading "OAuth client created" [active] [level=1] [ref=e710]
+      - generic [ref=e711]:
+        - paragraph [ref=e712]: The client ID can always be accessed from Clients tab under Google Auth Platform.
+        - generic [ref=e714]:
+          - img "Information" [ref=e715]:
+            - img [ref=e716]
+          - generic [ref=e720]:
+            - text: OAuth access is restricted to the
+            - link "test users external, opens new window" [ref=e721] [cursor=pointer]:
+              - /url: https://support.google.com/cloud/answer/10311615#publishing-status
+              - text: test users
+              - img "external, opens new window" [ref=e722]:
+                - img [ref=e723]
+            - text: listed on your
+            - link "OAuth consent screen" [ref=e725] [cursor=pointer]:
+              - /url: /apis/credentials/consent?project=drivede-492717
+        - generic [ref=e726]:
+          - generic [ref=e729]:
+            - term [ref=e730]: Client ID
+            - definition [ref=e731]:
+              - text: 712119605930-vchjs6suufvh4v46qq93ma7pot111sqh.apps.googleusercontent.com
+              - generic "Copy client ID" [ref=e733]:
+                - 'button "Copy to clipboard: 712119605930-vchjs6suufvh4v46qq93ma7pot111sqh.apps.googleusercontent.com" [ref=e735] [cursor=pointer]':
+                  - img [ref=e737]
+          - generic [ref=e741]:
+            - status [ref=e743]:
+              - img "Warning" [ref=e744]:
+                - img [ref=e745]
+              - generic [ref=e749]: You will no longer be able to view or download the client secret once you close this dialog. Make sure you have copied or downloaded the information below and securely stored it.
+            - generic [ref=e750]:
+              - generic [ref=e751]:
+                - generic [ref=e752]:
+                  - term [ref=e753]: Client secret
+                  - definition [ref=e754]:
+                    - text: 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
+                    - generic "Copy client secret" [ref=e756]:
+                      - 'button "Copy to clipboard: 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" [ref=e758] [cursor=pointer]':
+                        - img [ref=e760]
+                - generic [ref=e762]:
+                  - term [ref=e763]: Creation date
+                  - definition [ref=e764]: April 8, 2026, 7:44:19 PM GMT+2
+                - generic [ref=e765]:
+                  - term [ref=e766]: Status
+                  - definition [ref=e767]:
+                    - img [ref=e769]:
+                      - img [ref=e770]
+                    - text: Enabled
+              - button "Download JSON" [ref=e773]:
+                - generic [ref=e774]:
+                  - img [ref=e776]:
+                    - img [ref=e777]
+                  - text: Download JSON
+      - button "OK" [ref=e780]:
+        - generic [ref=e781]: OK

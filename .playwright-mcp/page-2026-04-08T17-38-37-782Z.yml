@@ -1,0 +1,160 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - complementary "Skip links" [ref=e5]:
+        - link "Skip to main content" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button "Keyboard shortcuts" [ref=e8]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link "Accessibility Help external, opens new window" [ref=e10] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - generic "external, opens new window" [ref=e12]:
+              - img "external, opens new window" [ref=e13]:
+                - img [ref=e14]
+        - link "Accessibility Feedback external, opens new window" [ref=e16] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - generic "external, opens new window" [ref=e18]:
+              - img "external, opens new window" [ref=e19]:
+                - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button "Navigation menu (.)" [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+          - link "Google Cloud Platform Home" [ref=e32] [cursor=pointer]:
+            - /url: /
+            - generic:
+              - img
+          - button "You're currently working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e40]:
+            - generic [ref=e41]:
+              - img [ref=e43]
+              - generic [ref=e46]: DriveDE
+        - button "Open search" [ref=e53] [cursor=pointer]:
+          - img [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - button "Open or close Gemini Cloud Assist chat (Alt G)" [ref=e62] [cursor=pointer]:
+              - img [ref=e64]
+            - generic [ref=e68]:
+              - button "Activate Cloud Shell (G then S)" [disabled]:
+                - generic:
+                  - img
+            - button "1 unread notifications. Open notifications" [ref=e72] [cursor=pointer]:
+              - generic [ref=e75]: "1"
+            - button "Settings and utilities" [ref=e80] [cursor=pointer]:
+              - img [ref=e82]
+          - img [ref=e86]
+    - main [ref=e107]:
+      - generic [ref=e127]:
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - heading "Google Cloud logo Welcome" [level=1] [ref=e131]:
+              - img "Google Cloud logo" [ref=e132]
+              - text: Welcome
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - text: You're working in
+                - button "You're working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e138]:
+                  - list [ref=e143]:
+                    - listitem [ref=e144]:
+                      - generic [ref=e147]: DriveDE
+              - generic [ref=e148]:
+                - generic [ref=e149]:
+                  - text: "Project number:"
+                  - generic [ref=e151]:
+                    - generic [ref=e152]: "712119605930"
+                    - 'button "Copy Project number to clipboard: 712119605930" [ref=e153] [cursor=pointer]':
+                      - img [ref=e155]
+                - generic [ref=e157]:
+                  - text: "Project ID:"
+                  - generic [ref=e159]:
+                    - generic [ref=e160]: drivede-492717
+                    - 'button "Copy Project ID to clipboard: drivede-492717" [ref=e161] [cursor=pointer]':
+                      - img [ref=e163]
+            - generic [ref=e167]:
+              - link "Dashboard" [ref=e168] [cursor=pointer]:
+                - /url: /home/dashboard?project=drivede-492717
+              - link "Cloud Hub" [ref=e169] [cursor=pointer]:
+                - /url: /cloud-hub/home?project=drivede-492717
+            - generic [ref=e172]:
+              - link "Create a VM" [ref=e173] [cursor=pointer]:
+                - /url: /compute/instancesAdd?project=drivede-492717
+                - img [ref=e175]
+                - generic [ref=e177]: Create a VM
+              - link "Run a query in BigQuery" [ref=e178] [cursor=pointer]:
+                - /url: /bigquery?project=drivede-492717
+                - img [ref=e180]
+                - generic [ref=e182]: Run a query in BigQuery
+              - link "Deploy an application" [ref=e183] [cursor=pointer]:
+                - /url: /run/overview?project=drivede-492717
+                - img [ref=e185]
+                - generic [ref=e187]: Deploy an application
+              - link "Create a storage bucket" [ref=e188] [cursor=pointer]:
+                - /url: /storage/create-bucket?project=drivede-492717
+                - img [ref=e190]
+                - generic [ref=e192]: Create a storage bucket
+          - 'button "Try Gemini Cloud Assist chat (Tip: use Alt G to open and close the chat) Chat now" [ref=e194]':
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]: Try Gemini Cloud Assist chat
+                - generic [ref=e198]: "(Tip: use Alt G to open and close the chat)"
+              - generic [ref=e199]:
+                - generic [ref=e200]: Chat now
+                - img [ref=e203]
+        - generic [ref=e205]:
+          - generic [ref=e208]:
+            - heading "Quick access" [level=2] [ref=e210]
+            - generic [ref=e214]:
+              - link "APIs & Services" [ref=e215] [cursor=pointer]:
+                - /url: /apis?project=drivede-492717
+                - generic [ref=e217]:
+                  - img [ref=e220]
+                  - generic [ref=e224]: APIs & Services
+              - link "IAM & Admin" [ref=e225] [cursor=pointer]:
+                - /url: /iam-admin?project=drivede-492717
+                - generic [ref=e227]:
+                  - img [ref=e230]
+                  - generic [ref=e234]: IAM & Admin
+              - link "Billing" [ref=e235] [cursor=pointer]:
+                - /url: /billing?project=drivede-492717
+                - generic [ref=e237]:
+                  - img [ref=e240]
+                  - generic [ref=e251]: Billing
+              - link "Compute Engine" [ref=e252] [cursor=pointer]:
+                - /url: /compute?project=drivede-492717
+                - generic [ref=e254]:
+                  - img [ref=e257]
+                  - generic [ref=e273]: Compute Engine
+              - link "Cloud Storage" [ref=e274] [cursor=pointer]:
+                - /url: /storage?project=drivede-492717
+                - generic [ref=e276]:
+                  - img [ref=e279]
+                  - generic [ref=e283]: Cloud Storage
+              - link "BigQuery" [ref=e284] [cursor=pointer]:
+                - /url: /bigquery?project=drivede-492717
+                - generic [ref=e286]:
+                  - img [ref=e289]
+                  - generic [ref=e295]: BigQuery
+              - link "VPC network" [ref=e296] [cursor=pointer]:
+                - /url: /networking?project=drivede-492717
+                - generic [ref=e298]:
+                  - img [ref=e301]
+                  - generic [ref=e307]: VPC network
+              - link "Kubernetes Engine" [ref=e308] [cursor=pointer]:
+                - /url: /kubernetes?project=drivede-492717
+                - generic [ref=e310]:
+                  - img [ref=e313]
+                  - generic [ref=e320]: Kubernetes Engine
+          - link "View all products" [ref=e323] [cursor=pointer]:
+            - /url: /products?project=drivede-492717
+            - img [ref=e325]
+            - generic [ref=e328]: View all products
+  - iframe [ref=e331]:
+    
+  - paragraph
+  - generic [ref=e332]: a

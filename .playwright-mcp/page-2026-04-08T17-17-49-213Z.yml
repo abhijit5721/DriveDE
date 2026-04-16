@@ -1,0 +1,144 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+          - button "Connect" [ref=e54] [cursor=pointer]:
+            - img [ref=e56]
+            - generic [ref=e58]: Connect
+        - generic [ref=e59]:
+          - generic [ref=e61] [cursor=pointer]: Feedback
+          - generic [ref=e62]:
+            - button "Search..." [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - paragraph [ref=e68]: Search...
+              - generic [ref=e70]: Ctrl K
+            - button [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+            - button [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+            - button [ref=e81] [cursor=pointer]:
+              - img [ref=e83]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e89]
+          - button [ref=e92] [cursor=pointer]:
+            - figure [ref=e94]:
+              - img [ref=e95]
+    - generic [ref=e97]:
+      - generic [ref=e101]:
+        - list [ref=e104]:
+          - generic [ref=e105]:
+            - listitem [ref=e106]:
+              - link "Project Overview" [ref=e107] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e108]
+                - generic: Project Overview
+            - listitem [ref=e110]:
+              - link "Table Editor" [ref=e111] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e112]
+                - generic: Table Editor
+            - listitem [ref=e114]:
+              - link "SQL Editor" [ref=e115] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e116]
+                - generic: SQL Editor
+          - generic [ref=e118]:
+            - listitem [ref=e119]:
+              - link "Database" [ref=e120] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e121]
+                - generic: Database
+            - listitem [ref=e125]:
+              - link "Authentication" [ref=e126] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e127]
+                - generic: Authentication
+            - listitem [ref=e129]:
+              - link "Storage" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e131]
+                - generic: Storage
+            - listitem [ref=e133]:
+              - link "Edge Functions" [ref=e134] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e135]
+                - generic: Edge Functions
+            - listitem [ref=e140]:
+              - link "Realtime" [ref=e141] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e142]
+                - generic: Realtime
+          - generic [ref=e144]:
+            - listitem [ref=e146]:
+              - link "Advisors" [ref=e147] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e148]
+                - generic: Advisors
+            - listitem [ref=e150]:
+              - link "Observability" [ref=e151] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e152]
+                - generic: Observability
+            - listitem [ref=e160]:
+              - link "Logs" [ref=e161] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e162]
+                - generic: Logs
+            - listitem [ref=e163]:
+              - link "Integrations" [ref=e164] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e165]
+                - generic: Integrations
+          - listitem [ref=e169]:
+            - link "Project Settings" [ref=e170] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e171]
+              - generic: Project Settings
+        - button [ref=e176] [cursor=pointer]:
+          - img [ref=e178]
+      - generic [ref=e185]:
+        - generic [ref=e189]:
+          - heading "Integrations" [level=4] [ref=e191]
+          - generic [ref=e192]:
+            - generic [ref=e195]: Explore
+            - generic [ref=e202]: Installed
+        - separator [disabled] [ref=e207]:
+          - img [ref=e209]
+        - main [ref=e218]:
+          - generic [ref=e219]:
+            - navigation "breadcrumb" [ref=e221]:
+              - list [ref=e222]:
+                - listitem [ref=e223]:
+                  - link "Integrations" [ref=e224] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - listitem [ref=e225]:
+                  - img [ref=e226]
+                - listitem [ref=e228]:
+                  - link "Data API" [disabled] [ref=e229]
+            - heading [level=1] [ref=e233]
+  - alert [ref=e244]: Integrations | Supabase

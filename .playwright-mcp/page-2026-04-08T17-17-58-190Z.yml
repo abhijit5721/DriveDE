@@ -1,0 +1,332 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - link "Supabase" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+            - img "Supabase" [ref=e10]
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - link "DriveDE Free" [ref=e16] [cursor=pointer]:
+                - /url: /dashboard/org/bqpvjihqxzjnughvuckf
+                - img [ref=e17]
+                - generic [ref=e27]: DriveDE
+                - generic [ref=e28]: Free
+              - button [ref=e29] [cursor=pointer]:
+                - img [ref=e31]
+            - generic [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]:
+                - link "DriveDE" [ref=e39] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - img [ref=e40]
+                  - generic "DriveDE" [ref=e43]
+                - button [ref=e44] [cursor=pointer]:
+                  - img [ref=e46]
+              - img [ref=e50]
+              - generic [ref=e245]:
+                - link "main Production" [ref=e246] [cursor=pointer]:
+                  - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                  - generic "main" [ref=e247]
+                  - generic [ref=e248]: Production
+                - button [ref=e249] [cursor=pointer]:
+                  - img [ref=e251]
+          - button "Connect" [ref=e54] [cursor=pointer]:
+            - img [ref=e56]
+            - generic [ref=e58]: Connect
+        - generic [ref=e59]:
+          - generic [ref=e61] [cursor=pointer]: Feedback
+          - generic [ref=e62]:
+            - button "Search..." [ref=e63] [cursor=pointer]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - paragraph [ref=e68]: Search...
+              - generic [ref=e70]: Ctrl K
+            - button [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+            - button [ref=e77] [cursor=pointer]:
+              - img [ref=e79]
+            - button [ref=e81] [cursor=pointer]:
+              - img [ref=e83]
+            - button [ref=e85] [cursor=pointer]:
+              - img [ref=e89]
+          - link "Upgrade to Pro" [ref=e254] [cursor=pointer]:
+            - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=headerUpgradeCta
+            - generic [ref=e255]: Upgrade to Pro
+          - button [ref=e92] [cursor=pointer]:
+            - figure [ref=e94]:
+              - img [ref=e95]
+    - generic [ref=e97]:
+      - generic [ref=e101]:
+        - list [ref=e104]:
+          - generic [ref=e105]:
+            - listitem [ref=e106]:
+              - link "Project Overview" [ref=e107] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga
+                - img [ref=e108]
+                - generic [ref=e437]: Project Overview
+            - listitem [ref=e110]:
+              - link "Table Editor" [ref=e111] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/editor
+                - img [ref=e112]
+                - generic [ref=e438]: Table Editor
+            - listitem [ref=e114]:
+              - link "SQL Editor" [ref=e115] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/sql
+                - img [ref=e116]
+                - generic [ref=e439]: SQL Editor
+          - generic [ref=e118]:
+            - listitem [ref=e119]:
+              - link "Database" [ref=e120] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/database/schemas
+                - img [ref=e121]
+                - generic [ref=e440]: Database
+            - listitem [ref=e125]:
+              - link "Authentication" [ref=e126] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/auth/users
+                - img [ref=e127]
+                - generic [ref=e441]: Authentication
+            - listitem [ref=e129]:
+              - link "Storage" [ref=e130] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/storage/files
+                - img [ref=e131]
+                - generic [ref=e442]: Storage
+            - listitem [ref=e133]:
+              - link "Edge Functions" [ref=e134] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/functions
+                - img [ref=e135]
+                - generic [ref=e443]: Edge Functions
+            - listitem [ref=e140]:
+              - link "Realtime" [ref=e141] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/realtime/inspector
+                - img [ref=e142]
+                - generic [ref=e444]: Realtime
+          - generic [ref=e144]:
+            - listitem [ref=e146]:
+              - link "Advisors" [ref=e147] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/advisors/security
+                - img [ref=e148]
+                - generic [ref=e445]: Advisors
+            - listitem [ref=e150]:
+              - link "Observability" [ref=e151] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/observability
+                - img [ref=e152]
+                - generic [ref=e446]: Observability
+            - listitem [ref=e160]:
+              - link "Logs" [ref=e161] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/logs/explorer
+                - img [ref=e162]
+                - generic [ref=e447]: Logs
+            - listitem [ref=e163]:
+              - link "Integrations" [ref=e164] [cursor=pointer]:
+                - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations
+                - img [ref=e165]
+                - generic [ref=e448]: Integrations
+          - listitem [ref=e169]:
+            - link "Project Settings" [active] [ref=e170] [cursor=pointer]:
+              - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+              - img [ref=e171]
+              - generic [ref=e449]: Project Settings
+        - button [ref=e176] [cursor=pointer]:
+          - img [ref=e178]
+      - generic [ref=e451]:
+        - generic [ref=e455]:
+          - heading "Settings" [level=4] [ref=e457]
+          - menu "Sidebar" [disabled] [ref=e460]:
+            - list [ref=e461]:
+              - generic [ref=e464]:
+                - generic [ref=e468]: Configuration
+                - generic [ref=e469]:
+                  - link "General" [disabled] [ref=e470] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/general
+                    - menuitem "General" [disabled] [ref=e471]:
+                      - generic "General" [ref=e474]:
+                        - generic [ref=e475]: General
+                  - link "Compute and Disk" [disabled] [ref=e476] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/compute-and-disk
+                    - menuitem "Compute and Disk" [disabled] [ref=e477]:
+                      - generic "Compute and Disk" [ref=e480]:
+                        - generic [ref=e481]: Compute and Disk
+                  - link "Infrastructure" [disabled] [ref=e482] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/infrastructure
+                    - menuitem "Infrastructure" [disabled] [ref=e483]:
+                      - generic "Infrastructure" [ref=e486]:
+                        - generic [ref=e487]: Infrastructure
+                  - link "Integrations" [disabled] [ref=e488] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/integrations
+                    - menuitem "Integrations" [disabled] [ref=e489]:
+                      - generic "Integrations" [ref=e492]:
+                        - generic [ref=e493]: Integrations
+                  - link "API Keys" [disabled] [ref=e494] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/api-keys/new
+                    - menuitem "API Keys" [disabled] [ref=e495]:
+                      - generic "API Keys" [ref=e498]:
+                        - generic [ref=e499]: API Keys
+                  - link "JWT Keys" [disabled] [ref=e500] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/jwt
+                    - menuitem "JWT Keys" [disabled] [ref=e501]:
+                      - generic "JWT Keys" [ref=e504]:
+                        - generic [ref=e505]: JWT Keys
+                  - link "Log Drains" [disabled] [ref=e506] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/log-drains
+                    - menuitem "Log Drains" [disabled] [ref=e507]:
+                      - generic "Log Drains" [ref=e510]:
+                        - generic [ref=e511]: Log Drains
+                  - link "Add-ons" [disabled] [ref=e512] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/settings/addons
+                    - menuitem "Add-ons" [disabled] [ref=e513]:
+                      - generic "Add-ons" [ref=e516]:
+                        - generic [ref=e517]: Add-ons
+              - generic [ref=e521]:
+                - generic [ref=e525]: Integrations
+                - generic [ref=e526]:
+                  - link "Data API" [disabled] [ref=e527] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/data_api/overview
+                    - menuitem "Data API" [disabled] [ref=e528]:
+                      - generic [ref=e530]:
+                        - generic "Data API" [ref=e531]:
+                          - generic [ref=e532]: Data API
+                        - img [ref=e534]
+                  - link "Vault Beta" [disabled] [ref=e537] [cursor=pointer]:
+                    - /url: /dashboard/project/zgmhkvpctiineanjmvga/integrations/vault/overview
+                    - menuitem "Vault Beta" [disabled] [ref=e538]:
+                      - generic [ref=e540]:
+                        - generic "Vault" [ref=e541]:
+                          - generic [ref=e542]: Vault
+                          - generic [ref=e543]: Beta
+                        - img [ref=e545]
+              - generic [ref=e551]:
+                - generic [ref=e555]: Billing
+                - generic [ref=e556]:
+                  - link "Subscription" [disabled] [ref=e557] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing
+                    - menuitem "Subscription" [disabled] [ref=e558]:
+                      - generic [ref=e560]:
+                        - generic "Subscription" [ref=e561]:
+                          - generic [ref=e562]: Subscription
+                        - img [ref=e564]
+                  - link "Usage" [disabled] [ref=e567] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/usage?projectRef=zgmhkvpctiineanjmvga
+                    - menuitem "Usage" [disabled] [ref=e568]:
+                      - generic [ref=e570]:
+                        - generic "Usage" [ref=e571]:
+                          - generic [ref=e572]: Usage
+                        - img [ref=e574]
+        - separator [disabled] [ref=e577]:
+          - img [ref=e579]
+        - main [ref=e588]:
+          - generic [ref=e592]:
+            - heading "Project Settings" [level=1] [ref=e593]
+            - generic [ref=e594]: General configuration, domains, ownership, and lifecycle
+          - generic [ref=e595]:
+            - generic [ref=e596]:
+              - heading "General settings" [level=2] [ref=e600]
+              - generic [ref=e603]:
+                - generic [ref=e606]:
+                  - textbox [ref=e608]: DriveDE
+                  - generic [ref=e609]:
+                    - generic [ref=e611]: Project name
+                    - generic [ref=e612]: Displayed throughout the dashboard.
+                - generic [ref=e615]:
+                  - group [ref=e617]:
+                    - textbox [ref=e618]: zgmhkvpctiineanjmvga
+                    - group [ref=e619]:
+                      - button "Copy" [ref=e620] [cursor=pointer]:
+                        - img [ref=e622]
+                        - generic [ref=e625]: Copy
+                  - generic [ref=e626]:
+                    - generic [ref=e628]: Project ID
+                    - generic [ref=e629]: Reference used in APIs and URLs.
+                - generic [ref=e630]:
+                  - button "Save changes" [disabled]:
+                    - generic: Save changes
+            - generic [ref=e631]:
+              - heading "Project access" [level=2] [ref=e635]
+              - generic [ref=e637]:
+                - generic [ref=e639]:
+                  - generic [ref=e640]:
+                    - paragraph [ref=e641]: Organization-wide access
+                    - paragraph [ref=e642]: All 1 organization members can access this project.
+                  - link "Manage members" [ref=e643] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/team
+                    - generic [ref=e644]: Manage members
+                - table [ref=e648]:
+                  - rowgroup [ref=e649]:
+                    - row "Member Role" [ref=e650]:
+                      - columnheader "Member" [ref=e651]
+                      - columnheader "Role" [ref=e652]
+                  - rowgroup [ref=e653]:
+                    - row "abhishek572021@gmail.com You Owner" [ref=e654]:
+                      - cell "abhishek572021@gmail.com You" [ref=e655]:
+                        - generic [ref=e656]:
+                          - paragraph [ref=e657]: abhishek572021@gmail.com
+                          - generic [ref=e658]: You
+                      - cell "Owner" [ref=e659]
+            - generic [ref=e660]:
+              - generic [ref=e663]:
+                - heading "Project availability" [level=2] [ref=e664]
+                - generic [ref=e665]: Restart or pause your project when performing maintenance
+              - generic [ref=e667]:
+                - generic [ref=e669]:
+                  - generic [ref=e670]:
+                    - paragraph [ref=e671]: Restart project
+                    - paragraph [ref=e673]: Your project will not be available for a few minutes.
+                  - generic [ref=e674]:
+                    - button "Restart project" [ref=e675] [cursor=pointer]:
+                      - generic [ref=e676]: Restart project
+                    - button [ref=e677] [cursor=pointer]:
+                      - img [ref=e679]
+                - generic [ref=e682]:
+                  - generic [ref=e683]:
+                    - paragraph [ref=e684]: Pause project
+                    - paragraph [ref=e686]: Your project will not be accessible while it is paused.
+                  - button "Pause project" [ref=e687] [cursor=pointer]:
+                    - img [ref=e689]
+                    - generic [ref=e692]: Pause project
+            - generic [ref=e693]:
+              - heading "Project usage" [level=2] [ref=e697]
+              - generic [ref=e701]:
+                - generic [ref=e702]:
+                  - img [ref=e703]
+                  - generic [ref=e704]:
+                    - paragraph [ref=e705]: Project usage statistics have been moved
+                    - paragraph [ref=e706]: You may view your project's usage under your organization's settings
+                - link "View project usage" [ref=e707] [cursor=pointer]:
+                  - /url: /dashboard/org/bqpvjihqxzjnughvuckf/usage?projectRef=zgmhkvpctiineanjmvga
+                  - generic [ref=e708]: View project usage
+            - generic [ref=e709]:
+              - generic [ref=e712]:
+                - heading "Custom domains" [level=2] [ref=e713]
+                - generic [ref=e714]: Present a branded experience to your users
+              - alert [ref=e716]:
+                - img [ref=e717]
+                - generic [ref=e719]:
+                  - generic [ref=e720]:
+                    - heading "Custom domains are a Pro Plan add-on" [level=5] [ref=e721]
+                    - paragraph [ref=e723]: Paid Plans come with free vanity subdomains or Custom Domains for an additional $10/month per domain.
+                  - link "Upgrade to Pro" [ref=e725] [cursor=pointer]:
+                    - /url: /dashboard/org/bqpvjihqxzjnughvuckf/billing?panel=subscriptionPlan&source=customDomain
+                    - generic [ref=e726]: Upgrade to Pro
+            - generic [ref=e727]:
+              - heading "Transfer project" [level=2] [ref=e731]
+              - generic [ref=e735]:
+                - generic [ref=e736]:
+                  - img [ref=e737]
+                  - generic [ref=e742]:
+                    - paragraph [ref=e743]: Transfer project to another organization
+                    - paragraph [ref=e744]: To transfer projects, the owner must be a member of both the source and target organizations.
+                - button "Transfer project" [ref=e746] [cursor=pointer]:
+                  - generic [ref=e747]: Transfer project
+            - generic [ref=e748]:
+              - generic [ref=e751]:
+                - heading "Delete project" [level=2] [ref=e752]
+                - generic [ref=e753]: Permanently remove your project and its database
+              - alert [ref=e755]:
+                - img [ref=e756]
+                - heading "Deleting this project will also remove your database." [level=5] [ref=e758]
+                - paragraph [ref=e760]: Make sure you have made a backup if you want to keep your data.
+                - button "Delete project" [ref=e762] [cursor=pointer]:
+                  - generic [ref=e763]: Delete project
+  - alert [ref=e244]: General | Settings | DriveDE | Supabase

@@ -1,0 +1,136 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - alertdialog "Free trial dialog" [ref=e334]:
+      - generic [ref=e335]:
+        - generic [ref=e336]:
+          - img [ref=e339]
+          - generic [ref=e342]:
+            - text: Start your Free Trial with $300 in credit. Don’t worry—you won’t be charged if you run out of credits.
+            - link "Learn more about the free trial program. external, opens new window" [ref=e343] [cursor=pointer]:
+              - /url: https://cloud.google.com/free/
+              - text: Learn more
+              - img "external, opens new window" [ref=e344]:
+                - img [ref=e345]
+        - generic [ref=e347]:
+          - button "Dismiss full account activation banner" [ref=e348]:
+            - generic [ref=e349]: Dismiss
+          - button "Start free" [ref=e350]:
+            - generic [ref=e351]: Start free
+    - generic [ref=e4]:
+      - complementary "Skip links" [ref=e5]:
+        - link "Skip to main content" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button "Keyboard shortcuts" [ref=e8]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link "Accessibility Help external, opens new window" [ref=e10] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - generic "external, opens new window" [ref=e12]:
+              - img "external, opens new window" [ref=e13]:
+                - img [ref=e14]
+        - link "Accessibility Feedback external, opens new window" [ref=e16] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - generic "external, opens new window" [ref=e18]:
+              - img "external, opens new window" [ref=e19]:
+                - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button "Navigation menu (.)" [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+          - link "Google Cloud Platform Home" [ref=e32] [cursor=pointer]:
+            - /url: /
+            - generic:
+              - img
+          - button "You're currently working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e40]:
+            - generic [ref=e41]:
+              - img [ref=e43]
+              - generic [ref=e46]: DriveDE
+        - button "Open search" [ref=e53] [cursor=pointer]:
+          - img [ref=e55]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - button "Open or close Gemini Cloud Assist chat (Alt G)" [ref=e62] [cursor=pointer]:
+              - img [ref=e64]
+            - button "Activate Cloud Shell (G then S)" [ref=e352] [cursor=pointer]:
+              - img [ref=e354]
+            - button "2 unread notifications. Open notifications" [ref=e1387] [cursor=pointer]:
+              - generic [ref=e1388]: "2"
+            - button "Settings and utilities" [ref=e80] [cursor=pointer]:
+              - img [ref=e82]
+          - 'button "Account: Abhishek Sahoo (abhishek572021@gmail.com)" [ref=e358]':
+            - img [ref=e359]
+    - generic [ref=e106]:
+      - navigation "APIs & Services" [ref=e1393]:
+        - generic [ref=e1394]:
+          - heading "APIs & Services" [level=2] [ref=e1396]:
+            - link "APIs & Services" [ref=e1397] [cursor=pointer]:
+              - /url: /apis?project=drivede-492717
+              - img [ref=e1400]
+              - generic [ref=e1404]: APIs & Services
+          - list "Enabled APIs & services, 1 of 5 More options Library, 2 of 5 More options Credentials, 3 of 5 More options OAuth consent screen, 4 of 5 More options Page usage agreements, 5 of 5 More options" [ref=e1408]:
+            - listitem [ref=e1409]:
+              - generic [ref=e1412]:
+                - link "Enabled APIs & services, 1 of 5" [ref=e1413] [cursor=pointer]:
+                  - /url: /apis/dashboard?project=drivede-492717
+                  - generic [ref=e1414]:
+                    - img [ref=e1417]
+                    - generic [ref=e1419]: Enabled APIs & services
+                - button "More options" [ref=e1421] [cursor=pointer]:
+                  - img [ref=e1423]
+            - listitem [ref=e1425]:
+              - generic [ref=e1428]:
+                - link "Library, 2 of 5" [ref=e1429] [cursor=pointer]:
+                  - /url: /apis/library?project=drivede-492717
+                  - generic [ref=e1430]:
+                    - img [ref=e1433]
+                    - generic [ref=e1435]: Library
+                - button "More options" [ref=e1437] [cursor=pointer]:
+                  - img [ref=e1439]
+            - listitem [ref=e1441]:
+              - generic [ref=e1444]:
+                - link "Credentials, 3 of 5" [ref=e1445] [cursor=pointer]:
+                  - /url: /apis/credentials?project=drivede-492717
+                  - generic [ref=e1446]:
+                    - img [ref=e1449]
+                    - generic [ref=e1451]: Credentials
+                - button "More options" [ref=e1453] [cursor=pointer]:
+                  - img [ref=e1455]
+            - listitem [ref=e1457]:
+              - generic [ref=e1460]:
+                - link "OAuth consent screen, 4 of 5" [ref=e1461] [cursor=pointer]:
+                  - /url: /apis/credentials/consent?project=drivede-492717
+                  - generic [ref=e1462]:
+                    - img [ref=e1465]
+                    - generic [ref=e1467]: OAuth consent screen
+                - button "More options" [ref=e1469] [cursor=pointer]:
+                  - img [ref=e1471]
+            - listitem [ref=e1473]:
+              - generic [ref=e1476]:
+                - link "Page usage agreements, 5 of 5" [ref=e1477] [cursor=pointer]:
+                  - /url: /apis/agreements?project=drivede-492717
+                  - generic [ref=e1478]:
+                    - img [ref=e1481]
+                    - generic [ref=e1484]: Page usage agreements
+                - button "More options" [ref=e1486] [cursor=pointer]:
+                  - img [ref=e1488]
+          - button "Toggle APIs & Services navigation menu" [pressed] [ref=e1492] [cursor=pointer]:
+            - img [ref=e1495]
+      - main [ref=e107]:
+        - img [ref=e1500]
+  - iframe [ref=e331]:
+    
+  - iframe [ref=e360]:
+    
+  - iframe [ref=e361]:
+    
+  - iframe [ref=e379]:
+    
+  - iframe [ref=e1168]:
+    
+  - paragraph [ref=e1502]: 2 unread notifications.
+  - paragraph

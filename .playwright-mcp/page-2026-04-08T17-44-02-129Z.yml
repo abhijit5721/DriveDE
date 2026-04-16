@@ -1,0 +1,247 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - alertdialog "Free trial dialog" [ref=e269]:
+      - generic [ref=e270]:
+        - generic [ref=e271]:
+          - img [ref=e274]
+          - generic [ref=e277]:
+            - text: Start your Free Trial with $300 in credit. Don’t worry—you won’t be charged if you run out of credits.
+            - link "Learn more about the free trial program. external, opens new window" [ref=e278] [cursor=pointer]:
+              - /url: https://cloud.google.com/free/
+              - text: Learn more
+              - img "external, opens new window" [ref=e279]:
+                - img [ref=e280]
+        - generic [ref=e282]:
+          - button "Dismiss full account activation banner" [ref=e283]:
+            - generic [ref=e284]: Dismiss
+          - button "Start free" [ref=e285]:
+            - generic [ref=e286]: Start free
+    - generic [ref=e4]:
+      - complementary "Skip links" [ref=e5]:
+        - link "Skip to main content" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: Skip to main content
+        - button "Keyboard shortcuts" [ref=e8]:
+          - generic [ref=e9]: Keyboard shortcuts
+        - link "Accessibility Help external, opens new window" [ref=e10] [cursor=pointer]:
+          - /url: https://cloud.google.com/docs/accessibility?hl=en_US
+          - generic [ref=e11]:
+            - text: Accessibility Help
+            - generic "external, opens new window" [ref=e12]:
+              - img "external, opens new window" [ref=e13]:
+                - img [ref=e14]
+        - link "Accessibility Feedback external, opens new window" [ref=e16] [cursor=pointer]:
+          - /url: https://support.google.com/accessibility/contact/feedback?hl=en_US
+          - generic [ref=e17]:
+            - text: Accessibility Feedback
+            - generic "external, opens new window" [ref=e18]:
+              - img "external, opens new window" [ref=e19]:
+                - img [ref=e20]
+      - banner [ref=e23]:
+        - generic [ref=e24]:
+          - navigation [ref=e27]:
+            - button "Navigation menu (.)" [ref=e28] [cursor=pointer]:
+              - img [ref=e30]
+          - link "Google Cloud Platform Home" [ref=e32] [cursor=pointer]:
+            - /url: /?project=drivede-492717
+            - generic:
+              - img
+          - button "You're currently working in DriveDE. Hit enter to switch projects, folders, or organizations" [ref=e287]:
+            - generic [ref=e288]:
+              - img [ref=e290]
+              - generic [ref=e293]: DriveDE
+        - button "Open search" [ref=e47] [cursor=pointer]:
+          - img [ref=e49]
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - button "Open or close Gemini Cloud Assist chat (Alt G)" [ref=e297] [cursor=pointer]:
+              - img [ref=e299]
+            - button "Activate Cloud Shell (G then S)" [ref=e301] [cursor=pointer]:
+              - img [ref=e303]
+            - button "2 unread notifications. Open notifications" [ref=e59] [cursor=pointer]:
+              - generic [ref=e62]: "2"
+            - button "Settings and utilities" [ref=e67] [cursor=pointer]:
+              - img [ref=e69]
+          - 'button "Account: Abhishek Sahoo (abhishek572021@gmail.com)" [ref=e307]':
+            - img [ref=e308]
+    - generic [ref=e82]:
+      - navigation "Breadcrumb" [ref=e313]:
+        - link "Google Auth Platform" [ref=e316] [cursor=pointer]:
+          - /url: /auth?project=drivede-492717
+          - img [ref=e319]
+          - generic [ref=e323]: Google Auth Platform
+        - list [ref=e324]:
+          - listitem [ref=e325]:
+            - generic [ref=e326]: /
+            - link "Clients" [ref=e329] [cursor=pointer]:
+              - /url: /auth/clients?project=drivede-492717
+              - generic [ref=e331]: Clients
+          - listitem [ref=e433]:
+            - generic [ref=e434]: /
+            - link "Create client" [ref=e437] [cursor=pointer]:
+              - /url: /auth/clients/create?project=drivede-492717
+              - generic [ref=e439]: Create client
+      - generic [ref=e93]:
+        - navigation "Google Auth Platform" [ref=e100]:
+          - generic [ref=e101]:
+            - list "Overview, 1 of 7 More options Branding, 2 of 7 More options Audience, 3 of 7 More options Clients, 4 of 7 More options Data Access, 5 of 7 More options Verification Center, 6 of 7 More options Settings, 7 of 7 More options" [ref=e115]:
+              - listitem [ref=e116]:
+                - generic [ref=e119]:
+                  - link "Overview, 1 of 7" [ref=e120] [cursor=pointer]:
+                    - /url: /auth/overview?project=drivede-492717
+                    - generic [ref=e121]:
+                      - img [ref=e124]
+                      - generic [ref=e126]: Overview
+                  - button "More options" [ref=e128] [cursor=pointer]:
+                    - img [ref=e130]
+              - listitem [ref=e132]:
+                - generic [ref=e135]:
+                  - link "Branding, 2 of 7" [ref=e136] [cursor=pointer]:
+                    - /url: /auth/branding?project=drivede-492717
+                    - generic [ref=e137]:
+                      - img [ref=e140]
+                      - generic [ref=e146]: Branding
+                  - button "More options" [ref=e148] [cursor=pointer]:
+                    - img [ref=e150]
+              - listitem [ref=e152]:
+                - generic [ref=e155]:
+                  - link "Audience, 3 of 7" [ref=e156] [cursor=pointer]:
+                    - /url: /auth/audience?project=drivede-492717
+                    - generic [ref=e157]:
+                      - img [ref=e160]
+                      - generic [ref=e162]: Audience
+                  - button "More options" [ref=e164] [cursor=pointer]:
+                    - img [ref=e166]
+              - listitem [ref=e168]:
+                - generic [ref=e171]:
+                  - link "Clients, 4 of 7" [ref=e172] [cursor=pointer]:
+                    - /url: /auth/clients?project=drivede-492717
+                    - generic [ref=e173]:
+                      - img [ref=e176]
+                      - generic [ref=e178]: Clients
+                  - button "More options" [ref=e180] [cursor=pointer]:
+                    - img [ref=e182]
+              - listitem [ref=e184]:
+                - generic [ref=e187]:
+                  - link "Data Access, 5 of 7" [ref=e188] [cursor=pointer]:
+                    - /url: /auth/scopes?project=drivede-492717
+                    - generic [ref=e189]:
+                      - img [ref=e192]
+                      - generic [ref=e195]: Data Access
+                  - button "More options" [ref=e197] [cursor=pointer]:
+                    - img [ref=e199]
+              - listitem [ref=e201]:
+                - generic [ref=e204]:
+                  - link "Verification Center, 6 of 7" [ref=e205] [cursor=pointer]:
+                    - /url: /auth/verification?project=drivede-492717
+                    - generic [ref=e206]:
+                      - img [ref=e209]
+                      - generic [ref=e212]: Verification Center
+                  - button "More options" [ref=e214] [cursor=pointer]:
+                    - img [ref=e216]
+              - listitem [ref=e218]:
+                - generic [ref=e221]:
+                  - link "Settings, 7 of 7" [ref=e222] [cursor=pointer]:
+                    - /url: /auth/settings?project=drivede-492717
+                    - generic [ref=e223]:
+                      - img [ref=e226]
+                      - generic [ref=e228]: Settings
+                  - button "More options" [ref=e230] [cursor=pointer]:
+                    - img [ref=e232]
+            - button "Toggle Google Auth Platform navigation menu" [pressed] [ref=e236] [cursor=pointer]:
+              - img [ref=e239]
+        - main [ref=e242]:
+          - generic [ref=e445]:
+            - generic [ref=e448]:
+              - button "Back to previous page" [ref=e452] [cursor=pointer]:
+                - img [ref=e454]
+              - heading "Create OAuth client ID" [level=1] [ref=e458]:
+                - generic [ref=e459]: Create OAuth client ID
+            - generic [ref=e461]:
+              - paragraph [ref=e462]:
+                - text: A client ID is used to identify a single app to Google's OAuth servers. If your app runs on multiple platforms, each will need its own client ID. See
+                - link "Setting up OAuth 2.0 external, opens new window" [ref=e463] [cursor=pointer]:
+                  - /url: https://developers.google.com/identity/protocols/oauth2/
+                  - text: Setting up OAuth 2.0
+                  - img "external, opens new window" [ref=e464]:
+                    - img [ref=e465]
+                - text: for more information.
+                - link "Learn more about OAuth client types external, opens new window" [ref=e467] [cursor=pointer]:
+                  - /url: https://support.google.com/cloud/answer/6158849
+                  - text: Learn more
+                  - img "external, opens new window" [ref=e468]:
+                    - img [ref=e469]
+                - text: about OAuth client types.
+              - generic [ref=e471]:
+                - generic [ref=e474] [cursor=pointer]:
+                  - generic [ref=e475]:
+                    - text: Application type
+                    - generic [ref=e476]: "*"
+                  - combobox "Application type" [ref=e478]:
+                    - generic [ref=e479]:
+                      - generic [ref=e519]: Web application
+                      - img [ref=e482]
+                - generic [ref=e521]:
+                  - generic [ref=e523]:
+                    - generic [ref=e524]:
+                      - generic [ref=e526] [cursor=pointer]:
+                        - generic [ref=e527]:
+                          - text: Name
+                          - generic [ref=e528]: "*"
+                        - textbox "Name" [ref=e530]: DriveDE Web Client
+                      - generic [ref=e533]: The name of your OAuth 2.0 client. This name is only used to identify the client in the console and will not be shown to end users.
+                    - generic [ref=e535]:
+                      - generic [ref=e537]:
+                        - img "Information" [ref=e538]:
+                          - img [ref=e539]
+                        - generic [ref=e543]:
+                          - text: The domains of the URIs you add below will be automatically added to your
+                          - link "OAuth consent screen" [ref=e544] [cursor=pointer]:
+                            - /url: /auth/branding?project=drivede-492717
+                          - text: as
+                          - link "authorized domains external, opens new window" [ref=e545] [cursor=pointer]:
+                            - /url: https://support.google.com/cloud/answer/6158849#authorized-domains
+                            - text: authorized domains
+                            - img "external, opens new window" [ref=e546]:
+                              - img [ref=e547]
+                          - text: .
+                      - group "Authorized JavaScript origins" [ref=e550]:
+                        - generic "Authorized JavaScript origins" [ref=e552]:
+                          - heading "Authorized JavaScript origins" [level=2] [ref=e554]
+                          - button "Help with Javascript origins" [ref=e556] [cursor=pointer]:
+                            - img [ref=e558]
+                        - generic [ref=e561]: For use with requests from a browser
+                        - group "Authorized JavaScript origins" [ref=e563]:
+                          - button "Add URI" [ref=e565]:
+                            - generic [ref=e567]:
+                              - img [ref=e569]
+                              - text: Add URI
+                      - group "Authorized redirect URIs" [ref=e572]:
+                        - generic "Authorized redirect URIs" [ref=e574]:
+                          - heading "Authorized redirect URIs" [level=2] [ref=e576]
+                          - button "Help with redirect URIs" [ref=e578] [cursor=pointer]:
+                            - img [ref=e580]
+                        - generic [ref=e583]: For use with requests from a web server
+                        - group "Authorized redirect URIs" [ref=e585]:
+                          - group "Item 1" [ref=e601]:
+                            - generic [ref=e605] [cursor=pointer]:
+                              - generic [ref=e606]:
+                                - generic [ref=e607]: URIs 1
+                                - generic [ref=e608]: "*"
+                              - textbox "URIs 1" [active] [ref=e610]:
+                                - /placeholder: https://www.example.com
+                            - button "Delete item. Item 1" [ref=e612] [cursor=pointer]:
+                              - img [ref=e614]
+                          - button "Add URI" [ref=e587]:
+                            - generic [ref=e589]:
+                              - img [ref=e591]
+                              - text: Add URI
+                  - paragraph [ref=e593]: "Note: It may take 5 minutes to a few hours for settings to take effect"
+                  - button "Create" [disabled] [ref=e596]:
+                    - generic [ref=e597]: Create
+                  - button "Cancel" [ref=e598]:
+                    - generic [ref=e599]: Cancel
+  - iframe [ref=e266]:
+    
+  - iframe [ref=e432]:
+    
