@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
@@ -44,10 +46,12 @@ export function Tracker() {
   const handleStartTimer = () => {
     setElapsedTime(0);
     setIsTimerRunning(true);
+    toast(isDE ? 'Fahrt-Timer gestartet!' : 'Drive timer started!', { icon: '⏱️' });
   };
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
+    toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
   };
 
   const handleStopTimer = () => {
@@ -60,6 +64,7 @@ export function Tracker() {
     }));
     setShowAddForm(true);
     setElapsedTime(0);
+    toast.success(isDE ? 'Bereit zum Speichern!' : 'Ready to save!');
   };
 
   const formatTime = (seconds: number) => {
@@ -99,6 +104,7 @@ export function Tracker() {
 
   const handleAddSession = () => {
     addDrivingSession(newSession);
+    toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
     setShowAddForm(false);
     setNewSession({
       date: new Date().toISOString().split('T')[0],
@@ -107,6 +113,11 @@ export function Tracker() {
       notes: '',
       instructorName: '',
     });
+  };
+
+  const handleRemoveSession = (sessionId: string) => {
+    removeDrivingSession(sessionId);
+    toast.error(isDE ? 'Fahrstunde gelöscht' : 'Session deleted');
   };
 
   const formatDate = (dateStr: string) => {
@@ -283,12 +294,15 @@ export function Tracker() {
                       </span>
                     </div>
                     <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                      <div
+                      <motion.div
                         className={cn(
-                          'h-full rounded-full transition-all duration-500',
+                          'h-full rounded-full',
                           progress >= 100 ? 'bg-green-500' : 'bg-blue-500'
                         )}
-                        style={{ width: `${progress}%` }}
+                        initial={{ width: '0%' }}
+                        whileInView={{ width: `${progress}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
                     </div>
                   </div>
@@ -368,7 +382,7 @@ export function Tracker() {
                     )}
                   </div>
                   <button
-                    onClick={() => removeDrivingSession(session.id)}
+                    onClick={() => handleRemoveSession(session.id)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
                   >
                     <Trash2 className="h-4 w-4" />

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase } from './services/supabaseSync';
-import { getCurrentSession, signOut, subscribeToAuthChanges } from './services/auth';
+import { signOut, subscribeToAuthChanges } from './services/auth';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { DesktopNav } from './components/DesktopNav';
@@ -40,23 +41,7 @@ export default function App() {
   } = useAppStore();
 
   useEffect(() => {
-    const initAuth = async () => {
-      setIsAuthLoading(true);
-      const session = await getCurrentSession();
-      if (session?.user) {
-        const { user } = session;
-        const displayName = user.user_metadata?.full_name || user.email;
-        setAuthState(user.email, 'signed_in', displayName);
-        await hydrateFromSupabase();
-      } else {
-        setAuthState(null, 'guest', null);
-      }
-      setIsAuthLoading(false);
-    };
-
-    void initAuth();
-
-    const unsubscribe = subscribeToAuthChanges((session) => {
+    const { unsubscribe } = subscribeToAuthChanges((session) => {
       if (session?.user) {
         const { user } = session;
         const displayName = user.user_metadata?.full_name || user.email;
@@ -68,7 +53,9 @@ export default function App() {
       setIsAuthLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [setAuthState]);
 
   useEffect(() => {
@@ -216,6 +203,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: '#334155',
+            color: '#fff',
+          },
+        }}
+      />
       <div className="flex min-h-screen">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
         <div className="flex flex-1 flex-col">
