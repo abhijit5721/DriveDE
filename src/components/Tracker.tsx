@@ -395,9 +395,9 @@ export function Tracker() {
 
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 pt-12 sm:items-center sm:pt-4">
-          <div className="w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 dark:bg-slate-800">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
+          <div className="flex h-full w-full max-w-md flex-col bg-white dark:bg-slate-800 sm:h-auto sm:max-h-[80vh] sm:rounded-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {isDE ? 'Fahrstunde eintragen' : 'Log Driving Session'}
               </h3>
@@ -409,7 +409,7 @@ export function Tracker() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="flex-1 space-y-4 overflow-y-auto p-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
                   {isDE ? 'Datum' : 'Date'}
@@ -482,7 +482,9 @@ export function Tracker() {
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
                 />
               </div>
-
+            </div>
+            
+            <div className="p-4">
               <button
                 onClick={handleAddSession}
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"

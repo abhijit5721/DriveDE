@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, 
 import { jsPDF } from 'jspdf';
 import { useAppStore } from '../store/useAppStore';
 import { chapters, getAllLessons, getLessonById } from '../data/curriculum';
+import { PageHeader } from './PageHeader';
 import type { Lesson, ManeuverStep, Tip } from '../types';
 
 interface InstructorReviewProps {
@@ -522,18 +523,15 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
   return (
     <div className="print-document space-y-6 pb-10 print:pb-0">
       <div className="flex items-center justify-between gap-3 print:hidden">
-        <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-          <ArrowLeft className="h-4 w-4" />
-          {isDE ? 'Zurück' : 'Back'}
-        </button>
+        <PageHeader title={isDE ? 'Fahrlehrer-Review' : 'Instructor Review'} onBack={onBack} />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pr-4">
           <button
             onClick={handlePrintReview}
             className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           >
             <Printer className="h-4 w-4" />
-            {isDE ? 'Drucken' : 'Print'}
+            <span className="hidden sm:inline">{isDE ? 'Drucken' : 'Print'}</span>
           </button>
           <button
             onClick={handleDownloadPdf}
@@ -541,12 +539,14 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
             className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <Download className="h-4 w-4" />
-            {isDownloadingPdf ? (isDE ? 'PDF wird erstellt…' : 'Generating PDF…') : isDE ? 'PDF herunterladen' : 'Download PDF'}
+            <span className="hidden sm:inline">
+              {isDownloadingPdf ? (isDE ? 'Wird erstellt…' : 'Generating…') : isDE ? 'PDF laden' : 'Download PDF'}
+            </span>
           </button>
         </div>
       </div>
 
-      <div ref={documentRef} className="space-y-6 bg-white print:bg-white dark:print:bg-white">
+      <div ref={documentRef} className="space-y-6 bg-white px-4 print:bg-white dark:print:bg-white sm:px-0">
         <section className="print-section print-no-shadow rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 p-6 text-white shadow-xl print:shadow-none">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">

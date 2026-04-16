@@ -152,6 +152,8 @@ export default function App() {
     return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
   }
 
+  const isDetailPage = selectedLesson !== null || selectedLegalPage !== null || activeTab === 'review';
+
   const renderContent = () => {
     if (isAuthLoading) {
       if (activeTab === 'account') {
@@ -237,7 +239,7 @@ export default function App() {
       <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
         <div className="flex h-screen flex-1 flex-col overflow-y-auto">
-          <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />
+          {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-24 lg:pb-6">
             <div className="mx-auto max-w-4xl">
               {renderContent()}

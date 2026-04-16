@@ -31,6 +31,7 @@ import { cn } from '../utils/cn';
 import { ParkingDiagram } from './ParkingDiagram';
 import AnimatedManeuver from './AnimatedManeuver';
 import { TrafficSignIcon } from './TrafficSignIcon';
+import { PageHeader } from './PageHeader';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -138,21 +139,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
     return (
       <div className="pb-6">
-        <button
-          onClick={() => setShowQuiz(false)}
-          className="mb-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {isDE ? 'Zurück zur Lektion' : 'Back to lesson'}
-        </button>
+        <PageHeader title={isDE ? 'Quiz' : 'Quiz'} onBack={() => setShowQuiz(false)} />
 
-        <div className="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
-              Quiz
-            </span>
-          </div>
-
+        <div className="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800 mt-4">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
             {isDE ? question.questionDe : question.questionEn}
           </h3>
@@ -242,26 +231,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
   return (
     <div className="pb-6">
-      {/* Header */}
-      <button
-        onClick={onBack}
-        className="mb-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {isDE ? 'Zurück' : 'Back'}
-      </button>
+      <PageHeader title={isDE ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
 
-      <div className="mb-6">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {isDE ? lesson.titleDe : lesson.titleEn}
-          </h2>
-          {isCompleted && (
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
-              <Check className="h-4 w-4" />
-            </span>
-          )}
-        </div>
+      <div className="mb-6 mt-4">
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {isDE ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
