@@ -1,4 +1,4 @@
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Scale, Cloud, LogIn, Flame } from 'lucide-react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Scale, Cloud, LogIn, Flame, Mic } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { chapters, getAllLessons } from '../data/curriculum';
 import { cn } from '../utils/cn';
@@ -10,10 +10,11 @@ interface DashboardProps {
   onNavigate: (tab: TabType) => void;
   onChangePath: () => void;
   onOpenPaywall: () => void;
+  onStartSimulation: () => void;
   onOpenAuth?: () => void;
 }
 
-export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onOpenAuth }: DashboardProps) {
+export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onOpenAuth }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, authStatus, authEmail } = useAppStore();
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -132,6 +133,24 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onOpenAuth 
           </button>
         )}
       </div>
+
+      <button
+        onClick={onStartSimulation}
+        className="flex w-full items-center justify-between rounded-xl bg-slate-900 p-4 text-white shadow-lg transition-transform hover:scale-[1.01] dark:bg-slate-800"
+      >
+        <div className="flex items-center gap-3 text-left">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+            <Mic className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold">{isDE ? 'Prüfungssimulation' : 'Exam Simulation'}</p>
+            <p className="text-xs text-slate-300">
+              {isDE ? 'Teste dein Wissen unter Prüfungsbedingungen' : 'Test your knowledge under exam conditions'}
+            </p>
+          </div>
+        </div>
+        <ChevronRight className="h-5 w-5 text-slate-300" />
+      </button>
 
       <div className="rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-5 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/30">
         <div className="flex items-start justify-between">
@@ -339,7 +358,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onOpenAuth 
           className="w-full rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-amber-900/40 dark:from-amber-900/20 dark:to-orange-900/10"
         >
           <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
               <Target className="h-6 w-6 text-amber-700 dark:text-amber-300" />
             </div>
             <div className="min-w-0 flex-1">
