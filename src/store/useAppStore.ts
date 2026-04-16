@@ -27,6 +27,8 @@ const initialProgress = {
     nacht: 0,
   },
   unlockedAchievements: [],
+  currentStreak: 0,
+  lastActivityDate: null,
 };
 
 const deriveSelectionState = (type: LicenseType) => {
@@ -51,6 +53,18 @@ const deriveSelectionState = (type: LicenseType) => {
   }
 
   return { learningPath, transmissionType };
+};
+
+const isSameDay = (date1: Date, date2: Date) => {
+  return date1.getFullYear() === date2.getFullYear() &&
+         date1.getMonth() === date2.getMonth() &&
+         date1.getDate() === date2.getDate();
+};
+
+const isYesterday = (date1: Date, date2: Date) => {
+  const yesterday = new Date(date2);
+  yesterday.setDate(yesterday.getDate() - 1);
+  return isSameDay(date1, yesterday);
 };
 
 export const useAppStore = create<AppState>()(
@@ -169,6 +183,31 @@ export const useAppStore = create<AppState>()(
             ],
           },
         })),
+      
+      updateStreak: () => {
+        const state = get();
+        const today = new Date();
+        const lastActivity = state.userProgress.lastActivityDate ? new Date(state.userProgress.lastActivityDate) : null;
+
+        if (lastActivity && isSameDay(lastActivity, today)) {
+          return; // Already active today
+        }
+
+        let newStreak = state.userProgress.currentStreak;
+        if (lastActivity && isYesterday(lastActivity, today)) {
+          newStreak += 1;
+        } else {
+          newStreak = 1;
+        }
+
+        set({
+          userProgress: {
+            ...state.userProgress,
+            currentStreak: newStreak,
+            lastActivityDate: today.toISOString(),
+          },
+        });
+      },
 
       completeLesson: (lessonId: string) => {
         const state = get();
@@ -187,6 +226,7 @@ export const useAppStore = create<AppState>()(
           },
         });
         
+        get().updateStreak();
         checkAndUnlockAchievements();
       },
 
@@ -217,6 +257,7 @@ export const useAppStore = create<AppState>()(
           },
         });
 
+        get().updateStreak();
         checkAndUnlockAchievements();
       },
 

@@ -5,7 +5,8 @@ import { Lock } from 'lucide-react';
 
 export function Achievements() {
   const { userProgress } = useAppStore();
-  const { unlockedAchievements } = userProgress;
+  // Add a fallback for unlockedAchievements to prevent crashes with old stored data
+  const unlockedAchievements = userProgress.unlockedAchievements || [];
 
   return (
     <div className="space-y-6 pb-6">

@@ -1,4 +1,4 @@
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Scale, Cloud, LogIn } from 'lucide-react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Scale, Cloud, LogIn, Flame } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { chapters, getAllLessons } from '../data/curriculum';
 import { cn } from '../utils/cn';
@@ -240,6 +240,24 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onOpenAuth 
             </div>
           </div>
         </div>
+        
+        {userProgress.currentStreak > 0 && (
+          <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800 sm:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/50">
+                <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isDE ? 'Aktuelle Serie' : 'Current Streak'}
+                </p>
+                <p className="text-lg font-bold text-slate-900 dark:text-white">
+                  {userProgress.currentStreak} {userProgress.currentStreak > 1 ? (isDE ? 'Tage' : 'days') : (isDE ? 'Tag' : 'day')}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {isUmschreibung && (
@@ -348,7 +366,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onOpenAuth 
           className="w-full rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-blue-900/40 dark:from-blue-900/20 dark:to-indigo-900/10"
         >
           <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
               <ClipboardCheck className="h-6 w-6 text-blue-700 dark:text-blue-300" />
             </div>
             <div className="min-w-0 flex-1">
