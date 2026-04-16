@@ -80,6 +80,9 @@ export const useAppStore = create<AppState>()(
       authDisplayName: null,
       authStatus: 'guest',
       userProgress: initialProgress,
+      hasVisited: false,
+
+      setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
 
       setLanguage: (lang: Language) =>
         set((state) => {

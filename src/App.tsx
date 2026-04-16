@@ -14,7 +14,7 @@ import { Tracker } from './components/Tracker';
 import { Achievements } from './components/Achievements';
 import { ExamSimulation } from './components/ExamSimulation';
 import { LessonDetail } from './components/LessonDetail';
-import { LicenseSelector } from './components/LicenseSelector';
+import { Welcome } from './components/Welcome';
 import { Paywall } from './components/Paywall';
 import { InstructorReview } from './components/InstructorReview';
 import { LegalHub } from './components/LegalHub';
@@ -42,6 +42,8 @@ export default function App() {
     setLearningPath,
     setTransmissionType,
     setAuthState,
+    hasVisited,
+    setHasVisited,
   } = useAppStore();
 
   useEffect(() => {
@@ -119,6 +121,7 @@ export default function App() {
     setLearningPath(null);
     setTransmissionType(null);
     setLicenseType(null);
+    setHasVisited(false);
   };
 
   const handleOpenAuth = () => {
@@ -128,24 +131,11 @@ export default function App() {
   const handleSignOut = async () => {
     await signOut();
     setAuthState(null, 'guest', null);
+    setHasVisited(false);
   };
 
-  const hasCompleteSelection =
-    licenseType === 'manual' ||
-    licenseType === 'automatic' ||
-    licenseType === 'umschreibung-manual' ||
-    licenseType === 'umschreibung-automatic';
-
-  if (isAuthLoading && !hasCompleteSelection) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Skeleton className="h-32 w-64 rounded-2xl" />
-      </div>
-    );
-  }
-
-  if (!hasCompleteSelection) {
-    return <LicenseSelector />;
+  if (!hasVisited) {
+    return <Welcome />;
   }
 
   if (showExamSimulation) {
