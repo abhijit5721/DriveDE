@@ -39,22 +39,26 @@ export default function App() {
   useEffect(() => {
     const initAuth = async () => {
       const session = await getCurrentSession();
-      if (session?.user?.email) {
-        setAuthState(session.user.email, 'signed_in');
+      if (session?.user) {
+        const { user } = session;
+        const displayName = user.user_metadata?.full_name || user.email;
+        setAuthState(user.email, 'signed_in', displayName);
         void hydrateFromSupabase();
       } else {
-        setAuthState(null, 'guest');
+        setAuthState(null, 'guest', null);
       }
     };
 
     void initAuth();
 
     const unsubscribe = subscribeToAuthChanges((session) => {
-      if (session?.user?.email) {
-        setAuthState(session.user.email, 'signed_in');
+      if (session?.user) {
+        const { user } = session;
+        const displayName = user.user_metadata?.full_name || user.email;
+        setAuthState(user.email, 'signed_in', displayName);
         void hydrateFromSupabase();
       } else {
-        setAuthState(null, 'guest');
+        setAuthState(null, 'guest', null);
       }
     });
 
@@ -118,7 +122,7 @@ export default function App() {
 
   const handleSignOut = async () => {
     await signOut();
-    setAuthState(null, 'guest');
+    setAuthState(null, 'guest', null);
   };
 
   const hasCompleteSelection =

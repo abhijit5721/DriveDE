@@ -61,6 +61,7 @@ export const useAppStore = create<AppState>()(
       transmissionType: null,
       isPremium: false,
       authEmail: null,
+      authDisplayName: null,
       authStatus: 'guest',
       userProgress: initialProgress,
 
@@ -149,10 +150,11 @@ export const useAppStore = create<AppState>()(
           return { isPremium: premium };
         }),
 
-      setAuthState: (authEmail, authStatus) =>
+      setAuthState: (authEmail, authStatus, authDisplayName) =>
         set(() => ({
           authEmail,
           authStatus,
+          authDisplayName,
         })),
 
       completeLesson: (lessonId: string) =>

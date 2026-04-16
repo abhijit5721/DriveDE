@@ -20,6 +20,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     toggleDarkMode,
     authStatus,
     authEmail,
+    authDisplayName,
     userProgress,
     learningPath,
     transmissionType,
@@ -104,18 +105,16 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
               {isDE ? 'Konto & Profil' : 'Account & Profile'}
             </p>
-            <h2 className="mt-1 text-2xl font-bold leading-tight">
+            <h2 className="mt-1 text-2xl font-bold leading-tight truncate">
               {authStatus === 'signed_in'
-                ? authEmail || (isDE ? 'Angemeldet' : 'Signed in')
+                ? authDisplayName
                 : isDE
                   ? 'Gastmodus aktiv'
                   : 'Guest mode active'}
             </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-sm leading-6 text-slate-300 truncate">
               {authStatus === 'signed_in'
-                ? isDE
-                  ? 'Dein Konto ist verbunden. Du kannst künftig lokale Daten mit der Cloud synchronisieren.'
-                  : 'Your account is connected. You can sync local data with the cloud in the future.'
+                ? authEmail
                 : isDE
                   ? 'Du kannst die App ohne Konto nutzen oder dich anmelden, um später Cloud-Synchronisierung zu aktivieren.'
                   : 'You can use the app without an account, or sign in to enable cloud sync later.'}
