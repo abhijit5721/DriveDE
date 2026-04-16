@@ -96,7 +96,6 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      viewport={{ once: true }}
     >
       {/* License Type Indicator */}
       <motion.button
