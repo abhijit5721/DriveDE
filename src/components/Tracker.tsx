@@ -3,6 +3,7 @@ import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X } from 'luci
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
+import { EmptyState } from './EmptyState';
 import type { DrivingSession } from '../types';
 
 export function Tracker() {
@@ -18,12 +19,6 @@ export function Tracker() {
 
   const isDE = language === 'de';
   const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
-
-  // Legal minimums in Germany (in minutes)
-  // total: 0 - No minimum for normal lessons, but typically ~18-20 lessons
-  // ueberland: 225 - 5 × 45 min
-  // autobahn: 180 - 4 × 45 min
-  // nacht: 135 - 3 × 45 min
 
   const getTypeLabel = (type: DrivingSession['type']) => {
     const labels = {
@@ -227,20 +222,20 @@ export function Tracker() {
         </h3>
 
         {userProgress.drivingSessions.length === 0 ? (
-          <div className="rounded-xl bg-slate-50 p-8 text-center dark:bg-slate-800/50">
-            <Car className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
-            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-              {isDE
-                ? 'Noch keine Fahrstunden eingetragen'
-                : 'No driving sessions logged yet'}
-            </p>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-            >
-              {isDE ? 'Erste Fahrstunde hinzufügen' : 'Add your first session'}
-            </button>
-          </div>
+          <EmptyState
+            icon={<Car className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
+            title={isDE ? 'Keine Fahrstunden' : 'No Driving Sessions'}
+            message={isDE ? 'Hier werden deine eingetragenen Fahrstunden angezeigt.' : 'Your logged driving sessions will appear here.'}
+            action={
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+              >
+                <Plus className="h-4 w-4" />
+                {isDE ? 'Erste Fahrstunde hinzufügen' : 'Add First Session'}
+              </button>
+            }
+          />
         ) : (
           <div className="space-y-2">
             {userProgress.drivingSessions

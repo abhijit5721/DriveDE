@@ -17,6 +17,8 @@ import { LegalHub } from './components/LegalHub';
 import { LegalPage } from './components/LegalPage';
 import { AuthModal } from './components/AuthModal';
 import { Account } from './components/Account';
+import { AccountSkeleton } from './components/AccountSkeleton';
+import { Skeleton } from './components/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
 
 export default function App() {
@@ -25,6 +27,7 @@ export default function App() {
   const [selectedLegalPage, setSelectedLegalPage] = useState<LegalPageType | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
     darkMode,
@@ -38,15 +41,17 @@ export default function App() {
 
   useEffect(() => {
     const initAuth = async () => {
+      setIsAuthLoading(true);
       const session = await getCurrentSession();
       if (session?.user) {
         const { user } = session;
         const displayName = user.user_metadata?.full_name || user.email;
         setAuthState(user.email, 'signed_in', displayName);
-        void hydrateFromSupabase();
+        await hydrateFromSupabase();
       } else {
         setAuthState(null, 'guest', null);
       }
+      setIsAuthLoading(false);
     };
 
     void initAuth();
@@ -60,6 +65,7 @@ export default function App() {
       } else {
         setAuthState(null, 'guest', null);
       }
+      setIsAuthLoading(false);
     });
 
     return unsubscribe;
@@ -131,11 +137,32 @@ export default function App() {
     licenseType === 'umschreibung-manual' ||
     licenseType === 'umschreibung-automatic';
 
+  if (isAuthLoading && !hasCompleteSelection) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Skeleton className="h-32 w-64 rounded-2xl" />
+      </div>
+    );
+  }
+
   if (!hasCompleteSelection) {
     return <LicenseSelector />;
   }
 
   const renderContent = () => {
+    if (isAuthLoading) {
+      if (activeTab === 'account') {
+        return <AccountSkeleton />;
+      }
+      return (
+        <div className="space-y-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-48 w-full" />
+        </div>
+      );
+    }
+
     if (selectedLesson) {
       return <LessonDetail lesson={selectedLesson} onBack={handleLessonBack} />;
     }
@@ -144,7 +171,6 @@ export default function App() {
       if (selectedLegalPage) {
         return <LegalPage page={selectedLegalPage} onBack={handleBackToLegalHub} />;
       }
-
       return <LegalHub onOpenPage={handleOpenLegalPage} />;
     }
 

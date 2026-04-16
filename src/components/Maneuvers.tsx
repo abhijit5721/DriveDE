@@ -1,10 +1,12 @@
-import { Play, Film } from 'lucide-react';
+import { Play, Film, Wrench } from 'lucide-react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '../store/useAppStore';
 import { chapters } from '../data/curriculum';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../utils/license';
 import { filterLessonsForSelection } from '../utils/contentFilter';
+import { EmptyState } from './EmptyState';
 import type { Lesson } from '../types';
 import AnimatedManeuver from './AnimatedManeuver';
 
@@ -13,6 +15,28 @@ interface ManeuversProps {
 }
 
 type AnimationType = 'parallel-parking' | 'reverse-parking' | 'three-point-turn' | 'emergency-brake' | 'roundabout' | 'highway-merge';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
 
 export function Maneuvers({ onLessonSelect }: ManeuversProps) {
   const { language, licenseType } = useAppStore();
@@ -46,8 +70,13 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
   };
 
   return (
-    <div className="space-y-6 pb-6">
-      <div>
+    <motion.div 
+      className="space-y-6 pb-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div variants={itemVariants}>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
           {isDE ? 'Grundfahraufgaben' : 'Basic Maneuvers'}
         </h2>
@@ -56,39 +85,58 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
             ? 'Schritt-für-Schritt Anleitungen für die Prüfung'
             : 'Step-by-step guides for the exam'}
         </p>
-      </div>
+      </motion.div>
 
       {/* Maneuver Cards Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        {maneuvers.map((maneuver) => (
-          <button
-            key={maneuver.id}
-            onClick={() => onLessonSelect(maneuver)}
-            className="group relative overflow-hidden rounded-2xl p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <div className={cn(
-              'absolute inset-0 bg-gradient-to-br opacity-90',
-              getManeuverColor(maneuver.id)
-            )} />
-            <div className="relative z-10">
-              <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
-              <h3 className="font-semibold text-white">
-                {isDE ? maneuver.titleDe : maneuver.titleEn}
-              </h3>
-              <p className="mt-1 text-xs text-white/80">
-                {maneuver.steps?.length || 0} {isDE ? 'Schritte' : 'steps'}
-              </p>
-              <div className="mt-3 flex items-center gap-1 text-xs font-medium text-white">
-                <Play className="h-3 w-3" />
-                {isDE ? 'Starten' : 'Start'}
+      {maneuvers.length === 0 ? (
+        <motion.div variants={itemVariants}>
+          <EmptyState
+            icon={<Wrench className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
+            title={isDE ? 'Keine Manöver' : 'No Maneuvers'}
+            message={isDE ? 'Für diesen Lernpfad sind keine speziellen Grundfahraufgaben erforderlich.' : 'No special maneuvers are required for this learning path.'}
+          />
+        </motion.div>
+      ) : (
+        <motion.div 
+          className="grid grid-cols-2 gap-3"
+          variants={containerVariants}
+        >
+          {maneuvers.map((maneuver) => (
+            <motion.button
+              key={maneuver.id}
+              onClick={() => onLessonSelect(maneuver)}
+              className="group relative overflow-hidden rounded-2xl p-4 text-left"
+              variants={itemVariants}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className={cn(
+                'absolute inset-0 bg-gradient-to-br opacity-90',
+                getManeuverColor(maneuver.id)
+              )} />
+              <div className="relative z-10">
+                <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
+                <h3 className="font-semibold text-white">
+                  {isDE ? maneuver.titleDe : maneuver.titleEn}
+                </h3>
+                <p className="mt-1 text-xs text-white/80">
+                  {maneuver.steps?.length || 0} {isDE ? 'Schritte' : 'steps'}
+                </p>
+                <div className="mt-3 flex items-center gap-1 text-xs font-medium text-white">
+                  <Play className="h-3 w-3" />
+                  {isDE ? 'Starten' : 'Start'}
+                </div>
               </div>
-            </div>
-          </button>
-        ))}
-      </div>
+            </motion.button>
+          ))}
+        </motion.div>
+      )}
 
       {/* Quick Tips Section */}
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
+      <motion.div 
+        className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800"
+        variants={itemVariants}
+      >
         <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
           {isDE ? 'Wichtige Hinweise' : 'Important Tips'}
         </h3>
@@ -136,10 +184,13 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Exam Checklist */}
-      <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+      <motion.div 
+        className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50"
+        variants={itemVariants}
+      >
         <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
           {isDE ? 'Prüfungs-Checkliste' : 'Exam Checklist'}
         </h3>
@@ -153,10 +204,13 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
             <li key={idx}>{isDE ? item.de : item.en}</li>
           ))}
         </ul>
-      </div>
+      </motion.div>
 
       {/* Video Animations Section */}
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
+      <motion.div 
+        className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800"
+        variants={itemVariants}
+      >
         <div className="flex items-center gap-2 mb-4">
           <Film className="h-5 w-5 text-blue-500" />
           <h3 className="font-semibold text-slate-900 dark:text-white">
@@ -192,7 +246,7 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
         {selectedAnimation && (
           <AnimatedManeuver type={selectedAnimation} language={language} />
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
