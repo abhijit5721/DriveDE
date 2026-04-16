@@ -19,6 +19,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     language,
     darkMode,
     toggleDarkMode,
+    setLanguage,
     authStatus,
     authEmail,
     authDisplayName,
@@ -241,7 +242,10 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
             </span>
           </button>
 
-          <div className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 dark:border-slate-700">
+          <button
+            onClick={() => setLanguage(language === 'de' ? 'en' : 'de')}
+            className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50"
+          >
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
                 <Globe className="h-5 w-5 text-slate-700 dark:text-slate-200" />
@@ -254,7 +258,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
               {isDE ? 'DE' : 'EN'}
             </span>
-          </div>
+          </button>
 
           <button
             onClick={onChangePath}
@@ -310,7 +314,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
         >
           <div className="flex items-start gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
-              <ClipboardCheck className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+              <ClipboardCheck className="h-6 w-6 text-blue-700 dark:text-blue-300" />
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900 dark:text-white">{isDE ? 'Fahrlehrer-Review' : 'Instructor review'}</p>
