@@ -216,7 +216,7 @@ export default function App() {
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
         <div className="flex h-screen flex-1 flex-col overflow-y-auto">
           <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />
-          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6">
+          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-24 lg:pb-6">
             <div className="mx-auto max-w-4xl">
               {renderContent()}
             </div>
