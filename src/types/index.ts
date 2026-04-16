@@ -148,6 +148,9 @@ export interface UserProgress {
     autobahn: number;
     nacht: number;
   };
+  unlockedAchievements: string[];
+  currentStreak: number;
+  lastActivityDate: string | null;
 }
 
 export interface AppState {
@@ -158,15 +161,20 @@ export interface AppState {
   transmissionType: TransmissionType;
   isPremium: boolean;
   authEmail: string | null;
+  authDisplayName: string | null;
   authStatus: 'guest' | 'signed_in';
   userProgress: UserProgress;
+  hasVisited: boolean;
+  setHasVisited: (hasVisited: boolean) => void;
   setLanguage: (lang: Language) => void;
   toggleDarkMode: () => void;
   setLicenseType: (type: LicenseType) => void;
   setLearningPath: (path: LearningPathType) => void;
   setTransmissionType: (type: TransmissionType) => void;
   setPremium: (isPremium: boolean) => void;
-  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in') => void;
+  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in', authDisplayName: string | null) => void;
+  unlockAchievement: (achievementId: string) => void;
+  updateStreak: () => void;
   completeLesson: (lessonId: string) => void;
   addDrivingSession: (session: Omit<DrivingSession, 'id'>) => void;
   removeDrivingSession: (sessionId: string) => void;
@@ -174,6 +182,6 @@ export interface AppState {
   resetProgress: () => void;
 }
 
-export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'review' | 'legal' | 'account';
+export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account';
 
 export type LegalPageType = 'privacy' | 'terms' | 'gdpr' | 'impressum' | 'disclaimer';
