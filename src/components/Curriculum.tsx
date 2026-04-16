@@ -389,6 +389,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   <AnimatePresence>
                     {isExpanded && isUnlocked && (
                       <motion.div 
+                        key={chapter.id}
                         className="ml-14 mt-2 space-y-2"
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
