@@ -18,11 +18,11 @@ serve(async (req) => {
   try {
     const { tier, language, user_id } = await req.json()
 
-    // NOTE: You must replace these with your actual Stripe Price IDs
+    // NOTE: Real Stripe Price IDs from Dashboard
     const pricing: Record<string, string> = {
-      '30-days': 'price_XYZ_30days',
-      '90-days': 'price_XYZ_90days',
-      'lifetime': 'price_XYZ_lifetime',
+      '30-days': 'price_1TNAE6KdwMS8radbvJpYwVL8',
+      '90-days': 'price_1TNAFgKdwMS8radbknDRyljk',
+      'lifetime': 'price_1TNAH6KdwMS8radb1ijnRNsP',
     }
 
     const priceId = pricing[tier]
