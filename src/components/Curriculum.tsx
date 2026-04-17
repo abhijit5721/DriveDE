@@ -41,7 +41,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   };
 
   const getLessonBadge = (lesson: Lesson) => {
-    if (lesson.isPremium) {
+    if (lesson.isPremium && !isPremium) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
           <Crown className="h-3 w-3" />
