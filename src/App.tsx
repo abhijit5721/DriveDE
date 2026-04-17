@@ -24,6 +24,7 @@ import { Account } from './components/Account';
 import { AccountSkeleton } from './components/AccountSkeleton';
 import { Skeleton } from './components/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
+import {LicenseSelector} from "@/components/LicenseSelector.tsx";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
