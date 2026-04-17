@@ -30,6 +30,7 @@ const initialProgress = {
   unlockedAchievements: [],
   currentStreak: 0,
   lastActivityDate: null,
+  incorrectQuestions: [],
 };
 
 const deriveSelectionState = (type: LicenseType) => {
@@ -301,6 +302,43 @@ export const useAppStore = create<AppState>()(
                 ...state.userProgress.quizScores,
                 [quizId]: score,
               },
+            },
+          };
+        }),
+
+      addMistake: (questionId: string) =>
+        set((state) => {
+          if (state.userProgress.incorrectQuestions.includes(questionId)) return state;
+          const nextState = {
+            ...state,
+            userProgress: {
+              ...state.userProgress,
+              incorrectQuestions: [...state.userProgress.incorrectQuestions, questionId],
+            },
+          };
+          void ensureProfileFromState(nextState as AppState);
+          return {
+            userProgress: {
+              ...state.userProgress,
+              incorrectQuestions: [...state.userProgress.incorrectQuestions, questionId],
+            },
+          };
+        }),
+
+      removeMistake: (questionId: string) =>
+        set((state) => {
+          const nextState = {
+            ...state,
+            userProgress: {
+              ...state.userProgress,
+              incorrectQuestions: state.userProgress.incorrectQuestions.filter((id) => id !== questionId),
+            },
+          };
+          void ensureProfileFromState(nextState as AppState);
+          return {
+            userProgress: {
+              ...state.userProgress,
+              incorrectQuestions: state.userProgress.incorrectQuestions.filter((id) => id !== questionId),
             },
           };
         }),

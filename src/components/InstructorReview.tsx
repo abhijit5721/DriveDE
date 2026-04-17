@@ -1,9 +1,11 @@
-import { useRef, useState } from 'react';
-import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck } from 'lucide-react';
+import { useRef, useState, useMemo } from 'react';
+import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck, AlertCircle, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { useAppStore } from '../store/useAppStore';
 import { chapters, getAllLessons, getLessonById } from '../data/curriculum';
+import { scenarios } from '../data/scenarios';
 import { PageHeader } from './PageHeader';
+import { cn } from '../utils/cn';
 import type { Lesson, ManeuverStep, Tip } from '../types';
 
 interface InstructorReviewProps {
@@ -276,10 +278,16 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
 }
 
 export function InstructorReview({ onBack }: InstructorReviewProps) {
-  const { language, licenseType } = useAppStore();
+  const { language, licenseType, userProgress, removeMistake } = useAppStore();
   const isDE = language === 'de';
   const documentRef = useRef<HTMLDivElement | null>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const myMistakes = useMemo(() => {
+    return (userProgress.incorrectQuestions || [])
+      .map(id => scenarios.find(s => s.id === id))
+      .filter(Boolean);
+  }, [userProgress.incorrectQuestions]);
 
   const sampleLessons = sampleLessonIds
     .map((id) => getLessonById(id))
@@ -569,6 +577,75 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
             </div>
           </div>
         </section>
+
+        {myMistakes.length > 0 && (
+          <section className="print:hidden rounded-2xl border border-red-200 bg-red-50/50 p-5 dark:border-red-900/30 dark:bg-red-900/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400">
+                  <AlertCircle className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                    {isDE ? 'Meine Fehler-Korrektur' : 'My Mistake Review'}
+                  </h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {isDE 
+                      ? `${myMistakes.length} Szenarien warten auf Wiederholung.` 
+                      : `${myMistakes.length} scenarios waiting for review.`}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              {myMistakes.map((scenario) => {
+                if (!scenario) return null;
+                const correctOption = scenario.options.find(o => o.id === scenario.correctId);
+                
+                return (
+                  <div key={scenario.id} className="group relative rounded-2xl border border-white bg-white/60 p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800/60">
+                    <button
+                      onClick={() => removeMistake(scenario.id)}
+                      className="absolute right-3 top-3 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                      title={isDE ? 'Als gelernt markieren' : 'Mark as learned'}
+                    >
+                      <CheckCircle2 className="h-5 w-5" />
+                    </button>
+
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{scenario.icon}</span>
+                      <h3 className="font-bold text-slate-900 dark:text-white">
+                        {isDE ? scenario.titleDe : scenario.titleEn}
+                      </h3>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div className="rounded-xl bg-slate-100/50 p-3 text-sm text-slate-700 dark:bg-slate-900/40 dark:text-slate-300">
+                        <p className="font-semibold text-slate-900 dark:text-white mb-1">
+                          {isDE ? 'Situation:' : 'Situation:'}
+                        </p>
+                        {isDE ? scenario.situationDe : scenario.situationEn}
+                      </div>
+
+                      <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 text-sm dark:border-emerald-900/30 dark:bg-emerald-900/10">
+                        <p className="font-bold text-emerald-800 dark:text-emerald-400 mb-1">
+                          {isDE ? 'Richtige Antwort:' : 'Correct Answer:'}
+                        </p>
+                        <p className="text-emerald-900 dark:text-emerald-200">
+                          {isDE ? correctOption?.textDe : correctOption?.textEn}
+                        </p>
+                        <p className="mt-2 text-xs italic opacity-80">
+                          {isDE ? scenario.explanationDe : scenario.explanationEn}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="print-section print-no-shadow rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800 print:shadow-none">
           <div className="flex items-center gap-3">

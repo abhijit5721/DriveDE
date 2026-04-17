@@ -43,6 +43,7 @@ export async function ensureProfileFromState(state: AppState) {
     transmission_type: mapTransmissionToDb(state.transmissionType),
     language: state.language,
     theme: state.darkMode ? 'dark' : 'light',
+    incorrect_questions: state.userProgress.incorrectQuestions || [],
   });
 
   if (error) {
@@ -139,5 +140,6 @@ export async function hydrateFromSupabase() {
     lessons: lessons ?? [],
     sessions: sessions ?? [],
     quizAttempts: quizAttempts ?? [],
+    incorrectQuestions: profile?.incorrect_questions ?? [],
   };
 }

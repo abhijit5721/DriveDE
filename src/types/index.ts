@@ -152,6 +152,7 @@ export interface UserProgress {
   unlockedAchievements: string[];
   currentStreak: number;
   lastActivityDate: string | null;
+  incorrectQuestions: string[];
 }
 
 export interface AppState {
@@ -180,6 +181,8 @@ export interface AppState {
   addDrivingSession: (session: Omit<DrivingSession, 'id'>) => void;
   removeDrivingSession: (sessionId: string) => void;
   setQuizScore: (quizId: string, score: number) => void;
+  addMistake: (questionId: string) => void;
+  removeMistake: (questionId: string) => void;
   resetProgress: () => void;
 }
 

@@ -107,12 +107,18 @@ export default function App() {
 
                 const isPremium = !!remoteData.profile?.is_premium;
 
+                const combinedIncorrectQuestions = Array.from(new Set([
+                    ...state.userProgress.incorrectQuestions,
+                    ...(remoteData.incorrectQuestions || [])
+                ]));
+
                 return {
                     isPremium,
                     userProgress: {
                         ...state.userProgress,
                         completedLessons: combinedCompletedLessons,
                         drivingSessions: combinedSessions,
+                        incorrectQuestions: combinedIncorrectQuestions,
                         totalDrivingMinutes,
                         specialDrivingMinutes
                     }
