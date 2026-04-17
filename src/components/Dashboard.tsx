@@ -232,6 +232,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       {isUmschreibung && (
         <button
           onClick={() => onDirectLessonSelect('basics-0')}
+          aria-label={isDE ? 'Umschreibung Schnellstart: Zu deutschen Prüfungsfallen springen' : 'Conversion Quick Start: Jump to German exam traps'}
           className="w-full rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-purple-900/40 dark:from-purple-900/20 dark:to-indigo-900/10"
         >
           <div className="flex items-start gap-3">
@@ -283,6 +284,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <button
           onClick={() => onNavigate('legal')}
+          aria-label={isDE ? 'Rechtliches & DSGVO: Datenschutz und Impressum ansehen' : 'Legal & GDPR: View privacy and imprint'}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
         >
           <div className="flex items-start gap-4">
@@ -310,6 +312,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
         <button
           onClick={() => onDirectLessonSelect('basics-1a')}
+          aria-label={isDE ? 'Fahrzeugtechnik: Reifen, Lichter und Kontrollleuchten lernen' : 'Vehicle Tech: Learn about tires, lights, and indicators'}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
         >
           <div className="flex items-start gap-4">
@@ -337,6 +340,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
         <button
           onClick={() => onNavigate('review')}
+          aria-label={isDE ? 'Fahrlehrer-Review-Paket: Fortschritt als PDF exportieren' : 'Instructor Review Pack: Export progress as PDF'}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800 lg:col-span-2"
         >
           <div className="flex items-start gap-4">
@@ -478,6 +482,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               <button
                 key={chapter.id}
                 onClick={() => onNavigate('curriculum')}
+                aria-label={isDE ? `${chapter.titleDe}: Fortschritt ${chapterProgress}%` : `${chapter.titleEn}: Progress ${chapterProgress}%`}
                 className="group flex w-full items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-900 dark:group-hover:bg-indigo-900/30">

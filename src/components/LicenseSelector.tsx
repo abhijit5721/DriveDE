@@ -145,6 +145,8 @@ export const LicenseSelector: React.FC = () => {
                   setLearningPath('standard');
                   setTransmissionType(null);
                 }}
+                aria-label={t.standard.title}
+                aria-pressed={learningPath === 'standard'}
                 className={`relative rounded-2xl bg-white p-6 text-left transition-all duration-300 ${
                   learningPath === 'standard' ? 'ring-4 ring-green-500 shadow-2xl' : 'shadow-lg hover:shadow-xl'
                 }`}
@@ -179,6 +181,8 @@ export const LicenseSelector: React.FC = () => {
                   setLearningPath('umschreibung');
                   setTransmissionType(null);
                 }}
+                aria-label={t.conversion.title}
+                aria-pressed={learningPath === 'umschreibung'}
                 className={`relative rounded-2xl bg-white p-6 text-left transition-all duration-300 ${
                   learningPath === 'umschreibung' ? 'ring-4 ring-green-500 shadow-2xl' : 'shadow-lg hover:shadow-xl'
                 }`}
@@ -226,6 +230,8 @@ export const LicenseSelector: React.FC = () => {
             <div className={`grid md:grid-cols-2 gap-4 ${!learningPath ? 'pointer-events-none opacity-50' : ''}`}>
               <button
                 onClick={() => setTransmissionType('manual')}
+                aria-label={t.manual.title}
+                aria-pressed={transmissionType === 'manual'}
                 className={`relative rounded-2xl border-2 p-6 text-left transition-all duration-300 ${
                   transmissionType === 'manual'
                     ? 'border-orange-500 bg-orange-50 shadow-lg'
@@ -251,6 +257,8 @@ export const LicenseSelector: React.FC = () => {
 
               <button
                 onClick={() => setTransmissionType('automatic')}
+                aria-label={t.automatic.title}
+                aria-pressed={transmissionType === 'automatic'}
                 className={`relative rounded-2xl border-2 p-6 text-left transition-all duration-300 ${
                   transmissionType === 'automatic'
                     ? 'border-blue-500 bg-blue-50 shadow-lg'

@@ -8,7 +8,7 @@ interface DesktopNavProps {
 }
 
 export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
-  const { language, setLanguage, darkMode, toggleDarkMode, isPremium } = useAppStore();
+  const { language, setLanguage, darkMode, toggleDarkMode, isPremium, userProgress } = useAppStore();
   const isDE = language === 'de';
 
   const navItems = [
@@ -21,17 +21,26 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
     { id: 'account', label: isDE ? 'Konto' : 'Account', icon: User },
   ] as const;
 
+  const mistakesCount = (userProgress.incorrectQuestions || []).length;
+
   return (
-    <aside className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0">
+    <aside 
+      role="navigation"
+      aria-label={isDE ? 'Hauptnavigation' : 'Main Navigation'}
+      className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0"
+    >
       <div className="p-6">
         <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-500">DriveDE</h2>
       </div>
       
       <nav className="flex-1 px-4 py-2">
-        <ul className="space-y-1.5">
+        <ul className="space-y-1.5" role="tablist">
           {navItems.map((item) => (
             <li key={item.id}>
               <button
+                role="tab"
+                aria-selected={activeTab === item.id}
+                aria-label={item.label}
                 onClick={() => onTabChange(item.id)}
                 className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-200
                   ${activeTab === item.id
@@ -39,8 +48,15 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
                     : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
                   }`}
               >
-                <item.icon className={`h-5 w-5 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
-                {item.label}
+                <div className="relative">
+                  <item.icon className={`h-5 w-5 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                  {item.id === 'review' && mistakesCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                      {mistakesCount}
+                    </span>
+                  )}
+                </div>
+                <span className="flex-1">{item.label}</span>
               </button>
             </li>
           ))}
@@ -56,9 +72,15 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
             </div>
           )}
 
-          <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+          <div 
+            className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl"
+            role="group"
+            aria-label={isDE ? 'Sprachauswahl' : 'Language Selection'}
+          >
             <button
               onClick={() => setLanguage('de')}
+              aria-label="Auf Deutsch wechseln"
+              aria-pressed={language === 'de'}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
                 language === 'de'
                   ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
@@ -69,6 +91,8 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
             </button>
             <button
               onClick={() => setLanguage('en')}
+              aria-label="Switch to English"
+              aria-pressed={language === 'en'}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
                 language === 'en'
                   ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
@@ -81,6 +105,7 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
 
           <button
             onClick={toggleDarkMode}
+            aria-label={darkMode ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}
             className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <div className="flex items-center gap-3">

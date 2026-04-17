@@ -90,6 +90,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           <div className="mt-6 flex gap-3">
             <button
               onClick={handleRestart}
+              aria-label={isDE ? 'Quiz neustarten' : 'Restart quiz'}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 py-3 font-semibold text-slate-700 transition-all hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
             >
               <RotateCcw className="h-4 w-4" />
@@ -97,6 +98,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
             </button>
             <button
               onClick={onClose}
+              aria-label={isDE ? 'Quiz beenden' : 'Close quiz and return to dashboard'}
               className="flex-1 rounded-xl bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600"
             >
               {isDE ? 'Fertig' : 'Done'}
@@ -119,6 +121,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           </div>
           <button
             onClick={onClose}
+            aria-label={isDE ? 'Quiz schließen' : 'Close quiz'}
             className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             <X className="h-5 w-5" />
@@ -162,6 +165,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
                   key={option.id}
                   onClick={() => handleSelect(option.id)}
                   disabled={showResult}
+                  aria-label={isDE ? `Option ${option.id.toUpperCase()}: ${option.textDe}` : `Option ${option.id.toUpperCase()}: ${option.textEn}`}
                   className={cn(
                     'flex w-full items-center gap-3 rounded-xl p-4 text-left transition-all',
                     showResult
@@ -211,6 +215,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           {showResult && (
             <button
               onClick={handleNext}
+              aria-label={currentIndex < scenarios.length - 1 ? (isDE ? 'Nächste Frage' : 'Next question') : (isDE ? 'Ergebnis anzeigen' : 'Show results')}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600"
             >
               {currentIndex < scenarios.length - 1
