@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -27,6 +27,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     learningPath,
     transmissionType,
     resetProgress,
+    isPremium,
   } = useAppStore();
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -107,12 +108,18 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
               {isDE ? 'Konto & Profil' : 'Account & Profile'}
             </p>
-            <h2 className="mt-1 text-2xl font-bold leading-tight truncate">
+            <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold leading-tight truncate">
               {authStatus === 'signed_in'
-                ? authDisplayName
+                 ? authDisplayName
                 : isDE
                   ? 'Gastmodus aktiv'
                   : 'Guest mode active'}
+              {isPremium && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                  <Crown className="h-3 w-3" />
+                  PRO
+                </span>
+              )}
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-300 truncate">
               {authStatus === 'signed_in'

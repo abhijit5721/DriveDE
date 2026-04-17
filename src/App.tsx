@@ -101,7 +101,10 @@ export default function App() {
                     if (s.type === 'nacht') specialDrivingMinutes.nacht += s.duration;
                 });
 
+                const isPremium = !!remoteData.profile?.is_premium;
+
                 return {
+                    isPremium,
                     userProgress: {
                         ...state.userProgress,
                         completedLessons: combinedCompletedLessons,

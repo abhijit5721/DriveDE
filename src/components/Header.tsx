@@ -57,6 +57,12 @@ export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
                   {transmissionLabel}
                 </span>
               )}
+              {isPremium && (
+                <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                  <Crown className="h-2.5 w-2.5" />
+                  PRO
+                </span>
+              )}
             </div>
             <p className="truncate text-[10px] text-slate-500 dark:text-slate-400">
               {language === 'de' ? 'Fahrschule App' : 'Driving School App'}
