@@ -43,7 +43,6 @@ export async function ensureProfileFromState(state: AppState) {
     transmission_type: mapTransmissionToDb(state.transmissionType),
     language: state.language,
     theme: state.darkMode ? 'dark' : 'light',
-    is_premium: state.isPremium,
   });
 
   if (error) {
