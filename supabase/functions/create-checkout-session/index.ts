@@ -32,7 +32,7 @@ serve(async (req) => {
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'paypal', 'giropay', 'sofort'],
+      payment_method_types: ['card'],
       client_reference_id: user_id, // Pass user UUID
       metadata: {
         user_id,
