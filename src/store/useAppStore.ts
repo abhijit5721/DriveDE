@@ -308,37 +308,48 @@ export const useAppStore = create<AppState>()(
 
       addMistake: (questionId: string) =>
         set((state) => {
-          if (state.userProgress.incorrectQuestions.includes(questionId)) return state;
+          const currentMistakes = Array.isArray(state.userProgress.incorrectQuestions) 
+            ? state.userProgress.incorrectQuestions 
+            : [];
+            
+          if (currentMistakes.includes(questionId)) return state;
+          
+          const nextMistakes = [...currentMistakes, questionId];
           const nextState = {
             ...state,
             userProgress: {
               ...state.userProgress,
-              incorrectQuestions: [...state.userProgress.incorrectQuestions, questionId],
+              incorrectQuestions: nextMistakes,
             },
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             userProgress: {
               ...state.userProgress,
-              incorrectQuestions: [...state.userProgress.incorrectQuestions, questionId],
+              incorrectQuestions: nextMistakes,
             },
           };
         }),
 
       removeMistake: (questionId: string) =>
         set((state) => {
+          const currentMistakes = Array.isArray(state.userProgress.incorrectQuestions) 
+            ? state.userProgress.incorrectQuestions 
+            : [];
+
+          const nextMistakes = currentMistakes.filter((id) => id !== questionId);
           const nextState = {
             ...state,
             userProgress: {
               ...state.userProgress,
-              incorrectQuestions: state.userProgress.incorrectQuestions.filter((id) => id !== questionId),
+              incorrectQuestions: nextMistakes,
             },
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             userProgress: {
               ...state.userProgress,
-              incorrectQuestions: state.userProgress.incorrectQuestions.filter((id) => id !== questionId),
+              incorrectQuestions: nextMistakes,
             },
           };
         }),

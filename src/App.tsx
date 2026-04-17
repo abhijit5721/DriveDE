@@ -107,9 +107,16 @@ export default function App() {
 
                 const isPremium = !!remoteData.profile?.is_premium;
 
+                const currentIncorrect = Array.isArray(state.userProgress.incorrectQuestions) 
+                    ? state.userProgress.incorrectQuestions 
+                    : [];
+                const remoteIncorrect = Array.isArray(remoteData.incorrectQuestions) 
+                    ? remoteData.incorrectQuestions 
+                    : [];
+
                 const combinedIncorrectQuestions = Array.from(new Set([
-                    ...state.userProgress.incorrectQuestions,
-                    ...(remoteData.incorrectQuestions || [])
+                    ...currentIncorrect,
+                    ...remoteIncorrect
                 ]));
 
                 return {
