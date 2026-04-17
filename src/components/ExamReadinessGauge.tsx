@@ -60,18 +60,18 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
 
       {/* Center Label */}
       <div className="absolute top-[35%] flex flex-col items-center">
-        <span className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white">
+        <span className="text-4xl font-black tracking-tighter text-white">
           {progress}%
         </span>
         {label && (
-          <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-blue-100/80">
             {label}
           </span>
         )}
       </div>
 
       {subLabel && (
-        <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <p className="mt-2 text-sm font-medium text-blue-100">
           {subLabel}
         </p>
       )}
