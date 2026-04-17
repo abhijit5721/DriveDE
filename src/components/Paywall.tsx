@@ -49,8 +49,19 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     setIsLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error(language === 'de' ? 'Bitte melden Sie sich an, um Pro freizuschalten.' : 'Please sign in to unlock Pro.');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { tier: selectedTier, language }
+        body: { 
+          tier: selectedTier, 
+          language,
+          user_id: user.id 
+        }
       });
 
       if (error) throw error;
