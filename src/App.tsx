@@ -127,6 +127,22 @@ export default function App() {
     };
   }, [setAuthState]);
 
+  // Handle post-payment success refresh
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('session_id') && useAppStore.getState().authStatus === 'signed_in') {
+      const triggerHydration = async () => {
+        const remoteData = await hydrateFromSupabase();
+        if (remoteData?.profile?.is_premium) {
+          useAppStore.setState({ isPremium: true });
+          // Clear the URL param without refreshing
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      };
+      triggerHydration();
+    }
+  }, []);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');

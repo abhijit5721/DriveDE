@@ -26,6 +26,8 @@ serve(async (req) => {
       const session = event.data.object
       const userId = session.client_reference_id
       const tier = session.metadata?.tier
+      
+      console.log(`[Webhook] Success for User: ${userId}, Tier: ${tier}`)
 
       if (userId) {
         // 1. Update Profile
@@ -34,7 +36,12 @@ serve(async (req) => {
           .update({ is_premium: true })
           .eq('id', userId)
 
-        if (profileError) throw profileError
+        if (profileError) {
+          console.error(`[Webhook] Profile Update Error: ${profileError.message}`)
+          throw profileError
+        }
+        
+        console.log(`[Webhook] Profile updated successfully for ${userId}`)
 
         // 2. Log subscription details
         const started_at = new Date().toISOString()
