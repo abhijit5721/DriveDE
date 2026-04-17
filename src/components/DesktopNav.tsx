@@ -1,4 +1,4 @@
-import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Globe, Sun, Moon, Crown } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { TabType } from '../types';
 
@@ -8,7 +8,7 @@ interface DesktopNavProps {
 }
 
 export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
-  const { language } = useAppStore();
+  const { language, setLanguage, darkMode, toggleDarkMode, isPremium } = useAppStore();
   const isDE = language === 'de';
 
   const navItems = [
@@ -22,29 +22,78 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
   ] as const;
 
   return (
-    <aside className="hidden lg:block w-64 shrink-0 border-r border-slate-200 dark:border-slate-800">
-      <div className="p-4">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">DriveDE</h2>
+    <aside className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0">
+      <div className="p-6">
+        <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-500">DriveDE</h2>
       </div>
-      <nav className="p-4">
-        <ul className="space-y-2">
+      
+      <nav className="flex-1 px-4 py-2">
+        <ul className="space-y-1.5">
           {navItems.map((item) => (
             <li key={item.id}>
               <button
                 onClick={() => onTabChange(item.id)}
-                className={`flex items-center w-full gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors
+                className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-200
                   ${activeTab === item.id
-                    ? 'bg-blue-500 text-white'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
+                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
                   }`}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className={`h-5 w-5 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
                 {item.label}
               </button>
             </li>
           ))}
         </ul>
       </nav>
+
+      <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
+        <div className="flex flex-col gap-3">
+          {isPremium && (
+            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+              <Crown className="h-4 w-4" />
+              DriveDE Pro Member
+            </div>
+          )}
+
+          <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+            <button
+              onClick={() => setLanguage('de')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                language === 'de'
+                  ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+              }`}
+            >
+              DE
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                language === 'en'
+                  ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
+                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
+          <button
+            onClick={toggleDarkMode}
+            className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            <div className="flex items-center gap-3">
+              {darkMode ? (
+                <Sun className="h-5 w-5 text-amber-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-blue-600" />
+              )}
+              {isDE ? (darkMode ? 'Heller Modus' : 'Dunkler Modus') : (darkMode ? 'Light Mode' : 'Dark Mode')}
+            </div>
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }
