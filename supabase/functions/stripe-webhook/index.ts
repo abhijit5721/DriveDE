@@ -4,7 +4,10 @@ import Stripe from "npm:stripe@^12"
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
   apiVersion: '2022-11-15',
+  httpClient: Stripe.createFetchHttpClient(),
 })
+
+const cryptoProvider = Stripe.createSubtleCryptoProvider()
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
@@ -16,10 +19,14 @@ serve(async (req) => {
 
   try {
     const body = await req.text()
+    
+    // Use constructEventAsync with the subtle crypto provider
     const event = await stripe.webhooks.constructEventAsync(
       body,
       signature!,
-      Deno.env.get('STRIPE_WEBHOOK_SECRET') || ''
+      Deno.env.get('STRIPE_WEBHOOK_SECRET') || '',
+      undefined,
+      cryptoProvider
     )
 
     if (event.type === 'checkout.session.completed') {
@@ -30,11 +37,13 @@ serve(async (req) => {
       console.log(`[Webhook] Success for User: ${userId}, Tier: ${tier}`)
 
       if (userId) {
-        // 1. Update Profile
+        // 1. Update Profile (using upsert to be safe)
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ is_premium: true })
-          .eq('id', userId)
+          .upsert({ 
+            id: userId,
+            is_premium: true 
+          })
 
         if (profileError) {
           console.error(`[Webhook] Profile Update Error: ${profileError.message}`)
