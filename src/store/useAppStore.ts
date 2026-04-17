@@ -308,6 +308,7 @@ export const useAppStore = create<AppState>()(
       resetProgress: () =>
         set({
           userProgress: initialProgress,
+          isPremium: false,
         }),
     }),
     {
