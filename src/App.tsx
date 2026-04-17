@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
-import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson } from './services/supabaseSync';
+import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
 import { Header } from './components/Header';
@@ -58,6 +58,10 @@ export default function App() {
         setAuthState(user.email || null, 'signed_in', displayName);
         
         const remoteData = await hydrateFromSupabase();
+        
+        // Ensure profile exists in DB immediately upon login
+        const currentState = useAppStore.getState();
+        await ensureProfileFromState(currentState);
         
         if (isNewUser) {
           // First sign-in: sync local session progress to cloud
