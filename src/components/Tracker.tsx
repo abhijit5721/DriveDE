@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
 import { EmptyState } from './EmptyState';
 import type { DrivingSession } from '../types';
 
-export function Tracker() {
-  const { language, userProgress, addDrivingSession, removeDrivingSession, licenseType } = useAppStore();
+interface TrackerProps {
+  onOpenPaywall: () => void;
+}
+
+export function Tracker({ onOpenPaywall }: TrackerProps) {
+  const { language, userProgress, addDrivingSession, removeDrivingSession, licenseType, isPremium } = useAppStore();
+  const SESSION_LIMIT = 3;
+  const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSession, setNewSession] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -147,10 +153,21 @@ export function Tracker() {
           </p>
         </div>
         <button
-          onClick={() => setShowAddForm(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-600 dark:shadow-blue-900/30"
+          onClick={() => {
+            if (hasReachedLimit) {
+              onOpenPaywall();
+            } else {
+              setShowAddForm(true);
+            }
+          }}
+          className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-all",
+            hasReachedLimit 
+              ? "bg-amber-500 hover:bg-amber-600 shadow-amber-200 dark:shadow-amber-900/30"
+              : "bg-blue-500 hover:bg-blue-600 shadow-blue-200 dark:shadow-blue-900/30"
+          )}
         >
-          <Plus className="h-5 w-5" />
+          {hasReachedLimit ? <Crown className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
         </button>
       </div>
 
@@ -177,7 +194,13 @@ export function Tracker() {
             </button>
           ) : (
             <button
-              onClick={handleStartTimer}
+              onClick={() => {
+                if (hasReachedLimit) {
+                  onOpenPaywall();
+                } else {
+                  handleStartTimer();
+                }
+              }}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-600"
             >
               <Play className="h-4 w-4" />

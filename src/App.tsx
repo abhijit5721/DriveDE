@@ -254,7 +254,13 @@ export default function App() {
             onChangePath={handleChangePath}
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
-            onStartSimulation={() => setShowExamSimulation(true)}
+            onStartSimulation={() => {
+              if (isPremium) {
+                setShowExamSimulation(true);
+              } else {
+                setShowPaywall(true);
+              }
+            }}
             onDirectLessonSelect={handleDirectLessonSelect}
           />
         );
@@ -263,7 +269,7 @@ export default function App() {
       case 'maneuvers':
         return <Maneuvers onLessonSelect={handleLessonSelect} />;
       case 'tracker':
-        return <Tracker />;
+        return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
       case 'achievements':
         return <Achievements />;
       case 'review':
@@ -285,7 +291,13 @@ export default function App() {
             onChangePath={handleChangePath}
             onOpenPaywall={() => setShowPaywall(true)}
             onOpenAuth={handleOpenAuth}
-            onStartSimulation={() => setShowExamSimulation(true)}
+            onStartSimulation={() => {
+              if (isPremium) {
+                setShowExamSimulation(true);
+              } else {
+                setShowPaywall(true);
+              }
+            }}
             onDirectLessonSelect={handleDirectLessonSelect}
           />
         );

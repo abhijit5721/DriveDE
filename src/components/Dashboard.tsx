@@ -140,8 +140,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         className="flex w-full items-center justify-between rounded-xl bg-slate-900 p-4 text-white shadow-lg transition-transform hover:scale-[1.01] dark:bg-slate-800"
       >
         <div className="flex items-center gap-3 text-left">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 relative">
             <Mic className="h-5 w-5" />
+            {!isPremium && (
+              <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 shadow-sm">
+                <Crown className="h-3 w-3 text-white" />
+              </div>
+            )}
           </div>
           <div>
             <p className="text-sm font-bold">{isDE ? 'Prüfungssimulation' : 'Exam Simulation'}</p>
@@ -295,6 +300,11 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   {isDE ? 'Umschreibung Schnellstart' : 'Conversion Quick Start'}
                 </h3>
                 <div className="flex items-center gap-2">
+                  {!isPremium && (
+                    <span className="inline-flex rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+                      Pro
+                    </span>
+                  )}
                   <span className="inline-flex rounded-full bg-purple-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-purple-800 dark:bg-purple-800/60 dark:text-purple-100">
                     {isDE ? 'Deutschland-Fokus' : 'Germany Focus'}
                   </span>

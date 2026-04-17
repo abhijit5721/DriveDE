@@ -1992,7 +1992,7 @@ const basicsLessons: Lesson[] = [
     completed: false,
     licenseType: 'both',
     learningPath: 'umschreibung',
-    isPremium: false,
+    isPremium: true,
     glossary: [...germanRoadGlossary],
     examinerCommands: [...examinerCommandsCore],
     guidedPoints: [
