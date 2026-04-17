@@ -24,9 +24,18 @@ async function getCurrentUserId() {
 }
 
 export async function ensureProfileFromState(state: AppState) {
-  if (!isSupabaseConfigured || !supabase) return;
+  console.log('[DB-Sync] Starting profile sync...');
+  if (!isSupabaseConfigured || !supabase) {
+    console.log('[DB-Sync] Configuration missing or incomplete');
+    return;
+  }
   const userId = await getCurrentUserId();
-  if (!userId) return;
+  if (!userId) {
+    console.log('[DB-Sync] No user ID found');
+    return;
+  }
+
+  console.log('[DB-Sync] Syncing for user:', userId);
 
   const { error } = await supabase.from('profiles').upsert({
     id: userId,
@@ -38,7 +47,9 @@ export async function ensureProfileFromState(state: AppState) {
   });
 
   if (error) {
-    console.warn('[DriveDE] Failed to sync profile', error.message);
+    console.error('[DB-Sync] FAILED to sync profile:', error.message);
+  } else {
+    console.log('[DB-Sync] Profile sync successful!');
   }
 }
 
