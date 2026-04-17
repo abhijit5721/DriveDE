@@ -115,7 +115,14 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
                 getManeuverColor(maneuver.id)
               )} />
               <div className="relative z-10">
-                <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
+                <div className="flex items-start justify-between">
+                  <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
+                  {maneuver.isPremium && (
+                    <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                      Pro
+                    </span>
+                  )}
+                </div>
                 <h3 className="font-semibold text-white">
                   {isDE ? maneuver.titleDe : maneuver.titleEn}
                 </h3>

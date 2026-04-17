@@ -3394,7 +3394,7 @@ const examLessons: Lesson[] = [
     descriptionDe: 'Tipps gegen Nervosität am Prüfungstag',
     descriptionEn: 'Tips against nervousness on exam day',
     completed: false,
-    isPremium: false,
+    isPremium: true,
     tips: [
       {
         id: 'anxiety-tip1',
@@ -3460,7 +3460,7 @@ const examLessons: Lesson[] = [
     descriptionDe: 'Was Sie am Prüfungstag mitbringen müssen',
     descriptionEn: 'What to bring on exam day',
     completed: false,
-    isPremium: false,
+    isPremium: true,
     guidedPoints: examChecklistGuidedPoints,
     scenarios: [
       {

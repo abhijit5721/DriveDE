@@ -399,7 +399,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                           <motion.button
                             key={lesson.id}
                             onClick={() => isLessonUnlocked && onLessonSelect(lesson)}
-                            disabled={!isLessonUnlocked || isLockedForFreeUser}
+                            disabled={!isLessonUnlocked}
                             className={cn(
                               'flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all',
                               isLessonUnlocked && !isLockedForFreeUser
