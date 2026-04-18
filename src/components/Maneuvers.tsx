@@ -105,6 +105,9 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
             <motion.button
               key={maneuver.id}
               onClick={() => onLessonSelect(maneuver)}
+              aria-label={isDE 
+                ? `${maneuver.titleDe}: ${maneuver.steps?.length || 0} Schritte ansehen` 
+                : `${maneuver.titleEn}: View ${maneuver.steps?.length || 0} steps`}
               className="group relative overflow-hidden rounded-2xl p-4 text-left"
               variants={itemVariants}
               whileHover={{ scale: 1.03 }}
@@ -237,15 +240,17 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
             <button
               key={anim.id}
               onClick={() => setSelectedAnimation(selectedAnimation === anim.id ? null : anim.id)}
+              aria-label={isDE ? `Animation für ${anim.label} ${selectedAnimation === anim.id ? 'schließen' : 'öffnen'}` : `${selectedAnimation === anim.id ? 'Close' : 'Open'} ${anim.label} animation`}
+              aria-pressed={selectedAnimation === anim.id}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-lg p-3 transition-all',
+                'flex flex-col items-center gap-1 rounded-lg p-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',
                 selectedAnimation === anim.id
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
               )}
             >
-              <span className="text-xl">{anim.icon}</span>
-              <span className="text-xs font-medium">{anim.label}</span>
+              <span className="text-xl" aria-hidden="true">{anim.icon}</span>
+              <span className="text-xs font-semibold">{anim.label}</span>
             </button>
           ))}
         </div>

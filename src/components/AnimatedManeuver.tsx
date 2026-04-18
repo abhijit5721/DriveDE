@@ -252,14 +252,25 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
 
       {/* Step Description */}
       <div className="p-4 bg-gray-800 border-t border-gray-700">
-        <p className="text-white text-center font-medium text-lg min-h-[3rem]">
+        <div 
+          aria-live="polite" 
+          aria-atomic="true"
+          className="text-white text-center font-medium text-lg min-h-[3rem] transition-all duration-300"
+        >
           {language === 'de' ? steps[currentStep]?.description : steps[currentStep]?.descriptionEn}
-        </p>
+        </div>
         
         {/* Progress bar */}
-        <div className="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+        <div 
+          className="mt-3 h-1.5 bg-gray-700 rounded-full overflow-hidden"
+          role="progressbar"
+          aria-valuenow={Math.round(progress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={language === 'de' ? 'Fortschritt des aktuellen Schritts' : 'Current step progress'}
+        >
           <div 
-            className="h-full bg-blue-500 transition-all duration-50"
+            className="h-full bg-blue-500 transition-all duration-50 shadow-[0_0_8px_rgba(59,130,246,0.5)]"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -269,7 +280,8 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
       <div className="flex items-center justify-center gap-4 p-4 bg-gray-900 border-t border-gray-800">
         <button
           onClick={handleReset}
-          className="p-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
+          aria-label={language === 'de' ? 'Animation zurücksetzen' : 'Reset animation'}
+          className="p-3 rounded-full bg-gray-800 border border-gray-700 text-white hover:bg-gray-700 hover:border-gray-600 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           <RotateCcw size={20} />
         </button>
@@ -277,14 +289,19 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
         <button
           onClick={handlePrevStep}
           disabled={currentStep === 0}
-          className="p-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={language === 'de' ? 'Vorheriger Schritt' : 'Previous step'}
+          className="p-3 rounded-full bg-gray-800 border border-gray-700 text-white hover:bg-gray-700 hover:border-gray-600 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           <ChevronLeft size={20} />
         </button>
         
         <button
           onClick={() => setIsPlaying(!isPlaying)}
-          className="p-4 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          aria-label={isPlaying 
+            ? (language === 'de' ? 'Animation pausieren' : 'Pause animation') 
+            : (language === 'de' ? 'Animation abspielen' : 'Play animation')}
+          aria-pressed={isPlaying}
+          className="p-4 rounded-full bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-500/20 transition-all active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
         >
           {isPlaying ? <Pause size={24} /> : <Play size={24} />}
         </button>
@@ -292,7 +309,8 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
         <button
           onClick={handleNextStep}
           disabled={currentStep === steps.length - 1}
-          className="p-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={language === 'de' ? 'Nächster Schritt' : 'Next step'}
+          className="p-3 rounded-full bg-gray-800 border border-gray-700 text-white hover:bg-gray-700 hover:border-gray-600 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           <ChevronRight size={20} />
         </button>
@@ -308,12 +326,14 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
               setProgress(0);
               setIsPlaying(false);
             }}
-            className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+            aria-label={language === 'de' ? `Gehe zu Schritt ${index + 1}` : `Go to step ${index + 1}`}
+            aria-current={index === currentStep ? 'step' : undefined}
+            className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold transition-all active:scale-90 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               index === currentStep
-                ? 'bg-blue-600 text-white scale-110'
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 scale-110'
                 : index < currentStep
-                ? 'bg-green-600 text-white'
-                : 'bg-gray-700 text-gray-400'
+                ? 'bg-emerald-600/20 text-emerald-500 border border-emerald-500/30'
+                : 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600'
             }`}
           >
             {index + 1}
