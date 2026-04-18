@@ -11,6 +11,7 @@ interface BottomNavProps {
 const tabs: { id: TabType; labelDe: string; labelEn: string; icon: React.ReactNode }[] = [
   { id: 'home', labelDe: 'Start', labelEn: 'Home', icon: <Home className="h-5 w-5" /> },
   { id: 'curriculum', labelDe: 'Plan', labelEn: 'Plan', icon: <BookOpen className="h-5 w-5" /> },
+  { id: 'maneuvers', labelDe: 'Manöver', labelEn: 'Moves', icon: <ParkingSquare className="h-5 w-5" /> },
   { id: 'review', labelDe: 'Review', labelEn: 'Review', icon: <Star className="h-5 w-5" /> },
   { id: 'tracker', labelDe: 'Log', labelEn: 'Log', icon: <ClipboardList className="h-5 w-5" /> },
   { id: 'account', labelDe: 'Konto', labelEn: 'Account', icon: <UserRound className="h-5 w-5" /> },
