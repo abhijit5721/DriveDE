@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 
 interface AnimationStep {
   id: number;
@@ -102,6 +103,31 @@ const VerticalCarIllustration: React.FC<{
     <circle cx="6" cy="-31" r="2.4" fill="#F8FAFC" />
     <circle cx="-6" cy="31" r="2.4" fill="#DC2626" />
     <circle cx="6" cy="31" r="2.4" fill="#DC2626" />
+  </g>
+);
+
+const VisionCone: React.FC<{
+  angle: number;
+  sweep: number;
+  opacity?: number;
+}> = ({ angle, sweep, opacity = 0.2 }) => (
+  <motion.path
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.8 }}
+    d={`M 0 0 L ${100 * Math.cos((angle - sweep/2) * Math.PI / 180)} ${100 * Math.sin((angle - sweep/2) * Math.PI / 180)} A 100 100 0 0 1 ${100 * Math.cos((angle + sweep/2) * Math.PI / 180)} ${100 * Math.sin((angle + sweep/2) * Math.PI / 180)} Z`}
+    fill="url(#visionGradient)"
+  />
+);
+
+const SteeringWheelOverlay: React.FC<{ rotation: number }> = ({ rotation }) => (
+  <g transform="translate(360, 40)">
+    <circle r="18" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+    <motion.g animate={{ rotate: rotation }} transition={{ type: "spring", stiffness: 60 }}>
+      <circle r="14" fill="none" stroke="#94a3b8" strokeWidth="3" />
+      <rect x="-2" y="-14" width="4" height="28" fill="#94a3b8" rx="1" />
+      <rect x="-14" y="-2" width="28" height="4" fill="#94a3b8" rx="1" />
+    </motion.g>
   </g>
 );
 
@@ -346,20 +372,20 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
 
 // Animated SVG Components
 const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  const getCarPosition = () => {
+  const getCarState = () => {
     switch (step) {
-      case 0: return { x: 280, y: 80, rotation: 0 };
-      case 1: return { x: 280, y: 80, rotation: 0 };
-      case 2: return { x: 280, y: 100 + (progress * 0.3), rotation: 0 };
-      case 3: return { x: 280, y: 130, rotation: progress * 0.25 };
-      case 4: return { x: 280 - (progress * 0.5), y: 130 + (progress * 0.4), rotation: 25 + (progress * 0.15) };
-      case 5: return { x: 230, y: 170, rotation: 40 - (progress * 0.4) };
-      case 6: return { x: 220, y: 175, rotation: 0 };
-      default: return { x: 280, y: 80, rotation: 0 };
+      case 0: return { x: 280, y: 70, rotation: 0, wheel: 0 };
+      case 1: return { x: 280, y: 70, rotation: 0, wheel: 0 };
+      case 2: return { x: 280, y: 90, rotation: 0, wheel: 0 };
+      case 3: return { x: 280, y: 110, rotation: 0, wheel: 45 };
+      case 4: return { x: 250, y: 145, rotation: 35, wheel: 45 };
+      case 5: return { x: 225, y: 175, rotation: 20, wheel: -45 };
+      case 6: return { x: 220, y: 180, rotation: 0, wheel: 0 };
+      default: return { x: 280, y: 70, rotation: 0, wheel: 0 };
     }
   };
 
-  const pos = getCarPosition();
+  const state = getCarState();
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -372,88 +398,84 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
           <stop offset="0%" stopColor="#9CA3AF" />
           <stop offset="100%" stopColor="#6B7280" />
         </linearGradient>
+        <radialGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </radialGradient>
       </defs>
       {/* Road */}
       <rect x="0" y="0" width="400" height="250" fill="url(#streetSurface)" />
-      <path d="M0 42 H400" stroke="#475569" strokeWidth="1" opacity="0.28" />
-      <path d="M0 88 H400" stroke="#475569" strokeWidth="1" opacity="0.2" />
-      <path d="M0 206 H400" stroke="#0F172A" strokeWidth="1" opacity="0.25" />
       
       {/* Curb + sidewalk */}
       <rect x="140" y="140" width="260" height="110" fill="url(#sidewalkSurface)" />
       <rect x="140" y="140" width="260" height="10" fill="#D1D5DB" />
-      <path d="M140 152 H400" stroke="#4B5563" strokeWidth="1" opacity="0.35" />
       
       {/* Parked cars */}
       <g>
-        {/* Front car */}
-        <g transform="translate(300, 175)">
+        <g transform="translate(300, 185)">
           <HorizontalCarIllustration color="#2563EB" scale={0.9} />
         </g>
-
-        {/* Rear car */}
-        <g transform="translate(180, 175)">
+        <g transform="translate(180, 185)">
           <HorizontalCarIllustration color="#7C3AED" scale={0.9} />
         </g>
       </g>
       
-      {/* Parking space indicator */}
-      <rect x="215" y="148" width="50" height="4" fill="#22C55E" opacity="0.8" />
-      
-      {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
+      {/* Your car - Pivoting from rear axle (approx -20px from center) */}
+      <motion.g
+        animate={{ 
+          x: state.x, 
+          y: state.y, 
+          rotate: state.rotation 
+        }}
+        transition={{ type: "spring", damping: 20, stiffness: 45 }}
+        style={{ transformOrigin: "20px 0px" }}
+      >
         <HorizontalCarIllustration color="#EF4444" scale={0.82} />
-        {/* Direction indicator */}
-        <polygon points="32,-4 39,0 32,4" fill="#FDE047" />
+        
+        {/* Dynamic Vision Cones */}
+        <AnimatePresence>
+          {step === 1 && (
+            <g transform="translate(30, 0)">
+              {/* Checking mirrors and shoulder */}
+              <g transform="rotate(-40)"><VisionCone angle={0} sweep={60} /></g>
+              <g transform="rotate(40)"><VisionCone angle={0} sweep={60} /></g>
+              <g transform="rotate(180)"><VisionCone angle={0} sweep={90} opacity={0.3} /></g>
+            </g>
+          )}
+        </AnimatePresence>
+      </motion.g>
 
-        {/* Shoulder check indicator */}
-        {step === 1 && (
-          <g>
-            <circle cx="10" cy="-24" r="12" fill="#FDE047" opacity="0.3">
-              <animate attributeName="opacity" values="0.3;0.7;0.3" dur="1s" repeatCount="indefinite" />
-            </circle>
-            <text x="10" y="-20" textAnchor="middle" fill="#000" fontSize="8" fontWeight="bold">👀</text>
-          </g>
-        )}
-      </g>
+      {/* Steering Wheel HUD Overlay */}
+      <SteeringWheelOverlay rotation={state.wheel} />
       
       {/* Distance indicators */}
-      {step === 0 && (
-        <g>
-          <line x1="255" y1="68" x2="255" y2="155" stroke="#22C55E" strokeWidth="2" strokeDasharray="4" />
-          <text x="245" y="115" fill="#22C55E" fontSize="10" fontWeight="bold">50cm</text>
-        </g>
-      )}
-      
-      {/* Final position check */}
-      {step === 6 && (
-        <g>
-          <line x1="195" y1="175" x2="195" y2="148" stroke="#22C55E" strokeWidth="2" />
-          <text x="170" y="145" fill="#22C55E" fontSize="8" fontWeight="bold">≤30cm ✓</text>
-        </g>
-      )}
-      
-      {/* Labels */}
-      <text x="20" y="20" fill="#9CA3AF" fontSize="12">🚗 {step === 0 ? 'Start Position' : ''}</text>
+      <AnimatePresence>
+        {step === 0 && (
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <line x1="255" y1="58" x2="255" y2="155" stroke="#22C55E" strokeWidth="2" strokeDasharray="4" />
+            <text x="245" y="115" fill="#22C55E" fontSize="10" fontWeight="bold">50cm</text>
+          </motion.g>
+        )}
+      </AnimatePresence>
     </svg>
   );
 };
 
 const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  const getCarPosition = () => {
+  const getCarState = () => {
     switch (step) {
-      case 0: return { x: 200, y: 50, rotation: 0 };
-      case 1: return { x: 200, y: 50, rotation: 0 };
-      case 2: return { x: 200, y: 70 + (progress * 0.3), rotation: 0 };
-      case 3: return { x: 200, y: 100, rotation: progress * 0.4 };
-      case 4: return { x: 200, y: 100 + (progress * 0.6), rotation: 40 };
-      case 5: return { x: 200, y: 160, rotation: 40 - (progress * 0.4) };
-      case 6: return { x: 200, y: 170, rotation: 0 };
-      default: return { x: 200, y: 50, rotation: 0 };
+      case 0: return { x: 200, y: 40, rotation: 0, wheel: 0 };
+      case 1: return { x: 200, y: 50, rotation: 0, wheel: 0 };
+      case 2: return { x: 200, y: 70, rotation: 0, wheel: 0 };
+      case 3: return { x: 200, y: 90, rotation: 0, wheel: 60 };
+      case 4: return { x: 210, y: 150, rotation: 70, wheel: 60 };
+      case 5: return { x: 210, y: 190, rotation: 20, wheel: -60 };
+      case 6: return { x: 210, y: 200, rotation: 0, wheel: 0 };
+      default: return { x: 200, y: 40, rotation: 0, wheel: 0 };
     }
   };
 
-  const pos = getCarPosition();
+  const state = getCarState();
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -462,343 +484,297 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
           <stop offset="0%" stopColor="#4B5563" />
           <stop offset="100%" stopColor="#1F2937" />
         </linearGradient>
+        <radialGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </radialGradient>
       </defs>
       {/* Parking lot */}
       <rect x="0" y="0" width="400" height="250" fill="url(#lotSurface)" />
-      <path d="M0 50 H400" stroke="#64748B" strokeWidth="1" opacity="0.16" />
-      <path d="M0 95 H400" stroke="#64748B" strokeWidth="1" opacity="0.12" />
       
       {/* Parking lines */}
-      <line x1="120" y1="120" x2="120" y2="250" stroke="#F8FAFC" strokeWidth="3" opacity="0.9" />
-      <line x1="180" y1="120" x2="180" y2="250" stroke="#F8FAFC" strokeWidth="3" opacity="0.9" />
-      <line x1="240" y1="120" x2="240" y2="250" stroke="#F8FAFC" strokeWidth="3" opacity="0.9" />
-      <line x1="300" y1="120" x2="300" y2="250" stroke="#F8FAFC" strokeWidth="3" opacity="0.9" />
+      {[120, 180, 240, 300].map(x => (
+        <line key={x} x1={x} y1={120} x2={x} y2={250} stroke="#F8FAFC" strokeWidth="3" opacity="0.3" />
+      ))}
       
       {/* Target space highlight */}
-      <rect x="182" y="125" width="56" height="120" fill="#22C55E" opacity="0.2" />
+      <rect x="182" y="125" width="56" height="120" fill="#22C55E" opacity="0.1" />
       
       {/* Other parked cars */}
-      <g transform="translate(150, 185)">
-        <VerticalCarIllustration color="#6366F1" scale={0.95} />
-      </g>
-      <g transform="translate(270, 185)">
-        <VerticalCarIllustration color="#8B5CF6" scale={0.95} />
-      </g>
+      <g transform="translate(150, 195)"><VerticalCarIllustration color="#6366F1" scale={0.95} /></g>
+      <g transform="translate(270, 195)"><VerticalCarIllustration color="#8B5CF6" scale={0.95} /></g>
       
       {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
+      <motion.g
+        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+        transition={{ type: "spring", damping: 22, stiffness: 40 }}
+      >
         <VerticalCarIllustration color="#EF4444" scale={0.9} />
         
         {/* Turn signal */}
         {step >= 0 && step <= 2 && (
-          <circle cx="18" cy="-28" r="4" fill="#FDE047">
-            <animate attributeName="opacity" values="1;0;1" dur="0.5s" repeatCount="indefinite" />
-          </circle>
+          <motion.circle 
+            cx="18" cy="-28" r="4" fill="#FDE047"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+          />
         )}
         
-        {/* Shoulder check */}
-        {step === 1 && (
-          <circle cx="0" cy="-44" r="15" fill="#FDE047" opacity="0.4">
-            <animate attributeName="r" values="15;20;15" dur="1s" repeatCount="indefinite" />
-          </circle>
-        )}
-      </g>
-      
-      {/* Arrow showing direction */}
-      {step >= 2 && step <= 5 && (
-        <path d="M 210 90 L 210 130 L 220 130 L 200 150 L 180 130 L 190 130 L 190 90 Z" 
-              fill="#22C55E" opacity="0.6">
-          <animate attributeName="opacity" values="0.6;1;0.6" dur="1s" repeatCount="indefinite" />
-        </path>
-      )}
+        {/* Vision Cones */}
+        <AnimatePresence>
+          {step === 1 && (
+            <g transform="translate(0, -30)">
+              <g transform="rotate(-90)"><VisionCone angle={0} sweep={160} /></g>
+              <g transform="rotate(90)"><VisionCone angle={0} sweep={160} /></g>
+              <g transform="rotate(0)"><VisionCone angle={0} sweep={120} opacity={0.3} /></g>
+            </g>
+          )}
+        </AnimatePresence>
+      </motion.g>
+
+      <SteeringWheelOverlay rotation={state.wheel} />
     </svg>
   );
 };
 
 const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  const getCarPosition = () => {
+  const getCarState = () => {
     switch (step) {
-      case 0: return { x: 320, y: 175, rotation: 0 };
-      case 1: return { x: 320, y: 175, rotation: 0 };
-      case 2: return { x: 280 - (progress * 1.5), y: 175 - (progress * 0.5), rotation: -progress * 0.5 };
-      case 3: return { x: 130, y: 125, rotation: -50 };
-      case 4: return { x: 130, y: 125, rotation: -50 };
-      case 5: return { x: 130 + (progress * 0.5), y: 125 + (progress * 0.5), rotation: -50 + (progress * 0.5) };
-      case 6: return { x: 180, y: 175, rotation: 0 };
-      case 7: return { x: 80 + (progress * 0.5), y: 175, rotation: 180 };
-      default: return { x: 320, y: 175, rotation: 0 };
+      case 0: return { x: 320, y: 175, rotation: 0, wheel: 0 };
+      case 1: return { x: 320, y: 175, rotation: 0, wheel: 0 };
+      case 2: return { x: 200, y: 140, rotation: -30, wheel: -90 };
+      case 3: return { x: 130, y: 125, rotation: -50, wheel: -90 };
+      case 4: return { x: 130, y: 125, rotation: -50, wheel: 0 };
+      case 5: return { x: 155, y: 150, rotation: -20, wheel: 90 };
+      case 6: return { x: 180, y: 175, rotation: 0, wheel: 90 };
+      case 7: return { x: 180, y: 175, rotation: 180, wheel: 0 };
+      default: return { x: 320, y: 175, rotation: 0, wheel: 0 };
     }
   };
 
-  const pos = getCarPosition();
+  const state = getCarState();
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
+      <defs>
+        <radialGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </radialGradient>
+      </defs>
       {/* Road */}
-      <rect x="0" y="100" width="400" height="100" fill="#4B5563" />
-      <line x1="0" y1="150" x2="400" y2="150" stroke="#FDE047" strokeWidth="2" strokeDasharray="20,10" />
+      <rect x="0" y="100" width="400" height="100" fill="#334155" />
+      <line x1="0" y1="150" x2="400" y2="150" stroke="#FDE047" strokeWidth="2" strokeDasharray="20,10" opacity="0.5" />
       
       {/* Curbs */}
-      <rect x="0" y="90" width="400" height="15" fill="#6B7280" />
-      <rect x="0" y="195" width="400" height="15" fill="#6B7280" />
-      
-      {/* Sidewalks */}
-      <rect x="0" y="0" width="400" height="90" fill="#9CA3AF" />
-      <rect x="0" y="210" width="400" height="40" fill="#9CA3AF" />
+      <rect x="0" y="90" width="400" height="10" fill="#475569" />
+      <rect x="0" y="200" width="400" height="10" fill="#475569" />
       
       {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
+      <motion.g
+        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+        transition={{ type: "spring", damping: 20, stiffness: 35 }}
+        style={{ transformOrigin: step === 5 || step === 6 ? "-20px 0px" : "20px 0px" }}
+      >
         <HorizontalCarIllustration color="#EF4444" scale={0.82} />
         
         {/* Turn signals */}
-        {(step === 0 || step === 2 || step === 3) && (
-          <circle cx="-30" cy="0" r="3" fill="#FDE047">
-            <animate attributeName="opacity" values="1;0;1" dur="0.5s" repeatCount="indefinite" />
-          </circle>
+        {(step === 0 || step === 2) && (
+          <motion.circle 
+            cx="-30" cy="0" r="3" fill="#FDE047"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+          />
         )}
         
-        {/* Shoulder check indicator */}
-        {(step === 1 || step === 4) && (
-          <g>
-            <circle cx="-36" cy="-18" r="12" fill="#FDE047" opacity="0.5">
-              <animate attributeName="r" values="12;16;12" dur="0.8s" repeatCount="indefinite" />
-            </circle>
-            <text x="-36" y="-15" textAnchor="middle" fontSize="10">👀</text>
-          </g>
-        )}
-      </g>
-      
-      {/* Movement arrows */}
-      {step >= 2 && step <= 3 && (
-        <path d="M 300 175 Q 200 140 130 125" stroke="#22C55E" strokeWidth="3" fill="none" strokeDasharray="8,4">
-          <animate attributeName="stroke-dashoffset" values="0;-24" dur="1s" repeatCount="indefinite" />
-        </path>
-      )}
-      
-      {step >= 5 && step <= 6 && (
-        <path d="M 130 125 Q 160 150 180 175" stroke="#3B82F6" strokeWidth="3" fill="none" strokeDasharray="8,4">
-          <animate attributeName="stroke-dashoffset" values="0;24" dur="1s" repeatCount="indefinite" />
-        </path>
-      )}
-      
-      {/* Step label */}
-      <text x="20" y="30" fill="#374151" fontSize="12" fontWeight="bold">
-        {step <= 3 ? '1. Vorwärts nach links' : step <= 6 ? '2. Rückwärts' : '3. Weiterfahren'}
-      </text>
+        {/* Vision Cones */}
+        <AnimatePresence>
+          {(step === 1 || step === 5) && (
+            <g transform="translate(0, 0)">
+              <VisionCone angle={state.rotation - 90} sweep={120} />
+              <VisionCone angle={state.rotation + 90} sweep={120} />
+            </g>
+          )}
+        </AnimatePresence>
+      </motion.g>
+
+      <SteeringWheelOverlay rotation={state.wheel} />
     </svg>
   );
 };
 
 const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  const getCarPosition = () => {
-    const baseX = 320 - (step * 50) - (step >= 2 ? progress * 0.5 : 0);
-    return { x: Math.max(100, baseX), y: 150 };
+  const getCarState = () => {
+    switch (step) {
+      case 0: return { x: 320, speed: 30, pedal: 0 };
+      case 1: return { x: 260, speed: 30, pedal: 0 };
+      case 2: return { x: 200, speed: 20, pedal: 100 };
+      case 3: return { x: 150, speed: 10, pedal: 100 };
+      case 4: return { x: 120, speed: 5, pedal: 100 };
+      case 5: return { x: 120, speed: 0, pedal: 0 };
+      default: return { x: 320, speed: 30, pedal: 0 };
+    }
   };
 
-  const pos = getCarPosition();
+  const state = getCarState();
   const isBraking = step >= 2;
-  const speed = step === 0 ? 30 : step === 1 ? 30 : Math.max(0, 30 - (step - 2) * 10 - progress * 0.1);
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
-      {/* Road */}
-      <rect x="0" y="100" width="400" height="100" fill="#4B5563" />
-      <line x1="0" y1="150" x2="400" y2="150" stroke="#FDE047" strokeWidth="2" strokeDasharray="20,10">
-        {step < 2 && <animate attributeName="stroke-dashoffset" values="0;-60" dur="0.5s" repeatCount="indefinite" />}
-      </line>
+      <defs>
+        <linearGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {/* Road with moving stripes logic handled by framer-motion indirectly via step change */}
+      <rect x="0" y="0" width="400" height="250" fill="#1e293b" />
+      <rect x="0" y="100" width="400" height="100" fill="#334155" />
       
-      {/* Curb */}
-      <rect x="0" y="195" width="400" height="10" fill="#6B7280" />
+      <motion.line 
+        x1="0" y1="150" x2="400" y2="150" 
+        stroke="#FDE047" strokeWidth="2" strokeDasharray="20,10"
+        animate={{ strokeDashoffset: step < 2 ? [0, -60] : 0 }}
+        transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+      />
       
-      {/* Speed indicator */}
+      {/* Speedometer HUD */}
       <g transform="translate(30, 30)">
-        <rect x="0" y="0" width="80" height="40" rx="8" fill="#1F2937" />
-        <text x="40" y="28" textAnchor="middle" fill={isBraking ? '#EF4444' : '#22C55E'} fontSize="18" fontWeight="bold">
-          {Math.round(speed)} km/h
-        </text>
+        <rect x="0" y="0" width="80" height="40" rx="8" fill="#0f172a" stroke="#1e293b" />
+        <motion.text 
+          x="40" y="28" textAnchor="middle" 
+          animate={{ fill: isBraking ? "#ef4444" : "#22c55e" }}
+          className="text-lg font-bold"
+        >
+          {state.speed} km/h
+        </motion.text>
       </g>
       
       {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y})`}>
+      <motion.g
+        animate={{ x: state.x, y: 150 }}
+        transition={{ 
+          type: "spring", 
+          damping: isBraking ? 15 : 25, 
+          stiffness: isBraking ? 30 : 50 
+        }}
+      >
         <HorizontalCarIllustration color="#EF4444" scale={0.95} />
         
         {/* Brake lights */}
         {isBraking && (
-          <>
-            <rect x="-33" y="-9" width="6" height="8" rx="2" fill="#FF0000">
-              <animate attributeName="opacity" values="1;0.5;1" dur="0.2s" repeatCount="indefinite" />
-            </rect>
-            <rect x="-33" y="1" width="6" height="8" rx="2" fill="#FF0000">
-              <animate attributeName="opacity" values="1;0.5;1" dur="0.2s" repeatCount="indefinite" />
-            </rect>
-          </>
+          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <rect x="-33" y="-9" width="6" height="8" rx="2" fill="#ef4444" className="filter blur-[1px]" />
+            <rect x="-33" y="1" width="6" height="8" rx="2" fill="#ef4444" className="filter blur-[1px]" />
+          </motion.g>
         )}
-        
-        {/* Tire marks */}
-        {isBraking && step >= 3 && (
-          <>
-            <rect x="30" y="-12" width={50 + progress} height="4" fill="#1F2937" opacity="0.7" />
-            <rect x="30" y="8" width={50 + progress} height="4" fill="#1F2937" opacity="0.7" />
-          </>
+      </motion.g>
+      
+      {/* Pedal HUD */}
+      <AnimatePresence>
+        {isBraking && (
+          <motion.g 
+            initial={{ y: 20, opacity: 0 }} 
+            animate={{ y: 0, opacity: 1 }}
+            transform="translate(300, 20)"
+          >
+            <rect x="0" y="0" width="90" height="50" rx="8" fill="#0f172a" />
+            <motion.rect 
+              x="10" y="10" width="30" height="30" rx="4" fill="#ef4444"
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 0.3, repeat: Infinity }}
+            />
+            <motion.rect 
+              x="50" y="10" width="30" height="30" rx="4" fill="#3b82f6"
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 0.3, repeat: Infinity }}
+            />
+          </motion.g>
         )}
-      </g>
-      
-      {/* Instructor signal */}
-      {step === 1 && (
-        <g transform="translate(200, 80)">
-          <circle cx="0" cy="0" r="30" fill="#FDE047" opacity="0.8">
-            <animate attributeName="r" values="25;35;25" dur="0.5s" repeatCount="indefinite" />
-          </circle>
-          <text x="0" y="8" textAnchor="middle" fontSize="24">⚠️</text>
-        </g>
-      )}
-      
-      {/* Pedal indicators */}
-      {step >= 2 && (
-        <g transform="translate(300, 20)">
-          <rect x="0" y="0" width="90" height="50" rx="8" fill="#1F2937" />
-          <rect x="10" y="10" width="30" height="30" rx="4" fill="#EF4444" opacity={isBraking ? 1 : 0.3}>
-            <animate attributeName="opacity" values="1;0.7;1" dur="0.3s" repeatCount="indefinite" />
-          </rect>
-          <text x="25" y="50" textAnchor="middle" fill="#FFF" fontSize="8">BRAKE</text>
-          <rect x="50" y="10" width="30" height="30" rx="4" fill="#3B82F6" opacity={isBraking ? 1 : 0.3}>
-            <animate attributeName="opacity" values="1;0.7;1" dur="0.3s" repeatCount="indefinite" />
-          </rect>
-          <text x="65" y="50" textAnchor="middle" fill="#FFF" fontSize="8">CLUTCH</text>
-        </g>
-      )}
-      
-      {/* ABS indicator */}
-      {step >= 3 && step < 5 && (
-        <g transform="translate(30, 80)">
-          <rect x="0" y="0" width="60" height="30" rx="6" fill="#FDE047" />
-          <text x="30" y="20" textAnchor="middle" fill="#000" fontSize="12" fontWeight="bold">ABS</text>
-          <animate attributeName="opacity" values="1;0.5;1" dur="0.3s" repeatCount="indefinite" />
-        </g>
-      )}
-      
-      {/* Complete stop indicator */}
-      {step >= 5 && (
-        <g transform="translate(pos.x - 30, 100)">
-          <circle cx={pos.x} cy="60" r="25" fill="#22C55E" opacity="0.8" />
-          <text x={pos.x} y="65" textAnchor="middle" fill="#FFF" fontSize="20">✓</text>
-        </g>
-      )}
+      </AnimatePresence>
+
+      {/* Warning Signal */}
+      <AnimatePresence>
+        {step === 1 && (
+          <motion.g 
+            initial={{ scale: 0, opacity: 0 }} 
+            animate={{ scale: 1, opacity: 1 }} 
+            exit={{ scale: 1.5, opacity: 0 }}
+            transform="translate(200, 70)"
+          >
+            <circle r="25" fill="#f59e0b" opacity="0.4" />
+            <text textAnchor="middle" y="8" fontSize="24">⚠️</text>
+          </motion.g>
+        )}
+      </AnimatePresence>
     </svg>
   );
 };
 
-const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  // Calculate car position along the roundabout path
-  const getCarTransform = () => {
-    const centerX = 200;
-    const centerY = 125;
-    const radius = 60;
-    
+const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
+  const getCarState = () => {
     switch (step) {
-      case 0:
-      case 1:
-        return { x: 200, y: 220 - (progress * 0.3), rotation: 0 };
-      case 2:
-        return { x: 200, y: 190, rotation: 0 };
-      case 3: {
-        // Enter roundabout
-        const angle = Math.PI / 2 - (progress / 100) * (Math.PI / 4);
-        return {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-          rotation: -90 + (progress * 0.45)
-        };
-      }
-      case 4: {
-        // Drive in roundabout
-        const angle = Math.PI / 4 - (progress / 100) * (Math.PI / 2);
-        return {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-          rotation: -45 - (progress * 0.9)
-        };
-      }
-      case 5: {
-        // Prepare to exit
-        const angle = -Math.PI / 4 - (progress / 100) * (Math.PI / 4);
-        return {
-          x: centerX + radius * Math.cos(angle),
-          y: centerY + radius * Math.sin(angle),
-          rotation: -135 - (progress * 0.45)
-        };
-      }
-      case 6: {
-        // Exit
-        return {
-          x: 280 + (progress * 0.5),
-          y: 125,
-          rotation: -180
-        };
-      }
-      default:
-        return { x: 200, y: 220, rotation: 0 };
+      case 0: return { x: 200, y: 220, rotation: -90, wheel: 0 };
+      case 1: return { x: 200, y: 210, rotation: -90, wheel: 0 };
+      case 2: return { x: 200, y: 195, rotation: -90, wheel: 0 };
+      case 3: return { x: 235, y: 175, rotation: -45, wheel: 30 };
+      case 4: return { x: 255, y: 110, rotation: -135, wheel: -30 };
+      case 5: return { x: 235, y: 80, rotation: -180, wheel: 0 };
+      case 6: return { x: 280, y: 125, rotation: 180, wheel: 30 };
+      default: return { x: 200, y: 220, rotation: -90, wheel: 0 };
     }
   };
 
-  const pos = getCarTransform();
+  const state = getCarState();
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
       <defs>
         <radialGradient id="roundGrass" cx="50%" cy="45%" r="65%">
-          <stop offset="0%" stopColor="#86EFAC" />
-          <stop offset="100%" stopColor="#16A34A" />
+          <stop offset="0%" stopColor="#22c55e" />
+          <stop offset="100%" stopColor="#15803d" />
         </radialGradient>
-        <linearGradient id="roundRoad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#4B5563" />
-          <stop offset="100%" stopColor="#1F2937" />
-        </linearGradient>
+        <radialGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </radialGradient>
       </defs>
+      
       {/* Background */}
-      <rect x="0" y="0" width="400" height="250" fill="#64748B" />
-      <rect x="0" y="0" width="400" height="250" fill="#84CC16" opacity="0.18" />
+      <rect x="0" y="0" width="400" height="250" fill="#0f172a" />
       
       {/* Roundabout circle */}
-      <circle cx="200" cy="125" r="82" fill="url(#roundRoad)" stroke="#E5E7EB" strokeWidth="4" />
-      <circle cx="200" cy="125" r="37" fill="url(#roundGrass)" /> {/* Center island */}
-      <circle cx="200" cy="125" r="20" fill="#65A30D" opacity="0.75" />
+      <circle cx="200" cy="125" r="82" fill="#334155" stroke="#475569" strokeWidth="2" />
+      <circle cx="200" cy="125" r="37" fill="url(#roundGrass)" />
       
       {/* Entry/Exit roads */}
-      <rect x="180" y="180" width="40" height="70" fill="#374151" />
-      <rect x="280" y="105" width="120" height="40" fill="#374151" />
-      <rect x="0" y="105" width="120" height="40" fill="#374151" />
-      <rect x="180" y="0" width="40" height="50" fill="#374151" />
-      
-      {/* Road markings */}
-      <line x1="200" y1="200" x2="200" y2="250" stroke="#FDE047" strokeWidth="2" strokeDasharray="8,4" />
-      <line x1="280" y1="125" x2="400" y2="125" stroke="#FDE047" strokeWidth="2" strokeDasharray="8,4" />
-      
-      {/* Yield sign */}
-      <g transform="translate(165, 190)">
-        <polygon points="15,0 30,26 0,26" fill="#FFF" stroke="#EF4444" strokeWidth="3" />
-        <text x="15" y="20" textAnchor="middle" fill="#EF4444" fontSize="10" fontWeight="bold">!</text>
-      </g>
-      
-      {/* Direction arrows in roundabout */}
-      <g opacity="0.6">
-        <path d="M 240 85 A 50 50 0 0 0 200 65" stroke="#FFF" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
-        <path d="M 160 85 A 50 50 0 0 0 140 125" stroke="#FFF" strokeWidth="2" fill="none" />
-      </g>
+      <rect x="180" y="180" width="40" height="70" fill="#334155" />
+      <rect x="280" y="105" width="120" height="40" fill="#334155" />
       
       {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotation})`}>
+      <motion.g
+        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+        transition={{ type: "spring", damping: 25, stiffness: 40 }}
+      >
         <HorizontalCarIllustration color="#EF4444" scale={0.5} />
         
-        {/* NO turn signal when entering (steps 0-3) */}
-        {/* Turn signal RIGHT when exiting (steps 5-6) */}
+        {/* Vision Cones */}
+        <AnimatePresence>
+          {(step === 2 || step === 6) && (
+            <g transform="rotate(45)"><VisionCone angle={-180} sweep={120} /></g>
+          )}
+        </AnimatePresence>
+
+        {/* Turn signal RIGHT when exiting */}
         {step >= 5 && (
-          <circle cx="16" cy="7" r="3" fill="#FDE047">
-            <animate attributeName="opacity" values="1;0;1" dur="0.5s" repeatCount="indefinite" />
-          </circle>
+          <motion.circle 
+            cx="16" cy="7" r="3" fill="#FDE047"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+          />
         )}
-      </g>
-      
+      </motion.g>
+
       {/* Warning: No signal when entering */}
       {step === 1 && (
         <g transform="translate(240, 180)">
@@ -807,7 +783,7 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
           <text x="60" y="32" textAnchor="middle" fill="#FFF" fontSize="10">beim Einfahren!</text>
         </g>
       )}
-      
+
       {/* Signal right when exiting */}
       {step === 5 && (
         <g transform="translate(280, 60)">
@@ -816,121 +792,81 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
           <text x="55" y="32" textAnchor="middle" fill="#FFF" fontSize="10">vor Ausfahrt!</text>
         </g>
       )}
-      
-      {/* Sign 215 indicator */}
-      <g transform="translate(160, 210)">
-        <circle cx="15" cy="15" r="15" fill="#FFF" stroke="#000" strokeWidth="2" />
-        <path d="M 15 8 A 7 7 0 1 1 15 22" stroke="#000" strokeWidth="2" fill="none" markerEnd="url(#arrowhead)" />
-      </g>
+
+      <SteeringWheelOverlay rotation={state.wheel} />
     </svg>
   );
 };
 
-const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
-  const getCarPosition = () => {
+const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
+  const getCarState = () => {
     switch (step) {
-      case 0: return { x: 50, y: 180, speed: 50 };
-      case 1: return { x: 80, y: 175, speed: 60 };
-      case 2: return { x: 120 + (progress * 0.5), y: 165 - (progress * 0.1), speed: 70 + (progress * 0.2) };
-      case 3: return { x: 180, y: 155, speed: 90 };
-      case 4: return { x: 200, y: 150, speed: 100 };
-      case 5: return { x: 230 + (progress * 0.5), y: 140 - (progress * 0.15), speed: 110 };
-      case 6: return { x: 300, y: 125, speed: 120 };
-      default: return { x: 50, y: 180, speed: 50 };
+      case 0: return { x: 50, y: 180, rotation: -10, speed: 40, wheel: 0 };
+      case 1: return { x: 120, y: 170, rotation: -5, speed: 60, wheel: 0 };
+      case 2: return { x: 220, y: 165, rotation: 0, speed: 85, wheel: 0 };
+      case 3: return { x: 300, y: 165, rotation: 0, speed: 90, wheel: 0 };
+      case 4: return { x: 340, y: 155, rotation: -15, speed: 95, wheel: -20 };
+      case 5: return { x: 380, y: 80, rotation: 0, speed: 100, wheel: 0 };
+      case 6: return { x: 420, y: 80, rotation: 0, speed: 100, wheel: 0 };
+      default: return { x: 50, y: 180, rotation: -10, speed: 40, wheel: 0 };
     }
   };
 
-  const pos = getCarPosition();
+  const state = getCarState();
 
   return (
     <svg viewBox="0 0 400 250" className="w-full h-full">
       <defs>
-        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#60A5FA" />
-          <stop offset="100%" stopColor="#1E3A8A" />
-        </linearGradient>
-        <linearGradient id="highwayGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#52525B" />
-          <stop offset="100%" stopColor="#27272A" />
-        </linearGradient>
+        <radialGradient id="visionGradient" cx="0%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#FDE047" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#FDE047" stopOpacity="0" />
+        </radialGradient>
       </defs>
-      {/* Sky/background */}
-      <rect x="0" y="0" width="400" height="250" fill="url(#skyGrad)" />
-      <rect x="0" y="170" width="400" height="80" fill="#84CC16" opacity="0.5" />
       
-      {/* Highway lanes */}
-      <polygon points="0,100 400,80 400,180 0,220" fill="url(#highwayGrad)" />
-      
-      {/* Lane markings */}
-      <line x1="0" y1="130" x2="400" y2="110" stroke="#FFF" strokeWidth="3" />
-      <line x1="0" y1="160" x2="400" y2="140" stroke="#FFF" strokeWidth="2" strokeDasharray="20,15">
-        <animate attributeName="stroke-dashoffset" values="0;-70" dur="0.5s" repeatCount="indefinite" />
-      </line>
-      <line x1="0" y1="190" x2="400" y2="170" stroke="#FFF" strokeWidth="2" strokeDasharray="20,15">
-        <animate attributeName="stroke-dashoffset" values="0;-70" dur="0.5s" repeatCount="indefinite" />
-      </line>
+      {/* Highway background */}
+      <rect x="0" y="0" width="400" height="250" fill="#0f172a" />
+      <rect x="0" y="40" width="400" height="80" fill="#334155" />
+      <line x1="0" y1="80" x2="400" y2="80" stroke="#94a3b8" strokeWidth="1" strokeDasharray="20,20" />
       
       {/* Acceleration lane */}
-      <polygon points="0,220 150,190 200,160 200,180 150,210 0,240" fill="#4B5563" />
-      <line x1="0" y1="230" x2="180" y2="185" stroke="#FDE047" strokeWidth="3" />
+      <path d="M 0 200 Q 150 180 400 150" stroke="#334155" strokeWidth="40" fill="none" />
       
-      {/* Other cars on highway */}
-      <g transform="translate(280, 115) rotate(-2)">
-        <HorizontalCarIllustration color="#6366F1" scale={0.62} />
-      </g>
-      <g transform="translate(150, 135) rotate(-2)">
-        <HorizontalCarIllustration color="#8B5CF6" scale={0.62} />
-      </g>
-      
+      {/* Other highway traffic */}
+      <motion.g animate={{ x: [-100, 500] }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+        <g transform="translate(0, 60)"><HorizontalCarIllustration color="#6366f1" scale={0.7} opacity={0.5} /></g>
+      </motion.g>
+
       {/* Your car */}
-      <g transform={`translate(${pos.x}, ${pos.y}) rotate(-5)`}>
-        <HorizontalCarIllustration color="#EF4444" scale={0.62} />
+      <motion.g
+        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+        transition={{ type: "spring", damping: 30, stiffness: 50 }}
+      >
+        <HorizontalCarIllustration color="#EF4444" scale={0.8} />
         
-        {/* Turn signal */}
+        {/* Indicators */}
         {step >= 1 && step <= 5 && (
-          <circle cx="-22" cy="-10" r="3" fill="#FDE047">
-            <animate attributeName="opacity" values="1;0;1" dur="0.5s" repeatCount="indefinite" />
-          </circle>
+          <motion.circle 
+            cx="32" cy="-6" r="3" fill="#FDE047"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+          />
         )}
-        
-        {/* Shoulder check indicator */}
-        {step === 4 && (
-          <g>
-            <circle cx="-28" cy="-22" r="15" fill="#FDE047" opacity="0.4">
-              <animate attributeName="r" values="12;18;12" dur="0.8s" repeatCount="indefinite" />
-            </circle>
-            <text x="-28" y="-19" textAnchor="middle" fontSize="12">👀</text>
-          </g>
-        )}
+
+        {/* Vision Cones */}
+        <AnimatePresence>
+          {(step === 3 || step === 4) && (
+            <g transform="rotate(-30)"><VisionCone angle={180} sweep={90} /></g>
+          )}
+        </AnimatePresence>
+      </motion.g>
+
+      {/* Speedometer Overlay */}
+      <g transform="translate(30, 30)">
+        <rect x="0" y="0" width="80" height="35" rx="6" fill="#1e293b" opacity="0.8" />
+        <text x="40" y="24" textAnchor="middle" fill="#22c55e" fontWeight="bold">{state.speed} km/h</text>
       </g>
-      
-      {/* Speed indicator */}
-      <g transform="translate(20, 20)">
-        <rect x="0" y="0" width="100" height="45" rx="8" fill="#1F2937" opacity="0.9" />
-        <text x="50" y="20" textAnchor="middle" fill="#9CA3AF" fontSize="10">Geschwindigkeit</text>
-        <text x="50" y="38" textAnchor="middle" fill={pos.speed >= 80 ? '#22C55E' : '#FDE047'} fontSize="16" fontWeight="bold">
-          {Math.round(pos.speed)} km/h
-        </text>
-      </g>
-      
-      {/* Minimum speed reminder */}
-      {step === 2 && (
-        <g transform="translate(250, 20)">
-          <rect x="0" y="0" width="130" height="35" rx="8" fill="#3B82F6" />
-          <text x="65" y="22" textAnchor="middle" fill="#FFF" fontSize="11" fontWeight="bold">
-            Mind. 80 km/h! 🚗💨
-          </text>
-        </g>
-      )}
-      
-      {/* Mirror check indicators */}
-      {step === 3 && (
-        <g transform="translate(250, 200)">
-          <rect x="0" y="0" width="140" height="40" rx="8" fill="#1F2937" opacity="0.9" />
-          <text x="70" y="15" textAnchor="middle" fill="#FFF" fontSize="10">Spiegel prüfen:</text>
-          <text x="70" y="32" textAnchor="middle" fill="#22C55E" fontSize="12">🪞 Innen + Links + Rechts</text>
-        </g>
-      )}
+
+      <SteeringWheelOverlay rotation={state.wheel} />
     </svg>
   );
 };
