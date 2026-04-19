@@ -138,6 +138,9 @@ export interface DrivingSession {
   type: 'normal' | 'ueberland' | 'autobahn' | 'nacht';
   notes: string;
   instructorName?: string;
+  totalDistance?: number; // km
+  route?: { lat: number; lng: number; timestamp: number }[];
+  locationSummary?: string; // e.g. "Berlin, Mitte"
 }
 
 export interface UserProgress {

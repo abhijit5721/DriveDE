@@ -8,9 +8,79 @@ import { getLearningPathFromLicenseType } from '../utils/license';
 import { EmptyState } from './EmptyState';
 import type { DrivingSession } from '../types';
 
-interface TrackerProps {
-  onOpenPaywall: () => void;
-}
+const RoutePreview = ({ route, language }: { route: NonNullable<DrivingSession['route']>, language: string }) => {
+  if (route.length < 2) return null;
+
+  // Find bounds
+  const lats = route.map(p => p.lat);
+  const lngs = route.map(p => p.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  
+  const width = 200;
+  const height = 120;
+  const padding = 10;
+
+  // Scale points to SVG space
+  const scale = (val: number, min: number, max: number, range: number) => {
+    const diff = max - min;
+    if (diff === 0) return range / 2;
+    return padding + ((val - min) / diff) * (range - 2 * padding);
+  };
+
+  const points = route.map(p => ({
+    x: scale(p.lng, minLng, maxLng, width),
+    y: height - scale(p.lat, minLat, maxLat, height) // Flip Y for SVG
+  }));
+
+  const pathData = `M ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
+
+  const isDE = language === 'de';
+
+  return (
+    <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50">
+      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-1.5 dark:border-slate-800">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          {isDE ? 'Streckenverlauf' : 'Route Trace'}
+        </span>
+        <div className="flex gap-2">
+           <div className="flex items-center gap-1">
+             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+             <span className="text-[9px] text-slate-400">{isDE ? 'Start' : 'Start'}</span>
+           </div>
+           <div className="flex items-center gap-1">
+             <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+             <span className="text-[9px] text-slate-400">{isDE ? 'Ende' : 'End'}</span>
+           </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-center p-4">
+        <svg width={width} height={height} className="drop-shadow-sm">
+          <path
+            d={pathData}
+            fill="none"
+            stroke="url(#routeGradient)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <defs>
+            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#10b981" />
+              <stop offset="100%" stopColor="#ef4444" />
+            </linearGradient>
+          </defs>
+          {/* Start Point */}
+          <circle cx={points[0].x} cy={points[0].y} r="4" fill="#10b981" />
+          {/* End Point */}
+          <circle cx={points[points.length-1].x} cy={points[points.length-1].y} r="4" fill="#ef4444" />
+        </svg>
+      </div>
+    </div>
+  );
+};
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
   const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, setHourlyRate45, licenseType, isPremium } = useAppStore();
@@ -31,7 +101,23 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [currentDistance, setCurrentDistance] = useState(0);
+  const [gpsPoints, setGpsPoints] = useState<DrivingSession['route']>([]);
+  const [currentSpeed, setCurrentSpeed] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const watchRef = useRef<number | null>(null);
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
 
   const isDE = language === 'de';
   const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
@@ -50,22 +136,51 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       timerRef.current = setInterval(() => {
         setElapsedTime(prev => prev + 1);
       }, 1000);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+
+      // Start GPS Tracking
+      if ("geolocation" in navigator && isPremium) {
+        watchRef.current = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude: lat, longitude: lng, speed } = position.coords;
+            const newPoint = { lat, lng, timestamp: Date.now() };
+            
+            setGpsPoints(prev => {
+              const lastPoint = prev[prev.length - 1];
+              if (lastPoint) {
+                const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
+                if (dist > 0.005) { // Only add if moved > 5 meters to save space
+                  setCurrentDistance(d => d + dist);
+                  return [...prev, newPoint];
+                }
+                return prev;
+              }
+              return [newPoint];
+            });
+
+            if (speed !== null) {
+              setCurrentSpeed(Math.round(speed * 3.6)); // m/s to km/h
+            }
+          },
+          (error) => console.error('GPS Error:', error),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
       }
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
     }
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, isPremium]);
 
   const handleStartTimer = () => {
     setElapsedTime(0);
+    setCurrentDistance(0);
+    setGpsPoints([]);
     setIsTimerRunning(true);
-    toast(isDE ? 'Fahrt-Timer gestartet!' : 'Drive timer started!', { icon: '⏱️' });
+    toast(isDE ? 'Fahrt-Timer & GPS gestartet!' : 'Drive timer & GPS started!', { icon: '️🛰️' });
   };
 
   const handlePauseTimer = () => {
@@ -73,13 +188,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
   };
 
-  const handleStopTimer = () => {
+  const handleStopTimer = async () => {
     setIsTimerRunning(false);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
+    
+    // Optional: Get location summary via reverse geocoding if we have points
+    let locationSummary = '';
+    if (gpsPoints.length > 0) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${gpsPoints[0].lat}&lon=${gpsPoints[0].lng}&format=json`);
+        const data = await response.json();
+        locationSummary = data.address.city || data.address.town || data.address.suburb || '';
+        if (data.address.suburb && data.address.city) locationSummary = `${data.address.city}, ${data.address.suburb}`;
+      } catch (e) {
+        console.error('Geocoding failed');
+      }
+    }
+
     setNewSession(prev => ({
       ...prev,
       duration: durationInMinutes,
       date: new Date().toISOString().split('T')[0],
+      totalDistance: Math.round(currentDistance * 10) / 10,
+      route: gpsPoints,
+      locationSummary: locationSummary || undefined
     }));
     setShowAddForm(true);
     setElapsedTime(0);
@@ -256,8 +388,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </div>
           {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
         </div>
-        <div className="my-4 text-center text-5xl font-bold tracking-tighter">
-          {formatTime(elapsedTime)}
+        <div className="my-4 flex flex-col items-center">
+          <div className="text-5xl font-bold tracking-tighter">
+            {formatTime(elapsedTime)}
+          </div>
+          
+          {isPremium && (
+            <div className="mt-4 grid w-full grid-cols-2 gap-4 border-t border-white/10 pt-4">
+              <div className="text-center">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {isDE ? 'Strecke' : 'Distance'}
+                </p>
+                <p className="text-xl font-bold">{currentDistance.toFixed(1)} <span className="text-sm font-medium opacity-60">km</span></p>
+              </div>
+              <div className="text-center border-l border-white/10">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {isDE ? 'Tempo' : 'Speed'}
+                </p>
+                <p className="text-xl font-bold">{currentSpeed} <span className="text-sm font-medium opacity-60">km/h</span></p>
+              </div>
+            </div>
+          )}
+
+          {!isPremium && isTimerRunning && (
+            <p className="mt-2 text-[10px] text-slate-400 italic">
+              {isDE ? 'Upgrade für GPS & Routen-Tracking' : 'Upgrade for GPS & Route tracking'}
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-3">
           {isTimerRunning ? (
@@ -472,20 +629,37 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         </span>
                       )}
                     </div>
-                    <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(session.date)}
+                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(session.date)}
+                      </div>
+                      {session.totalDistance && (
+                        <div className="flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400">
+                          <Route className="h-3 w-3" />
+                          {session.totalDistance} km
+                        </div>
+                      )}
+                      {session.locationSummary && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {session.locationSummary}
+                        </div>
+                      )}
                       {session.instructorName && (
-                        <>
-                          <span>•</span>
-                          <span>{session.instructorName}</span>
-                        </>
+                        <div className="flex items-center gap-1">
+                          <div className="h-1 w-1 rounded-full bg-slate-300" />
+                          {session.instructorName}
+                        </div>
                       )}
                     </div>
                     {session.notes && (
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         {session.notes}
                       </p>
+                    )}
+                    {session.route && session.route.length > 0 && (
+                      <RoutePreview route={session.route} language={language} />
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -565,16 +739,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Dauer (Minuten)' : 'Duration (minutes)'}
-                </label>
-                <input
-                  type="number"
-                  value={newSession.duration}
-                  onChange={(e) => setNewSession({ ...newSession, duration: parseInt(e.target.value, 10) || 0 })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    {isDE ? 'Dauer (Minuten)' : 'Duration (minutes)'}
+                  </label>
+                  <input
+                    type="number"
+                    value={newSession.duration}
+                    onChange={(e) => setNewSession({ ...newSession, duration: parseInt(e.target.value, 10) || 0 })}
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    {isDE ? 'Distanz (km)' : 'Distance (km)'}
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={newSession.totalDistance || ''}
+                    onChange={(e) => setNewSession({ ...newSession, totalDistance: parseFloat(e.target.value) || undefined })}
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                  />
+                </div>
               </div>
 
               <div>
@@ -586,6 +774,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   value={newSession.instructorName}
                   onChange={(e) => setNewSession({ ...newSession, instructorName: e.target.value })}
                   placeholder={isDE ? 'Name' : 'Name'}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {isDE ? 'Ort / Stadt' : 'Location / City'}
+                </label>
+                <input
+                  type="text"
+                  value={newSession.locationSummary || ''}
+                  onChange={(e) => setNewSession({ ...newSession, locationSummary: e.target.value })}
+                  placeholder={isDE ? 'z.B. Berlin, Mitte' : 'e.g. Berlin, Mitte'}
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
                 />
               </div>
