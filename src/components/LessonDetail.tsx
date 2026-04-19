@@ -244,7 +244,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       </div>
 
       {/* Interactive Simulator Section */}
-      {isVorfahrtLesson && !isCompleted && (
+      {isVorfahrtLesson && (
         <div className="mb-8">
           <div className="mb-4 flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
@@ -263,7 +263,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
           
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveVorfahrt onComplete={() => setIsSimulatorComplete(true)} />
+            <InteractiveVorfahrt onComplete={() => setIsSimulatorComplete(true)} language={language} />
             
             {isSimulatorComplete && (
               <div className="mx-4 mb-4">
