@@ -34,6 +34,7 @@ import { TrafficSignIcon } from './TrafficSignIcon';
 import { PageHeader } from './PageHeader';
 import InteractiveVorfahrt from './InteractiveVorfahrt';
 import InteractiveMirrorCheck from './InteractiveMirrorCheck';
+import InteractiveRoundabout from './InteractiveRoundabout';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -138,6 +139,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
   const isVorfahrtLesson = lesson.id === 'city-1';
   const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
+  const isRoundaboutLesson = lesson.id === 'city-3';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -321,6 +323,37 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
                   <Check className="h-5 w-5" />
                   {language === 'de' ? 'Blickfolge korrekt trainiert!' : 'Scanning sequence trained correctly!'}
+                </div>
+              </div>
+            )}
+          </div>
+      )}
+
+      {/* Interactive Roundabout Section */}
+      {isRoundaboutLesson && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+              <RotateCcw className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Praxis-Check: Kreisverkehr' : 'Practical Check: Roundabout'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Meistere die Blinkregeln im Kreisel' : 'Master signaling rules in the circle'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveRoundabout onComplete={() => setIsSimulatorComplete(true)} language={language} />
+            
+            {isSimulatorComplete && (
+              <div className="mx-4 mb-4">
+                <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                  <Check className="h-5 w-5" />
+                  {language === 'de' ? 'Kreisverkehr erfolgreich beendet!' : 'Roundabout successfully completed!'}
                 </div>
               </div>
             )}

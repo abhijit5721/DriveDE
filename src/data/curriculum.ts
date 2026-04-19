@@ -2652,6 +2652,7 @@ const cityLessons: Lesson[] = [
     descriptionEn: 'Entering and exiting roundabouts (Sign 215, § 8 StVO)',
     completed: false,
     isPremium: true,
+    isInteractive: true,
     guidedPoints: roundaboutGuidedPoints,
     scenarios: roundaboutScenarios,
     trafficSigns: [signRoundabout, signYield],
