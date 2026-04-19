@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Info, AlertCircle, Droplets, Thermometer, Battery, Oil, Gauge } from 'lucide-react';
+import { Check, Info, AlertCircle, Droplets, Thermometer, Battery, Droplet, Gauge } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 interface Hotspot {
@@ -23,7 +23,7 @@ const hotspots: Hotspot[] = [
     descriptionEn: 'To check the engine oil level. The level must be between MIN and MAX.',
     x: 45,
     y: 50,
-    icon: Oil,
+    icon: Droplet,
   },
   {
     id: 'coolant',
