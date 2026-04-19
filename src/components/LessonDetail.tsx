@@ -25,6 +25,7 @@ import {
   Shield,
   Gauge,
   GraduationCap,
+  Zap,
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
