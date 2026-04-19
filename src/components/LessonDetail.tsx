@@ -27,6 +27,7 @@ import {
   GraduationCap,
   Zap,
   Car,
+  Trophy,
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
