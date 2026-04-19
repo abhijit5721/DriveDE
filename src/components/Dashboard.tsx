@@ -137,7 +137,6 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               />
             </div>
           </div>
-        </div>
         
         {/* Quick Progress Bar (Alternative visualization) */}
         {!isPremium && (
