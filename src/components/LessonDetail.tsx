@@ -33,6 +33,7 @@ import AnimatedManeuver from './AnimatedManeuver';
 import { TrafficSignIcon } from './TrafficSignIcon';
 import { PageHeader } from './PageHeader';
 import InteractiveVorfahrt from './InteractiveVorfahrt';
+import InteractiveMirrorCheck from './InteractiveMirrorCheck';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -136,6 +137,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   };
 
   const isVorfahrtLesson = lesson.id === 'city-1';
+  const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];

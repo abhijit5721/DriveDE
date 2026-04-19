@@ -2714,6 +2714,7 @@ const cityLessons: Lesson[] = [
     descriptionEn: 'Safe right turns with attention to cyclists, pedestrians, and traffic-light situations',
     completed: false,
     isPremium: true,
+    isInteractive: true,
     guidedPoints: rightTurnGuidedPoints,
     scenarios: rightTurnScenarios,
     trafficSigns: [signPedestrianCrossing],
@@ -2943,6 +2944,7 @@ const cityLessons: Lesson[] = [
     descriptionEn: 'Safe lane change with shoulder check (§ 7 StVO)',
     completed: false,
     isPremium: true,
+    isInteractive: true,
     guidedPoints: laneChangeGuidedPoints,
     scenarios: [
       {
