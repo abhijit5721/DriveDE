@@ -341,7 +341,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900">
       <Toaster
         position="bottom-center"
         toastOptions={{
