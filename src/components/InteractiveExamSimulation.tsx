@@ -63,6 +63,213 @@ const scenarios: ExamScenario[] = [
         feedbackEn: 'Failed! Disregarded right-of-way.',
       }
     ]
+  },
+  {
+    id: 'tempo-30',
+    situationDe: 'Sie biegen in eine Straße ein und sehen das Schild "Zone 30". Ihr Tacho zeigt 45 km/h.',
+    situationEn: 'You turn into a street and see the "Zone 30" sign. Your speedometer shows 45 km/h.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Sofort auf 30 km/h abbremsen.',
+        textEn: 'Brake immediately to 30 km/h.',
+        isCorrect: true,
+        feedbackDe: 'Richtig. In Zonen muss das Limit exakt eingehalten werden.',
+        feedbackEn: 'Correct. Limts must be kept exactly in zones.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Ausrollen lassen, bis man 35 km/h erreicht.',
+        textEn: 'Let the car coast until you reach 35 km/h.',
+        isCorrect: false,
+        feedbackDe: 'Fehler! Zu schnell in der 30er Zone.',
+        feedbackEn: 'Error! Too fast in the 30 zone.',
+      }
+    ]
+  },
+  {
+    id: 'school-bus',
+    situationDe: 'Ein Schulbus hält vor Ihnen mit eingeschalteter Warnblinkanlage.',
+    situationEn: 'A school bus stops in front of you with hazard lights on.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Nur mit Schrittgeschwindigkeit (4-7 km/h) vorbeifahren, falls gefahrlos möglich.',
+        textEn: 'Only pass at walking speed (4-7 km/h) if safe to do so.',
+        isCorrect: true,
+        feedbackDe: 'Korrekt. Besondere Vorsicht bei Schulbussen!',
+        feedbackEn: 'Correct. Special caution with school buses!',
+      },
+      {
+        id: 'o2',
+        textDe: 'Mit normaler Stadtgeschwindigkeit (50 km/h) überholen.',
+        textEn: 'Overtake at normal city speed (50 km/h).',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen! Lebensgefährliche Situation für Kinder.',
+        feedbackEn: 'Failed! Life-threatening situation for children.',
+      }
+    ]
+  },
+  {
+    id: 'zebra-crossing',
+    situationDe: 'Ein Fußgänger nähert sich erkennbar einem Zebrastreifen.',
+    situationEn: 'A pedestrian is clearly approaching a zebra crossing.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Anhalten und den Fußgänger überqueren lassen.',
+        textEn: 'Stop and let the pedestrian cross.',
+        isCorrect: true,
+        feedbackDe: 'Richtig. Fußgänger haben hier Vorrang.',
+        feedbackEn: 'Correct. Pedestrians have priority here.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Kurz hupen und zügig weiterfahren.',
+        textEn: 'Honk briefly and continue quickly.',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen! Vorrang missachtet.',
+        feedbackEn: 'Failed! Disregarded priority.',
+      }
+    ]
+  },
+  {
+    id: 'emergency-vehicle',
+    situationDe: 'Sie hören ein Martinshorn und sehen blaues Blinklicht im Rückspiegel.',
+    situationEn: 'You hear a siren and see blue flashing lights in your rearview mirror.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Blinker setzen, Geschwindigkeit reduzieren und Platz machen.',
+        textEn: 'Use indicator, reduce speed and make space.',
+        isCorrect: true,
+        feedbackDe: 'Korrekt. Einsatzfahrzeuge müssen sofort vorbei.',
+        feedbackEn: 'Correct. Emergency vehicles must pass immediately.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Schneller fahren, um nicht im Weg zu sein.',
+        textEn: 'Drive faster so you are not in the way.',
+        isCorrect: false,
+        feedbackDe: 'Fehler! Das behindert das Einsatzfahrzeug.',
+        feedbackEn: 'Error! This obstructs the emergency vehicle.',
+      }
+    ]
+  },
+  {
+    id: 'cyclist-overtake',
+    situationDe: 'Sie möchten einen Radfahrer innerhalb der Ortschaft überholen.',
+    situationEn: 'You want to overtake a cyclist within a built-up area.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Mindestens 1,5 Meter Seitenabstand einhalten.',
+        textEn: 'Keep at least 1.5 meters lateral distance.',
+        isCorrect: true,
+        feedbackDe: 'Sehr gut. Abstand ist gesetzlich vorgeschrieben.',
+        feedbackEn: 'Very good. Distance is legally required.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Eng vorbeifahren, damit der Gegenverkehr nicht behindert wird.',
+        textEn: 'Pass closely so oncoming traffic is not hindered.',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen! Gefährdung des Radfahrers.',
+        feedbackEn: 'Failed! Endangering the cyclist.',
+      }
+    ]
+  },
+  {
+    id: 'left-turn',
+    situationDe: 'Sie wollen links abbiegen. Es kommt Gegenverkehr geradeaus entgegen.',
+    situationEn: 'You want to turn left. Oncoming traffic is coming straight ahead.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Den Gegenverkehr erst durchfahren lassen.',
+        textEn: 'Let oncoming traffic pass first.',
+        isCorrect: true,
+        feedbackDe: 'Korrekt. Linksabbieger müssen warten.',
+        feedbackEn: 'Correct. Left turners must wait.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Schnell vor dem Gegenverkehr abbiegen.',
+        textEn: 'Turn quickly before oncoming traffic.',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen! Vorfahrt erzwingen ist verboten.',
+        feedbackEn: 'Failed! Forcing right-of-way is forbidden.',
+      }
+    ]
+  },
+  {
+    id: 'stop-sign',
+    situationDe: 'Sie kommen an ein STOPP-Schild mit einer Haltelinie.',
+    situationEn: 'You approach a STOP sign with a stop line.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'An der Haltelinie komplett zum Stillstand kommen (3 Sek.).',
+        textEn: 'Come to a complete standstill at the stop line (3 sec).',
+        isCorrect: true,
+        feedbackDe: 'Richtig. "Rollen" gilt als durchgefallen.',
+        feedbackEn: 'Correct. "Rolling" counts as failed.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Langsam ranrollen und weiterfahren, wenn frei ist.',
+        textEn: 'Roll slowly up and continue if clear.',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen! Stopp-Pflicht missachtet.',
+        feedbackEn: 'Failed! Disregarded stop duty.',
+      }
+    ]
+  },
+  {
+    id: 'autobahn-merge',
+    situationDe: 'Sie befinden sich auf dem Beschleunigungsstreifen der Autobahn.',
+    situationEn: 'You are on the acceleration lane of the highway.',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Kräftig beschleunigen und mit passendem Tempo einfädeln.',
+        textEn: 'Accelerate strongly and merge with appropriate speed.',
+        isCorrect: true,
+        feedbackDe: 'Korrekt. Zügiges Auffahren ist sicherer.',
+        feedbackEn: 'Correct. Rapid entry is safer.',
+      },
+      {
+        id: 'o2',
+        textDe: 'Am Anfang des Streifens anhalten und auf eine Lücke warten.',
+        textEn: 'Stop at the beginning of the lane and wait for a gap.',
+        isCorrect: false,
+        feedbackDe: 'Gefährlich! Das führt oft zu Auffahrunfällen.',
+        feedbackEn: 'Dangerous! This often leads to rear-end collisions.',
+      }
+    ]
+  },
+  {
+    id: 'finish-park',
+    situationDe: 'Der Prüfer sagt: "Suchen Sie sich eine Parklücke und stellen Sie das Fahrzeug ab."',
+    situationEn: 'The examiner says: "Find a parking space and park the vehicle."',
+    options: [
+      {
+        id: 'o1',
+        textDe: 'Lücke suchen, Blinken, Sichern, Einparken, Motor aus, Sichern.',
+        textEn: 'Find gap, signal, secure, park, engine off, secure.',
+        isCorrect: true,
+        feedbackDe: 'Perfekt. Herzlichen Glückwunsch, Sie haben bestanden!',
+        feedbackEn: 'Perfect. Congratulations, you passed!',
+      },
+      {
+        id: 'o2',
+        textDe: 'Einfach auf den Gehweg stellen und rausspringen.',
+        textEn: 'Just park on the sidewalk and jump out.',
+        isCorrect: false,
+        feedbackDe: 'Durchgefallen auf den letzten Metern!',
+        feedbackEn: 'Failed at the last meters!',
+      }
+    ]
   }
 ];
 
