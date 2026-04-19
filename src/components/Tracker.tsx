@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
 import { EmptyState } from './EmptyState';
-import type { DrivingSession } from '../types';
+import type { DrivingSession, DrivingMistake } from '../types';
 
 const RoutePreview = ({ route, language }: { route: NonNullable<DrivingSession['route']>, language: string }) => {
   if (route.length < 2) return null;
@@ -765,23 +765,48 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     {session.route && session.route.length > 0 && (
                       <RoutePreview route={session.route} language={language} />
                     )}
-                    {session.mistakes && session.mistakes.length > 0 && (
-                      <div className="mt-3 rounded-lg border border-red-200 bg-red-50/50 p-2 dark:border-red-900/30 dark:bg-red-900/10">
-                        <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400">
-                          <X className="h-3 w-3" />
-                          {isDE ? 'Fehler-Analyse' : 'Mistake Analysis'}
+                    {session.mistakes && session.mistakes.length > 0 ? (
+                      <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-900/20">
+                        <div className="mb-2 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                            <X className="h-4 w-4" />
+                            {isDE ? 'Fehler-Analyse' : 'Mistake Analysis'}
+                          </div>
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
+                            {session.mistakes.length}
+                          </span>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           {session.mistakes.map((mistake, idx) => (
-                            <div key={idx} className="flex items-center justify-between text-[11px]">
-                              <span className="text-slate-600 dark:text-slate-400">
-                                {mistake.type === 'speeding' ? (isDE ? 'Geschwindigkeitsüberschreitung' : 'Speeding') : mistake.type}
+                            <div key={idx} className="flex items-center justify-between rounded-lg bg-white/50 p-2 text-xs dark:bg-slate-900/50">
+                              <span className="font-medium text-slate-700 dark:text-slate-300">
+                                {mistake.type === 'speeding' ? (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation') : mistake.type}
                               </span>
-                              <span className="font-bold text-red-600">
-                                {mistake.speed} km/h <span className="font-normal opacity-60">vs</span> {mistake.limit} km/h
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-black text-red-600">
+                                  {mistake.speed} <span className="text-[10px] font-normal opacity-70">km/h</span>
+                                </span>
+                                <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700" />
+                                <span className="text-[10px] font-bold text-slate-500">
+                                  Limit: {mistake.limit}
+                                </span>
+                              </div>
                             </div>
                           ))}
+                        </div>
+                      </div>
+                    ) : session.route && session.route.length > 0 && (
+                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-3 dark:border-green-900/30 dark:bg-green-900/10">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
+                          <Plus className="h-3.5 w-3.5 rotate-45" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-green-700 dark:text-green-400">
+                            {isDE ? 'Keine Fehler erkannt' : 'No mistakes detected'}
+                          </p>
+                          <p className="text-[10px] text-green-600/80 dark:text-green-500/80">
+                            {isDE ? 'Sichere Fahrweise beibehalten!' : 'Keep up the safe driving!'}
+                          </p>
                         </div>
                       </div>
                     )}
