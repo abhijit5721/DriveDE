@@ -339,6 +339,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       type: session.type,
       notes: session.notes,
       instructorName: session.instructorName || '',
+      totalDistance: session.totalDistance,
+      route: session.route,
+      locationSummary: session.locationSummary,
+      mistakes: session.mistakes
     });
     setShowAddForm(true);
   };
@@ -374,23 +378,56 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               : 'Track your driving lessons'}
           </p>
         </div>
-        <button
-          onClick={() => {
-            if (hasReachedLimit) {
-              onOpenPaywall();
-            } else {
-              setShowAddForm(true);
-            }
-          }}
-          className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-all",
-            hasReachedLimit 
-              ? "bg-amber-500 hover:bg-amber-600 shadow-amber-200 dark:shadow-amber-900/30"
-              : "bg-blue-500 hover:bg-blue-600 shadow-blue-200 dark:shadow-blue-900/30"
+        <div className="flex gap-2">
+          {import.meta.env.DEV && (
+            <button
+              onClick={() => {
+                const mockRoute = [
+                  { lat: 52.5200, lng: 13.4050, timestamp: Date.now() },
+                  { lat: 52.5210, lng: 13.4060, timestamp: Date.now() + 10000 },
+                  { lat: 52.5220, lng: 13.4080, timestamp: Date.now() + 20000 },
+                  { lat: 52.5215, lng: 13.4100, timestamp: Date.now() + 30000 },
+                  { lat: 52.5205, lng: 13.4110, timestamp: Date.now() + 40000 },
+                ];
+                const mockMistakes: DrivingMistake[] = [
+                  { type: 'speeding', speed: 58, limit: 50, timestamp: Date.now(), location: mockRoute[2] }
+                ];
+                addDrivingSession({
+                  date: new Date().toISOString().split('T')[0],
+                  duration: 45,
+                  type: 'normal',
+                  notes: 'Test drive with route and mistakes',
+                  instructorName: 'AI Instructor',
+                  totalDistance: 1.2,
+                  route: mockRoute,
+                  locationSummary: 'Berlin, Mitte',
+                  mistakes: mockMistakes
+                });
+                toast.success('Mock Premium Session Added!');
+              }}
+              className="flex h-10 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 px-3 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:border-blue-900/30 dark:bg-blue-900/20"
+            >
+              Simulate Drive
+            </button>
           )}
-        >
-          {hasReachedLimit ? <Crown className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-        </button>
+          <button
+            onClick={() => {
+              if (hasReachedLimit) {
+                onOpenPaywall();
+              } else {
+                setShowAddForm(true);
+              }
+            }}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-all",
+              hasReachedLimit 
+                ? "bg-amber-500 hover:bg-amber-600 shadow-amber-200 dark:shadow-amber-900/30"
+                : "bg-blue-500 hover:bg-blue-600 shadow-blue-200 dark:shadow-blue-900/30"
+            )}
+          >
+            {hasReachedLimit ? <Crown className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Cost Settings */}
