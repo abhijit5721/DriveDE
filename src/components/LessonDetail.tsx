@@ -292,6 +292,42 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         </div>
       )}
 
+      {/* Interactive Mirror Check Section */}
+      {isMirrorLesson && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+              <Eye className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Praxis-Check: Schulterblick' : 'Practical Check: Shoulder Scan'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Trainiere die lebenswichtige Blickfolge' : 'Practice the life-saving scanning sequence'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveMirrorCheck 
+              onComplete={() => setIsSimulatorComplete(true)} 
+              language={language}
+              direction={lesson.id === 'city-5' ? 'right' : 'left'} 
+            />
+            
+            {isSimulatorComplete && (
+              <div className="mx-4 mb-4">
+                <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                  <Check className="h-5 w-5" />
+                  {language === 'de' ? 'Blickfolge korrekt trainiert!' : 'Scanning sequence trained correctly!'}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Steps Visualization */}
       {lesson.steps && lesson.steps.length > 0 && (
         <>
