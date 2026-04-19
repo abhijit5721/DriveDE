@@ -2403,6 +2403,7 @@ const maneuverLessons: Lesson[] = [
     descriptionEn: 'Parking parallel between two vehicles',
     completed: false,
     isPremium: false,
+    isInteractive: true,
     steps: parallelParkingSteps,
     guidedPoints: parkingGuidedPoints,
     scenarios: parkingScenarios,

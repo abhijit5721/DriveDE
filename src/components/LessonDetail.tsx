@@ -37,6 +37,7 @@ import InteractiveVorfahrt from './InteractiveVorfahrt';
 import InteractiveMirrorCheck from './InteractiveMirrorCheck';
 import InteractiveRoundabout from './InteractiveRoundabout';
 import InteractiveEmergencyBrake from './InteractiveEmergencyBrake';
+import InteractiveParking from './InteractiveParking';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -143,6 +144,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
   const isRoundaboutLesson = lesson.id === 'city-3';
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
+  const isParkingLesson = lesson.id === 'maneuver-1';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -383,6 +385,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
             <InteractiveEmergencyBrake onComplete={() => setIsSimulatorComplete(true)} language={language} />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Parking Section */}
+      {isParkingLesson && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+              <Car className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Praxis-Check: Einparken' : 'Practical Check: Parking'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Parallel-Parken Schritt für Schritt' : 'Parallel parking step by step'}
+              </p>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
+            <InteractiveParking onComplete={() => setIsSimulatorComplete(true)} language={language} />
           </div>
         </div>
       )}
