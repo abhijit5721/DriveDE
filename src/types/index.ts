@@ -153,6 +153,7 @@ export interface UserProgress {
   currentStreak: number;
   lastActivityDate: string | null;
   incorrectQuestions: string[];
+  hourlyRate45: number;
 }
 
 export interface AppState {
@@ -179,10 +180,12 @@ export interface AppState {
   updateStreak: () => void;
   completeLesson: (lessonId: string) => void;
   addDrivingSession: (session: Omit<DrivingSession, 'id'>) => void;
+  updateDrivingSession: (sessionId: string, session: Partial<DrivingSession>) => void;
   removeDrivingSession: (sessionId: string) => void;
   setQuizScore: (quizId: string, score: number) => void;
   addMistake: (questionId: string) => void;
   removeMistake: (questionId: string) => void;
+  setHourlyRate45: (rate: number) => void;
   resetProgress: () => void;
 }
 

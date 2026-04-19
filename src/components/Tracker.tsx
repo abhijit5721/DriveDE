@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -13,10 +13,14 @@ interface TrackerProps {
 }
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
-  const { language, userProgress, addDrivingSession, removeDrivingSession, licenseType, isPremium } = useAppStore();
+  const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, setHourlyRate45, licenseType, isPremium } = useAppStore();
   const SESSION_LIMIT = 3;
   const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [isEditingRate, setIsEditingRate] = useState(false);
+  const [tempRate, setTempRate] = useState(userProgress.hourlyRate45.toString());
+
   const [newSession, setNewSession] = useState({
     date: new Date().toISOString().split('T')[0],
     duration: 45,
@@ -31,6 +35,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const isDE = language === 'de';
   const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
+
+  const totalSpending = (userProgress.totalDrivingMinutes / 45) * userProgress.hourlyRate45;
+
+  const handleSaveRate = () => {
+    const rate = parseFloat(tempRate) || 0;
+    setHourlyRate45(rate);
+    setIsEditingRate(false);
+    toast.success(isDE ? 'Stundensatz aktualisiert!' : 'Rate updated!');
+  };
 
   useEffect(() => {
     if (isTimerRunning) {
@@ -109,9 +122,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   };
 
   const handleAddSession = () => {
-    addDrivingSession(newSession);
-    toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
+    if (editingSessionId) {
+      updateDrivingSession(editingSessionId, newSession);
+      toast.success(isDE ? 'Fahrstunde aktualisiert!' : 'Session updated!');
+    } else {
+      addDrivingSession(newSession);
+      toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
+    }
+    handleCloseForm();
+  };
+
+  const handleCloseForm = () => {
     setShowAddForm(false);
+    setEditingSessionId(null);
     setNewSession({
       date: new Date().toISOString().split('T')[0],
       duration: 45,
@@ -119,6 +142,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       notes: '',
       instructorName: '',
     });
+  };
+
+  const handleEditOpen = (session: DrivingSession) => {
+    setEditingSessionId(session.id);
+    setNewSession({
+      date: session.date,
+      duration: session.duration,
+      type: session.type,
+      notes: session.notes,
+      instructorName: session.instructorName || '',
+    });
+    setShowAddForm(true);
   };
 
   const handleRemoveSession = (sessionId: string) => {
@@ -171,6 +206,47 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         </button>
       </div>
 
+      {/* Cost Settings */}
+      <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-700/50 dark:bg-slate-800">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+              <span className="text-xl font-bold">€</span>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {isDE ? 'Fahrschul-Tarif' : 'Driving School Rate'}
+              </p>
+              {isEditingRate ? (
+                <div className="mt-1 flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={tempRate}
+                    onChange={(e) => setTempRate(e.target.value)}
+                    autoFocus
+                    className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                  />
+                  <span className="text-sm font-bold text-slate-400">/ 45 min</span>
+                  <button 
+                    onClick={handleSaveRate}
+                    className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-bold text-white hover:bg-blue-600"
+                  >
+                    OK
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setIsEditingRate(true)}
+                  className="mt-0.5 text-lg font-black text-slate-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
+                >
+                  €{userProgress.hourlyRate45.toFixed(2)} <span className="text-xs font-bold text-slate-400">/ 45 min</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Live Timer */}
       <div className="rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
         <div className="flex items-center justify-between">
@@ -219,30 +295,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       </div>
 
       {/* Progress Cards */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-            <Clock className="h-4 w-4" />
-            <span className="text-xs">{isDE ? 'Gesamt' : 'Total'}</span>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+            <Clock className="h-3.5 w-3.5" />
+            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Gesamt' : 'Total'}</span>
           </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+          <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
             {Math.floor(userProgress.totalDrivingMinutes / 60)}h {userProgress.totalDrivingMinutes % 60}m
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {userProgress.drivingSessions.length} {isDE ? 'Fahrstunden' : 'sessions'}
           </p>
         </div>
 
-        <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-            <Car className="h-4 w-4" />
-            <span className="text-xs">{isDE ? 'Normal' : 'Regular'}</span>
+        <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+            <Car className="h-3.5 w-3.5" />
+            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Normal' : 'Regular'}</span>
           </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
+          <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
             {Math.floor(normalMinutes / 45)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {isDE ? 'Übungsfahrten' : 'practice lessons'}
+        </div>
+
+        <div className="rounded-xl bg-blue-500 p-3 shadow-lg shadow-blue-500/20 dark:bg-blue-600">
+          <div className="flex items-center gap-1.5 text-blue-100">
+            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Kosten' : 'Cost'}</span>
+          </div>
+          <p className="mt-2 text-lg font-black text-white italic">
+            €{totalSpending.toFixed(0)}
           </p>
         </div>
       </div>
@@ -387,6 +466,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       <span className="text-xs text-slate-500">
                         {session.duration} min
                       </span>
+                      {userProgress.hourlyRate45 > 0 && (
+                        <span className="ml-auto text-xs font-bold text-green-600 dark:text-green-400">
+                          €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
+                        </span>
+                      )}
                     </div>
                     <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                       <Calendar className="h-3 w-3" />
@@ -404,12 +488,20 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       </p>
                     )}
                   </div>
-                  <button
-                    onClick={() => handleRemoveSession(session.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleEditOpen(session)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/30"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleRemoveSession(session.id)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
           </div>
@@ -424,10 +516,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {/* Header (Sticky) */}
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                {isDE ? 'Fahrstunde eintragen' : 'Log Driving Session'}
+                {editingSessionId 
+                  ? (isDE ? 'Fahrstunde bearbeiten' : 'Edit Driving Session')
+                  : (isDE ? 'Fahrstunde eintragen' : 'Log Driving Session')}
               </h3>
               <button
-                onClick={() => setShowAddForm(false)}
+                onClick={handleCloseForm}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               >
                 <X className="h-5 w-5" />
@@ -516,7 +610,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 onClick={handleAddSession}
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
               >
-                {isDE ? 'Fahrstunde speichern' : 'Save Session'}
+                {editingSessionId 
+                  ? (isDE ? 'Änderungen speichern' : 'Save Changes')
+                  : (isDE ? 'Fahrstunde speichern' : 'Save Session')}
               </button>
             </div>
 

@@ -31,6 +31,7 @@ const initialProgress = {
   currentStreak: 0,
   lastActivityDate: null,
   incorrectQuestions: [],
+  hourlyRate45: 0,
 };
 
 const deriveSelectionState = (type: LicenseType) => {
@@ -266,6 +267,40 @@ export const useAppStore = create<AppState>()(
         checkAndUnlockAchievements();
       },
 
+      updateDrivingSession: (sessionId: string, updatedFields: Partial<DrivingSession>) => {
+        const state = get();
+        const sessionIndex = state.userProgress.drivingSessions.findIndex((s) => s.id === sessionId);
+        if (sessionIndex === -1) return;
+
+        const oldSession = state.userProgress.drivingSessions[sessionIndex];
+        const newSession = { ...oldSession, ...updatedFields };
+
+        const newSessions = [...state.userProgress.drivingSessions];
+        newSessions[sessionIndex] = newSession;
+
+        // Recalculate totals
+        let totalMinutes = 0;
+        const specialMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
+
+        newSessions.forEach(s => {
+          totalMinutes += s.duration;
+          if (s.type === 'ueberland') specialMinutes.ueberland += s.duration;
+          else if (s.type === 'autobahn') specialMinutes.autobahn += s.duration;
+          else if (s.type === 'nacht') specialMinutes.nacht += s.duration;
+        });
+
+        void syncDrivingSession(newSession, state.transmissionType);
+
+        set({
+          userProgress: {
+            ...state.userProgress,
+            drivingSessions: newSessions,
+            totalDrivingMinutes: totalMinutes,
+            specialDrivingMinutes: specialMinutes,
+          },
+        });
+      },
+
       removeDrivingSession: (sessionId: string) => {
         const state = get();
         const session = state.userProgress.drivingSessions.find((s) => s.id === sessionId);
@@ -350,6 +385,24 @@ export const useAppStore = create<AppState>()(
             userProgress: {
               ...state.userProgress,
               incorrectQuestions: nextMistakes,
+            },
+          };
+        }),
+      
+      setHourlyRate45: (hourlyRate45: number) =>
+        set((state) => {
+          const nextState = {
+            ...state,
+            userProgress: {
+              ...state.userProgress,
+              hourlyRate45,
+            },
+          };
+          void ensureProfileFromState(nextState as AppState);
+          return {
+            userProgress: {
+              ...state.userProgress,
+              hourlyRate45,
             },
           };
         }),
