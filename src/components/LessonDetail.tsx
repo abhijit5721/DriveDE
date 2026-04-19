@@ -327,6 +327,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
             )}
           </div>
+        </div>
       )}
 
       {/* Interactive Roundabout Section */}
