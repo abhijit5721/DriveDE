@@ -6,7 +6,6 @@ import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '
 import { filterChaptersForSelection, filterLessonsForSelection } from '../utils/contentFilter';
 import type { TabType } from '../types';
 import { ExamReadinessGauge } from './ExamReadinessGauge';
-import { SimulatorRadar } from './SimulatorRadar';
 
 interface DashboardProps {
   onNavigate: (tab: TabType) => void;
@@ -117,25 +116,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               progress={progressPercent}
               label={isDE ? 'Prüfungschance' : 'Exam Score'}
               subLabel={isDE 
-                ? 'Gesamtfortschritt' 
-                : 'Overall Progress'}
-              className="w-full mb-8"
+? 'Kombination aus Lektionen & Tests' 
+: 'Combined Lessons & Quiz Score'}
+              className="w-full"
             />
-
-            <div className="w-full max-w-md bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
-              <h4 className="text-center text-xs font-bold uppercase tracking-[0.2em] text-blue-200 mb-6">
-                {isDE ? 'Simulator-Meisterschaft' : 'Simulator Mastery'}
-              </h4>
-              <SimulatorRadar 
-                language={language}
-                stats={{
-                  vorfahrt: userProgress.completedLessons.includes('city-1'),
-                  roundabout: userProgress.completedLessons.includes('city-3'),
-                  mirrors: userProgress.completedLessons.includes('city-5') || userProgress.completedLessons.includes('city-6'),
-                  braking: userProgress.completedLessons.includes('maneuver-4') || userProgress.completedLessons.includes('maneuver-4a'),
-                }}
-              />
-            </div>
           </div>
         
         {/* Quick Progress Bar (Alternative visualization) */}
