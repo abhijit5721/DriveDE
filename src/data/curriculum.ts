@@ -3545,29 +3545,6 @@ const examLessons: Lesson[] = [
     isInteractive: true,
   },
 ];
-inigung Theorieprüfung ✓ Ausbildungsnachweis',
-        contentEn: '✓ ID/Passport ✓ Glasses if needed ✓ Theory test certificate ✓ Training documentation',
-        type: 'warning',
-      },
-      {
-        id: 'check-tip2',
-        titleDe: 'Prüfungsdauer',
-        titleEn: 'Exam duration',
-        contentDe: 'Die praktische Prüfung dauert ca. 45 Minuten. 3 Grundfahraufgaben werden geprüft (aus dem Katalog ausgewählt).',
-        contentEn: 'The practical exam lasts approx. 45 minutes. 3 basic maneuvers are tested (selected from catalog).',
-        type: 'info',
-      },
-      {
-        id: 'check-tip3',
-        titleDe: 'Durchfallquote',
-        titleEn: 'Pass rate info',
-        contentDe: 'Ca. 67% bestehen beim ersten Versuch (KBA 2024). Bei Nicht-Bestehen: Wiederholung frühestens nach 2 Wochen möglich.',
-        contentEn: 'About 67% pass on first attempt (KBA 2024). If failed: Retake possible after minimum 2 weeks.',
-        type: 'info',
-      },
-    ],
-  },
-];
 
 // Chapters Data
 export const chapters: Chapter[] = [
