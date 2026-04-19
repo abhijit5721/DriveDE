@@ -1609,85 +1609,114 @@ const examChecklistGuidedPoints: GuidedPoint[] = [
 ];
 
 // Quiz Questions - Based on official German driving exam content
+// Quiz Questions - Lesson Specific
+const basicsQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-seat',
+    questionDe: 'Wie prüfen Sie die richtige Entfernung zum Lenkrad?',
+    questionEn: 'How do you check the correct distance to the steering wheel?',
+    options: [
+      { id: 'a', textDe: 'Arme voll durchgestreckt', textEn: 'Arms fully extended' },
+      { id: 'b', textDe: 'Handgelenke liegen bei gestreckten Armen oben auf dem Lenkradkranz auf', textEn: 'Wrists rest on top of the steering wheel rim with arms extended' },
+      { id: 'c', textDe: 'Oberkörper so nah wie möglich am Lenkrad', textEn: 'Upper body as close as possible to the steering wheel' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Die Handgelenke sollten bei gestreckten Armen oben auf dem Kranz liegen, damit die Arme beim Greifen in der 9-und-3-Uhr-Stellung leicht gebeugt sind.',
+    explanationEn: 'Your wrists should rest on the top of the rim with arms extended, so your arms are slightly bent when gripping in the 9-and-3 o\'clock position.',
+  }
+];
+
+const mirrorQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-sb',
+    questionDe: 'Wann ist ein Schulterblick in Deutschland zwingend erforderlich?',
+    questionEn: 'When is a shoulder check mandatory in Germany?',
+    options: [
+      { id: 'a', textDe: 'Nur beim Rückwärtsfahren', textEn: 'Only when reversing' },
+      { id: 'b', textDe: 'Vor jedem Abbiegen, Fahrstreifenwechsel und beim Anfahren', textEn: 'Before every turn, lane change, and when moving off' },
+      { id: 'c', textDe: 'Gar nicht, wenn die Spiegel groß sind', textEn: 'Not at all if the mirrors are large' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Der Schulterblick sichert den "Toten Winkel" ab, den Spiegel nicht erfassen können.',
+    explanationEn: 'The shoulder check secures the "blind spot" that mirrors cannot capture.',
+  }
+];
+
+const techQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-oil',
+    questionDe: 'Wie prüfen Sie den Motorölstand korrekt?',
+    questionEn: 'How do you correctly check the engine oil level?',
+    options: [
+      { id: 'a', textDe: 'Bei laufendem Motor', textEn: 'With the engine running' },
+      { id: 'b', textDe: 'Auf ebener Fläche, Motor aus, kurz warten, Peilstab nutzen', textEn: 'On level ground, engine off, wait briefly, use dipstick' },
+      { id: 'c', textDe: 'Nur wenn die Warnleuchte brennt', textEn: 'Only when the warning light is on' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Für eine genaue Messung muss das Öl in die Wanne zurücklaufen und das Fahrzeug gerade stehen.',
+    explanationEn: 'For an accurate measurement, the oil must drain back into the pan and the vehicle must be level.',
+  }
+];
+
 const maneuverQuiz: QuizQuestion[] = [
   {
-    id: 'quiz1',
-    questionDe: 'Was gehört vor dem Rückwärts-Einparken zuerst zur sicheren Vorbereitung?',
-    questionEn: 'Before reversing into a space, what comes first in the safe preparation?',
-    options: [
-      { id: 'a', textDe: 'Sofort rückwärts fahren', textEn: 'Immediately reverse' },
-      { id: 'b', textDe: 'Spiegel prüfen, Umfeld beobachten, dann blinken und unmittelbar vor dem Bewegen Schulterblick/Rundumblick', textEn: 'Check mirrors, observe the surroundings, then signal, and immediately before moving perform a shoulder/all-round check' },
-      { id: 'c', textDe: 'Nur auf den Bordstein schauen', textEn: 'Only look at the curb' },
-    ],
-    correctOptionId: 'b',
-    explanationDe: 'In der Fahrausbildung gilt: erst beobachten, dann Absicht anzeigen und direkt vor dem tatsächlichen Rückwärtsfahren erneut Rundumblick/Schulterblick durchführen.',
-    explanationEn: 'In driving instruction, you observe first, then show your intention, and immediately before the actual reverse movement you perform another all-round/shoulder check.',
-  },
-  {
-    id: 'quiz2',
-    questionDe: 'Bei der Gefahrenbremsung im Schaltwagen aus 30 km/h - was ist richtig?',
-    questionEn: 'During emergency braking in a manual car from 30 km/h - what is correct?',
-    options: [
-      { id: 'a', textDe: 'Erst Schulterblick, dann bremsen', textEn: 'First shoulder check, then brake' },
-      { id: 'b', textDe: 'Kupplung und Bremse sofort gleichzeitig voll durchtreten', textEn: 'Press clutch and brake immediately at the same time with full force' },
-      { id: 'c', textDe: 'Kupplung zuerst treten, dann sanft bremsen', textEn: 'Press the clutch first, then brake gently' },
-    ],
-    correctOptionId: 'b',
-    explanationDe: 'Bei der Gefahrenbremsung im Schaltwagen reagiert man sofort und schlagartig mit Kupplung und Bremse gleichzeitig. Kein Schulterblick vor der Bremsung.',
-    explanationEn: 'During emergency braking in a manual car, you react immediately and abruptly with clutch and brake at the same time. No shoulder check before braking.',
-  },
-  {
-    id: 'quiz3',
-    questionDe: 'Wie verhalten Sie sich im Kreisverkehr (mit Zeichen 215)?',
-    questionEn: 'How do you behave in a roundabout (with sign 215)?',
-    options: [
-      { id: 'a', textDe: 'Beim Einfahren blinken', textEn: 'Signal when entering' },
-      { id: 'b', textDe: 'Nur beim Ausfahren blinken', textEn: 'Signal only when exiting' },
-      { id: 'c', textDe: 'Gar nicht blinken', textEn: 'No signaling at all' },
-    ],
-    correctOptionId: 'b',
-    explanationDe: 'Laut StVO: Beim Einfahren NICHT blinken! Erst beim Verlassen nach rechts blinken.',
-    explanationEn: 'According to StVO: Do NOT signal when entering! Only signal right when exiting.',
-  },
-  {
-    id: 'quiz4',
+    id: 'quiz-park-1',
     questionDe: 'Wie viele Korrekturzüge sind beim Einparken in der Prüfung erlaubt?',
     questionEn: 'How many correction moves are allowed during parking in the exam?',
     options: [
-      { id: 'a', textDe: 'Keine', textEn: 'None' },
-      { id: 'b', textDe: 'Maximal 2', textEn: 'Maximum 2' },
-      { id: 'c', textDe: 'Unbegrenzt', textEn: 'Unlimited' },
-    ],
-    correctOptionId: 'b',
-    explanationDe: 'Maximal 2 Korrekturzüge sind erlaubt. Bei Misserfolg darf die Aufgabe einmal wiederholt werden.',
-    explanationEn: 'Maximum 2 corrections are allowed. If unsuccessful, the task may be repeated once.',
-  },
-  {
-    id: 'quiz5',
-    questionDe: 'Was gilt bei "Rechts vor Links" (ohne Verkehrszeichen)?',
-    questionEn: 'What applies at "Right before Left" (without traffic signs)?',
-    options: [
-      { id: 'a', textDe: 'Der von rechts kommende hat Vorfahrt', textEn: 'Traffic from the right has priority' },
-      { id: 'b', textDe: 'Der schnellere hat Vorfahrt', textEn: 'The faster vehicle has priority' },
-      { id: 'c', textDe: 'Immer der Größere hat Vorfahrt', textEn: 'The larger vehicle always has priority' },
+      { id: 'a', textDe: 'Maximal 2', textEn: 'Maximum 2' },
+      { id: 'b', textDe: 'Beliebig viele', textEn: 'As many as you like' },
+      { id: 'c', textDe: 'Keine', textEn: 'None' },
     ],
     correctOptionId: 'a',
-    explanationDe: 'Grundregel in Deutschland (§ 8 StVO): Wer von rechts kommt, hat Vorfahrt. Nicht anwendbar ist sie bei geregelter Vorfahrt sowie in typischen §10-StVO-Fällen wie Grundstücksausfahrten, Feld-/Waldwegen, verkehrsberuhigten Bereichen oder beim Einfahren über einen abgesenkten Bordstein.',
-    explanationEn: 'Basic rule in Germany (§ 8 StVO): Traffic from the right has priority. It does not apply where priority is otherwise regulated or in typical §10 StVO situations such as exiting properties, field/forest tracks, traffic-calmed areas, or entering over a lowered curb.',
-  },
+    explanationDe: 'In der praktischen Prüfung sind pro Grundfahraufgabe maximal 2 Korrekturzüge zulässig.',
+    explanationEn: 'In the practical exam, a maximum of 2 correction moves are permitted per basic maneuver.',
+  }
+];
+
+const emergencyBrakeQuiz: QuizQuestion[] = [
   {
-    id: 'quiz6',
-    questionDe: 'Ab welcher Sichtweite dürfen Sie die Nebelschlussleuchte einschalten?',
-    questionEn: 'At what visibility may you turn on rear fog lights?',
+    id: 'quiz-eb-1',
+    questionDe: 'Was ist bei der Gefahrenbremsung im Schaltwagen entscheidend?',
+    questionEn: 'What is crucial during emergency braking in a manual car?',
     options: [
-      { id: 'a', textDe: 'Unter 100 Meter', textEn: 'Under 100 meters' },
-      { id: 'b', textDe: 'Unter 50 Meter', textEn: 'Under 50 meters' },
-      { id: 'c', textDe: 'Immer bei Nebel', textEn: 'Always in fog' },
+      { id: 'a', textDe: 'Sanft bremsen', textEn: 'Brake gently' },
+      { id: 'b', textDe: 'Kupplung und Bremse schlagartig gleichzeitig voll durchtreten', textEn: 'Press clutch and brake abruptly and fully at the same time' },
+      { id: 'c', textDe: 'Erst Schulterblick machen', textEn: 'First perform a shoulder check' },
     ],
     correctOptionId: 'b',
-    explanationDe: 'Die Nebelschlussleuchte darf nur bei Sichtweite unter 50 m benutzt werden (§ 17 StVO). Unabhängig davon gilt bei Sicht unter 50 m für Fahrzeuge höchstens 50 km/h (§ 3 StVO).',
-    explanationEn: 'The rear fog light may only be used when visibility is below 50 m (§ 17 StVO). Separately, when visibility is below 50 m, vehicles may travel at no more than 50 km/h (§ 3 StVO).',
+    explanationDe: 'Sofortige maximale Verzögerung ist das Ziel. Der Fahrlehrer sichert nach hinten ab.',
+    explanationEn: 'Immediate maximum deceleration is the goal. The instructor secures the area behind.',
+  }
+];
+
+const cityQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-rvl',
+    questionDe: 'Wo gilt die Regel "Rechts vor Links"?',
+    questionEn: 'Where does the "Right before Left" rule apply?',
+    options: [
+      { id: 'a', textDe: 'An allen Kreuzungen', textEn: 'At all intersections' },
+      { id: 'b', textDe: 'An Kreuzungen ohne vorfahrtregelnde Verkehrszeichen oder Ampeln', textEn: 'At intersections without priority signs or traffic lights' },
+      { id: 'c', textDe: 'Nur in Sackgassen', textEn: 'Only in dead-end streets' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Rechts vor Links (§ 8 StVO) gilt immer dann, wenn keine andere Regelung (Schilder, Ampeln, Polizei) vorhanden ist.',
+    explanationEn: 'Right before Left (§ 8 StVO) always applies when no other regulation (signs, lights, police) is present.',
   },
+  {
+    id: 'quiz-roundabout',
+    questionDe: 'Wann müssen Sie im Kreisverkehr (Zeichen 215) blinken?',
+    questionEn: 'When must you signal in a roundabout (Sign 215)?',
+    options: [
+      { id: 'a', textDe: 'Beim Einfahren', textEn: 'When entering' },
+      { id: 'b', textDe: 'Beim Ausfahren', textEn: 'When exiting' },
+      { id: 'c', textDe: 'Beides', textEn: 'Both' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'In Deutschland wird beim Einfahren in den Kreisel NICHT geblinkt. Erst beim Verlassen ist das Blinken nach rechts Pflicht.',
+    explanationEn: 'In Germany, you do NOT signal when entering the roundabout. Signaling right is mandatory only when exiting.',
+  }
 ];
 
 // Vehicle Check Visuals
@@ -2031,6 +2060,7 @@ const basicsLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'basics-1',
@@ -2052,6 +2082,7 @@ const basicsLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-1b',
@@ -2116,6 +2147,7 @@ const basicsLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: mirrorQuiz,
   },
   {
     id: 'basics-1a',
@@ -2208,6 +2240,7 @@ const basicsLessons: Lesson[] = [
         type: 'success',
       },
     ],
+    quiz: techQuiz,
   },
   {
     id: 'basics-2',
@@ -2238,6 +2271,7 @@ const basicsLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-2a',
@@ -2268,6 +2302,7 @@ const basicsLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-3',
@@ -2298,6 +2333,7 @@ const basicsLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-3a',
@@ -2320,6 +2356,7 @@ const basicsLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-4',
@@ -2331,6 +2368,17 @@ const basicsLessons: Lesson[] = [
     completed: false,
     licenseType: 'both',
     isPremium: true,
+    tips: [
+      {
+        id: 'steer-tip1',
+        titleDe: 'Viertel vor Drei Stellung',
+        titleEn: 'Quarter to Three Position',
+        contentDe: 'Halten Sie das Lenkrad immer mit beiden Händen in der 9-und-3-Uhr-Stellung für maximale Kontrolle.',
+        contentEn: 'Always hold the steering wheel with both hands at the 9 and 3 o\'clock position for maximum control.',
+        type: 'info',
+      }
+    ],
+    quiz: basicsQuiz,
   },
   {
     id: 'basics-5',
@@ -2425,7 +2473,17 @@ const maneuverLessons: Lesson[] = [
     guidedPoints: parkingGuidedPoints,
     scenarios: parkingScenarios,
     trafficSigns: [signParking, signNoStopping],
-    tips: maneuverTips,
+    tips: [
+      {
+        id: 'park-rev-tip1',
+        titleDe: 'Bezugspunkte nutzen',
+        titleEn: 'Use Reference Points',
+        contentDe: 'Bei 45 Grad einlenken, wenn der eigene Außenspiegel die Rückleuchte des stehenden Autos passiert.',
+        contentEn: 'Turn at 45 degrees when your side mirror passes the taillight of the parked car.',
+        type: 'info',
+      },
+    ],
+    quiz: maneuverQuiz,
   },
   {
     id: 'maneuver-3',
@@ -2438,6 +2496,7 @@ const maneuverLessons: Lesson[] = [
     isPremium: true,
     steps: threePointTurnSteps,
     tips: maneuverTips,
+    quiz: maneuverQuiz,
   },
   {
     id: 'maneuver-4',
@@ -2470,6 +2529,7 @@ const maneuverLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: emergencyBrakeQuiz,
   },
   {
     id: 'maneuver-4a',
@@ -2502,6 +2562,7 @@ const maneuverLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: emergencyBrakeQuiz,
   },
 ];
 
@@ -2572,6 +2633,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-2',
@@ -2646,6 +2708,7 @@ const cityLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-3',
@@ -2686,6 +2749,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-4',
@@ -2709,6 +2773,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-5',
@@ -2733,6 +2798,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: mirrorQuiz,
   },
   {
     id: 'city-5a',
@@ -2863,6 +2929,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-5b',
@@ -2901,6 +2968,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-5c',
@@ -2939,6 +3007,7 @@ const cityLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-6',
@@ -3005,6 +3074,7 @@ const cityLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: mirrorQuiz,
   },
   {
     id: 'city-7',
@@ -3099,6 +3169,7 @@ const cityLessons: Lesson[] = [
         emphasis: 'priority',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-10',
@@ -3119,6 +3190,7 @@ const cityLessons: Lesson[] = [
         emphasis: 'safety',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'city-11',
@@ -3139,6 +3211,7 @@ const cityLessons: Lesson[] = [
         emphasis: 'safety',
       },
     ],
+    quiz: mirrorQuiz,
   },
 ];
 
@@ -3163,6 +3236,7 @@ const specialLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'special-2',
@@ -3185,6 +3259,7 @@ const specialLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'special-2a',
@@ -3239,6 +3314,7 @@ const specialLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'special-3',
@@ -3297,6 +3373,7 @@ const specialLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'special-4',
@@ -3325,6 +3402,7 @@ const specialLessons: Lesson[] = [
         emphasis: 'safety',
       },
     ],
+    quiz: cityQuiz,
   },
 ];
 
@@ -3356,6 +3434,7 @@ const examLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'exam-1a',
@@ -3393,6 +3472,7 @@ const examLessons: Lesson[] = [
         emphasis: 'exam',
       },
     ],
+    quiz: mirrorQuiz,
   },
   {
     id: 'exam-2',
@@ -3421,6 +3501,7 @@ const examLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'exam-2a',
@@ -3459,6 +3540,7 @@ const examLessons: Lesson[] = [
         type: 'warning',
       },
     ],
+    quiz: cityQuiz,
   },
   {
     id: 'exam-3',
@@ -3532,6 +3614,7 @@ const examLessons: Lesson[] = [
         type: 'info',
       },
     ],
+    quiz: basicsQuiz,
   },
   {
     id: 'exam-sim',

@@ -139,8 +139,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   };
 
   const handleFinish = () => {
-    completeLesson(lesson.id);
-    onBack();
+    if (lesson.quiz && lesson.quiz.length > 0 && !showQuiz) {
+      setShowQuiz(true);
+    } else {
+      completeLesson(lesson.id);
+      onBack();
+    }
   };
 
   const isVorfahrtLesson = lesson.id === 'city-1';
