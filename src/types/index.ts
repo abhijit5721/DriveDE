@@ -48,6 +48,7 @@ export interface Lesson {
   manualOnly?: boolean;
   automaticOnly?: boolean;
   isPremium?: boolean;
+  isInteractive?: boolean;
 }
 
 export interface ManeuverStep {

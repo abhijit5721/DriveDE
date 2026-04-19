@@ -32,6 +32,7 @@ import { ParkingDiagram } from './ParkingDiagram';
 import AnimatedManeuver from './AnimatedManeuver';
 import { TrafficSignIcon } from './TrafficSignIcon';
 import { PageHeader } from './PageHeader';
+import InteractiveVorfahrt from './InteractiveVorfahrt';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -60,6 +61,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [isSimulatorComplete, setIsSimulatorComplete] = useState(false);
 
   const isDE = language === 'de';
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
@@ -132,6 +134,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
     completeLesson(lesson.id);
     onBack();
   };
+
+  const isVorfahrtLesson = lesson.id === 'city-1';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -238,6 +242,53 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {isDE ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
       </div>
+
+      {/* Interactive Simulator Section */}
+      {isVorfahrtLesson && !isCompleted && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+              <Activity className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {isDE ? 'Interaktiver Simulator' : 'Interactive Simulator'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {isDE 
+                  ? 'Meistere die Situation, um die Lektion abzuschließen' 
+                  : 'Master the situation to complete the lesson'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveVorfahrt onComplete={() => setIsSimulatorComplete(true)} />
+            
+            {isSimulatorComplete && (
+              <div className="mx-4 mb-4">
+                <button
+                  onClick={handleFinish}
+                  className="w-full rounded-2xl bg-gradient-to-r from-green-500 to-green-600 py-4 font-bold text-white shadow-lg shadow-green-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    {isDE ? 'Lektion erfolgreich abgeschlossen!' : 'Lesson Successfully Completed!'}
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {!isSimulatorComplete && (
+            <p className="mt-4 text-center text-sm font-medium text-amber-600 dark:text-amber-400">
+              {isDE 
+                ? '💡 Löse den Simulator oben, um fortzufahren' 
+                : '💡 Solve the simulator above to proceed'}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Steps Visualization */}
       {lesson.steps && lesson.steps.length > 0 && (

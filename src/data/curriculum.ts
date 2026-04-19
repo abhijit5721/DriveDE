@@ -2511,6 +2511,7 @@ const cityLessons: Lesson[] = [
     descriptionEn: 'The most important right-of-way rule in Germany (§ 8 StVO)',
     completed: false,
     isPremium: false,
+    isInteractive: true,
     guidedPoints: rightBeforeLeftGuidedPoints,
     scenarios: [
       {

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Check, Lock, Cog, Zap, Settings2, BadgeCheck, BookOpen, Crown } from 'lucide-react';
+import { ChevronRight, ChevronDown, Check, Lock, Cog, Zap, Settings2, BadgeCheck, BookOpen, Crown, Activity } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { chapters } from '../data/curriculum';
 import { cn } from '../utils/cn';
@@ -62,6 +62,14 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
           <Zap className="h-3 w-3" />
           {isDE ? 'Automatik' : 'Auto'}
+        </span>
+      );
+    }
+    if (lesson.isInteractive) {
+      return (
+        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200 shadow-sm shadow-indigo-500/10">
+          <Activity className="h-3 w-3" />
+          {isDE ? 'Interaktiv' : 'Interactive'}
         </span>
       );
     }
