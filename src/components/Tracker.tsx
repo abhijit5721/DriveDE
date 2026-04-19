@@ -104,8 +104,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [currentDistance, setCurrentDistance] = useState(0);
   const [gpsPoints, setGpsPoints] = useState<DrivingSession['route']>([]);
   const [currentSpeed, setCurrentSpeed] = useState(0);
+  const [currentLimit, setCurrentLimit] = useState<number | null>(null);
+  const [currentMistakes, setCurrentMistakes] = useState<DrivingMistake[]>([]);
+  
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
+  const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchSpeedLimit = async (lat: number, lng: number) => {
+    try {
+      // Overpass API query for nearest way with maxspeed
+      const query = `[out:json];way(around:30,${lat},${lng})[maxspeed];out tags;`;
+      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      
+      if (data.elements && data.elements.length > 0) {
+        const limit = parseInt(data.elements[0].tags.maxspeed);
+        if (!isNaN(limit)) {
+          setCurrentLimit(limit);
+          return limit;
+        }
+      }
+      return null;
+    } catch (e) {
+      console.error('Speed limit fetch failed');
+      return null;
+    }
+  };
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // km
@@ -143,12 +168,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           (position) => {
             const { latitude: lat, longitude: lng, speed } = position.coords;
             const newPoint = { lat, lng, timestamp: Date.now() };
+            const currentKmh = speed !== null ? Math.round(speed * 3.6) : 0;
             
             setGpsPoints(prev => {
               const lastPoint = prev[prev.length - 1];
               if (lastPoint) {
                 const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                if (dist > 0.005) { // Only add if moved > 5 meters to save space
+                if (dist > 0.005) { // Only add if moved > 5 meters
                   setCurrentDistance(d => d + dist);
                   return [...prev, newPoint];
                 }
@@ -157,28 +183,56 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               return [newPoint];
             });
 
-            if (speed !== null) {
-              setCurrentSpeed(Math.round(speed * 3.6)); // m/s to km/h
+            setCurrentSpeed(currentKmh);
+
+            // Check if speeding
+            if (currentLimit && currentKmh > currentLimit + 5) {
+              setCurrentMistakes(prev => {
+                const lastMistake = prev[prev.length - 1];
+                // Debounce speeding mistakes (wait at least 30s between same type)
+                if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000)) {
+                  toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
+                  return [...prev, {
+                    type: 'speeding',
+                    speed: currentKmh,
+                    limit: currentLimit,
+                    timestamp: Date.now(),
+                    location: { lat, lng }
+                  }];
+                }
+                return prev;
+              });
             }
           },
           (error) => console.error('GPS Error:', error),
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
+
+        // Periodically fetch speed limit for current road
+        limitCheckRef.current = setInterval(() => {
+          navigator.geolocation.getCurrentPosition((pos) => {
+            fetchSpeedLimit(pos.coords.latitude, pos.coords.longitude);
+          });
+        }, 20000); // Check every 20 seconds
       }
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+      if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+      if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     };
-  }, [isTimerRunning, isPremium]);
+  }, [isTimerRunning, isPremium, currentLimit]);
 
   const handleStartTimer = () => {
     setElapsedTime(0);
     setCurrentDistance(0);
     setGpsPoints([]);
+    setCurrentMistakes([]);
+    setCurrentLimit(null);
     setIsTimerRunning(true);
     toast(isDE ? 'Fahrt-Timer & GPS gestartet!' : 'Drive timer & GPS started!', { icon: '️🛰️' });
   };
@@ -211,7 +265,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       date: new Date().toISOString().split('T')[0],
       totalDistance: Math.round(currentDistance * 10) / 10,
       route: gpsPoints,
-      locationSummary: locationSummary || undefined
+      locationSummary: locationSummary || undefined,
+      mistakes: currentMistakes
     }));
     setShowAddForm(true);
     setElapsedTime(0);
@@ -394,18 +449,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </div>
           
           {isPremium && (
-            <div className="mt-4 grid w-full grid-cols-2 gap-4 border-t border-white/10 pt-4">
+            <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
               <div className="text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {isDE ? 'Strecke' : 'Distance'}
+                  {isDE ? 'Strecke' : 'Dist.'}
                 </p>
-                <p className="text-xl font-bold">{currentDistance.toFixed(1)} <span className="text-sm font-medium opacity-60">km</span></p>
+                <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
               </div>
               <div className="text-center border-l border-white/10">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   {isDE ? 'Tempo' : 'Speed'}
                 </p>
-                <p className="text-xl font-bold">{currentSpeed} <span className="text-sm font-medium opacity-60">km/h</span></p>
+                <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
+              </div>
+              <div className="text-center border-l border-white/10">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {isDE ? 'Limit' : 'Limit'}
+                </p>
+                <p className={cn(
+                  "text-lg font-bold flex items-center justify-center gap-1",
+                  currentLimit && currentSpeed > currentLimit ? "text-red-400" : "text-white"
+                )}>
+                  {currentLimit || '--'}
+                  {currentLimit && <div className={cn("h-4 w-4 rounded-full border-2 border-red-500 flex items-center justify-center text-[10px] font-black text-slate-900 bg-white", currentLimit === 30 && "border-red-600")} >{currentLimit}</div>}
+                </p>
               </div>
             </div>
           )}
@@ -660,6 +727,26 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     )}
                     {session.route && session.route.length > 0 && (
                       <RoutePreview route={session.route} language={language} />
+                    )}
+                    {session.mistakes && session.mistakes.length > 0 && (
+                      <div className="mt-3 rounded-lg border border-red-200 bg-red-50/50 p-2 dark:border-red-900/30 dark:bg-red-900/10">
+                        <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400">
+                          <X className="h-3 w-3" />
+                          {isDE ? 'Fehler-Analyse' : 'Mistake Analysis'}
+                        </div>
+                        <div className="space-y-1">
+                          {session.mistakes.map((mistake, idx) => (
+                            <div key={idx} className="flex items-center justify-between text-[11px]">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {mistake.type === 'speeding' ? (isDE ? 'Geschwindigkeitsüberschreitung' : 'Speeding') : mistake.type}
+                              </span>
+                              <span className="font-bold text-red-600">
+                                {mistake.speed} km/h <span className="font-normal opacity-60">vs</span> {mistake.limit} km/h
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-1">

@@ -131,6 +131,14 @@ export interface QuizOption {
   textEn: string;
 }
 
+export interface DrivingMistake {
+  type: 'speeding' | 'priority' | 'stop_sign' | 'other';
+  speed?: number;
+  limit?: number;
+  timestamp: number;
+  location?: { lat: number; lng: number };
+}
+
 export interface DrivingSession {
   id: string;
   date: string;
@@ -141,6 +149,7 @@ export interface DrivingSession {
   totalDistance?: number; // km
   route?: { lat: number; lng: number; timestamp: number }[];
   locationSummary?: string; // e.g. "Berlin, Mitte"
+  mistakes?: DrivingMistake[];
 }
 
 export interface UserProgress {
