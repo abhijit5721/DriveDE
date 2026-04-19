@@ -410,13 +410,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {language === 'de' ? 'Praxis-Check: Einparken' : 'Practical Check: Parking'}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Parallel-Parken Schritt für Schritt' : 'Parallel parking step by step'}
-              </p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
-            <InteractiveParking onComplete={() => setIsSimulatorComplete(true)} language={language} />
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveParking onComplete={handleFinish} language={language} />
           </div>
         </div>
       )}
@@ -430,15 +425,15 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Praxis-Check: Fahrzeugtechnik' : 'Practical Check: Vehicle Tech'}
+                {language === 'de' ? 'Interaktive Fahrzeugkontrolle' : 'Interactive Vehicle Check'}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Komponenten im Motorraum finden' : 'Find components in the engine bay'}
+                {language === 'de' ? 'Prüfen Sie Ihr technisches Wissen am Fahrzeug' : 'Check your technical knowledge of the vehicle'}
               </p>
             </div>
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveTechCheck onComplete={() => setIsSimulatorComplete(true)} language={language} />
+            <InteractiveTechCheck onComplete={handleFinish} language={language} />
           </div>
         </div>
       )}
@@ -460,7 +455,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 shadow-2xl">
-            <InteractiveExamSimulation onComplete={() => setIsSimulatorComplete(true)} language={language} />
+            <InteractiveExamSimulation onComplete={handleFinish} language={language} />
           </div>
         </div>
       )}
