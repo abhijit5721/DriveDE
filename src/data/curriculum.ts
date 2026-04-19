@@ -2448,6 +2448,7 @@ const maneuverLessons: Lesson[] = [
     manualOnly: true,
     licenseType: 'manual',
     isPremium: true,
+    isInteractive: true,
     steps: emergencyBrakingStepsManual,
     tips: [
       {
@@ -2479,6 +2480,7 @@ const maneuverLessons: Lesson[] = [
     automaticOnly: true,
     licenseType: 'automatic',
     isPremium: true,
+    isInteractive: true,
     steps: emergencyBrakingStepsAutomatic,
     tips: [
       {

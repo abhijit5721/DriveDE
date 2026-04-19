@@ -35,6 +35,7 @@ import { PageHeader } from './PageHeader';
 import InteractiveVorfahrt from './InteractiveVorfahrt';
 import InteractiveMirrorCheck from './InteractiveMirrorCheck';
 import InteractiveRoundabout from './InteractiveRoundabout';
+import InteractiveEmergencyBrake from './InteractiveEmergencyBrake';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -140,6 +141,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isVorfahrtLesson = lesson.id === 'city-1';
   const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
   const isRoundaboutLesson = lesson.id === 'city-3';
+  const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -358,6 +360,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Emergency Brake Section */}
+      {isEmergencyBrakeLesson && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20">
+              <Zap className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Praxis-Check: Gefahrenbremsung' : 'Practical Check: Emergency Brake'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Reaktionszeit & Vollbremsung trainieren' : 'Train reaction time & full emergency brake'}
+              </p>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
+            <InteractiveEmergencyBrake onComplete={() => setIsSimulatorComplete(true)} language={language} />
           </div>
         </div>
       )}
