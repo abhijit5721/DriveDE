@@ -2127,6 +2127,7 @@ const basicsLessons: Lesson[] = [
     completed: false,
     licenseType: 'both',
     isPremium: true,
+    isInteractive: true,
     scenarioSectionTitleDe: 'Typische Prüfungsfragen & technische Situationen',
     scenarioSectionTitleEn: 'Typical Exam Questions & Technical Situations',
     scenarioSectionSubtitleDe: 'Schritt-für-Schritt für häufige Technikfragen in der praktischen Prüfung',

@@ -39,6 +39,7 @@ import InteractiveMirrorCheck from './InteractiveMirrorCheck';
 import InteractiveRoundabout from './InteractiveRoundabout';
 import InteractiveEmergencyBrake from './InteractiveEmergencyBrake';
 import InteractiveParking from './InteractiveParking';
+import InteractiveTechCheck from './InteractiveTechCheck';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -146,6 +147,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isRoundaboutLesson = lesson.id === 'city-3';
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
   const isParkingLesson = lesson.id === 'maneuver-1';
+  const isTechLesson = lesson.id === 'basics-1a';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -408,6 +410,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
             <InteractiveParking onComplete={() => setIsSimulatorComplete(true)} language={language} />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Tech Check Section */}
+      {isTechLesson && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+              <Activity className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Praxis-Check: Fahrzeugtechnik' : 'Practical Check: Vehicle Tech'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Komponenten im Motorraum finden' : 'Find components in the engine bay'}
+              </p>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveTechCheck onComplete={() => setIsSimulatorComplete(true)} language={language} />
           </div>
         </div>
       )}
