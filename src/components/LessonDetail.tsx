@@ -40,6 +40,7 @@ import InteractiveRoundabout from './InteractiveRoundabout';
 import InteractiveEmergencyBrake from './InteractiveEmergencyBrake';
 import InteractiveParking from './InteractiveParking';
 import InteractiveTechCheck from './InteractiveTechCheck';
+import InteractiveExamSimulation from './InteractiveExamSimulation';
 import type { Lesson } from '../types';
 
 interface LessonDetailProps {
@@ -148,6 +149,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
   const isParkingLesson = lesson.id === 'maneuver-1';
   const isTechLesson = lesson.id === 'basics-1a';
+  const isExamSim = lesson.id === 'exam-sim';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
     const question = lesson.quiz[0];
@@ -432,6 +434,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
             <InteractiveTechCheck onComplete={() => setIsSimulatorComplete(true)} language={language} />
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Exam Simulation Section */}
+      {isExamSim && (
+        <div className="mb-8">
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20">
+              <Trophy className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {language === 'de' ? 'Full Final Check: Prüfungssimulation' : 'Full Final Check: Exam Simulation'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? '15-minütige Live-Simulation mit Experten-Feedback' : '15-minute live simulation with expert feedback'}
+              </p>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 shadow-2xl">
+            <InteractiveExamSimulation onComplete={() => setIsSimulatorComplete(true)} language={language} />
           </div>
         </div>
       )}
