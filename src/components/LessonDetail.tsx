@@ -26,6 +26,7 @@ import {
   Gauge,
   GraduationCap,
   Zap,
+  Car,
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
