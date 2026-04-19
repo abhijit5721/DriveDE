@@ -393,8 +393,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </p>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800 p-4">
-            <InteractiveEmergencyBrake onComplete={() => setIsSimulatorComplete(true)} language={language} />
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
+            <InteractiveEmergencyBrake onComplete={handleFinish} language={language} />
           </div>
         </div>
       )}
@@ -410,6 +410,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {language === 'de' ? 'Praxis-Check: Einparken' : 'Practical Check: Parking'}
               </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {language === 'de' ? 'Parallel-Parken Schritt für Schritt' : 'Parallel parking step by step'}
+              </p>
+            </div>
+          </div>
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
             <InteractiveParking onComplete={handleFinish} language={language} />
           </div>
