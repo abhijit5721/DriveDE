@@ -1,82 +1,101 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
 import { EmptyState } from './EmptyState';
 import type { DrivingSession, DrivingMistake } from '../types';
 
-const RoutePreview = ({ route, language }: { route: NonNullable<DrivingSession['route']>, language: string }) => {
+import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icons in Leaflet with React
+// @ts-ignore
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+});
+
+const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
   if (route.length < 2) return null;
-
-  // Find bounds
-  const lats = route.map(p => p.lat);
-  const lngs = route.map(p => p.lng);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
+  const isDE = language === 'de';
   
-  const width = 200;
-  const height = 120;
-  const padding = 10;
+  const startPoint = [route[0].lat, route[0].lng] as [number, number];
+  const endPoint = [route[route.length-1].lat, route[route.length-1].lng] as [number, number];
+  const polyline = route.map(p => [p.lat, p.lng] as [number, number]);
 
-  // Scale points to SVG space
-  const scale = (val: number, min: number, max: number, range: number) => {
-    const diff = max - min;
-    if (diff === 0) return range / 2;
-    return padding + ((val - min) / diff) * (range - 2 * padding);
+  // Component to fit bounds automatically
+  const MapBounds = () => {
+    const map = useMap();
+    useEffect(() => {
+      const bounds = L.latLngBounds(polyline);
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }, [map]);
+    return null;
   };
 
-  const points = route.map(p => ({
-    x: scale(p.lng, minLng, maxLng, width),
-    y: height - scale(p.lat, minLat, maxLat, height) // Flip Y for SVG
-  }));
-
-  const pathData = `M ${points[0].x} ${points[0].y} ` + points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
-
-  const isDE = language === 'de';
+  const getMistakeIcon = (type: DrivingMistake['type']) => {
+    let color = '#ef4444'; // default red
+    if (type === 'harsh_braking') color = '#f97316'; // orange
+    if (type === 'rapid_acceleration') color = '#3b82f6'; // blue
+    
+    return L.divIcon({
+      className: 'custom-div-icon',
+      html: `<div style="background-color: ${color}; width: 12px; height: 12px; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
+  };
 
   return (
-    <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50">
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-1.5 dark:border-slate-800">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-          {isDE ? 'Streckenverlauf' : 'Route Trace'}
+    <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-slate-800">
+      <div className="flex items-center justify-between bg-slate-50 px-3 py-2 dark:bg-slate-900/80">
+        <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          <MapPin className="h-3 w-3" />
+          {isDE ? 'Streckenverlauf (Echtzeit)' : 'Live Route Trace'}
         </span>
-        <div className="flex gap-2">
-           <div className="flex items-center gap-1">
-             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-             <span className="text-[9px] text-slate-400">{isDE ? 'Start' : 'Start'}</span>
-           </div>
-           <div className="flex items-center gap-1">
-             <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-             <span className="text-[9px] text-slate-400">{isDE ? 'Ende' : 'End'}</span>
-           </div>
-        </div>
       </div>
-      <div className="flex items-center justify-center p-4">
-        <svg width={width} height={height} className="drop-shadow-sm">
-          <path
-            d={pathData}
-            fill="none"
-            stroke="url(#routeGradient)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <div className="h-[250px] w-full z-0">
+        <MapContainer 
+          center={startPoint} 
+          zoom={15} 
+          scrollWheelZoom={false}
+          style={{ height: '100%', width: '100%' }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <defs>
-            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#10b981" />
-              <stop offset="100%" stopColor="#ef4444" />
-            </linearGradient>
-          </defs>
-          {/* Start Point */}
-          <circle cx={points[0].x} cy={points[0].y} r="4" fill="#10b981" />
-          {/* End Point */}
-          <circle cx={points[points.length-1].x} cy={points[points.length-1].y} r="4" fill="#ef4444" />
-        </svg>
+          <MapBounds />
+          <Polyline positions={polyline} color="#3b82f6" weight={4} opacity={0.7} />
+          
+          <Marker position={startPoint}>
+             <Popup>{isDE ? 'Startpunkt' : 'Start Point'}</Popup>
+          </Marker>
+          <Marker position={endPoint}>
+             <Popup>{isDE ? 'Endpunkt' : 'End Point'}</Popup>
+          </Marker>
+
+          {mistakes?.map((m, i) => m.location && (
+            <Marker key={i} position={[m.location.lat, m.location.lng]} icon={getMistakeIcon(m.type)}>
+              <Popup>
+                <div className="text-xs font-bold">
+                  {m.type === 'speeding' && (isDE ? 'Geschwindigkeitsüberschreitung' : 'Speeding')}
+                  {m.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
+                  {m.type === 'rapid_acceleration' && (isDE ? 'Starke Beschleunigung' : 'Rapid Acceleration')}
+                  {m.type === 'shoulder_check' && (isDE ? 'Schulterblick vergessen' : 'Missed Shoulder Check')}
+                  {m.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
+                  {m.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
     </div>
   );
@@ -110,6 +129,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
+  const lastMotionLogRef = useRef<number>(0);
+  const [showManualLog, setShowManualLog] = useState(false);
 
   const fetchSpeedLimit = async (lat: number, lng: number) => {
     try {
@@ -189,7 +210,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             if (currentLimit && currentKmh > currentLimit + 5) {
               setCurrentMistakes(prev => {
                 const lastMistake = prev[prev.length - 1];
-                // Debounce speeding mistakes (wait at least 30s between same type)
                 if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000)) {
                   toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
                   return [...prev, {
@@ -215,26 +235,79 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           });
         }, 20000); // Check every 20 seconds
       }
+
+      // Start Motion Auditor (Accelerometer)
+      const handleMotion = (event: DeviceMotionEvent) => {
+        if (!isPremium) return;
+        
+        const acc = event.acceleration;
+        if (!acc) return;
+
+        const x = acc.x || 0;
+        const y = acc.y || 0;
+        const z = acc.z || 0;
+        const totalAcc = Math.sqrt(x*x + y*y + z*z);
+
+        // Threshold for "harsh" driving: 4.0 m/s^2
+        if (totalAcc > 4.0 && Date.now() - lastMotionLogRef.current > 10000) {
+          lastMotionLogRef.current = Date.now();
+          
+          // Try to guess if it's braking or acceleration based on relative values or device orientation
+          // For now, we'll log it as a general harsh maneuver or try to fetch the current GPS for the mistake
+          navigator.geolocation.getCurrentPosition((pos) => {
+            const isBraking = y < -3.0; // Simplistic guess
+            const type = isBraking ? 'harsh_braking' : 'rapid_acceleration';
+            
+            setCurrentMistakes(prev => [...prev, {
+              type,
+              timestamp: Date.now(),
+              location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
+            }]);
+
+            toast.error(
+              isDE 
+                ? (isBraking ? 'Starkes Bremsen erkannt!' : 'Starke Beschleunigung erkannt!')
+                : (isBraking ? 'Harsh braking detected!' : 'Rapid acceleration detected!'),
+              { position: 'bottom-center' }
+            );
+          });
+        }
+      };
+
+      window.addEventListener('devicemotion', handleMotion);
+      return () => {
+        window.removeEventListener('devicemotion', handleMotion);
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+        if (limitCheckRef.current) clearInterval(limitCheckRef.current);
+      };
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
-      if (limitCheckRef.current) clearInterval(limitCheckRef.current);
-    };
   }, [isTimerRunning, isPremium, currentLimit]);
 
-  const handleStartTimer = () => {
+  const handleStartTimer = async () => {
+    // Request Motion permission for iOS
+    if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
+      try {
+        const permissionState = await (DeviceMotionEvent as any).requestPermission();
+        if (permissionState !== 'granted') {
+          toast.error(isDE ? 'Bewegungssensoren-Zugriff verweigert' : 'Motion sensor access denied');
+        }
+      } catch (e) {
+        console.error('Motion permission error', e);
+      }
+    }
+
     setElapsedTime(0);
     setCurrentDistance(0);
     setGpsPoints([]);
     setCurrentMistakes([]);
     setCurrentLimit(null);
     setIsTimerRunning(true);
-    toast(isDE ? 'Fahrt-Timer & GPS gestartet!' : 'Drive timer & GPS started!', { icon: '️🛰️' });
+    toast(isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!', { icon: '️🚀' });
   };
 
   const handlePauseTimer = () => {
@@ -269,8 +342,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       mistakes: currentMistakes
     }));
     setShowAddForm(true);
+    setShowManualLog(false);
     setElapsedTime(0);
     toast.success(isDE ? 'Bereit zum Speichern!' : 'Ready to save!');
+  };
+
+  const handleManualMistake = (type: DrivingMistake['type']) => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setCurrentMistakes(prev => [...prev, {
+        type,
+        timestamp: Date.now(),
+        location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
+      }]);
+      toast.error(
+        isDE ? 'Fehler manuell hinzugefügt' : 'Mistake added manually',
+        { position: 'bottom-center' }
+      );
+    });
+    setShowManualLog(false);
   };
 
   const formatTime = (seconds: number) => {
@@ -389,20 +478,22 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 { lat: 52.5205, lng: 13.4110, timestamp: Date.now() + 40000 },
               ];
               const mockMistakes: DrivingMistake[] = [
-                { type: 'speeding', speed: 58, limit: 50, timestamp: Date.now(), location: mockRoute[2] }
+                { type: 'speeding', speed: 58, limit: 50, timestamp: Date.now(), location: mockRoute[1] },
+                { type: 'harsh_braking', timestamp: Date.now() + 15000, location: mockRoute[2] },
+                { type: 'shoulder_check', timestamp: Date.now() + 25000, location: mockRoute[3] },
               ];
               addDrivingSession({
                 date: new Date().toISOString().split('T')[0],
                 duration: 45,
                 type: 'normal',
-                notes: 'Test drive with route and mistakes',
-                instructorName: 'AI Instructor',
+                notes: 'Simulated Drive with Leaflet Maps & Mixed Mistakes',
+                instructorName: 'AI Safety Auditor',
                 totalDistance: 1.2,
                 route: mockRoute,
                 locationSummary: 'Berlin, Mitte',
                 mistakes: mockMistakes
               });
-              toast.success('Simulation Session Added!');
+              toast.success('Advanced Simulation Added!');
             }}
             className="flex h-10 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 px-3 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:border-blue-900/30 dark:bg-blue-900/20"
           >
@@ -469,14 +560,60 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         </div>
       </div>
 
-      {/* Live Timer */}
-      <div className="rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+      {/* Live Timer & Manual Log HUD */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+        {showManualLog && isTimerRunning && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4"
+          >
+            <div className="mb-4 flex items-center justify-between w-full">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">
+                {isDE ? 'Fehler manuell erfassen' : 'Log Manual Mistake'}
+              </h4>
+              <button onClick={() => setShowManualLog(false)} className="rounded-full bg-slate-800 p-1">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid w-full grid-cols-2 gap-2">
+              <button onClick={() => handleManualMistake('shoulder_check')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
+                <Eye className="h-5 w-5 text-blue-400" />
+                {isDE ? 'Schulterblick' : 'Shoulder Check'}
+              </button>
+              <button onClick={() => handleManualMistake('signal')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
+                <Signal className="h-5 w-5 text-amber-400" />
+                {isDE ? 'Blinker' : 'Signal'}
+              </button>
+              <button onClick={() => handleManualMistake('priority')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                {isDE ? 'Vorfahrt' : 'Priority'}
+              </button>
+              <button onClick={() => handleManualMistake('stop_sign')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
+                <Square className="h-5 w-5 text-red-600" />
+                {isDE ? 'Stoppschild' : 'Stop Sign'}
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-slate-300" />
             <h3 className="font-semibold">{isDE ? 'Live-Fahrt-Timer' : 'Live Drive Timer'}</h3>
           </div>
-          {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
+          <div className="flex items-center gap-3">
+             {isTimerRunning && (
+               <button 
+                 onClick={() => setShowManualLog(true)}
+                 className="flex h-8 items-center gap-1.5 rounded-full bg-red-500/20 px-3 text-[10px] font-black uppercase tracking-widest text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-all"
+               >
+                 <AlertTriangle className="h-3 w-3" />
+                 {isDE ? 'Problem!' : 'Problem!'}
+               </button>
+             )}
+             {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
+          </div>
         </div>
         <div className="my-4 flex flex-col items-center">
           <div className="text-5xl font-bold tracking-tighter">
@@ -761,14 +898,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       </p>
                     )}
                     {session.route && session.route.length > 0 && (
-                      <RoutePreview route={session.route} language={language} />
+                      <RouteMap route={session.route} mistakes={session.mistakes} language={language} />
                     )}
                     {session.mistakes && session.mistakes.length > 0 ? (
                       <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-900/20">
                         <div className="mb-2 flex items-center justify-between">
                           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
-                            <X className="h-4 w-4" />
-                            {isDE ? 'Fehler-Analyse' : 'Mistake Analysis'}
+                            <AlertTriangle className="h-4 w-4" />
+                            {isDE ? 'Detail-Analyse' : 'Detailed Analysis'}
                           </div>
                           <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
                             {session.mistakes.length}
@@ -777,17 +914,34 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         <div className="space-y-2">
                           {session.mistakes.map((mistake, idx) => (
                             <div key={idx} className="flex items-center justify-between rounded-lg bg-white/50 p-2 text-xs dark:bg-slate-900/50">
-                              <span className="font-medium text-slate-700 dark:text-slate-300">
-                                {mistake.type === 'speeding' ? (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation') : mistake.type}
-                              </span>
                               <div className="flex items-center gap-2">
-                                <span className="font-black text-red-600">
-                                  {mistake.speed} <span className="text-[10px] font-normal opacity-70">km/h</span>
+                                {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
+                                {mistake.type === 'harsh_braking' && <Footprints className="h-3.5 w-3.5 text-orange-500" />}
+                                {mistake.type === 'rapid_acceleration' && <Zap className="h-3.5 w-3.5 text-blue-500" />}
+                                {mistake.type === 'shoulder_check' && <Eye className="h-3.5 w-3.5 text-indigo-500" />}
+                                {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
+                                <span className="font-medium text-slate-700 dark:text-slate-300">
+                                  {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
+                                  {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
+                                  {mistake.type === 'rapid_acceleration' && (isDE ? 'Starke Beschleunigung' : 'Rapid Acceleration')}
+                                  {mistake.type === 'shoulder_check' && (isDE ? 'Schulterblick vergessen' : 'Missed Shoulder Check')}
+                                  {mistake.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
+                                  {mistake.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
+                                  {mistake.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
+                                  {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
-                                <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700" />
-                                <span className="text-[10px] font-bold text-slate-500">
-                                  Limit: {mistake.limit}
-                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {mistake.speed && (
+                                  <span className="font-black text-red-600">
+                                    {mistake.speed} <span className="text-[10px] font-normal opacity-70">km/h</span>
+                                  </span>
+                                )}
+                                {mistake.timestamp && (
+                                  <span className="text-[10px] font-bold text-slate-400">
+                                    {new Date(mistake.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           ))}

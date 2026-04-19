@@ -132,7 +132,7 @@ export interface QuizOption {
 }
 
 export interface DrivingMistake {
-  type: 'speeding' | 'priority' | 'stop_sign' | 'other';
+  type: 'speeding' | 'harsh_braking' | 'rapid_acceleration' | 'signal' | 'priority' | 'stop_sign' | 'shoulder_check' | 'other';
   speed?: number;
   limit?: number;
   timestamp: number;
