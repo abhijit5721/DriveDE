@@ -86,12 +86,27 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
           {/* Lane Markings */}
           <circle cx="150" cy="150" r="100" stroke="white" strokeWidth="2" strokeDasharray="10,10" fill="none" opacity="0.2" />
 
+          {/* Indicator Arrows */}
+          <g opacity="0.4">
+            <path d="M 150 280 L 150 240 M 145 250 L 150 240 L 155 250" stroke="white" fill="none" strokeWidth="2" />
+            <path d="M 240 150 L 280 150 M 270 145 L 280 150 L 270 155" stroke="white" fill="none" strokeWidth="2" />
+          </g>
+
           {/* Car */}
           <motion.g
+            initial={{ x: 150, y: 280, rotate: -90 }}
             animate={
-              phase === 'entry' ? { x: 150, y: 260, rotate: -90 } :
-              phase === 'inside' ? { x: 150, y: 150, rotate: [270, 0] } :
-              phase === 'exit' ? { x: 340, y: 150, rotate: 0 } :
+              phase === 'entry' ? { x: 150, y: 280, rotate: -90 } :
+              phase === 'inside' ? { 
+                rotate: [270, 360], 
+                x: 150, 
+                y: 150 
+              } :
+              phase === 'exit' ? { 
+                rotate: 360,
+                x: [150, 340],
+                y: 150
+              } :
               { x: 340, y: 150, rotate: 0 }
             }
             transition={{
@@ -99,15 +114,14 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
               x: { duration: 0.8 },
               y: { duration: 0.8 }
             }}
-            initial={{ x: 150, y: 260, rotate: -90 }}
             className="origin-center"
-            style={phase === 'inside' ? { originX: "150px", originY: "150px" } : {}}
+            style={{ originX: "150px", originY: "150px" }}
           >
-            {/* Simple Car Shape */}
-            <g transform="translate(-15, -10)">
+            {/* The car itself is offset from the rotation center */}
+            <g transform={phase === 'entry' ? "translate(110, -10)" : "translate(100, -10)"}>
               <rect width="30" height="20" rx="4" fill="#ef4444" />
-              <rect x="20" width="6" height="4" rx="1" fill="white" opacity="0.6" /> {/* Headlights */}
-              <rect x="20" y="16" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+              <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" /> {/* Headlights */}
+              <rect x="22" y="14" width="6" height="4" rx="1" fill="white" opacity="0.6" />
               
               {/* Blinker */}
               {isBlinking && (
