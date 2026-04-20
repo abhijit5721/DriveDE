@@ -363,45 +363,50 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         setElapsedTime(prev => prev + 1);
       }, 1000);
 
-      // Start periodic API checks (every 10 seconds)
-      limitCheckRef.current = setInterval(() => {
-        if (gpsPoints.length > 1) {
-          const lastPoint = gpsPoints[gpsPoints.length - 1];
-          const prevPoint = gpsPoints[gpsPoints.length - 2];
-          fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
-          checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
-          // Compute travel bearing for wrong-way check
-          const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
-          checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
-        }
-      }, 10000);
+      // Start periodic API checks (every 10 seconds) - Disable in Simulation Mode
+      if (!isSimulationMode) {
+        limitCheckRef.current = setInterval(() => {
+          setGpsPoints(currentPoints => {
+            if (currentPoints.length > 1) {
+              const lastPoint = currentPoints[currentPoints.length - 1];
+              const prevPoint = currentPoints[currentPoints.length - 2];
+              fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
+              checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
+              // Compute travel bearing for wrong-way check
+              const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
+              checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
+            }
+            return currentPoints; // state updater used just to read the latest value safely
+          });
+        }, 10000);
 
-      // Start GPS Tracking
-      if ("geolocation" in navigator && isPremium) {
-        watchRef.current = navigator.geolocation.watchPosition(
-          (position) => {
-            const { latitude: lat, longitude: lng, speed } = position.coords;
-            const newPoint = { lat, lng, timestamp: Date.now() };
-            const currentKmh = speed !== null ? Math.round(speed * 3.6) : 0;
-            
-            setCurrentSpeed(currentKmh);
-            
-            setGpsPoints(prev => {
-              const lastPoint = prev[prev.length - 1];
-              if (lastPoint) {
-                const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                if (dist > 0.005) { // Only add if moved > 5 meters
-                  setCurrentDistance(d => d + dist);
-                  return [...prev, newPoint];
+        // Start GPS Tracking
+        if ("geolocation" in navigator && isPremium) {
+          watchRef.current = navigator.geolocation.watchPosition(
+            (position) => {
+              const { latitude: lat, longitude: lng, speed } = position.coords;
+              const newPoint = { lat, lng, timestamp: Date.now() };
+              const currentKmh = speed !== null ? Math.round(speed * 3.6) : 0;
+              
+              setCurrentSpeed(currentKmh);
+              
+              setGpsPoints(prev => {
+                const lastPoint = prev[prev.length - 1];
+                if (lastPoint) {
+                  const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
+                  if (dist > 0.005) { // Only add if moved > 5 meters
+                    setCurrentDistance(d => d + dist);
+                    return [...prev, newPoint];
+                  }
+                  return prev;
                 }
-                return prev;
-              }
-              return [newPoint];
-            });
-          },
-          (error) => console.error('GPS Error:', error),
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
+                return [newPoint];
+              });
+            },
+            (error) => console.error('GPS Error:', error),
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        }
       }
 
       // Start Motion Auditor (Accelerometer)
