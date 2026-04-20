@@ -1226,7 +1226,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           </span>
                         </div>
                         <div className="space-y-2">
-                          {session.mistakes.map((mistake, idx) => (
+                          {session.mistakes.reduce((acc, mistake) => {
+                            const existing = acc.find(m => m.type === mistake.type);
+                            if (existing) {
+                              existing.count = (existing.count || 1) + 1;
+                              if (mistake.speed && (!existing.speed || mistake.speed > existing.speed)) {
+                                existing.speed = mistake.speed; // keep highest speed
+                              }
+                            } else {
+                              acc.push({ ...mistake, count: 1 });
+                            }
+                            return acc;
+                          }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => (
                             <div key={idx} className="flex items-center justify-between rounded-lg bg-white/50 p-2 text-xs dark:bg-slate-900/50">
                               <div className="flex items-center gap-2">
                                 {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
@@ -1248,6 +1259,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
+                                {mistake.count && mistake.count > 1 && (
+                                  <span className="ml-1 rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                                    x{mistake.count}
+                                  </span>
+                                )}
                               </div>
                               <div className="flex items-center gap-2">
                                 {mistake.speed && (
