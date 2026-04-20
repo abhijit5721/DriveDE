@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -774,6 +774,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 18: slowing
         {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 19: almost stopped
         {lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 20: end
+        // Steps 21-25: Roundabout Scenario
+        {lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },  // step 21: Entering roundabout (no signal needed)
+        {lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },  // step 22: Navigating curve
+        {lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },  // step 23: Navigating curve 2
+        {lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },  // step 24: Exiting roundabout -> missing signal toast fires here
+        {lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },  // step 25: Resumed straight driving
       ];
 
       simulationStepRef.current = 0;
@@ -831,6 +837,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           );
           const mistakeObj: DrivingMistake = {
             type: 'illegal_turn',
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+
+        // Step 24: simulate missed signal on roundabout exit
+        if (currentStep === 24) {
+          toast.error(
+            isDE ? '⛔ Kreisverkehr: Blinker beim Ausfahren vergessen!' : '⛔ Roundabout: Missed Exit Signal!',
+            { position: 'bottom-center', duration: 8000 }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'roundabout_signal',
             timestamp: Date.now(),
             location: { lat: point.lat, lng: point.lng }
           };
@@ -1615,6 +1636,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
                                 {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
                                 {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
+                                {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
@@ -1626,6 +1648,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
                                   {mistake.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
                                   {mistake.type === 'idling' && (isDE ? '🌱 Umweltschutz: Motor abstellen' : '🌱 Eco: Stop Engine')}
+                                  {mistake.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker vergessen' : '🔄 Roundabout: Missed Signal')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
                                 {mistake.count && mistake.count > 1 && (
