@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -209,18 +209,20 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [isEditingRate, setIsEditingRate] = useState(false);
   const [tempRate, setTempRate] = useState(userProgress.hourlyRate45.toString());
 
-  const [newSession, setNewSession] = useState({
+  const [newSession, setNewSession] = useState<Partial<DrivingSession>>({
     date: new Date().toISOString().split('T')[0],
     duration: 45,
     type: 'normal' as DrivingSession['type'],
     notes: '',
     instructorName: '',
+    totalDistance: undefined,
+    locationSummary: ''
   });
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDistance, setCurrentDistance] = useState(0);
-  const [gpsPoints, setGpsPoints] = useState<DrivingSession['route']>([]);
+  const [gpsPoints, setGpsPoints] = useState<NonNullable<DrivingSession['route']>>([]);
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [currentLimit, setCurrentLimit] = useState<number | null>(null);
   const [currentMistakes, setCurrentMistakes] = useState<DrivingMistake[]>([]);
@@ -592,13 +594,27 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const z = acc.z || 0;
         const totalAcc = Math.sqrt(x*x + y*y + z*z);
 
-        // Threshold for "harsh" driving: 4.0 m/s^2
-        if (totalAcc > 4.0 && Date.now() - lastMotionLogRef.current > 10000) {
+        // Threshold for "harsh" driving: 4.0 m/s^2. Lateral cornering > 3.0 m/s^2
+        if ((totalAcc > 4.0 || Math.abs(x) > 3.0) && Date.now() - lastMotionLogRef.current > 10000) {
           lastMotionLogRef.current = Date.now();
           
           navigator.geolocation.getCurrentPosition((pos) => {
-            const isBraking = y < -3.0; // Simplistic guess
-            const type = isBraking ? 'harsh_braking' : 'rapid_acceleration';
+            const isCornering = Math.abs(x) > 3.0 && Math.abs(x) > Math.abs(y);
+            const isBraking = !isCornering && y < -3.0;
+            
+            let type: DrivingMistake['type'] = 'rapid_acceleration';
+            let messageDE = 'Starke Beschleunigung erkannt!';
+            let messageEN = 'Rapid acceleration detected!';
+
+            if (isCornering) {
+              type = 'aggressive_cornering';
+              messageDE = '🏎️ Fliehkraft: Aggressives Kurvenfahren!';
+              messageEN = '🏎️ High G-Force: Aggressive Cornering!';
+            } else if (isBraking) {
+              type = 'harsh_braking';
+              messageDE = 'Starkes Bremsen erkannt!';
+              messageEN = 'Harsh braking detected!';
+            }
             
             logMistake({
               type,
@@ -606,12 +622,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
             });
 
-            toast.error(
-              isDE 
-                ? (isBraking ? 'Starkes Bremsen erkannt!' : 'Starke Beschleunigung erkannt!')
-                : (isBraking ? 'Harsh braking detected!' : 'Rapid acceleration detected!'),
-              { position: 'bottom-center' }
-            );
+            toast.error(isDE ? messageDE : messageEN, { position: 'bottom-center', duration: 4000 });
           });
         }
       };
@@ -757,29 +768,40 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },  // step 2: rolled through
         { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },  // step 3: accelerating away
         {lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: >50m past sign → stop sign violation fires
-        // Steps 5-15: Stationary idling (testing environmental mistake)
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 5: stops
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 6
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 7
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 8
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 9
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 10
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 11
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 12
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 13
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 14
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 15: idling fires after ~15s (10 ticks)
-        {lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 16: continues
-        {lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 17: new zone — wrong-way toast fires here
-        {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 18: slowing
-        {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 19: almost stopped
-        {lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 20: end
-        // Steps 21-25: Roundabout Scenario
-        {lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },  // step 21: Entering roundabout (no signal needed)
-        {lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },  // step 22: Navigating curve
-        {lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },  // step 23: Navigating curve 2
-        {lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },  // step 24: Exiting roundabout -> missing signal toast fires here
-        {lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },  // step 25: Resumed straight driving
+        
+        // Steps 5-9: Roundabout Scenario (Moved UP)
+        {lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },  // step 5: Entering roundabout (no signal needed)
+        {lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },  // step 6: Navigating curve
+        {lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },  // step 7: Navigating curve 2
+        {lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },  // step 8: Exiting roundabout -> missing signal toast fires here
+        {lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },  // step 9: Resumed straight driving
+        
+        // Steps 10-15: Sharp Curve Scenario & Aggressive Cornering (Moved UP)
+        {lat: 52.5205, lng: 13.4120, speed: 50, limit: 50 },  // step 10: Approaching sharp curve at 50km/h (limit is 50, but unsafe)
+        {lat: 52.5200, lng: 13.4110, speed: 50, limit: 50 },  // step 11: Apex of curve -> Inappropriate speed toast fires here
+        {lat: 52.5190, lng: 13.4100, speed: 30, limit: 50 },  // step 12: Braking late
+        {lat: 52.5180, lng: 13.4090, speed: 40, limit: 50 },  // step 13: Exiting curve straight
+        {lat: 52.5175, lng: 13.4080, speed: 45, limit: 50 },  // step 14: Aggressive swerve trigger point
+        {lat: 52.5170, lng: 13.4070, speed: 45, limit: 50 },  // step 15: End of curve
+
+        // Steps 16-26: Stationary idling (testing environmental mistake)
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 16
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 17
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 18
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 19
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 20
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 21
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 22
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 23
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 24
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 25
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 26: idling fires after ~15s (10 ticks)
+        
+        {lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 27: continues
+        {lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 28: new zone — wrong-way toast fires here
+        {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 29: slowing
+        {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 30: almost stopped
+        {lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 31: end
       ];
 
       simulationStepRef.current = 0;
@@ -813,8 +835,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           toast(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!', { id: 'mock-stop-toast' });
         }
 
-        // Step 17: simulate wrong-way driving alert (previously 6)
-        if (currentStep === 17) {
+        // Step 28: simulate wrong-way driving alert
+        if (currentStep === 28) {
           toast.dismiss(); // clear stop sign toasts to ensure this shows!
           toast.error(
             isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!',
@@ -829,8 +851,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           setCurrentMistakes(prev => [...prev, mistakeObj]);
         }
 
-        // Step 19: simulate illegal turn into pedestrian zone (previously 8)
-        if (currentStep === 19) {
+        // Step 30: simulate illegal turn into pedestrian zone
+        if (currentStep === 30) {
           toast.error(
             isDE ? '⛔ Unzulässiges Abbiegen! (Fußgängerzone)' : '⛔ Illegal Turn! (Pedestrian Zone)',
             { position: 'bottom-center', duration: 8000 }
@@ -844,14 +866,47 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           setCurrentMistakes(prev => [...prev, mistakeObj]);
         }
 
-        // Step 24: simulate missed signal on roundabout exit
-        if (currentStep === 24) {
+        // Step 8: simulate missed signal on roundabout exit
+        if (currentStep === 8) {
           toast.error(
             isDE ? '⛔ Kreisverkehr: Blinker beim Ausfahren vergessen!' : '⛔ Roundabout: Missed Exit Signal!',
             { position: 'bottom-center', duration: 8000 }
           );
           const mistakeObj: DrivingMistake = {
             type: 'roundabout_signal',
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+        
+        // Step 11: simulate inappropriate speed in a corner
+        if (currentStep === 11) {
+          toast.error(
+            isDE ? '⚠️ Unangepasste Geschwindigkeit (Kurve)!' : '⚠️ Inappropriate Speed (Curve)!',
+            { position: 'bottom-center', duration: 8000 }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'curve_speeding',
+            speed: point.speed,
+            limit: 30, // contextual safe mock limit
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+        
+        // Step 14: simulate aggressive cornering (high G-force swerve)
+        if (currentStep === 14) {
+          toast.error(
+            isDE ? '🏎️ Fliehkraft: Aggressives Kurvenfahren / Spurwechsel!' : '🏎️ High G-Force: Aggressive Cornering!',
+            { position: 'bottom-center', duration: 8000 }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'aggressive_cornering',
+            speed: point.speed,
             timestamp: Date.now(),
             location: { lat: point.lat, lng: point.lng }
           };
@@ -1637,6 +1692,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
                                 {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
                                 {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
+                                {mistake.type === 'curve_speeding' && <CornerUpRight className="h-3.5 w-3.5 text-orange-600" />}
+                                {mistake.type === 'aggressive_cornering' && <Gauge className="h-3.5 w-3.5 text-rose-500" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
@@ -1649,6 +1706,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
                                   {mistake.type === 'idling' && (isDE ? '🌱 Umweltschutz: Motor abstellen' : '🌱 Eco: Stop Engine')}
                                   {mistake.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker vergessen' : '🔄 Roundabout: Missed Signal')}
+                                  {mistake.type === 'curve_speeding' && (isDE ? '⚠️ Unangepasste Geschw. (Kurve)' : '⚠️ Inappropriate Speed (Curve)')}
+                                  {mistake.type === 'aggressive_cornering' && (isDE ? '🏎️ Aggressives Kurvenfahren / Spurwechsel' : '🏎️ Aggressive Cornering')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
                                 {mistake.count && mistake.count > 1 && (
