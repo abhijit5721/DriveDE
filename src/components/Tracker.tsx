@@ -559,9 +559,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         // Step 6: simulate wrong-way driving alert
         if (step === 6) {
+          toast.dismiss(); // clear stop sign toasts to ensure this shows!
           toast.error(
-            isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
-            { position: 'bottom-center', duration: 6000 }
+            isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!',
+            { position: 'bottom-center', duration: 8000 }
           );
           setCurrentMistakes(prev => [...prev, {
             type: 'wrong_way',
@@ -573,11 +574,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if (step > 0) {
           const prev = mockPoints[step - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
-          setCurrentDistance(d => d + dist);
+          setCurrentDistance(d => d + (dist * 10)); // Multiply by 10 to force UI to jump visibly
         }
 
         step++;
-      }, 3000);
+      }, 1000); // Trigger every 1 second (fast forward)
     }
 
     setIsTimerRunning(true);
