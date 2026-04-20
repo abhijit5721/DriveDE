@@ -455,14 +455,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     if (isSimulationMode) {
       // Create a mock route for simulation
+      // Stop sign is placed at step 1. Car never stops (speed > 0).
+      // By step 4 the car is >50m away → triggers "Stop Sign Violation".
+      const stopLat = 52.5205;
+      const stopLng = 13.4055;
       const mockPoints = [
-        { lat: 52.5200, lng: 13.4050, timestamp: Date.now(), speed: 20, limit: 50 },
-        { lat: 52.5210, lng: 13.4060, timestamp: Date.now() + 5000, speed: 45, limit: 50 },
-        { lat: 52.5220, lng: 13.4080, timestamp: Date.now() + 10000, speed: 58, limit: 50 }, // Speeding
-        { lat: 52.5225, lng: 13.4095, timestamp: Date.now() + 15000, speed: 30, limit: 30 },
-        { lat: 52.5215, lng: 13.4110, timestamp: Date.now() + 20000, speed: 25, limit: 30 },
+        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },  // step 0: approaching
+        { lat: stopLat,  lng: stopLng,  speed: 15, limit: 50 }, // step 1: at stop sign – SHOULD stop, doesn't
+        { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },  // step 2: rolled through
+        { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },  // step 3: accelerating away
+        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: speeding – >50m from sign, violation fires here
+        { lat: 52.5237, lng: 13.4105, speed: 45, limit: 50 },  // step 5
+        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 6: new speed zone
+        { lat: 52.5235, lng: 13.4135, speed: 20, limit: 30 },  // step 7: slowing down
       ];
-      
+
       let step = 0;
       simulationIntervalRef.current = setInterval(() => {
         if (step >= mockPoints.length) {
@@ -471,32 +478,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         }
 
         const point = mockPoints[step];
-        setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: point.timestamp }]);
+        setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: Date.now() }]);
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
-        // Simulate Stop Sign Detection at Step 3
-        if (step === 2) {
-          setActiveStopSign({ lat: 52.5220, lng: 13.4080, id: 'mock-stop-1' });
+        // Place the stop sign at step 0 (one step ahead of the car)
+        if (step === 0) {
+          setActiveStopSign({ lat: stopLat, lng: stopLng, id: 'mock-stop-1' });
           setHasStoppedAtSign(false);
-          toast.info(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!');
+          toast.info(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!');
         }
+
         if (step > 0) {
           const prev = mockPoints[step - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
           setCurrentDistance(d => d + dist);
-        }
-
-        // Trigger a mock mistake at step 2
-        if (step === 2) {
-          setCurrentMistakes(prev => [...prev, {
-            type: 'speeding',
-            speed: point.speed,
-            limit: point.limit,
-            timestamp: point.timestamp,
-            location: { lat: point.lat, lng: point.lng }
-          }]);
-          toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${point.limit})` : `Speeding! (Limit: ${point.limit})`, { position: 'bottom-center' });
         }
 
         step++;
