@@ -21,21 +21,77 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+const MapBoundsSimple = ({ points }: { points: { lat: number, lng: number }[] }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (points.length > 0) {
+      map.panTo([points[points.length-1].lat, points[points.length-1].lng], { animate: true });
+    }
+  }, [points, map]);
+  return null;
+};
+
+const calculateBearing = (startLat: number, startLng: number, endLat: number, endLng: number) => {
+  const startLatRad = (startLat * Math.PI) / 180;
+  const startLngRad = (startLng * Math.PI) / 180;
+  const endLatRad = (endLat * Math.PI) / 180;
+  const endLngRad = (endLng * Math.PI) / 180;
+
+  const y = Math.sin(endLngRad - startLngRad) * Math.cos(endLatRad);
+  const x = Math.cos(startLatRad) * Math.sin(endLatRad) -
+            Math.sin(startLatRad) * Math.cos(endLatRad) * Math.cos(endLngRad - startLngRad);
+  const bearing = (Math.atan2(y, x) * 180) / Math.PI;
+  return (bearing + 360) % 360;
+};
+
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
   if (route.length < 2) return null;
   const isDE = language === 'de';
+  const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const playbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const startPoint = [route[0].lat, route[0].lng] as [number, number];
   const endPoint = [route[route.length-1].lat, route[route.length-1].lng] as [number, number];
   const polyline = route.map(p => [p.lat, p.lng] as [number, number]);
 
+  useEffect(() => {
+    if (isPlaying && playbackIndex !== null) {
+      playbackTimeoutRef.current = setTimeout(() => {
+        if (playbackIndex < route.length - 1) {
+          setPlaybackIndex(playbackIndex + 1);
+        } else {
+          setIsPlaying(false);
+          setPlaybackIndex(null);
+        }
+      }, 1000); // Even slower playback as requested
+    }
+    return () => {
+      if (playbackTimeoutRef.current) clearTimeout(playbackTimeoutRef.current);
+    };
+  }, [isPlaying, playbackIndex, route.length]);
+
+  const handleTogglePlayback = () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+    } else {
+      setPlaybackIndex(0);
+      setIsPlaying(true);
+    }
+  };
+
   // Component to fit bounds automatically
   const MapBounds = () => {
     const map = useMap();
     useEffect(() => {
-      const bounds = L.latLngBounds(polyline);
-      map.fitBounds(bounds, { padding: [20, 20] });
-    }, [map]);
+      if (playbackIndex === null) {
+        const bounds = L.latLngBounds(polyline);
+        map.fitBounds(bounds, { padding: [20, 20] });
+      } else {
+        const point = route[playbackIndex];
+        map.panTo([point.lat, point.lng], { animate: true });
+      }
+    }, [map, playbackIndex]);
     return null;
   };
 
@@ -52,6 +108,26 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
     });
   };
 
+  const currentPlaybackPoint = playbackIndex !== null ? [route[playbackIndex].lat, route[playbackIndex].lng] as [number, number] : null;
+
+  const blinkingDotIcon = L.divIcon({
+    className: 'playback-dot-icon',
+    html: `
+      <div style="position: relative; display: flex; items-center; justify-center;">
+        <div style="position: absolute; width: 24px; height: 24px; background: rgba(153, 27, 27, 0.4); border-radius: 50%; animation: pulse-dot 2s infinite ease-out;"></div>
+        <div style="width: 12px; height: 12px; background: #991b1b; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(153, 27, 27, 0.5); z-index: 10;"></div>
+      </div>
+      <style>
+        @keyframes pulse-dot {
+          0% { transform: scale(0.5); opacity: 1; }
+          100% { transform: scale(2.5); opacity: 0; }
+        }
+      </style>
+    `,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+  });
+
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-slate-800">
       <div className="flex items-center justify-between bg-slate-50 px-3 py-2 dark:bg-slate-900/80">
@@ -59,6 +135,16 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           <MapPin className="h-3 w-3" />
           {isDE ? 'Streckenverlauf (Echtzeit)' : 'Live Route Trace'}
         </span>
+        <button 
+          onClick={handleTogglePlayback}
+          className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-[9px] font-bold text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
+        >
+          {isPlaying ? (
+            <><Pause className="h-3 w-3" /> {isDE ? 'Pause' : 'Pause'}</>
+          ) : (
+            <><Play className="h-3 w-3" /> {isDE ? 'Abspielen' : 'Replay'}</>
+          )}
+        </button>
       </div>
       <div className="h-[250px] w-full z-0">
         <MapContainer 
@@ -80,6 +166,14 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           <Marker position={endPoint}>
              <Popup>{isDE ? 'Endpunkt' : 'End Point'}</Popup>
           </Marker>
+
+          {currentPlaybackPoint && (
+            <Marker 
+              position={currentPlaybackPoint} 
+              icon={blinkingDotIcon} 
+              zIndexOffset={1000}
+            />
+          )}
 
           {mistakes?.map((m, i) => m.location && (
             <Marker key={i} position={[m.location.lat, m.location.lng]} icon={getMistakeIcon(m.type)}>
@@ -131,6 +225,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
   const lastMotionLogRef = useRef<number>(0);
   const [showManualLog, setShowManualLog] = useState(false);
+  const [isSimulationMode, setIsSimulationMode] = useState(false);
+  const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchSpeedLimit = async (lat: number, lng: number) => {
     try {
@@ -238,7 +334,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       // Start Motion Auditor (Accelerometer)
       const handleMotion = (event: DeviceMotionEvent) => {
-        if (!isPremium) return;
+        if (!isPremium || isSimulationMode) return;
         
         const acc = event.acceleration;
         if (!acc) return;
@@ -301,22 +397,69 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
     }
 
-    setElapsedTime(0);
-    setCurrentDistance(0);
-    setGpsPoints([]);
-    setCurrentMistakes([]);
-    setCurrentLimit(null);
+    if (isSimulationMode) {
+      // Create a mock route for simulation
+      const mockPoints = [
+        { lat: 52.5200, lng: 13.4050, timestamp: Date.now(), speed: 20, limit: 50 },
+        { lat: 52.5210, lng: 13.4060, timestamp: Date.now() + 5000, speed: 45, limit: 50 },
+        { lat: 52.5220, lng: 13.4080, timestamp: Date.now() + 10000, speed: 58, limit: 50 }, // Speeding
+        { lat: 52.5225, lng: 13.4095, timestamp: Date.now() + 15000, speed: 30, limit: 30 },
+        { lat: 52.5215, lng: 13.4110, timestamp: Date.now() + 20000, speed: 25, limit: 30 },
+      ];
+      
+      let step = 0;
+      simulationIntervalRef.current = setInterval(() => {
+        if (step >= mockPoints.length) {
+          if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
+          return;
+        }
+
+        const point = mockPoints[step];
+        setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: point.timestamp }]);
+        setCurrentSpeed(point.speed);
+        setCurrentLimit(point.limit);
+        
+        // Calculate incremental distance
+        if (step > 0) {
+          const prev = mockPoints[step - 1];
+          const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
+          setCurrentDistance(d => d + dist);
+        }
+
+        // Trigger a mock mistake at step 2
+        if (step === 2) {
+          setCurrentMistakes(prev => [...prev, {
+            type: 'speeding',
+            speed: point.speed,
+            limit: point.limit,
+            timestamp: point.timestamp,
+            location: { lat: point.lat, lng: point.lng }
+          }]);
+          toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${point.limit})` : `Speeding! (Limit: ${point.limit})`, { position: 'bottom-center' });
+        }
+
+        step++;
+      }, 3000);
+    }
+
     setIsTimerRunning(true);
-    toast(isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!', { icon: '️🚀' });
+    toast(
+      isSimulationMode 
+        ? (isDE ? 'Simulation gestartet...' : 'Simulation started...') 
+        : (isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!'), 
+      { icon: isSimulationMode ? '🎮' : '🚀' }
+    );
   };
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
+    if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
   };
 
   const handleStopTimer = async () => {
     setIsTimerRunning(false);
+    if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
     
     // Optional: Get location summary via reverse geocoding if we have points
@@ -603,6 +746,23 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <h3 className="font-semibold">{isDE ? 'Live-Fahrt-Timer' : 'Live Drive Timer'}</h3>
           </div>
           <div className="flex items-center gap-3">
+             <div className="flex items-center gap-2 mr-2">
+               <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                 {isDE ? 'Simulation' : 'Demo Mode'}
+               </span>
+               <button 
+                 onClick={() => setIsSimulationMode(!isSimulationMode)}
+                 className={cn(
+                   "relative h-4 w-8 rounded-full transition-colors",
+                   isSimulationMode ? "bg-indigo-600" : "bg-slate-700"
+                 )}
+               >
+                 <div className={cn(
+                   "absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all",
+                   isSimulationMode ? "left-4.5" : "left-0.5"
+                 )} />
+               </button>
+             </div>
              {isTimerRunning && (
                <button 
                  onClick={() => setShowManualLog(true)}
@@ -615,45 +775,67 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
              {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
           </div>
         </div>
+
+        {/* Real-time Map Monitoring (Always Available) */}
+        {isTimerRunning && gpsPoints.length > 0 && (
+          <div className="mt-3 h-24 w-full overflow-hidden rounded-xl border border-white/10 opacity-80">
+            <MapContainer 
+              center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
+              zoom={16} 
+              zoomControl={false}
+              attributionControl={false}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={3} />
+              <Marker position={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} />
+              <MapBoundsSimple points={gpsPoints} />
+            </MapContainer>
+          </div>
+        )}
+
         <div className="my-4 flex flex-col items-center">
           <div className="text-5xl font-bold tracking-tighter">
             {formatTime(elapsedTime)}
           </div>
-          
-          {isPremium && (
-            <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
-              <div className="text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {isDE ? 'Strecke' : 'Dist.'}
-                </p>
-                <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
-              </div>
-              <div className="text-center border-l border-white/10">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {isDE ? 'Tempo' : 'Speed'}
-                </p>
-                <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
-              </div>
-              <div className="text-center border-l border-white/10">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {isDE ? 'Limit' : 'Limit'}
-                </p>
-                <p className={cn(
-                  "text-lg font-bold flex items-center justify-center gap-1",
-                  currentLimit && currentSpeed > currentLimit ? "text-red-400" : "text-white"
-                )}>
-                  {currentLimit || '--'}
-                  {currentLimit && <div className={cn("h-4 w-4 rounded-full border-2 border-red-500 flex items-center justify-center text-[10px] font-black text-slate-900 bg-white", currentLimit === 30 && "border-red-600")} >{currentLimit}</div>}
-                </p>
-              </div>
-            </div>
-          )}
+        </div>
 
-          {!isPremium && isTimerRunning && (
-            <p className="mt-2 text-[10px] text-slate-400 italic">
-              {isDE ? 'Upgrade für GPS & Routen-Tracking' : 'Upgrade for GPS & Route tracking'}
+        <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
+          <div className="text-center">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              {isDE ? 'Strecke' : 'Dist.'}
             </p>
-          )}
+            <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
+          </div>
+          <div className="text-center border-l border-white/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              {isDE ? 'Tempo' : 'Speed'}
+            </p>
+            <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
+          </div>
+          <div className="text-center border-l border-white/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              {isDE ? 'Limit' : 'Limit'}
+            </p>
+            <div className={cn(
+              "text-lg font-bold flex items-center justify-center gap-1",
+              currentLimit && currentSpeed > currentLimit ? "text-red-400" : "text-white"
+            )}>
+              {currentLimit || '--'}
+              {currentLimit && (
+                <div className="h-4 w-4 rounded-full border-2 border-red-500 bg-white flex items-center justify-center">
+                  <span className="text-[8px] font-black text-slate-900">{currentLimit}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {!isPremium && isTimerRunning && (
+          <p className="mt-2 text-[10px] text-slate-400 italic text-center">
+            {isDE ? 'Live-Tracking aktiv (Basis-Modus)' : 'Live tracking active (Basic mode)'}
+          </p>
+        )}
         </div>
         <div className="grid grid-cols-2 gap-3">
           {isTimerRunning ? (
@@ -688,7 +870,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {isDE ? 'Stopp & Speichern' : 'Stop & Save'}
           </button>
         </div>
-      </div>
 
       {/* Progress Cards */}
       <div className="grid grid-cols-3 gap-3">
