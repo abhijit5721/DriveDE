@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -188,6 +188,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
                   {m.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
                   {m.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
                   {m.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
+                  {m.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
                   {m.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                 </div>
               </Popup>
@@ -226,7 +227,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [activeStopSign, setActiveStopSign] = useState<{lat: number, lng: number, id: string} | null>(null);
   const [hasStoppedAtSign, setHasStoppedAtSign] = useState(false);
   const lastWrongWayLogRef = useRef<number>(0);
+  const lastIllegalTurnLogRef = useRef<number>(0);
+  const stationaryStartRef = useRef<number | null>(null);
+  const lastIdlingLogRef = useRef<number>(0);
   
+  // Persistent trackers for session summary (preserves data across simulation loops)
+  const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
+  const cumulativeRouteRef = useRef<DrivingSession['route']>([]);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
@@ -242,6 +250,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Centralized logging helpers to ensure data persistence across loops/resets
+  const logMistake = (mistake: DrivingMistake) => {
+    cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistake];
+    setCurrentMistakes(prev => [...prev, mistake]);
+  };
+
+  const logRoutePoint = (point: { lat: number, lng: number, timestamp: number }) => {
+    cumulativeRouteRef.current = [...cumulativeRouteRef.current, point];
+    setGpsPoints(prev => [...prev, point]);
+  };
 
   // Handle autocomplete search
   useEffect(() => {
@@ -395,14 +414,50 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
           { position: 'bottom-center', duration: 6000 }
         );
-        setCurrentMistakes(prev => [...prev, {
+        logMistake({
           type: 'wrong_way',
           timestamp: Date.now(),
           location: { lat, lng }
-        }]);
+        });
       }
     } catch (e) {
       // Network errors are silently ignored — non-critical sensor
+    }
+  };
+
+  const checkIllegalTurn = async (lat: number, lng: number, travelBearing: number) => {
+    if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
+    if (currentSpeed < 5) return;
+
+    try {
+      // Check for restricted access tags: footway=pedestrian, access=no/private, motor_vehicle=no
+      const query = `[out:json];way(around:15,${lat},${lng})[~"^(access|motor_vehicle|footway)$"~"^(no|private|pedestrian)$"];out tags;`;
+      const response = await fetch(
+        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
+        { signal: AbortSignal.timeout(5000) }
+      );
+      const data = await response.json();
+
+      if (data.elements && data.elements.length > 0) {
+        lastIllegalTurnLogRef.current = Date.now();
+        const tag = data.elements[0].tags;
+        const reason = tag.footway === 'pedestrian' ? (isDE ? 'Fußgängerzone' : 'Pedestrian Zone') 
+                     : tag.access === 'private' ? (isDE ? 'Privatweg' : 'Private Access')
+                     : (isDE ? 'Einfahrt verboten' : 'Illegal Turn / Entry');
+
+        toast.error(
+          `${isDE ? '⛔ Unzulässiges Abbiegen!' : '⛔ Illegal Turn!'} (${reason})`,
+          { position: 'bottom-center', duration: 6000 }
+        );
+
+        logMistake({
+          type: 'illegal_turn',
+          timestamp: Date.now(),
+          location: { lat, lng }
+        });
+      }
+    } catch (e) {
+      console.error('Illegal turn check failed', e);
     }
   };
 
@@ -485,9 +540,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               const prevPoint = currentPoints[currentPoints.length - 2];
               fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
               checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
-              // Compute travel bearing for wrong-way check
+              // Compute travel bearing for checks
               const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
               checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
+              checkIllegalTurn(lastPoint.lat, lastPoint.lng, bearing);
             }
             return currentPoints; // state updater used just to read the latest value safely
           });
@@ -509,10 +565,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
                   if (dist > 0.005) { // Only add if moved > 5 meters
                     setCurrentDistance(d => d + dist);
+                    logRoutePoint(newPoint);
                     return [...prev, newPoint];
                   }
                   return prev;
                 }
+                logRoutePoint(newPoint);
                 return [newPoint];
               });
             },
@@ -542,11 +600,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             const isBraking = y < -3.0; // Simplistic guess
             const type = isBraking ? 'harsh_braking' : 'rapid_acceleration';
             
-            setCurrentMistakes(prev => [...prev, {
+            logMistake({
               type,
               timestamp: Date.now(),
               location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
-            }]);
+            });
 
             toast.error(
               isDE 
@@ -593,11 +651,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         // 30 meters away after passing it (prevent immediate trigger on approach)
         if (!hasStoppedAtSign) {
           toast.error(isDE ? 'Stoppschild überfahren!' : 'Stop Sign Violation!', { position: 'bottom-center' });
-          setCurrentMistakes(prev => [...prev, {
+          logMistake({
             type: 'stop_sign' as any,
             timestamp: Date.now(),
             location: { lat: activeStopSign.lat, lng: activeStopSign.lng }
-          }]);
+          });
         }
         setActiveStopSign(null);
         setHasStoppedAtSign(false);
@@ -611,23 +669,69 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         // 30 second cooldown between speeding mistakes of the same type
         if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000) || lastMistake.type !== 'speeding') {
           toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
-          return [...prev, {
+          
+          const mistakeObj: DrivingMistake = {
             type: 'speeding',
             speed: currentSpeed,
             limit: currentLimit,
             timestamp: Date.now(),
             location: { lat: lastPoint.lat, lng: lastPoint.lng }
-          }];
+          };
+          
+          logMistake(mistakeObj);
+          return [...prev, mistakeObj];
         }
         return prev;
       });
     }
-  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE]);
+
+    // 3. Idling Monitoring (Environmental)
+    const IDLING_THRESHOLD = isSimulationMode ? 15000 : 60000; // 15s for demo, 60s real
+    
+    if (currentSpeed === 0) {
+      if (stationaryStartRef.current === null) {
+        stationaryStartRef.current = Date.now();
+      } else {
+        const idlingDuration = Date.now() - stationaryStartRef.current;
+        const timeSinceLastLog = Date.now() - lastIdlingLogRef.current;
+
+        if (idlingDuration > IDLING_THRESHOLD && timeSinceLastLog > 120000) { // Log every 2 mins max
+          toast.error(isDE ? 'Umweltschutz: Motor abstellen!' : 'Eco: Stop Engine!', { 
+            position: 'bottom-center',
+            icon: '🌱'
+          });
+          
+          logMistake({
+            type: 'idling',
+            timestamp: Date.now(),
+            location: { lat: lastPoint.lat, lng: lastPoint.lng }
+          });
+          
+          lastIdlingLogRef.current = Date.now();
+        }
+      }
+    } else {
+      // Reset when moving
+      stationaryStartRef.current = null;
+      lastIdlingLogRef.current = 0;
+    }
+  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE, isSimulationMode]);
 
   const handleStartTimer = async () => {
-    // Clear suggestions if they are still open
     setShowSuggestions(false);
     setSuggestions([]);
+    
+    // Reset state for new session
+    setGpsPoints([]);
+    setCurrentMistakes([]);
+    cumulativeMistakesRef.current = [];
+    cumulativeRouteRef.current = [];
+    setCurrentDistance(0);
+    setElapsedTime(0);
+    lastWrongWayLogRef.current = 0;
+    lastIllegalTurnLogRef.current = 0;
+    stationaryStartRef.current = null;
+    lastIdlingLogRef.current = 0;
 
     // Request Motion permission for iOS
     if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
@@ -652,12 +756,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         { lat: stopLat,  lng: stopLng,  speed: 15, limit: 50 }, // step 1: at stop sign – SHOULD stop
         { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },  // step 2: rolled through
         { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },  // step 3: accelerating away
-        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: >50m past sign → stop sign violation fires
-        { lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 5: continues
-        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 6: new zone — wrong-way toast fires here
-        { lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 7: slowing
-        { lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 8: almost stopped
-        { lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 9: end
+        {lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: >50m past sign → stop sign violation fires
+        // Steps 5-15: Stationary idling (testing environmental mistake)
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 5: stops
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 6
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 7
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 8
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 9
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 10
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 11
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 12
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 13
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 14
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 15: idling fires after ~15s (10 ticks)
+        {lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 16: continues
+        {lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 17: new zone — wrong-way toast fires here
+        {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 18: slowing
+        {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 19: almost stopped
+        {lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 20: end
       ];
 
       simulationStepRef.current = 0;
@@ -666,12 +782,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         console.log('Running simulation step:', currentStep);
         
         if (currentStep >= mockPoints.length) {
-          if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
+          simulationStepRef.current = 0;
+          setGpsPoints([]); // Clear route visually for next lap
+          // NOTE: We no longer clear currentMistakes here so they persist in the final session summary
+          setActiveStopSign(null);
+          setHasStoppedAtSign(false);
+          lastIllegalTurnLogRef.current = 0;
+          lastWrongWayLogRef.current = 0;
+          toast(isDE ? 'Simulation wird wiederholt...' : 'Simulation looping...', { icon: '🔄' });
           return;
         }
 
         const point = mockPoints[currentStep];
-        setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: Date.now() }]);
+        const newTrackPoint = { lat: point.lat, lng: point.lng, timestamp: Date.now() };
+        setGpsPoints(prev => [...prev, newTrackPoint]);
+        cumulativeRouteRef.current = [...cumulativeRouteRef.current, newTrackPoint];
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
@@ -682,18 +807,35 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           toast(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!', { id: 'mock-stop-toast' });
         }
 
-        // Step 6: simulate wrong-way driving alert
-        if (currentStep === 6) {
+        // Step 17: simulate wrong-way driving alert (previously 6)
+        if (currentStep === 17) {
           toast.dismiss(); // clear stop sign toasts to ensure this shows!
           toast.error(
             isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!',
             { position: 'bottom-center', duration: 8000 }
           );
-          setCurrentMistakes(prev => [...prev, {
+          const mistakeObj: DrivingMistake = {
             type: 'wrong_way',
             timestamp: Date.now(),
             location: { lat: point.lat, lng: point.lng }
-          }]);
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+
+        // Step 19: simulate illegal turn into pedestrian zone (previously 8)
+        if (currentStep === 19) {
+          toast.error(
+            isDE ? '⛔ Unzulässiges Abbiegen! (Fußgängerzone)' : '⛔ Illegal Turn! (Pedestrian Zone)',
+            { position: 'bottom-center', duration: 8000 }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'illegal_turn',
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
         }
 
         if (currentStep > 0) {
@@ -746,9 +888,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       duration: durationInMinutes,
       date: new Date().toISOString().split('T')[0],
       totalDistance: Math.round(currentDistance * 10) / 10,
-      route: gpsPoints,
+      route: cumulativeRouteRef.current,
       locationSummary: locationSummary || undefined,
-      mistakes: currentMistakes
+      mistakes: cumulativeMistakesRef.current
     }));
     setShowAddForm(true);
     setShowManualLog(false);
@@ -758,11 +900,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const handleManualMistake = (type: DrivingMistake['type']) => {
     navigator.geolocation.getCurrentPosition((pos) => {
-      setCurrentMistakes(prev => [...prev, {
+      const mistakeObj: DrivingMistake = {
         type,
         timestamp: Date.now(),
         location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
-      }]);
+      };
+      cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+      setCurrentMistakes(prev => [...prev, mistakeObj]);
       toast.error(
         isDE ? 'Fehler manuell hinzugefügt' : 'Mistake added manually',
         { position: 'bottom-center' }
@@ -1469,6 +1613,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
                                 {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
                                 {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
+                                {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
+                                {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
@@ -1478,6 +1624,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
                                   {mistake.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
                                   {mistake.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
+                                  {mistake.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
+                                  {mistake.type === 'idling' && (isDE ? '🌱 Umweltschutz: Motor abstellen' : '🌱 Eco: Stop Engine')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
                                 {mistake.count && mistake.count > 1 && (
