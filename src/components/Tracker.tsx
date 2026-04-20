@@ -99,6 +99,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
     let color = '#ef4444'; // default red
     if (type === 'harsh_braking') color = '#f97316'; // orange
     if (type === 'rapid_acceleration') color = '#3b82f6'; // blue
+    if (type === 'wrong_way') color = '#c026d3'; // vivid magenta
     
     return L.divIcon({
       className: 'custom-div-icon',
@@ -186,6 +187,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
                   {m.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
                   {m.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
                   {m.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
+                  {m.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
                   {m.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                 </div>
               </Popup>
@@ -223,6 +225,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [currentMistakes, setCurrentMistakes] = useState<DrivingMistake[]>([]);
   const [activeStopSign, setActiveStopSign] = useState<{lat: number, lng: number, id: string} | null>(null);
   const [hasStoppedAtSign, setHasStoppedAtSign] = useState(false);
+  const lastWrongWayLogRef = useRef<number>(0);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
@@ -254,6 +257,58 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
     } catch (e) {
       console.error('Stop sign fetch failed');
+    }
+  };
+
+  // ─── Wrong Way Driving Detection ───────────────────────────────────────────
+  // Queries Overpass for oneway roads at the car's position, extracts geometry,
+  // computes the road's bearing, then compares against the car's travel bearing.
+  // If the angle difference is >120° the car is driving against traffic.
+  const checkWrongWayDriving = async (lat: number, lng: number, travelBearing: number) => {
+    // 30-second cooldown to avoid toast spam
+    if (Date.now() - lastWrongWayLogRef.current < 30000) return;
+    if (currentSpeed < 10) return; // ignore while nearly stopped
+
+    try {
+      // Fetch the nearest one-way road WITH geometry so we can compute its direction
+      const query = `[out:json];way(around:20,${lat},${lng})[oneway=yes];out geom 1;`;
+      const response = await fetch(
+        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
+        { signal: AbortSignal.timeout(5000) }
+      );
+      const data = await response.json();
+
+      if (!data.elements || data.elements.length === 0) return;
+
+      const way = data.elements[0];
+      const nodes = way.geometry as { lat: number; lon: number }[];
+      if (!nodes || nodes.length < 2) return;
+
+      // Use the first two nodes to determine the road's legal travel direction
+      const roadBearing = calculateBearing(
+        nodes[0].lat, nodes[0].lon,
+        nodes[1].lat, nodes[1].lon
+      );
+
+      // Angle difference between road direction and car's travel direction
+      let angleDiff = Math.abs(travelBearing - roadBearing);
+      if (angleDiff > 180) angleDiff = 360 - angleDiff;
+
+      // >120° means the car is travelling broadly against the legal direction
+      if (angleDiff > 120) {
+        lastWrongWayLogRef.current = Date.now();
+        toast.error(
+          isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
+          { position: 'bottom-center', duration: 6000 }
+        );
+        setCurrentMistakes(prev => [...prev, {
+          type: 'wrong_way',
+          timestamp: Date.now(),
+          location: { lat, lng }
+        }]);
+      }
+    } catch (e) {
+      // Network errors are silently ignored — non-critical sensor
     }
   };
 
@@ -310,10 +365,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       // Start periodic API checks (every 10 seconds)
       limitCheckRef.current = setInterval(() => {
-        if (gpsPoints.length > 0) {
+        if (gpsPoints.length > 1) {
           const lastPoint = gpsPoints[gpsPoints.length - 1];
+          const prevPoint = gpsPoints[gpsPoints.length - 2];
           fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
           checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
+          // Compute travel bearing for wrong-way check
+          const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
+          checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
         }
       }, 10000);
 
@@ -456,20 +515,22 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
 
     if (isSimulationMode) {
-      // Create a mock route for simulation
-      // Stop sign is placed at step 1. Car never stops (speed > 0).
-      // By step 4 the car is >50m away → triggers "Stop Sign Violation".
+      // — Route layout —
+      // Steps 0-4:  Normal drive, stop sign ignored → violation fires at step 4
+      // Step 6:     Car reverses into a one-way street → wrong-way violation fires
       const stopLat = 52.5205;
       const stopLng = 13.4055;
       const mockPoints = [
-        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },  // step 0: approaching
-        { lat: stopLat,  lng: stopLng,  speed: 15, limit: 50 }, // step 1: at stop sign – SHOULD stop, doesn't
+        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },  // step 0: approaching stop sign
+        { lat: stopLat,  lng: stopLng,  speed: 15, limit: 50 }, // step 1: at stop sign – SHOULD stop
         { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },  // step 2: rolled through
         { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },  // step 3: accelerating away
-        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: speeding – >50m from sign, violation fires here
-        { lat: 52.5237, lng: 13.4105, speed: 45, limit: 50 },  // step 5
-        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 6: new speed zone
-        { lat: 52.5235, lng: 13.4135, speed: 20, limit: 30 },  // step 7: slowing down
+        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: >50m past sign → stop sign violation fires
+        { lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 5: continues
+        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 6: new zone — wrong-way toast fires here
+        { lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 7: slowing
+        { lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 8: almost stopped
+        { lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 9: end
       ];
 
       let step = 0;
@@ -484,11 +545,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
-        // Place the stop sign at step 0 (one step ahead of the car)
+        // Step 0: place stop sign one step ahead
         if (step === 0) {
           setActiveStopSign({ lat: stopLat, lng: stopLng, id: 'mock-stop-1' });
           setHasStoppedAtSign(false);
           toast.info(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!');
+        }
+
+        // Step 6: simulate wrong-way driving alert
+        if (step === 6) {
+          toast.error(
+            isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
+            { position: 'bottom-center', duration: 6000 }
+          );
+          setCurrentMistakes(prev => [...prev, {
+            type: 'wrong_way',
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          }]);
         }
 
         if (step > 0) {
@@ -1162,6 +1236,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
                                 {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
                                 {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
+                                {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
@@ -1170,6 +1245,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
                                   {mistake.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
                                   {mistake.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
+                                  {mistake.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
                               </div>
