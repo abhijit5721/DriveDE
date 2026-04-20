@@ -185,6 +185,8 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
                   {m.type === 'shoulder_check' && (isDE ? 'Schulterblick vergessen' : 'Missed Shoulder Check')}
                   {m.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
                   {m.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
+                  {m.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
+                  {m.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                 </div>
               </Popup>
             </Marker>
@@ -1158,6 +1160,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'rapid_acceleration' && <Zap className="h-3.5 w-3.5 text-blue-500" />}
                                 {mistake.type === 'shoulder_check' && <Eye className="h-3.5 w-3.5 text-indigo-500" />}
                                 {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
+                                {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
+                                {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
