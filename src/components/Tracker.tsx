@@ -1223,8 +1223,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-0">
-          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 max-h-[85vh]">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center sm:p-4">
+          {/* On mobile: sheet slides up from bottom. On desktop: centered modal */}
+          <div className="flex w-full flex-col overflow-hidden rounded-t-2xl bg-white dark:bg-slate-800 sm:max-w-md sm:rounded-2xl"
+            style={{
+              maxHeight: 'calc(100dvh - 80px)',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            }}
+          >
             
             {/* Header (Sticky) */}
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
@@ -1344,11 +1350,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
             </div>
 
-            {/* Footer (Sticky) */}
+            {/* Footer (Sticky) — always visible above safe area */}
             <div className="shrink-0 border-t border-slate-200 p-4 dark:border-slate-700">
               <button
                 onClick={handleAddSession}
-                className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
+                className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700 active:scale-95"
               >
                 {editingSessionId 
                   ? (isDE ? 'Änderungen speichern' : 'Save Changes')

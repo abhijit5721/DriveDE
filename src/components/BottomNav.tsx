@@ -28,7 +28,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
       aria-label={isDE ? 'Mobile Navigation' : 'Mobile Navigation'}
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95"
     >
-      <div className="px-1 py-1">
+      <div className="px-1 pt-1" style={{ paddingBottom: 'max(4px, env(safe-area-inset-bottom))' }}>
         <div className="flex items-center justify-around" role="tablist">
           {tabs.map((tab) => (
             <button
