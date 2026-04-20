@@ -78,7 +78,7 @@ export const useAppStore = create<AppState>()(
       licenseType: null,
       learningPath: null,
       transmissionType: null,
-      isPremium: false,
+      isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
       authEmail: null,
       authDisplayName: null,
       authStatus: 'guest',

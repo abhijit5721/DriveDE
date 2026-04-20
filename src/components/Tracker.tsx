@@ -219,6 +219,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [currentSpeed, setCurrentSpeed] = useState(0);
   const [currentLimit, setCurrentLimit] = useState<number | null>(null);
   const [currentMistakes, setCurrentMistakes] = useState<DrivingMistake[]>([]);
+  const [activeStopSign, setActiveStopSign] = useState<{lat: number, lng: number, id: string} | null>(null);
+  const [hasStoppedAtSign, setHasStoppedAtSign] = useState(false);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
@@ -227,6 +229,31 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [showManualLog, setShowManualLog] = useState(false);
   const [isSimulationMode, setIsSimulationMode] = useState(false);
   const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const checkNearbyStopSign = async (lat: number, lng: number) => {
+    try {
+      // Look for stop signs within 25m
+      const query = `[out:json];node(around:25,${lat},${lng})["highway"="stop"];out;`;
+      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      
+      if (data.elements && data.elements.length > 0) {
+        const sign = data.elements[0];
+        // Only trigger if it's a new sign to avoid double counting
+        if (!activeStopSign || activeStopSign.id !== sign.id.toString()) {
+          setActiveStopSign({
+            lat: sign.lat,
+            lng: sign.lon,
+            id: sign.id.toString()
+          });
+          setHasStoppedAtSign(false);
+          toast.info(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!');
+        }
+      }
+    } catch (e) {
+      console.error('Stop sign fetch failed');
+    }
+  };
 
   const fetchSpeedLimit = async (lat: number, lng: number) => {
     try {
@@ -279,6 +306,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         setElapsedTime(prev => prev + 1);
       }, 1000);
 
+      // Start periodic API checks (every 10 seconds)
+      limitCheckRef.current = setInterval(() => {
+        if (gpsPoints.length > 0) {
+          const lastPoint = gpsPoints[gpsPoints.length - 1];
+          fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
+          checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
+        }
+      }, 10000);
+
       // Start GPS Tracking
       if ("geolocation" in navigator && isPremium) {
         watchRef.current = navigator.geolocation.watchPosition(
@@ -286,6 +322,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             const { latitude: lat, longitude: lng, speed } = position.coords;
             const newPoint = { lat, lng, timestamp: Date.now() };
             const currentKmh = speed !== null ? Math.round(speed * 3.6) : 0;
+            
+            setCurrentSpeed(currentKmh);
             
             setGpsPoints(prev => {
               const lastPoint = prev[prev.length - 1];
@@ -299,37 +337,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               }
               return [newPoint];
             });
-
-            setCurrentSpeed(currentKmh);
-
-            // Check if speeding
-            if (currentLimit && currentKmh > currentLimit + 5) {
-              setCurrentMistakes(prev => {
-                const lastMistake = prev[prev.length - 1];
-                if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000)) {
-                  toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
-                  return [...prev, {
-                    type: 'speeding',
-                    speed: currentKmh,
-                    limit: currentLimit,
-                    timestamp: Date.now(),
-                    location: { lat, lng }
-                  }];
-                }
-                return prev;
-              });
-            }
           },
           (error) => console.error('GPS Error:', error),
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
-
-        // Periodically fetch speed limit for current road
-        limitCheckRef.current = setInterval(() => {
-          navigator.geolocation.getCurrentPosition((pos) => {
-            fetchSpeedLimit(pos.coords.latitude, pos.coords.longitude);
-          });
-        }, 20000); // Check every 20 seconds
       }
 
       // Start Motion Auditor (Accelerometer)
@@ -348,8 +359,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if (totalAcc > 4.0 && Date.now() - lastMotionLogRef.current > 10000) {
           lastMotionLogRef.current = Date.now();
           
-          // Try to guess if it's braking or acceleration based on relative values or device orientation
-          // For now, we'll log it as a general harsh maneuver or try to fetch the current GPS for the mistake
           navigator.geolocation.getCurrentPosition((pos) => {
             const isBraking = y < -3.0; // Simplistic guess
             const type = isBraking ? 'harsh_braking' : 'rapid_acceleration';
@@ -382,7 +391,54 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning, isPremium, currentLimit]);
+  }, [isTimerRunning]);
+
+  // Safety Auditing Hook (Reactive to Speed & Location)
+  useEffect(() => {
+    if (!isTimerRunning || gpsPoints.length === 0) return;
+
+    const lastPoint = gpsPoints[gpsPoints.length - 1];
+
+    // 1. Stop Sign Monitoring
+    if (activeStopSign) {
+      if (currentSpeed === 0) {
+        setHasStoppedAtSign(true);
+      }
+
+      const distFromSign = calculateDistance(lastPoint.lat, lastPoint.lng, activeStopSign.lat, activeStopSign.lng);
+      if (distFromSign > 0.04) { // 40 meters away
+        if (!hasStoppedAtSign) {
+          toast.error(isDE ? 'Stoppschild überfahren!' : 'Stop Sign Violation!', { position: 'bottom-center' });
+          setCurrentMistakes(prev => [...prev, {
+            type: 'stop_sign' as any,
+            timestamp: Date.now(),
+            location: { lat: activeStopSign.lat, lng: activeStopSign.lng }
+          }]);
+        }
+        setActiveStopSign(null);
+        setHasStoppedAtSign(false);
+      }
+    }
+
+    // 2. Speeding Monitoring
+    if (currentLimit && currentSpeed > currentLimit + 5) {
+      setCurrentMistakes(prev => {
+        const lastMistake = prev[prev.length - 1];
+        // 30 second cooldown between speeding mistakes of the same type
+        if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000) || lastMistake.type !== 'speeding') {
+          toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
+          return [...prev, {
+            type: 'speeding',
+            speed: currentSpeed,
+            limit: currentLimit,
+            timestamp: Date.now(),
+            location: { lat: lastPoint.lat, lng: lastPoint.lng }
+          }];
+        }
+        return prev;
+      });
+    }
+  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE]);
 
   const handleStartTimer = async () => {
     // Request Motion permission for iOS
@@ -418,8 +474,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: point.timestamp }]);
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
-        
-        // Calculate incremental distance
+
+        // Simulate Stop Sign Detection at Step 3
+        if (step === 2) {
+          setActiveStopSign({ lat: 52.5220, lng: 13.4080, id: 'mock-stop-1' });
+          setHasStoppedAtSign(false);
+          toast.info(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!');
+        }
         if (step > 0) {
           const prev = mockPoints[step - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
@@ -849,7 +910,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           ) : (
             <button
               onClick={() => {
-                if (hasReachedLimit) {
+                if (hasReachedLimit && !isSimulationMode) {
                   onOpenPaywall();
                 } else {
                   handleStartTimer();
