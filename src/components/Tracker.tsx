@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -45,7 +45,7 @@ const calculateBearing = (startLat: number, startLng: number, endLat: number, en
 };
 
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
-  if (route.length < 2) return null;
+  if (!route || route.length < 2) return null;
   const isDE = language === 'de';
   const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -176,7 +176,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
             />
           )}
 
-          {mistakes?.map((m, i) => m.location && (
+          {mistakes?.map((m, i) => m && m.location && m.type && (
             <Marker key={i} position={[m.location.lat, m.location.lng]} icon={getMistakeIcon(m.type)}>
               <Popup>
                 <div className="text-xs font-bold">
@@ -230,10 +230,104 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
+  const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const simulationStepRef = useRef<number>(0);
   const lastMotionLogRef = useRef<number>(0);
   const [showManualLog, setShowManualLog] = useState(false);
   const [isSimulationMode, setIsSimulationMode] = useState(false);
-  const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [targetDestination, setTargetDestination] = useState('');
+  const [destinationCoords, setDestinationCoords] = useState<{ lat: number, lng: number } | null>(null);
+  const [isSearchingDestination, setIsSearchingDestination] = useState(false);
+
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Handle autocomplete search
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (targetDestination.length < 3) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      try {
+        const langCode = language === 'de' ? 'de' : 'en';
+        // Add bias based on current position if available, else default to Berlin
+        const biasLat = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
+        const biasLon = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lng : 13.405;
+        
+        const response = await fetch(
+          `https://photon.komoot.io/api?q=${encodeURIComponent(targetDestination)}&limit=5&lang=${langCode}&lat=${biasLat}&lon=${biasLon}`
+        );
+        const data = await response.json();
+        if (data.features) {
+          setSuggestions(data.features);
+          setShowSuggestions(true);
+        }
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    };
+
+    const timer = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(timer);
+  }, [targetDestination, language, gpsPoints]);
+
+  // Click outside listener to close suggestions
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getCarMarkerIcon = (rotation: number) => {
+    return L.divIcon({
+      className: 'car-marker-icon',
+      html: `
+        <div style="transform: rotate(${rotation}deg); transition: transform 0.5s ease; width: 34px; height: 18px; background: #3b82f6; border: 2px solid white; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
+          <!-- Body Detail -->
+          <div style="position: absolute; right: 6px; width: 10px; height: 12px; background: #1e293b; border-radius: 1px; opacity: 0.8;"></div>
+          <!-- Headlights -->
+          <div style="position: absolute; right: -3px; top: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
+          <div style="position: absolute; right: -3px; bottom: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
+          <!-- Brake Lights -->
+          <div style="position: absolute; left: -2px; top: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
+          <div style="position: absolute; left: -2px; bottom: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
+        </div>
+      `,
+      iconSize: [34, 18],
+      iconAnchor: [17, 9]
+    });
+  };
+
+  const getFlagMarkerIcon = () => {
+    return L.divIcon({
+      className: 'flag-marker-icon',
+      html: `
+        <div style="display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));">
+          <div style="background: white; border: 3px solid #1e293b; border-radius: 12px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 20px; animation: bounce-flag 2s infinite ease-in-out;">
+            🏁
+          </div>
+        </div>
+        <style>
+          @keyframes bounce-flag {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+          }
+        </style>
+      `,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
+    });
+  };
+
+
 
   const checkNearbyStopSign = async (lat: number, lng: number) => {
     try {
@@ -252,7 +346,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             id: sign.id.toString()
           });
           setHasStoppedAtSign(false);
-          toast.info(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!');
+          toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: 'ℹ️', id: 'stop-sign-alert' });
         }
       }
     } catch (e) {
@@ -347,6 +441,25 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const isDE = language === 'de';
   const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
+
+  const handleSearchDestination = async () => {
+    if (!targetDestination.trim()) return;
+    setIsSearchingDestination(true);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(targetDestination)}&format=json&limit=1`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        setDestinationCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
+        toast.success(isDE ? 'Ziel gefunden!' : 'Destination found!');
+      } else {
+        toast.error(isDE ? 'Ziel nicht gefunden' : 'Destination not found');
+      }
+    } catch (e) {
+      toast.error(isDE ? 'Suche fehlgeschlagen' : 'Search failed');
+    } finally {
+      setIsSearchingDestination(false);
+    }
+  };
 
   const totalSpending = (userProgress.totalDrivingMinutes / 45) * userProgress.hourlyRate45;
 
@@ -472,7 +585,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
 
       const distFromSign = calculateDistance(lastPoint.lat, lastPoint.lng, activeStopSign.lat, activeStopSign.lng);
-      if (distFromSign > 0.04) { // 40 meters away
+      
+      // If we approach very closely, we consider we are at the sign
+      if (distFromSign < 0.02) {
+        // Checking...
+      } else if (distFromSign > 0.03 && gpsPoints.length > 3) { 
+        // 30 meters away after passing it (prevent immediate trigger on approach)
         if (!hasStoppedAtSign) {
           toast.error(isDE ? 'Stoppschild überfahren!' : 'Stop Sign Violation!', { position: 'bottom-center' });
           setCurrentMistakes(prev => [...prev, {
@@ -507,6 +625,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE]);
 
   const handleStartTimer = async () => {
+    // Clear suggestions if they are still open
+    setShowSuggestions(false);
+    setSuggestions([]);
+
     // Request Motion permission for iOS
     if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
       try {
@@ -538,27 +660,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         { lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 9: end
       ];
 
-      let step = 0;
+      simulationStepRef.current = 0;
       simulationIntervalRef.current = setInterval(() => {
-        if (step >= mockPoints.length) {
+        const currentStep = simulationStepRef.current;
+        console.log('Running simulation step:', currentStep);
+        
+        if (currentStep >= mockPoints.length) {
           if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
           return;
         }
 
-        const point = mockPoints[step];
+        const point = mockPoints[currentStep];
         setGpsPoints(prev => [...prev, { lat: point.lat, lng: point.lng, timestamp: Date.now() }]);
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
-        // Step 0: place stop sign one step ahead
-        if (step === 0) {
-          setActiveStopSign({ lat: stopLat, lng: stopLng, id: 'mock-stop-1' });
+        // Step 0: place stop sign roughly 10 meters ahead so we don't trigger violation instantly
+        if (currentStep === 0) {
+          setActiveStopSign({ lat: 52.52005, lng: 13.40505, id: 'mock-stop-1' });
           setHasStoppedAtSign(false);
-          toast.info(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!');
+          toast(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!', { id: 'mock-stop-toast' });
         }
 
         // Step 6: simulate wrong-way driving alert
-        if (step === 6) {
+        if (currentStep === 6) {
           toast.dismiss(); // clear stop sign toasts to ensure this shows!
           toast.error(
             isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!',
@@ -571,14 +696,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           }]);
         }
 
-        if (step > 0) {
-          const prev = mockPoints[step - 1];
+        if (currentStep > 0) {
+          const prev = mockPoints[currentStep - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
-          setCurrentDistance(d => d + (dist * 10)); // Multiply by 10 to force UI to jump visibly
+          setCurrentDistance(d => d + (dist * 100)); // Multiply drastically to guarantee UI movement
         }
 
-        step++;
-      }, 1000); // Trigger every 1 second (fast forward)
+        simulationStepRef.current += 1;
+      }, 1500); // 1.5 seconds per tick
     }
 
     setIsTimerRunning(true);
@@ -598,6 +723,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const handleStopTimer = async () => {
     setIsTimerRunning(false);
+    setShowSuggestions(false);
+    setSuggestions([]);
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
     
@@ -917,19 +1044,104 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         {/* Real-time Map Monitoring (Always Available) */}
         {isTimerRunning && gpsPoints.length > 0 && (
-          <div className="mt-3 h-24 w-full overflow-hidden rounded-xl border border-white/10 opacity-80">
+          <div className="mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
             <MapContainer 
               center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
-              zoom={16} 
+              zoom={17} 
               zoomControl={false}
               attributionControl={false}
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={3} />
-              <Marker position={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} />
+              <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={4} opacity={0.8} />
+              
+              {destinationCoords && (
+                <Marker position={[destinationCoords.lat, destinationCoords.lng]} icon={getFlagMarkerIcon()}>
+                  <Popup>{isDE ? 'Dein Ziel' : 'Your Destination'}</Popup>
+                </Marker>
+              )}
+
+              <Marker 
+                position={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
+                icon={getCarMarkerIcon(gpsPoints.length > 1 
+                  ? (calculateBearing(
+                      gpsPoints[gpsPoints.length-2].lat, gpsPoints[gpsPoints.length-2].lng,
+                      gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng
+                    ) - 90)
+                  : -90
+                )}
+              />
               <MapBoundsSimple points={gpsPoints} />
             </MapContainer>
+          </div>
+        )}
+
+        {/* Destination Search Input */}
+        {!isTimerRunning && (
+          <div className="mt-4 px-1">
+            <div className="relative group">
+              <input
+                type="text"
+                placeholder={isDE ? "Destination eingeben (z.B. Berlin Hbf)" : "Enter destination (e.g. Berlin Hbf)"}
+                value={targetDestination}
+                onChange={(e) => setTargetDestination(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
+                className="w-full rounded-xl bg-white/5 border border-white/10 px-10 py-2.5 text-sm text-white placeholder-slate-400 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all"
+              />
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+              <button 
+                onClick={handleSearchDestination}
+                disabled={isSearchingDestination}
+                className="absolute right-2 top-1.5 rounded-lg bg-indigo-600/20 px-3 py-1 text-[10px] font-bold text-indigo-400 hover:bg-indigo-600/30 transition-all border border-indigo-500/20"
+              >
+                {isSearchingDestination ? '...' : (isDE ? 'SUCHEN' : 'SEARCH')}
+              </button>
+
+              {/* Autocomplete Suggestions Dropdown */}
+              <AnimatePresence>
+                {showSuggestions && suggestions.length > 0 && (
+                  <motion.div
+                    ref={suggestionsRef}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-white/20 bg-slate-900/90 backdrop-blur-md shadow-2xl"
+                  >
+                    {suggestions.map((feature, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          const name = feature.properties.name;
+                          const city = feature.properties.city || feature.properties.state || '';
+                          const country = feature.properties.country || '';
+                          const label = `${name}${city ? ', ' + city : ''}${country ? ', ' + country : ''}`;
+                          
+                          setTargetDestination(label);
+                          setDestinationCoords({
+                            lat: feature.geometry.coordinates[1],
+                            lng: feature.geometry.coordinates[0]
+                          });
+                          setShowSuggestions(false);
+                          setSuggestions([]);
+                        }}
+                        className="flex w-full flex-col px-4 py-3 text-left transition-colors hover:bg-white/10 border-b border-white/5 last:border-0"
+                      >
+                        <span className="text-sm font-bold text-white">
+                          {feature.properties.name}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {[
+                            feature.properties.city,
+                            feature.properties.state,
+                            feature.properties.country
+                          ].filter(Boolean).join(', ')}
+                        </span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         )}
 
@@ -1217,10 +1429,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         {session.notes}
                       </p>
                     )}
-                    {session.route && session.route.length > 0 && (
-                      <RouteMap route={session.route} mistakes={session.mistakes} language={language} />
+                    {session.route && Array.isArray(session.route) && session.route.length > 0 && (
+                      <RouteMap route={session.route} mistakes={Array.isArray(session.mistakes) ? session.mistakes : []} language={language} />
                     )}
-                    {session.mistakes && session.mistakes.length > 0 ? (
+                    {session.mistakes && Array.isArray(session.mistakes) && session.mistakes.length > 0 ? (
                       <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-900/20">
                         <div className="mb-2 flex items-center justify-between">
                           <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
@@ -1228,11 +1440,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             {isDE ? 'Detail-Analyse' : 'Detailed Analysis'}
                           </div>
                           <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
-                            {session.mistakes.length}
+                            {session.mistakes.filter(m => m && m.type).length}
                           </span>
                         </div>
                         <div className="space-y-2">
                           {session.mistakes.reduce((acc, mistake) => {
+                            if (!mistake || !mistake.type) return acc;
                             const existing = acc.find(m => m.type === mistake.type);
                             if (existing) {
                               existing.count = (existing.count || 1) + 1;
@@ -1243,7 +1456,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               acc.push({ ...mistake, count: 1 });
                             }
                             return acc;
-                          }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => (
+                          }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => {
+                            if (!mistake) return null;
+                            return (
                             <div key={idx} className="flex items-center justify-between rounded-lg bg-white/50 p-2 text-xs dark:bg-slate-900/50">
                               <div className="flex items-center gap-2">
                                 {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
@@ -1284,7 +1499,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 )}
                               </div>
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     ) : session.route && session.route.length > 0 && (
