@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "chmod +x ./node_modules/.bin/vite && vite build",
+    "build": "node ./scripts/migrate.js && chmod +x ./node_modules/.bin/vite && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.7.0",
+    "postgres": "^3.4.9",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hot-toast": "^2.4.1",
