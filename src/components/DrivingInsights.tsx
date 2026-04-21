@@ -14,13 +14,18 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
   const isDE = language === 'de';
 
   // Sort sessions by date (newest first)
-  const sortedSessions = [...drivingSessions].sort((a, b) => b.date - a.date);
+  const sortedSessions = [...drivingSessions].sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
   
   // Calculate Weekly Stats
   const now = Date.now();
   const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
-  const thisWeekSessions = sortedSessions.filter(s => (now - s.date) < ONE_WEEK);
-  const lastWeekSessions = sortedSessions.filter(s => (now - s.date) >= ONE_WEEK && (now - s.date) < (2 * ONE_WEEK));
+  const thisWeekSessions = sortedSessions.filter(s => (now - new Date(s.date).getTime()) < ONE_WEEK);
+  const lastWeekSessions = sortedSessions.filter(s => {
+    const time = new Date(s.date).getTime();
+    return (now - time) >= ONE_WEEK && (now - time) < (2 * ONE_WEEK);
+  });
 
   const thisWeekMinutes = thisWeekSessions.reduce((acc, s) => acc + s.duration, 0);
   const lastWeekMinutes = lastWeekSessions.reduce((acc, s) => acc + s.duration, 0);
