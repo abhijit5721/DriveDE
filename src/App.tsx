@@ -359,9 +359,9 @@ export default function App() {
       />
       <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
-        <div className="flex h-screen flex-1 flex-col overflow-y-auto">
+        <div className="flex h-[100dvh] flex-1 flex-col overflow-y-auto overscroll-contain [webkit-overflow-scrolling:touch]">
           {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />}
-          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-24 lg:pb-6">
+          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
             <div className="mx-auto max-w-4xl">
               {renderContent()}
             </div>

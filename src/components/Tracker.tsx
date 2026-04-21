@@ -2075,12 +2075,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center sm:p-4">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center sm:p-4">
           {/* On mobile: sheet slides up from bottom. On desktop: centered modal */}
-          <div className="flex w-full flex-col overflow-hidden rounded-t-2xl bg-white dark:bg-slate-800 sm:max-w-md sm:rounded-2xl"
+          <div className="flex w-full flex-col overflow-hidden rounded-t-[2.5rem] bg-white dark:bg-slate-800 sm:max-w-md sm:rounded-2xl shadow-2xl"
             style={{
-              maxHeight: 'calc(100dvh - 80px)',
-              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+              maxHeight: 'calc(100dvh - 100px)',
+              paddingBottom: 'calc(env(safe-area-inset-bottom, 20px) + 16px)',
             }}
           >
             
