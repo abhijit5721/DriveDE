@@ -1,14 +1,3 @@
-/**
- * BudgetEstimator.tsx
- * 
- * Provides a specialized dashboard for tracking and estimating the cost of getting 
- * a driving license in Germany.
- * Calculations include:
- * 1. Base fees (Registration, exams, etc.)
- * 2. Per-session costs (Normal vs Special drives like Autobahn).
- * 3. Future estimation based on current progress and readiness.
- */
-
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -23,7 +12,9 @@ import {
   Save, 
   X,
   CreditCard,
-  GraduationCap
+  GraduationCap,
+  Lock,
+  Crown
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -31,8 +22,12 @@ import { getAllLessons } from '../../data/curriculum';
 import { filterLessonsForSelection } from '../../utils/contentFilter';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
 
-export function BudgetEstimator() {
-  const { language, userProgress, licenseType, updateFixedCosts, setHourlyRate45 } = useAppStore();
+interface BudgetEstimatorProps {
+  onOpenPaywall?: () => void;
+}
+
+export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
+  const { language, userProgress, licenseType, updateFixedCosts, setHourlyRate45, isPremium } = useAppStore();
   const isDE = language === 'de';
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -194,11 +189,26 @@ export function BudgetEstimator() {
                 <span className="text-4xl font-black text-white">€{currentSpend.toLocaleString()}</span>
               </div>
             </div>
-            <div className="text-right space-y-1 border-l border-white/5 pl-8">
+            <div className="relative text-right space-y-1 border-l border-white/5 pl-8">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{isDE ? 'Voraussichtliches Ziel' : 'Total Goal'}</p>
-              <div className="flex items-baseline justify-end gap-1">
-                <span className="text-4xl font-black text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
-              </div>
+              {isPremium ? (
+                <div className="flex items-baseline justify-end gap-1">
+                  <span className="text-4xl font-black text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-end gap-1">
+                  <span className="flex items-center gap-1.5 text-2xl font-black text-slate-500">
+                    € ?,???
+                    <Lock className="h-4 w-4" />
+                  </span>
+                  <button 
+                    onClick={onOpenPaywall}
+                    className="text-[10px] font-black text-indigo-400 underline uppercase tracking-tighter"
+                  >
+                    {isDE ? 'SCHÄTZUNG FREISCHALTEN' : 'UNLOCK ESTIMATION'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -223,7 +233,7 @@ export function BudgetEstimator() {
             </div>
             <div className="flex flex-col items-end">
               <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
-                ~{estimation.remainingNormal + estimation.remainingSpecial}
+                {isPremium ? `~${estimation.remainingNormal + estimation.remainingSpecial}` : '?'}
               </span>
             </div>
           </div>
@@ -234,14 +244,14 @@ export function BudgetEstimator() {
                  <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                  <span className="text-xs text-slate-500">{isDE ? 'Normalfahrten' : 'Normal Lessons'}</span>
               </div>
-              <span className="text-xs font-bold">{estimation.remainingNormal}</span>
+              <span className="text-xs font-bold">{isPremium ? estimation.remainingNormal : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-1.5 w-1.5 rounded-full bg-orange-400" />
                  <span className="text-xs text-slate-500">{isDE ? 'Sonderfahrten' : 'Special Drives'}</span>
               </div>
-              <span className="text-xs font-bold text-orange-600">{estimation.remainingSpecial}</span>
+              <span className="text-xs font-bold text-orange-600">{isPremium ? estimation.remainingSpecial : '-'}</span>
             </div>
             
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -253,13 +263,24 @@ export function BudgetEstimator() {
               />
             </div>
           </div>
+          {!isPremium && (
+             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={onOpenPaywall}
+                  className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xl dark:bg-white dark:text-slate-900"
+                >
+                  <Lock className="h-3 w-3" />
+                  PRO
+                </button>
+             </div>
+          )}
         </motion.div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+          className="relative group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
@@ -271,7 +292,9 @@ export function BudgetEstimator() {
             </div>
           </div>
           <div className="mt-8">
-            <p className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">€{estimation.remainingCost.toLocaleString()}</p>
+            <p className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+              {isPremium ? `€${estimation.remainingCost.toLocaleString()}` : '€ ?,???'}
+            </p>
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
               <Info className="h-4 w-4 text-blue-500 shrink-0" />
               <p className="text-[10px] font-medium leading-tight text-blue-600 dark:text-blue-400">
@@ -281,6 +304,17 @@ export function BudgetEstimator() {
               </p>
             </div>
           </div>
+          {!isPremium && (
+             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={onOpenPaywall}
+                  className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xl dark:bg-white dark:text-slate-900"
+                >
+                  <Lock className="h-3 w-3" />
+                  PRO
+                </button>
+             </div>
+          )}
         </motion.div>
       </div>
 
@@ -290,7 +324,7 @@ export function BudgetEstimator() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
         className={cn(
-          "rounded-[2rem] p-6 border transition-all duration-500",
+          "relative group rounded-[2rem] p-6 border transition-all duration-500 overflow-hidden",
           estimation.isHighReadiness 
             ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-900/30 shadow-[0_10px_40px_-15px_rgba(16,185,129,0.1)]" 
             : "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-900/30 shadow-[0_10px_40px_-15px_rgba(245,158,11,0.1)]"
@@ -303,39 +337,60 @@ export function BudgetEstimator() {
           )}>
             {estimation.isHighReadiness ? <CheckCircle2 className="h-7 w-7" /> : <TrendingUp className="h-7 w-7" />}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
               <h4 className={cn(
                 "font-black uppercase tracking-widest text-[10px]",
                 estimation.isHighReadiness ? "text-emerald-600" : "text-amber-600"
               )}>
                 {isDE ? 'DriveDE Strategie' : 'DriveDE Strategy'}
               </h4>
+              {!isPremium && <Crown className="h-3 w-3 text-amber-500" />}
             </div>
-            <p className={cn(
-              "mt-2 text-sm font-semibold leading-relaxed",
-              estimation.isHighReadiness ? "text-emerald-900 dark:text-emerald-200" : "text-amber-900 dark:text-amber-200"
-            )}>
-              {estimation.isHighReadiness
-                ? (isDE 
-                    ? 'Maximale Ersparnis möglich!' 
-                    : 'Maximum savings possible!')
-                : (isDE 
-                    ? 'Effizienz-Potential erkannt' 
-                    : 'Efficiency potential detected')}
-            </p>
-            <p className={cn(
-              "mt-1 text-sm opacity-80",
-              estimation.isHighReadiness ? "text-emerald-800 dark:text-emerald-400" : "text-amber-800 dark:text-amber-400"
-            )}>
-              {estimation.isHighReadiness
-                ? (isDE 
-                    ? 'Deine Bereitschaft ist top. Schließe die Sonderfahrten zügig ab, um unnötige Übungsstunden zu vermeiden.' 
-                    : 'Your readiness is peak. Finish special drives quickly to avoid extra practice lessons.')
-                : (isDE 
-                    ? `Fokussiere dich auf Theorie & Simulation. Jede Stunde, die du dadurch sparst, bringt dir ca. €${hourlyRate45} zurück.` 
-                    : `Focus on theory & simulation. Every lesson you save through prep puts €${hourlyRate45} back in your pocket.`)}
-            </p>
+            
+            {isPremium ? (
+              <>
+                <p className={cn(
+                  "mt-2 text-sm font-semibold leading-relaxed",
+                  estimation.isHighReadiness ? "text-emerald-900 dark:text-emerald-200" : "text-amber-900 dark:text-amber-200"
+                )}>
+                  {estimation.isHighReadiness
+                    ? (isDE 
+                        ? 'Maximale Ersparnis möglich!' 
+                        : 'Maximum savings possible!')
+                    : (isDE 
+                        ? 'Effizienz-Potential erkannt' 
+                        : 'Efficiency potential detected')}
+                </p>
+                <p className={cn(
+                  "mt-1 text-sm opacity-80",
+                  estimation.isHighReadiness ? "text-emerald-800 dark:text-emerald-400" : "text-amber-800 dark:text-amber-400"
+                )}>
+                  {estimation.isHighReadiness
+                    ? (isDE 
+                        ? 'Deine Bereitschaft ist top. Schließe die Sonderfahrten zügig ab, um unnötige Übungsstunden zu vermeiden.' 
+                        : 'Your readiness is peak. Finish special drives quickly to avoid extra practice lessons.')
+                    : (isDE 
+                        ? `Fokussiere dich auf Theorie & Simulation. Jede Stunde, die du dadurch sparst, bringt dir ca. €${hourlyRate45} zurück.` 
+                        : `Focus on theory & simulation. Every lesson you save through prep puts €${hourlyRate45} back in your pocket.`)}
+                </p>
+              </>
+            ) : (
+              <div className="mt-2">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                  {isDE ? 'Strategische Optimierung verfügbar' : 'Strategic optimization available'}
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {isDE ? 'Upgrade auf Pro, um deine persönliche Finanz-Strategie und Spar-Tipps zu sehen.' : 'Upgrade to Pro to see your personal financial strategy and savings tips.'}
+                </p>
+                <button 
+                  onClick={onOpenPaywall}
+                  className="mt-3 text-[10px] font-black text-indigo-600 underline"
+                >
+                  {isDE ? 'PRO FREISCHALTEN' : 'UNLOCK PRO'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

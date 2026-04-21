@@ -1,4 +1,4 @@
-import { Play, Film, Wrench } from 'lucide-react';
+import { Play, Film, Wrench, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
@@ -12,6 +12,7 @@ import AnimatedManeuver from './AnimatedManeuver';
 
 interface ManeuversProps {
   onLessonSelect: (lesson: Lesson) => void;
+  onOpenPaywall?: () => void;
 }
 
 type AnimationType = 'parallel-parking' | 'reverse-parking' | 'three-point-turn' | 'emergency-brake' | 'roundabout' | 'highway-merge';
@@ -38,8 +39,8 @@ const itemVariants = {
   },
 };
 
-export function Maneuvers({ onLessonSelect }: ManeuversProps) {
-  const { language, licenseType } = useAppStore();
+export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
+  const { language, licenseType, isPremium } = useAppStore();
   const isDE = language === 'de';
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationType | null>(null);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -239,16 +240,27 @@ export function Maneuvers({ onLessonSelect }: ManeuversProps) {
           ].map((anim) => (
             <button
               key={anim.id}
-              onClick={() => setSelectedAnimation(selectedAnimation === anim.id ? null : anim.id)}
+              onClick={() => {
+                if (isPremium) {
+                  setSelectedAnimation(selectedAnimation === anim.id ? null : anim.id);
+                } else {
+                  onOpenPaywall?.();
+                }
+              }}
               aria-label={isDE ? `Animation für ${anim.label} ${selectedAnimation === anim.id ? 'schließen' : 'öffnen'}` : `${selectedAnimation === anim.id ? 'Close' : 'Open'} ${anim.label} animation`}
               aria-pressed={selectedAnimation === anim.id}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-lg p-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',
+                'relative flex flex-col items-center gap-1 rounded-lg p-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',
                 selectedAnimation === anim.id
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
               )}
             >
+              {!isPremium && (
+                <div className="absolute right-1 top-1 bg-white dark:bg-slate-800 rounded-full p-0.5 shadow-sm">
+                  <Lock className="h-2.5 w-2.5 text-amber-500" />
+                </div>
+              )}
               <span className="text-xl" aria-hidden="true">{anim.icon}</span>
               <span className="text-xs font-semibold">{anim.label}</span>
             </button>

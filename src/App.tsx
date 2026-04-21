@@ -321,15 +321,15 @@ export default function App() {
       case 'curriculum':
         return <Curriculum onLessonSelect={handleLessonSelect} />;
       case 'maneuvers':
-        return <Maneuvers onLessonSelect={handleLessonSelect} />;
+        return <Maneuvers onLessonSelect={handleLessonSelect} onOpenPaywall={() => setShowPaywall(true)} />;
       case 'tracker':
         return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
       case 'achievements':
         return <Achievements />;
       case 'finance':
-        return <BudgetEstimator />;
+        return <BudgetEstimator onOpenPaywall={() => setShowPaywall(true)} />;
       case 'review':
-        return <InstructorReview onBack={() => setActiveTab('home')} />;
+        return <InstructorReview onBack={() => setActiveTab('home')} onOpenPaywall={() => setShowPaywall(true)} />;
       case 'account':
         return (
           <Account

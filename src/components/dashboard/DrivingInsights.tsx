@@ -1,14 +1,15 @@
 import React from 'react';
-import { TrendingUp, Target, Clock, ChevronRight, AlertTriangle, Zap, Calendar, Wind, Star } from 'lucide-react';
+import { TrendingUp, Target, Clock, ChevronRight, AlertTriangle, Zap, Calendar, Wind, Star, Lock, Crown } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import type { DrivingMistake } from '../../types';
 
 interface DrivingInsightsProps {
   onDirectLessonSelect: (lessonId: string) => void;
+  onOpenPaywall?: () => void;
 }
 
-export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
+export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: DrivingInsightsProps) {
   const { language, userProgress, transmissionType, isPremium } = useAppStore();
   const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
     .filter(s => s.instructorName !== 'AI Safety Auditor' && !s.isSimulation);
@@ -168,6 +169,17 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
               </div>
             ))}
           </div>
+          {!isPremium && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-800/40 opacity-0 hover:opacity-100 transition-opacity">
+               <button 
+                onClick={onOpenPaywall}
+                className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg"
+               >
+                 <Crown className="h-3 w-3 text-amber-400" />
+                 {isDE ? 'Werte freischalten' : 'Unlock Insights'}
+               </button>
+            </div>
+          )}
           <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-tighter text-slate-400">
             {dayNames.map((name, i) => (
               <span key={i} className={cn(i === todayIndex && "text-indigo-600 dark:text-indigo-400 font-black")}>
@@ -178,7 +190,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
         </div>
 
         {/* AI Focus Areas Card */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <div className="flex items-center gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
               <Target className="h-5 w-5" />
@@ -194,29 +206,44 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
           </div>
 
           <div className="space-y-3">
-            {topMistakes.length > 0 ? topMistakes.map(([type, count]) => (
-              <div key={type} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    {getMistakeLabel(type)}
-                  </span>
-                  <span className="text-[10px] text-slate-400">({count}x)</span>
+            {isPremium ? (
+              topMistakes.length > 0 ? topMistakes.map(([type, count]) => (
+                <div key={type} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      {getMistakeLabel(type)}
+                    </span>
+                    <span className="text-[10px] text-slate-400">({count}x)</span>
+                  </div>
+                  <button
+                    onClick={() => onDirectLessonSelect(lessonMap[type] || 'basics-0')}
+                    className="group flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                  >
+                    {isDE ? 'Lektion wiederholen' : 'Review Lesson'}
+                    <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => onDirectLessonSelect(lessonMap[type] || 'basics-0')}
-                  className="group flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
-                >
-                  {isDE ? 'Lektion wiederholen' : 'Review Lesson'}
-                  <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                </button>
-              </div>
-            )) : (
+              )) : (
+                <div className="flex flex-col items-center justify-center py-4 text-center">
+                  <Zap className="h-8 w-8 text-emerald-500 mb-2" />
+                  <p className="text-xs font-bold text-emerald-600">
+                    {isDE ? 'Perfekt! Keine Fehler-Häufung.' : 'Perfect! No recurring faults.'}
+                  </p>
+                </div>
+              )
+            ) : (
               <div className="flex flex-col items-center justify-center py-4 text-center">
-                <Zap className="h-8 w-8 text-emerald-500 mb-2" />
-                <p className="text-xs font-bold text-emerald-600">
-                  {isDE ? 'Perfekt! Keine Fehler-Häufung.' : 'Perfect! No recurring faults.'}
+                <Lock className="h-8 w-8 text-slate-300 mb-2" />
+                <p className="text-[10px] font-medium text-slate-400 px-4">
+                  {isDE ? 'Die KI-Fehleranalyse ist für Pro-Mitglieder verfügbar.' : 'AI mistake analysis is available for Pro members.'}
                 </p>
+                <button 
+                  onClick={onOpenPaywall}
+                  className="mt-3 text-[10px] font-black text-indigo-600 underline"
+                >
+                  {isDE ? 'PRO FREISCHALTEN' : 'UNLOCK PRO'}
+                </button>
               </div>
             )}
           </div>
@@ -224,7 +251,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
       </div>
 
       {/* Efficiency & Environment Card */}
-      {mistakeCounts['idling'] > 0 && (
+      {mistakeCounts['idling'] > 0 && isPremium && (
         <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 dark:border-emerald-900/30 dark:bg-emerald-900/10">
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">

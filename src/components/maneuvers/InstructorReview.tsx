@@ -1,5 +1,5 @@
 import { useRef, useState, useMemo } from 'react';
-import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck, AlertCircle, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
+import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck, AlertCircle, CheckCircle2, XCircle, RotateCcw, Lock } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons, getLessonById } from '../../data/curriculum';
@@ -10,6 +10,7 @@ import type { Lesson, ManeuverStep, Tip } from '../../types';
 
 interface InstructorReviewProps {
   onBack: () => void;
+  onOpenPaywall?: () => void;
 }
 
 const sampleLessonIds = ['basics-1a', 'city-2', 'maneuver-1'];
@@ -277,8 +278,8 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
   );
 }
 
-export function InstructorReview({ onBack }: InstructorReviewProps) {
-  const { language, licenseType, userProgress, removeMistake } = useAppStore();
+export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProps) {
+  const { language, licenseType, userProgress, removeMistake, isPremium } = useAppStore();
   const isDE = language === 'de';
   const documentRef = useRef<HTMLDivElement | null>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
@@ -490,6 +491,10 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
   };
 
   const handlePrintReview = () => {
+    if (!isPremium) {
+      onOpenPaywall?.();
+      return;
+    }
     try {
       const pdf = buildReviewPdf();
       pdf.autoPrint();
@@ -513,6 +518,10 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
   };
 
   const handleDownloadPdf = async () => {
+    if (!isPremium) {
+      onOpenPaywall?.();
+      return;
+    }
     if (isDownloadingPdf) return;
     setIsDownloadingPdf(true);
 
@@ -538,7 +547,7 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
             onClick={handlePrintReview}
             className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           >
-            <Printer className="h-4 w-4" />
+            {isPremium ? <Printer className="h-4 w-4" /> : <Lock className="h-4 w-4 text-amber-500" />}
             <span className="hidden sm:inline">{isDE ? 'Drucken' : 'Print'}</span>
           </button>
           <button
@@ -546,7 +555,7 @@ export function InstructorReview({ onBack }: InstructorReviewProps) {
             disabled={isDownloadingPdf}
             className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            <Download className="h-4 w-4" />
+            {isPremium ? <Download className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
             <span className="hidden sm:inline">
               {isDownloadingPdf ? (isDE ? 'Wird erstellt…' : 'Generating…') : isDE ? 'PDF laden' : 'Download PDF'}
             </span>

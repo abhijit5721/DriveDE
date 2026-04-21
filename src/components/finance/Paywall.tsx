@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { Star, Check, X, Clock, Calendar, Shield, Zap, Sparkles } from 'lucide-react';
+import { Star, Check, X, Clock, Calendar, Shield, Zap, Sparkles, Users, Trophy, Globe } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -81,11 +81,11 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       title: 'DriveDE Pro freischalten',
       subtitle: 'Wähle deinen Plan und bestehe die Prüfung beim ersten Mal',
       features: [
-        'Alle 25+ Video-Lektionen & Animationen',
-        'Unbegrenzter Fahrstunden-Tracker',
-        'Alle Spezial-Manöver & Umschreibung-Tools',
-        'Interaktive Prüfungssimulation (Sprachausgabe)',
-        'Detaillierte PDF-Checklisten & Protokolle'
+        'GPS Live-Tracking & Streckenverlauf',
+        'AI Fahr-Coach & Fehler-Analyse',
+        'Finanzielle Prognosen & Spar-Strategien',
+        'Alle Video-Lektionen & Animationen',
+        'Fahrlehrer-Review (PDF & Druck)'
       ],
       button: 'Jetzt Pro werden',
       cancel: 'Vielleicht später',
@@ -95,11 +95,11 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       title: 'Unlock DriveDE Pro',
       subtitle: 'Pick your plan and pass your exam on the first try',
       features: [
-        'All 25+ video lessons & animations',
-        'Unlimited driving lesson tracker',
-        'All special maneuvers & conversion tools',
-        'Interactive exam simulation (Voice)',
-        'Detailed PDF checklists & reports'
+        'GPS Live Tracking & Route Maps',
+        'AI Driving Coach & Fault Analysis',
+        'Financial Projections & Cost Strategy',
+        'All Video Lessons & Animations',
+        'Instructor Review (PDF & Print)'
       ],
       button: 'Unlock Pro Now',
       cancel: 'Maybe later',
@@ -133,9 +133,42 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                 {t.title}
               </h2>
-              <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-                {t.subtitle}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
+                  {t.subtitle}
+                </p>
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/40 rounded-full animate-pulse">
+                  <div className="w-1 h-1 bg-green-500 rounded-full" />
+                  <span className="text-[10px] font-bold text-green-600 dark:text-green-400">
+                    {language === 'de' ? '142 gerade online' : '142 online now'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Proof Stats */}
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-slate-100 shadow-sm dark:bg-slate-800/40 dark:border-slate-700/50">
+              <Users className="w-4 h-4 text-blue-500 mb-1" />
+              <span className="text-[10px] font-black text-slate-900 dark:text-white leading-none">2.5k+</span>
+              <span className="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter mt-1">
+                {language === 'de' ? 'Nutzer' : 'Users'}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-slate-100 shadow-sm dark:bg-slate-800/40 dark:border-slate-700/50">
+              <Trophy className="w-4 h-4 text-amber-500 mb-1" />
+              <span className="text-[10px] font-black text-slate-900 dark:text-white leading-none">94%</span>
+              <span className="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter mt-1">
+                {language === 'de' ? 'Erfolg' : 'Success'}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-slate-100 shadow-sm dark:bg-slate-800/40 dark:border-slate-700/50">
+              <Globe className="w-4 h-4 text-emerald-500 mb-1" />
+              <span className="text-[10px] font-black text-slate-900 dark:text-white leading-none">16+</span>
+              <span className="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter mt-1">
+                {language === 'de' ? 'Städte' : 'Cities'}
+              </span>
             </div>
           </div>
 
@@ -227,6 +260,18 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             >
               {t.cancel}
             </button>
+
+            {/* Institutional Trust Badge */}
+            <div className="flex items-center gap-2 mt-4 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white dark:bg-slate-700 shadow-sm">
+                <Shield className="h-2.5 w-2.5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <p className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">
+                {language === 'de' 
+                  ? 'Basierend auf aktuellen TÜV / DEKRA Prüfungsrichtlinien 2026' 
+                  : 'Based on current 2026 TÜV / DEKRA exam guidelines'}
+              </p>
+            </div>
           </div>
         </div>
       </div>
