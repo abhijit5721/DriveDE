@@ -1828,10 +1828,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
                           )} />
                           <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                            Safety Score: {Math.max(0, 100 - (session.mistakes.length * 8))}% ({session.mistakes.length} {isDE ? 'Fehler' : 'Faults'})
+                            Safety Score: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}% ({(session.mistakes || []).length} {isDE ? 'Fehler' : 'Faults'})
                           </span>
                         </div>
-                        {session.mistakes.some(m => m.type === 'idling') && (
+                        {(session.mistakes || []).some(m => m.type === 'idling') && (
                           <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-1 dark:bg-emerald-900/20">
                             <Wind className="h-3 w-3 text-emerald-500" />
                             <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
