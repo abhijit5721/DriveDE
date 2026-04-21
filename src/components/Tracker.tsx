@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge, ChevronRight, GraduationCap } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
@@ -100,6 +100,11 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
     if (type === 'harsh_braking') color = '#f97316'; // orange
     if (type === 'rapid_acceleration') color = '#3b82f6'; // blue
     if (type === 'wrong_way') color = '#c026d3'; // vivid magenta
+    if (type === 'roundabout_signal') color = '#3b82f6'; // blue
+    if (type === 'curve_speeding') color = '#ea580c'; // orange
+    if (type === 'aggressive_cornering') color = '#e11d48'; // rose
+    if (type === 'right_before_left') color = '#4f46e5'; // indigo
+    if (type === 'school_zone_speeding') color = '#d97706'; // amber
     
     return L.divIcon({
       className: 'custom-div-icon',
@@ -189,6 +194,11 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
                   {m.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
                   {m.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
                   {m.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
+                  {m.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker' : '🔄 Roundabout: Signal')}
+                  {m.type === 'curve_speeding' && (isDE ? '⚠️ Unangepasste Geschwind.' : '⚠️ Speed in Curve')}
+                  {m.type === 'aggressive_cornering' && (isDE ? '🏎️ Aggressives Kurvenfahren' : '🏎️ Aggressive Cornering')}
+                  {m.type === 'right_before_left' && (isDE ? '👉 Rechts vor Links' : '👉 Right-Before-Left')}
+                  {m.type === 'school_zone_speeding' && (isDE ? '🏫 Schulzone' : '🏫 School Zone')}
                   {m.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                 </div>
               </Popup>
@@ -232,6 +242,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const lastIllegalTurnLogRef = useRef<number>(0);
   const stationaryStartRef = useRef<number | null>(null);
   const lastIdlingLogRef = useRef<number>(0);
+  const lastRvlCheckRef = useRef<number>(0);
+  const lastSchoolCheckRef = useRef<number>(0);
   
   // Persistent trackers for session summary (preserves data across simulation loops)
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
@@ -463,6 +475,70 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
 
+  const checkRightBeforeLeft = async (lat: number, lng: number) => {
+    if (Date.now() - lastRvlCheckRef.current < 30000) return;
+    if (currentSpeed < 10) return;
+
+    try {
+      // Logic: we are on a residential street and there's an intersection with another residential/living_street
+      const query = `[out:json];way(around:15,${lat},${lng})["highway"~"residential|living_street"]->.w;node(w.w)(around:10,${lat},${lng})->.n;way(bn.n)["highway"~"residential|living_street"]->.i;(.i; - .w;);out count;`;
+      const response = await fetch(
+        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
+        { signal: AbortSignal.timeout(4000) }
+      );
+      const data = await response.json();
+      
+      if (data.count && data.count > 0) {
+        // In Germany, at unmarked residential intersections, you MUST be able to stop for any car from the right.
+        // Crossing at >20km/h blindly is usually a fault.
+        if (currentSpeed > 22) { 
+          lastRvlCheckRef.current = Date.now();
+          toast.error(
+            isDE ? '👉 Rechts vor Links beachten! (Zu schnell)' : '👉 Watch Right-Before-Left! (Too fast)',
+            { position: 'bottom-center', duration: 7000 }
+          );
+          logMistake({
+            type: 'right_before_left',
+            timestamp: Date.now(),
+            location: { lat, lng },
+            speed: currentSpeed
+          });
+        }
+      }
+    } catch (e) {}
+  };
+
+  const checkSchoolArea = async (lat: number, lng: number) => {
+    if (Date.now() - lastSchoolCheckRef.current < 30000) return;
+    
+    try {
+      const query = `[out:json];(node(around:60,${lat},${lng})["amenity"~"school|kindergarten"];node(around:60,${lat},${lng})["leisure"="playground"];);out count;`;
+      const response = await fetch(
+        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
+        { signal: AbortSignal.timeout(4000) }
+      );
+      const data = await response.json();
+      
+      if (data.count && data.count > 0) {
+        // Even if the digital maxspeed is 50, driving >30 in front of a school is a pedagogical fault
+        if (currentSpeed > 32) {
+          lastSchoolCheckRef.current = Date.now();
+          toast.error(
+            isDE ? '🏫 Vorsicht: Schulzone / Spielplatz! (Max 30 empfohlen)' : '🏫 Caution: School Zone / Playground! (Max 30 recommended)',
+            { position: 'bottom-center', duration: 7000, icon: '🏫' }
+          );
+          logMistake({
+            type: 'school_zone_speeding',
+            speed: currentSpeed,
+            limit: 30,
+            timestamp: Date.now(),
+            location: { lat, lng }
+          });
+        }
+      }
+    } catch (e) {}
+  };
+
   const fetchSpeedLimit = async (lat: number, lng: number) => {
     try {
       // Overpass API query for nearest way with maxspeed
@@ -546,6 +622,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
               checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
               checkIllegalTurn(lastPoint.lat, lastPoint.lng, bearing);
+              checkRightBeforeLeft(lastPoint.lat, lastPoint.lng);
+              checkSchoolArea(lastPoint.lat, lastPoint.lng);
             }
             return currentPoints; // state updater used just to read the latest value safely
           });
@@ -784,20 +862,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         {lat: 52.5175, lng: 13.4080, speed: 45, limit: 50 },  // step 14: Aggressive swerve trigger point
         {lat: 52.5170, lng: 13.4070, speed: 45, limit: 50 },  // step 15: End of curve
 
-        // Steps 16-26: Stationary idling (testing environmental mistake)
+        // Steps 16-19: Stationary idling (testing environmental mistake)
         {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 16
         {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 17
         {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 18
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 19
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 20
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 21
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 22
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 23
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 24
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 25
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 26: idling fires after ~15s (10 ticks)
+        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 19: idling fires (on 10th tick of 0 speed, adjusted)
         
-        {lat: 52.5237, lng: 13.4105, speed: 40, limit: 50 },  // step 27: continues
+        // Steps 20-23: Right-Before-Left (Residential Intersection)
+        {lat: 52.5240, lng: 13.4110, speed: 35, limit: 30 },  // step 20: Entering zone
+        {lat: 52.5242, lng: 13.4115, speed: 32, limit: 30 },  // step 21: Approaching unmarked intersection
+        {lat: 52.5245, lng: 13.4120, speed: 32, limit: 30 },  // step 22: Crossing without braking (fault)
+        {lat: 52.5248, lng: 13.4125, speed: 35, limit: 30 },  // step 23: Away
+        
+        // Steps 24-27: School Zone
+        {lat: 52.5255, lng: 13.4135, speed: 45, limit: 50 },  // step 24: Approaching school at 45 (legal limit 50)
+        {lat: 52.5258, lng: 13.4140, speed: 42, limit: 50 },  // step 25: Passing school gate (fault)
+        {lat: 52.5262, lng: 13.4150, speed: 40, limit: 50 },  // step 26: Resuming
+        {lat: 52.5265, lng: 13.4160, speed: 50, limit: 50 },  // step 27: Clear
+        
         {lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 28: new zone — wrong-way toast fires here
         {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 29: slowing
         {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 30: almost stopped
@@ -907,6 +989,39 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           const mistakeObj: DrivingMistake = {
             type: 'aggressive_cornering',
             speed: point.speed,
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+
+        // Step 22: simulate Right-Before-Left Violation
+        if (currentStep === 22) {
+          toast.error(
+            isDE ? '👉 Rechts vor Links missachtet! (Wohngebiet)' : '👉 Right-Before-Left Violation! (Residential)',
+            { position: 'bottom-center', duration: 8000 }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'right_before_left',
+            speed: point.speed,
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+
+        // Step 25: simulate School Zone Violation
+        if (currentStep === 25) {
+          toast.error(
+            isDE ? '🏫 Zu schnell in Schulzone! (Max 30 empfohlen)' : '🏫 Speeding in School Zone! (Max 30 recommended)',
+            { position: 'bottom-center', duration: 8000, icon: '🏫' }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'school_zone_speeding',
+            speed: point.speed,
+            limit: 30,
             timestamp: Date.now(),
             location: { lat: point.lat, lng: point.lng }
           };
@@ -1694,6 +1809,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
                                 {mistake.type === 'curve_speeding' && <CornerUpRight className="h-3.5 w-3.5 text-orange-600" />}
                                 {mistake.type === 'aggressive_cornering' && <Gauge className="h-3.5 w-3.5 text-rose-500" />}
+                                {mistake.type === 'right_before_left' && <ChevronRight className="h-3.5 w-3.5 text-blue-500" />}
+                                {mistake.type === 'school_zone_speeding' && <GraduationCap className="h-3.5 w-3.5 text-amber-600" />}
                                 <span className="font-medium text-slate-700 dark:text-slate-300">
                                   {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
                                   {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
@@ -1708,6 +1825,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   {mistake.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker vergessen' : '🔄 Roundabout: Missed Signal')}
                                   {mistake.type === 'curve_speeding' && (isDE ? '⚠️ Unangepasste Geschw. (Kurve)' : '⚠️ Inappropriate Speed (Curve)')}
                                   {mistake.type === 'aggressive_cornering' && (isDE ? '🏎️ Aggressives Kurvenfahren / Spurwechsel' : '🏎️ Aggressive Cornering')}
+                                  {mistake.type === 'right_before_left' && (isDE ? '👉 Rechts vor Links missachtet' : '👉 Right-Before-Left Violation')}
+                                  {mistake.type === 'school_zone_speeding' && (isDE ? '🏫 Zu schnell in Schulzone/Spielstraße' : '🏫 Speeding in School/Play Zone')}
                                   {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
                                 </span>
                                 {mistake.count && mistake.count > 1 && (
