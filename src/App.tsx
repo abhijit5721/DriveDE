@@ -17,28 +17,28 @@ import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
-import { Header } from './components/Header';
-import { BottomNav } from './components/BottomNav';
-import { DesktopNav } from './components/DesktopNav';
-import { Dashboard } from './components/Dashboard';
-import { Curriculum } from './components/Curriculum';
-import { Maneuvers } from './components/Maneuvers';
-import { Tracker } from './components/Tracker';
-import { Achievements } from './components/Achievements';
-import { ExamSimulation } from './components/ExamSimulation';
-import { LessonDetail } from './components/LessonDetail';
-import { Welcome } from './components/Welcome';
-import { Paywall } from './components/Paywall';
-import { InstructorReview } from './components/InstructorReview';
-import { LegalHub } from './components/LegalHub';
-import { LegalPage } from './components/LegalPage';
-import { AuthModal } from './components/AuthModal';
-import { Account } from './components/Account';
-import { AccountSkeleton } from './components/AccountSkeleton';
-import { BudgetEstimator } from './components/BudgetEstimator';
-import { Skeleton } from './components/Skeleton';
+import { Header } from './components/layout/Header';
+import { BottomNav } from './components/layout/BottomNav';
+import { DesktopNav } from './components/layout/DesktopNav';
+import { Dashboard } from './components/dashboard/Dashboard';
+import { Curriculum } from './components/curriculum/Curriculum';
+import { Maneuvers } from './components/maneuvers/Maneuvers';
+import { Tracker } from './components/tracker/Tracker';
+import { Achievements } from './components/curriculum/Achievements';
+import { ExamSimulation } from './components/maneuvers/ExamSimulation';
+import { LessonDetail } from './components/curriculum/LessonDetail';
+import { Welcome } from './components/auth/Welcome';
+import { Paywall } from './components/finance/Paywall';
+import { InstructorReview } from './components/maneuvers/InstructorReview';
+import { LegalHub } from './components/legal/LegalHub';
+import { LegalPage } from './components/legal/LegalPage';
+import { AuthModal } from './components/auth/AuthModal';
+import { Account } from './components/auth/Account';
+import { AccountSkeleton } from './components/auth/AccountSkeleton';
+import { BudgetEstimator } from './components/finance/BudgetEstimator';
+import { Skeleton } from './components/common/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
-import {LicenseSelector} from "@/components/LicenseSelector.tsx";
+import {LicenseSelector} from "./components/auth/LicenseSelector";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -373,7 +373,7 @@ export default function App() {
       />
       <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} />
-        <div className="flex h-[100dvh] flex-1 flex-col overflow-y-auto overscroll-contain [webkit-overflow-scrolling:touch]">
+        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
           {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
             <div className="mx-auto max-w-4xl">
