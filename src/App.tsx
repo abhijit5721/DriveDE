@@ -22,6 +22,7 @@ import { LegalPage } from './components/LegalPage';
 import { AuthModal } from './components/AuthModal';
 import { Account } from './components/Account';
 import { AccountSkeleton } from './components/AccountSkeleton';
+import { BudgetEstimator } from './components/BudgetEstimator';
 import { Skeleton } from './components/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
 import {LicenseSelector} from "@/components/LicenseSelector.tsx";
@@ -309,6 +310,8 @@ export default function App() {
         return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
       case 'achievements':
         return <Achievements />;
+      case 'finance':
+        return <BudgetEstimator />;
       case 'review':
         return <InstructorReview onBack={() => setActiveTab('home')} />;
       case 'account':

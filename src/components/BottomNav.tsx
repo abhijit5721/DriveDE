@@ -1,4 +1,4 @@
-import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Trophy, Star } from 'lucide-react';
+import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Trophy, Star, Wallet } from 'lucide-react';
 import type { TabType } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
@@ -14,6 +14,7 @@ const tabs: { id: TabType; labelDe: string; labelEn: string; icon: React.ReactNo
   { id: 'maneuvers', labelDe: 'Manöver', labelEn: 'Moves', icon: <ParkingSquare className="h-5 w-5" /> },
   { id: 'review', labelDe: 'Review', labelEn: 'Review', icon: <Star className="h-5 w-5" /> },
   { id: 'tracker', labelDe: 'Log', labelEn: 'Log', icon: <ClipboardList className="h-5 w-5" /> },
+  { id: 'finance', labelDe: 'Geld', labelEn: 'Finance', icon: <Wallet className="h-5 w-5" /> },
   { id: 'account', labelDe: 'Konto', labelEn: 'Account', icon: <UserRound className="h-5 w-5" /> },
 ];
 

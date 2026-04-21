@@ -204,6 +204,6 @@ export interface AppState {
   clearDrivingHistory: () => void;
 }
 
-export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account';
+export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
 
 export type LegalPageType = 'privacy' | 'terms' | 'gdpr' | 'impressum' | 'disclaimer';
