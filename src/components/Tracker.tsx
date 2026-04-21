@@ -1029,6 +1029,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           setCurrentMistakes(prev => [...prev, mistakeObj]);
         }
 
+        // Step 19: simulate idling fault (environmental)
+        if (currentStep === 19) {
+          toast.error(
+            isDE ? '🌱 Umweltschutz: Motor abstellen bei längerem Halt!' : '🌱 Eco: Stop engine during long stationary periods!',
+            { position: 'bottom-center', duration: 8000, icon: '🌱' }
+          );
+          const mistakeObj: DrivingMistake = {
+            type: 'idling',
+            timestamp: Date.now(),
+            location: { lat: point.lat, lng: point.lng }
+          };
+          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
+          setCurrentMistakes(prev => [...prev, mistakeObj]);
+        }
+
         if (currentStep > 0) {
           const prev = mockPoints[currentStep - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
@@ -1385,6 +1400,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                  <AlertTriangle className="h-3 w-3" />
                  {isDE ? 'Problem!' : 'Problem!'}
                </button>
+             )}
+             {isTimerRunning && currentMistakes.some(m => m.type === 'idling') && (
+               <div className="flex h-8 items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-400 border border-emerald-500/30 animate-pulse">
+                 <Wind className="h-3 w-3" />
+                 {isDE ? 'Eco-Warnung' : 'Eco Alert'}
+               </div>
              )}
              {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
           </div>
