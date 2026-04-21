@@ -1828,7 +1828,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
                           )} />
                           <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                            Safety Score: {Math.max(0, 100 - (session.mistakes.length * 8))}%
+                            Safety Score: {Math.max(0, 100 - (session.mistakes.length * 8))}% ({session.mistakes.length} {isDE ? 'Fehler' : 'Faults'})
                           </span>
                         </div>
                         {session.mistakes.some(m => m.type === 'idling') && (
