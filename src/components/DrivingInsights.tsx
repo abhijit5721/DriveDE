@@ -55,12 +55,6 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     return acc;
   }, {} as Record<string, number>);
 
-  const topMistakes = Object.entries(mistakeCounts)
-    .sort(([, a], [, b]) => b - a)
-    .filter(([type]) => lessonMap[type]) // Only show mistakes we can accurately map to a lesson
-    .slice(0, 5);
-
-
   // Mapping mistakes to lesson IDs - Precision fixed for curriculum alignment
   const lessonMap: Record<string, string> = {
     'speeding': 'special-1',
@@ -82,6 +76,11 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     'illegal_turn': 'city-5',
     'pedestrian_safety': 'city-4'
   };
+
+  const topMistakes = Object.entries(mistakeCounts)
+    .sort(([, a], [, b]) => b - a)
+    .filter(([type]) => lessonMap[type]) // Only show mistakes we can accurately map to a lesson
+    .slice(0, 5);
 
 
   const getMistakeLabel = (type: string) => {
