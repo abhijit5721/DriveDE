@@ -124,9 +124,15 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
    * based on the readiness score.
    */
   const estimation = useMemo(() => {
-    // German legal requirements for Sonderfahrten
-    const MANDATORY_SPECIAL = { ueberland: 5, autobahn: 4, nacht: 3 };
-    const targetLessons = 30; // Typical average sessions needed
+    const isConversion = learningPath === 'umschreibung';
+    
+    // German legal requirements for Sonderfahrten (None for conversion!)
+    const MANDATORY_SPECIAL = isConversion 
+      ? { ueberland: 0, autobahn: 0, nacht: 0 }
+      : { ueberland: 5, autobahn: 4, nacht: 3 };
+    
+    // Typical average sessions needed (Conversion usually needs far fewer)
+    const targetLessons = isConversion ? 12 : 30;
     
     // Calculate how many mandatory drives are still pending
     const remainingSpecialUeberland = Math.max(0, MANDATORY_SPECIAL.ueberland - totalUeberland);
@@ -136,8 +142,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
     // Weight the remaining normal sessions by how "unready" the user is
     const progressFactor = (100 - readiness) / 100;
     const remainingNormal = Math.max(
-      readiness > 80 ? 2 : 5, 
-      Math.round((targetLessons - totalNormalSessions) * (0.5 + progressFactor))
+      readiness > 80 ? 1 : 3, 
+      Math.round((targetLessons - totalNormalSessions) * (0.4 + progressFactor))
     );
 
     const remainingSpecialCost = (remainingSpecialUeberland + remainingSpecialAutobahn + remainingSpecialNacht) * (hourlyRate45 * specialRateFactor);
@@ -154,7 +160,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
       isLowReadiness: readiness < 40,
       isHighReadiness: readiness > 80
     };
-  }, [readiness, totalNormalSessions, totalUeberland, totalAutobahn, totalNacht, currentSpend, hourlyRate45, costs]);
+  }, [readiness, totalNormalSessions, totalUeberland, totalAutobahn, totalNacht, currentSpend, hourlyRate45, costs, learningPath]);
 
   return (
     <div className="space-y-6 pb-26 px-4 pt-4 max-w-2xl mx-auto">
