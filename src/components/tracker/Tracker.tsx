@@ -1335,20 +1335,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => {
-              const mockRoute = [
-                { lat: 52.5200, lng: 13.4050, timestamp: Date.now() },
-                { lat: 52.5210, lng: 13.4060, timestamp: Date.now() + 10000 },
-                { lat: 52.5220, lng: 13.4080, timestamp: Date.now() + 20000 },
-                { lat: 52.5215, lng: 13.4100, timestamp: Date.now() + 30000 },
-                { lat: 52.5205, lng: 13.4110, timestamp: Date.now() + 40000 },
-              ];
-              const mockMistakes: DrivingMistake[] = [
-                { type: 'speeding', speed: 58, limit: 50, timestamp: Date.now(), location: mockRoute[1] },
-                { type: 'harsh_braking', timestamp: Date.now() + 15000, location: mockRoute[2] },
-                { type: 'shoulder_check', timestamp: Date.now() + 25000, location: mockRoute[3] },
-              ];
+
           <button
             onClick={() => {
               if (!isPremium) {
