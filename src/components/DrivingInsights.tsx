@@ -43,8 +43,8 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
   const minuteDiff = thisWeekMinutes - lastWeekMinutes;
   const isUp = minuteDiff >= 0;
 
-  // Aggregate Mistakes for recommendations
-  const mistakeCounts = drivingSessions.reduce((acc, s) => {
+  // Aggregate Mistakes for recommendations - FOCUS ON RECENT (LAST 7 DAYS)
+  const mistakeCounts = thisWeekSessions.reduce((acc, s) => {
     (s.mistakes || []).forEach(m => {
       if (m && m.type) {
         acc[m.type] = (acc[m.type] || 0) + 1;
@@ -57,7 +57,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
 
-  // Mapping mistakes to lesson IDs
+  // Mapping mistakes to lesson IDs - Expanded to cover all simulation types
   const lessonMap: Record<string, string> = {
     'speeding': 'basics-4',
     'shoulder_check': 'basics-1a',
@@ -69,7 +69,12 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     'signal': 'basics-1b',
     'harsh_braking': 'maneuver-4',
     'harsh_cornering': 'city-3',
-    'school_zone': 'city-1'
+    'school_zone': 'city-1',
+    'school_zone_speeding': 'city-1',
+    'curve_speeding': 'city-3',
+    'aggressive_cornering': 'city-3',
+    'wrong_way': 'city-6',
+    'illegal_turn': 'city-5'
   };
 
   const getMistakeLabel = (type: string) => {
@@ -79,10 +84,15 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
       case 'priority': return isDE ? 'Vorfahrt' : 'Priority';
       case 'right_before_left': return isDE ? 'Rechts vor Links' : 'Right-Before-Left';
       case 'idling': return isDE ? 'Umweltschutz' : 'Eco/Idling';
-      case 'roundabout_signal': return isDE ? 'Kreisverkehr' : 'Roundabout';
+      case 'roundabout_signal': return isDE ? 'Kreisverkehr' : 'Roundabout Signal';
       case 'harsh_braking': return isDE ? 'Harte Bremsung' : 'Harsh Braking';
       case 'harsh_cornering': return isDE ? 'Kurvenverhalten' : 'Harsh Cornering';
       case 'school_zone': return isDE ? 'Schulzone' : 'School Zone';
+      case 'school_zone_speeding': return isDE ? 'Schulzone (+km/h)' : 'School Zone Speed';
+      case 'curve_speeding': return isDE ? 'Geschw. in Kurve' : 'Cornering Speed';
+      case 'aggressive_cornering': return isDE ? 'G-Kräfte Kurve' : 'Aggressive Cornering';
+      case 'wrong_way': return isDE ? 'Falschfahrer' : 'Wrong Way';
+      case 'illegal_turn': return isDE ? 'Abbiegefehler' : 'Illegal Turn';
       default: return type.replace(/_/g, ' ');
     }
   };
