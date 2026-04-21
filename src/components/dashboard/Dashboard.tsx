@@ -319,33 +319,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </div>
         </button>
 
-        <button
-          onClick={() => onNavigate('legal')}
-          aria-label={isDE ? 'Rechtliches & DSGVO: Datenschutz und Impressum ansehen' : 'Legal & GDPR: View privacy and imprint'}
-          className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Scale className="h-6 w-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Rechtliches & DSGVO' : 'Legal & GDPR'}
-                </p>
-                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-600 dark:bg-emerald-900/30">
-                  {isDE ? 'Pflicht' : 'Required'}
-                </span>
-              </div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {isDE
-                  ? 'Datenschutz, Impressum und Launch-Checks.'
-                  : 'Privacy, imprint, and launch readiness.'}
-              </p>
-            </div>
-            <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
-          </div>
-        </button>
+
 
         <button
           onClick={() => onDirectLessonSelect('basics-1a')}
