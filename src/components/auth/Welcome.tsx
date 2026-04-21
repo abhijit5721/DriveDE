@@ -7,7 +7,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 
 export function Welcome() {
-  const { language, setLicenseType, setHasVisited } = useAppStore();
+  const { language, setLicenseType, setHasVisited, licenseType, authStatus } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isDE = language === 'de';
@@ -68,12 +68,21 @@ export function Welcome() {
                 {link.name}
               </a>
             ))}
-            <button 
-              onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-              className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95"
-            >
-              {isDE ? 'Pfad wählen' : 'Start Now'}
-            </button>
+            {licenseType ? (
+              <button 
+                onClick={() => setHasVisited(true)}
+                className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-95"
+              >
+                {isDE ? 'Zum Dashboard' : 'Back to Dashboard'}
+              </button>
+            ) : (
+              <button 
+                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95"
+              >
+                {isDE ? 'Pfad wählen' : 'Start Now'}
+              </button>
+            )}
           </div>
 
           {/* Mobile Toggle */}
@@ -89,6 +98,14 @@ export function Welcome() {
               {navLinks.map((link) => (
                 <a key={link.name} href={link.href} className="text-lg font-bold text-white">{link.name}</a>
               ))}
+              {licenseType && (
+                <button 
+                  onClick={() => setHasVisited(true)}
+                  className="rounded-xl bg-emerald-600 py-4 text-lg font-bold text-white transition hover:bg-emerald-700"
+                >
+                  {isDE ? 'Zum Dashboard' : 'Back to Dashboard'}
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -148,13 +165,23 @@ export function Welcome() {
           </div>
 
           <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <button 
-              onClick={() => window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })}
-              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-700 active:scale-95"
-            >
-              {isDE ? 'Jetzt kostenlos starten' : 'Get Started Free'}
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            {licenseType ? (
+              <button 
+                onClick={() => setHasVisited(true)}
+                className="group flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-emerald-600/30 transition hover:bg-emerald-700 active:scale-95"
+              >
+                {isDE ? 'Zurück zum Dashboard' : 'Back to Dashboard'}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            ) : (
+              <button 
+                onClick={() => window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })}
+                className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-700 active:scale-95"
+              >
+                {isDE ? 'Jetzt kostenlos starten' : 'Get Started Free'}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            )}
             <button className="flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/10">
               <Play className="h-5 w-5 text-blue-400" />
               {isDE ? 'Demo ansehen' : 'Watch Demo'}

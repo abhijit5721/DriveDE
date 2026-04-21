@@ -283,6 +283,21 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
           </button>
 
           <button
+            onClick={() => useAppStore.getState().setHasVisited(false)}
+            className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Landing Page ansehen' : 'View landing page'}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Die Startseite mit allen Informationen anzeigen' : 'Show the introductory page with all info'}</p>
+              </div>
+            </div>
+          </button>
+
+          <button
             onClick={resetProgress}
             className="flex w-full items-center justify-between rounded-xl border border-rose-200 px-4 py-3 text-left transition hover:bg-rose-50 dark:border-rose-900/40 dark:hover:bg-rose-900/10"
           >
