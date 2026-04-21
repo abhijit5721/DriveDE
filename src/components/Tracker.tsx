@@ -1336,7 +1336,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     value={tempRate}
                     onChange={(e) => setTempRate(e.target.value)}
                     autoFocus
-                    className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                   />
                   <span className="text-sm font-bold text-slate-400">/ 45 min</span>
                   <button 
