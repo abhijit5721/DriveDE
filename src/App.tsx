@@ -81,9 +81,14 @@ export default function App() {
                     ...remoteData.lessons.map(l => l.lesson_id)
                 ]));
                 
-                const localSessionIds = new Set(state.userProgress.drivingSessions.map(s => s.id));
+                // Track existing sessions to avoid duplicates
+                // We use a key of (date + duration) as a fallback fingerprint if IDs differ
+                const existingSessionKeys = new Set(state.userProgress.drivingSessions.map(s => 
+                    `${s.date}-${s.duration}`
+                ));
+
                 const remoteSessions = remoteData.sessions
-                    .filter(s => !localSessionIds.has(s.id))
+                    .filter(s => !existingSessionKeys.has(`${s.session_date}-${s.duration_minutes}`))
                     .map(s => ({
                         id: s.id,
                         date: s.session_date,
@@ -97,8 +102,11 @@ export default function App() {
                         locationSummary: s.location_summary || undefined
                     }));
 
+                // If local sessions exist but remote is also populated, combine them
+                // But filter out duplicates from the merge
                 const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
                 
+                // Re-calculate totals from the combined pool
                 let totalDrivingMinutes = 0;
                 let specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
                 
@@ -109,27 +117,16 @@ export default function App() {
                     if (s.type === 'nacht') specialDrivingMinutes.nacht += s.duration;
                 });
 
-                const isPremium = !!remoteData.profile?.is_premium;
-
-                const currentIncorrect = Array.isArray(state.userProgress.incorrectQuestions) 
-                    ? state.userProgress.incorrectQuestions 
-                    : [];
-                const remoteIncorrect = Array.isArray(remoteData.incorrectQuestions) 
-                    ? remoteData.incorrectQuestions 
-                    : [];
-
-                const combinedIncorrectQuestions = Array.from(new Set([
-                    ...currentIncorrect,
-                    ...remoteIncorrect
-                ]));
-
                 return {
-                    isPremium,
+                    isPremium: !!remoteData.profile?.is_premium,
                     userProgress: {
                         ...state.userProgress,
                         completedLessons: combinedCompletedLessons,
                         drivingSessions: combinedSessions,
-                        incorrectQuestions: combinedIncorrectQuestions,
+                        incorrectQuestions: Array.from(new Set([
+                            ...(state.userProgress.incorrectQuestions || []),
+                            ...(remoteData.incorrectQuestions || [])
+                        ])),
                         totalDrivingMinutes,
                         specialDrivingMinutes
                     }

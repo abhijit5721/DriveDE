@@ -420,17 +420,7 @@ export const useAppStore = create<AppState>()(
           return localStorage.getItem(name) || sessionStorage.getItem(name);
         },
         setItem: (name, value) => {
-          const stateData = JSON.parse(value);
-          // If the user is signed in, save to persistent localStorage
-          if (stateData.state.authStatus === 'signed_in') {
-            localStorage.setItem(name, value);
-            sessionStorage.removeItem(name);
-          } else {
-            // If user is a guest, save only to the temporary sessionStorage
-            // AND ensure we clear any old persistent data
-            sessionStorage.setItem(name, value);
-            localStorage.removeItem(name);
-          }
+          localStorage.setItem(name, value);
         },
         removeItem: (name) => {
           localStorage.removeItem(name);

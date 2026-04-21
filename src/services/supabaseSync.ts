@@ -90,7 +90,9 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
   });
 
   if (error) {
-    console.warn('[DriveDE] Failed to sync driving session', error.message);
+    console.error('[DriveDE] CRITICAL: Failed to sync driving session. This might be due to missing DB columns or connection issues.', error);
+  } else {
+    console.log('[DriveDE] Session synced successfully to cloud.');
   }
 }
 
