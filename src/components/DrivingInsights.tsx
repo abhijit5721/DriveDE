@@ -30,7 +30,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
 
   // Aggregate Mistakes for recommendations
   const mistakeCounts = drivingSessions.reduce((acc, s) => {
-    s.mistakes.forEach(m => {
+    (s.mistakes || []).forEach(m => {
       if (m && m.type) {
         acc[m.type] = (acc[m.type] || 0) + 1;
       }
