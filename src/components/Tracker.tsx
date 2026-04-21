@@ -1482,7 +1482,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 value={targetDestination}
                 onChange={(e) => setTargetDestination(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-10 py-2.5 text-sm text-white placeholder-slate-400 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all"
+                className="w-full rounded-xl bg-white/5 border border-white/10 pl-10 pr-24 py-2.5 text-sm text-white placeholder:text-slate-400/60 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all placeholder:text-[11px] sm:placeholder:text-sm"
               />
               <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
               <button 
