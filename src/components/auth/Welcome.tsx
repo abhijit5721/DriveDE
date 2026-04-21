@@ -10,6 +10,7 @@ export function Welcome() {
   const { language, setLicenseType, setHasVisited, licenseType, authStatus } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
   const isDE = language === 'de';
 
   // Strict check for returning user status
@@ -185,13 +186,147 @@ export function Welcome() {
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
             )}
-            <button className="flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/10">
+            <button 
+              onClick={() => setShowDemo(true)}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/10"
+            >
               <Play className="h-5 w-5 text-blue-400" />
               {isDE ? 'Demo ansehen' : 'Watch Demo'}
             </button>
           </div>
         </div>
       </main>
+
+      {/* Features Section */}
+      <section id="features" className="relative z-10 bg-slate-900 px-6 py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-black text-white sm:text-5xl">
+              {isDE ? 'Intelligente Funktionen' : 'Smart Features'}
+            </h2>
+            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+              {isDE 
+                ? 'Alles was du brauchst um deine Prüfung im ersten Anlauf zu bestehen.' 
+                : 'Everything you need to pass your exam on the first attempt.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {[
+              { 
+                icon: Zap, 
+                title: isDE ? 'KI Coaching' : 'AI Coaching', 
+                desc: isDE ? 'Erhalte Echtzeit-Feedback zu deinem Fahrstil und erkenne Fehler bevor sie teuer werden.' : 'Get real-time feedback on your driving style and spot mistakes before they become costly.'
+              },
+              { 
+                icon: BadgeCheck, 
+                title: isDE ? 'Manöver-Wiederholung' : 'Maneuver Replay', 
+                desc: isDE ? 'Schau dir deine Einpark- und Autobahnmanöver in der 3D-Vorschau an.' : 'Review your parking and highway maneuvers in a smooth 3D-style preview.'
+              },
+              { 
+                icon: Users, 
+                title: isDE ? 'Fahrlehrer-Synchronisation' : 'Instructor Sync', 
+                desc: isDE ? 'Teile deinen Fortschritt direkt mit deinem Fahrlehrer für gezieltere Fahrstunden.' : 'Share your progress directly with your instructor for more focused driving lessons.'
+              }
+            ].map((f, i) => (
+              <div key={i} className="group rounded-3xl border border-slate-800 bg-slate-800/20 p-8 transition hover:border-blue-500/30">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-500 group-hover:scale-110 transition-transform">
+                  <f.icon className="h-8 w-8" />
+                </div>
+                <h3 className="mb-3 text-xl font-bold text-white">{f.title}</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories Section */}
+      <section id="success" className="relative z-10 bg-slate-800/30 px-6 py-24 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-black text-white sm:text-5xl">
+              {isDE ? 'Schüler-Feedback' : 'Student Success'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              { name: 'Lukas S.', role: isDE ? 'Frisch bestanden' : 'Just Passed', text: isDE ? 'Dank der KI-Analyse wusste ich genau, worauf ich bei der Prüfung achten muss. 10/10!' : 'Thanks to the AI analysis, I knew exactly what to look out for during the exam. 10/10!' },
+              { name: 'Sarah M.', role: isDE ? 'Umschreibung' : 'Conversion', text: isDE ? 'Die Umschreibung war so einfach. Das digitale Fahrtenbuch hat mir extrem viel Zeit gespart.' : 'The conversion path was so easy. The digital logbook saved me so much time.' },
+              { name: 'Marc K.', role: isDE ? 'Theorie & Praxis' : 'Theory & Practical', text: isDE ? 'Beste App auf dem Markt. Die Manöver-Simulationen sind Gold wert!' : 'Best app on the market. The maneuver simulations are worth their weight in gold!' }
+            ].map((t, i) => (
+              <div key={i} className="rounded-2xl bg-slate-900 border border-slate-700/50 p-6 shadow-xl">
+                <div className="mb-4 flex text-amber-500">
+                  {[1, 2, 3, 4, 5].map(s => <Star key={s} className="h-4 w-4 fill-current" />)}
+                </div>
+                <p className="mb-6 text-slate-300 italic">"{t.text}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-blue-600/20 flex items-center justify-center font-bold text-blue-400 text-xs">
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="relative z-10 mx-auto max-w-4xl px-6 py-24 text-center">
+        <div className="rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-12 text-white shadow-2xl">
+          <h2 className="text-3xl font-black">{isDE ? 'Über DriveDE' : 'About DriveDE'}</h2>
+          <p className="mt-6 text-lg text-blue-100 leading-relaxed">
+            {isDE 
+              ? 'Unsere Mission ist es, die Fahrausbildung in Deutschland zu digitalisieren. Wir kombinieren modernste KI-Technologie mit jahrzehntelanger Expertise, um dich sicherer und schneller in den Straßenverkehr zu bringen.'
+              : 'Our mission is to digitize driver education in Germany. We combine cutting-edge AI technology with decades of expertise to get you on the road safer and faster.'}
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-8 opacity-80 uppercase text-[10px] font-bold tracking-widest">
+            <span>Engineering in Berlin</span>
+            <span>Expert Data</span>
+            <span>Privacy First</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Modal */}
+      {showDemo && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" onClick={() => setShowDemo(false)} />
+          <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setShowDemo(false)}
+              className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white backdrop-blur-md hover:bg-slate-900"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="flex flex-col h-full items-center justify-center bg-slate-900">
+               {/* Simulating a Video Background with a Playable UI */}
+               <img 
+                 src="file:///C:/Users/abhij/.gemini/antigravity/brain/ecfe8d6c-977d-46a5-b284-6fe4f34b7f6d/drivede_hero_background_1776721458946_1776807807642.png"
+                 className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
+                 alt="Demo Video"
+               />
+               <div className="relative z-10 flex flex-col items-center">
+                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xl shadow-blue-600/50">
+                   <Play className="h-10 w-10 fill-current" />
+                 </div>
+                 <h2 className="mt-6 text-3xl font-black text-white">DriveDE Experience Demo</h2>
+                 <p className="mt-2 text-blue-200">See how AI transforms your practice</p>
+                 <div className="mt-8 grid grid-cols-3 gap-2 px-6 w-full max-w-sm">
+                    <div className="h-1 bg-blue-500 rounded-full" />
+                    <div className="h-1 bg-slate-700 rounded-full" />
+                    <div className="h-1 bg-slate-700 rounded-full" />
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Path Selection Area (Scroll-to Target) */}
       <section className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl">
