@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge, ChevronRight, GraduationCap } from 'lucide-react';
+import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge, ChevronRight, ChevronDown, GraduationCap } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
