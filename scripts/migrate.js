@@ -10,11 +10,8 @@ const MIGRATIONS_DIR = path.join(__dirname, '../supabase/migrations');
 // Format: postgres://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
 const connectionString = process.env.DATABASE_URL || process.env.DB_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL;
 
-console.log('🔍 Checking database connection variables...');
-console.log('🔍 Found Env Vars:', Object.keys(process.env).filter(k => k.includes('URL') || k.includes('DATABASE') || k.includes('SUPABASE')));
-
 if (!connectionString) {
-  console.log('⚠️ No database connection string found (tried DATABASE_URL, DB_URL, POSTGRES_URL). Skipping migrations.');
+  console.log('⚠️ No database connection string found (tried DATABASE_URL, DB_URL, POSTGRES_URL, SUPABASE_DB_URL). Skipping migrations.');
   process.exit(0);
 }
 
