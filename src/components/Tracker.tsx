@@ -1061,14 +1061,27 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
     
-    // Optional: Get location summary via reverse geocoding if we have points
+    // Get start and end location summary
     let locationSummary = '';
     if (gpsPoints.length > 0) {
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${gpsPoints[0].lat}&lon=${gpsPoints[0].lng}&format=json`);
-        const data = await response.json();
-        locationSummary = data.address.city || data.address.town || data.address.suburb || '';
-        if (data.address.suburb && data.address.city) locationSummary = `${data.address.city}, ${data.address.suburb}`;
+        const startPoint = gpsPoints[0];
+        const endPoint = gpsPoints[gpsPoints.length - 1];
+        
+        const [startRes, endRes] = await Promise.all([
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${startPoint.lat}&lon=${startPoint.lng}&format=json`).then(r => r.json()),
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${endPoint.lat}&lon=${endPoint.lng}&format=json`).then(r => r.json())
+        ]);
+
+        const getShortLoc = (data: any) => data.address.suburb || data.address.town || data.address.city || data.address.village || '';
+        const startLoc = getShortLoc(startRes);
+        const endLoc = getShortLoc(endRes);
+
+        if (startLoc && endLoc && startLoc !== endLoc) {
+          locationSummary = `${startLoc} → ${endLoc}`;
+        } else {
+          locationSummary = startLoc || endLoc || '';
+        }
       } catch (e) {
         console.error('Geocoding failed');
       }
@@ -1484,6 +1497,25 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           <div className="text-5xl font-bold tracking-tighter">
             {formatTime(elapsedTime)}
           </div>
+          {isTimerRunning && (
+            <div className="mt-2 w-full max-w-[200px]">
+              <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
+                <span>{isDE ? 'Sicherheits-Score' : 'Safety Score'}</span>
+                <span>{Math.max(0, 100 - (currentMistakes.length * 10))}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
+                <motion.div 
+                  className={cn(
+                    "h-full rounded-full transition-all duration-1000",
+                    currentMistakes.length < 2 ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" :
+                    currentMistakes.length < 5 ? "bg-yellow-500" : "bg-red-500"
+                  )}
+                  initial={{ width: '100%' }}
+                  animate={{ width: `${Math.max(0, 100 - (currentMistakes.length * 10))}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
@@ -1729,6 +1761,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       <span className="text-xs text-slate-500">
                         {session.duration} min
                       </span>
+                      {session.route && session.route.length > 30 && (
+                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                          {isDE ? 'SIMULIERT' : 'SIMULATED'}
+                        </span>
+                      )}
                       {userProgress.hourlyRate45 > 0 && (
                         <span className="ml-auto text-xs font-bold text-green-600 dark:text-green-400">
                           €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
@@ -1759,6 +1796,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         </div>
                       )}
                     </div>
+
+                    {/* Quick Scores (Only if route data exists) */}
+                    {session.route && session.route.length > 0 && (
+                      <div className="mt-2 flex gap-2">
+                        <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2 py-1 dark:bg-slate-700/50">
+                          <div className={cn(
+                            "h-2 w-2 rounded-full",
+                            (session.mistakes.length < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
+                            (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
+                          )} />
+                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            Safety Score: {Math.max(0, 100 - (session.mistakes.length * 8))}%
+                          </span>
+                        </div>
+                        {session.mistakes.some(m => m.type === 'idling') && (
+                          <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-1 dark:bg-emerald-900/20">
+                            <Wind className="h-3 w-3 text-emerald-500" />
+                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                              Eco Point Loss
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     {session.notes && (
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         {session.notes}
