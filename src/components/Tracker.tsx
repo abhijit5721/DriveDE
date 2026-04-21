@@ -598,7 +598,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     return R * c;
   };
 
-  const isDE = language === 'de';
   const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
 
   const handleSearchDestination = async () => {
@@ -2073,8 +2072,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </button>
             </div>
           )}
-      </div>
-
+      
       {/* Add Session Modal */}
       {showAddForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center sm:p-4">
