@@ -297,32 +297,20 @@ export function Welcome() {
       {showDemo && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" onClick={() => setShowDemo(false)} />
-          <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setShowDemo(false)}
-              className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white backdrop-blur-md hover:bg-slate-900"
+              className="absolute top-4 right-4 z-[110] flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white backdrop-blur-md hover:bg-slate-900"
             >
               <X className="h-6 w-6" />
             </button>
-            <div className="flex flex-col h-full items-center justify-center bg-slate-900">
-               {/* Simulating a Video Background with a Playable UI */}
+            <div className="relative h-full w-full bg-slate-950">
+               {/* Real Demo Video */}
                <img 
-                 src="file:///C:/Users/abhij/.gemini/antigravity/brain/ecfe8d6c-977d-46a5-b284-6fe4f34b7f6d/drivede_hero_background_1776721458946_1776807807642.png"
-                 className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
-                 alt="Demo Video"
+                 src="/demo-video.webp"
+                 className="h-full w-full object-contain"
+                 alt="DriveDE Demo Video"
                />
-               <div className="relative z-10 flex flex-col items-center">
-                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xl shadow-blue-600/50">
-                   <Play className="h-10 w-10 fill-current" />
-                 </div>
-                 <h2 className="mt-6 text-3xl font-black text-white">DriveDE Experience Demo</h2>
-                 <p className="mt-2 text-blue-200">See how AI transforms your practice</p>
-                 <div className="mt-8 grid grid-cols-3 gap-2 px-6 w-full max-w-sm">
-                    <div className="h-1 bg-blue-500 rounded-full" />
-                    <div className="h-1 bg-slate-700 rounded-full" />
-                    <div className="h-1 bg-slate-700 rounded-full" />
-                 </div>
-               </div>
             </div>
           </div>
         </div>

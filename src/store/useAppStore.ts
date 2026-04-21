@@ -489,6 +489,91 @@ export const useAppStore = create<AppState>()(
           void ensureProfileFromState(nextState as AppState);
           return { userProgress: nextProgress };
         }),
+
+      enableDemoMode: () => {
+        const now = new Date();
+        const demoSessions: DrivingSession[] = [
+          {
+            id: 'demo-1',
+            date: new Date(now.getTime() - 10 * 86400000).toISOString(),
+            duration: 90,
+            type: 'ueberland',
+            notes: 'Fahrt über Landstraßen, Vorbeifahrt an landwirtschaftlichen Fahrzeugen geübt.',
+            instructorName: 'Hans Müller',
+            totalDistance: 45.2,
+            locationSummary: 'Potsdam & Umland',
+            mistakes: [],
+          },
+          {
+            id: 'demo-2',
+            date: new Date(now.getTime() - 7 * 86400000).toISOString(),
+            duration: 135,
+            type: 'autobahn',
+            notes: 'A115 Richtung Dreilinden. Auffahren und Überholen bei hohem Verkehrsaufkommen.',
+            instructorName: 'Hans Müller',
+            totalDistance: 120.5,
+            locationSummary: 'A115 Autobahn',
+            mistakes: [
+              { type: 'speeding', speed: 128, limit: 120, timestamp: now.getTime() - 7 * 86400000 + 1500000 }
+            ],
+          },
+          {
+            id: 'demo-3',
+            date: new Date(now.getTime() - 3 * 86400000).toISOString(),
+            duration: 45,
+            type: 'normal',
+            notes: 'Stadtverkehr, Rechts vor Links und Zebrastreifen.',
+            instructorName: 'Hans Müller',
+            totalDistance: 12.8,
+            locationSummary: 'Berlin Mitte',
+            route: [
+              { lat: 52.5200, lng: 13.4050, timestamp: 0 },
+              { lat: 52.5210, lng: 13.4060, timestamp: 60000 },
+              { lat: 52.5220, lng: 13.4070, timestamp: 120000 },
+            ],
+            mistakes: [
+              { type: 'signal', timestamp: now.getTime() - 3 * 86400000 + 500000 },
+              { type: 'stop_sign', timestamp: now.getTime() - 3 * 86400000 + 900000 }
+            ]
+          },
+          {
+            id: 'demo-4',
+            date: new Date(now.getTime() - 1 * 86400000).toISOString(),
+            duration: 90,
+            type: 'nacht',
+            notes: 'Nachtfahrt bei Regen. Abblendlicht und Fernlicht-Einsatz.',
+            instructorName: 'Hans Müller',
+            totalDistance: 65.0,
+            locationSummary: 'Berlin Spandau',
+            mistakes: []
+          }
+        ];
+
+        set({
+          licenseType: 'manual',
+          learningPath: 'standard',
+          transmissionType: 'manual',
+          isPremium: true,
+          hasVisited: true,
+          userProgress: {
+            ...get().userProgress,
+            completedLessons: ['l-grundlagen-1', 'l-grundlagen-2', 'l-vorfahrt-1', 'l-autobahn-1'],
+            drivingSessions: demoSessions,
+            totalDrivingMinutes: 360,
+            specialDrivingMinutes: {
+              ueberland: 90,
+              autobahn: 135,
+              nacht: 90,
+            },
+            unlockedAchievements: ['first-drive', 'highway-hero', 'night-owl'],
+            currentStreak: 5,
+            quizScores: {
+              'q-vorfahrt': 95,
+              'q-technik': 100
+            }
+          }
+        });
+      },
     }),
     {
       name: 'drivede-storage',

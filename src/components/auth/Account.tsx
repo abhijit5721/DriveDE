@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -27,6 +27,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     learningPath,
     transmissionType,
     resetProgress,
+    enableDemoMode,
     isPremium,
   } = useAppStore();
   const [authMessage, setAuthMessage] = useState<string | null>(null);
@@ -311,6 +312,27 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
               </div>
             </div>
           </button>
+
+          <div className="pt-2">
+            <div className="mb-2 px-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{isDE ? 'Entwickler-Tools' : 'Developer Tools'}</p>
+            </div>
+            <button
+              onClick={enableDemoMode}
+              className="flex w-full items-center justify-between rounded-xl border border-blue-200 bg-blue-50/50 px-4 py-3 text-left transition hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/10"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Demo-Modus aktivieren' : 'Enable Demo Mode'}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'App mit Beispieldaten für Videoaufnahmen füllen' : 'Fill app with sample data for video recording'}</p>
+                </div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </button>
+          </div>
         </div>
       </div>
 

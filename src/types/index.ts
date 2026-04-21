@@ -211,6 +211,7 @@ export interface AppState {
   updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => void;
   resetProgress: () => void;
   clearDrivingHistory: () => void;
+  enableDemoMode: () => void;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
