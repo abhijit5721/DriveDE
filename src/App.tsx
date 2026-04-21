@@ -1,4 +1,7 @@
 /**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ * 
  * App.tsx
  * 
  * Root component of the DriveDE application.

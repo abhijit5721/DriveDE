@@ -1,4 +1,7 @@
 /**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ * 
  * useAppStore.ts
  * 
  * Central Zustand store for global application state.
