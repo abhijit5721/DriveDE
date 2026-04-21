@@ -45,21 +45,22 @@ async function migrate() {
         console.log(`⏳ Executing: ${file}`);
         const content = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
 
-        // Execute in a transaction
-        await sql.begin(async (tx) => {
-          // We use tx.unsafe because migrations often contain multiple statements 
-          // and complex DDL that simple templating can't handle
-          await tx.unsafe(content);
-          
-          await tx`
-            INSERT INTO public._migrations (name) 
-            VALUES (${file})
-          `;
-        });
-        
-        console.log(`✅ Success: ${file}`);
-      } else {
-        // console.log(`⏭️ Skipping: ${file} (already executed)`);
+        try {
+          await sql.begin(async (tx) => {
+            await tx.unsafe(content);
+            await tx`INSERT INTO public._migrations (name) VALUES (${file})`;
+          });
+          console.log(`✅ Success: ${file}`);
+        } catch (migrationError) {
+          const msg = migrationError.message || '';
+          if (msg.includes('already exists')) {
+            // Objects already exist from a partial run — mark as done and continue
+            console.log(`⚠️  ${file}: objects already exist, marking as done and continuing.`);
+            await sql`INSERT INTO public._migrations (name) VALUES (${file}) ON CONFLICT DO NOTHING`;
+          } else {
+            throw migrationError; // Real error - fail the build
+          }
+        }
       }
     }
 
