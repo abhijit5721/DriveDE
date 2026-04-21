@@ -129,7 +129,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
             {barData.map((val, i) => (
               <div 
                 key={i} 
-                className="flex-1 rounded-t-sm bg-slate-100 dark:bg-slate-700 relative group/bar cursor-help"
+                className="flex-1 rounded-t-sm bg-slate-100 dark:bg-slate-700 relative group/bar cursor-pointer"
                 style={{ height: `${Math.max(10, Math.min(100, (val / 120) * 100))}%` }}
               >
                 <div className="absolute inset-x-0 bottom-0 top-0 bg-blue-500 opacity-0 group-hover/bar:opacity-100 transition-opacity rounded-t-sm" />

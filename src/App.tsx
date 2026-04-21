@@ -90,7 +90,11 @@ export default function App() {
                         duration: s.duration_minutes,
                         type: s.category,
                         notes: s.notes || '',
-                        instructorName: '' 
+                        instructorName: '',
+                        route: s.route || [],
+                        mistakes: s.mistakes || [],
+                        totalDistance: s.total_distance || 0,
+                        locationSummary: s.location_summary || undefined
                     }));
 
                 const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
