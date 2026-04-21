@@ -95,67 +95,67 @@ export function BudgetEstimator() {
   }, [readiness, totalNormalSessions, totalUeberland, totalAutobahn, totalNacht, currentSpend, hourlyRate45]);
 
   return (
-    <div className=\"space-y-6 pb-20\">
+    <div className="space-y-6 pb-20">
       {/* Header Card */}
-      <div className=\"relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-xl dark:bg-slate-950\">
-        <div className=\"absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl\"></div>
-        <div className=\"absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl\"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-xl dark:bg-slate-950">
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl"></div>
+        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl"></div>
         
-        <div className=\"relative z-10\">
-          <div className=\"flex items-center gap-3\">
-            <div className=\"flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md\">
-              <PiggyBank className=\"h-7 w-7 text-emerald-400\" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md">
+              <PiggyBank className="h-7 w-7 text-emerald-400" />
             </div>
             <div>
-              <h2 className=\"text-xl font-bold\">{isDE ? 'Kosten-Schätzer' : 'License Estimator'}</h2>
-              <p className=\"text-sm text-slate-400\">{isDE ? 'Basierend auf deinem Fortschritt' : 'Based on your current progress'}</p>
+              <h2 className="text-xl font-bold">{isDE ? 'Kosten-Schätzer' : 'License Estimator'}</h2>
+              <p className="text-sm text-slate-400">{isDE ? 'Basierend auf deinem Fortschritt' : 'Based on your current progress'}</p>
             </div>
           </div>
 
-          <div className=\"mt-8 grid grid-cols-2 gap-4\">
+          <div className="mt-8 grid grid-cols-2 gap-4">
             <div>
-              <p className=\"text-xs font-bold uppercase tracking-widest text-slate-500\">{isDE ? 'Bisher ausgegeben' : 'Spent So Far'}</p>
-              <p className=\"text-3xl font-black text-white\">€{currentSpend.toLocaleString()}</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDE ? 'Bisher ausgegeben' : 'Spent So Far'}</p>
+              <p className="text-3xl font-black text-white">€{currentSpend.toLocaleString()}</p>
             </div>
-            <div className=\"text-right\">
-              <p className=\"text-xs font-bold uppercase tracking-widest text-slate-500\">{isDE ? 'Gesamtschätzung' : 'Total Estimate'}</p>
-              <p className=\"text-3xl font-black text-emerald-400\">€{estimation.totalEstimate.toLocaleString()}</p>
+            <div className="text-right">
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDE ? 'Gesamtschätzung' : 'Total Estimate'}</p>
+              <p className="text-3xl font-black text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Breakdown Grid */}
-      <div className=\"grid grid-cols-1 gap-4 sm:grid-cols-2\">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className=\"rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900\"
+          className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
-          <div className=\"flex items-center justify-between\">
-            <div className=\"flex items-center gap-3\">
-              <div className=\"flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400\">
-                <Calculator className=\"h-5 w-5\" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                <Calculator className="h-5 w-5" />
               </div>
-              <h3 className=\"font-bold\">{isDE ? 'Restliche Fahrten' : 'Remaining Lessons'}</h3>
+              <h3 className="font-bold">{isDE ? 'Restliche Fahrten' : 'Remaining Lessons'}</h3>
             </div>
-            <span className=\"rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300\">
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
               ~{estimation.remainingNormal + estimation.remainingSpecial}
             </span>
           </div>
           
-          <div className=\"mt-4 space-y-3\">
-            <div className=\"flex items-center justify-between text-sm\">
-              <span className=\"text-slate-500\">{isDE ? 'Normale Stunden' : 'Normal Lessons'}</span>
-              <span className=\"font-semibold\">{estimation.remainingNormal}</span>
+          <div className="mt-4 space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">{isDE ? 'Normale Stunden' : 'Normal Lessons'}</span>
+              <span className="font-semibold">{estimation.remainingNormal}</span>
             </div>
-            <div className=\"flex items-center justify-between text-sm\">
-              <span className=\"text-slate-500\">{isDE ? 'Sonderfahrten' : 'Special Drives'}</span>
-              <span className=\"font-semibold text-orange-600\">{estimation.remainingSpecial}</span>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">{isDE ? 'Sonderfahrten' : 'Special Drives'}</span>
+              <span className="font-semibold text-orange-600">{estimation.remainingSpecial}</span>
             </div>
-            <div className=\"h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800\">
+            <div className="h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <div 
-                className=\"h-full bg-blue-500 transition-all duration-1000\" 
+                className="h-full bg-blue-500 transition-all duration-1000" 
                 style={{ width: `${readiness}%` }}
               />
             </div>
@@ -166,22 +166,22 @@ export function BudgetEstimator() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className=\"rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900\"
+          className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
-          <div className=\"flex items-center gap-3\">
-            <div className=\"flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400\">
-              <Wallet className=\"h-5 w-5\" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+              <Wallet className="h-5 w-5" />
             </div>
-            <h3 className=\"font-bold\">{isDE ? 'Geschätzte Restkosten' : 'Estimated Remaining'}</h3>
+            <h3 className="font-bold">{isDE ? 'Geschätzte Restkosten' : 'Estimated Remaining'}</h3>
           </div>
-          <div className=\"mt-2\">
-            <p className=\"text-2xl font-black text-slate-900 dark:text-white\">€{estimation.remainingCost.toLocaleString()}</p>
-            <p className=\"mt-1 text-xs text-slate-500\">{isDE ? 'Inkl. Prüfungsgebühren & Material' : 'Incl. exam fees & learning materials'}</p>
+          <div className="mt-2">
+            <p className="text-2xl font-black text-slate-900 dark:text-white">€{estimation.remainingCost.toLocaleString()}</p>
+            <p className="mt-1 text-xs text-slate-500">{isDE ? 'Inkl. Prüfungsgebühren & Material' : 'Incl. exam fees & learning materials'}</p>
           </div>
           
-          <div className=\"mt-4 flex items-center gap-2 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50\">
-            <Info className=\"h-4 w-4 text-blue-500\" />
-            <p className=\"text-[10px] leading-tight text-slate-500\">
+          <div className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+            <Info className="h-4 w-4 text-blue-500" />
+            <p className="text-[10px] leading-tight text-slate-500">
               {isDE 
                 ? 'Schätzung basiert auf Durchschnittswerten für deutsche Fahrschulen.' 
                 : 'Estimates based on average German driving school costs.'}
@@ -192,28 +192,28 @@ export function BudgetEstimator() {
 
       {/* AI Advice Card */}
       <div className={cn(
-        \"rounded-2xl p-5 border\",
+        "rounded-2xl p-5 border",
         estimation.isHighReadiness 
-          ? \"bg-emerald-50 border-emerald-100 dark:bg-emerald-900/10 dark:border-emerald-900/30\" 
-          : \"bg-amber-50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/30\"
+          ? "bg-emerald-50 border-emerald-100 dark:bg-emerald-900/10 dark:border-emerald-900/30" 
+          : "bg-amber-50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/30"
       )}>
-        <div className=\"flex items-start gap-4\">
+        <div className="flex items-start gap-4">
           <div className={cn(
-            \"flex h-10 w-10 shrink-0 items-center justify-center rounded-xl\",
-            estimation.isHighReadiness ? \"bg-emerald-100 text-emerald-600\" : \"bg-amber-100 text-amber-600\"
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+            estimation.isHighReadiness ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"
           )}>
-            {estimation.isHighReadiness ? <CheckCircle2 className=\"h-6 w-6\" /> : <TrendingUp className=\"h-6 w-6\" />}
+            {estimation.isHighReadiness ? <CheckCircle2 className="h-6 w-6" /> : <TrendingUp className="h-6 w-6" />}
           </div>
           <div>
             <h4 className={cn(
-              \"font-bold\",
-              estimation.isHighReadiness ? \"text-emerald-900 dark:text-emerald-200\" : \"text-amber-900 dark:text-amber-200\"
+              "font-bold",
+              estimation.isHighReadiness ? "text-emerald-900 dark:text-emerald-200" : "text-amber-900 dark:text-amber-200"
             )}>
               {isDE ? 'DriveDE Spar-Tipp' : 'DriveDE Savings Tip'}
             </h4>
             <p className={cn(
-              \"mt-1 text-sm leading-relaxed\",
-              estimation.isHighReadiness ? \"text-emerald-700 dark:text-emerald-400\" : \"text-amber-700 dark:text-amber-400\"
+              "mt-1 text-sm leading-relaxed",
+              estimation.isHighReadiness ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
             )}>
               {estimation.isHighReadiness
                 ? (isDE 
