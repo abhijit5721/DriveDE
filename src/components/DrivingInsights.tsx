@@ -49,9 +49,12 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     'priority': 'basics-5',
     'right_before_left': 'basics-5',
     'idling': 'basics-1a',
-    'roundabout_signal': 'basics-7',
+    'roundabout_signal': 'city-3',
     'stop_sign': 'basics-5',
-    'signal': 'basics-1b'
+    'signal': 'basics-1b',
+    'harsh_braking': 'maneuver-4',
+    'harsh_cornering': 'city-3',
+    'school_zone': 'city-1'
   };
 
   const getMistakeLabel = (type: string) => {
@@ -62,11 +65,24 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
       case 'right_before_left': return isDE ? 'Rechts vor Links' : 'Right-Before-Left';
       case 'idling': return isDE ? 'Umweltschutz' : 'Eco/Idling';
       case 'roundabout_signal': return isDE ? 'Kreisverkehr' : 'Roundabout';
+      case 'harsh_braking': return isDE ? 'Harte Bremsung' : 'Harsh Braking';
+      case 'harsh_cornering': return isDE ? 'Kurvenverhalten' : 'Harsh Cornering';
+      case 'school_zone': return isDE ? 'Schulzone' : 'School Zone';
       default: return type.replace(/_/g, ' ');
     }
   };
 
   if (drivingSessions.length === 0) return null;
+
+  // Real data for bars (last 7 days)
+  const barData = [0, 0, 0, 0, 0, 0, 0];
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const todayIndex = (new Date().getDay() + 6) % 7; // 0 = Mon, 6 = Sun
+
+  thisWeekSessions.forEach(s => {
+    const day = (new Date(s.date).getDay() + 6) % 7;
+    barData[day] += s.duration;
+  });
 
   return (
     <div className="space-y-4">
@@ -92,7 +108,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
                 <p className="text-xs font-bold text-slate-900 dark:text-white">
                   {isDE ? 'Wochen-Aktivität' : 'Weekly Activity'}
                 </p>
-                <p className="text-[10px] text-slate-500">Letzte 7 Tage</p>
+                <p className="text-[10px] text-slate-500">{isDE ? 'Letzte 7 Tage' : 'Last 7 Days'}</p>
               </div>
             </div>
             <div className={cn(
@@ -105,25 +121,28 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
           </div>
 
           <div className="flex items-end gap-1.5 h-16">
-            {[45, 60, 30, 90, 45, 0, thisWeekMinutes % 120].map((val, i) => (
+            {barData.map((val, i) => (
               <div 
                 key={i} 
-                className="flex-1 rounded-t-sm bg-slate-100 dark:bg-slate-700 relative group/bar"
-                style={{ height: `${Math.max(10, (val / 120) * 100)}%` }}
+                className="flex-1 rounded-t-sm bg-slate-100 dark:bg-slate-700 relative group/bar cursor-help"
+                style={{ height: `${Math.max(10, Math.min(100, (val / 120) * 100))}%` }}
               >
                 <div className="absolute inset-x-0 bottom-0 top-0 bg-blue-500 opacity-0 group-hover/bar:opacity-100 transition-opacity rounded-t-sm" />
-                {i === 6 && <div className="absolute inset-x-0 bottom-0 top-0 bg-indigo-600 rounded-t-sm" />}
+                {i === todayIndex && <div className="absolute inset-x-0 bottom-0 top-0 bg-indigo-600 rounded-t-sm" />}
+                
+                {/* TOOLTIP */}
+                <div className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 hidden group-hover/bar:block bg-slate-900 text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20 shadow-xl font-bold animate-in fade-in zoom-in-95 duration-200">
+                  {Math.floor(val / 60)}h {val % 60}m
+                </div>
               </div>
             ))}
           </div>
           <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-tighter text-slate-400">
-            <span>Mon</span>
-            <span>Tue</span>
-            <span>Wed</span>
-            <span>Thu</span>
-            <span>Fri</span>
-            <span>Sat</span>
-            <span className="text-indigo-600">Today</span>
+            {dayNames.map((name, i) => (
+              <span key={i} className={cn(i === todayIndex && "text-indigo-600 dark:text-indigo-400 font-black")}>
+                {name}
+              </span>
+            ))}
           </div>
         </div>
 
