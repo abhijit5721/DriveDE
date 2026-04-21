@@ -90,7 +90,7 @@ export default function App() {
                         duration: s.duration_minutes,
                         type: s.category,
                         notes: s.notes || '',
-                        instructorName: '',
+                        instructorName: s.instructor_name || '',
                         route: s.route || [],
                         mistakes: s.mistakes || [],
                         totalDistance: s.total_distance || 0,

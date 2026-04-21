@@ -82,6 +82,7 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     category: mapTrackerCategoryToDb(session.type),
     transmission_type: mapTransmissionToDb(transmissionType),
     notes: session.notes || null,
+    instructor_name: session.instructorName || null,
     route: session.route || [],
     mistakes: session.mistakes || [],
     total_distance: session.totalDistance || 0,

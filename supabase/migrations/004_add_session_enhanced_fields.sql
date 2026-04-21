@@ -3,4 +3,5 @@ ALTER TABLE public.driving_sessions
 ADD COLUMN IF NOT EXISTS route jsonb DEFAULT '[]'::jsonb,
 ADD COLUMN IF NOT EXISTS mistakes jsonb DEFAULT '[]'::jsonb,
 ADD COLUMN IF NOT EXISTS total_distance numeric DEFAULT 0,
-ADD COLUMN IF NOT EXISTS location_summary text;
+ADD COLUMN IF NOT EXISTS location_summary text,
+ADD COLUMN IF NOT EXISTS instructor_name text;
