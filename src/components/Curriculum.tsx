@@ -1,6 +1,19 @@
+/**
+ * Curriculum.tsx
+ * 
+ * Displays the structured learning path for the user.
+ * It dynamically filters chapters and lessons based on:
+ * 1. License Type (Standard vs Conversion/Umschreibung).
+ * 2. Transmission Type (Manual vs Automatic).
+ * 3. Premium status (locking Pro content).
+ */
+
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronDown, Check, Lock, Cog, Zap, Settings2, BadgeCheck, BookOpen, Crown, Activity } from 'lucide-react';
+import { 
+  ChevronRight, ChevronDown, Check, Lock, Cog, Zap, 
+  Settings2, BadgeCheck, BookOpen, Crown, Activity 
+} from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { chapters } from '../data/curriculum';
 import { cn } from '../utils/cn';
@@ -17,18 +30,29 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const { language, userProgress, licenseType, setLicenseType, isPremium } = useAppStore();
   const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
+  
   const isDE = language === 'de';
+  
+  // --- DERIVED LICENSE STATE ---
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
+  
+  // Helpers for UI highlighting selected license
   const isManualSelection = transmissionType === 'manual' && learningPath === 'standard';
   const isAutomaticSelection = transmissionType === 'automatic' && learningPath === 'standard';
   const isConversionManualSelection = licenseType === 'umschreibung-manual';
   const isConversionAutomaticSelection = licenseType === 'umschreibung-automatic';
 
+  /**
+   * Filters the master chapters list based on the user's selected license and path.
+   */
   const filteredChapters = useMemo((): Chapter[] => {
     return filterChaptersForSelection(chapters, transmissionType, learningPath);
   }, [transmissionType, learningPath]);
 
+  /**
+   * Returns a visual emoji icon for each chapter.
+   */
   const getChapterIcon = (chapterId: string) => {
     switch (chapterId) {
       case 'chapter-1': return '🚗';
@@ -40,6 +64,9 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
   };
 
+  /**
+   * Generates a descriptive badge for specific lesson types (Pro, Manual, etc).
+   */
   const getLessonBadge = (lesson: Lesson) => {
     if (lesson.isPremium && !isPremium) {
       return (
@@ -315,14 +342,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           <div className="absolute left-6 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-700" />
           <div className="relative space-y-4">
             {filteredChapters.map((chapter, index) => {
+              // Calculate completion percentage for the current chapter
               const completedInChapter = chapter.lessons.filter(l =>
                 userProgress.completedLessons.includes(l.id)
               ).length;
               const chapterProgress = chapter.lessons.length > 0 
                 ? Math.round((completedInChapter / chapter.lessons.length) * 100)
                 : 0;
+              
               const isExpanded = expandedChapter === chapter.id;
               const isCompleted = chapterProgress === 100;
+              
+              // A chapter is unlocked if it's the first one or the previous one has at least one completed lesson
               const isUnlocked = index === 0 || filteredChapters[index - 1].lessons.some(l =>
                 userProgress.completedLessons.includes(l.id)
               );

@@ -1,3 +1,14 @@
+/**
+ * BudgetEstimator.tsx
+ * 
+ * Provides a specialized dashboard for tracking and estimating the cost of getting 
+ * a driving license in Germany.
+ * Calculations include:
+ * 1. Base fees (Registration, exams, etc.)
+ * 2. Per-session costs (Normal vs Special drives like Autobahn).
+ * 3. Future estimation based on current progress and readiness.
+ */
+
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -28,7 +39,9 @@ export function BudgetEstimator() {
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
   
-  // Use costs from store with fallback for older users
+  // --- CONFIGURATION ---
+  
+  // Use costs from store with fallback for default German prices
   const costs = userProgress.fixedCosts || {
     registration: 350,
     theoryExam: 25,
@@ -37,7 +50,10 @@ export function BudgetEstimator() {
     firstAid: 40,
     visionTest: 7,
   };
+  
   const hourlyRate45 = userProgress.hourlyRate45 || 60;
+  
+  // Special drives (Sonderfahrten) are typically 20% more expensive
   const specialRateFactor = 1.2;
 
   // Local state for editing to avoid laggy inputs
@@ -69,14 +85,20 @@ export function BudgetEstimator() {
   const totalAutobahn = userProgress.drivingSessions.filter(s => s.type === 'autobahn').length;
   const totalNacht = userProgress.drivingSessions.filter(s => s.type === 'nacht').length;
 
+  /**
+   * Calculates the total money spent so far.
+   * Includes all logged driving sessions and base fees (if driving has started).
+   */
   const currentSpend = useMemo(() => {
     let sum = 0;
     userProgress.drivingSessions.forEach(s => {
+      // Rates are usually quoted per 45min (Fahrstunde)
       const units = s.duration / 45;
       const rate = s.type === 'normal' ? hourlyRate45 : hourlyRate45 * specialRateFactor;
       sum += units * rate;
     });
-    // Assuming base fees are paid if you've started driving
+    
+    // Add one-time fees once driving has commenced
     if (userProgress.drivingSessions.length > 0) {
       sum += costs.registration + costs.firstAid + costs.visionTest + costs.learningMaterial;
     }
@@ -88,15 +110,28 @@ export function BudgetEstimator() {
   const completedLessonsCount = userProgress.completedLessons.length;
   const activeLessonsPercent = totalLessons > 0 ? (completedLessonsCount / totalLessons) * 100 : 0;
   const mainQuizScore = userProgress.quizScores['main-scenarios'] || 0;
+  /**
+   * Calculates a readiness score (0-100) based on curriculum progress and quiz performance.
+   * This is used to weight the financial estimation.
+   */
   const readiness = Math.round((activeLessonsPercent * 0.7) + (mainQuizScore * 0.3));
 
+  /**
+   * Estimates the remaining cost until the practical exam.
+   * Factors in mandatory special drives (Sonderfahrten) and estimated normal drives
+   * based on the readiness score.
+   */
   const estimation = useMemo(() => {
+    // German legal requirements for Sonderfahrten
     const MANDATORY_SPECIAL = { ueberland: 5, autobahn: 4, nacht: 3 };
-    const targetLessons = 30;
+    const targetLessons = 30; // Typical average sessions needed
+    
+    // Calculate how many mandatory drives are still pending
     const remainingSpecialUeberland = Math.max(0, MANDATORY_SPECIAL.ueberland - totalUeberland);
     const remainingSpecialAutobahn = Math.max(0, MANDATORY_SPECIAL.autobahn - totalAutobahn);
     const remainingSpecialNacht = Math.max(0, MANDATORY_SPECIAL.nacht - totalNacht);
     
+    // Weight the remaining normal sessions by how "unready" the user is
     const progressFactor = (100 - readiness) / 100;
     const remainingNormal = Math.max(
       readiness > 80 ? 2 : 5, 

@@ -1,6 +1,15 @@
-// [DriveDE] Deployment Heartbeat: Triggering migration runner...
+/**
+ * supabaseSync.ts
+ * 
+ * Middleware-style service for synchronizing local store data with Supabase.
+ * Most functions check for an active user session before attempting sync.
+ */
+
 import type { AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+
+// --- MAPPING HELPERS ---
+// These ensure that local TS types match the naming conventions and constraints of the DB.
 
 const mapLearningPathToDb = (path: LearningPathType): 'standard' | 'conversion' =>
   path === 'umschreibung' ? 'conversion' : 'standard';
@@ -13,6 +22,9 @@ const mapTrackerCategoryToDb = (type: DrivingSession['type']): 'normal' | 'ueber
   return type;
 };
 
+/**
+ * Retrieves the currently authenticated user's ID.
+ */
 async function getCurrentUserId() {
   if (!isSupabaseConfigured || !supabase) return null;
   const {
@@ -24,6 +36,9 @@ async function getCurrentUserId() {
   return user.id;
 }
 
+/**
+ * Syncs the global application state (settings, progress, etc) to the profiles table.
+ */
 export async function ensureProfileFromState(state: AppState) {
   console.log('[DB-Sync] Starting profile sync...');
   if (!isSupabaseConfigured || !supabase) {

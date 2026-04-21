@@ -1,3 +1,13 @@
+/**
+ * App.tsx
+ * 
+ * Root component of the DriveDE application.
+ * Manages:
+ * 1. App-level layout (Tabs, Headers, Navigation).
+ * 2. Authentication state & Supabase data synchronization.
+ * 3. Conditional rendering based on license selection (Welcome/LicenseSelector vs Dashboard).
+ */
+
 import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
@@ -49,6 +59,7 @@ export default function App() {
     resetProgress,
   } = useAppStore();
 
+  // --- AUTH & DATA SYNC LOGIC ---
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges(async (session) => {
       const isNewUser = !useAppStore.getState().authEmail && !!session?.user;

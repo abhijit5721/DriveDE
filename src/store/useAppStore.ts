@@ -1,3 +1,14 @@
+/**
+ * useAppStore.ts
+ * 
+ * Central Zustand store for global application state.
+ * Handles:
+ * 1. User progress tracking (lessons, sessions, scores).
+ * 2. App settings (Language, Dark Mode, License Type).
+ * 3. Persistence via LocalStorage.
+ * 4. Cloud synchronization triggers for Supabase.
+ */
+
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { checkAndUnlockAchievements } from '../utils/achievements';
@@ -18,6 +29,9 @@ import {
   syncQuizAttempt,
 } from '../services/supabaseSync';
 
+/**
+ * Default initial state for a new user progress tracker.
+ */
 const initialProgress: UserProgress = {
   completedLessons: [],
   drivingSessions: [],
@@ -43,6 +57,9 @@ const initialProgress: UserProgress = {
   },
 };
 
+/**
+ * Automatically sets the correct LearningPath and TransmissionType based on the selected license.
+ */
 const deriveSelectionState = (type: LicenseType) => {
   let learningPath: LearningPathType = null;
   let transmissionType: TransmissionType = null;
@@ -67,12 +84,18 @@ const deriveSelectionState = (type: LicenseType) => {
   return { learningPath, transmissionType };
 };
 
+/**
+ * Helper to check if two dates fall on the same calendar day.
+ */
 const isSameDay = (date1: Date, date2: Date) => {
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate();
 };
 
+/**
+ * Helper to check if date1 is exactly one day before date2.
+ */
 const isYesterday = (date1: Date, date2: Date) => {
   const yesterday = new Date(date2);
   yesterday.setDate(yesterday.getDate() - 1);

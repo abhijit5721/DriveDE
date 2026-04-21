@@ -1,13 +1,30 @@
+/**
+ * Tracker.tsx
+ * 
+ * This is the central component for managing driving sessions.
+ * It provides:
+ * 1. Live GPS tracking and speed monitoring.
+ * 2. Real-time mistake detection (simulated and manual).
+ * 3. History of previous sessions with route playback.
+ * 4. Manual session logging for users without GPS access.
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, Gauge, ChevronRight, ChevronDown, GraduationCap } from 'lucide-react';
+import { 
+  Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, 
+  Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
+  Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, 
+  Gauge, ChevronRight, ChevronDown, GraduationCap 
+} from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { cn } from '../utils/cn';
 import { getLearningPathFromLicenseType } from '../utils/license';
 import { EmptyState } from './EmptyState';
-import type { DrivingSession, DrivingMistake } from '../types';
+import type { DrivingSession, DrivingMistake, GPSPoint } from '../types';
 
+// Leaflet imports for Map rendering
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -21,6 +38,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
+/**
+ * Small helper to keep the map centered on the latest point during live tracking.
+ */
 const MapBoundsSimple = ({ points }: { points: { lat: number, lng: number }[] }) => {
   const map = useMap();
   useEffect(() => {
@@ -31,6 +51,10 @@ const MapBoundsSimple = ({ points }: { points: { lat: number, lng: number }[] })
   return null;
 };
 
+/**
+ * Calculates the bearing (compass direction) between two GPS points.
+ * Used to rotate the car icon on the map.
+ */
 const calculateBearing = (startLat: number, startLng: number, endLat: number, endLng: number) => {
   const startLatRad = (startLat * Math.PI) / 180;
   const startLngRad = (startLng * Math.PI) / 180;
@@ -44,6 +68,10 @@ const calculateBearing = (startLat: number, startLng: number, endLat: number, en
   return (bearing + 360) % 360;
 };
 
+/**
+ * Component to display a static route map with playback functionality.
+ * Used in the session history list expanded view.
+ */
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
   if (!route || route.length < 2) return null;
   const isDE = language === 'de';
@@ -269,11 +297,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const stationaryStartRef = useRef<number | null>(null);
   const lastIdlingLogRef = useRef<number>(0);
   const lastRvlCheckRef = useRef<number>(0);
-  const lastSchoolCheckRef = useRef<number>(0);
-  
-  // Persistent trackers for session summary (preserves data across simulation loops)
+  // --- PERSISTENT REFS ---
+  // Used to maintain data across simulation loops or component re-renders
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
   const cumulativeRouteRef = useRef<DrivingSession['route']>([]);
+  const lastSchoolCheckRef = useRef<number>(0);
+  const lastWrongWayLogRef = useRef<number>(0);
+  const lastIllegalTurnLogRef = useRef<number>(0);
+  const lastMotionLogRef = useRef<number>(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
@@ -291,20 +322,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Centralized logging helpers to ensure data persistence across loops/resets
+  /**
+   * Centralized logging helper for driving mistakes.
+   * Updates both UI state and persistent ref.
+   */
   const logMistake = (mistake: DrivingMistake) => {
     cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistake];
     setCurrentMistakes(prev => [...prev, mistake]);
   };
 
+  /**
+   * Centralized logging helper for GPS points.
+   */
   const logRoutePoint = (point: { lat: number, lng: number, timestamp: number }) => {
     cumulativeRouteRef.current = [...cumulativeRouteRef.current, point];
     setGpsPoints(prev => [...prev, point]);
   };
 
-  // Handle autocomplete search
+  // --- AUTOCOMPLETE: SEARCH SUGGESTIONS ---
+  // Fetches address suggestions as the user types a destination
   useEffect(() => {
     const fetchSuggestions = async () => {
+      // Delay search until 3+ characters are typed
       if (targetDestination.length < 3) {
         setSuggestions([]);
         setShowSuggestions(false);
@@ -313,7 +352,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       try {
         const langCode = language === 'de' ? 'de' : 'en';
-        // Add bias based on current position if available, else default to Berlin
+        // Add geographical bias (prioritize results near user)
         const biasLat = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
         const biasLon = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lng : 13.405;
         
@@ -330,7 +369,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
     };
 
-    const timer = setTimeout(fetchSuggestions, 300);
+    const timer = setTimeout(fetchSuggestions, 300); // Debounce to save API calls
     return () => clearTimeout(timer);
   }, [targetDestination, language, gpsPoints]);
 
@@ -365,6 +404,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     });
   };
 
+  /**
+   * Renders a custom 🏁 finish flag marker.
+   */
   const getFlagMarkerIcon = () => {
     return L.divIcon({
       className: 'flag-marker-icon',
@@ -386,8 +428,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     });
   };
 
-
-
+  // --- SMART MONITORING: SAFETY CHECKS ---
+  
+  /**
+   * Detects nearby stop signs using Overpass API.
+   * If found, sets a flag that requires the car to reach 0km/h nearby.
+   */
   const checkNearbyStopSign = async (lat: number, lng: number) => {
     try {
       // Look for stop signs within 25m
@@ -413,10 +459,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
 
-  // ─── Wrong Way Driving Detection ───────────────────────────────────────────
-  // Queries Overpass for oneway roads at the car's position, extracts geometry,
-  // computes the road's bearing, then compares against the car's travel bearing.
-  // If the angle difference is >120° the car is driving against traffic.
+  /**
+   * Wrong Way Driving Detection
+   * Queries Overpass for oneway roads at current position, extracts geometry,
+   * computes the road's bearing, then compares against the car's travel bearing.
+   * If the angle difference is >120° the car is driving against traffic.
+   */
   const checkWrongWayDriving = async (lat: number, lng: number, travelBearing: number) => {
     // 30-second cooldown to avoid toast spam
     if (Date.now() - lastWrongWayLogRef.current < 30000) return;
@@ -437,17 +485,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const nodes = way.geometry as { lat: number; lon: number }[];
       if (!nodes || nodes.length < 2) return;
 
-      // Use the first two nodes to determine the road's legal travel direction
+      // Determine road's legal direction
       const roadBearing = calculateBearing(
         nodes[0].lat, nodes[0].lon,
         nodes[1].lat, nodes[1].lon
       );
 
-      // Angle difference between road direction and car's travel direction
+      // Angle difference road vs car
       let angleDiff = Math.abs(travelBearing - roadBearing);
       if (angleDiff > 180) angleDiff = 360 - angleDiff;
 
-      // >120° means the car is travelling broadly against the legal direction
+      // >120° means car is broad-travelling against legal direction
       if (angleDiff > 120) {
         lastWrongWayLogRef.current = Date.now();
         toast.error(
@@ -461,10 +509,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         });
       }
     } catch (e) {
-      // Network errors are silently ignored — non-critical sensor
+      // Silent ignore for non-critical sensor
     }
   };
 
+  /**
+   * Detects illegal entries (No Entry signs) at the car's position.
+   */
   const checkIllegalTurn = async (lat: number, lng: number, travelBearing: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
     if (currentSpeed < 5) return;
