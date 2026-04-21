@@ -305,16 +305,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
   const cumulativeRouteRef = useRef<DrivingSession['route']>([]);
   const lastSchoolCheckRef = useRef<number>(0);
-  const lastWrongWayLogRef = useRef<number>(0);
-  const lastIllegalTurnLogRef = useRef<number>(0);
-  const lastMotionLogRef = useRef<number>(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
   const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const simulationStepRef = useRef<number>(0);
-  const lastMotionLogRef = useRef<number>(0);
   const [showManualLog, setShowManualLog] = useState(false);
   const [isSimulationMode, setIsSimulationMode] = useState(false);
   const [targetDestination, setTargetDestination] = useState('');
