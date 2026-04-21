@@ -145,7 +145,18 @@ export async function hydrateFromSupabase() {
   return {
     profile: profile ?? null,
     lessons: lessons ?? [],
-    sessions: sessions ?? [],
+    sessions: (sessions ?? []).map(s => ({
+      id: s.id,
+      date: s.session_date,
+      duration: s.duration_minutes,
+      type: s.category === 'night' ? 'nacht' : s.category, // Map back to frontend enum
+      notes: s.notes || '',
+      instructorName: s.instructor_name || '',
+      route: s.route || [],
+      mistakes: s.mistakes || [],
+      totalDistance: s.total_distance || 0,
+      locationSummary: s.location_summary || ''
+    })),
     quizAttempts: quizAttempts ?? [],
     incorrectQuestions: profile?.incorrect_questions ?? [],
   };

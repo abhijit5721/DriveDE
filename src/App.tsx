@@ -82,39 +82,37 @@ export default function App() {
                 ]));
                 
                 // Track existing sessions to avoid duplicates
-                // We use a key of (date + duration) as a fallback fingerprint if IDs differ
                 const existingSessionKeys = new Set(state.userProgress.drivingSessions.map(s => 
                     `${s.date}-${s.duration}`
                 ));
 
+                // remoteData.sessions is already mapped to frontend format by hydrateFromSupabase
                 const remoteSessions = remoteData.sessions
-                    .filter(s => !existingSessionKeys.has(`${s.session_date}-${s.duration_minutes}`))
+                    .filter(s => !existingSessionKeys.has(`${s.date}-${s.duration}`))
                     .map(s => ({
                         id: s.id,
-                        date: s.session_date,
-                        duration: s.duration_minutes,
-                        type: s.category,
+                        date: s.date,
+                        duration: s.duration,
+                        type: s.type,
                         notes: s.notes || '',
-                        instructorName: s.instructor_name || '',
+                        instructorName: s.instructorName || '',
                         route: s.route || [],
                         mistakes: s.mistakes || [],
-                        totalDistance: s.total_distance || 0,
-                        locationSummary: s.location_summary || undefined
+                        totalDistance: s.totalDistance || 0,
+                        locationSummary: s.locationSummary || undefined
                     }));
 
-                // If local sessions exist but remote is also populated, combine them
-                // But filter out duplicates from the merge
                 const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
                 
-                // Re-calculate totals from the combined pool
                 let totalDrivingMinutes = 0;
                 let specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
                 
                 combinedSessions.forEach(s => {
-                    totalDrivingMinutes += s.duration;
-                    if (s.type === 'ueberland') specialDrivingMinutes.ueberland += s.duration;
-                    if (s.type === 'autobahn') specialDrivingMinutes.autobahn += s.duration;
-                    if (s.type === 'nacht') specialDrivingMinutes.nacht += s.duration;
+                    const duration = Number(s.duration) || 0;
+                    totalDrivingMinutes += duration;
+                    if (s.type === 'ueberland') specialDrivingMinutes.ueberland += duration;
+                    if (s.type === 'autobahn') specialDrivingMinutes.autobahn += duration;
+                    if (s.type === 'nacht') specialDrivingMinutes.nacht += duration;
                 });
 
                 return {

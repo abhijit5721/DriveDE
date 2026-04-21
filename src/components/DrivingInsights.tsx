@@ -10,25 +10,35 @@ interface DrivingInsightsProps {
 
 export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
   const { language, userProgress, isPremium } = useAppStore();
-  const { drivingSessions } = userProgress;
+  const drivingSessions = Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [];
   const isDE = language === 'de';
 
-  // Sort sessions by date (newest first)
-  const sortedSessions = [...drivingSessions].sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-  
-  // Calculate Weekly Stats
+  if (drivingSessions.length === 0) return null;
+
   const now = Date.now();
   const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
-  const thisWeekSessions = sortedSessions.filter(s => (now - new Date(s.date).getTime()) < ONE_WEEK);
+  
+  // Sort and filter sessions within the last 7 days
+  const sortedSessions = [...drivingSessions].sort((a, b) => {
+    const timeA = a.date ? new Date(a.date).getTime() : 0;
+    const timeB = b.date ? new Date(b.date).getTime() : 0;
+    return timeB - timeA;
+  });
+
+  const thisWeekSessions = sortedSessions.filter(s => {
+    if (!s.date) return false;
+    const sessionTime = new Date(s.date).getTime();
+    return (now - sessionTime) < ONE_WEEK;
+  });
+
   const lastWeekSessions = sortedSessions.filter(s => {
+    if (!s.date) return false;
     const time = new Date(s.date).getTime();
     return (now - time) >= ONE_WEEK && (now - time) < (2 * ONE_WEEK);
   });
 
-  const thisWeekMinutes = thisWeekSessions.reduce((acc, s) => acc + s.duration, 0);
-  const lastWeekMinutes = lastWeekSessions.reduce((acc, s) => acc + s.duration, 0);
+  const thisWeekMinutes = thisWeekSessions.reduce((acc, s) => acc + (s.duration || 0), 0);
+  const lastWeekMinutes = lastWeekSessions.reduce((acc, s) => acc + (s.duration || 0), 0);
   
   const minuteDiff = thisWeekMinutes - lastWeekMinutes;
   const isUp = minuteDiff >= 0;
@@ -77,16 +87,16 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     }
   };
 
-  if (drivingSessions.length === 0) return null;
-
   // Real data for bars (last 7 days)
   const barData = [0, 0, 0, 0, 0, 0, 0];
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const todayIndex = (new Date().getDay() + 6) % 7; // 0 = Mon, 6 = Sun
 
   thisWeekSessions.forEach(s => {
-    const day = (new Date(s.date).getDay() + 6) % 7;
-    barData[day] += s.duration;
+    if (s.date) {
+      const day = (new Date(s.date).getDay() + 6) % 7;
+      barData[day] += (s.duration || 0);
+    }
   });
 
   return (
