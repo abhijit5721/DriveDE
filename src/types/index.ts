@@ -168,6 +168,14 @@ export interface UserProgress {
   lastActivityDate: string | null;
   incorrectQuestions: string[];
   hourlyRate45: number;
+  fixedCosts: {
+    registration: number;
+    theoryExam: number;
+    practicalExam: number;
+    learningMaterial: number;
+    firstAid: number;
+    visionTest: number;
+  };
 }
 
 export interface AppState {
@@ -200,6 +208,7 @@ export interface AppState {
   addMistake: (questionId: string) => void;
   removeMistake: (questionId: string) => void;
   setHourlyRate45: (rate: number) => void;
+  updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => void;
   resetProgress: () => void;
   clearDrivingHistory: () => void;
 }

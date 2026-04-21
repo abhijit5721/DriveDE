@@ -8,6 +8,7 @@ import type {
   LicenseType,
   LearningPathType,
   TransmissionType,
+  UserProgress,
 } from '@/types';
 import {
   ensureProfileFromState,
@@ -17,7 +18,7 @@ import {
   syncQuizAttempt,
 } from '../services/supabaseSync';
 
-const initialProgress = {
+const initialProgress: UserProgress = {
   completedLessons: [],
   drivingSessions: [],
   quizScores: {},
@@ -31,7 +32,15 @@ const initialProgress = {
   currentStreak: 0,
   lastActivityDate: null,
   incorrectQuestions: [],
-  hourlyRate45: 0,
+  hourlyRate45: 60,
+  fixedCosts: {
+    registration: 350,
+    theoryExam: 25,
+    practicalExam: 116,
+    learningMaterial: 50,
+    firstAid: 40,
+    visionTest: 7,
+  },
 };
 
 const deriveSelectionState = (type: LicenseType) => {
@@ -389,20 +398,38 @@ export const useAppStore = create<AppState>()(
           };
         }),
       
-      setHourlyRate45: (hourlyRate45: number) =>
+      setHourlyRate45: (rate: number) =>
         set((state) => {
           const nextState = {
             ...state,
             userProgress: {
               ...state.userProgress,
-              hourlyRate45,
+              hourlyRate45: rate,
             },
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             userProgress: {
               ...state.userProgress,
-              hourlyRate45,
+              hourlyRate45: rate,
+            },
+          };
+        }),
+
+      updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) =>
+        set((state) => {
+          const nextState = {
+            ...state,
+            userProgress: {
+              ...state.userProgress,
+              fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
+            },
+          };
+          void ensureProfileFromState(nextState as AppState);
+          return {
+            userProgress: {
+              ...state.userProgress,
+              fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
             },
           };
         }),
