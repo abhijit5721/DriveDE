@@ -75,24 +75,46 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  const { error } = await supabase.from('driving_sessions').insert({
+  // First Attempt: Full sync with enhanced fields
+  const { error: fullError } = await supabase.from('driving_sessions').insert({
     user_id: userId,
     session_date: session.date,
     duration_minutes: session.duration,
     category: mapTrackerCategoryToDb(session.type),
     transmission_type: mapTransmissionToDb(transmissionType),
-    notes: session.notes || null,
+    notes: session.notes,
+    route: session.route,
+    mistakes: session.mistakes,
+    total_distance: session.totalDistance,
+    location_summary: session.locationSummary,
     instructor_name: session.instructorName || null,
-    route: session.route || [],
-    mistakes: session.mistakes || [],
-    total_distance: session.totalDistance || 0,
-    location_summary: session.locationSummary || null,
   });
 
-  if (error) {
-    console.error('[DriveDE] CRITICAL: Failed to sync driving session. This might be due to missing DB columns or connection issues.', error);
+  if (fullError) {
+    console.warn('[DriveDE] Full sync failed, attempting basic fallback save...', fullError.message);
+    
+    // Check if it's a "column missing" type error
+    if (fullError.code === '42703' || fullError.message.includes('column')) {
+       // Second Attempt: Basic sync with original columns only
+       const { error: basicError } = await supabase.from('driving_sessions').insert({
+         user_id: userId,
+         session_date: session.date,
+         duration_minutes: session.duration,
+         category: mapTrackerCategoryToDb(session.type),
+         transmission_type: mapTransmissionToDb(transmissionType),
+         notes: session.notes,
+       });
+
+       if (basicError) {
+         console.error('[DriveDE] CRITICAL: Both full and fallback sync failed.', basicError);
+       } else {
+         console.info('[DriveDE] Basic fallback sync completed successfully.');
+       }
+    } else {
+      console.error('[DriveDE] Sync failed with a non-schema error:', fullError);
+    }
   } else {
-    console.log('[DriveDE] Session synced successfully to cloud.');
+    console.log('[DriveDE] Full session synced successfully.');
   }
 }
 
