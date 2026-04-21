@@ -9,7 +9,7 @@ interface DrivingInsightsProps {
 }
 
 export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
-  const { language, userProgress, isPremium } = useAppStore();
+  const { language, userProgress, transmissionType, isPremium } = useAppStore();
   const drivingSessions = Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [];
   const isDE = language === 'de';
 
@@ -57,22 +57,22 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
 
-  // Mapping mistakes to lesson IDs - Expanded to cover all simulation types
+  // Mapping mistakes to lesson IDs - Precision fixed for curriculum alignment
   const lessonMap: Record<string, string> = {
-    'speeding': 'basics-4',
-    'shoulder_check': 'basics-1a',
-    'priority': 'basics-5',
-    'right_before_left': 'basics-5',
-    'idling': 'basics-1a',
+    'speeding': 'city-1',
+    'shoulder_check': 'basics-1b',
+    'priority': 'city-1',
+    'right_before_left': 'city-1',
+    'idling': 'exam-1',
     'roundabout_signal': 'city-3',
-    'stop_sign': 'basics-5',
+    'stop_sign': 'city-2',
     'signal': 'basics-1b',
-    'harsh_braking': 'maneuver-4',
-    'harsh_cornering': 'city-3',
+    'harsh_braking': transmissionType === 'automatic' ? 'maneuver-4a' : 'maneuver-4',
+    'harsh_cornering': 'basics-4',
     'school_zone': 'city-1',
     'school_zone_speeding': 'city-1',
-    'curve_speeding': 'city-3',
-    'aggressive_cornering': 'city-3',
+    'curve_speeding': 'basics-4',
+    'aggressive_cornering': 'basics-4',
     'wrong_way': 'city-6',
     'illegal_turn': 'city-5'
   };
@@ -234,7 +234,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
                   : `You left the engine idling ${mistakeCounts['idling']}x this week. This wastes ~1.2L of fuel per hour and is recorded as an environmental fault in the exam.`}
               </p>
               <button 
-                onClick={() => onDirectLessonSelect('basics-1a')}
+                onClick={() => onDirectLessonSelect('exam-1')}
                 className="mt-3 text-[10px] font-bold uppercase tracking-wider text-emerald-700 underline underline-offset-4 dark:text-emerald-300"
               >
                 {isDE ? 'Energiesparende Fahrweise lernen' : 'Learn energy-saving driving'}
