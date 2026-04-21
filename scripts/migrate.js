@@ -8,7 +8,7 @@ const MIGRATIONS_DIR = path.join(__dirname, '../supabase/migrations');
 
 // Database connection string from environment variable
 // Format: postgres://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
-const connectionString = process.env.DATABASE_URL || process.env.DB_URL || process.env.POSTGRES_URL;
+const connectionString = process.env.DATABASE_URL || process.env.DB_URL || process.env.POSTGRES_URL || process.env.SUPABASE_DB_URL;
 
 console.log('🔍 Checking database connection variables...');
 console.log('🔍 Found Env Vars:', Object.keys(process.env).filter(k => k.includes('URL') || k.includes('DATABASE') || k.includes('SUPABASE')));
