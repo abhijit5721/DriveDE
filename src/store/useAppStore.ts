@@ -463,7 +463,11 @@ export const useAppStore = create<AppState>()(
       resetProgress: () =>
         set({
           userProgress: initialProgress,
-          isPremium: false,
+          isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
+          licenseType: null,
+          learningPath: null,
+          transmissionType: null,
+          hasVisited: false,
         }),
 
       clearDrivingHistory: () =>
