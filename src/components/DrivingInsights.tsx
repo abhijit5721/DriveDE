@@ -57,6 +57,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
 
   const topMistakes = Object.entries(mistakeCounts)
     .sort(([, a], [, b]) => b - a)
+    .filter(([type]) => lessonMap[type]) // Only show mistakes we can accurately map to a lesson
     .slice(0, 5);
 
 
@@ -67,6 +68,7 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     'priority': 'city-1',
     'right_before_left': 'city-1',
     'idling': 'exam-1',
+    'eco_driving': 'exam-1',
     'roundabout_signal': 'city-3',
     'stop_sign': 'city-2',
     'signal': 'basics-1b',

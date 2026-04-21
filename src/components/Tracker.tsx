@@ -212,6 +212,32 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
   const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, licenseType, isPremium } = useAppStore();
+  const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
+  
+  const isDE = language === 'de';
+
+  const getMistakeLabel = (type: DrivingMistake['type']) => {
+    const labels: Record<string, { de: string, en: string }> = {
+      speeding: { de: 'Geschw.-Überschreitung', en: 'Speeding' },
+      harsh_braking: { de: 'Starkes Bremsen', en: 'Harsh Braking' },
+      rapid_acceleration: { de: 'Starke Beschleunigung', en: 'Rapid Accel.' },
+      shoulder_check: { de: 'Schulterblick vergessen', en: 'Missed Shoulder Check' },
+      signal: { de: 'Blinker vergessen', en: 'Missed Signal' },
+      priority: { de: 'Vorfahrtsfehler', en: 'Priority Violation' },
+      stop_sign: { de: 'Stoppschild überfahren', en: 'Stop Sign Violation' },
+      wrong_way: { de: 'Falschfahrer', en: 'Wrong Way Driving' },
+      illegal_turn: { de: 'Unzulässiges Abbiegen', en: 'Illegal Turn' },
+      idling: { de: 'Motor laufen gelassen', en: 'Engine Idling' },
+      roundabout_signal: { de: 'Kreisverkehr Blinker', en: 'Roundabout Signal' },
+      curve_speeding: { de: 'Geschw. in Kurve', en: 'Curve Speeding' },
+      aggressive_cornering: { de: 'Aggressives Kurvenfahren', en: 'Aggressive Cornering' },
+      right_before_left: { de: 'Rechts vor Links', en: 'Right-Before-Left' },
+      school_zone_speeding: { de: 'Schulzone Speeding', en: 'School Zone Spd.' },
+      other: { de: 'Sonstiger Fehler', en: 'Other Mistake' }
+    };
+    return isDE ? labels[type]?.de || type : labels[type]?.en || type;
+  };
+
   const SESSION_LIMIT = 3;
   const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
   const [showAddForm, setShowAddForm] = useState(false);
@@ -1740,10 +1766,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       </div>
 
       {/* Session List */}
-      <div>
-        <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-          {isDE ? 'Letzte Fahrstunden' : 'Recent Sessions'}
-        </h3>
+      <div className="mt-8">
+        <div className="flex items-center justify-between mb-4 px-1">
+          <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
+            {isDE ? 'Fahrtenbuch' : 'Driving Logbook'}
+          </h3>
+          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+            {userProgress.drivingSessions.length} {isDE ? 'Einträge' : 'Entries'}
+          </span>
+        </div>
 
         {userProgress.drivingSessions.length === 0 ? (
           <EmptyState
@@ -1753,223 +1784,279 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             action={
               <button
                 onClick={() => setShowAddForm(true)}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+                className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-5 py-2 text-sm font-bold text-white transition-all hover:bg-blue-600 hover:shadow-lg active:scale-95"
               >
                 <Plus className="h-4 w-4" />
-                {isDE ? 'Erste Fahrstunde hinzufügen' : 'Add First Session'}
+                {isDE ? 'Fahrstunde eintragen' : 'Log First Session'}
               </button>
             }
           />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {userProgress.drivingSessions
               .slice()
               .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-              .map((session) => (
+              .map((session) => {
+                const isExpanded = expandedSessionId === session.id;
+                return (
                 <div
                   key={session.id}
-                  className="flex items-center gap-3 rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800"
+                  className={cn(
+                    "overflow-hidden rounded-2xl border transition-all duration-300",
+                    isExpanded 
+                      ? "border-blue-200 bg-blue-50/10 shadow-lg dark:border-blue-900/50 dark:bg-blue-900/10" 
+                      : "border-slate-100 bg-white shadow-sm hover:border-blue-100 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800"
+                  )}
                 >
-                  <div className={cn(
-                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
-                    getTypeColor(session.type)
-                  )}>
-                    {getTypeIcon(session.type)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-slate-900 dark:text-white">
-                        {getTypeLabel(session.type)}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        {session.duration} min
-                      </span>
-                      {session.route && session.route.length > 30 && (
-                        <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
-                          {isDE ? 'SIMULIERT' : 'SIMULATED'}
-                        </span>
-                      )}
-                      {userProgress.hourlyRate45 > 0 && (
-                        <span className="ml-auto text-xs font-bold text-green-600 dark:text-green-400">
+                  {/* Collapsible Header */}
+                  <div 
+                    className="flex cursor-pointer items-center justify-between p-4"
+                    onClick={() => setExpandedSessionId(isExpanded ? null : session.id)}
+                  >
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <div className={cn(
+                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
+                        getTypeColor(session.type),
+                        isExpanded ? "scale-110 shadow-md" : ""
+                      )}>
+                        {getTypeIcon(session.type)}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                            {getTypeLabel(session.type)}
+                          </span>
+                          <span className="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+                             {session.duration} min
+                          </span>
+                          {session.route && session.route.length > 30 && (
+                            <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                              {isDE ? 'SIMULIERT' : 'SIMULATED'}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                          <div className="flex items-center gap-0.5">
+                            <Calendar className="h-2.5 w-2.5" />
+                            {formatDate(session.date)}
+                          </div>
+                          {session.instructorName && (
+                            <span className="flex items-center gap-0.5 truncate uppercase tracking-tighter opacity-80">
+                              <div className="h-0.5 w-0.5 rounded-full bg-slate-300" />
+                              {session.instructorName}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      {userProgress.hourlyRate45 > 0 && !isExpanded && (
+                        <span className="hidden sm:block text-xs font-black text-green-600 dark:text-green-500">
                           €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
                         </span>
                       )}
-                    </div>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {formatDate(session.date)}
-                      </div>
-                      {session.totalDistance && (
-                        <div className="flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400">
-                          <Route className="h-3 w-3" />
-                          {session.totalDistance} km
+                      {!isExpanded && session.route && (Array.isArray(session.route) ? session.route.length > 0 : false) && (
+                        <div className={cn(
+                          "flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900",
+                          "group-hover/header:bg-blue-50 group-hover/header:text-blue-500"
+                        )}>
+                          <MapPin className="h-3.5 w-3.5" />
                         </div>
                       )}
-                      {session.locationSummary && (
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {session.locationSummary}
-                        </div>
-                      )}
-                      {session.instructorName && (
-                        <div className="flex items-center gap-1">
-                          <div className="h-1 w-1 rounded-full bg-slate-300" />
-                          {session.instructorName}
-                        </div>
+                      <motion.div
+                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </motion.div>
+                      {!isExpanded && (
+                        <div className={cn(
+                          "h-2 w-2 rounded-full",
+                          (session.mistakes.length < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
+                          (session.mistakes.length < 5) ? "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]"
+                        )} />
                       )}
                     </div>
 
-                    {/* Quick Scores (Only if route data exists) */}
-                    {session.route && session.route.length > 0 && (
-                      <div className="mt-2 flex gap-2">
-                        <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2 py-1 dark:bg-slate-700/50">
-                          <div className={cn(
-                            "h-2 w-2 rounded-full",
-                            (session.mistakes.length < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
-                            (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
-                          )} />
-                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                            Safety Score: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}% ({(session.mistakes || []).length} {isDE ? 'Fehler' : 'Faults'})
-                          </span>
-                        </div>
-                        {(session.mistakes || []).some(m => m.type === 'idling') && (
-                          <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-1 dark:bg-emerald-900/20">
-                            <Wind className="h-3 w-3 text-emerald-500" />
-                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                              Eco Point Loss
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    {session.notes && (
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                        {session.notes}
-                      </p>
-                    )}
-                    {session.route && Array.isArray(session.route) && session.route.length > 0 && (
-                      <RouteMap route={session.route} mistakes={Array.isArray(session.mistakes) ? session.mistakes : []} language={language} />
-                    )}
-                    {session.mistakes && Array.isArray(session.mistakes) && session.mistakes.length > 0 ? (
-                      <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/50 dark:bg-red-900/20">
-                        <div className="mb-2 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
-                            <AlertTriangle className="h-4 w-4" />
-                            {isDE ? 'Detail-Analyse' : 'Detailed Analysis'}
-                          </div>
-                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
-                            {session.mistakes.filter(m => m && m.type).length}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {session.mistakes.reduce((acc, mistake) => {
-                            if (!mistake || !mistake.type) return acc;
-                            const existing = acc.find(m => m.type === mistake.type);
-                            if (existing) {
-                              existing.count = (existing.count || 1) + 1;
-                              if (mistake.speed && (!existing.speed || mistake.speed > existing.speed)) {
-                                existing.speed = mistake.speed; // keep highest speed
-                              }
-                            } else {
-                              acc.push({ ...mistake, count: 1 });
-                            }
-                            return acc;
-                          }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => {
-                            if (!mistake) return null;
-                            return (
-                            <div key={idx} className="flex items-center justify-between rounded-lg bg-white/50 p-2 text-xs dark:bg-slate-900/50">
-                              <div className="flex items-center gap-2">
-                                {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
-                                {mistake.type === 'harsh_braking' && <Footprints className="h-3.5 w-3.5 text-orange-500" />}
-                                {mistake.type === 'rapid_acceleration' && <Zap className="h-3.5 w-3.5 text-blue-500" />}
-                                {mistake.type === 'shoulder_check' && <Eye className="h-3.5 w-3.5 text-indigo-500" />}
-                                {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
-                                {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
-                                {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
-                                {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
-                                {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
-                                {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
-                                {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
-                                {mistake.type === 'curve_speeding' && <CornerUpRight className="h-3.5 w-3.5 text-orange-600" />}
-                                {mistake.type === 'aggressive_cornering' && <Gauge className="h-3.5 w-3.5 text-rose-500" />}
-                                {mistake.type === 'right_before_left' && <ChevronRight className="h-3.5 w-3.5 text-blue-500" />}
-                                {mistake.type === 'school_zone_speeding' && <GraduationCap className="h-3.5 w-3.5 text-amber-600" />}
-                                <span className="font-medium text-slate-700 dark:text-slate-300">
-                                  {mistake.type === 'speeding' && (isDE ? 'Geschwindigkeits-Überschreitung' : 'Speeding Violation')}
-                                  {mistake.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
-                                  {mistake.type === 'rapid_acceleration' && (isDE ? 'Starke Beschleunigung' : 'Rapid Acceleration')}
-                                  {mistake.type === 'shoulder_check' && (isDE ? 'Schulterblick vergessen' : 'Missed Shoulder Check')}
-                                  {mistake.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
-                                  {mistake.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
-                                  {mistake.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
-                                  {mistake.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
-                                  {mistake.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
-                                  {mistake.type === 'idling' && (isDE ? '🌱 Umweltschutz: Motor abstellen' : '🌱 Eco: Stop Engine')}
-                                  {mistake.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker vergessen' : '🔄 Roundabout: Missed Signal')}
-                                  {mistake.type === 'curve_speeding' && (isDE ? '⚠️ Unangepasste Geschw. (Kurve)' : '⚠️ Inappropriate Speed (Curve)')}
-                                  {mistake.type === 'aggressive_cornering' && (isDE ? '🏎️ Aggressives Kurvenfahren / Spurwechsel' : '🏎️ Aggressive Cornering')}
-                                  {mistake.type === 'right_before_left' && (isDE ? '👉 Rechts vor Links missachtet' : '👉 Right-Before-Left Violation')}
-                                  {mistake.type === 'school_zone_speeding' && (isDE ? '🏫 Zu schnell in Schulzone/Spielstraße' : '🏫 Speeding in School/Play Zone')}
-                                  {mistake.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
-                                </span>
-                                {mistake.count && mistake.count > 1 && (
-                                  <span className="ml-1 rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                                    x{mistake.count}
-                                  </span>
-                                )}
+                  </div>
+
+                  {/* Collapsible Content */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      >
+                        <div className="border-t border-slate-100/50 p-4 pt-4 dark:border-slate-700/50">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
+                            {session.totalDistance && (
+                              <div className="flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">
+                                <Route className="h-3.5 w-3.5" />
+                                {session.totalDistance} km
                               </div>
-                              <div className="flex items-center gap-2">
-                                {mistake.speed && (
-                                  <span className="font-black text-red-600">
-                                    {mistake.speed} <span className="text-[10px] font-normal opacity-70">km/h</span>
-                                  </span>
-                                )}
-                                {mistake.timestamp && (
-                                  <span className="text-[10px] font-bold text-slate-400">
-                                    {new Date(mistake.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                )}
+                            )}
+                            {session.locationSummary && (
+                              <div className="flex items-center gap-1 opacity-80">
+                                <MapPin className="h-3.5 w-3.5" />
+                                {session.locationSummary}
+                              </div>
+                            )}
+                            {userProgress.hourlyRate45 > 0 && (
+                              <div className="ml-auto font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
+                                €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
+                              <div className={cn(
+                                "h-2 w-2 rounded-full",
+                                (session.mistakes.length < 2) ? "bg-green-500" : 
+                                (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
+                              )} />
+                              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                {isDE ? 'Sicherheits-Fahrweise' : 'Safety Balance'}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
+                              </span>
+                            </div>
+                            {(session.mistakes || []).some(m => m.type === 'idling') && (
+                              <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30">
+                                <Wind className="h-3.5 w-3.5 text-emerald-500" />
+                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                  {isDE ? 'Öko-Fahrweise' : 'Eco Friendly'}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {session.notes && (
+                            <div className="mt-4 rounded-2xl bg-slate-50/50 p-3 text-xs text-slate-600 border border-slate-100/50 dark:bg-slate-900/40 dark:text-slate-400 dark:border-slate-800">
+                              <p className="font-bold uppercase tracking-widest text-[8px] text-slate-400 mb-2">{isDE ? 'NOTIZEN' : 'NOTES'}</p>
+                              {session.notes}
+                            </div>
+                          )}
+
+                          {session.route && Array.isArray(session.route) && session.route.length > 0 && (
+                            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 shadow-inner bg-slate-50 dark:bg-slate-900/50">
+                              <RouteMap route={session.route} mistakes={Array.isArray(session.mistakes) ? session.mistakes : []} language={language} />
+                            </div>
+                          )}
+
+                          {session.mistakes && Array.isArray(session.mistakes) && session.mistakes.length > 0 ? (
+                            <div className="mt-4 rounded-2xl border border-red-100 bg-red-50/20 p-4 dark:border-red-900/30 dark:bg-red-900/10">
+                              <div className="mb-4 flex items-center justify-between">
+                                <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400">
+                                  <AlertTriangle className="h-4 w-4" />
+                                  {isDE ? 'FAHRFEHLER ANALYSE' : 'DRIVING FAULT ANALYSIS'}
+                                </div>
+                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
+                                  {session.mistakes.filter(m => m && m.type).length}
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                {session.mistakes.reduce((acc, mistake) => {
+                                  if (!mistake || !mistake.type) return acc;
+                                  const existing = acc.find(m => m.type === mistake.type);
+                                  if (existing) {
+                                    existing.count = (existing.count || 1) + 1;
+                                    if (mistake.speed && (!existing.speed || mistake.speed > existing.speed)) {
+                                      existing.speed = mistake.speed; 
+                                    }
+                                  } else {
+                                    acc.push({ ...mistake, count: 1 });
+                                  }
+                                  return acc;
+                                }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => (
+                                  <div key={idx} className="flex items-center justify-between rounded-xl bg-white p-2.5 shadow-sm border border-slate-100/50 dark:bg-slate-800 dark:border-slate-700/50">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                                        {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
+                                        {mistake.type === 'harsh_braking' && <Footprints className="h-3.5 w-3.5 text-orange-500" />}
+                                        {mistake.type === 'rapid_acceleration' && <Zap className="h-3.5 w-3.5 text-blue-500" />}
+                                        {mistake.type === 'shoulder_check' && <Eye className="h-3.5 w-3.5 text-indigo-500" />}
+                                        {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
+                                        {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
+                                        {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
+                                        {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
+                                        {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
+                                        {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
+                                        {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
+                                        {mistake.type === 'curve_speeding' && <CornerUpRight className="h-3.5 w-3.5 text-orange-600" />}
+                                        {mistake.type === 'aggressive_cornering' && <Gauge className="h-3.5 w-3.5 text-rose-500" />}
+                                        {mistake.type === 'right_before_left' && <ChevronRight className="h-3.5 w-3.5 text-blue-500" />}
+                                        {mistake.type === 'school_zone_speeding' && <GraduationCap className="h-3.5 w-3.5 text-amber-600" />}
+                                      </div>
+                                      <div className="flex flex-col min-w-0">
+                                        <span className="truncate text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                          {getMistakeLabel(mistake.type)}
+                                        </span>
+                                        {mistake.count && mistake.count > 1 && (
+                                          <span className="text-[9px] font-black text-rose-500">
+                                            {mistake.count}x {isDE ? 'Vorkommen' : 'Occurrences'}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {mistake.speed && (
+                                      <div className="flex flex-col items-end">
+                                        <span className="text-[10px] font-black text-red-600">
+                                          {mistake.speed}
+                                        </span>
+                                        <span className="text-[8px] font-bold opacity-50">km/h</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
                               </div>
                             </div>
-                            );
-                          })}
+                          ) : (
+                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-green-50/50 p-4 border border-green-100 dark:bg-green-900/10 dark:border-green-900/20">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
+                                <Plus className="h-4 w-4 rotate-45" />
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="text-xs font-bold text-green-700 dark:text-green-500">
+                                  {isDE ? 'Keine nennenswerten Fehler' : 'No Critical Mistakes'}
+                                </p>
+                                <p className="text-[10px] text-green-600/80">
+                                  {isDE ? 'Sehr sichere Fahrt!' : 'Excellent driving performance!'}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Detail Footer Actions */}
+                          <div className="mt-6 flex items-center justify-end gap-2 border-t border-slate-100/50 pt-4 dark:border-slate-800">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleEditOpen(session); }}
+                              className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-600 transition-all hover:bg-blue-50 hover:text-blue-600 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-blue-900/30"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                              {isDE ? 'SITZUNG BEARBEITEN' : 'EDIT SESSION'}
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleRemoveSession(session.id); }}
+                              className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-400 transition-all hover:bg-red-50 hover:text-red-500 dark:bg-slate-900 dark:text-slate-500 dark:hover:bg-red-900/30"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              {isDE ? 'LÖSCHEN' : 'DELETE'}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ) : session.route && session.route.length > 0 && (
-                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-3 dark:border-green-900/30 dark:bg-green-900/10">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
-                          <Plus className="h-3.5 w-3.5 rotate-45" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-green-700 dark:text-green-400">
-                            {isDE ? 'Keine Fehler erkannt' : 'No mistakes detected'}
-                          </p>
-                          <p className="text-[10px] text-green-600/80 dark:text-green-500/80">
-                            {isDE ? 'Sichere Fahrweise beibehalten!' : 'Keep up the safe driving!'}
-                          </p>
-                        </div>
-                      </div>
+                      </motion.div>
                     )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handleEditOpen(session)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-900/30"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleRemoveSession(session.id)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+                  </AnimatePresence>
                 </div>
-              ))}
+                );
+              })}
           </div>
         )}
+      </div>
+
 
           {userProgress.drivingSessions.length > 0 && (
             <div className="mt-8 flex justify-center border-t border-slate-100 pt-6 dark:border-slate-800">

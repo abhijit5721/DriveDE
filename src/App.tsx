@@ -193,7 +193,9 @@ export default function App() {
 
   const handleNavigate = (tab: TabType) => {
     setActiveTab(tab);
-    setSelectedLesson(null);
+    // Don't auto-reset selectedLesson here because it breaks direct lesson selection
+    // that triggers a navigation. Instead, selectedLesson is cleared by handleLessonBack
+    // or when explicitly choosing a new lesson.
     setSelectedLegalPage(null);
   };
 
