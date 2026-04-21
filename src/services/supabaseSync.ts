@@ -45,6 +45,8 @@ export async function ensureProfileFromState(state: AppState) {
     language: state.language,
     theme: state.darkMode ? 'dark' : 'light',
     incorrect_questions: state.userProgress.incorrectQuestions || [],
+    hourly_rate_45: state.userProgress.hourlyRate45,
+    fixed_costs: state.userProgress.fixedCosts,
   });
 
   if (error) {
@@ -182,5 +184,14 @@ export async function hydrateFromSupabase() {
     })),
     quizAttempts: quizAttempts ?? [],
     incorrectQuestions: profile?.incorrect_questions ?? [],
+    hourlyRate45: profile?.hourly_rate_45 ?? 60,
+    fixedCosts: profile?.fixed_costs ?? {
+      registration: 350,
+      theoryExam: 25,
+      practicalExam: 116,
+      learningMaterial: 50,
+      firstAid: 40,
+      visionTest: 7,
+    },
   };
 }

@@ -127,7 +127,9 @@ export default function App() {
                             ...(remoteData.incorrectQuestions || [])
                         ])),
                         totalDrivingMinutes,
-                        specialDrivingMinutes
+                        specialDrivingMinutes,
+                        hourlyRate45: remoteData.hourlyRate45,
+                        fixedCosts: remoteData.fixedCosts
                     }
                 };
             });
