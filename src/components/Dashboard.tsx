@@ -16,7 +16,10 @@ interface DashboardProps {
   onOpenAuth?: () => void;
 }
 
+import { DrivingInsights } from './DrivingInsights';
+
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
+
   const { language, userProgress, licenseType, isPremium, authStatus, authEmail } = useAppStore();
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -226,6 +229,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </div>
         </div>
       </div>
+      
+      {/* AI Driving Insights & Weekly Stats */}
+      <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
 
       {isUmschreibung && (
         <button
