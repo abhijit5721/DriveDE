@@ -19,6 +19,10 @@ export function Welcome() {
       <h1 className="mt-6 text-3xl font-bold text-slate-900 dark:text-white">
         {isDE ? 'Willkommen bei DriveDE!' : 'Welcome to DriveDE!'}
       </h1>
+      <p className="mt-2 max-w-lg text-base text-slate-600 dark:text-slate-300">
+        {isDE
+          ? 'Deine App für die praktische Fahrprüfung in Deutschland. Wähle deinen Lernpfad, um zu beginnen.'
+          : 'Your app for the practical driving test in Germany. Choose your learning path to get started.'}
       </p>
 
       {/* Social Proof Section */}
