@@ -1,3 +1,4 @@
+// [DriveDE] Deployment Heartbeat: Triggering migration runner...
 import type { AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
