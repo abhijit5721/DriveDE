@@ -9,7 +9,8 @@ interface DrivingInsightsProps {
 }
 
 export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
-  const { language, drivingSessions, isPremium } = useAppStore();
+  const { language, userProgress, isPremium } = useAppStore();
+  const { drivingSessions } = userProgress;
   const isDE = language === 'de';
 
   // Sort sessions by date (newest first)
