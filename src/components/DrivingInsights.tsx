@@ -11,7 +11,8 @@ interface DrivingInsightsProps {
 export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
   const { language, userProgress, transmissionType, isPremium } = useAppStore();
   const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
-    .filter(s => !s.isSimulation && s.instructorName !== 'AI Safety Auditor' && !s.notes?.includes('Simulated Drive'));
+    .filter(s => s.instructorName !== 'AI Safety Auditor' || s.isSimulation); // Allow simulation sessions for testing focus areas
+
   const isDE = language === 'de';
 
   if (drivingSessions.length === 0) return null;
@@ -56,11 +57,12 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
 
   const topMistakes = Object.entries(mistakeCounts)
     .sort(([, a], [, b]) => b - a)
-    .slice(0, 3);
+    .slice(0, 5);
+
 
   // Mapping mistakes to lesson IDs - Precision fixed for curriculum alignment
   const lessonMap: Record<string, string> = {
-    'speeding': 'city-1',
+    'speeding': 'special-1',
     'shoulder_check': 'basics-1b',
     'priority': 'city-1',
     'right_before_left': 'city-1',
@@ -72,11 +74,13 @@ export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) 
     'harsh_cornering': 'basics-4',
     'school_zone': 'city-1',
     'school_zone_speeding': 'city-1',
-    'curve_speeding': 'basics-4',
-    'aggressive_cornering': 'basics-4',
-    'wrong_way': 'city-6',
-    'illegal_turn': 'city-5'
+    'curve_speeding': 'special-1',
+    'aggressive_cornering': 'special-1',
+    'wrong_way': 'city-1',
+    'illegal_turn': 'city-5',
+    'pedestrian_safety': 'city-4'
   };
+
 
   const getMistakeLabel = (type: string) => {
     switch (type) {
