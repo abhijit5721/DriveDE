@@ -412,6 +412,26 @@ export const useAppStore = create<AppState>()(
           userProgress: initialProgress,
           isPremium: false,
         }),
+
+      clearDrivingHistory: () =>
+        set((state) => {
+          const nextProgress = {
+            ...state.userProgress,
+            drivingSessions: [],
+            totalDrivingMinutes: 0,
+            specialDrivingMinutes: {
+              ueberland: 0,
+              autobahn: 0,
+              nacht: 0,
+            },
+          };
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+          void ensureProfileFromState(nextState as AppState);
+          return { userProgress: nextProgress };
+        }),
     }),
     {
       name: 'drivede-storage',

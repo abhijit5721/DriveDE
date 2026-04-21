@@ -150,6 +150,7 @@ export interface DrivingSession {
   route?: { lat: number; lng: number; timestamp: number }[];
   locationSummary?: string; // e.g. "Berlin, Mitte"
   mistakes?: DrivingMistake[];
+  isSimulation?: boolean;
 }
 
 export interface UserProgress {
@@ -200,6 +201,7 @@ export interface AppState {
   removeMistake: (questionId: string) => void;
   setHourlyRate45: (rate: number) => void;
   resetProgress: () => void;
+  clearDrivingHistory: () => void;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account';

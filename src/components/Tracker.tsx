@@ -211,7 +211,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
 };
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
-  const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, setHourlyRate45, licenseType, isPremium } = useAppStore();
+  const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, licenseType, isPremium } = useAppStore();
   const SESSION_LIMIT = 3;
   const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
   const [showAddForm, setShowAddForm] = useState(false);
@@ -1109,7 +1109,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       totalDistance: Math.round(currentDistance * 10) / 10,
       route: cumulativeRouteRef.current,
       locationSummary: locationSummary || undefined,
-      mistakes: cumulativeMistakesRef.current
+      mistakes: cumulativeMistakesRef.current,
+      isSimulation: isSimulationMode
     }));
     setShowAddForm(true);
     setShowManualLog(false);
@@ -1263,7 +1264,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 totalDistance: 1.2,
                 route: mockRoute,
                 locationSummary: 'Berlin, Mitte',
-                mistakes: mockMistakes
+                mistakes: mockMistakes,
+                isSimulation: true
               });
               toast.success('Advanced Simulation Added!');
             }}
@@ -1968,6 +1970,22 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               ))}
           </div>
         )}
+
+          {userProgress.drivingSessions.length > 0 && (
+            <div className="mt-8 flex justify-center border-t border-slate-100 pt-6 dark:border-slate-800">
+              <button
+                onClick={() => {
+                  if (window.confirm(isDE ? 'Möchtest du wirklich alle Fahrstunden löschen?' : 'Are you sure you want to delete all driving sessions?')) {
+                    clearDrivingHistory();
+                  }
+                }}
+                className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-red-600 transition-all hover:bg-red-50 dark:border-red-900/30 dark:bg-red-900/10 dark:hover:bg-red-900/20"
+              >
+                <Trash2 className="h-4 w-4" />
+                {isDE ? 'Fahrtenbuch zurücksetzen' : 'Clear All History'}
+              </button>
+            </div>
+          )}
       </div>
 
       {/* Add Session Modal */}

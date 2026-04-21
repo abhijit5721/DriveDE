@@ -10,7 +10,8 @@ interface DrivingInsightsProps {
 
 export function DrivingInsights({ onDirectLessonSelect }: DrivingInsightsProps) {
   const { language, userProgress, transmissionType, isPremium } = useAppStore();
-  const drivingSessions = Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [];
+  const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
+    .filter(s => !s.isSimulation && s.instructorName !== 'AI Safety Auditor' && !s.notes?.includes('Simulated Drive'));
   const isDE = language === 'de';
 
   if (drivingSessions.length === 0) return null;
