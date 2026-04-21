@@ -28,8 +28,15 @@ export function BudgetEstimator() {
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
   
-  // Use costs from store
-  const costs = userProgress.fixedCosts;
+  // Use costs from store with fallback for older users
+  const costs = userProgress.fixedCosts || {
+    registration: 350,
+    theoryExam: 25,
+    practicalExam: 116,
+    learningMaterial: 50,
+    firstAid: 40,
+    visionTest: 7,
+  };
   const hourlyRate45 = userProgress.hourlyRate45 || 60;
   const specialRateFactor = 1.2;
 
