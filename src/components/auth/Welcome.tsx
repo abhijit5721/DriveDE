@@ -39,7 +39,7 @@ export function Welcome() {
       {/* Background with Overlay */}
       <div className="fixed inset-0 z-0">
         <img 
-          src="file:///C:/Users/abhij/.gemini/antigravity/brain/ecfe8d6c-977d-46a5-b284-6fe4f34b7f6d/drivede_hero_background_1776721458946_1776807807642.png"
+          src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop"
           alt="Driving Background"
           className="h-full w-full object-cover"
         />
