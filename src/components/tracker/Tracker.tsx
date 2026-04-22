@@ -2203,8 +2203,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             className="flex w-full flex-col overflow-hidden rounded-t-[2.5rem] bg-white dark:bg-slate-800 sm:max-w-md sm:rounded-2xl shadow-2xl"
             style={{
               height: 'auto',
-              maxHeight: '92dvh',
-              paddingBottom: 'env(safe-area-inset-bottom, 24px)',
+              maxHeight: '90dvh',
+              paddingBottom: 'env(safe-area-inset-bottom, 32px)',
             }}
           >
             
@@ -2329,7 +2329,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             </div>
 
             {/* Footer (Sticky) — always visible above safe area */}
-            <div className="shrink-0 border-t border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+            <div className="shrink-0 border-t border-slate-200 bg-white p-4 pb-8 dark:border-slate-700 dark:bg-slate-800 sm:pb-4">
               <button
                 onClick={handleAddSession}
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:from-blue-600 hover:to-blue-700 active:scale-[0.98]"
