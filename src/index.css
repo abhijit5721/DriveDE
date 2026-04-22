@@ -105,6 +105,37 @@ textarea:focus-visible {
   animation: progress-pulse 2s ease-in-out infinite;
 }
 
+/* Cinematic Animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes cinematic-zoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-cinematic-zoom {
+  animation: cinematic-zoom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Print styles for review/export screens */
 @page {
   size: A4;
