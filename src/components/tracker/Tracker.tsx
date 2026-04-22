@@ -2195,16 +2195,15 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       
       {/* Add Session Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center sm:p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           {/* On mobile: sheet slides up from bottom. On desktop: centered modal */}
           <motion.div 
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            className="flex w-full flex-col overflow-hidden rounded-t-[2.5rem] bg-white dark:bg-slate-800 sm:max-w-md sm:rounded-2xl shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="flex w-full flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-800 sm:max-w-md shadow-2xl"
             style={{
               height: 'auto',
-              maxHeight: '90dvh',
-              paddingBottom: 'env(safe-area-inset-bottom, 32px)',
+              maxHeight: '85dvh',
             }}
           >
             
@@ -2329,7 +2328,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             </div>
 
             {/* Footer (Sticky) — always visible above safe area */}
-            <div className="shrink-0 border-t border-slate-200 bg-white p-4 pb-8 dark:border-slate-700 dark:bg-slate-800 sm:pb-4">
+            <div className="shrink-0 border-t border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
               <button
                 onClick={handleAddSession}
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:from-blue-600 hover:to-blue-700 active:scale-[0.98]"
