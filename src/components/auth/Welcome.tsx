@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { 
   Car, BadgeCheck, Cog, Zap, Users, Trophy, Shield, 
-  Star, ChevronRight, Menu, X, ArrowRight, Play, CheckCircle2 
+  Star, ChevronRight, Menu, X, ArrowRight, Play, CheckCircle2, Languages, Globe 
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 
 export function Welcome() {
-  const { language, setLicenseType, setHasVisited, licenseType, authStatus } = useAppStore();
+  const { language, setLanguage, setLicenseType, setHasVisited, licenseType, authStatus } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
@@ -87,6 +87,28 @@ export function Welcome() {
                 {isDE ? 'Pfad wählen' : 'Start Now'}
               </button>
             )}
+
+            {/* Language Switcher Desktop */}
+            <div className="flex items-center gap-1 ml-2 border-l border-slate-700/50 pl-4">
+              <button
+                onClick={() => setLanguage('de')}
+                className={cn(
+                  "px-2 py-1 text-[10px] font-black rounded-lg transition-all",
+                  isDE ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20" : "text-slate-400 hover:text-white"
+                )}
+              >
+                DE
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={cn(
+                  "px-2 py-1 text-[10px] font-black rounded-lg transition-all",
+                  !isDE ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20" : "text-slate-400 hover:text-white"
+                )}
+              >
+                EN
+              </button>
+            </div>
           </div>
 
           {/* Mobile Toggle */}
@@ -110,6 +132,34 @@ export function Welcome() {
                   {isDE ? 'Zum Dashboard' : 'Back to Dashboard'}
                 </button>
               )}
+
+              {/* Language Switcher Mobile */}
+              <div className="mt-4 flex items-center justify-between border-t border-slate-800 pt-6">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <Languages className="h-5 w-5" />
+                  <span className="text-sm font-bold">{isDE ? 'Sprache' : 'Language'}</span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setLanguage('de')}
+                    className={cn(
+                      "px-4 py-2 text-xs font-black rounded-xl transition-all",
+                      isDE ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-400"
+                    )}
+                  >
+                    DEUTSCH
+                  </button>
+                  <button
+                    onClick={() => setLanguage('en')}
+                    className={cn(
+                      "px-4 py-2 text-xs font-black rounded-xl transition-all",
+                      !isDE ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-400"
+                    )}
+                  >
+                    ENGLISH
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
