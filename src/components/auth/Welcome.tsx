@@ -307,7 +307,7 @@ export function Welcome() {
             <div className="relative h-full w-full bg-slate-950">
                {/* Real Demo Video */}
                <img 
-                 src="/demo-video.webp"
+                 src="/demo-video-cinematic.webp"
                  className="h-full w-full object-contain"
                  alt="DriveDE Demo Video"
                />
