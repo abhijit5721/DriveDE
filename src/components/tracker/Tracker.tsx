@@ -1322,7 +1322,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     .reduce((sum, s) => sum + s.duration, 0);
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -1668,12 +1668,12 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             {isDE ? 'Live-Tracking aktiv (Basis-Modus)' : 'Live tracking active (Basic mode)'}
           </p>
         )}
-        </div>
-        <div className="grid grid-cols-2 gap-3">
+        {/* Primary Control Actions (Integrated) */}
+        <div className="mt-6 grid grid-cols-2 gap-3">
           {isTimerRunning ? (
             <button
               onClick={handlePauseTimer}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
             >
               <Pause className="h-4 w-4" />
               {isDE ? 'Pause' : 'Pause'}
@@ -1689,16 +1689,16 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                 }
               }}
               className={cn(
-                "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition-colors",
+                "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95",
                 !isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT
-                  ? "bg-amber-500 hover:bg-amber-600"
-                  : "bg-green-500 hover:bg-green-600"
+                  ? "bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20"
+                  : "bg-green-500/90 hover:bg-green-600 shadow-green-500/20"
               )}
             >
               {!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
                 <>
                   <Crown className="h-4 w-4" />
-                  {isDE ? 'Live Tracking (Pro)' : 'Live Tracking (Pro)'}
+                  {isDE ? 'Tracking (Pro)' : 'Tracking (Pro)'}
                 </>
               ) : (
                 <>
@@ -1711,12 +1711,13 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           <button
             onClick={handleStopTimer}
             disabled={elapsedTime === 0 && !isTimerRunning}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
           >
             <Square className="h-4 w-4" />
             {isDE ? 'Stopp & Speichern' : 'Stop & Save'}
           </button>
         </div>
+      </div>
 
       {/* Progress Cards */}
       <div className="grid grid-cols-3 gap-3">
