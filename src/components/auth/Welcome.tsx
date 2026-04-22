@@ -81,7 +81,7 @@ export function Welcome() {
               </button>
             ) : (
               <button 
-                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
                 className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95"
               >
                 {isDE ? 'Pfad wählen' : 'Start Now'}
@@ -124,12 +124,22 @@ export function Welcome() {
               {navLinks.map((link) => (
                 <a key={link.name} href={link.href} className="text-lg font-bold text-white">{link.name}</a>
               ))}
-              {isReturningUser && (
+              {isReturningUser ? (
                 <button 
                   onClick={() => setHasVisited(true)}
                   className="rounded-xl bg-emerald-600 py-4 text-lg font-bold text-white transition hover:bg-emerald-700"
                 >
                   {isDE ? 'Zum Dashboard' : 'Back to Dashboard'}
+                </button>
+              ) : (
+                <button 
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setTimeout(() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' }), 100);
+                  }}
+                  className="rounded-xl bg-blue-600 py-4 text-lg font-bold text-white transition hover:bg-blue-700"
+                >
+                  {isDE ? 'Jetzt starten' : 'Start Now'}
                 </button>
               )}
 
@@ -229,7 +239,7 @@ export function Welcome() {
               </button>
             ) : (
               <button 
-                onClick={() => window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' })}
+                onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
                 className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-700 active:scale-95"
               >
                 {isDE ? 'Jetzt kostenlos starten' : 'Get Started Free'}
@@ -367,7 +377,7 @@ export function Welcome() {
       )}
 
       {/* Path Selection Area (Scroll-to Target) */}
-      <section className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl">
+      <section id="paths" className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl">
         <div className="mx-auto max-w-4xl">
           <div className="text-center">
             <h2 className="text-3xl font-black text-white sm:text-4xl">
