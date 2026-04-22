@@ -720,12 +720,24 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             (position) => {
               const { latitude: lat, longitude: lng, speed } = position.coords;
               const newPoint = { lat, lng, timestamp: Date.now() };
-              const currentKmh = speed !== null ? Math.round(speed * 3.6) : 0;
-              
-              setCurrentSpeed(currentKmh);
               
               setGpsPoints(prev => {
                 const lastPoint = prev[prev.length - 1];
+                let currentKmh = 0;
+
+                if (speed !== null) {
+                  currentKmh = Math.round(speed * 3.6);
+                } else if (lastPoint) {
+                  // Fallback: Calculate speed manually (dist / time)
+                  const distKm = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
+                  const timeHours = (newPoint.timestamp - lastPoint.timestamp) / 3600000;
+                  if (timeHours > 0) {
+                    currentKmh = Math.round(distKm / timeHours);
+                  }
+                }
+
+                setCurrentSpeed(currentKmh);
+
                 if (lastPoint) {
                   const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
                   if (dist > 0.005) { // Only add if moved > 5 meters
