@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, AlertTriangle, CheckCircle2, Volume2, VolumeX, ArrowRight, Flag, Car } from 'lucide-react';
+import { Timer, AlertTriangle, CheckCircle2, Volume2, VolumeX, ArrowRight, Car } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface ExamScenario {

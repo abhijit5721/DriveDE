@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Play, Square, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '../../utils/cn';
 import { examCommands } from '../../data/examCommands';
 
 interface ExamSimulationProps {

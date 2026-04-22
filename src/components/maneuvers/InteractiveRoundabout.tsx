@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, RotateCcw, Play, Info, ArrowRight } from 'lucide-react';
+import { Check, RotateCcw, Play, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 export default function InteractiveRoundabout({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {

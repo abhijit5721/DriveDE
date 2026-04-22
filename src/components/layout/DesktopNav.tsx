@@ -1,4 +1,4 @@
-import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Globe, Sun, Moon, Crown, Wallet } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, Crown, Wallet } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 

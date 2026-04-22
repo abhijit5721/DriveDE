@@ -131,6 +131,12 @@ export interface QuizOption {
   textEn: string;
 }
 
+export interface GPSPoint {
+  lat: number;
+  lng: number;
+  timestamp: number;
+}
+
 export interface DrivingMistake {
   type: 'speeding' | 'harsh_braking' | 'rapid_acceleration' | 'signal' | 'priority' | 'stop_sign' | 'shoulder_check' | 'wrong_way' | 'illegal_turn' | 'idling' | 'roundabout_signal' | 'curve_speeding' | 'aggressive_cornering' | 'right_before_left' | 'school_zone_speeding' | 'other';
   speed?: number;
@@ -147,7 +153,7 @@ export interface DrivingSession {
   notes: string;
   instructorName?: string;
   totalDistance?: number; // km
-  route?: { lat: number; lng: number; timestamp: number }[];
+  route?: GPSPoint[];
   locationSummary?: string; // e.g. "Berlin, Mitte"
   mistakes?: DrivingMistake[];
   isSimulation?: boolean;
@@ -187,6 +193,7 @@ export interface AppState {
   isPremium: boolean;
   authEmail: string | null;
   authDisplayName: string | null;
+  authUserId: string | null;
   authStatus: 'guest' | 'signed_in';
   userProgress: UserProgress;
   hasVisited: boolean;
@@ -197,7 +204,7 @@ export interface AppState {
   setLearningPath: (path: LearningPathType) => void;
   setTransmissionType: (type: TransmissionType) => void;
   setPremium: (isPremium: boolean) => void;
-  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in', authDisplayName: string | null) => void;
+  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in', authDisplayName: string | null, authUserId: string | null) => void;
   unlockAchievement: (achievementId: string) => void;
   updateStreak: () => void;
   completeLesson: (lessonId: string) => void;

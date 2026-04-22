@@ -209,7 +209,7 @@ export const useAppStore = create<AppState>()(
         }),
 
       setAuthState: (email, status, displayName = null, userId = null) =>
-        set((state) => ({ 
+        set(() => ({ 
           authEmail: email, 
           authStatus: status, 
           authDisplayName: displayName,

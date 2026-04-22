@@ -163,7 +163,7 @@ export default function App() {
         }
 
       } else {
-        setAuthState(null, 'guest', null);
+        setAuthState(null, 'guest', null, null);
       }
       setIsAuthLoading(false);
     });
@@ -255,7 +255,7 @@ export default function App() {
 
   const handleSignOut = async () => {
     await signOut();
-    setAuthState(null, 'guest', null);
+    setAuthState(null, 'guest', null, null);
     resetProgress();
     setHasVisited(false);
   };

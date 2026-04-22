@@ -171,6 +171,10 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 {isDE ? 'Abmelden' : 'Sign out'}
               </button>
 
+              <button
+                disabled
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/50 cursor-not-allowed"
+              >
                 {isDE ? 'Konto verwalten' : 'Manage account'}
               </button>
 
@@ -182,7 +186,6 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 {isDE ? 'Report mit Fahrlehrer teilen' : 'Share report with instructor'}
               </button>
             </div>
-
           ) : (
             <>
               <div className="grid grid-cols-1 gap-3">

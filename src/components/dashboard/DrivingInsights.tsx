@@ -1,8 +1,6 @@
-import React from 'react';
-import { TrendingUp, Target, Clock, ChevronRight, AlertTriangle, Zap, Calendar, Wind, Star, Lock, Crown } from 'lucide-react';
+import { TrendingUp, Target, ChevronRight, Zap, Calendar, Wind, Star, Lock, Crown } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-import type { DrivingMistake } from '../../types';
 
 interface DrivingInsightsProps {
   onDirectLessonSelect: (lessonId: string) => void;

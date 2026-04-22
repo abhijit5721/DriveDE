@@ -1,24 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoveDown, RotateCcw, Check, AlertCircle, Info } from 'lucide-react';
+import { RotateCcw, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
+
 
 type ParkingPhase = 'start' | 'align' | 'steering-in' | 'backing-in' | 'steering-out' | 'final' | 'failed';
 
 export default function InteractiveParking({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const isDE = language === 'de';
   const [phase, setPhase] = useState<ParkingPhase>('start');
-  const [carX, setCarX] = useState(0);
-  const [carY, setCarY] = useState(0);
-  const [carAngle, setCarAngle] = useState(0);
   const [hint, setHint] = useState<string>('');
 
   useEffect(() => {
     switch (phase) {
       case 'start':
-        setCarX(100);
-        setCarY(100);
-        setCarAngle(0);
         setHint(isDE ? 'Fahre vorwärts, bis du neben dem blauen Auto stehst.' : 'Drive forward until you are next to the blue car.');
         break;
       case 'align':

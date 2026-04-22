@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Scale, Cloud, LogIn, Flame, Mic } from 'lucide-react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Cloud, LogIn, Flame, Mic } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
@@ -25,7 +25,7 @@ import { DrivingInsights } from './DrivingInsights';
 
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
 
-  const { language, userProgress, licenseType, isPremium, authStatus, authEmail } = useAppStore();
+  const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
 

@@ -12,7 +12,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [selectedTier, setSelectedTier] = useState<Tier>('90-days');
   const [isLoading, setIsLoading] = useState(false);
 
-  const tiers = {
+  const tiers: Record<string, any> = {
     '30-days': {
       price: 9.99,
       period: { de: 'für 30 Tage', en: 'for 30 days' },

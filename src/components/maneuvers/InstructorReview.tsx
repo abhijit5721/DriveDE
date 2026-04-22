@@ -1,11 +1,10 @@
 import { useRef, useState, useMemo } from 'react';
-import { ArrowLeft, BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck, AlertCircle, CheckCircle2, XCircle, RotateCcw, Lock } from 'lucide-react';
+import { BookOpenText, CarFront, ClipboardCheck, Download, FileText, MonitorSmartphone, Printer, ShieldCheck, AlertCircle, CheckCircle2, Lock } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons, getLessonById } from '../../data/curriculum';
 import { scenarios } from '../../data/scenarios';
 import { PageHeader } from '../layout/PageHeader';
-import { cn } from '../../utils/cn';
 import type { Lesson, ManeuverStep, Tip } from '../../types';
 
 interface InstructorReviewProps {

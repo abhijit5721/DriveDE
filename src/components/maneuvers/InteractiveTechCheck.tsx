@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Info, AlertCircle, Droplets, Thermometer, Battery, Droplet, Gauge } from 'lucide-react';
+import { Check, Info, Droplets, Thermometer, Battery, Droplet, Gauge } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface Hotspot {

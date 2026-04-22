@@ -17,13 +17,13 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { 
   Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, 
   Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
-  Signal, Search, Flag, Target, Undo2, Wind, RefreshCcw, CornerUpRight, 
+  Signal, Search, Undo2, Wind, RefreshCcw, CornerUpRight, 
   Gauge, ChevronRight, ChevronDown, GraduationCap, Lock 
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
@@ -246,6 +246,10 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
   );
 };
 
+interface TrackerProps {
+  onOpenPaywall?: () => void;
+}
+
 export function Tracker({ onOpenPaywall }: TrackerProps) {
   const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, licenseType, isPremium } = useAppStore();
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
@@ -274,9 +278,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     return isDE ? labels[type]?.de || type : labels[type]?.en || type;
   };
 
-  const SESSION_LIMIT = 300; // Manual logs are effectively unlimited or high limit
+  // const SESSION_LIMIT = 300; // Manual logs are effectively unlimited or high limit
 const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
-  const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
+  // const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [isEditingRate, setIsEditingRate] = useState(false);
@@ -309,7 +313,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
   // --- PERSISTENT REFS ---
   // Used to maintain data across simulation loops or component re-renders
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
-  const cumulativeRouteRef = useRef<DrivingSession['route']>([]);
+  const cumulativeRouteRef = useRef<GPSPoint[]>([]);
+  const lastMotionLogRef = useRef<number>(0);
   const lastSchoolCheckRef = useRef<number>(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -339,8 +344,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
   /**
    * Centralized logging helper for GPS points.
    */
-  const logRoutePoint = (point: { lat: number, lng: number, timestamp: number }) => {
-    cumulativeRouteRef.current = [...cumulativeRouteRef.current, point];
+  const logRoutePoint = (point: GPSPoint) => {
+    cumulativeRouteRef.current = [...(cumulativeRouteRef.current || []), point];
     setGpsPoints(prev => [...prev, point]);
   };
 
@@ -521,7 +526,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
   /**
    * Detects illegal entries (No Entry signs) at the car's position.
    */
-  const checkIllegalTurn = async (lat: number, lng: number, travelBearing: number) => {
+  const checkIllegalTurn = async (lat: number, lng: number, _travelBearing: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
     if (currentSpeed < 5) return;
 
@@ -1268,7 +1273,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
   };
 
   const handleAddSession = () => {
-    if (newSession.duration <= 0) {
+    if ((newSession.duration || 0) <= 0) {
       toast.error(isDE ? 'Dauer muss größer als 0 sein' : 'Duration must be greater than 0');
       return;
     }
@@ -1281,7 +1286,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       updateDrivingSession(editingSessionId, newSession);
       toast.success(isDE ? 'Fahrstunde aktualisiert!' : 'Session updated!');
     } else {
-      addDrivingSession(newSession);
+      addDrivingSession(newSession as Omit<DrivingSession, 'id'>);
       toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
     }
     handleCloseForm();
@@ -1351,7 +1356,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           <button
             onClick={() => {
               if (!isPremium) {
-                onOpenPaywall();
+                onOpenPaywall?.();
               } else {
                 if (window.confirm(isDE ? 'Möchtest du wirklich eine simulierte Fahrt mit Leaflet-Karte und Fehlverhaltens-Daten hinzufügen?' : 'Do you want to add a simulated drive with Leaflet Map and mistake data?')) {
                   const mockMistakes: DrivingMistake[] = [
@@ -1695,7 +1700,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
               onClick={() => {
                 const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
                 if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
-                  onOpenPaywall();
+                  onOpenPaywall?.();
                 } else {
                   handleStartTimer();
                 }
@@ -1967,8 +1972,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                       {!isExpanded && (
                         <div className={cn(
                           "h-2 w-2 rounded-full",
-                          (session.mistakes.length < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
-                          (session.mistakes.length < 5) ? "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]"
+                          ((session.mistakes?.length || 0) < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
+                          ((session.mistakes?.length || 0) < 5) ? "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]"
                         )} />
                       )}
                     </div>
@@ -2009,8 +2014,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                             <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
                               <div className={cn(
                                 "h-2 w-2 rounded-full",
-                                (session.mistakes.length < 2) ? "bg-green-500" : 
-                                (session.mistakes.length < 5) ? "bg-yellow-500" : "bg-red-500"
+                                ((session.mistakes?.length || 0) < 2) ? "bg-green-500" : 
+                                ((session.mistakes?.length || 0) < 5) ? "bg-yellow-500" : "bg-red-500"
                               )} />
                               <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
                                 {isDE ? 'Sicherheits-Fahrweise' : 'Safety Balance'}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
@@ -2051,7 +2056,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                                     </p>
                                   </div>
                                   <button
-                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall(); }}
+                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
                                     className="flex items-center gap-2 rounded-full bg-blue-500 px-4 py-1.5 text-[10px] font-bold text-white shadow-md transition-transform hover:scale-105 active:scale-95"
                                   >
                                     <Crown className="h-3 w-3 text-amber-300" />
@@ -2135,7 +2140,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                                     {isDE ? 'Upgrade auf Pro für detaillierte Fehler-Analyse und Verbesserungstipps.' : 'Upgrade to Pro for detailed mistake analysis and improvement tips.'}
                                   </p>
                                   <button
-                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall(); }}
+                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
                                     className="flex shrink-0 items-center gap-2 rounded-lg bg-red-100 px-3 py-1.5 text-[9px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400"
                                   >
                                     <Lock className="h-3 w-3" />

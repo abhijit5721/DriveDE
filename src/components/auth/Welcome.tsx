@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { 
   Car, BadgeCheck, Cog, Zap, Users, Trophy, Shield, 
-  Star, ChevronRight, Menu, X, ArrowRight, Play, CheckCircle2, Languages, Globe 
+  Star, ChevronRight, Menu, X, ArrowRight, Play, CheckCircle2, Languages 
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 
 export function Welcome() {
-  const { language, setLanguage, setLicenseType, setHasVisited, licenseType, authStatus } = useAppStore();
+  const { language, setLanguage, setLicenseType, setHasVisited, licenseType } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);

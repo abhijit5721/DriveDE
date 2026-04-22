@@ -52,11 +52,11 @@ export default function InteractiveMirrorCheck({
     }
   };
 
-  const reset = () => {
+  /* const reset = () => {
     setCompletedSteps([]);
     setError(null);
     setShowSuccess(false);
-  };
+  }; */
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-6 text-white overflow-hidden relative">

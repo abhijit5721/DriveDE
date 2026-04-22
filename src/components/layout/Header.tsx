@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, Cloud, LogIn, LogOut } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, LogIn, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
@@ -14,7 +14,7 @@ interface HeaderProps {
 }
 
 export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
-  const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authEmail, authStatus } = useAppStore();
+  const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authStatus } = useAppStore();
 
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);

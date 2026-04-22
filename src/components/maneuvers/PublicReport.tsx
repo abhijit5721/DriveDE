@@ -13,7 +13,7 @@ import {
   Info
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
-import { DrivingSession, UserProgress } from '../../types';
+import { DrivingSession } from '../../types';
 import { Skeleton } from '../common/Skeleton';
 
 interface PublicReportProps {
@@ -98,7 +98,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
   const totalLessons = data.completedLessons.length;
-  const latestSession = data.sessions[0];
+  // const latestSession = data.sessions[0];
   
   // Simple "Readiness" calculation for the instructor
   const readiness = Math.min(100, Math.round((totalLessons / 14) * 50 + (totalMinutes / 600) * 50));
@@ -187,7 +187,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 {(() => {
                   const allMistakes = data.sessions.flatMap(s => s.mistakes);
                   const counts: Record<string, number> = {};
-                  allMistakes.forEach(m => counts[m.type] = (counts[m.type] || 0) + 1);
+                  allMistakes.forEach(m => {
+                    if (m && m.type) {
+                      counts[m.type] = (counts[m.type] || 0) + 1;
+                    }
+                  });
                   const topMistake = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
                   
                   if (topMistake) {
@@ -237,10 +241,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     {session.duration} min
                   </div>
                 </div>
-                {session.mistakes.length > 0 && (
+                {(session.mistakes?.length || 0) > 0 && (
                   <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
                     <AlertCircle className="h-3 w-3" />
-                    {session.mistakes.length}
+                    {session.mistakes?.length || 0}
                   </div>
                 )}
               </div>

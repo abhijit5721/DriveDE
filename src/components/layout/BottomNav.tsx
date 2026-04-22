@@ -1,4 +1,4 @@
-import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Trophy, Star, Wallet } from 'lucide-react';
+import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Star, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';

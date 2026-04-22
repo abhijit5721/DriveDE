@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PiggyBank, 
@@ -8,7 +8,6 @@ import {
   Wallet, 
   Info, 
   Settings2, 
-  ChevronRight, 
   Save, 
   X,
   CreditCard,
@@ -52,7 +51,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
   const specialRateFactor = 1.2;
 
   // Local state for editing to avoid laggy inputs
-  const [editValues, setEditValues] = useState({
+  const [editValues, setEditValues] = useState<Record<string, number | string>>({
     registration: costs.registration,
     theoryExam: costs.theoryExam,
     practicalExam: costs.practicalExam,

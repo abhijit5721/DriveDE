@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
-import { cn } from '../../utils/cn';
+
 
 interface Car {
   id: string;
@@ -20,26 +20,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
   const [isSuccess, setIsSuccess] = useState(false);
   const [animatingCar, setAnimatingCar] = useState<string | null>(null);
 
-  const cars: Car[] = [
-    {
-      id: 'red',
-      color: '#ef4444',
-      position: { x: 50, y: 150, rotate: 90 }, // Coming from Bottom
-      target: { x: 50, y: -50 },
-      order: 1,
-      labelDe: 'Auto Blau (Rechts)',
-      labelEn: 'Blue Car (Right)',
-    },
-    {
-       id: 'blue',
-       color: '#3b82f6',
-       position: { x: 150, y: 50, rotate: 0 }, // Coming from Right
-       target: { x: -50, y: 50 },
-       order: 0,
-       labelDe: 'Auto Rot (Links)',
-       labelEn: 'Red Car (Left)',
-    }
-  ];
+
 
   /* 
      Scenario: Right before Left
