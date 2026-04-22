@@ -5,6 +5,10 @@ import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider } from '../../services/auth';
 import GoogleLogo from '../../assets/google-logo.svg';
+import { QRCodeCanvas } from 'qrcode.react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Share2, X } from 'lucide-react';
+
 
 interface AccountProps {
   onOpenAuth: () => void;
@@ -23,7 +27,9 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     authStatus,
     authEmail,
     authDisplayName,
+    authUserId,
     userProgress,
+
     learningPath,
     transmissionType,
     resetProgress,
@@ -33,6 +39,9 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+
 
   const isDE = language === 'de';
   const completedLessons = userProgress.completedLessons.length;
@@ -75,6 +84,25 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
 
     setAuthLoading(false);
   };
+
+  const handleOpenShare = () => {
+    if (authStatus !== 'signed_in') {
+      setAuthError(isDE ? 'Bitte melde dich zuerst an, um deinen Report zu teilen.' : 'Please sign in first to share your report.');
+      return;
+    }
+    
+    // Get the base URL (works in dev and production)
+    const baseUrl = window.location.origin + window.location.pathname;
+    
+    if (authUserId) {
+      setShareUrl(`${baseUrl}?report=${authUserId}`);
+      setShowShareModal(true);
+    } else {
+      setAuthError(isDE ? 'User ID konnte nicht gefunden werden.' : 'User ID could not be found.');
+    }
+  };
+
+
 
   const pathLabel =
     learningPath === 'umschreibung'
@@ -143,14 +171,18 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 {isDE ? 'Abmelden' : 'Sign out'}
               </button>
 
-              <button
-                onClick={onOpenAuth}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-              >
-                <ShieldCheck className="h-4 w-4" />
                 {isDE ? 'Konto verwalten' : 'Manage account'}
               </button>
+
+              <button
+                onClick={handleOpenShare}
+                className="col-span-full inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+              >
+                <Share2 className="h-4 w-4" />
+                {isDE ? 'Report mit Fahrlehrer teilen' : 'Share report with instructor'}
+              </button>
             </div>
+
           ) : (
             <>
               <div className="grid grid-cols-1 gap-3">
@@ -367,6 +399,85 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
           </div>
         </button>
       </div>
+
+      {/* Share Modal */}
+      <AnimatePresence>
+        {showShareModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowShareModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-sm rounded-3xl bg-slate-900 border border-white/10 p-8 text-center shadow-2xl"
+            >
+              <button 
+                onClick={() => setShowShareModal(false)}
+                className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white transition"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-400">
+                <Share2 className="h-8 w-8" />
+              </div>
+
+              <h3 className="text-xl font-bold text-white mb-2">
+                {isDE ? 'Fahrlehrer-Sync' : 'Instructor Sync'}
+              </h3>
+              <p className="text-sm text-slate-400 mb-8">
+                {isDE 
+                  ? 'Dein Fahrlehrer kann diesen Code scannen, um deinen aktuellen Lernstand und deine Fahrten zu prüfen.'
+                  : 'Your instructor can scan this code to review your current progress and driving logs.'}
+              </p>
+
+              <div className="mx-auto mb-8 flex items-center justify-center rounded-3xl bg-white p-6 shadow-inner">
+                <QRCodeCanvas 
+                  value={shareUrl} 
+                  size={200}
+                  level="H"
+                  includeMargin={false}
+                  imageSettings={{
+                    src: "/favicon.ico", // Or app logo
+                    x: undefined,
+                    y: undefined,
+                    height: 40,
+                    width: 40,
+                    excavate: true,
+                  }}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-3 rounded-xl bg-slate-800/50 border border-white/5">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
+                    {isDE ? 'Direkter Link' : 'Direct Link'}
+                  </p>
+                  <p className="text-xs text-blue-400 truncate font-mono">
+                    {shareUrl}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(shareUrl);
+                    alert(isDE ? 'Link kopiert!' : 'Link copied!');
+                  }}
+                  className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-bold transition"
+                >
+                  {isDE ? 'Link kopieren' : 'Copy link'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+

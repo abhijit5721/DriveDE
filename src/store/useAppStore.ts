@@ -116,6 +116,7 @@ export const useAppStore = create<AppState>()(
       isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
       authEmail: null,
       authDisplayName: null,
+      authUserId: null,
       authStatus: 'guest',
       userProgress: initialProgress,
       hasVisited: false,
@@ -207,11 +208,12 @@ export const useAppStore = create<AppState>()(
           return { isPremium: premium };
         }),
 
-      setAuthState: (authEmail, authStatus, authDisplayName) =>
-        set(() => ({
-          authEmail,
-          authStatus,
-          authDisplayName,
+      setAuthState: (email, status, displayName = null, userId = null) =>
+        set((state) => ({ 
+          authEmail: email, 
+          authStatus: status, 
+          authDisplayName: displayName,
+          authUserId: userId
         })),
 
       unlockAchievement: (achievementId: string) =>

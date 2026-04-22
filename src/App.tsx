@@ -39,6 +39,8 @@ import { BudgetEstimator } from './components/finance/BudgetEstimator';
 import { Skeleton } from './components/common/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
 import {LicenseSelector} from "./components/auth/LicenseSelector";
+import { PublicReport } from './components/maneuvers/PublicReport';
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('home');
@@ -61,6 +63,17 @@ export default function App() {
     setHasVisited,
     resetProgress,
   } = useAppStore();
+  
+  const [reportUserId, setReportUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const reportId = params.get('report');
+    if (reportId) {
+      setReportUserId(reportId);
+    }
+  }, []);
+
 
   // --- AUTH & DATA SYNC LOGIC ---
   useEffect(() => {
@@ -70,7 +83,7 @@ export default function App() {
       if (session?.user) {
         const { user } = session;
         const displayName = user.user_metadata?.full_name || user.email || null;
-        setAuthState(user.email || null, 'signed_in', displayName);
+        setAuthState(user.email || null, 'signed_in', displayName, user.id);
         
         const remoteData = await hydrateFromSupabase();
         
@@ -247,7 +260,12 @@ export default function App() {
     setHasVisited(false);
   };
 
+  if (reportUserId) {
+    return <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />;
+  }
+
   if (!hasVisited) {
+
     return <Welcome />;
   }
 
