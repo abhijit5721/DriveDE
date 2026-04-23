@@ -81,6 +81,8 @@ export async function syncCompletedLesson(lessonId: string) {
     lesson_id: lessonId,
     status: 'completed',
     completed_at: new Date().toISOString(),
+  }, {
+    onConflict: 'user_id,lesson_id'
   });
 
   if (error) {
