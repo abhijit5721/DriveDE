@@ -4,6 +4,8 @@ import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider } from '../../services/auth';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
+import { useRef } from 'react';
 
 type AuthMode = 'signin' | 'signup';
 
@@ -20,6 +22,12 @@ export function AuthModal({ onClose }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+
+  // Cloudflare Turnstile Site Key (Testing key that always passes)
+  // REPLACE THIS with your real Site Key from Cloudflare Dashboard
+  const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
 
   const copy = useMemo(() => {
     const isDe = language === 'de';
@@ -55,6 +63,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
         ? 'Passwort muss Groß-/Kleinschreibung, Zahlen und Sonderzeichen enthalten.' 
         : 'Password must include uppercase, lowercase, numbers, and symbols.',
       emailInvalid: isDe ? 'Bitte eine gültige E-Mail-Adresse angeben.' : 'Please provide a valid email address.',
+      captchaMissing: isDe ? 'Bitte bestätige, dass du kein Roboter bist.' : 'Please complete the CAPTCHA.',
       genericError: isDe ? 'Anmeldung fehlgeschlagen.' : 'Authentication failed.',
     };
   }, [language, mode]);
@@ -118,6 +127,11 @@ export function AuthModal({ onClose }: AuthModalProps) {
       }
     }
 
+    if (!captchaToken) {
+      setError(copy.captchaMissing);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -125,6 +139,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
+          options: {
+            captchaToken: captchaToken,
+          }
         });
 
         if (signInError) throw signInError;
@@ -133,6 +150,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            captchaToken: captchaToken,
+          }
         });
 
         if (signUpError) throw signUpError;
@@ -143,6 +163,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
     } catch (err) {
       const message = err instanceof Error ? err.message : copy.genericError;
       setError(message || copy.genericError);
+      // Reset CAPTCHA on error
+      turnstileRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -253,6 +276,24 @@ export function AuthModal({ onClose }: AuthModalProps) {
               </div>
             </label>
           )}
+
+          {/* Cloudflare Turnstile CAPTCHA */}
+          <div className="flex justify-center pt-2">
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={TURNSTILE_SITE_KEY}
+              onSuccess={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+              onError={() => {
+                setCaptchaToken(null);
+                setError(isDE ? 'CAPTCHA Fehler. Bitte versuche es erneut.' : 'CAPTCHA error. Please try again.');
+              }}
+              options={{
+                theme: 'light',
+                size: 'normal',
+              }}
+            />
+          </div>
         </div>
 
         {error && (
