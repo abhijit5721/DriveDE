@@ -21,6 +21,8 @@ interface PublicReportProps {
   onBack: () => void;
 }
 
+const VERSION = "1.0.4-perfect-dedup";
+
 export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{
