@@ -98,10 +98,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
   const totalLessons = data.completedLessons.length;
-  // const latestSession = data.sessions[0];
+  const [expandedSession, setExpandedSession] = useState<string | null>(null);
   
-  // Simple "Readiness" calculation for the instructor
-  const readiness = Math.min(100, Math.round((totalLessons / 14) * 50 + (totalMinutes / 600) * 50));
+  // More realistic "Readiness" calculation (14 theory + 20 hours = 100%)
+  const readiness = Math.min(100, Math.round((totalLessons / 14) * 40 + (totalMinutes / 1200) * 60));
 
   return (
     <div className="min-h-screen bg-slate-950 pb-20">
@@ -201,7 +201,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                           <AlertCircle className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white">Focus Area: {topMistake[0].replace('_', ' ')}</p>
+                          <p className="text-sm font-bold text-white">Focus Area: {topMistake[0].replace(/_/g, ' ')}</p>
                           <p className="text-xs text-slate-400 mt-1">Detected {topMistake[1]} instances. Recommended focus for next lesson.</p>
                         </div>
                       </div>
@@ -221,30 +221,55 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Recent Sessions</h3>
           <div className="space-y-3">
             {data.sessions.slice(0, 5).map((session) => (
-              <div key={session.id} className="rounded-2xl bg-slate-900 border border-white/5 p-4 flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${
-                  session.type === 'autobahn' ? 'bg-indigo-500/10 text-indigo-400' :
-                  session.type === 'ueberland' ? 'bg-emerald-500/10 text-emerald-400' :
-                  session.type === 'nacht' ? 'bg-amber-500/10 text-amber-400' :
-                  'bg-blue-500/10 text-blue-400'
-                }`}>
-                  <MapPin className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white truncate">
-                    {session.locationSummary || (session.type.charAt(0).toUpperCase() + session.type.slice(1))}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(session.date).toLocaleDateString()}
-                    <span className="text-slate-700">•</span>
-                    {session.duration} min
+              <div key={session.id} className="space-y-2">
+                <div 
+                  onClick={() => setExpandedSession(expandedSession === session.id ? null : session.id)}
+                  className="rounded-2xl bg-slate-900 border border-white/5 p-4 flex items-center gap-4 cursor-pointer hover:bg-slate-800/50 transition-colors"
+                >
+                  <div className={`p-3 rounded-xl ${
+                    session.type === 'autobahn' ? 'bg-indigo-500/10 text-indigo-400' :
+                    session.type === 'ueberland' ? 'bg-emerald-500/10 text-emerald-400' :
+                    session.type === 'nacht' ? 'bg-amber-500/10 text-amber-400' :
+                    'bg-blue-500/10 text-blue-400'
+                  }`}>
+                    <MapPin className="h-5 w-5" />
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-white truncate">
+                      {session.locationSummary || (session.type.charAt(0).toUpperCase() + session.type.slice(1))}
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(session.date).toLocaleDateString()}
+                      <span className="text-slate-700">•</span>
+                      {session.duration} min
+                    </div>
+                  </div>
+                  {(session.mistakes?.length || 0) > 0 && (
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
+                      <AlertCircle className="h-3 w-3" />
+                      {session.mistakes?.length || 0}
+                    </div>
+                  )}
                 </div>
-                {(session.mistakes?.length || 0) > 0 && (
-                  <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
-                    <AlertCircle className="h-3 w-3" />
-                    {session.mistakes?.length || 0}
+
+                {/* Expanded Fault Details */}
+                {expandedSession === session.id && (session.mistakes?.length || 0) > 0 && (
+                  <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Fault Details</p>
+                    {session.mistakes.map((m: any, idx: number) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
+                        <div className="w-1 h-1 rounded-full bg-red-500" />
+                        <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
+                        {m.timestamp && <span className="text-slate-500 text-[10px] ml-auto">{m.timestamp}</span>}
+                      </div>
+                    ))}
+                    {session.notes && (
+                      <div className="mt-3 pt-3 border-t border-white/5">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Notes</p>
+                        <p className="text-xs text-slate-400 italic">{session.notes}</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

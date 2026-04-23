@@ -224,20 +224,30 @@ export async function syncAllData(state: AppState) {
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  console.log('[DB-Sync] Starting full data sync...');
+  console.log('[DB-Sync] Starting optimized full data sync...');
   
-  // 1. Sync Profile
+  // 1. Sync Profile first
   await ensureProfileFromState(state);
   
-  // 2. Sync Lessons
-  for (const lessonId of state.userProgress.completedLessons) {
-    await syncCompletedLesson(lessonId);
+  const syncTasks: Promise<any>[] = [];
+
+  // 2. Batch Sync Lessons
+  if (state.userProgress.completedLessons.length > 0) {
+    const lessonData = state.userProgress.completedLessons.map(id => ({
+      user_id: userId,
+      lesson_id: id,
+      status: 'completed' as const,
+      completed_at: new Date().toISOString()
+    }));
+    syncTasks.push(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' }));
   }
   
-  // 3. Sync Sessions
+  // 3. Parallel Sync Sessions
+  // We use the existing helper but it's now part of a Promise.all
   for (const session of state.userProgress.drivingSessions) {
-    await syncDrivingSession(session, state.transmissionType);
+    syncTasks.push(syncDrivingSession(session, state.transmissionType));
   }
   
-  console.log('[DB-Sync] Full data sync complete!');
+  await Promise.all(syncTasks);
+  console.log('[DB-Sync] Optimized full data sync complete!');
 }
