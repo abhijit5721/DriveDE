@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npx tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
