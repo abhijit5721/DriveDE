@@ -38,6 +38,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     completedLessons: string[];
   } | null>(null);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
+  const [selectedFault, setSelectedFault] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -196,6 +197,17 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
 
+  const faultAdvice: Record<string, string> = {
+    speeding: "Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.",
+    harsh_braking: "Maintain a larger following distance and look further ahead to anticipate traffic flow changes earlier.",
+    signal: "Remember the 'Look-Signal-Maneuver' sequence. Always signal at least 3 seconds before turning or changing lanes.",
+    priority: "Review 'Right before Left' rules. Slow down when approaching intersections with limited visibility.",
+    shoulder_check: "Make the 'Schulterblick' more obvious. It must be done for every turn, lane change, and when pulling out.",
+    stop_sign: "Ensure a complete 3-second stop. The wheels must stop moving entirely before proceeding.",
+    right_before_left: "Always slow down and look right at unmarked T-junctions and intersections.",
+    school_zone_speeding: "Be extra vigilant near schools. Speed limits here are strictly enforced during exam hours."
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 pb-20">
       {/* Header */}
@@ -306,19 +318,45 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Practical Skills Focus</h3>
             </div>
             <div className="space-y-3">
-              {sortedFaults.map(([fault, count], i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold">
-                      {count}
-                    </div>
-                    <span className="text-sm text-slate-200 font-medium">{formatFaultName(fault)}</span>
+              {sortedFaults.map(([fault, count], i) => {
+                const isSelected = selectedFault === fault;
+                return (
+                  <div key={i} className="space-y-2">
+                    <button 
+                      onClick={() => setSelectedFault(isSelected ? null : fault)}
+                      className={cn(
+                        "w-full flex items-center justify-between p-3 rounded-xl border transition-all active:scale-[0.98]",
+                        isSelected ? "bg-orange-500/10 border-orange-500/30" : "bg-white/5 border-white/5 hover:bg-white/10"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm transition-colors",
+                          isSelected ? "bg-orange-500 text-white" : "bg-orange-500/10 text-orange-500"
+                        )}>
+                          {count}
+                        </div>
+                        <span className="text-sm text-slate-200 font-medium">{formatFaultName(fault)}</span>
+                      </div>
+                      <ArrowUpRight className={cn("h-4 w-4 transition-transform", isSelected ? "text-orange-500 rotate-45" : "text-slate-600")} />
+                    </button>
+                    
+                    {isSelected && (
+                      <div className="p-4 rounded-xl bg-slate-800/50 border border-white/5 animate-in slide-in-from-top-2 duration-300">
+                        <div className="flex items-center gap-2 mb-2 text-orange-400">
+                          <Info className="h-3.5 w-3.5" />
+                          <span className="text-[10px] font-bold uppercase tracking-wider">Instructor Advice</span>
+                        </div>
+                        <p className="text-xs text-slate-300 leading-relaxed">
+                          {faultAdvice[fault] || "Consistently review this maneuver with your instructor. Focus on awareness and early preparation."}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-slate-600" />
-                </div>
-              ))}
+                );
+              })}
               <p className="mt-4 text-[11px] text-slate-500 leading-relaxed italic">
-                * These areas show the highest frequency of errors in recent sessions.
+                * Click on a focus area to see specific instructor tips and advice.
               </p>
             </div>
           </div>
