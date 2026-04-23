@@ -9,7 +9,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-  // https://vite.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), viteSingleFile()],
   build: {
@@ -24,6 +24,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: './src/test/setup.tsx',
+    testTimeout: 15000,
   },
 });

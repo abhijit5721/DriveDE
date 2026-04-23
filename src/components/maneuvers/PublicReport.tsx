@@ -61,7 +61,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isSupabaseConfigured || !supabase) return;
+      if (!isSupabaseConfigured || !supabase) {
+        setLoading(false);
+        return;
+      }
       
       try {
         const [{ data: profile }, { data: sessions }, { data: lessons }] = await Promise.all([
@@ -101,7 +104,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     );
   }
 
-  if (!data) {
+  if (!data || !data.profile) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-center">
         <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
@@ -277,6 +280,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         </button>
         <div className="ml-auto flex items-center gap-2">
           <button
+            data-testid="lesson-mode-toggle"
             onClick={() => setLessonMode(!lessonMode)}
             className={cn(
               'flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border',
