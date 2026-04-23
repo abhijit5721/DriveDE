@@ -68,6 +68,15 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
         const finalRows = [...modernRows, ...filteredLegacy];
 
+        // DEBUG: Expose to window for remote inspection
+        (window as any).reportDebug = {
+          rawCount: allRows.length,
+          modernCount: modernRows.length,
+          legacyCount: legacyRows.length,
+          filteredLegacyCount: filteredLegacy.length,
+          finalCount: finalRows.length
+        };
+
         setData({
           profile,
           sessions: finalRows.map(s => ({
