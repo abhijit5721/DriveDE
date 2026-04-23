@@ -41,9 +41,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        setData({
-          profile,
-          sessions: (sessions || []).map(s => ({
+        // De-duplicate sessions (important if old rows without external_id exist)
+        const sessionMap = new Map<string, DrivingSession>();
+        
+        (sessions || []).forEach(s => {
+          const mapped: DrivingSession = {
             id: s.id,
             date: s.session_date,
             duration: s.duration_minutes,
@@ -53,8 +55,25 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             route: s.route || [],
             mistakes: s.mistakes || [],
             totalDistance: s.total_distance || 0,
+            location_summary: s.location_summary || '',
             locationSummary: s.location_summary || ''
-          })),
+          };
+
+          // Priority 1: external_id (the local timestamp ID)
+          // Priority 2: A composite key of date and duration (for legacy rows)
+          const key = s.external_id || `${s.session_date}_${s.duration_minutes}`;
+          
+          // If we already have this session, prefer the one with an external_id
+          if (!sessionMap.has(key) || s.external_id) {
+            sessionMap.set(key, mapped);
+          }
+        });
+
+        setData({
+          profile,
+          sessions: Array.from(sessionMap.values()).sort((a, b) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          ),
           completedLessons: (lessons || []).map(l => l.lesson_id)
         });
       } catch (e) {
