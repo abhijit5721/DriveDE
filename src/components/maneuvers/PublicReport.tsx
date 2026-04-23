@@ -55,13 +55,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           }
         });
 
-        // Tier 2: Merge by Similarity (Date + Duration + Category + Distance + Location)
-        // (Handles the same session uploaded with different IDs)
+        // Tier 2: Merge by Similarity (Date + Duration + Category + Distance + Location + Instructor)
+        // (Handles the same session uploaded with different IDs while preserving back-to-back lessons)
         const similarityMap = new Map<string, any>();
         Array.from(idMap.values()).forEach(r => {
           const dateStr = new Date(r.session_date).toISOString().split('T')[0];
           const dist = Math.round(r.total_distance || 0);
-          const simKey = `${dateStr}_${r.duration_minutes}_${r.category}_${dist}_${r.location_summary || ''}`;
+          // Key includes Instructor to distinguish sessions with same stats but different teachers
+          const simKey = `${dateStr}_${r.duration_minutes}_${r.category}_${dist}_${r.location_summary || ''}_${r.instructor_name || ''}`;
           
           if (!similarityMap.has(simKey)) {
             similarityMap.set(simKey, r);
@@ -139,8 +140,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   // 2. Quality Penalty (Recent Faults)
   // Look at the last 5 sessions or all if less
-  const recentSessions = data.sessions.slice(0, 5);
-  const totalRecentMistakes = recentSessions.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0);
+  const recentSessionsCount = data.sessions.slice(0, 5);
+  const totalRecentMistakes = recentSessionsCount.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0);
   
   // Penalty: -3% per recent mistake, capped at -30%
   const penalty = Math.min(30, totalRecentMistakes * 3);
@@ -263,7 +264,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         <div>
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Recent Sessions</h3>
           <div className="space-y-3">
-            {data.sessions.slice(0, 5).map((session) => (
+            {data.sessions.slice(0, 50).map((session) => (
               <div key={session.id} className="space-y-2">
                 <div 
                   onClick={() => setExpandedSession(expandedSession === session.id ? null : session.id)}
