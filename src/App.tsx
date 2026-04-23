@@ -38,7 +38,7 @@ import { AccountSkeleton } from './components/auth/AccountSkeleton';
 import { BudgetEstimator } from './components/finance/BudgetEstimator';
 import { Skeleton } from './components/common/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
-import {LicenseSelector} from "./components/auth/LicenseSelector";
+import {LicenseSelector} from './components/auth/LicenseSelector';
 import { PublicReport } from './components/maneuvers/PublicReport';
 
 
@@ -133,7 +133,7 @@ export default function App() {
                 const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
                 
                 let totalDrivingMinutes = 0;
-                let specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
+                const specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
                 
                 combinedSessions.forEach(s => {
                     const duration = Number(s.duration) || 0;

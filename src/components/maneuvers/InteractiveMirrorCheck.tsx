@@ -90,10 +90,10 @@ export default function InteractiveMirrorCheck({
           <button
             onClick={() => handleStepClick('mirror-inner')}
             className={cn(
-              "absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-8 rounded-lg border-2 transition-all flex items-center justify-center gap-2 overflow-hidden",
+              'absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-8 rounded-lg border-2 transition-all flex items-center justify-center gap-2 overflow-hidden',
               completedSteps.includes('mirror-inner') 
-                ? "bg-green-500/20 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]" 
-                : "bg-slate-800/80 border-slate-500 hover:border-blue-400"
+                ? 'bg-green-500/20 border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]' 
+                : 'bg-slate-800/80 border-slate-500 hover:border-blue-400'
             )}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent pointer-events-none" />
@@ -107,14 +107,14 @@ export default function InteractiveMirrorCheck({
           <button
             onClick={() => handleStepClick('mirror-outer')}
             className={cn(
-              "absolute top-4 w-12 h-16 rounded-l-2xl border-2 transition-all flex flex-col items-center justify-center gap-1",
-              direction === 'left' ? "left-0" : "right-0 rotate-180",
+              'absolute top-4 w-12 h-16 rounded-l-2xl border-2 transition-all flex flex-col items-center justify-center gap-1',
+              direction === 'left' ? 'left-0' : 'right-0 rotate-180',
               completedSteps.includes('mirror-outer') 
-                ? "bg-green-500/20 border-green-500" 
-                : "bg-slate-800 border-slate-500 hover:border-blue-400"
+                ? 'bg-green-500/20 border-green-500' 
+                : 'bg-slate-800 border-slate-500 hover:border-blue-400'
             )}
           >
-             <div className={cn("text-[8px] font-bold uppercase -rotate-90 whitespace-nowrap", direction === 'right' && "rotate-90")}>
+             <div className={cn('text-[8px] font-bold uppercase -rotate-90 whitespace-nowrap', direction === 'right' && 'rotate-90')}>
                Side Mirror
              </div>
              {completedSteps.includes('mirror-outer') && <Check className="h-3 w-3 text-green-400" />}
@@ -124,10 +124,10 @@ export default function InteractiveMirrorCheck({
           <button
             onClick={() => handleStepClick('blinker')}
             className={cn(
-              "absolute bottom-4 left-1/4 w-16 h-4 rounded-full border-2 transition-all flex items-center justify-center",
+              'absolute bottom-4 left-1/4 w-16 h-4 rounded-full border-2 transition-all flex items-center justify-center',
               completedSteps.includes('blinker') 
-                ? "bg-amber-500/20 border-amber-500" 
-                : "bg-slate-800 border-slate-500 hover:border-blue-400"
+                ? 'bg-amber-500/20 border-amber-500' 
+                : 'bg-slate-800 border-slate-500 hover:border-blue-400'
             )}
           >
             <motion.div 
@@ -143,13 +143,13 @@ export default function InteractiveMirrorCheck({
           <button
             onClick={() => handleStepClick('shoulder')}
             className={cn(
-              "absolute bottom-4 right-1/4 group transition-all",
-              completedSteps.includes('shoulder') ? "opacity-100" : "opacity-60 hover:opacity-100"
+              'absolute bottom-4 right-1/4 group transition-all',
+              completedSteps.includes('shoulder') ? 'opacity-100' : 'opacity-60 hover:opacity-100'
             )}
           >
             <div className={cn(
-              "p-3 rounded-full border-2 flex flex-col items-center gap-1",
-              completedSteps.includes('shoulder') ? "bg-green-500/20 border-green-500" : "bg-slate-800 border-slate-500"
+              'p-3 rounded-full border-2 flex flex-col items-center gap-1',
+              completedSteps.includes('shoulder') ? 'bg-green-500/20 border-green-500' : 'bg-slate-800 border-slate-500'
             )}>
               <div className="flex items-center gap-1 text-[9px] font-bold">
                 <RotateCcw className="h-3 w-3" />
@@ -176,8 +176,8 @@ export default function InteractiveMirrorCheck({
                <div 
                  key={step.id} 
                  className={cn(
-                   "h-1.5 w-6 rounded-full transition-all",
-                   completedSteps.includes(step.id) ? "bg-green-500" : "bg-slate-600"
+                   'h-1.5 w-6 rounded-full transition-all',
+                   completedSteps.includes(step.id) ? 'bg-green-500' : 'bg-slate-600'
                  )} 
                />
              ))}

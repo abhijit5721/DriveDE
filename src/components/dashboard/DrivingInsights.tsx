@@ -142,10 +142,10 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </div>
             </div>
             <div className={cn(
-              "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
-              isUp ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20" : "bg-red-50 text-red-600 dark:bg-red-900/20"
+              'flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold',
+              isUp ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'
             )}>
-              <TrendingUp className={cn("h-3 w-3", !isUp && "rotate-180")} />
+              <TrendingUp className={cn('h-3 w-3', !isUp && 'rotate-180')} />
               {isUp ? '+' : ''}{Math.round(minuteDiff / 60)}h
             </div>
           </div>
@@ -180,7 +180,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
           )}
           <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-tighter text-slate-400">
             {dayNames.map((name, i) => (
-              <span key={i} className={cn(i === todayIndex && "text-indigo-600 dark:text-indigo-400 font-black")}>
+              <span key={i} className={cn(i === todayIndex && 'text-indigo-600 dark:text-indigo-400 font-black')}>
                 {name}
               </span>
             ))}

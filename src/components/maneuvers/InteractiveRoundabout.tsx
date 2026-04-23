@@ -61,13 +61,13 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
       </div>
 
       <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
-        <div className={cn("px-2 py-1 rounded-full border", phase === 'entry' ? "bg-orange-500 text-white border-orange-500" : "bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800")}>
+        <div className={cn('px-2 py-1 rounded-full border', phase === 'entry' ? 'bg-orange-500 text-white border-orange-500' : 'bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800')}>
           1. {isDE ? 'Einfahren' : 'Entry'}
         </div>
-        <div className={cn("px-2 py-1 rounded-full border", phase === 'inside' ? "bg-orange-500 text-white border-orange-500" : "bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800")}>
+        <div className={cn('px-2 py-1 rounded-full border', phase === 'inside' ? 'bg-orange-500 text-white border-orange-500' : 'bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800')}>
           2. {isDE ? 'Im Kreisel' : 'Inside'}
         </div>
-        <div className={cn("px-2 py-1 rounded-full border", phase === 'exit' ? "bg-orange-500 text-white border-orange-500" : "bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800")}>
+        <div className={cn('px-2 py-1 rounded-full border', phase === 'exit' ? 'bg-orange-500 text-white border-orange-500' : 'bg-slate-200 text-slate-500 border-transparent dark:bg-slate-800')}>
           3. {isDE ? 'Ausfahren' : 'Exit'}
         </div>
       </div>
@@ -110,15 +110,15 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
               { x: 340, y: 150, rotate: 0 }
             }
             transition={{
-              rotate: { duration: phase === 'inside' ? 2 : 0.5, ease: "linear" },
+              rotate: { duration: phase === 'inside' ? 2 : 0.5, ease: 'linear' },
               x: { duration: 0.8 },
               y: { duration: 0.8 }
             }}
             className="origin-center"
-            style={{ originX: "150px", originY: "150px" }}
+            style={{ originX: '150px', originY: '150px' }}
           >
             {/* The car itself is offset from the rotation center */}
-            <g transform={phase === 'entry' ? "translate(110, -10)" : "translate(100, -10)"}>
+            <g transform={phase === 'entry' ? 'translate(110, -10)' : 'translate(100, -10)'}>
               <rect width="30" height="20" rx="4" fill="#ef4444" />
               <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" /> {/* Headlights */}
               <rect x="22" y="14" width="6" height="4" rx="1" fill="white" opacity="0.6" />
@@ -174,13 +174,13 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
         <button
           onClick={() => setIsBlinking(!isBlinking)}
           className={cn(
-            "flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2",
+            'flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2',
             isBlinking 
-              ? "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20" 
-              : "bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
+              ? 'bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20' 
+              : 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'
           )}
         >
-          <div className={cn("h-2 w-2 rounded-full", isBlinking ? "bg-white animate-pulse" : "bg-slate-300")} />
+          <div className={cn('h-2 w-2 rounded-full', isBlinking ? 'bg-white animate-pulse' : 'bg-slate-300')} />
           {isDE ? 'Blinker Rechts' : 'Signal Right'}
         </button>
         

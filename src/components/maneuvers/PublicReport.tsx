@@ -179,7 +179,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   // 1. Quantity Base (40% Theory, 60% Experience)
   const theoryProgress = Math.min(1, validCompletedLessonsCount / totalVisibleLessons);
   const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours base for full experience
-  let score = (theoryProgress * 40) + (experienceProgress * 60);
+  const score = (theoryProgress * 40) + (experienceProgress * 60);
 
   // 2. Quality Penalty (Recent Faults)
   // Look at the last 5 sessions or all if less
@@ -239,10 +239,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
       if (missingSonderfahrten.length > 0) {
         briefing += `Focus should shift towards ${missingSonderfahrten.join(', ')} hours, which are currently below legal requirements. `;
       } else {
-        briefing += "All mandatory special driving hours are completed, meaning the focus can now be 100% on exam simulation. ";
+        briefing += 'All mandatory special driving hours are completed, meaning the focus can now be 100% on exam simulation. ';
       }
     } else {
-      briefing += "As a conversion student, focus remains on perfecting exam-specific maneuvers and city awareness. ";
+      briefing += 'As a conversion student, focus remains on perfecting exam-specific maneuvers and city awareness. ';
     }
 
     if (sortedFaults.length > 0) {
@@ -292,14 +292,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const trend = calculateTrend();
 
   const faultAdvice: Record<string, string> = {
-    speeding: "Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.",
-    harsh_braking: "Maintain a larger following distance and look further ahead to anticipate traffic flow changes earlier.",
-    signal: "Remember the 'Look-Signal-Maneuver' sequence. Always signal at least 3 seconds before turning or changing lanes.",
-    priority: "Review 'Right before Left' rules. Slow down when approaching intersections with limited visibility.",
-    shoulder_check: "Make the 'Schulterblick' more obvious. It must be done for every turn, lane change, and when pulling out.",
-    stop_sign: "Ensure a complete 3-second stop. The wheels must stop moving entirely before proceeding.",
-    right_before_left: "Always slow down and look right at unmarked T-junctions and intersections.",
-    school_zone_speeding: "Be extra vigilant near schools. Speed limits here are strictly enforced during exam hours."
+    speeding: 'Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.',
+    harsh_braking: 'Maintain a larger following distance and look further ahead to anticipate traffic flow changes earlier.',
+    signal: 'Remember the \'Look-Signal-Maneuver\' sequence. Always signal at least 3 seconds before turning or changing lanes.',
+    priority: 'Review \'Right before Left\' rules. Slow down when approaching intersections with limited visibility.',
+    shoulder_check: 'Make the \'Schulterblick\' more obvious. It must be done for every turn, lane change, and when pulling out.',
+    stop_sign: 'Ensure a complete 3-second stop. The wheels must stop moving entirely before proceeding.',
+    right_before_left: 'Always slow down and look right at unmarked T-junctions and intersections.',
+    school_zone_speeding: 'Be extra vigilant near schools. Speed limits here are strictly enforced during exam hours.'
   };
 
   return (
@@ -328,10 +328,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           <button
             onClick={() => setLessonMode(!lessonMode)}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border",
+              'flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border',
               lessonMode 
-                ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20" 
-                : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
+                ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+                : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
             )}
           >
             {lessonMode ? <Zap className="h-3 w-3" /> : <LayoutDashboard className="h-3 w-3" />}
@@ -387,8 +387,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                         <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                           <div 
                             className={cn(
-                              "h-full rounded-full",
-                              progress >= 100 ? "bg-emerald-500" : "bg-blue-500"
+                              'h-full rounded-full',
+                              progress >= 100 ? 'bg-emerald-500' : 'bg-blue-500'
                             )}
                             style={{ width: `${progress}%` }}
                           />
@@ -456,8 +456,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {trend ? (
               <div className="space-y-2">
                 <div className={cn(
-                  "flex items-center gap-2 text-2xl font-black",
-                  trend.type === 'improving' ? "text-emerald-500" : trend.type === 'regressing' ? "text-rose-500" : "text-slate-400"
+                  'flex items-center gap-2 text-2xl font-black',
+                  trend.type === 'improving' ? 'text-emerald-500' : trend.type === 'regressing' ? 'text-rose-500' : 'text-slate-400'
                 )}>
                   {trend.type === 'improving' ? <TrendingUp className="h-6 w-6" /> : trend.type === 'regressing' ? <TrendingDown className="h-6 w-6" /> : <Minus className="h-6 w-6" />}
                   {trend.type === 'neutral' ? 'Stable' : `${trend.value}%`}
@@ -504,7 +504,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     </div>
                     <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                       <div 
-                        className={cn("h-full rounded-full transition-all duration-1000", item.color)}
+                        className={cn('h-full rounded-full transition-all duration-1000', item.color)}
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -541,7 +541,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                       <span className="text-[9px] font-bold uppercase tracking-widest">Instructor Focus</span>
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      {faultAdvice[fault] || "Review this maneuver in the next lesson. Focus on awareness and early preparation."}
+                      {faultAdvice[fault] || 'Review this maneuver in the next lesson. Focus on awareness and early preparation.'}
                     </p>
                   </div>
                 </div>

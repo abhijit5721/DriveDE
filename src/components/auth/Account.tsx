@@ -453,7 +453,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                   level="H"
                   includeMargin={false}
                   imageSettings={{
-                    src: "/favicon.ico", // Or app logo
+                    src: '/favicon.ico', // Or app logo
                     x: undefined,
                     y: undefined,
                     height: 40,

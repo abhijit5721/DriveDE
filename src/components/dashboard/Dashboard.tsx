@@ -216,8 +216,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
 
         <div className={cn(
-          "rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700 transition-all",
-          userProgress.currentStreak === 0 ? "opacity-50 grayscale" : ""
+          'rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700 transition-all',
+          userProgress.currentStreak === 0 ? 'opacity-50 grayscale' : ''
         )}>
           <div className="flex flex-col items-center gap-2 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
@@ -544,10 +544,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           onClick={() => onOpenAuth?.()}
           aria-label={isDE ? 'Kontoeinstellungen' : 'Account Settings'}
           className={cn(
-            "flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-all",
+            'flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-all',
             authStatus === 'signed_in' 
-              ? "bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300" 
-              : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+              ? 'bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300' 
+              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
           )}
         >
           {authStatus === 'signed_in' ? (

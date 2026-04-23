@@ -125,10 +125,10 @@ export default function InteractiveTechCheck({ onComplete, language }: { onCompl
                 onClick={() => handleHotspotClick(h.id)}
                 style={{ left: `${h.x}%`, top: `${h.y}%` }}
                 className={cn(
-                  "absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 transition-all shadow-lg",
+                  'absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 transition-all shadow-lg',
                   isFound 
-                    ? "bg-emerald-500 border-white text-white scale-110 z-10" 
-                    : "bg-white/40 border-white/60 text-slate-800 backdrop-blur-sm hover:scale-125 hover:bg-white hover:z-10"
+                    ? 'bg-emerald-500 border-white text-white scale-110 z-10' 
+                    : 'bg-white/40 border-white/60 text-slate-800 backdrop-blur-sm hover:scale-125 hover:bg-white hover:z-10'
                 )}
               >
                 {isFound ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}

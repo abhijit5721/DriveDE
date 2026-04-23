@@ -293,7 +293,7 @@ const maneuverTips: Tip[] = [
   {
     id: 'tip1',
     titleDe: 'Rundum-Blick nicht vergessen!',
-    titleEn: "Don't forget the all-round check!",
+    titleEn: 'Don\'t forget the all-round check!',
     contentDe: 'Der häufigste Fehler bei der Prüfung! Vor jedem Rückwärtsfahren Rundum-Blick durchführen und bei jedem Richtungswechsel den passenden Schulterblick klar zeigen.',
     contentEn: 'One of the most common exam mistakes! Before every reverse movement perform an all-round check, and at every change of direction clearly show the appropriate shoulder check.',
     type: 'warning',

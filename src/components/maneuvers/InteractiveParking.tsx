@@ -87,7 +87,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
              left: phase === 'align' ? 120 : phase === 'steering-in' ? 120 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 220 : phase === 'final' ? 180 : 0,
              rotate: phase === 'backing-in' ? 45 : phase === 'steering-out' ? 15 : 0
            }}
-           transition={{ duration: 1.5, ease: "easeInOut" }}
+           transition={{ duration: 1.5, ease: 'easeInOut' }}
            className="absolute h-32 w-16 bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400"
         >
            <div className="absolute inset-x-2 top-2 h-4 bg-emerald-300 rounded-sm opacity-50" />
@@ -131,8 +131,8 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
             <button
               onClick={handleAction}
               className={cn(
-                "flex w-full items-center justify-center gap-2 rounded-xl py-4 font-bold text-white shadow-lg transition-all active:scale-95",
-                phase === 'align' || phase === 'backing-in' ? "bg-red-500" : "bg-blue-600"
+                'flex w-full items-center justify-center gap-2 rounded-xl py-4 font-bold text-white shadow-lg transition-all active:scale-95',
+                phase === 'align' || phase === 'backing-in' ? 'bg-red-500' : 'bg-blue-600'
               )}
             >
               {phase === 'start' && (isDE ? 'Anfahren' : 'Start Engine')}

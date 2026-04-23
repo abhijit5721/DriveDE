@@ -264,7 +264,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 className="h-full bg-gradient-to-r from-blue-500 to-blue-400"
                 initial={{ width: 0 }}
                 animate={{ width: `${readiness}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                transition={{ duration: 1, ease: 'easeOut' }}
               />
             </div>
           </div>
@@ -329,24 +329,24 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
         className={cn(
-          "relative group rounded-[2rem] p-6 border transition-all duration-500 overflow-hidden",
+          'relative group rounded-[2rem] p-6 border transition-all duration-500 overflow-hidden',
           estimation.isHighReadiness 
-            ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-900/30 shadow-[0_10px_40px_-15px_rgba(16,185,129,0.1)]" 
-            : "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-900/30 shadow-[0_10px_40px_-15px_rgba(245,158,11,0.1)]"
+            ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-900/30 shadow-[0_10px_40px_-15px_rgba(16,185,129,0.1)]' 
+            : 'bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-900/30 shadow-[0_10px_40px_-15px_rgba(245,158,11,0.1)]'
         )}
       >
         <div className="flex items-start gap-4">
           <div className={cn(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm",
-            estimation.isHighReadiness ? "bg-white text-emerald-600" : "bg-white text-amber-600"
+            'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm',
+            estimation.isHighReadiness ? 'bg-white text-emerald-600' : 'bg-white text-amber-600'
           )}>
             {estimation.isHighReadiness ? <CheckCircle2 className="h-7 w-7" /> : <TrendingUp className="h-7 w-7" />}
           </div>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <h4 className={cn(
-                "font-black uppercase tracking-widest text-[10px]",
-                estimation.isHighReadiness ? "text-emerald-600" : "text-amber-600"
+                'font-black uppercase tracking-widest text-[10px]',
+                estimation.isHighReadiness ? 'text-emerald-600' : 'text-amber-600'
               )}>
                 {isDE ? 'DriveDE Strategie' : 'DriveDE Strategy'}
               </h4>
@@ -356,8 +356,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             {isPremium ? (
               <>
                 <p className={cn(
-                  "mt-2 text-sm font-semibold leading-relaxed",
-                  estimation.isHighReadiness ? "text-emerald-900 dark:text-emerald-200" : "text-amber-900 dark:text-amber-200"
+                  'mt-2 text-sm font-semibold leading-relaxed',
+                  estimation.isHighReadiness ? 'text-emerald-900 dark:text-emerald-200' : 'text-amber-900 dark:text-amber-200'
                 )}>
                   {estimation.isHighReadiness
                     ? (isDE 
@@ -368,8 +368,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                         : 'Efficiency potential detected')}
                 </p>
                 <p className={cn(
-                  "mt-1 text-sm opacity-80",
-                  estimation.isHighReadiness ? "text-emerald-800 dark:text-emerald-400" : "text-amber-800 dark:text-amber-400"
+                  'mt-1 text-sm opacity-80',
+                  estimation.isHighReadiness ? 'text-emerald-800 dark:text-emerald-400' : 'text-amber-800 dark:text-amber-400'
                 )}>
                   {estimation.isHighReadiness
                     ? (isDE 

@@ -87,7 +87,7 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
           <motion.path
             initial={{ d: gridPath(20), opacity: 0 }}
             animate={{ d: pathContent, opacity: 1 }}
-            transition={{ duration: 1, ease: "circOut" }}
+            transition={{ duration: 1, ease: 'circOut' }}
             className="fill-blue-400/20 stroke-blue-400 dark:fill-blue-500/30 dark:stroke-blue-400"
             strokeWidth="3"
             style={{ filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))' }}
@@ -103,8 +103,8 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
                 cy={y}
                 r="4"
                 className={cn(
-                  "stroke-white dark:stroke-slate-900 transition-colors",
-                  p.value === 100 ? "fill-emerald-400" : "fill-blue-400"
+                  'stroke-white dark:stroke-slate-900 transition-colors',
+                  p.value === 100 ? 'fill-emerald-400' : 'fill-blue-400'
                 )}
                 strokeWidth="2"
               />
@@ -127,10 +127,10 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
               }}
             >
               <div className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-lg shadow-sm border",
+                'flex h-6 w-6 items-center justify-center rounded-lg shadow-sm border',
                 p.value === 100 
-                  ? "bg-emerald-500 border-emerald-400 text-white" 
-                  : "bg-white/10 border-white/20 text-blue-200"
+                  ? 'bg-emerald-500 border-emerald-400 text-white' 
+                  : 'bg-white/10 border-white/20 text-blue-200'
               )}>
                 <Icon className="h-3.5 w-3.5" />
               </div>

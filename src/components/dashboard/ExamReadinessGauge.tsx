@@ -15,7 +15,7 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className={cn("relative flex flex-col items-center justify-center", className)}>
+    <div className={cn('relative flex flex-col items-center justify-center', className)}>
       <svg
         height={radius + 10}
         width={radius * 2}

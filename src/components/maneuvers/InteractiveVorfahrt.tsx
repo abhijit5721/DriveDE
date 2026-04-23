@@ -128,7 +128,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
                  key={car.id}
                  initial={car.position}
                  animate={isCurrentAnimation ? { ...car.target, opacity: 0 } : isMoved ? { ...car.target, opacity: 0 } : car.position}
-                 transition={{ duration: 0.8, ease: "easeInOut" }}
+                 transition={{ duration: 0.8, ease: 'easeInOut' }}
                  style={{ cursor: isMoved ? 'default' : 'pointer' }}
                  onClick={() => handleCarClick(car.id)}
                >

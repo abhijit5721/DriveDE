@@ -410,7 +410,7 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
             <span className="text-sm font-mono font-bold text-white">{formatTime(timeLeft)}</span>
           </div>
           <div className="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-white/10">
-            <AlertTriangle className={cn("w-4 h-4", mistakes > 0 ? "text-red-500" : "text-slate-500")} />
+            <AlertTriangle className={cn('w-4 h-4', mistakes > 0 ? 'text-red-500' : 'text-slate-500')} />
             <span className="text-sm font-mono font-bold text-white">{mistakes}</span>
           </div>
         </div>
@@ -430,7 +430,7 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
               className="flex flex-col items-center text-center max-w-sm"
             >
               <div className={cn(
-                "w-16 h-16 rounded-full flex items-center justify-center mb-4",
+                'w-16 h-16 rounded-full flex items-center justify-center mb-4',
                 feedback.includes('Fehler') || feedback.includes('Failed') ? 'bg-red-500/20 text-red-500' : 'bg-emerald-500/20 text-emerald-500'
               )}>
                 {feedback.includes('Fehler') || feedback.includes('Failed') ? <AlertTriangle className="w-8 h-8" /> : <CheckCircle2 className="w-8 h-8" />}

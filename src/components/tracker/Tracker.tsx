@@ -720,7 +720,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }, 10000);
 
         // Start GPS Tracking
-        if ("geolocation" in navigator && isPremium) {
+        if ('geolocation' in navigator && isPremium) {
           watchRef.current = navigator.geolocation.watchPosition(
             (position) => {
               const { latitude: lat, longitude: lng, speed } = position.coords;
@@ -1492,13 +1492,13 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                <button 
                  onClick={() => setIsSimulationMode(!isSimulationMode)}
                  className={cn(
-                   "relative h-4 w-8 rounded-full transition-colors",
-                   isSimulationMode ? "bg-indigo-600" : "bg-slate-700"
+                   'relative h-4 w-8 rounded-full transition-colors',
+                   isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700'
                  )}
                >
                  <div className={cn(
-                   "absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all",
-                   isSimulationMode ? "left-4.5" : "left-0.5"
+                   'absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all',
+                   isSimulationMode ? 'left-4.5' : 'left-0.5'
                  )} />
                </button>
              </div>
@@ -1561,7 +1561,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             <div className="relative group">
               <input
                 type="text"
-                placeholder={isDE ? "Ziel (z.B. Berlin Hbf)" : "Destination (e.g. Berlin Hbf)"}
+                placeholder={isDE ? 'Ziel (z.B. Berlin Hbf)' : 'Destination (e.g. Berlin Hbf)'}
                 value={targetDestination}
                 onChange={(e) => setTargetDestination(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
@@ -1637,9 +1637,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
               <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                 <motion.div 
                   className={cn(
-                    "h-full rounded-full transition-all duration-1000",
-                    currentMistakes.length < 2 ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" :
-                    currentMistakes.length < 5 ? "bg-yellow-500" : "bg-red-500"
+                    'h-full rounded-full transition-all duration-1000',
+                    currentMistakes.length < 2 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
+                    currentMistakes.length < 5 ? 'bg-yellow-500' : 'bg-red-500'
                   )}
                   initial={{ width: '100%' }}
                   animate={{ width: `${Math.max(0, 100 - (currentMistakes.length * 10))}%` }}
@@ -1667,8 +1667,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
               {isDE ? 'Limit' : 'Limit'}
             </p>
             <div className={cn(
-              "text-lg font-bold flex items-center justify-center gap-1",
-              currentLimit && currentSpeed > currentLimit ? "text-red-400" : "text-white"
+              'text-lg font-bold flex items-center justify-center gap-1',
+              currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
             )}>
               {currentLimit || '--'}
               {currentLimit && (
@@ -1706,10 +1706,10 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                 }
               }}
               className={cn(
-                "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95",
+                'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
                 !isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT
-                  ? "bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20"
-                  : "bg-green-500/90 hover:bg-green-600 shadow-green-500/20"
+                  ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
+                  : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
               )}
             >
               {!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
@@ -1900,10 +1900,10 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                 <div
                   key={session.id}
                   className={cn(
-                    "overflow-hidden rounded-2xl border transition-all duration-300",
+                    'overflow-hidden rounded-2xl border transition-all duration-300',
                     isExpanded 
-                      ? "border-blue-200 bg-blue-50/10 shadow-lg dark:border-blue-900/50 dark:bg-blue-900/10" 
-                      : "border-slate-100 bg-white shadow-sm hover:border-blue-100 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800"
+                      ? 'border-blue-200 bg-blue-50/10 shadow-lg dark:border-blue-900/50 dark:bg-blue-900/10' 
+                      : 'border-slate-100 bg-white shadow-sm hover:border-blue-100 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800'
                   )}
                 >
                   {/* Collapsible Header */}
@@ -1915,7 +1915,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                       <div className={cn(
                         'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
                         getTypeColor(session.type),
-                        isExpanded ? "scale-110 shadow-md" : ""
+                        isExpanded ? 'scale-110 shadow-md' : ''
                       )}>
                         {getTypeIcon(session.type)}
                       </div>
@@ -1956,24 +1956,24 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                       )}
                       {!isExpanded && session.route && (Array.isArray(session.route) ? session.route.length > 0 : false) && (
                         <div className={cn(
-                          "flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900",
-                          "group-hover/header:bg-blue-50 group-hover/header:text-blue-500"
+                          'flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900',
+                          'group-hover/header:bg-blue-50 group-hover/header:text-blue-500'
                         )}>
                           <MapPin className="h-3.5 w-3.5" />
                         </div>
                       )}
                       <motion.div
                         animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900"
                       >
                         <ChevronDown className="h-4 w-4" />
                       </motion.div>
                       {!isExpanded && (
                         <div className={cn(
-                          "h-2 w-2 rounded-full",
-                          ((session.mistakes?.length || 0) < 2) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : 
-                          ((session.mistakes?.length || 0) < 5) ? "bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]"
+                          'h-2 w-2 rounded-full',
+                          ((session.mistakes?.length || 0) < 2) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 
+                          ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]'
                         )} />
                       )}
                     </div>
@@ -2013,9 +2013,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                           <div className="mt-4 flex flex-wrap gap-2">
                             <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
                               <div className={cn(
-                                "h-2 w-2 rounded-full",
-                                ((session.mistakes?.length || 0) < 2) ? "bg-green-500" : 
-                                ((session.mistakes?.length || 0) < 5) ? "bg-yellow-500" : "bg-red-500"
+                                'h-2 w-2 rounded-full',
+                                ((session.mistakes?.length || 0) < 2) ? 'bg-green-500' : 
+                                ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500' : 'bg-red-500'
                               )} />
                               <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
                                 {isDE ? 'Sicherheits-Fahrweise' : 'Safety Balance'}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%

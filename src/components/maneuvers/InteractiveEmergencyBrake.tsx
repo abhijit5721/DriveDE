@@ -209,10 +209,10 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
         onClick={brake}
         disabled={gameState === 'braked' || gameState === 'failed'}
         className={cn(
-          "w-full py-8 rounded-2xl font-black text-2xl transition-all shadow-xl active:scale-95 border-b-8 mb-2",
+          'w-full py-8 rounded-2xl font-black text-2xl transition-all shadow-xl active:scale-95 border-b-8 mb-2',
           gameState === 'signal'
-            ? "bg-red-500 border-red-700 text-white animate-bounce shadow-red-500/50"
-            : "bg-slate-200 border-slate-300 text-slate-400 dark:bg-slate-800 dark:border-slate-900"
+            ? 'bg-red-500 border-red-700 text-white animate-bounce shadow-red-500/50'
+            : 'bg-slate-200 border-slate-300 text-slate-400 dark:bg-slate-800 dark:border-slate-900'
         )}
       >
         {isDE ? 'BREMSEN' : 'BRAKE'}

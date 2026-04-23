@@ -89,8 +89,8 @@ const TopDownCar: React.FC<{
     <rect x="32" y="7" width="4" height="8" rx="1" fill="#f8fafc" />
 
     {/* Tail Lights / Brake Lights (on the Left) */}
-    <rect x="-36" y="-15" width="4" height="8" rx="1" fill={brakeLights ? "#ef4444" : "#991b1b"} />
-    <rect x="-36" y="7" width="4" height="8" rx="1" fill={brakeLights ? "#ef4444" : "#991b1b"} />
+    <rect x="-36" y="-15" width="4" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
+    <rect x="-36" y="7" width="4" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
 
     {/* Indicators */}
     {(indicator === 'left' || indicator === 'hazard') && (
@@ -154,7 +154,7 @@ const InstructionPopup: React.FC<{ text: string }> = ({ text }) => (
 const SteeringWheelOverlay: React.FC<{ rotation: number }> = ({ rotation }) => (
   <g transform="translate(360, 45)">
     <circle r="22" fill="#1e293b" />
-    <motion.g animate={{ rotate: rotation }} transition={{ type: "spring", damping: 15 }}>
+    <motion.g animate={{ rotate: rotation }} transition={{ type: 'spring', damping: 15 }}>
       <circle r="20" fill="none" stroke="#64748b" strokeWidth="4" />
       <rect x="-2" y="-20" width="4" height="12" rx="1" fill="#38BDF8" />
       <rect x="-2" y="-2" width="4" height="4" rx="1" fill="#fff" />
@@ -298,7 +298,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
           <motion.div 
             animate={{ width: `${progress}%` }}
             className="h-full bg-[#38BDF8] shadow-[0_0_15px_rgba(56,189,248,0.6)]"
-            transition={{ type: "spring", bounce: 0, duration: 0.1 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
           />
         </div>
       </div>
@@ -377,7 +377,7 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
         )}
 
         {/* User Car */}
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: "spring", damping: 20 }}>
+        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 20 }}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && (
@@ -431,7 +431,7 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
         <g transform="translate(265, 40) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
 
         {/* User Car */}
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: "spring", damping: 25 }}>
+        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="round" opacity={0.4} />}
@@ -471,7 +471,7 @@ const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({
         <rect x="0" y="70" width="400" height="2" fill="#94a3b8" />
         <rect x="0" y="178" width="400" height="2" fill="#94a3b8" />
         
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: "spring", damping: 25 }}>
+        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
@@ -508,7 +508,7 @@ const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({
         <rect x="0" y="80" width="400" height="90" fill="#334155" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
 
-        <motion.g animate={{ x: state.x, y: state.y }} transition={{ type: "spring", stiffness: 100, damping: 20 }}>
+        <motion.g animate={{ x: state.x, y: state.y }} transition={{ type: 'spring', stiffness: 100, damping: 20 }}>
           <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
         </motion.g>
@@ -585,7 +585,7 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
         {/* Yield Line */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
 
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: "spring", damping: 25 }}>
+        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
@@ -623,7 +623,7 @@ const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ s
 
         <g transform="translate(300, 65)"><TopDownCar color="#94a3b8" scale={0.8} /></g>
 
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: "spring", damping: 25 }}>
+        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
         </motion.g>

@@ -48,8 +48,8 @@ export function Welcome() {
 
       {/* Navigation */}
       <nav className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-slate-900/90 backdrop-blur-md py-3 shadow-xl" : "bg-transparent py-6"
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        scrolled ? 'bg-slate-900/90 backdrop-blur-md py-3 shadow-xl' : 'bg-transparent py-6'
       )}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
           <button 
@@ -96,8 +96,8 @@ export function Welcome() {
               <button
                 onClick={() => setLanguage('de')}
                 className={cn(
-                  "px-2 py-1 text-[10px] font-black rounded-lg transition-all",
-                  isDE ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20" : "text-slate-400 hover:text-white"
+                  'px-2 py-1 text-[10px] font-black rounded-lg transition-all',
+                  isDE ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'
                 )}
               >
                 DE
@@ -105,8 +105,8 @@ export function Welcome() {
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "px-2 py-1 text-[10px] font-black rounded-lg transition-all",
-                  !isDE ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20" : "text-slate-400 hover:text-white"
+                  'px-2 py-1 text-[10px] font-black rounded-lg transition-all',
+                  !isDE ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:text-white'
                 )}
               >
                 EN
@@ -156,8 +156,8 @@ export function Welcome() {
                   <button
                     onClick={() => setLanguage('de')}
                     className={cn(
-                      "px-4 py-2 text-xs font-black rounded-xl transition-all",
-                      isDE ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-400"
+                      'px-4 py-2 text-xs font-black rounded-xl transition-all',
+                      isDE ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400'
                     )}
                   >
                     DEUTSCH
@@ -165,8 +165,8 @@ export function Welcome() {
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
-                      "px-4 py-2 text-xs font-black rounded-xl transition-all",
-                      !isDE ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-400"
+                      'px-4 py-2 text-xs font-black rounded-xl transition-all',
+                      !isDE ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400'
                     )}
                   >
                     ENGLISH
@@ -404,11 +404,11 @@ export function Welcome() {
                 className="group relative flex flex-col items-start gap-4 rounded-3xl border border-slate-700/50 bg-slate-800/40 p-8 text-left transition-all hover:border-blue-500/50 hover:bg-slate-800/80 active:scale-[0.98]"
               >
                 <div className={cn(
-                  "flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner",
-                  path.color === 'orange' && "bg-orange-500/10 text-orange-500",
-                  path.color === 'blue' && "bg-blue-500/10 text-blue-500",
-                  path.color === 'purple' && "bg-purple-500/10 text-purple-500",
-                  path.color === 'emerald' && "bg-emerald-500/10 text-emerald-500",
+                  'flex h-14 w-14 items-center justify-center rounded-2xl shadow-inner',
+                  path.color === 'orange' && 'bg-orange-500/10 text-orange-500',
+                  path.color === 'blue' && 'bg-blue-500/10 text-blue-500',
+                  path.color === 'purple' && 'bg-purple-500/10 text-purple-500',
+                  path.color === 'emerald' && 'bg-emerald-500/10 text-emerald-500',
                 )}>
                   <path.icon className="h-8 w-8" />
                 </div>
