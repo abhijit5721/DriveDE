@@ -7,12 +7,20 @@ import toast from 'react-hot-toast';
 
 type Tier = '30-days' | '90-days' | 'lifetime';
 
+interface TierInfo {
+  price: number;
+  period: { de: string; en: string };
+  icon: React.ElementType;
+  label: { de: string; en: string };
+  popular?: boolean;
+}
+
 export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { language, setPremium } = useAppStore();
   const [selectedTier, setSelectedTier] = useState<Tier>('90-days');
   const [isLoading, setIsLoading] = useState(false);
 
-  const tiers: Record<string, any> = {
+  const tiers: Record<Tier, TierInfo> = {
     '30-days': {
       price: 9.99,
       period: { de: 'für 30 Tage', en: 'for 30 days' },
@@ -68,7 +76,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       if (data?.url) {
         window.location.href = data.url;
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Payment error:', err);
       toast.error(language === 'de' ? 'Zahlungsfehler. Bitte versuchen Sie es später erneut.' : 'Payment error. Please try again later.');
     } finally {

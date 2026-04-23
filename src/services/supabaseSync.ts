@@ -265,7 +265,7 @@ export async function syncAllData(state: AppState) {
   // 1. Sync Profile (Await this as it ensures the user exists in profiles)
   await ensureProfileFromState(state);
   
-  const syncTasks: Promise<any>[] = [];
+  const syncTasks: Promise<unknown>[] = [];
 
   // 2. Batch Sync Lessons (Single Request)
   if (state.userProgress.completedLessons.length > 0) {
@@ -299,7 +299,7 @@ export async function syncAllData(state: AppState) {
   }
   
   // Execute remaining syncs in parallel (max 2-3 requests total)
-  const results = await Promise.all(syncTasks);
+  const results = await Promise.all(syncTasks) as Array<{ error: { message: string } | null }>;
   const errors = results.filter(r => r.error).map(r => r.error?.message);
   
   if (errors.length > 0) {

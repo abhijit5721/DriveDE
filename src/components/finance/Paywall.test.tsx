@@ -34,15 +34,17 @@ describe('Paywall Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAppStore as any).mockReturnValue({
+    (useAppStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       language: 'en',
       setPremium: mockSetPremium,
     });
     
-    // Mock window.location to prevent redirect issues
+    // Mock window.location safely for testing
     const originalLocation = window.location;
-    delete (window as any).location;
-    window.location = { ...originalLocation, href: '' } as any;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...originalLocation, href: '' }
+    });
   });
 
   it('should render all pricing tiers', () => {
@@ -51,14 +53,22 @@ describe('Paywall Component', () => {
   });
 
   it('should trigger checkout function when clicked', async () => {
-    (supabaseModule as any).isSupabaseConfigured = true;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - necessary for mocking internal module properties
+    supabaseModule.isSupabaseConfigured = true;
+    
     const mockInvoke = vi.fn().mockResolvedValue({ 
       data: { url: 'https://checkout.stripe.com/test' }, 
       error: null 
     });
     
-    (supabaseModule.supabase as any).functions.invoke = mockInvoke;
-    (supabaseModule.supabase as any).auth.getUser = vi.fn().mockResolvedValue({ 
+    const mockedSupabase = supabaseModule.supabase as unknown as {
+      functions: { invoke: ReturnType<typeof vi.fn> };
+      auth: { getUser: ReturnType<typeof vi.fn> };
+    };
+    
+    mockedSupabase.functions.invoke = mockInvoke;
+    mockedSupabase.auth.getUser = vi.fn().mockResolvedValue({ 
       data: { user: { id: 'user_123' } } 
     });
 

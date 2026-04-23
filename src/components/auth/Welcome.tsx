@@ -424,7 +424,7 @@ export function Welcome() {
             ].map((path) => (
               <button
                 key={path.id}
-                onClick={() => handleSelect(path.id as any)}
+                onClick={() => handleSelect(path.id as Parameters<typeof handleSelect>[0])}
                 className="group relative flex flex-col items-start gap-4 rounded-3xl border border-slate-700/50 bg-slate-800/40 p-8 text-left transition-all hover:border-blue-500/50 hover:bg-slate-800/80 active:scale-[0.98]"
               >
                 <div className={cn(

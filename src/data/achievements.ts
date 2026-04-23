@@ -1,9 +1,11 @@
+import { UserProgress } from '../types';
+
 export interface Achievement {
   id: string;
   title: string;
   description: string;
   icon: string;
-  criteria: (progress: any) => boolean;
+  criteria: (progress: UserProgress) => boolean;
 }
 
 export const achievements: Achievement[] = [
@@ -43,13 +45,13 @@ export const achievements: Achievement[] = [
     title: 'Night Owl',
     description: 'Log your first night drive.',
     icon: '🌙',
-    criteria: (progress) => progress.drivingSessions.some((s: any) => s.type === 'nacht'),
+    criteria: (progress) => progress.drivingSessions.some((s) => s.type === 'nacht'),
   },
   {
     id: 'log_highway_drive',
     title: 'Highway Star',
     description: 'Log your first highway drive.',
     icon: '🛤️',
-    criteria: (progress) => progress.drivingSessions.some((s: any) => s.type === 'autobahn'),
+    criteria: (progress) => progress.drivingSessions.some((s) => s.type === 'autobahn'),
   },
 ];

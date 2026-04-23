@@ -43,10 +43,18 @@ interface PublicReportProps {
   onBack: () => void;
 }
 
+interface Profile {
+  id: string;
+  display_name: string | null;
+  learning_path: string | null;
+  transmission_type: 'manual' | 'automatic' | null;
+  [key: string]: unknown;
+}
+
 export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{
-    profile: any;
+    profile: Profile;
     sessions: DrivingSession[];
     completedLessons: string[];
   } | null>(null);
@@ -175,8 +183,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const generateBriefing = () => {
     const name = data.profile?.display_name || 'The student';
     const missingSonderfahrten = Object.entries(sonderfahrten)
-      .filter(([_, stats]) => stats.current < stats.target)
-      .map(([key, _]) => key.charAt(0).toUpperCase() + key.slice(1));
+      .filter(([, stats]) => stats.current < stats.target)
+      .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
 
     let briefing = `${name} is showing ${readiness >= 75 ? 'excellent' : readiness >= 50 ? 'consistent' : 'steady'} progress with a ${readiness}% practical readiness score. `;
     
@@ -589,7 +597,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 {expandedSession === session.id && (session.mistakes?.length || 0) > 0 && (
                   <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Fault Details</p>
-                    {session.mistakes?.map((m: any, idx: number) => (
+                    {session.mistakes?.map((m, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                         <div className="w-1 h-1 rounded-full bg-red-500" />
                         <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>

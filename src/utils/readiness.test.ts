@@ -16,19 +16,31 @@ describe('calculateTotalReadiness', () => {
 
   it('should reflect legal hour progress', () => {
     // 0% theory, 100% legal hours (12 * 45 mins), 100% performance (no mistakes)
-    const sessions: DrivingSession[] = Array(12).fill({
+    const sessions = Array(12).fill({
       duration: 45,
-      mistakes: []
-    });
+      mistakes: [],
+      type: 'ueberland'
+    }) as DrivingSession[];
     
-    const score = calculateTotalReadiness(sessions as any, 0, 10);
+    const score = calculateTotalReadiness(sessions, 0, 10);
     // Legal (30%) + Performance (40%) = 70%
     expect(score).toBe(70);
   });
 
   it('should penalize recent mistakes heavily', () => {
     const sessionsWithMistakes: DrivingSession[] = [
-      { id: '1', duration: 45, mistakes: [{}, {}, {}, {}, {}] as any, date: '', type: 'normal', notes: '', instructorName: '', route: [], totalDistance: 0, locationSummary: '' }
+      { 
+        id: '1', 
+        duration: 45, 
+        mistakes: Array(5).fill({ type: 'speeding', timestamp: Date.now() }), 
+        date: '', 
+        type: 'normal', 
+        notes: '', 
+        instructorName: '', 
+        route: [], 
+        totalDistance: 0, 
+        locationSummary: '' 
+      }
     ];
     
     const score = calculateTotalReadiness(sessionsWithMistakes, 10, 10);

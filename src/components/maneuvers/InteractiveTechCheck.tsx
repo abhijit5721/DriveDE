@@ -11,7 +11,7 @@ interface Hotspot {
   descriptionEn: string;
   x: number; // %
   y: number; // %
-  icon: any;
+  icon: React.ElementType;
 }
 
 const hotspots: Hotspot[] = [

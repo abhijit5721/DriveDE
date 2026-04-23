@@ -1,6 +1,6 @@
 import { DrivingSession, GPSPoint, DrivingMistake } from '../types';
 
-interface RawSession {
+export interface RawSession {
   id: string;
   external_id?: string;
   session_date: string;

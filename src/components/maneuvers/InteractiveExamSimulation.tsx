@@ -310,7 +310,7 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
     speak(isDE ? currentScenario.situationDe : currentScenario.situationEn);
   };
 
-  const handleOptionSelect = (option: any) => {
+  const handleOptionSelect = (option: ExamScenario['options'][number]) => {
     if (feedback) return;
     
     setFeedback(isDE ? option.feedbackDe : option.feedbackEn);

@@ -55,7 +55,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
 
   // Distance animation during driving
   useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout;
     if (gameState === 'driving' || gameState === 'signal') {
       interval = setInterval(() => {
         setDistance(prev => prev + 2);
