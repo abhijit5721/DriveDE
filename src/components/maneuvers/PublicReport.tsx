@@ -178,7 +178,13 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
           <div>
             <h1 className="text-base font-bold text-white">Drive<span className="text-blue-500">DE</span></h1>
-            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-tight">Instructor Review</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-tight">Review</p>
+              <span className="h-1 w-1 rounded-full bg-slate-700" />
+              <p className="text-[10px] text-slate-400 font-medium truncate max-w-[120px]">
+                {data.profile?.display_name || 'Student'}
+              </p>
+            </div>
           </div>
         </button>
         <div className="ml-auto">
@@ -190,9 +196,20 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         {/* Readiness Card */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl">
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 text-white font-black text-xl">
+                {data.profile?.display_name?.[0] || 'S'}
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white leading-tight">
+                  {data.profile?.display_name || 'Student'}
+                </h2>
+                <p className="text-xs text-blue-200/60 font-medium">Verified Progress Report</p>
+              </div>
+              <TrendingUp className="ml-auto h-5 w-5 text-blue-100" />
+            </div>
+            <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-bold uppercase tracking-widest text-blue-100">Exam Readiness</span>
-              <TrendingUp className="h-5 w-5 text-blue-100" />
             </div>
             <div className="flex items-end gap-3 mb-4">
               <span className="text-6xl font-black">{readiness}%</span>
