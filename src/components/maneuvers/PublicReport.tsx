@@ -1,3 +1,14 @@
+/**
+ * PublicReport.tsx
+ * 
+ * A high-performance, AI-driven instructor briefing dashboard.
+ * Designed for "Practical Exam Readiness" tracking with specialized logic for:
+ * 1. AI Instructor Briefing: Logical synthesis of student progress and tactical advice.
+ * 2. Practical Readiness Model: Multi-weighted score based on Sonderfahrten and fault frequency.
+ * 3. Driving Performance Trends: Statistical comparison of recent vs. historical fault rates.
+ * 4. Lesson Mode: A high-contrast, condensed UI optimized for active in-car coaching.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { 
   ChevronLeft, 
@@ -57,7 +68,9 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // --- Precision De-duplication Engine ---
+        // --- MULTI-TIER DEDUPLICATION ENGINE ---
+        // This engine ensures that even if a session is synced multiple times or across 
+        // multiple devices (e.g., iPhone and iPad), it only appears once in the report.
         const allRows = sessions || [];
         
         // Tier 1: Merge by Exact External ID
@@ -204,6 +217,16 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     .slice(0, 3);
 
   // --- AI Briefing Engine ---
+  /**
+   * AI INSTRUCTOR BRIEFING ENGINE
+   * 
+   * This logic synthesizes three main data points into a readable summary:
+   * 1. Readiness Score (Progress)
+   * 2. Legal Requirements (Sonderfahrten)
+   * 3. Fault Frequency (Tactical Focus)
+   * 
+   * It provides the instructor with a preparation script for the next lesson.
+   */
   const generateBriefing = () => {
     const name = data.profile?.display_name || 'The student';
     const missingSonderfahrten = Object.entries(sonderfahrten)
@@ -231,6 +254,15 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   };
 
   // --- Trend Calculation ---
+  /**
+   * DRIVING PERFORMANCE TREND ANALYSIS
+   * 
+   * Compares the "Fault Frequency" (Mistakes per hour) of the most recent 3 sessions
+   * against the previous 3 sessions to determine if the student is:
+   * - Improving (Reducing faults)
+   * - Regressing (Increasing faults)
+   * - Stabilizing (Consistent performance)
+   */
   const calculateTrend = () => {
     if (data.sessions.length < 2) return null;
     
