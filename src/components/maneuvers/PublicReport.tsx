@@ -77,6 +77,17 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
         const finalRows = [...cleanModern, ...cleanLegacy];
 
+        // DEBUG: Expose state for deep inspection
+        (window as any).reportDebug = {
+          version: VERSION,
+          rawCount: allRows.length,
+          cleanModernCount: cleanModern.length,
+          cleanLegacyCount: cleanLegacy.length,
+          finalCount: finalRows.length,
+          sampleExternalIds: cleanModern.slice(0, 5).map(r => r.external_id),
+          isDuplicatedInMap: allRows.length !== new Set(allRows.map(r => r.external_id || r.id)).size
+        };
+
         setData({
           profile,
           sessions: finalRows.map(s => ({
