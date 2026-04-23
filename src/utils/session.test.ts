@@ -24,9 +24,9 @@ describe('deduplicateSessions', () => {
   });
 
   it('should preserve back-to-back lessons with different instructors', () => {
-    const rawSessions = [
-      { id: '1', session_date: '2026-04-23T10:00:00Z', duration_minutes: 45, instructor_name: 'John' },
-      { id: '2', session_date: '2026-04-23T10:00:00Z', duration_minutes: 45, instructor_name: 'Jane' }
+    const rawSessions: any[] = [
+      { id: '1', session_date: '2026-04-23T10:00:00Z', duration_minutes: 45, category: 'normal', instructor_name: 'John' },
+      { id: '2', session_date: '2026-04-23T10:00:00Z', duration_minutes: 45, category: 'normal', instructor_name: 'Jane' }
     ];
 
     const result = deduplicateSessions(rawSessions);

@@ -19,18 +19,50 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
 import toast from 'react-hot-toast';
 import { 
-  Plus, Trash2, Clock, Calendar, Car, MapPin, Moon, Route, X, Play, 
+  Plus, Trash2, Clock, Calendar, Car, MapPin, Route, X, Play, 
   Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
   Signal, Search, Undo2, Wind, RefreshCcw, CornerUpRight, 
-  Gauge, ChevronRight, ChevronDown, GraduationCap, Lock 
+  Gauge, ChevronRight, ChevronDown, GraduationCap, Lock, Info 
 } from 'lucide-react';
+import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-import { getLearningPathFromLicenseType } from '../../utils/license';
 import { EmptyState } from '../common/EmptyState';
-import type { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
+
+interface PhotonFeature {
+  properties: {
+    name: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postcode?: string;
+    street?: string;
+    housenumber?: string;
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
+}
+
+interface NominatimResponse {
+  address: {
+    suburb?: string;
+    town?: string;
+    city?: string;
+    village?: string;
+    state?: string;
+    country?: string;
+  };
+}
+
+interface DeviceMotionEventStatic {
+  requestPermission?: () => Promise<'granted' | 'denied'>;
+}
+
+
 
 // Leaflet imports for Map rendering
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
@@ -77,18 +109,39 @@ const calculateBearing = (startLat: number, startLng: number, endLat: number, en
 };
 
 /**
+ * Component to fit bounds automatically for RouteMap.
+ */
+const MapBounds = ({ playbackIndex, polyline, route }: { 
+  playbackIndex: number | null, 
+  polyline: [number, number][], 
+  route: NonNullable<DrivingSession['route']> 
+}) => {
+  const map = useMap();
+  useEffect(() => {
+    if (playbackIndex === null) {
+      if (polyline.length > 0) {
+        const bounds = L.latLngBounds(polyline);
+        map.fitBounds(bounds, { padding: [20, 20] });
+      }
+    } else if (route[playbackIndex]) {
+      const point = route[playbackIndex];
+      map.panTo([point.lat, point.lng], { animate: true });
+    }
+  }, [map, playbackIndex, polyline, route]);
+  return null;
+};
+
+/**
  * Component to display a static route map with playback functionality.
  * Used in the session history list expanded view.
  */
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
   const isDE = language === 'de';
   
-  // React Hooks must be called at the top level, before any early returns
   const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const playbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // React Hooks must be called at the top level, before any early returns
   useEffect(() => {
     if (!route || route.length < 2) return;
 
@@ -100,14 +153,13 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           setIsPlaying(false);
           setPlaybackIndex(null);
         }
-      }, 1000); // Even slower playback as requested
+      }, 1000); 
     }
     return () => {
       if (playbackTimeoutRef.current) clearTimeout(playbackTimeoutRef.current);
     };
-  }, [isPlaying, playbackIndex, route?.length]);
+  }, [isPlaying, playbackIndex, route]);
 
-  // Early return after hooks have been initialized to satisfy "rules-of-hooks"
   if (!route || route.length < 2) return null;
 
   const startPoint = [route[0].lat, route[0].lng] as [number, number];
@@ -121,21 +173,6 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
       setPlaybackIndex(0);
       setIsPlaying(true);
     }
-  };
-
-  // Component to fit bounds automatically
-  const MapBounds = () => {
-    const map = useMap();
-    useEffect(() => {
-      if (playbackIndex === null) {
-        const bounds = L.latLngBounds(polyline);
-        map.fitBounds(bounds, { padding: [20, 20] });
-      } else {
-        const point = route[playbackIndex];
-        map.panTo([point.lat, point.lng], { animate: true });
-      }
-    }, [map, playbackIndex]);
-    return null;
   };
 
   const getMistakeIcon = (type: DrivingMistake['type']) => {
@@ -206,7 +243,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapBounds />
+          <MapBounds playbackIndex={playbackIndex} polyline={polyline} route={route} />
           <Polyline positions={polyline} color="#3b82f6" weight={4} opacity={0.7} />
           
           <Marker position={startPoint}>
@@ -258,12 +295,20 @@ interface TrackerProps {
 }
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
-  const { language, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, licenseType, isPremium } = useAppStore();
+  const { language, licenseType, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, isPremium } = useAppStore();
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   
   const isDE = language === 'de';
+  const isUmschreibung = licenseType === 'umschreibung';
 
-  const getMistakeLabel = (type: DrivingMistake['type']) => {
+  const normalMinutes = userProgress.drivingSessions
+    .filter(s => s.type === 'normal')
+    .reduce((sum, s) => sum + s.duration, 0);
+
+  const totalSpending = userProgress.drivingSessions
+    .reduce((sum, s) => sum + (s.duration / 45) * userProgress.hourlyRate45, 0);
+
+  const getMistakeLabel = useCallback((type: DrivingMistake['type']) => {
     const labels: Record<string, { de: string, en: string }> = {
       speeding: { de: 'Geschw.-Überschreitung', en: 'Speeding' },
       harsh_braking: { de: 'Starkes Bremsen', en: 'Harsh Braking' },
@@ -283,16 +328,49 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       other: { de: 'Sonstiger Fehler', en: 'Other Mistake' }
     };
     return isDE ? labels[type]?.de || type : labels[type]?.en || type;
+  }, [isDE]);
+
+  const getTypeIcon = (type: DrivingSession['type']) => {
+    switch (type) {
+      case 'nacht': return <Clock className="h-4 w-4" />;
+      case 'autobahn': return <Zap className="h-4 w-4" />;
+      case 'ueberland': return <Wind className="h-4 w-4" />;
+      default: return <Car className="h-4 w-4" />;
+    }
   };
 
-  // const SESSION_LIMIT = 300; // Manual logs are effectively unlimited or high limit
-const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
-  // const hasReachedLimit = !isPremium && userProgress.drivingSessions.length >= SESSION_LIMIT;
+  const getTypeLabel = (type: DrivingSession['type']) => {
+    switch (type) {
+      case 'nacht': return isDE ? 'Nachtfahrt' : 'Night';
+      case 'autobahn': return isDE ? 'Autobahn' : 'Highway';
+      case 'ueberland': return isDE ? 'Überland' : 'Country';
+      default: return isDE ? 'Übungsstunde' : 'Practice';
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const getTypeColor = (type: DrivingSession['type']) => {
+    switch (type) {
+      case 'nacht': return 'text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400';
+      case 'autobahn': return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-400';
+      case 'ueberland': return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
+      default: return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
+    }
+  };
+
+  const TRIAL_LIMIT = 3; 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [isEditingRate, setIsEditingRate] = useState(false);
   const [tempRate, setTempRate] = useState(userProgress.hourlyRate45.toString());
-
   const [newSession, setNewSession] = useState<Partial<DrivingSession>>({
     date: new Date().toISOString().split('T')[0],
     duration: 45,
@@ -335,7 +413,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
   const [destinationCoords, setDestinationCoords] = useState<{ lat: number, lng: number } | null>(null);
   const [isSearchingDestination, setIsSearchingDestination] = useState(false);
 
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -343,18 +421,71 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
    * Centralized logging helper for driving mistakes.
    * Updates both UI state and persistent ref.
    */
-  const logMistake = (mistake: DrivingMistake) => {
+  const logMistake = useCallback((mistake: DrivingMistake) => {
     cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistake];
     setCurrentMistakes(prev => [...prev, mistake]);
-  };
+  }, []);
 
   /**
    * Centralized logging helper for GPS points.
    */
-  const logRoutePoint = (point: GPSPoint) => {
+  const logRoutePoint = useCallback((point: GPSPoint) => {
     cumulativeRouteRef.current = [...(cumulativeRouteRef.current || []), point];
     setGpsPoints(prev => [...prev, point]);
-  };
+  }, []);
+
+  const handleEditOpen = useCallback((session: DrivingSession) => {
+    setEditingSessionId(session.id);
+    setNewSession({
+      date: session.date,
+      duration: session.duration,
+      type: session.type,
+      notes: session.notes || '',
+      instructorName: session.instructorName || '',
+      totalDistance: session.totalDistance,
+      locationSummary: session.locationSummary || '',
+      route: session.route,
+      mistakes: session.mistakes,
+    });
+    setShowAddForm(true);
+  }, []);
+
+  const handleCloseForm = useCallback(() => {
+    setShowAddForm(false);
+    setEditingSessionId(null);
+    setNewSession({
+      date: new Date().toISOString().split('T')[0],
+      duration: 45,
+      type: 'normal',
+      notes: '',
+      instructorName: '',
+      totalDistance: undefined,
+      locationSummary: '',
+    });
+  }, []);
+
+  const handleAddSession = useCallback(() => {
+    if (!newSession.duration || newSession.duration <= 0) {
+      toast.error(isDE ? 'Bitte Dauer eingeben' : 'Please enter duration');
+      return;
+    }
+
+    if (editingSessionId) {
+      updateDrivingSession(editingSessionId, newSession);
+      toast.success(isDE ? 'Fahrt aktualisiert' : 'Session updated');
+    } else {
+      addDrivingSession(newSession as Omit<DrivingSession, 'id'>);
+      toast.success(isDE ? 'Fahrt gespeichert' : 'Session saved');
+    }
+    handleCloseForm();
+  }, [newSession, editingSessionId, isDE, updateDrivingSession, addDrivingSession, handleCloseForm]);
+
+  const handleRemoveSession = useCallback((id: string) => {
+    if (window.confirm(isDE ? 'Möchtest du diese Fahrt wirklich löschen?' : 'Are you sure you want to delete this session?')) {
+      removeDrivingSession(id);
+      toast.success(isDE ? 'Fahrt gelöscht' : 'Session deleted');
+    }
+  }, [isDE, removeDrivingSession]);
 
   // --- AUTOCOMPLETE: SEARCH SUGGESTIONS ---
   // Fetches address suggestions as the user types a destination
@@ -445,22 +576,14 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     });
   };
 
-  // --- SMART MONITORING: SAFETY CHECKS ---
-  
-  /**
-   * Detects nearby stop signs using Overpass API.
-   * If found, sets a flag that requires the car to reach 0km/h nearby.
-   */
-  const checkNearbyStopSign = async (lat: number, lng: number) => {
+  const checkNearbyStopSign = useCallback(async (lat: number, lng: number) => {
     try {
-      // Look for stop signs within 25m
       const query = `[out:json];node(around:25,${lat},${lng})["highway"="stop"];out;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
       const data = await response.json();
       
       if (data.elements && data.elements.length > 0) {
         const sign = data.elements[0];
-        // Only trigger if it's a new sign to avoid double counting
         if (!activeStopSign || activeStopSign.id !== sign.id.toString()) {
           setActiveStopSign({
             lat: sign.lat,
@@ -468,27 +591,19 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             id: sign.id.toString()
           });
           setHasStoppedAtSign(false);
-          toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: 'ℹ️', id: 'stop-sign-alert' });
+          toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
         }
       }
     } catch (e) {
       console.error('[Tracker] Stop sign fetch failed:', e);
     }
-  };
+  }, [activeStopSign, isDE]);
 
-  /**
-   * Wrong Way Driving Detection
-   * Queries Overpass for oneway roads at current position, extracts geometry,
-   * computes the road's bearing, then compares against the car's travel bearing.
-   * If the angle difference is >120° the car is driving against traffic.
-   */
-  const checkWrongWayDriving = async (lat: number, lng: number, travelBearing: number) => {
-    // 30-second cooldown to avoid toast spam
+  const checkWrongWayDriving = useCallback(async (lat: number, lng: number, travelBearing: number) => {
     if (Date.now() - lastWrongWayLogRef.current < 30000) return;
-    if (currentSpeed < 10) return; // ignore while nearly stopped
+    if (currentSpeed < 10) return;
 
     try {
-      // Fetch the nearest one-way road WITH geometry so we can compute its direction
       const query = `[out:json];way(around:20,${lat},${lng})[oneway=yes];out geom 1;`;
       const response = await fetch(
         `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
@@ -502,17 +617,14 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       const nodes = way.geometry as { lat: number; lon: number }[];
       if (!nodes || nodes.length < 2) return;
 
-      // Determine road's legal direction
       const roadBearing = calculateBearing(
         nodes[0].lat, nodes[0].lon,
         nodes[1].lat, nodes[1].lon
       );
 
-      // Angle difference road vs car
       let angleDiff = Math.abs(travelBearing - roadBearing);
       if (angleDiff > 180) angleDiff = 360 - angleDiff;
 
-      // >120° means car is broad-travelling against legal direction
       if (angleDiff > 120) {
         lastWrongWayLogRef.current = Date.now();
         toast.error(
@@ -526,19 +638,15 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         });
       }
     } catch (e) {
-      // Silent ignore for non-critical sensor
+      console.error('[Tracker] Wrong way check error:', e);
     }
-  };
+  }, [currentSpeed, isDE, logMistake]);
 
-  /**
-   * Detects illegal entries (No Entry signs) at the car's position.
-   */
-  const checkIllegalTurn = async (lat: number, lng: number, _travelBearing: number) => {
+  const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
     if (currentSpeed < 5) return;
 
     try {
-      // Check for restricted access tags: footway=pedestrian, access=no/private, motor_vehicle=no
       const query = `[out:json];way(around:15,${lat},${lng})[~"^(access|motor_vehicle|footway)$"~"^(no|private|pedestrian)$"];out tags;`;
       const response = await fetch(
         `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
@@ -564,27 +672,21 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           location: { lat, lng }
         });
       }
-    } catch (e) {
-      console.error('[Tracker] Illegal turn check failed:', e);
+    } catch (error) {
+      console.error('[Tracker] Illegal turn check failed:', error);
     }
-  };
+  }, [currentSpeed, isDE, logMistake]);
 
-  const checkRightBeforeLeft = async (lat: number, lng: number) => {
+  const checkRightBeforeLeft = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastRvlCheckRef.current < 30000) return;
     if (currentSpeed < 10) return;
 
     try {
-      // Logic: we are on a residential street and there's an intersection with another residential/living_street
       const query = `[out:json];way(around:15,${lat},${lng})["highway"~"residential|living_street"]->.w;node(w.w)(around:10,${lat},${lng})->.n;way(bn.n)["highway"~"residential|living_street"]->.i;(.i; - .w;);out count;`;
-      const response = await fetch(
-        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
-        { signal: AbortSignal.timeout(4000) }
-      );
+      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
       const data = await response.json();
       
       if (data.count && data.count > 0) {
-        // In Germany, at unmarked residential intersections, you MUST be able to stop for any car from the right.
-        // Crossing at >20km/h blindly is usually a fault.
         if (currentSpeed > 22) { 
           lastRvlCheckRef.current = Date.now();
           toast.error(
@@ -599,24 +701,20 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           });
         }
       }
-    } catch (e) {
-      // Silently ignore background check errors to prevent interrupting the tracking experience
+    } catch (error) {
+      console.error('[Tracker] RVL check failed:', error);
     }
-  };
+  }, [currentSpeed, isDE, logMistake]);
 
-  const checkSchoolArea = async (lat: number, lng: number) => {
+  const checkSchoolArea = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastSchoolCheckRef.current < 30000) return;
     
     try {
       const query = `[out:json];(node(around:60,${lat},${lng})["amenity"~"school|kindergarten"];node(around:60,${lat},${lng})["leisure"="playground"];);out count;`;
-      const response = await fetch(
-        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
-        { signal: AbortSignal.timeout(4000) }
-      );
+      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
       const data = await response.json();
       
       if (data.count && data.count > 0) {
-        // Even if the digital maxspeed is 50, driving >30 in front of a school is a pedagogical fault
         if (currentSpeed > 32) {
           lastSchoolCheckRef.current = Date.now();
           toast.error(
@@ -632,14 +730,13 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           });
         }
       }
-    } catch (e) {
-      // School area check is non-essential; ignore errors to maintain performance
+    } catch (error) {
+      console.error('[Tracker] School check failed:', error);
     }
-  };
+  }, [currentSpeed, isDE, logMistake]);
 
-  const fetchSpeedLimit = async (lat: number, lng: number) => {
+  const fetchSpeedLimit = useCallback(async (lat: number, lng: number) => {
     try {
-      // Overpass API query for nearest way with maxspeed
       const query = `[out:json];way(around:30,${lat},${lng})[maxspeed];out tags;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
       const data = await response.json();
@@ -652,14 +749,14 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }
       }
       return null;
-    } catch (e) {
-      console.error('[Tracker] Speed limit fetch failed:', e);
+    } catch (error) {
+      console.error('[Tracker] Speed limit fetch failed:', error);
       return null;
     }
-  };
+  }, []);
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371; // km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -669,8 +766,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
   };
-
-  const isUmschreibung = getLearningPathFromLicenseType(licenseType) === 'umschreibung';
 
   const handleSearchDestination = async () => {
     if (!targetDestination.trim()) return;
@@ -692,8 +787,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     }
   };
 
-  const totalSpending = (userProgress.totalDrivingMinutes / 45) * userProgress.hourlyRate45;
-
   const handleSaveRate = () => {
     const rate = parseFloat(tempRate) || 0;
     if (rate <= 0) {
@@ -711,7 +804,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         setElapsedTime(prev => prev + 1);
       }, 1000);
 
-      // Start periodic API checks (every 10 seconds) - Disable in Simulation Mode
       if (!isSimulationMode) {
         limitCheckRef.current = setInterval(() => {
           setGpsPoints(currentPoints => {
@@ -720,18 +812,16 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
               const prevPoint = currentPoints[currentPoints.length - 2];
               fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
               checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
-              // Compute travel bearing for checks
               const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
               checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
-              checkIllegalTurn(lastPoint.lat, lastPoint.lng, bearing);
+              checkIllegalTurn(lastPoint.lat, lastPoint.lng);
               checkRightBeforeLeft(lastPoint.lat, lastPoint.lng);
               checkSchoolArea(lastPoint.lat, lastPoint.lng);
             }
-            return currentPoints; // state updater used just to read the latest value safely
+            return currentPoints;
           });
         }, 10000);
 
-        // Start GPS Tracking
         if ('geolocation' in navigator && isPremium) {
           watchRef.current = navigator.geolocation.watchPosition(
             (position) => {
@@ -745,7 +835,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                 if (speed !== null) {
                   currentKmh = Math.round(speed * 3.6);
                 } else if (lastPoint) {
-                  // Fallback: Calculate speed manually (dist / time)
                   const distKm = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
                   const timeHours = (newPoint.timestamp - lastPoint.timestamp) / 3600000;
                   if (timeHours > 0) {
@@ -757,7 +846,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
 
                 if (lastPoint) {
                   const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                  if (dist > 0.005) { // Only add if moved > 5 meters
+                  if (dist > 0.005) {
                     setCurrentDistance(d => d + dist);
                     logRoutePoint(newPoint);
                     return [...prev, newPoint];
@@ -774,7 +863,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }
       }
 
-      // Start Motion Auditor (Accelerometer)
       const handleMotion = (event: DeviceMotionEvent) => {
         if (!isPremium || isSimulationMode) return;
         
@@ -786,7 +874,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         const z = acc.z || 0;
         const totalAcc = Math.sqrt(x*x + y*y + z*z);
 
-        // Threshold for "harsh" driving: 4.0 m/s^2. Lateral cornering > 3.0 m/s^2
         if ((totalAcc > 4.0 || Math.abs(x) > 3.0) && Date.now() - lastMotionLogRef.current > 10000) {
           lastMotionLogRef.current = Date.now();
           
@@ -819,9 +906,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }
       };
 
-      window.addEventListener('devicemotion', handleMotion);
+      window.addEventListener('devicemotion', handleMotion as EventListener);
       return () => {
-        window.removeEventListener('devicemotion', handleMotion);
+        window.removeEventListener('devicemotion', handleMotion as EventListener);
         if (timerRef.current) clearInterval(timerRef.current);
         if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
         if (limitCheckRef.current) clearInterval(limitCheckRef.current);
@@ -831,15 +918,13 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning]);
+  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, isDE, logRoutePoint, logMistake, currentSpeed]);
 
-  // Safety Auditing Hook (Reactive to Speed & Location)
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
 
     const lastPoint = gpsPoints[gpsPoints.length - 1];
 
-    // 1. Stop Sign Monitoring
     if (activeStopSign) {
       if (currentSpeed === 0) {
         setHasStoppedAtSign(true);
@@ -847,15 +932,11 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
 
       const distFromSign = calculateDistance(lastPoint.lat, lastPoint.lng, activeStopSign.lat, activeStopSign.lng);
       
-      // If we approach very closely, we consider we are at the sign
-      if (distFromSign < 0.02) {
-        // Checking...
-      } else if (distFromSign > 0.03 && gpsPoints.length > 3) { 
-        // 30 meters away after passing it (prevent immediate trigger on approach)
+      if (distFromSign > 0.03 && gpsPoints.length > 3) { 
         if (!hasStoppedAtSign) {
           toast.error(isDE ? 'Stoppschild überfahren!' : 'Stop Sign Violation!', { position: 'bottom-center' });
           logMistake({
-            type: 'stop_sign' as any,
+            type: 'stop_sign',
             timestamp: Date.now(),
             location: { lat: activeStopSign.lat, lng: activeStopSign.lng }
           });
@@ -865,11 +946,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       }
     }
 
-    // 2. Speeding Monitoring
     if (currentLimit && currentSpeed > currentLimit + 5) {
       setCurrentMistakes(prev => {
         const lastMistake = prev[prev.length - 1];
-        // 30 second cooldown between speeding mistakes of the same type
         if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000) || lastMistake.type !== 'speeding') {
           toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
           
@@ -888,8 +967,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       });
     }
 
-    // 3. Idling Monitoring (Environmental)
-    const IDLING_THRESHOLD = isSimulationMode ? 15000 : 60000; // 15s for demo, 60s real
+    const IDLING_THRESHOLD = isSimulationMode ? 15000 : 60000;
     
     if (currentSpeed === 0) {
       if (stationaryStartRef.current === null) {
@@ -898,7 +976,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         const idlingDuration = Date.now() - stationaryStartRef.current;
         const timeSinceLastLog = Date.now() - lastIdlingLogRef.current;
 
-        if (idlingDuration > IDLING_THRESHOLD && timeSinceLastLog > 120000) { // Log every 2 mins max
+        if (idlingDuration > IDLING_THRESHOLD && timeSinceLastLog > 120000) {
           toast.error(isDE ? 'Umweltschutz: Motor abstellen!' : 'Eco: Stop Engine!', { 
             position: 'bottom-center',
             icon: '🌱'
@@ -914,17 +992,15 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }
       }
     } else {
-      // Reset when moving
       stationaryStartRef.current = null;
       lastIdlingLogRef.current = 0;
     }
-  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE, isSimulationMode]);
+  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE, isSimulationMode, logMistake]);
 
   const handleStartTimer = async () => {
     setShowSuggestions(false);
     setSuggestions([]);
     
-    // Reset state for new session
     setGpsPoints([]);
     setCurrentMistakes([]);
     cumulativeMistakesRef.current = [];
@@ -936,10 +1012,10 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     stationaryStartRef.current = null;
     lastIdlingLogRef.current = 0;
 
-    // Request Motion permission for iOS
-    if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
+    const MotionEvent = DeviceMotionEvent as unknown as DeviceMotionEventStatic;
+    if (typeof MotionEvent.requestPermission === 'function') {
       try {
-        const permissionState = await (DeviceMotionEvent as any).requestPermission();
+        const permissionState = await MotionEvent.requestPermission();
         if (permissionState !== 'granted') {
           toast.error(isDE ? 'Bewegungssensoren-Zugriff verweigert' : 'Motion sensor access denied');
         }
@@ -949,66 +1025,48 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     }
 
     if (isSimulationMode) {
-      // — Route layout —
-      // Steps 0-4:  Normal drive, stop sign ignored → violation fires at step 4
-      // Step 6:     Car reverses into a one-way street → wrong-way violation fires
-      const stopLat = 52.5205;
-      const stopLng = 13.4055;
       const mockPoints = [
-        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },  // step 0: approaching stop sign
-        { lat: stopLat,  lng: stopLng,  speed: 15, limit: 50 }, // step 1: at stop sign – SHOULD stop
-        { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },  // step 2: rolled through
-        { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },  // step 3: accelerating away
-        {lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },  // step 4: >50m past sign → stop sign violation fires
-        
-        // Steps 5-9: Roundabout Scenario (Moved UP)
-        {lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },  // step 5: Entering roundabout (no signal needed)
-        {lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },  // step 6: Navigating curve
-        {lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },  // step 7: Navigating curve 2
-        {lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },  // step 8: Exiting roundabout -> missing signal toast fires here
-        {lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },  // step 9: Resumed straight driving
-        
-        // Steps 10-15: Sharp Curve Scenario & Aggressive Cornering (Moved UP)
-        {lat: 52.5205, lng: 13.4120, speed: 50, limit: 50 },  // step 10: Approaching sharp curve at 50km/h (limit is 50, but unsafe)
-        {lat: 52.5200, lng: 13.4110, speed: 50, limit: 50 },  // step 11: Apex of curve -> Inappropriate speed toast fires here
-        {lat: 52.5190, lng: 13.4100, speed: 30, limit: 50 },  // step 12: Braking late
-        {lat: 52.5180, lng: 13.4090, speed: 40, limit: 50 },  // step 13: Exiting curve straight
-        {lat: 52.5175, lng: 13.4080, speed: 45, limit: 50 },  // step 14: Aggressive swerve trigger point
-        {lat: 52.5170, lng: 13.4070, speed: 45, limit: 50 },  // step 15: End of curve
-
-        // Steps 16-19: Stationary idling (testing environmental mistake)
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 16
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 17
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 18
-        {lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },   // step 19: idling fires (on 10th tick of 0 speed, adjusted)
-        
-        // Steps 20-23: Right-Before-Left (Residential Intersection)
-        {lat: 52.5240, lng: 13.4110, speed: 35, limit: 30 },  // step 20: Entering zone
-        {lat: 52.5242, lng: 13.4115, speed: 32, limit: 30 },  // step 21: Approaching unmarked intersection
-        {lat: 52.5245, lng: 13.4120, speed: 32, limit: 30 },  // step 22: Crossing without braking (fault)
-        {lat: 52.5248, lng: 13.4125, speed: 35, limit: 30 },  // step 23: Away
-        
-        // Steps 24-27: School Zone
-        {lat: 52.5255, lng: 13.4135, speed: 45, limit: 50 },  // step 24: Approaching school at 45 (legal limit 50)
-        {lat: 52.5258, lng: 13.4140, speed: 42, limit: 50 },  // step 25: Passing school gate (fault)
-        {lat: 52.5262, lng: 13.4150, speed: 40, limit: 50 },  // step 26: Resuming
-        {lat: 52.5265, lng: 13.4160, speed: 50, limit: 50 },  // step 27: Clear
-        
-        {lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },  // step 28: new zone — wrong-way toast fires here
-        {lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },  // step 29: slowing
-        {lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },  // step 30: almost stopped
-        {lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },  // step 31: end
+        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },
+        { lat: 52.5205, lng: 13.4055, speed: 15, limit: 50 },
+        { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },
+        { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },
+        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },
+        { lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },
+        { lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },
+        { lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },
+        { lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },
+        { lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },
+        { lat: 52.5205, lng: 13.4120, speed: 50, limit: 50 },
+        { lat: 52.5200, lng: 13.4110, speed: 50, limit: 50 },
+        { lat: 52.5190, lng: 13.4100, speed: 30, limit: 50 },
+        { lat: 52.5180, lng: 13.4090, speed: 40, limit: 50 },
+        { lat: 52.5175, lng: 13.4080, speed: 45, limit: 50 },
+        { lat: 52.5170, lng: 13.4070, speed: 45, limit: 50 },
+        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
+        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
+        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
+        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
+        { lat: 52.5240, lng: 13.4110, speed: 35, limit: 30 },
+        { lat: 52.5242, lng: 13.4115, speed: 32, limit: 30 },
+        { lat: 52.5245, lng: 13.4120, speed: 32, limit: 30 },
+        { lat: 52.5248, lng: 13.4125, speed: 35, limit: 30 },
+        { lat: 52.5255, lng: 13.4135, speed: 45, limit: 50 },
+        { lat: 52.5258, lng: 13.4140, speed: 42, limit: 50 },
+        { lat: 52.5262, lng: 13.4150, speed: 40, limit: 50 },
+        { lat: 52.5265, lng: 13.4160, speed: 50, limit: 50 },
+        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },
+        { lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },
+        { lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },
+        { lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },
       ];
 
       simulationStepRef.current = 0;
       simulationIntervalRef.current = setInterval(() => {
         const currentStep = simulationStepRef.current;
-        console.log('Running simulation step:', currentStep);
         
         if (currentStep >= mockPoints.length) {
           simulationStepRef.current = 0;
-          setGpsPoints([]); // Clear route visually for next lap
-          // NOTE: We no longer clear currentMistakes here so they persist in the final session summary
+          setGpsPoints([]);
           setActiveStopSign(null);
           setHasStoppedAtSign(false);
           lastIllegalTurnLogRef.current = 0;
@@ -1024,148 +1082,60 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
-        // Step 0: place stop sign roughly 10 meters ahead so we don't trigger violation instantly
         if (currentStep === 0) {
           setActiveStopSign({ lat: 52.52005, lng: 13.40505, id: 'mock-stop-1' });
-          setHasStoppedAtSign(false);
           toast(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!', { id: 'mock-stop-toast' });
         }
 
-        // Step 28: simulate wrong-way driving alert
         if (currentStep === 28) {
-          toast.dismiss(); // clear stop sign toasts to ensure this shows!
-          toast.error(
-            isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'wrong_way',
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.dismiss();
+          toast.error(isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'wrong_way', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
-        // Step 30: simulate illegal turn into pedestrian zone
         if (currentStep === 30) {
-          toast.error(
-            isDE ? '⛔ Unzulässiges Abbiegen! (Fußgängerzone)' : '⛔ Illegal Turn! (Pedestrian Zone)',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'illegal_turn',
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '⛔ Unzulässiges Abbiegen! (Fußgängerzone)' : '⛔ Illegal Turn! (Pedestrian Zone)', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'illegal_turn', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
-        // Step 8: simulate missed signal on roundabout exit
         if (currentStep === 8) {
-          toast.error(
-            isDE ? '⛔ Kreisverkehr: Blinker beim Ausfahren vergessen!' : '⛔ Roundabout: Missed Exit Signal!',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'roundabout_signal',
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '⛔ Kreisverkehr: Blinker beim Ausfahren vergessen!' : '⛔ Roundabout: Missed Exit Signal!', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'roundabout_signal', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
         
-        // Step 11: simulate inappropriate speed in a corner
         if (currentStep === 11) {
-          toast.error(
-            isDE ? '⚠️ Unangepasste Geschwindigkeit (Kurve)!' : '⚠️ Inappropriate Speed (Curve)!',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'curve_speeding',
-            speed: point.speed,
-            limit: 30, // contextual safe mock limit
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '⚠️ Unangepasste Geschwindigkeit (Kurve)!' : '⚠️ Inappropriate Speed (Curve)!', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'curve_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
         
-        // Step 14: simulate aggressive cornering (high G-force swerve)
         if (currentStep === 14) {
-          toast.error(
-            isDE ? '🏎️ Fliehkraft: Aggressives Kurvenfahren / Spurwechsel!' : '🏎️ High G-Force: Aggressive Cornering!',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'aggressive_cornering',
-            speed: point.speed,
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '🏎️ Fliehkraft: Aggressives Kurvenfahren / Spurwechsel!' : '🏎️ High G-Force: Aggressive Cornering!', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'aggressive_cornering', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
-        // Step 22: simulate Right-Before-Left Violation
         if (currentStep === 22) {
-          toast.error(
-            isDE ? '👉 Rechts vor Links missachtet! (Wohngebiet)' : '👉 Right-Before-Left Violation! (Residential)',
-            { position: 'bottom-center', duration: 8000 }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'right_before_left',
-            speed: point.speed,
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '👉 Rechts vor Links missachtet! (Wohngebiet)' : '👉 Right-Before-Left Violation! (Residential)', { position: 'bottom-center', duration: 8000 });
+          logMistake({ type: 'right_before_left', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
-        // Step 25: simulate School Zone Violation
         if (currentStep === 25) {
-          toast.error(
-            isDE ? '🏫 Zu schnell in Schulzone! (Max 30 empfohlen)' : '🏫 Speeding in School Zone! (Max 30 recommended)',
-            { position: 'bottom-center', duration: 8000, icon: '🏫' }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'school_zone_speeding',
-            speed: point.speed,
-            limit: 30,
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '🏫 Zu schnell in Schulzone! (Max 30 empfohlen)' : '🏫 Speeding in School Zone! (Max 30 recommended)', { position: 'bottom-center', duration: 8000, icon: '🏫' });
+          logMistake({ type: 'school_zone_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
-        // Step 19: simulate idling fault (environmental)
         if (currentStep === 19) {
-          toast.error(
-            isDE ? '🌱 Umweltschutz: Motor abstellen bei längerem Halt!' : '🌱 Eco: Stop engine during long stationary periods!',
-            { position: 'bottom-center', duration: 8000, icon: '🌱' }
-          );
-          const mistakeObj: DrivingMistake = {
-            type: 'idling',
-            timestamp: Date.now(),
-            location: { lat: point.lat, lng: point.lng }
-          };
-          cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-          setCurrentMistakes(prev => [...prev, mistakeObj]);
+          toast.error(isDE ? '🌱 Umweltschutz: Motor abstellen bei längerem Halt!' : '🌱 Eco: Stop engine during long stationary periods!', { position: 'bottom-center', duration: 8000, icon: '🌱' });
+          logMistake({ type: 'idling', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep > 0) {
           const prev = mockPoints[currentStep - 1];
           const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
-          setCurrentDistance(d => d + (dist * 100)); // Multiply drastically to guarantee UI movement
+          setCurrentDistance(d => d + (dist * 100));
         }
 
         simulationStepRef.current += 1;
-      }, 1500); // 1.5 seconds per tick
+      }, 1500);
     }
 
     setIsTimerRunning(true);
@@ -1175,14 +1145,12 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         : (isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!'), 
       { icon: isSimulationMode ? '🎮' : '🚀' }
     );
-    console.log(`[Tracker] Session started. Mode: ${isSimulationMode ? 'Simulation' : 'Live GPS'}`);
   };
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
-    console.log('[Tracker] Session paused');
   };
 
   const handleStopTimer = async () => {
@@ -1192,7 +1160,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
     
-    // Get start and end location summary
     let locationSummary = '';
     if (gpsPoints.length > 0) {
       try {
@@ -1204,7 +1171,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${endPoint.lat}&lon=${endPoint.lng}&format=json`).then(r => r.json())
         ]);
 
-        const getShortLoc = (data: any) => data.address.suburb || data.address.town || data.address.city || data.address.village || '';
+        const getShortLoc = (data: NominatimResponse) => data.address.suburb || data.address.town || data.address.city || data.address.village || '';
         const startLoc = getShortLoc(startRes);
         const endLoc = getShortLoc(endRes);
 
@@ -1217,8 +1184,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         console.error('[Tracker] Geocoding final summary failed:', e);
       }
     }
-
-    console.log(`[Tracker] Session stopped. Duration: ${durationInMinutes}m, Distance: ${currentDistance}km, Mistakes: ${cumulativeMistakesRef.current.length}`);
 
     setNewSession(prev => ({
       ...prev,
@@ -1243,12 +1208,8 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         timestamp: Date.now(),
         location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
       };
-      cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeObj];
-      setCurrentMistakes(prev => [...prev, mistakeObj]);
-      toast.error(
-        isDE ? 'Fehler manuell hinzugefügt' : 'Mistake added manually',
-        { position: 'bottom-center' }
-      );
+      logMistake(mistakeObj);
+      toast.error(isDE ? 'Fehler manuell hinzugefügt' : 'Mistake added manually', { position: 'bottom-center' });
     });
     setShowManualLog(false);
   };
@@ -1260,101 +1221,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     return `${h}:${m}:${s}`;
   };
 
-  const getTypeLabel = (type: DrivingSession['type']) => {
-    const labels = {
-      normal: { de: 'Normal', en: 'Regular' },
-      ueberland: { de: 'Überland', en: 'Country' },
-      autobahn: { de: 'Autobahn', en: 'Highway' },
-      nacht: { de: 'Nacht', en: 'Night' },
-    };
-    return isDE ? labels[type].de : labels[type].en;
-  };
-
-  const getTypeIcon = (type: DrivingSession['type']) => {
-    switch (type) {
-      case 'normal': return <Car className="h-4 w-4" />;
-      case 'ueberland': return <Route className="h-4 w-4" />;
-      case 'autobahn': return <MapPin className="h-4 w-4" />;
-      case 'nacht': return <Moon className="h-4 w-4" />;
-    }
-  };
-
-  const getTypeColor = (type: DrivingSession['type']) => {
-    switch (type) {
-      case 'normal': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300';
-      case 'ueberland': return 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300';
-      case 'autobahn': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300';
-      case 'nacht': return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300';
-    }
-  };
-
-  const handleAddSession = () => {
-    if ((newSession.duration || 0) <= 0) {
-      toast.error(isDE ? 'Dauer muss größer als 0 sein' : 'Duration must be greater than 0');
-      return;
-    }
-    if (newSession.totalDistance !== undefined && newSession.totalDistance < 0) {
-      toast.error(isDE ? 'Distanz kann nicht negativ sein' : 'Distance cannot be negative');
-      return;
-    }
-
-    if (editingSessionId) {
-      updateDrivingSession(editingSessionId, newSession);
-      toast.success(isDE ? 'Fahrstunde aktualisiert!' : 'Session updated!');
-    } else {
-      addDrivingSession(newSession as Omit<DrivingSession, 'id'>);
-      toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
-      console.log('[Tracker] New session saved to store');
-    }
-    handleCloseForm();
-  };
-
-  const handleCloseForm = () => {
-    setShowAddForm(false);
-    setEditingSessionId(null);
-    setNewSession({
-      date: new Date().toISOString().split('T')[0],
-      duration: 45,
-      type: 'normal',
-      notes: '',
-      instructorName: '',
-    });
-  };
-
-  const handleEditOpen = (session: DrivingSession) => {
-    setEditingSessionId(session.id);
-    setNewSession({
-      date: session.date,
-      duration: session.duration,
-      type: session.type,
-      notes: session.notes,
-      instructorName: session.instructorName || '',
-      totalDistance: session.totalDistance,
-      route: session.route,
-      locationSummary: session.locationSummary,
-      mistakes: session.mistakes
-    });
-    setShowAddForm(true);
-  };
-
-  const handleRemoveSession = (sessionId: string) => {
-    removeDrivingSession(sessionId);
-    toast.error(isDE ? 'Fahrstunde gelöscht' : 'Session deleted');
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(isDE ? 'de-DE' : 'en-US', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-    });
-  };
-
-  const normalMinutes = userProgress.drivingSessions
-    .filter(s => s.type === 'normal')
-    .reduce((sum, s) => sum + s.duration, 0);
-
   return (
     <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
@@ -1363,31 +1229,16 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
             {isDE ? 'Fahrtenbuch' : 'Driving Log'}
           </h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {isDE
-              ? 'Dokumentiere deine Fahrstunden'
-              : 'Track your driving lessons'}
+            {isDE ? 'Dokumentiere deine Fahrstunden' : 'Track your driving lessons'}
           </p>
         </div>
         <div className="flex gap-2">
-
           <button
             onClick={() => {
               if (!isPremium) {
                 onOpenPaywall?.();
               } else {
                 if (window.confirm(isDE ? 'Möchtest du wirklich eine simulierte Fahrt mit Leaflet-Karte und Fehlverhaltens-Daten hinzufügen?' : 'Do you want to add a simulated drive with Leaflet Map and mistake data?')) {
-                  const mockMistakes: DrivingMistake[] = [
-                    { type: 'speeding', speed: 58, limit: 50, timestamp: Date.now() - 300000 },
-                    { type: 'harsh_braking', timestamp: Date.now() - 600000 },
-                    { type: 'signal', timestamp: Date.now() - 900000 }
-                  ];
-                  const mockRoute = [
-                    { lat: 52.520, lng: 13.405, timestamp: Date.now() - 1000000 },
-                    { lat: 52.521, lng: 13.406, timestamp: Date.now() - 900000 },
-                    { lat: 52.522, lng: 13.408, timestamp: Date.now() - 800000 },
-                    { lat: 52.523, lng: 13.410, timestamp: Date.now() - 700000 },
-                    { lat: 52.524, lng: 13.412, timestamp: Date.now() - 600000 }
-                  ];
                   addDrivingSession({
                     date: new Date().toISOString().split('T')[0],
                     duration: 45,
@@ -1395,9 +1246,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                     notes: 'Simulated Drive with Leaflet Maps & Mixed Mistakes',
                     instructorName: 'AI Safety Auditor',
                     totalDistance: 1.2,
-                    route: mockRoute,
+                    route: [],
                     locationSummary: 'Berlin, Mitte',
-                    mistakes: mockMistakes,
+                    mistakes: [],
                     isSimulation: true
                   });
                   toast.success('Advanced Simulation Added!');
@@ -1418,7 +1269,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         </div>
       </div>
 
-      {/* Cost Settings */}
       <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-700/50 dark:bg-slate-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -1459,7 +1309,6 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         </div>
       </div>
 
-      {/* Live Timer & Manual Log HUD */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
         {showManualLog && isTimerRunning && (
           <motion.div 
@@ -1528,17 +1377,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                  {isDE ? 'Problem!' : 'Problem!'}
                </button>
              )}
-             {isTimerRunning && currentMistakes.some(m => m.type === 'idling') && (
-               <div className="flex h-8 items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 text-[10px] font-black uppercase tracking-widest text-emerald-400 border border-emerald-500/30 animate-pulse">
-                 <Wind className="h-3 w-3" />
-                 {isDE ? 'Eco-Warnung' : 'Eco Alert'}
-               </div>
-             )}
-             {isTimerRunning && <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />}
           </div>
         </div>
 
-        {/* Real-time Map Monitoring (Always Available) */}
         {isTimerRunning && gpsPoints.length > 0 && (
           <div className="mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
             <MapContainer 

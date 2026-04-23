@@ -36,14 +36,14 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
   // --- CONFIGURATION ---
   
   // Use costs from store with fallback for default German prices
-  const costs = userProgress.fixedCosts || {
+  const costs = useMemo(() => userProgress.fixedCosts || {
     registration: 350,
     theoryExam: 25,
     practicalExam: 116,
     learningMaterial: 50,
     firstAid: 40,
     visionTest: 7,
-  };
+  }, [userProgress.fixedCosts]);
   
   const hourlyRate45 = userProgress.hourlyRate45 || 60;
   
@@ -106,7 +106,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
     return Math.round(sum);
   }, [userProgress.drivingSessions, hourlyRate45, costs]);
 
-  const visibleLessons = filterLessonsForSelection(getAllLessons(), transmissionType, learningPath);
+  const visibleLessons = useMemo(() => filterLessonsForSelection(getAllLessons(), transmissionType, learningPath), [transmissionType, learningPath]);
   const totalLessons = visibleLessons.length;
   const completedLessonsCount = userProgress.completedLessons.length;
   const activeLessonsPercent = totalLessons > 0 ? (completedLessonsCount / totalLessons) * 100 : 0;
