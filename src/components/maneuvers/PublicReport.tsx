@@ -212,10 +212,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
     let briefing = `${name} is showing ${readiness >= 75 ? 'excellent' : readiness >= 50 ? 'consistent' : 'steady'} progress with a ${readiness}% practical readiness score. `;
     
-    if (missingSonderfahrten.length > 0) {
-      briefing += `Focus should shift towards ${missingSonderfahrten.join(', ')} hours, which are currently below legal requirements. `;
+    if (learningPath === 'standard') {
+      if (missingSonderfahrten.length > 0) {
+        briefing += `Focus should shift towards ${missingSonderfahrten.join(', ')} hours, which are currently below legal requirements. `;
+      } else {
+        briefing += "All mandatory special driving hours are completed, meaning the focus can now be 100% on exam simulation. ";
+      }
     } else {
-      briefing += "All mandatory special driving hours are completed, meaning the focus can now be 100% on exam simulation. ";
+      briefing += "As a conversion student, focus remains on perfecting exam-specific maneuvers and city awareness. ";
     }
 
     if (sortedFaults.length > 0) {
@@ -335,32 +339,34 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               ))}
             </div>
 
-            {/* Critical Legal Hours */}
-            <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
-              <div className="grid grid-cols-3 gap-3">
-                {Object.entries(sonderfahrten).map(([key, stats]) => {
-                  const progress = (stats.current / stats.target) * 100;
-                  return (
-                    <div key={key} className="space-y-2">
-                      <div className="flex justify-between items-end">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">{key}</span>
-                        <span className="text-[10px] font-black text-white">{stats.current}/{stats.target}</span>
+            {/* Critical Legal Hours - Only for Standard path */}
+            {learningPath === 'standard' && (
+              <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
+                <div className="grid grid-cols-3 gap-3">
+                  {Object.entries(sonderfahrten).map(([key, stats]) => {
+                    const progress = (stats.current / stats.target) * 100;
+                    return (
+                      <div key={key} className="space-y-2">
+                        <div className="flex justify-between items-end">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase">{key}</span>
+                          <span className="text-[10px] font-black text-white">{stats.current}/{stats.target}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className={cn(
+                              "h-full rounded-full",
+                              progress >= 100 ? "bg-emerald-500" : "bg-blue-500"
+                            )}
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                        <div 
-                          className={cn(
-                            "h-full rounded-full",
-                            progress >= 100 ? "bg-emerald-500" : "bg-blue-500"
-                          )}
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             <button 
               onClick={() => setLessonMode(false)}
@@ -436,44 +442,46 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
         </div>
 
-        {/* Special Driving Hours (Sonderfahrten) */}
-        <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <Activity className="h-4 w-4 text-blue-500" />
-              Special Driving Hours
-            </h3>
-            <span className="text-[10px] text-slate-500 font-bold uppercase">German Requirements</span>
-          </div>
-          
-          <div className="space-y-6">
-            {[
-              { label: 'Überland (Cross-country)', key: 'ueberland', color: 'bg-emerald-500', icon: '🛣️' },
-              { label: 'Autobahn (Highway)', key: 'autobahn', color: 'bg-blue-500', icon: '🏎️' },
-              { label: 'Nachtfahrt (Night)', key: 'nacht', color: 'bg-purple-500', icon: '🌙' },
-            ].map((item) => {
-              const stats = sonderfahrten[item.key as keyof typeof sonderfahrten];
-              const progress = Math.min(100, (stats.current / stats.target) * 100);
-              return (
-                <div key={item.key}>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{item.icon}</span>
-                      <span className="text-sm font-semibold text-slate-200">{item.label}</span>
+        {/* Special Driving Hours (Sonderfahrten) - Only for Standard path */}
+        {learningPath === 'standard' && (
+          <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <Activity className="h-4 w-4 text-blue-500" />
+                Special Driving Hours
+              </h3>
+              <span className="text-[10px] text-slate-500 font-bold uppercase">German Requirements</span>
+            </div>
+            
+            <div className="space-y-6">
+              {[
+                { label: 'Überland (Cross-country)', key: 'ueberland', color: 'bg-emerald-500', icon: '🛣️' },
+                { label: 'Autobahn (Highway)', key: 'autobahn', color: 'bg-blue-500', icon: '🏎️' },
+                { label: 'Nachtfahrt (Night)', key: 'nacht', color: 'bg-purple-500', icon: '🌙' },
+              ].map((item) => {
+                const stats = sonderfahrten[item.key as keyof typeof sonderfahrten];
+                const progress = Math.min(100, (stats.current / stats.target) * 100);
+                return (
+                  <div key={item.key}>
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{item.icon}</span>
+                        <span className="text-sm font-semibold text-slate-200">{item.label}</span>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400">{stats.current} / {stats.target} units</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-400">{stats.current} / {stats.target} units</span>
+                    <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                      <div 
+                        className={cn("h-full rounded-full transition-all duration-1000", item.color)}
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div 
-                      className={cn("h-full rounded-full transition-all duration-1000", item.color)}
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Practical Skills Focus */}
         {sortedFaults.length > 0 && (
