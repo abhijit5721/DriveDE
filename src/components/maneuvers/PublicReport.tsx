@@ -49,9 +49,18 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         const legacyRows = allRows.filter(r => r.external_id === null);
 
         // A legacy row is a duplicate if there's a modern row with the same date and duration.
+        const normalizeDate = (d: string) => {
+          try {
+            return new Date(d).toISOString().split('T')[0];
+          } catch (e) {
+            return d;
+          }
+        };
+
         const filteredLegacy = legacyRows.filter(lr => {
+          const lDate = normalizeDate(lr.session_date);
           const isDuplicate = modernRows.some(mr => 
-            mr.session_date === lr.session_date && 
+            normalizeDate(mr.session_date) === lDate && 
             mr.duration_minutes === lr.duration_minutes
           );
           return !isDuplicate;
