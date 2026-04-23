@@ -224,14 +224,14 @@ export async function syncAllData(state: AppState) {
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  console.log('[DB-Sync] Starting optimized full data sync...');
+  console.log('[DB-Sync] Starting ultra-optimized batch sync...');
   
-  // 1. Sync Profile first
+  // 1. Sync Profile (Await this as it ensures the user exists in profiles)
   await ensureProfileFromState(state);
   
   const syncTasks: Promise<any>[] = [];
 
-  // 2. Batch Sync Lessons
+  // 2. Batch Sync Lessons (Single Request)
   if (state.userProgress.completedLessons.length > 0) {
     const lessonData = state.userProgress.completedLessons.map(id => ({
       user_id: userId,
@@ -242,12 +242,27 @@ export async function syncAllData(state: AppState) {
     syncTasks.push(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' }));
   }
   
-  // 3. Parallel Sync Sessions
-  // We use the existing helper but it's now part of a Promise.all
-  for (const session of state.userProgress.drivingSessions) {
-    syncTasks.push(syncDrivingSession(session, state.transmissionType));
+  // 3. Batch Sync Driving Sessions (Single Request)
+  if (state.userProgress.drivingSessions.length > 0) {
+    const sessionData = state.userProgress.drivingSessions.map(session => ({
+      user_id: userId,
+      external_id: session.id, // Store local timestamp ID
+      session_date: session.date,
+      duration_minutes: session.duration,
+      category: mapTrackerCategoryToDb(session.type),
+      transmission_type: mapTransmissionToDb(state.transmissionType),
+      notes: session.notes,
+      route: session.route,
+      mistakes: session.mistakes,
+      total_distance: session.totalDistance,
+      location_summary: session.locationSummary,
+      instructor_name: session.instructorName || null,
+    }));
+    
+    syncTasks.push(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' }));
   }
   
+  // Execute remaining syncs in parallel (max 2-3 requests total)
   await Promise.all(syncTasks);
-  console.log('[DB-Sync] Optimized full data sync complete!');
+  console.log('[DB-Sync] Batch sync complete!');
 }
