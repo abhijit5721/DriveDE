@@ -182,9 +182,16 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const faultMap = new Map<string, number>();
   data.sessions.forEach(s => {
     s.mistakes?.forEach(m => {
-      faultMap.set(m, (faultMap.get(m) || 0) + 1);
+      // mistakes is DrivingMistake[] so we use m.type
+      const faultType = typeof m === 'string' ? m : m.type;
+      faultMap.set(faultType, (faultMap.get(faultType) || 0) + 1);
     });
   });
+  
+  const formatFaultName = (type: string) => {
+    return type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
   const sortedFaults = Array.from(faultMap.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
@@ -305,7 +312,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold">
                       {count}
                     </div>
-                    <span className="text-sm text-slate-200 font-medium">{fault}</span>
+                    <span className="text-sm text-slate-200 font-medium">{formatFaultName(fault)}</span>
                   </div>
                   <ArrowUpRight className="h-4 w-4 text-slate-600" />
                 </div>
