@@ -15,7 +15,8 @@ import {
   Activity,
   Flame,
   ShieldAlert,
-  ArrowUpRight
+  ArrowUpRight,
+  Sparkles
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -197,6 +198,29 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
 
+  // --- AI Briefing Engine ---
+  const generateBriefing = () => {
+    const name = data.profile?.display_name || 'The student';
+    const missingSonderfahrten = Object.entries(sonderfahrten)
+      .filter(([_, stats]) => stats.current < stats.target)
+      .map(([key, _]) => key.charAt(0).toUpperCase() + key.slice(1));
+
+    let briefing = `${name} is showing ${readiness >= 75 ? 'excellent' : readiness >= 50 ? 'consistent' : 'steady'} progress with a ${readiness}% practical readiness score. `;
+    
+    if (missingSonderfahrten.length > 0) {
+      briefing += `Focus should shift towards ${missingSonderfahrten.join(', ')} hours, which are currently below legal requirements. `;
+    } else {
+      briefing += "All mandatory special driving hours are completed, meaning the focus can now be 100% on exam simulation. ";
+    }
+
+    if (sortedFaults.length > 0) {
+      const mainFault = formatFaultName(sortedFaults[0][0]);
+      briefing += `Tactically, the next session should prioritize ${mainFault} to eliminate recurring errors observed in recent tracking data.`;
+    }
+
+    return briefing;
+  };
+
   const faultAdvice: Record<string, string> = {
     speeding: "Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.",
     harsh_braking: "Maintain a larger following distance and look further ahead to anticipate traffic flow changes earlier.",
@@ -236,6 +260,24 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
       </div>
 
       <div className="p-6 space-y-6 max-w-2xl mx-auto">
+        {/* AI Instructor Briefing */}
+        <div className="rounded-3xl bg-slate-900 border border-blue-500/20 p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Sparkles className="h-24 w-24 text-blue-400" />
+          </div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-1.5 rounded-lg bg-blue-500/20">
+                <Sparkles className="h-4 w-4 text-blue-400" />
+              </div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">AI Instructor Briefing</h3>
+            </div>
+            <p className="text-sm text-slate-300 leading-relaxed font-medium italic">
+              "{generateBriefing()}"
+            </p>
+          </div>
+        </div>
+
         {/* Readiness Card */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl">
           <div className="relative z-10">
