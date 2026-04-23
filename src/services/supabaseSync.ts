@@ -93,9 +93,10 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  // First Attempt: Full sync with enhanced fields
-  const { error: fullError } = await supabase.from('driving_sessions').insert({
+  // First Attempt: Full sync with enhanced fields using upsert on external_id
+  const { error: fullError } = await supabase.from('driving_sessions').upsert({
     user_id: userId,
+    external_id: session.id, // Store local timestamp ID
     session_date: session.date,
     duration_minutes: session.duration,
     category: mapTrackerCategoryToDb(session.type),
@@ -106,6 +107,8 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     total_distance: session.totalDistance,
     location_summary: session.locationSummary,
     instructor_name: session.instructorName || null,
+  }, { 
+    onConflict: 'user_id,external_id' 
   });
 
   if (fullError) {
@@ -114,13 +117,16 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     // Check if it's a "column missing" type error
     if (fullError.code === '42703' || fullError.message.includes('column')) {
        // Second Attempt: Basic sync with original columns only
-       const { error: basicError } = await supabase.from('driving_sessions').insert({
+       const { error: basicError } = await supabase.from('driving_sessions').upsert({
          user_id: userId,
+         external_id: session.id,
          session_date: session.date,
          duration_minutes: session.duration,
          category: mapTrackerCategoryToDb(session.type),
          transmission_type: mapTransmissionToDb(transmissionType),
          notes: session.notes,
+       }, { 
+         onConflict: 'user_id,external_id' 
        });
 
        if (basicError) {
@@ -209,4 +215,27 @@ export async function hydrateFromSupabase() {
       visionTest: 7,
     },
   };
+}
+
+export async function syncAllData(state: AppState) {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+
+  console.log('[DB-Sync] Starting full data sync...');
+  
+  // 1. Sync Profile
+  await ensureProfileFromState(state);
+  
+  // 2. Sync Lessons
+  for (const lessonId of state.userProgress.completedLessons) {
+    await syncCompletedLesson(lessonId);
+  }
+  
+  // 3. Sync Sessions
+  for (const session of state.userProgress.drivingSessions) {
+    await syncDrivingSession(session, state.transmissionType);
+  }
+  
+  console.log('[DB-Sync] Full data sync complete!');
 }

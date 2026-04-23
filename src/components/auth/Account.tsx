@@ -5,6 +5,7 @@ import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider } from '../../services/auth';
 import GoogleLogo from '../../assets/google-logo.svg';
+import { syncAllData } from '../../services/supabaseSync';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Share2, X } from 'lucide-react';
@@ -85,12 +86,17 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     setAuthLoading(false);
   };
 
-  const handleOpenShare = () => {
+  const handleOpenShare = async () => {
     if (authStatus !== 'signed_in') {
       setAuthError(isDE ? 'Bitte melde dich zuerst an, um deinen Report zu teilen.' : 'Please sign in first to share your report.');
       return;
     }
     
+    // Ensure all data is synced to cloud before sharing
+    setAuthLoading(true);
+    await syncAllData(useAppStore.getState());
+    setAuthLoading(false);
+
     // Get the base URL (works in dev and production)
     const baseUrl = window.location.origin + window.location.pathname;
     
