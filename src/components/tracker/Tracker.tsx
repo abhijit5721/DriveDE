@@ -38,7 +38,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Fix for default marker icons in Leaflet with React
-// @ts-ignore
+// @ts-expect-error - Internal Leaflet icon property access
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -81,17 +81,17 @@ const calculateBearing = (startLat: number, startLng: number, endLat: number, en
  * Used in the session history list expanded view.
  */
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
-  if (!route || route.length < 2) return null;
   const isDE = language === 'de';
+  
+  // React Hooks must be called at the top level, before any early returns
   const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const playbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  const startPoint = [route[0].lat, route[0].lng] as [number, number];
-  const endPoint = [route[route.length-1].lat, route[route.length-1].lng] as [number, number];
-  const polyline = route.map(p => [p.lat, p.lng] as [number, number]);
-
+  // React Hooks must be called at the top level, before any early returns
   useEffect(() => {
+    if (!route || route.length < 2) return;
+
     if (isPlaying && playbackIndex !== null) {
       playbackTimeoutRef.current = setTimeout(() => {
         if (playbackIndex < route.length - 1) {
@@ -105,7 +105,14 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
     return () => {
       if (playbackTimeoutRef.current) clearTimeout(playbackTimeoutRef.current);
     };
-  }, [isPlaying, playbackIndex, route.length]);
+  }, [isPlaying, playbackIndex, route?.length]);
+
+  // Early return after hooks have been initialized to satisfy "rules-of-hooks"
+  if (!route || route.length < 2) return null;
+
+  const startPoint = [route[0].lat, route[0].lng] as [number, number];
+  const endPoint = [route[route.length-1].lat, route[route.length-1].lng] as [number, number];
+  const polyline = route.map(p => [p.lat, p.lng] as [number, number]);
 
   const handleTogglePlayback = () => {
     if (isPlaying) {
@@ -592,7 +599,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           });
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // Silently ignore background check errors to prevent interrupting the tracking experience
+    }
   };
 
   const checkSchoolArea = async (lat: number, lng: number) => {
@@ -623,7 +632,9 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           });
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // School area check is non-essential; ignore errors to maintain performance
+    }
   };
 
   const fetchSpeedLimit = async (lat: number, lng: number) => {

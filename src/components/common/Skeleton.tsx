@@ -1,6 +1,10 @@
 import { cn } from '../../utils/cn';
 
-interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
+/**
+ * Skeleton component for loading states.
+ * Uses a type alias for HTML attributes to avoid empty interface linting errors.
+ */
+type SkeletonProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function Skeleton({ className, ...props }: SkeletonProps) {
   return (
