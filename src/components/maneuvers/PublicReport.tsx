@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  Car
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -168,13 +169,18 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     <div className="min-h-screen bg-slate-950 pb-20">
       {/* Header */}
       <div className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-lg border-b border-white/5 p-4 flex items-center gap-4">
-        <button onClick={onBack} className="p-2 text-slate-400 hover:text-white transition">
-          <ChevronLeft className="h-6 w-6" />
+        <button 
+          onClick={onBack} 
+          className="flex items-center gap-2 hover:opacity-80 transition active:scale-95 text-left"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">
+             <Car className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-white">Drive<span className="text-blue-500">DE</span></h1>
+            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-tight">Instructor Review</p>
+          </div>
         </button>
-        <div>
-          <h1 className="text-lg font-bold text-white">Instructor Review</h1>
-          <p className="text-xs text-blue-400 font-medium">DriveDE Pro Sync</p>
-        </div>
         <div className="ml-auto">
           <ShieldCheck className="h-6 w-6 text-emerald-500" />
         </div>

@@ -52,14 +52,17 @@ export function Welcome() {
         scrolled ? "bg-slate-900/90 backdrop-blur-md py-3 shadow-xl" : "bg-transparent py-6"
       )}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-2">
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 transition hover:opacity-80 active:scale-95"
+          >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
               <Car className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-black tracking-tighter text-white">
               Drive<span className="text-blue-500">DE</span>
             </span>
-          </div>
+          </button>
 
           {/* Desktop Nav */}
           <div className="hidden items-center gap-8 md:flex">
