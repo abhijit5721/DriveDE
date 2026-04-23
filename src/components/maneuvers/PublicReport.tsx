@@ -261,7 +261,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                       <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                         <div className="w-1 h-1 rounded-full bg-red-500" />
                         <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
-                        {m.timestamp && <span className="text-slate-500 text-[10px] ml-auto">{m.timestamp}</span>}
+                        {m.timestamp && (
+                          <span className="text-slate-500 text-[10px] ml-auto">
+                            {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        )}
                       </div>
                     ))}
                     {session.notes && (
