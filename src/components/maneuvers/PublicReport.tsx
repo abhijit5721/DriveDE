@@ -102,7 +102,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   
   // Smarter "Readiness" calculation
   // 1. Quantity Base (40% Theory, 60% Experience)
-  const theoryProgress = Math.min(1, totalLessons / 14);
+  const theoryProgress = Math.min(1, totalLessons / 50);
   const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours
   let score = (theoryProgress * 40) + (experienceProgress * 60);
 
@@ -150,7 +150,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               />
             </div>
             <p className="mt-4 text-sm text-blue-100">
-              Based on {Math.round(totalMinutes / 45)} units and {totalLessons} theory chapters completed.
+              Based on {Math.round(totalMinutes / 45)} units and {totalLessons} theory lessons completed.
             </p>
           </div>
           <Zap className="absolute -bottom-4 -right-4 h-32 w-32 text-white/10 rotate-12" />
@@ -172,7 +172,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <BarChart2 className="h-4 w-4" />
               <span className="text-xs font-bold uppercase">Theory</span>
             </div>
-            <div className="text-2xl font-bold text-white">{totalLessons}/14</div>
+            <div className="text-2xl font-bold text-white">{totalLessons} Lessons</div>
           </div>
         </div>
 
