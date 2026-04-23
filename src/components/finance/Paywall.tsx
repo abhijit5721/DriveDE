@@ -269,7 +269,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               onClick={handleSubscribe}
               disabled={isLoading}
               className={cn(
-                "group relative w-full h-20 bg-white hover:bg-blue-50 rounded-[1.5rem] shadow-2xl shadow-blue-600/10 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-4 overflow-hidden"
+                'group relative w-full h-20 bg-white hover:bg-blue-50 rounded-[1.5rem] shadow-2xl shadow-blue-600/10 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-4 overflow-hidden'
               )}
             >
               <AnimatePresence mode="wait">
