@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { Check, X, Clock, Calendar, Sparkles, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
+import { Check, X, Clock, Calendar, Sparkles, ArrowRight, CreditCard, ShieldCheck, Zap, Star, Crown } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
 type Tier = '30-days' | '90-days' | 'lifetime';
 
@@ -128,192 +128,240 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const t = content[language];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl overflow-hidden">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 40 }}
-        className="relative w-full max-w-2xl max-h-[90vh] bg-slate-900 border border-white/10 rounded-[3rem] shadow-[0_0_80px_rgba(59,130,246,0.2)] overflow-hidden flex flex-col"
-      >
-        {/* Decorative Background Glows */}
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-blue-600/20 to-transparent pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl overflow-hidden">
+      {/* Dynamic Mesh Gradient Background */}
+      <div className="absolute inset-0 overflow-hidden opacity-50 pointer-events-none">
+        <motion.div 
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+            x: [-100, 100, -100],
+            y: [-100, 100, -100],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute -top-[20%] -left-[20%] w-[80%] h-[80%] rounded-full bg-blue-600/20 blur-[120px]"
+        />
+        <motion.div 
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [0, -90, 0],
+            x: [100, -100, 100],
+            y: [100, -100, 100],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          className="absolute -bottom-[20%] -right-[20%] w-[80%] h-[80%] rounded-full bg-indigo-600/20 blur-[120px]"
+        />
+      </div>
 
-        {/* Header Section */}
-        <div className="relative pt-10 px-10 pb-6 shrink-0">
-          <div className="flex items-center justify-between mb-4">
-            <motion.div 
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 backdrop-blur-md"
-            >
-              <Zap className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
-              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">{t.badge}</span>
-            </motion.div>
-            <button 
-              onClick={onClose}
-              className="p-2.5 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900/40 border border-white/10 rounded-[3.5rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden flex flex-col lg:flex-row"
+      >
+        {/* Header/Hero Section (Left side on desktop) */}
+        <div className="relative w-full lg:w-[40%] p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-white/5 flex flex-col justify-between overflow-hidden">
+          {/* Subtle Glow */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-transparent pointer-events-none" />
           
-          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tighter italic leading-tight mb-2">
-            {t.title}
-          </h2>
-          <p className="text-slate-400 text-base sm:text-lg font-medium max-w-md">
-            {t.subtitle}
-          </p>
+          <div className="relative">
+            <div className="flex items-center justify-between mb-8">
+              <motion.div 
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10"
+              >
+                <Zap className="w-4 h-4 text-blue-400 fill-blue-400" />
+                <span className="text-[10px] font-black text-blue-100 tracking-[0.2em] uppercase">{t.badge}</span>
+              </motion.div>
+              <button 
+                onClick={onClose}
+                className="lg:hidden p-2 rounded-2xl bg-white/5 text-slate-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <h2 className="text-4xl lg:text-5xl font-black text-white tracking-tighter leading-[0.9] mb-4 italic">
+              {t.title} <span className="text-blue-500">PRO</span>
+            </h2>
+            <p className="text-slate-400 text-lg font-medium leading-relaxed mb-8">
+              {t.subtitle}
+            </p>
+
+            <div className="space-y-4">
+              {t.features.map((feature, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                  className="flex items-center gap-3 group"
+                >
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/20 border border-blue-500/30 group-hover:scale-110 transition-transform">
+                    <Check className="h-3 w-3 text-blue-400 stroke-[3px]" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{feature}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative mt-8 pt-8 border-t border-white/5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                <ShieldCheck className="w-7 h-7 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-white italic uppercase tracking-wider">{isDE ? 'Geld-Zurück-Garantie' : 'Money-Back Guarantee'}</p>
+                <p className="text-[10px] text-slate-500 font-bold leading-tight">{isDE ? '100% Sicherheit für deinen Erfolg' : '100% safety for your success'}</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest flex items-center gap-2">
+              <Star className="w-3 h-3 fill-slate-600" />
+              {t.trust}
+            </p>
+          </div>
         </div>
 
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto px-10 pb-10 pt-2 scrollbar-hide">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-            
-            {/* Features (Left side on large screens) */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="space-y-4">
-                {t.features.map((feature, i) => (
-                  <motion.div 
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + (i * 0.1) }}
-                    className="flex items-center gap-3.5 group"
-                  >
-                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-500/20 border border-blue-500/30 group-hover:scale-110 transition-transform">
-                      <Check className="h-3 w-3 text-blue-400 stroke-[3px]" />
-                    </div>
-                    <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{feature}</span>
-                  </motion.div>
-                ))}
-              </div>
+        {/* Pricing & Selection (Right side on desktop) */}
+        <div className="relative flex-1 p-8 lg:p-12 flex flex-col bg-slate-900/40">
+          <button 
+            onClick={onClose}
+            className="hidden lg:flex absolute top-8 right-8 p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-              {/* Success Badge */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="p-4 rounded-3xl bg-slate-800/40 border border-white/5 flex items-center gap-4"
-              >
-                <div className="h-10 w-10 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                  <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-xs font-black text-white italic">{isDE ? 'Geld-Zurück-Garantie' : 'Money-Back Guarantee'}</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{isDE ? 'Falls du die Prüfung nicht bestehst' : 'If you don\'t pass your exam'}</p>
-                </div>
-              </motion.div>
-            </div>
+          <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide">
+            <LayoutGroup>
+              <div className="space-y-4 mb-8">
+                {(Object.entries(tiers) as [Tier, TierInfo][]).map(([key, tier]) => {
+                  const Icon = tier.icon;
+                  const isSelected = selectedTier === key;
+                  const isLifetime = key === 'lifetime';
+                  
+                  return (
+                    <motion.button
+                      key={key}
+                      layout
+                      onClick={() => setSelectedTier(key)}
+                      className={cn(
+                        'w-full relative flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all duration-500 group overflow-hidden',
+                        isSelected 
+                          ? isLifetime 
+                            ? 'bg-gradient-to-br from-amber-500 to-orange-600 border-amber-400 shadow-[0_20px_50px_rgba(245,158,11,0.3)]'
+                            : 'bg-blue-600 border-blue-500 shadow-[0_20px_50px_rgba(59,130,246,0.3)]' 
+                          : 'bg-white/5 border-white/5 hover:border-white/10 hover:bg-white/10'
+                      )}
+                    >
+                      {/* Active Indicator Line */}
+                      {isSelected && (
+                        <motion.div 
+                          layoutId="active-indicator"
+                          className="absolute left-0 top-0 bottom-0 w-1.5 bg-white/40"
+                        />
+                      )}
 
-            {/* Pricing Selection (Right side on large screens) */}
-            <div className="lg:col-span-3 space-y-3">
-              {(Object.entries(tiers) as [Tier, TierInfo][]).map(([key, tier], index) => {
-                const Icon = tier.icon;
-                const isSelected = selectedTier === key;
-                return (
-                  <motion.button
-                    key={key}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + (index * 0.1) }}
-                    onClick={() => setSelectedTier(key)}
-                    className={cn(
-                      'w-full flex items-center gap-5 p-5 rounded-[2rem] border-2 transition-all duration-500 relative group overflow-hidden',
-                      isSelected 
-                        ? 'bg-blue-600 border-blue-500 shadow-[0_20px_40px_rgba(59,130,246,0.25)] scale-[1.02]' 
-                        : 'bg-slate-800/40 border-white/5 hover:border-white/10 hover:bg-slate-800/60'
-                    )}
-                  >
-                    {/* Background Shine */}
-                    {isSelected && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
-                    )}
+                      <div className={cn(
+                        'w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-500',
+                        isSelected 
+                          ? 'bg-white text-slate-900 scale-110 shadow-xl' 
+                          : 'bg-slate-800 text-slate-400 group-hover:scale-105'
+                      )}>
+                        {isLifetime && isSelected ? <Crown className="w-8 h-8" /> : <Icon className="w-8 h-8" />}
+                      </div>
 
-                    <div className={cn(
-                      'w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500',
-                      isSelected ? 'bg-white text-blue-600 rotate-3 scale-110 shadow-lg' : 'bg-slate-700 text-slate-400 group-hover:bg-slate-600'
-                    )}>
-                      <Icon className="w-7 h-7" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className={cn('text-[10px] font-black uppercase tracking-[0.2em]', isSelected ? 'text-blue-100' : 'text-slate-500')}>
-                          {tier.label[language]}
-                        </span>
-                        {tier.popular && (
-                          <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter shadow-lg shadow-amber-400/20">
-                            {isDE ? 'EMPFOHLEN' : 'RECOMMENDED'}
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className={cn(
+                            'text-[10px] font-black uppercase tracking-[0.2em]', 
+                            isSelected ? 'text-white/70' : 'text-slate-500'
+                          )}>
+                            {tier.label[language]}
                           </span>
+                          {tier.popular && (
+                            <span className="bg-white/20 backdrop-blur-md text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter">
+                              {isDE ? 'EMPFOHLEN' : 'RECOMMENDED'}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-baseline gap-2">
+                          <span className={cn('text-3xl font-black italic tracking-tighter', isSelected ? 'text-white' : 'text-slate-100')}>
+                            €{tier.price}
+                          </span>
+                          <span className={cn('text-xs font-bold', isSelected ? 'text-white/60' : 'text-slate-500')}>
+                            {tier.period[language]}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Selection Glow */}
+                      <AnimatePresence>
+                        {isSelected && (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none"
+                          />
                         )}
-                      </div>
-                      <div className="flex items-baseline gap-2">
-                        <span className={cn('text-3xl font-black italic tracking-tighter', isSelected ? 'text-white' : 'text-slate-100')}>
-                          €{tier.price}
-                        </span>
-                        <span className={cn('text-xs font-bold', isSelected ? 'text-blue-100/70' : 'text-slate-500')}>
-                          {tier.period[language]}
-                        </span>
-                      </div>
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Footer Action */}
-          <div className="mt-12 space-y-6">
-            <button
-              onClick={handleSubscribe}
-              disabled={isLoading}
-              className={cn(
-                'group relative w-full h-20 bg-white hover:bg-blue-50 rounded-[1.5rem] shadow-2xl shadow-blue-600/10 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-4 overflow-hidden'
-              )}
-            >
-              <AnimatePresence mode="wait">
-                {isLoading ? (
-                  <motion.div 
-                    key="loader"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="w-7 h-7 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" 
-                  />
-                ) : (
-                  <motion.div 
-                    key="text"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex items-center gap-4"
-                  >
-                    <span className="text-xl font-black text-slate-900 italic tracking-tight">{t.cta}</span>
-                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center group-hover:translate-x-1.5 transition-transform">
-                      <ArrowRight className="w-4 h-4 text-white stroke-[3px]" />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4">
-              <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  <CreditCard className="w-3.5 h-3.5" />
-                  {t.secure}
-                </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  {t.trust}
-                </div>
+                      </AnimatePresence>
+                    </motion.button>
+                  );
+                })}
               </div>
-              
+            </LayoutGroup>
+
+            {/* CTA Button */}
+            <div className="space-y-4">
               <button
-                onClick={onClose}
-                className="text-slate-500 text-xs font-bold hover:text-white transition-colors uppercase tracking-[0.2em]"
+                onClick={handleSubscribe}
+                disabled={isLoading}
+                className={cn(
+                  'group relative w-full h-20 rounded-[2rem] overflow-hidden transition-all active:scale-[0.98] disabled:opacity-70 shadow-2xl',
+                  selectedTier === 'lifetime' 
+                    ? 'bg-white text-slate-900 hover:bg-amber-50' 
+                    : 'bg-white text-slate-900 hover:bg-blue-50'
+                )}
               >
-                {t.cancel}
+                <AnimatePresence mode="wait">
+                  {isLoading ? (
+                    <motion.div 
+                      key="loader"
+                      className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto" 
+                    />
+                  ) : (
+                    <motion.div 
+                      key="text"
+                      className="flex items-center justify-center gap-4"
+                    >
+                      <span className="text-xl font-black italic tracking-tight">{t.cta}</span>
+                      <div className={cn(
+                        'h-10 w-10 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-2',
+                        selectedTier === 'lifetime' ? 'bg-amber-500 text-white' : 'bg-blue-600 text-white'
+                      )}>
+                        <ArrowRight className="w-5 h-5 stroke-[3px]" />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </button>
+
+              <div className="flex items-center justify-between px-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    <CreditCard className="w-3 h-3" />
+                    {t.secure}
+                  </div>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="text-slate-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors"
+                >
+                  {t.cancel}
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -103,14 +103,10 @@ export function AuthModal({ onClose }: AuthModalProps) {
       const domain = email.split('@')[1].toLowerCase();
       const trustedDomains = [
         'gmail.com', 'googlemail.com',
-        'yahoo.com', 'yahoo.de', 'ymail.com',
-        'outlook.com', 'outlook.de', 'hotmail.com', 'hotmail.de', 'live.com', 'live.de', 'msn.com',
-        'icloud.com', 'me.com', 'appleid.com',
-        'gmx.de', 'gmx.net', 'web.de', 't-online.de', 'freenet.de',
-        'protonmail.com', 'proton.me',
-        'zoho.com', 'zoho.eu',
-        'aol.com',
-        'posteo.de', 'mailbox.org',
+        'yahoo.com', 'yahoo.de', 'yahoo.co.uk',
+        'outlook.com', 'outlook.de', 'hotmail.com', 'hotmail.de', 'live.com', 'live.de',
+        'icloud.com', 'me.com',
+        'gmx.de', 'gmx.net', 'web.de', 't-online.de', 'freenet.de'
       ];
 
       if (!trustedDomains.includes(domain)) {

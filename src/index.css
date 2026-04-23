@@ -137,6 +137,15 @@ textarea:focus-visible {
   animation: cinematic-zoom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 /* Print styles for review/export screens */
 @page {
   size: A4;
