@@ -50,7 +50,11 @@ export function AuthModal({ onClose }: AuthModalProps) {
         ? 'Konto erstellt. Bitte bestätige ggf. deine E-Mail und melde dich danach an.'
         : 'Account created. Please confirm your email if required, then sign in.',
       passwordMismatch: isDe ? 'Die Passwörter stimmen nicht überein.' : 'Passwords do not match.',
-      passwordShort: isDe ? 'Bitte mindestens 6 Zeichen verwenden.' : 'Please use at least 6 characters.',
+      passwordShort: isDe ? 'Passwort muss mindestens 8 Zeichen lang sein.' : 'Password must be at least 8 characters.',
+      passwordComplexity: isDe 
+        ? 'Passwort muss Groß-/Kleinschreibung, Zahlen und Sonderzeichen enthalten.' 
+        : 'Password must include uppercase, lowercase, numbers, and symbols.',
+      emailInvalid: isDe ? 'Bitte eine gültige E-Mail-Adresse angeben.' : 'Please provide a valid email address.',
       genericError: isDe ? 'Anmeldung fehlgeschlagen.' : 'Authentication failed.',
     };
   }, [language, mode]);
@@ -84,14 +88,34 @@ export function AuthModal({ onClose }: AuthModalProps) {
       return;
     }
 
-    if (password.length < 6) {
-      setError(copy.passwordShort);
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setError(copy.emailInvalid);
       return;
     }
 
-    if (mode === 'signup' && password !== confirmPassword) {
-      setError(copy.passwordMismatch);
-      return;
+    // Password validation (only for signup or strict signin)
+    if (mode === 'signup') {
+      if (password.length < 8) {
+        setError(copy.passwordShort);
+        return;
+      }
+
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+      if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+        setError(copy.passwordComplexity);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError(copy.passwordMismatch);
+        return;
+      }
     }
 
     setLoading(true);
