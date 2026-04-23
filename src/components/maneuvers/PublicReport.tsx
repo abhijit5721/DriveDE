@@ -318,46 +318,29 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Practical Skills Focus</h3>
             </div>
             <div className="space-y-3">
-              {sortedFaults.map(([fault, count], i) => {
-                const isSelected = selectedFault === fault;
-                return (
-                  <div key={i} className="space-y-2">
-                    <button 
-                      onClick={() => setSelectedFault(isSelected ? null : fault)}
-                      className={cn(
-                        "w-full flex items-center justify-between p-3 rounded-xl border transition-all active:scale-[0.98]",
-                        isSelected ? "bg-orange-500/10 border-orange-500/30" : "bg-white/5 border-white/5 hover:bg-white/10"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          "h-8 w-8 rounded-lg flex items-center justify-center font-bold text-sm transition-colors",
-                          isSelected ? "bg-orange-500 text-white" : "bg-orange-500/10 text-orange-500"
-                        )}>
-                          {count}
-                        </div>
-                        <span className="text-sm text-slate-200 font-medium">{formatFaultName(fault)}</span>
+              {sortedFaults.map(([fault, count], i) => (
+                <div key={i} className="rounded-xl border bg-white/5 border-white/5 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-sm">
+                        {count}
                       </div>
-                      <ArrowUpRight className={cn("h-4 w-4 transition-transform", isSelected ? "text-orange-500 rotate-45" : "text-slate-600")} />
-                    </button>
-                    
-                    {isSelected && (
-                      <div className="p-4 rounded-xl bg-slate-800/50 border border-white/5 animate-in slide-in-from-top-2 duration-300">
-                        <div className="flex items-center gap-2 mb-2 text-orange-400">
-                          <Info className="h-3.5 w-3.5" />
-                          <span className="text-[10px] font-bold uppercase tracking-wider">Instructor Advice</span>
-                        </div>
-                        <p className="text-xs text-slate-300 leading-relaxed">
-                          {faultAdvice[fault] || "Consistently review this maneuver with your instructor. Focus on awareness and early preparation."}
-                        </p>
-                      </div>
-                    )}
+                      <span className="text-sm text-slate-200 font-bold uppercase tracking-tight">{formatFaultName(fault)}</span>
+                    </div>
+                    <Flame className="h-4 w-4 text-orange-500/50" />
                   </div>
-                );
-              })}
-              <p className="mt-4 text-[11px] text-slate-500 leading-relaxed italic">
-                * Click on a focus area to see specific instructor tips and advice.
-              </p>
+                  
+                  <div className="p-3 rounded-lg bg-slate-800/50 border border-white/5">
+                    <div className="flex items-center gap-2 mb-1.5 text-orange-400">
+                      <Info className="h-3 w-3" />
+                      <span className="text-[9px] font-bold uppercase tracking-widest">Instructor Focus</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      {faultAdvice[fault] || "Review this maneuver in the next lesson. Focus on awareness and early preparation."}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
