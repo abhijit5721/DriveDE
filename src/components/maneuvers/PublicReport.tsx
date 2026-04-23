@@ -16,7 +16,10 @@ import {
   Flame,
   ShieldAlert,
   ArrowUpRight,
-  Sparkles
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Minus
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -221,6 +224,35 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     return briefing;
   };
 
+  // --- Trend Calculation ---
+  const calculateTrend = () => {
+    if (data.sessions.length < 2) return null;
+    
+    const sorted = [...data.sessions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const recent = sorted.slice(-3); // Last 3 sessions
+    const previous = sorted.slice(0, -3).slice(-3); // 3 sessions before that
+    
+    const avgMistakes = (sessions: DrivingSession[]) => {
+      if (sessions.length === 0) return 0;
+      return sessions.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0) / sessions.length;
+    };
+
+    const recentAvg = avgMistakes(recent);
+    const prevAvg = avgMistakes(previous);
+
+    if (previous.length === 0) return { type: 'neutral', value: 0 };
+    
+    const diff = prevAvg - recentAvg; // Positive means fewer mistakes now (improving)
+    const percent = Math.round((diff / (prevAvg || 1)) * 100);
+
+    return {
+      type: diff > 0 ? 'improving' : diff < 0 ? 'regressing' : 'neutral',
+      value: Math.abs(percent)
+    };
+  };
+
+  const trend = calculateTrend();
+
   const faultAdvice: Record<string, string> = {
     speeding: "Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.",
     harsh_braking: "Maintain a larger following distance and look further ahead to anticipate traffic flow changes earlier.",
@@ -288,29 +320,51 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <div>
                 <h2 className="text-xl font-bold text-white leading-tight">
                   {data.profile?.display_name || 'Student'}
-                </h2>
-                <p className="text-xs text-blue-200/60 font-medium">Verified Progress Report</p>
+        {/* Readiness Card & Trend */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl">
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-bold uppercase tracking-wider text-blue-100">Practical Readiness</span>
+                <Activity className="h-6 w-6 text-blue-200" />
               </div>
-              <TrendingUp className="ml-auto h-5 w-5 text-blue-100" />
+              <div className="flex items-baseline gap-2">
+                <span className="text-6xl font-black">{readiness}%</span>
+                <span className="text-sm text-blue-100 font-medium opacity-80">Score</span>
+              </div>
+              <div className="mt-6 h-3 w-full rounded-full bg-blue-900/30 overflow-hidden">
+                <div 
+                  className="h-full bg-emerald-400 transition-all duration-1000" 
+                  style={{ width: `${readiness}%` }}
+                />
+              </div>
+              <p className="mt-4 text-xs text-blue-100 font-medium">
+                Based on {data.sessions.length} sessions and {validCompletedLessonsCount}/{totalVisibleLessons} theory units.
+              </p>
             </div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-bold uppercase tracking-widest text-blue-100">Exam Readiness</span>
-            </div>
-            <div className="flex items-end gap-3 mb-4">
-              <span className="text-6xl font-black">{readiness}%</span>
-              <span className="text-blue-100 mb-2 font-medium">Ready</span>
-            </div>
-            <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-white rounded-full transition-all duration-1000" 
-                style={{ width: `${readiness}%` }}
-              />
-            </div>
-            <p className="mt-4 text-sm text-blue-100">
-              Based on {totalMinutes >= 45 ? `${Math.round(totalMinutes / 45)} units` : `${totalMinutes} minutes`} and {validCompletedLessonsCount}/{totalVisibleLessons} theory lessons.
-            </p>
           </div>
-          <Zap className="absolute -bottom-4 -right-4 h-32 w-32 text-white/10 rotate-12" />
+
+          <div className="rounded-3xl bg-slate-900 border border-white/5 p-6 flex flex-col justify-center">
+            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Driving Trend</div>
+            {trend ? (
+              <div className="space-y-2">
+                <div className={cn(
+                  "flex items-center gap-2 text-2xl font-black",
+                  trend.type === 'improving' ? "text-emerald-500" : trend.type === 'regressing' ? "text-rose-500" : "text-slate-400"
+                )}>
+                  {trend.type === 'improving' ? <TrendingUp className="h-6 w-6" /> : trend.type === 'regressing' ? <TrendingDown className="h-6 w-6" /> : <Minus className="h-6 w-6" />}
+                  {trend.type === 'neutral' ? 'Stable' : `${trend.value}%`}
+                </div>
+                <p className="text-xs text-slate-400 font-medium">
+                  {trend.type === 'improving' ? 'Fault frequency decreased vs. previous sessions.' : 
+                   trend.type === 'regressing' ? 'Fault frequency increased. More focus needed.' : 
+                   'Consistency maintained across recent sessions.'}
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500 italic">Need more sessions to calculate trend.</p>
+            )}
+          </div>
         </div>
 
         {/* Special Driving Hours (Sonderfahrten) */}
