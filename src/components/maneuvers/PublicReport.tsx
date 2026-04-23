@@ -28,6 +28,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     sessions: DrivingSession[];
     completedLessons: string[];
   } | null>(null);
+  const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,7 +99,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
   const totalLessons = data.completedLessons.length;
-  const [expandedSession, setExpandedSession] = useState<string | null>(null);
   
   // More realistic "Readiness" calculation (14 theory + 20 hours = 100%)
   const readiness = Math.min(100, Math.round((totalLessons / 14) * 40 + (totalMinutes / 1200) * 60));
