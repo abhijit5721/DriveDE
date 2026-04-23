@@ -34,6 +34,20 @@ export function Welcome() {
     { name: isDE ? 'Über uns' : 'About', href: '#about' },
   ];
 
+  const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    
+    if (href === '#') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30">
       {/* Background with Overlay */}
@@ -70,6 +84,7 @@ export function Welcome() {
               <a 
                 key={link.name} 
                 href={link.href}
+                onClick={(e) => handleNavLinkClick(e, link.href)}
                 className="text-sm font-semibold text-slate-300 transition hover:text-white"
               >
                 {link.name}
@@ -125,7 +140,14 @@ export function Welcome() {
           <div className="absolute top-full left-0 right-0 bg-slate-900 p-6 shadow-2xl md:hidden">
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href} className="text-lg font-bold text-white">{link.name}</a>
+                <a 
+                  key={link.name} 
+                  href={link.href} 
+                  onClick={(e) => handleNavLinkClick(e, link.href)}
+                  className="text-lg font-bold text-white"
+                >
+                  {link.name}
+                </a>
               ))}
               {isReturningUser ? (
                 <button 
