@@ -21,8 +21,6 @@ interface PublicReportProps {
   onBack: () => void;
 }
 
-const VERSION = "1.0.4-perfect-dedup";
-
 export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{
@@ -33,7 +31,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("DriveDE Public Report Version:", VERSION);
     const fetchData = async () => {
       if (!isSupabaseConfigured || !supabase) return;
       
@@ -72,13 +69,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         });
 
         const finalRows = Array.from(similarityMap.values());
-
-        // DEBUG: Expose state for deep inspection
-        (window as any).reportDebug = {
-          version: VERSION,
-          rawCount: allRows.length,
-          finalCount: finalRows.length
-        };
 
         setData({
           profile,
