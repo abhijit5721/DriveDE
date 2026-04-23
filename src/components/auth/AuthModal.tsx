@@ -55,6 +55,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
         ? 'Passwort muss Groß-/Kleinschreibung, Zahlen und Sonderzeichen enthalten.' 
         : 'Password must include uppercase, lowercase, numbers, and symbols.',
       emailInvalid: isDe ? 'Bitte eine gültige E-Mail-Adresse angeben.' : 'Please provide a valid email address.',
+      emailDomainInvalid: isDe 
+        ? 'Dieser E-Mail-Anbieter ist nicht zugelassen. Bitte verwende einen bekannten Anbieter (z.B. Gmail, Yahoo, GMX).' 
+        : 'This email provider is not allowed. Please use a well-known provider (e.g., Gmail, Yahoo, Outlook).',
       genericError: isDe ? 'Anmeldung fehlgeschlagen.' : 'Authentication failed.',
     };
   }, [language, mode]);
@@ -93,6 +96,27 @@ export function AuthModal({ onClose }: AuthModalProps) {
     if (!emailRegex.test(email)) {
       setError(copy.emailInvalid);
       return;
+    }
+
+    // Domain validation (only for signup)
+    if (mode === 'signup') {
+      const domain = email.split('@')[1].toLowerCase();
+      const trustedDomains = [
+        'gmail.com', 'googlemail.com',
+        'yahoo.com', 'yahoo.de', 'ymail.com',
+        'outlook.com', 'outlook.de', 'hotmail.com', 'hotmail.de', 'live.com', 'live.de', 'msn.com',
+        'icloud.com', 'me.com', 'appleid.com',
+        'gmx.de', 'gmx.net', 'web.de', 't-online.de', 'freenet.de',
+        'protonmail.com', 'proton.me',
+        'zoho.com', 'zoho.eu',
+        'aol.com',
+        'posteo.de', 'mailbox.org',
+      ];
+
+      if (!trustedDomains.includes(domain)) {
+        setError(copy.emailDomainInvalid);
+        return;
+      }
     }
 
     // Password validation (only for signup or strict signin)
