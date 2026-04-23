@@ -11,7 +11,11 @@ import {
   ShieldCheck,
   Zap,
   Info,
-  Car
+  Car,
+  Activity,
+  Flame,
+  ShieldAlert,
+  ArrowUpRight
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -19,6 +23,7 @@ import { Skeleton } from '../common/Skeleton';
 import { getAllLessons, chapters } from '../../data/curriculum';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
 import { filterLessonsForSelection } from '../../utils/contentFilter';
+import { cn } from '../../utils/cn';
 
 interface PublicReportProps {
   userId: string;
@@ -165,6 +170,25 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const penalty = Math.min(30, totalRecentMistakes * 3);
   const readiness = Math.round(Math.max(0, score - penalty));
 
+  // --- Practical Analytics ---
+  // 1. Sonderfahrten Progress (Units)
+  const sonderfahrten = {
+    ueberland: { current: Math.floor(data.sessions.filter(s => s.type === 'ueberland').reduce((acc, s) => acc + s.duration, 0) / 45), target: 5 },
+    autobahn: { current: Math.floor(data.sessions.filter(s => s.type === 'autobahn').reduce((acc, s) => acc + s.duration, 0) / 45), target: 4 },
+    nacht: { current: Math.floor(data.sessions.filter(s => s.type === 'nacht').reduce((acc, s) => acc + s.duration, 0) / 45), target: 3 }
+  };
+
+  // 2. Skill Weaknesses (Aggregated Faults)
+  const faultMap = new Map<string, number>();
+  data.sessions.forEach(s => {
+    s.mistakes?.forEach(m => {
+      faultMap.set(m, (faultMap.get(m) || 0) + 1);
+    });
+  });
+  const sortedFaults = Array.from(faultMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
   return (
     <div className="min-h-screen bg-slate-950 pb-20">
       {/* Header */}
@@ -228,25 +252,70 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           <Zap className="absolute -bottom-4 -right-4 h-32 w-32 text-white/10 rotate-12" />
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-2xl bg-slate-900 border border-white/5 p-4">
-            <div className="flex items-center gap-2 text-slate-400 mb-2">
-              <Clock className="h-4 w-4" />
-              <span className="text-xs font-bold uppercase">Total Time</span>
-            </div>
-            <div className="text-2xl font-bold text-white">
-              {Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m
-            </div>
+        {/* Special Driving Hours (Sonderfahrten) */}
+        <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <Activity className="h-4 w-4 text-blue-500" />
+              Special Driving Hours
+            </h3>
+            <span className="text-[10px] text-slate-500 font-bold uppercase">German Requirements</span>
           </div>
-          <div className="rounded-2xl bg-slate-900 border border-white/5 p-4">
-            <div className="flex items-center gap-2 text-slate-400 mb-2">
-              <BarChart2 className="h-4 w-4" />
-              <span className="text-xs font-bold uppercase">Theory</span>
-            </div>
-            <div className="text-2xl font-bold text-white">{validCompletedLessonsCount}/{totalVisibleLessons}</div>
+          
+          <div className="space-y-6">
+            {[
+              { label: 'Überland (Cross-country)', key: 'ueberland', color: 'bg-emerald-500', icon: '🛣️' },
+              { label: 'Autobahn (Highway)', key: 'autobahn', color: 'bg-blue-500', icon: '🏎️' },
+              { label: 'Nachtfahrt (Night)', key: 'nacht', color: 'bg-purple-500', icon: '🌙' },
+            ].map((item) => {
+              const stats = sonderfahrten[item.key as keyof typeof sonderfahrten];
+              const progress = Math.min(100, (stats.current / stats.target) * 100);
+              return (
+                <div key={item.key}>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{item.icon}</span>
+                      <span className="text-sm font-semibold text-slate-200">{item.label}</span>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400">{stats.current} / {stats.target} units</span>
+                  </div>
+                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div 
+                      className={cn("h-full rounded-full transition-all duration-1000", item.color)}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Practical Skills Focus */}
+        {sortedFaults.length > 0 && (
+          <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldAlert className="h-5 w-5 text-orange-500" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Practical Skills Focus</h3>
+            </div>
+            <div className="space-y-3">
+              {sortedFaults.map(([fault, count], i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold">
+                      {count}
+                    </div>
+                    <span className="text-sm text-slate-200 font-medium">{fault}</span>
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-slate-600" />
+                </div>
+              ))}
+              <p className="mt-4 text-[11px] text-slate-500 leading-relaxed italic">
+                * These areas show the highest frequency of errors in recent sessions.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* AI Insight Section */}
         <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
