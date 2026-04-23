@@ -44,23 +44,38 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // --- Precision De-duplication ---
-        // 1. If a session has an 'external_id' (from the student's app), use it as the key.
-        //    This perfectly merges duplicates created during sync.
-        // 2. If it's a legacy session (null external_id), use the database 'id' as a fallback.
-        //    This prevents collapsing different sessions that happen on the same day.
+        // --- Precision De-duplication Engine ---
         const allRows = sessions || [];
-        const sessionMap = new Map<string, any>();
-
-        allRows.forEach(s => {
-          const key = s.external_id || s.id;
-          
-          if (!sessionMap.has(key)) {
-            sessionMap.set(key, s);
+        
+        // 1. Clean 'Modern' sessions (those with external_id)
+        // Group by external_id to eliminate redundant sync artifacts.
+        const modernMap = new Map<string, any>();
+        allRows.forEach(r => {
+          if (r.external_id) {
+            const existing = modernMap.get(r.external_id);
+            // Keep the one with a location summary if possible
+            if (!existing || (!existing.location_summary && r.location_summary)) {
+              modernMap.set(r.external_id, r);
+            }
           }
         });
+        const cleanModern = Array.from(modernMap.values());
 
-        const finalRows = Array.from(sessionMap.values());
+        // 2. Filter 'Legacy' sessions (those without external_id)
+        // A legacy row is dropped if it looks identical to a clean modern row.
+        const legacyRows = allRows.filter(r => !r.external_id);
+        const normalizeDate = (d: string) => new Date(d).toISOString().split('T')[0];
+
+        const cleanLegacy = legacyRows.filter(lr => {
+          const lDate = normalizeDate(lr.session_date);
+          const isDuplicate = cleanModern.some(mr => 
+            normalizeDate(mr.session_date) === lDate && 
+            mr.duration_minutes === lr.duration_minutes
+          );
+          return !isDuplicate;
+        });
+
+        const finalRows = [...cleanModern, ...cleanLegacy];
 
         setData({
           profile,
