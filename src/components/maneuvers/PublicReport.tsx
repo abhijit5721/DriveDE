@@ -144,9 +144,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const visibleLessons = filterLessonsForSelection(getAllLessons(), tType, learningPath);
   const totalVisibleLessons = visibleLessons.length || 50;
 
+  // Filter the user's completed IDs to only those that exist in visibleLessons
+  const validCompletedLessonsCount = data.completedLessons.filter(id => 
+    visibleLessons.some(l => l.id === id)
+  ).length;
+
   // Smarter "Readiness" calculation
   // 1. Quantity Base (40% Theory, 60% Experience)
-  const theoryProgress = Math.min(1, completedLessonsCount / totalVisibleLessons);
+  const theoryProgress = Math.min(1, validCompletedLessonsCount / totalVisibleLessons);
   const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours base for full experience
   let score = (theoryProgress * 40) + (experienceProgress * 60);
 
@@ -194,7 +199,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               />
             </div>
             <p className="mt-4 text-sm text-blue-100">
-              Based on {totalMinutes >= 45 ? `${Math.round(totalMinutes / 45)} units` : `${totalMinutes} minutes`} and {completedLessonsCount}/{totalVisibleLessons} theory lessons.
+              Based on {totalMinutes >= 45 ? `${Math.round(totalMinutes / 45)} units` : `${totalMinutes} minutes`} and {validCompletedLessonsCount}/{totalVisibleLessons} theory lessons.
             </p>
           </div>
           <Zap className="absolute -bottom-4 -right-4 h-32 w-32 text-white/10 rotate-12" />
@@ -216,7 +221,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <BarChart2 className="h-4 w-4" />
               <span className="text-xs font-bold uppercase">Theory</span>
             </div>
-            <div className="text-2xl font-bold text-white">{completedLessonsCount}/{totalVisibleLessons}</div>
+            <div className="text-2xl font-bold text-white">{validCompletedLessonsCount}/{totalVisibleLessons}</div>
           </div>
         </div>
 
