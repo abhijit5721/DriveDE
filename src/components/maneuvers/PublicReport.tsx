@@ -275,7 +275,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-lg border-b border-white/5 p-4 flex items-center gap-4">
         <button 
-          onClick={onBack} 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
           className="flex items-center gap-2 hover:opacity-80 transition active:scale-95 text-left"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">
