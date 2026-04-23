@@ -25,6 +25,7 @@ export function Welcome() {
   const handleSelect = (type: 'manual' | 'automatic' | 'umschreibung-manual' | 'umschreibung-automatic') => {
     setLicenseType(type);
     setHasVisited(true);
+    console.log(`[Welcome] User selected license type: ${type}`);
   };
 
   const navLinks = [
@@ -46,6 +47,7 @@ export function Welcome() {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
+    console.log(`[Welcome] Navigation link clicked: ${href}`);
   };
 
   return (

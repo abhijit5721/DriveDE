@@ -382,7 +382,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           setShowSuggestions(true);
         }
       } catch (error) {
-        console.error('Error fetching suggestions:', error);
+        console.error('[Tracker] Error fetching suggestions:', error);
       }
     };
 
@@ -472,7 +472,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         }
       }
     } catch (e) {
-      console.error('Stop sign fetch failed');
+      console.error('[Tracker] Stop sign fetch failed:', e);
     }
   };
 
@@ -565,7 +565,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         });
       }
     } catch (e) {
-      console.error('Illegal turn check failed', e);
+      console.error('[Tracker] Illegal turn check failed:', e);
     }
   };
 
@@ -653,7 +653,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
       }
       return null;
     } catch (e) {
-      console.error('Speed limit fetch failed');
+      console.error('[Tracker] Speed limit fetch failed:', e);
       return null;
     }
   };
@@ -685,6 +685,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         toast.error(isDE ? 'Ziel nicht gefunden' : 'Destination not found');
       }
     } catch (e) {
+      console.error('[Tracker] Reverse geocoding search failed:', e);
       toast.error(isDE ? 'Suche fehlgeschlagen' : 'Search failed');
     } finally {
       setIsSearchingDestination(false);
@@ -767,7 +768,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
                 return [newPoint];
               });
             },
-            (error) => console.error('GPS Error:', error),
+            (error) => console.error('[Tracker] GPS Error:', error),
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
           );
         }
@@ -1174,12 +1175,14 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
         : (isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!'), 
       { icon: isSimulationMode ? '🎮' : '🚀' }
     );
+    console.log(`[Tracker] Session started. Mode: ${isSimulationMode ? 'Simulation' : 'Live GPS'}`);
   };
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
+    console.log('[Tracker] Session paused');
   };
 
   const handleStopTimer = async () => {
@@ -1211,9 +1214,11 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
           locationSummary = startLoc || endLoc || '';
         }
       } catch (e) {
-        console.error('Geocoding failed');
+        console.error('[Tracker] Geocoding final summary failed:', e);
       }
     }
+
+    console.log(`[Tracker] Session stopped. Duration: ${durationInMinutes}m, Distance: ${currentDistance}km, Mistakes: ${cumulativeMistakesRef.current.length}`);
 
     setNewSession(prev => ({
       ...prev,
@@ -1299,6 +1304,7 @@ const TRIAL_LIMIT = 3; // Trial limit for advanced tracking features
     } else {
       addDrivingSession(newSession as Omit<DrivingSession, 'id'>);
       toast.success(isDE ? 'Fahrstunde gespeichert!' : 'Session saved!');
+      console.log('[Tracker] New session saved to store');
     }
     handleCloseForm();
   };

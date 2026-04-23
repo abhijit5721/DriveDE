@@ -299,6 +299,12 @@ export async function syncAllData(state: AppState) {
   }
   
   // Execute remaining syncs in parallel (max 2-3 requests total)
-  await Promise.all(syncTasks);
-  console.log('[DB-Sync] Batch sync complete!');
+  const results = await Promise.all(syncTasks);
+  const errors = results.filter(r => r.error).map(r => r.error?.message);
+  
+  if (errors.length > 0) {
+    console.error('[DB-Sync] Batch sync encountered errors:', errors);
+  } else {
+    console.log('[DB-Sync] Batch sync complete!');
+  }
 }

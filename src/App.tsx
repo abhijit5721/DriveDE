@@ -71,6 +71,7 @@ export default function App() {
     const reportId = params.get('report');
     if (reportId) {
       setReportUserId(reportId);
+      console.log(`[App] Public report view detected for ID: ${reportId}`);
     }
   }, []);
 
@@ -83,15 +84,20 @@ export default function App() {
       if (session?.user) {
         const { user } = session;
         const displayName = user.user_metadata?.full_name || user.email || null;
+        console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
         setAuthState(user.email || null, 'signed_in', displayName, user.id);
         
         const remoteData = await hydrateFromSupabase();
+        if (remoteData) {
+          console.log('[App] State hydrated from Supabase');
+        }
         
         // Ensure profile exists in DB immediately upon login
         const currentState = useAppStore.getState();
         await ensureProfileFromState(currentState);
         
         if (isNewUser) {
+          console.log('[App] New user detected, migrating local progress to cloud...');
           // First sign-in: sync local session progress to cloud
           const localProgress = useAppStore.getState().userProgress;
           for (const lessonId of localProgress.completedLessons) {
