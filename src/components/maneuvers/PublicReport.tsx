@@ -40,6 +40,8 @@ import { getAllLessons, chapters } from '../../data/curriculum';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
 import { filterLessonsForSelection } from '../../utils/contentFilter';
 import { cn } from '../../utils/cn';
+import { deduplicateSessions } from '../../utils/session';
+import { calculateTotalReadiness } from '../../utils/readiness';
 
 interface PublicReportProps {
   userId: string;
@@ -68,54 +70,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // --- MULTI-TIER DEDUPLICATION ENGINE ---
-        // This engine ensures that even if a session is synced multiple times or across 
-        // multiple devices (e.g., iPhone and iPad), it only appears once in the report.
-        const allRows = sessions || [];
-        
-        // Tier 1: Merge by Exact External ID
-        // (Handles duplicates of the exact same sync record)
-        const idMap = new Map<string, any>();
-        allRows.forEach(r => {
-          const key = r.external_id || r.id;
-          const existing = idMap.get(key);
-          if (!existing || (!existing.location_summary && r.location_summary)) {
-            idMap.set(key, r);
-          }
-        });
-
-        // Tier 2: Merge by Similarity (Date + Duration + Category + Distance + Location + Instructor)
-        // (Handles the same session uploaded with different IDs while preserving back-to-back lessons)
-        const similarityMap = new Map<string, any>();
-        Array.from(idMap.values()).forEach(r => {
-          const dateStr = new Date(r.session_date).toISOString().split('T')[0];
-          const dist = Math.round(r.total_distance || 0);
-          // Key includes Instructor to distinguish sessions with same stats but different teachers
-          const simKey = `${dateStr}_${r.duration_minutes}_${r.category}_${dist}_${r.location_summary || ''}_${r.instructor_name || ''}`;
-          
-          if (!similarityMap.has(simKey)) {
-            similarityMap.set(simKey, r);
-          }
-        });
-
-        const finalRows = Array.from(similarityMap.values());
+        const finalRows = deduplicateSessions(sessions || []);
 
         setData({
           profile,
-          sessions: finalRows.map(s => ({
-            id: s.id,
-            date: s.session_date,
-            duration: s.duration_minutes,
-            type: s.category === 'night' ? 'nacht' : s.category,
-            notes: s.notes || '',
-            instructorName: s.instructor_name || '',
-            route: s.route || [],
-            mistakes: s.mistakes || [],
-            totalDistance: s.total_distance || 0,
-            locationSummary: s.location_summary || ''
-          })).sort((a, b) => 
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-          ),
+          sessions: finalRows,
           completedLessons: (lessons || []).map(l => l.lesson_id)
         });
       } catch (e) {
@@ -175,20 +134,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     visibleLessons.some(l => l.id === id)
   ).length;
 
-  // Smarter "Readiness" calculation
-  // 1. Quantity Base (40% Theory, 60% Experience)
-  const theoryProgress = Math.min(1, validCompletedLessonsCount / totalVisibleLessons);
-  const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours base for full experience
-  const score = (theoryProgress * 40) + (experienceProgress * 60);
-
-  // 2. Quality Penalty (Recent Faults)
-  // Look at the last 5 sessions or all if less
-  const recentSessionsCount = data.sessions.slice(0, 5);
-  const totalRecentMistakes = recentSessionsCount.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0);
-  
-  // Penalty: -3% per recent mistake, capped at -30%
-  const penalty = Math.min(30, totalRecentMistakes * 3);
-  const readiness = Math.round(Math.max(0, score - penalty));
+  // Hybrid Readiness Model (Theory + Legal + Performance)
+  const readiness = calculateTotalReadiness(
+    data.sessions,
+    validCompletedLessonsCount,
+    totalVisibleLessons
+  );
 
   // --- Practical Analytics ---
   // 1. Sonderfahrten Progress (Units)
