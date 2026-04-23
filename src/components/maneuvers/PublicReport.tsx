@@ -47,35 +47,31 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         // --- Precision De-duplication Engine ---
         const allRows = sessions || [];
         
-        // 1. Clean 'Modern' sessions (those with external_id)
-        // Group by external_id to eliminate redundant sync artifacts.
-        const modernMap = new Map<string, any>();
+        // Tier 1: Merge by Exact External ID
+        // (Handles duplicates of the exact same sync record)
+        const idMap = new Map<string, any>();
         allRows.forEach(r => {
-          if (r.external_id) {
-            const existing = modernMap.get(r.external_id);
-            // Keep the one with a location summary if possible
-            if (!existing || (!existing.location_summary && r.location_summary)) {
-              modernMap.set(r.external_id, r);
-            }
+          const key = r.external_id || r.id;
+          const existing = idMap.get(key);
+          if (!existing || (!existing.location_summary && r.location_summary)) {
+            idMap.set(key, r);
           }
         });
-        const cleanModern = Array.from(modernMap.values());
 
-        // 2. Filter 'Legacy' sessions (those without external_id)
-        // A legacy row is dropped if it looks identical to a clean modern row.
-        const legacyRows = allRows.filter(r => !r.external_id);
-        const normalizeDate = (d: string) => new Date(d).toISOString().split('T')[0];
-
-        const cleanLegacy = legacyRows.filter(lr => {
-          const lDate = normalizeDate(lr.session_date);
-          const isDuplicate = cleanModern.some(mr => 
-            normalizeDate(mr.session_date) === lDate && 
-            mr.duration_minutes === lr.duration_minutes
-          );
-          return !isDuplicate;
+        // Tier 2: Merge by Similarity (Date + Duration + Category + Distance + Location)
+        // (Handles the same session uploaded with different IDs)
+        const similarityMap = new Map<string, any>();
+        Array.from(idMap.values()).forEach(r => {
+          const dateStr = new Date(r.session_date).toISOString().split('T')[0];
+          const dist = Math.round(r.total_distance || 0);
+          const simKey = `${dateStr}_${r.duration_minutes}_${r.category}_${dist}_${r.location_summary || ''}`;
+          
+          if (!similarityMap.has(simKey)) {
+            similarityMap.set(simKey, r);
+          }
         });
 
-        const finalRows = [...cleanModern, ...cleanLegacy];
+        const finalRows = Array.from(similarityMap.values());
 
         // DEBUG: Expose state for deep inspection
         (window as any).reportDebug = {
