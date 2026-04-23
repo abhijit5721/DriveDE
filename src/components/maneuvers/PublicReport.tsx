@@ -100,8 +100,20 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
   const totalLessons = data.completedLessons.length;
   
-  // More realistic "Readiness" calculation (14 theory + 20 hours = 100%)
-  const readiness = Math.min(100, Math.round((totalLessons / 14) * 40 + (totalMinutes / 1200) * 60));
+  // Smarter "Readiness" calculation
+  // 1. Quantity Base (40% Theory, 60% Experience)
+  const theoryProgress = Math.min(1, totalLessons / 14);
+  const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours
+  let score = (theoryProgress * 40) + (experienceProgress * 60);
+
+  // 2. Quality Penalty (Recent Faults)
+  // Look at the last 5 sessions or all if less
+  const recentSessions = data.sessions.slice(0, 5);
+  const totalRecentMistakes = recentSessions.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0);
+  
+  // Penalty: -3% per recent mistake, capped at -30%
+  const penalty = Math.min(30, totalRecentMistakes * 3);
+  const readiness = Math.round(Math.max(0, score - penalty));
 
   return (
     <div className="min-h-screen bg-slate-950 pb-20">
