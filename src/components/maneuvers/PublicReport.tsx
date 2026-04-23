@@ -41,23 +41,19 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // --- Visual Match De-duplication ---
-        // We use a combination of Date, Duration, and Category as the key.
-        // This is the most robust way to merge duplicates that might have different IDs
-        // but represent the same real-world driving session.
+        // --- Precision De-duplication ---
+        // 1. If a session has an 'external_id' (from the student's app), use it as the key.
+        //    This perfectly merges duplicates created during sync.
+        // 2. If it's a legacy session (null external_id), use the database 'id' as a fallback.
+        //    This prevents collapsing different sessions that happen on the same day.
         const allRows = sessions || [];
         const sessionMap = new Map<string, any>();
 
         allRows.forEach(s => {
-          // Normalize date to YYYY-MM-DD to handle precision mismatches
-          const dateKey = new Date(s.session_date).toISOString().split('T')[0];
-          const visualKey = `${dateKey}_${s.duration_minutes}_${s.category}`;
+          const key = s.external_id || s.id;
           
-          const existing = sessionMap.get(visualKey);
-          
-          // If this is a new session, or it's a better quality record (has external_id)
-          if (!existing || (!existing.external_id && s.external_id)) {
-            sessionMap.set(visualKey, s);
+          if (!sessionMap.has(key)) {
+            sessionMap.set(key, s);
           }
         });
 
