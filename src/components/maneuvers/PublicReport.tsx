@@ -5,7 +5,6 @@ import {
   Clock, 
   Calendar, 
   AlertCircle, 
-  TrendingUp,
   BarChart2,
   CheckCircle2,
   ShieldCheck,
@@ -310,16 +309,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
         </div>
 
-        {/* Readiness Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl">
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 text-white font-black text-xl">
-                {data.profile?.display_name?.[0] || 'S'}
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-white leading-tight">
-                  {data.profile?.display_name || 'Student'}
         {/* Readiness Card & Trend */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-2xl">
