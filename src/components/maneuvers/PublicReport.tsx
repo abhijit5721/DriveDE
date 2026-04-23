@@ -59,11 +59,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             locationSummary: s.location_summary || ''
           };
 
-          // Priority 1: external_id (the local timestamp ID)
-          // Priority 2: A composite key of date and duration (for legacy rows)
-          const key = s.external_id || `${s.session_date}_${s.duration_minutes}`;
+          // Use session_date as the unique key. Since it's an ISO string from Date.now(), 
+          // it is unique to the millisecond when the session was created.
+          const key = s.session_date;
           
-          // If we already have this session, prefer the one with an external_id
+          // If we already have this session, prefer the one that has an external_id 
+          // (which indicates it's from the new, cleaner sync system)
           if (!sessionMap.has(key) || s.external_id) {
             sessionMap.set(key, mapped);
           }
