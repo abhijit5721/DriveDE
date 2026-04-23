@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "npm run lint && npm run typecheck && npm run test && node ./scripts/migrate.js && vite build",
-    "preview": "vite preview",
+    "dev": "node node_modules/vite/bin/vite.js",
+    "build": "npm run lint && npm run typecheck && npm run test && node ./scripts/migrate.js && node node_modules/vite/bin/vite.js build",
+    "preview": "node node_modules/vite/bin/vite.js preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
