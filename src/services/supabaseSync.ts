@@ -160,6 +160,42 @@ export async function deleteDrivingSessionFromCloud(sessionId: string) {
   }
 }
 
+export async function clearDrivingHistoryFromCloud() {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+
+  const { error } = await supabase
+    .from('driving_sessions')
+    .delete()
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('[DriveDE] Failed to clear cloud driving history:', error.message);
+  } else {
+    console.log('[DriveDE] Cloud driving history cleared successfully.');
+  }
+}
+
+export async function resetAllDataFromCloud() {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+
+  const results = await Promise.all([
+    supabase.from('driving_sessions').delete().eq('user_id', userId),
+    supabase.from('lesson_progress').delete().eq('user_id', userId),
+    supabase.from('quiz_attempts').delete().eq('user_id', userId),
+  ]);
+
+  const errors = results.filter(r => r.error);
+  if (errors.length > 0) {
+    console.warn('[DriveDE] Reset cloud data had some errors:', errors);
+  } else {
+    console.log('[DriveDE] All cloud data reset successfully.');
+  }
+}
+
 export async function syncQuizAttempt(quizId: string, score: number) {
   if (!isSupabaseConfigured || !supabase) return;
   const userId = await getCurrentUserId();

@@ -462,7 +462,9 @@ export const useAppStore = create<AppState>()(
           };
         }),
 
-      resetProgress: () =>
+      resetProgress: () => {
+        // NEW: Reset cloud data as well
+        import('../services/supabaseSync').then(m => m.resetAllDataFromCloud());
         set({
           userProgress: initialProgress,
           isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
@@ -470,7 +472,8 @@ export const useAppStore = create<AppState>()(
           learningPath: null,
           transmissionType: null,
           hasVisited: false,
-        }),
+        });
+      },
 
       clearDrivingHistory: () =>
         set((state) => {
@@ -489,6 +492,8 @@ export const useAppStore = create<AppState>()(
             userProgress: nextProgress,
           };
           void ensureProfileFromState(nextState as AppState);
+          // NEW: Clear from cloud as well
+          import('../services/supabaseSync').then(m => m.clearDrivingHistoryFromCloud());
           return { userProgress: nextProgress };
         }),
 
