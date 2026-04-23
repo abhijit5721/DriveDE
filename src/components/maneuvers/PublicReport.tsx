@@ -41,41 +41,27 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // Advanced De-duplication Logic
-        // The DB might contain "Legacy" sessions (null external_id) and "Modern" sessions (with external_id).
-        // If a student synced twice, every session exists twice.
+        // --- Visual Match De-duplication ---
+        // We use a combination of Date, Duration, and Category as the key.
+        // This is the most robust way to merge duplicates that might have different IDs
+        // but represent the same real-world driving session.
         const allRows = sessions || [];
-        const modernRows = allRows.filter(r => r.external_id !== null);
-        const legacyRows = allRows.filter(r => r.external_id === null);
+        const sessionMap = new Map<string, any>();
 
-        // A legacy row is a duplicate if there's a modern row with the same date and duration.
-        const normalizeDate = (d: string) => {
-          try {
-            return new Date(d).toISOString().split('T')[0];
-          } catch (e) {
-            return d;
+        allRows.forEach(s => {
+          // Normalize date to YYYY-MM-DD to handle precision mismatches
+          const dateKey = new Date(s.session_date).toISOString().split('T')[0];
+          const visualKey = `${dateKey}_${s.duration_minutes}_${s.category}`;
+          
+          const existing = sessionMap.get(visualKey);
+          
+          // If this is a new session, or it's a better quality record (has external_id)
+          if (!existing || (!existing.external_id && s.external_id)) {
+            sessionMap.set(visualKey, s);
           }
-        };
-
-        const filteredLegacy = legacyRows.filter(lr => {
-          const lDate = normalizeDate(lr.session_date);
-          const isDuplicate = modernRows.some(mr => 
-            normalizeDate(mr.session_date) === lDate && 
-            mr.duration_minutes === lr.duration_minutes
-          );
-          return !isDuplicate;
         });
 
-        const finalRows = [...modernRows, ...filteredLegacy];
-
-        // DEBUG: Expose to window for remote inspection
-        (window as any).reportDebug = {
-          rawCount: allRows.length,
-          modernCount: modernRows.length,
-          legacyCount: legacyRows.length,
-          filteredLegacyCount: filteredLegacy.length,
-          finalCount: finalRows.length
-        };
+        const finalRows = Array.from(sessionMap.values());
 
         setData({
           profile,
