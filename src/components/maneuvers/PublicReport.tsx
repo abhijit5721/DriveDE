@@ -15,6 +15,9 @@ import {
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
 import { Skeleton } from '../common/Skeleton';
+import { getAllLessons, chapters } from '../../data/curriculum';
+import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
+import { filterLessonsForSelection } from '../../utils/contentFilter';
 
 interface PublicReportProps {
   userId: string;
@@ -130,12 +133,21 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   }
 
   const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
-  const totalLessons = data.completedLessons.length;
+  const completedLessonsCount = data.completedLessons.length;
   
+  // Get dynamic total lessons based on profile
+  const lPath = data.profile?.learning_path || 'standard';
+  const tType = data.profile?.transmission_type || 'automatic';
+  
+  // Convert Supabase enums to app types if needed
+  const learningPath = lPath === 'conversion' ? 'umschreibung' : 'standard';
+  const visibleLessons = filterLessonsForSelection(getAllLessons(), tType, learningPath);
+  const totalVisibleLessons = visibleLessons.length || 50;
+
   // Smarter "Readiness" calculation
   // 1. Quantity Base (40% Theory, 60% Experience)
-  const theoryProgress = Math.min(1, totalLessons / 50);
-  const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours
+  const theoryProgress = Math.min(1, completedLessonsCount / totalVisibleLessons);
+  const experienceProgress = Math.min(1, totalMinutes / 1200); // 20 hours base for full experience
   let score = (theoryProgress * 40) + (experienceProgress * 60);
 
   // 2. Quality Penalty (Recent Faults)
@@ -182,7 +194,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               />
             </div>
             <p className="mt-4 text-sm text-blue-100">
-              Based on {Math.round(totalMinutes / 45)} units and {totalLessons} theory lessons completed.
+              Based on {totalMinutes >= 45 ? `${Math.round(totalMinutes / 45)} units` : `${totalMinutes} minutes`} and {completedLessonsCount}/{totalVisibleLessons} theory lessons.
             </p>
           </div>
           <Zap className="absolute -bottom-4 -right-4 h-32 w-32 text-white/10 rotate-12" />
@@ -204,7 +216,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <BarChart2 className="h-4 w-4" />
               <span className="text-xs font-bold uppercase">Theory</span>
             </div>
-            <div className="text-2xl font-bold text-white">{totalLessons} Lessons</div>
+            <div className="text-2xl font-bold text-white">{completedLessonsCount}/{totalVisibleLessons}</div>
           </div>
         </div>
 
