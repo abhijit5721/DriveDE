@@ -41,11 +41,27 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           supabase.from('lesson_progress').select('*').eq('user_id', userId).eq('status', 'completed')
         ]);
 
-        // De-duplicate sessions (important if old rows without external_id exist)
-        const sessionMap = new Map<string, DrivingSession>();
-        
-        (sessions || []).forEach(s => {
-          const mapped: DrivingSession = {
+        // Advanced De-duplication Logic
+        // The DB might contain "Legacy" sessions (null external_id) and "Modern" sessions (with external_id).
+        // If a student synced twice, every session exists twice.
+        const allRows = sessions || [];
+        const modernRows = allRows.filter(r => r.external_id !== null);
+        const legacyRows = allRows.filter(r => r.external_id === null);
+
+        // A legacy row is a duplicate if there's a modern row with the same date and duration.
+        const filteredLegacy = legacyRows.filter(lr => {
+          const isDuplicate = modernRows.some(mr => 
+            mr.session_date === lr.session_date && 
+            mr.duration_minutes === lr.duration_minutes
+          );
+          return !isDuplicate;
+        });
+
+        const finalRows = [...modernRows, ...filteredLegacy];
+
+        setData({
+          profile,
+          sessions: finalRows.map(s => ({
             id: s.id,
             date: s.session_date,
             duration: s.duration_minutes,
@@ -55,24 +71,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             route: s.route || [],
             mistakes: s.mistakes || [],
             totalDistance: s.total_distance || 0,
-            location_summary: s.location_summary || '',
             locationSummary: s.location_summary || ''
-          };
-
-          // Use session_date as the unique key. Since it's an ISO string from Date.now(), 
-          // it is unique to the millisecond when the session was created.
-          const key = s.session_date;
-          
-          // If we already have this session, prefer the one that has an external_id 
-          // (which indicates it's from the new, cleaner sync system)
-          if (!sessionMap.has(key) || s.external_id) {
-            sessionMap.set(key, mapped);
-          }
-        });
-
-        setData({
-          profile,
-          sessions: Array.from(sessionMap.values()).sort((a, b) => 
+          })).sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
           ),
           completedLessons: (lessons || []).map(l => l.lesson_id)
