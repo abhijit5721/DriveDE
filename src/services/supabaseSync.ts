@@ -275,7 +275,7 @@ export async function syncAllData(state: AppState) {
       status: 'completed' as const,
       completed_at: new Date().toISOString()
     }));
-    syncTasks.push(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' }));
+    syncTasks.push(Promise.resolve(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' })));
   }
   
   // 3. Batch Sync Driving Sessions (Single Request)
@@ -295,7 +295,7 @@ export async function syncAllData(state: AppState) {
       instructor_name: session.instructorName || null,
     }));
     
-    syncTasks.push(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' }));
+    syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' })));
   }
   
   // Execute remaining syncs in parallel (max 2-3 requests total)

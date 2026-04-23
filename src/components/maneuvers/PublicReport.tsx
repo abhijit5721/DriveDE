@@ -11,12 +11,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  ChevronLeft, 
   MapPin, 
-  Clock, 
   Calendar, 
   AlertCircle, 
-  BarChart2,
   CheckCircle2,
   ShieldCheck,
   Zap,
@@ -25,19 +22,17 @@ import {
   Activity,
   Flame,
   ShieldAlert,
-  ArrowUpRight,
   Sparkles,
   TrendingUp,
   TrendingDown,
   Minus,
-  LayoutDashboard,
-  ZapOff
+  LayoutDashboard
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
 import { Skeleton } from '../common/Skeleton';
-import { getAllLessons, chapters } from '../../data/curriculum';
-import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
+import { getAllLessons } from '../../data/curriculum';
+
 import { filterLessonsForSelection } from '../../utils/contentFilter';
 import { cn } from '../../utils/cn';
 import { deduplicateSessions } from '../../utils/session';
@@ -56,7 +51,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     completedLessons: string[];
   } | null>(null);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
-  const [selectedFault, setSelectedFault] = useState<string | null>(null);
   const [lessonMode, setLessonMode] = useState(false);
 
   useEffect(() => {
@@ -120,9 +114,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     );
   }
 
-  const totalMinutes = data.sessions.reduce((acc, s) => acc + s.duration, 0);
-  const completedLessonsCount = data.completedLessons.length;
-  
   // Get dynamic total lessons based on profile
   const lPath = data.profile?.learning_path || 'standard';
   const tType = data.profile?.transmission_type || 'automatic';
@@ -598,7 +589,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 {expandedSession === session.id && (session.mistakes?.length || 0) > 0 && (
                   <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Fault Details</p>
-                    {session.mistakes.map((m: any, idx: number) => (
+                    {session.mistakes?.map((m: any, idx: number) => (
                       <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                         <div className="w-1 h-1 rounded-full bg-red-500" />
                         <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>

@@ -28,7 +28,7 @@ describe('calculateTotalReadiness', () => {
 
   it('should penalize recent mistakes heavily', () => {
     const sessionsWithMistakes: DrivingSession[] = [
-      { id: '1', duration: 45, mistakes: [{}, {}, {}, {}, {}] as any, date: '', type: 'city', notes: '', instructorName: '', route: [], totalDistance: 0, locationSummary: '' }
+      { id: '1', duration: 45, mistakes: [{}, {}, {}, {}, {}] as any, date: '', type: 'normal', notes: '', instructorName: '', route: [], totalDistance: 0, locationSummary: '' }
     ];
     
     const score = calculateTotalReadiness(sessionsWithMistakes, 10, 10);

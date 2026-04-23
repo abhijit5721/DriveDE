@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run lint && node ./scripts/migrate.js && vite build",
+    "build": "npm run lint && npm run typecheck && npm run test && node ./scripts/migrate.js && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
