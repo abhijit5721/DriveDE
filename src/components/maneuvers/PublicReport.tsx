@@ -33,6 +33,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("DriveDE Public Report Version:", VERSION);
     const fetchData = async () => {
       if (!isSupabaseConfigured || !supabase) return;
       
