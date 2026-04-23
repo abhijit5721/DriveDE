@@ -49,7 +49,7 @@ describe('Paywall Component', () => {
 
   it('should render all pricing tiers', () => {
     render(<Paywall onClose={mockOnClose} />);
-    expect(screen.getByText(/Standard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Starter/i)).toBeInTheDocument();
   });
 
   it('should trigger checkout function when clicked', async () => {
