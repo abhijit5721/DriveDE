@@ -18,7 +18,9 @@ import {
   Sparkles,
   TrendingUp,
   TrendingDown,
-  Minus
+  Minus,
+  LayoutDashboard,
+  ZapOff
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -42,6 +44,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   } | null>(null);
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
   const [selectedFault, setSelectedFault] = useState<string | null>(null);
+  const [lessonMode, setLessonMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -285,13 +288,90 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             </div>
           </div>
         </button>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setLessonMode(!lessonMode)}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border",
+              lessonMode 
+                ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20" 
+                : "bg-white/5 border-white/5 text-slate-400 hover:bg-white/10"
+            )}
+          >
+            {lessonMode ? <Zap className="h-3 w-3" /> : <LayoutDashboard className="h-3 w-3" />}
+            {lessonMode ? 'Lesson Active' : 'Lesson Mode'}
+          </button>
           <ShieldCheck className="h-6 w-6 text-emerald-500" />
         </div>
       </div>
 
       <div className="p-6 space-y-6 max-w-2xl mx-auto">
-        {/* AI Instructor Briefing */}
+        {lessonMode ? (
+          <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+            {/* Condensed AI Briefing */}
+            <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl">
+              <div className="flex items-center gap-2 mb-3 opacity-80">
+                <Sparkles className="h-4 w-4" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Active Briefing</span>
+              </div>
+              <p className="text-lg font-bold leading-tight">
+                {generateBriefing().split('.')[0]}. Focus on {formatFaultName(sortedFaults[0]?.[0] || 'precision')}.
+              </p>
+            </div>
+
+            {/* Quick Fault Priority */}
+            <div className="grid grid-cols-1 gap-4">
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2">Top Training Priorities</div>
+              {sortedFaults.map(([fault, count], i) => (
+                <div key={i} className="rounded-2xl bg-slate-900 border-2 border-orange-500/20 p-5 flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-500/20">
+                    {count}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-white uppercase tracking-tight">{formatFaultName(fault)}</h4>
+                    <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">{faultAdvice[fault]}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Critical Legal Hours */}
+            <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
+              <div className="grid grid-cols-3 gap-3">
+                {Object.entries(sonderfahrten).map(([key, stats]) => {
+                  const progress = (stats.current / stats.target) * 100;
+                  return (
+                    <div key={key} className="space-y-2">
+                      <div className="flex justify-between items-end">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">{key}</span>
+                        <span className="text-[10px] font-black text-white">{stats.current}/{stats.target}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div 
+                          className={cn(
+                            "h-full rounded-full",
+                            progress >= 100 ? "bg-emerald-500" : "bg-blue-500"
+                          )}
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setLessonMode(false)}
+              className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-slate-500 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+            >
+              Exit Lesson Mode
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* AI Instructor Briefing */}
         <div className="rounded-3xl bg-slate-900 border border-blue-500/20 p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Sparkles className="h-24 w-24 text-blue-400" />
@@ -555,6 +635,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             Privacy protected by DriveDE. Data sync expires automatically.
           </p>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
