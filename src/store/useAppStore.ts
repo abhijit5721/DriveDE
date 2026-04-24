@@ -183,8 +183,8 @@ export const useAppStore = create<AppState>()(
             path === null
               ? null
               : path === 'umschreibung'
-                ? 'B'
-                : state.licenseType || 'B';
+                ? 'manual'
+                : state.licenseType || 'manual';
           
           const nextState = {
             ...state,
