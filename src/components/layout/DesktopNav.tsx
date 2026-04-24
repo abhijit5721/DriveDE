@@ -1,14 +1,15 @@
-import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, Crown, Wallet } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 
 interface DesktopNavProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
+  onSignOut?: () => void;
 }
 
-export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
-  const { language, setLanguage, darkMode, toggleDarkMode, isPremium, userProgress } = useAppStore();
+export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProps) {
+  const { language, setLanguage, darkMode, toggleDarkMode, isPremium, userProgress, authStatus } = useAppStore();
   const isDE = language === 'de';
 
   const navItems = [
@@ -118,6 +119,16 @@ export function DesktopNav({ activeTab, onTabChange }: DesktopNavProps) {
               {isDE ? (darkMode ? 'Heller Modus' : 'Dunkler Modus') : (darkMode ? 'Light Mode' : 'Dark Mode')}
             </div>
           </button>
+          
+          {authStatus === 'signed_in' && (
+            <button
+              onClick={onSignOut}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-red-600 transition-all hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            >
+              <LogOut className="h-5 w-5" />
+              {isDE ? 'Abmelden' : 'Sign Out'}
+            </button>
+          )}
         </div>
       </div>
     </aside>
