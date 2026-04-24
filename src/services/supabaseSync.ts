@@ -223,8 +223,8 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
   }
 
   const { error } = await supabase.from('driving_sessions').upsert({
-    id: session.id, // Using the stable external_id
     user_id: userId,
+    external_id: session.id,
     session_date: session.date,
     duration_minutes: session.duration,
     category: mapTrackerCategoryToDb(session.type),
@@ -235,6 +235,8 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     total_distance: session.totalDistance,
     location_summary: session.locationSummary,
     transmission_type: mapTransmissionToDb(transmissionType)
+  }, {
+    onConflict: 'user_id,external_id'
   });
 
   if (error && !isRetry) {
@@ -279,7 +281,7 @@ export async function hydrateFromSupabase() {
     profile,
     lessons: lessons ?? [],
     sessions: (sessions ?? []).map(s => ({
-      id: s.id,
+      id: s.external_id || s.id,
       date: s.session_date || '',
       duration: Number(s.duration_minutes) || 0,
       type: s.category === 'night' ? 'nacht' : (s.category || 'normal'),
