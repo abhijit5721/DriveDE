@@ -91,6 +91,18 @@ export async function processSyncQueue() {
           await syncQuizAttempt(task.payload.quizId as string, task.payload.score as number, true);
           success = true;
           break;
+        case 'profile':
+          await ensureProfileFromState(task.payload.state as AppState, true);
+          success = true;
+          break;
+        case 'delete_session':
+          await deleteDrivingSessionFromCloud(task.payload.sessionId as string);
+          success = true;
+          break;
+        case 'clear_history':
+          await clearDrivingHistoryFromCloud();
+          success = true;
+          break;
       }
 
       if (!success && task.retryCount < 5) {
@@ -98,7 +110,7 @@ export async function processSyncQueue() {
         remainingTasks.push(task);
       }
     } catch (error) {
-      console.warn(`[SyncQueue] Task ${task.id} failed:`, error);
+      console.warn(`[SyncQueue] Task failed: ${task.id}`, error);
       if (task.retryCount < 5) {
         task.retryCount++;
         remainingTasks.push(task);
@@ -109,19 +121,10 @@ export async function processSyncQueue() {
   await saveQueue(remainingTasks);
 }
 
-// Add online listener
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => {
-    console.log('[SyncQueue] Back online! Processing queue...');
-    processSyncQueue();
-  });
-}
+// --- CORE SYNC FUNCTIONS ---
 
-/**
- * Retrieves the currently authenticated user's ID.
- */
-async function getCurrentUserId() {
-  if (!isSupabaseConfigured || !supabase) return null;
+export async function getCurrentUserId() {
+  if (!supabase) return null;
   const {
     data: { user },
     error,
@@ -131,204 +134,132 @@ async function getCurrentUserId() {
   return user.id;
 }
 
+let profileSyncTimer: NodeJS.Timeout | null = null;
+
 /**
  * Syncs the global application state (settings, progress, etc) to the profiles table.
+ * Includes a 2-second debounce to prevent spamming the database with high-frequency updates.
  */
-export async function ensureProfileFromState(state: AppState) {
-  console.log('[DB-Sync] Starting profile sync...');
-  if (!isSupabaseConfigured || !supabase) {
-    console.log('[DB-Sync] Configuration missing or incomplete');
-    return;
-  }
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    console.log('[DB-Sync] No user ID found');
-    return;
+export async function ensureProfileFromState(state: AppState, isRetry: boolean = false) {
+  if (profileSyncTimer && !isRetry) {
+    clearTimeout(profileSyncTimer);
   }
 
-  console.log('[DB-Sync] Syncing for user:', userId);
+  return new Promise<void>((resolve) => {
+    const performSync = async () => {
+      if (!isSupabaseConfigured || !supabase) {
+        resolve();
+        return;
+      }
+      
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        resolve();
+        return;
+      }
 
-  const { error } = await supabase.from('profiles_secure').upsert({
-    id: userId,
-    learning_path: mapLearningPathToDb(state.learningPath),
-    transmission_type: mapTransmissionToDb(state.transmissionType),
-    language: state.language,
-    theme: state.darkMode ? 'dark' : 'light',
-    incorrect_questions: state.userProgress.incorrectQuestions || [],
-    hourly_rate_45: state.userProgress.hourlyRate45,
-    fixed_costs: state.userProgress.fixedCosts,
+      console.log('[DB-Sync] Starting profile sync for user:', userId);
+
+      const { error } = await supabase.from('profiles_secure').upsert({
+        id: userId,
+        learning_path: mapLearningPathToDb(state.learningPath),
+        transmission_type: mapTransmissionToDb(state.transmissionType),
+        language: state.language,
+        theme: state.darkMode ? 'dark' : 'light',
+        incorrect_questions: state.userProgress.incorrectQuestions || [],
+        hourly_rate_45: state.userProgress.hourlyRate45,
+        fixed_costs: state.userProgress.fixedCosts,
+      });
+
+      if (error) {
+        console.error('[DB-Sync] FAILED to sync profile:', error.message);
+        if (!isRetry) {
+          await addToQueue('profile', { state });
+        }
+      } else {
+        console.log('[DB-Sync] Profile sync successful!');
+      }
+      resolve();
+    };
+
+    if (isRetry) {
+      void performSync();
+    } else {
+      profileSyncTimer = setTimeout(() => {
+        void performSync();
+      }, 2000);
+    }
   });
-
-  if (error) {
-    console.error('[DB-Sync] FAILED to sync profile:', error.message);
-    // Profile sync is often high frequency, we might not want to queue EVERY change
-    // but the final state should definitely be synced.
-  } else {
-    console.log('[DB-Sync] Profile sync successful!');
-  }
 }
 
 export async function syncCompletedLesson(lessonId: string, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
   
-  if (!navigator.onLine && !isRetry) {
-    await addToQueue('lesson', { lessonId });
+  if (!userId) {
+    if (!isRetry) await addToQueue('lesson', { lessonId });
     return;
   }
-
-  const userId = await getCurrentUserId();
-  if (!userId) return;
 
   const { error } = await supabase.from('lesson_progress').upsert({
     user_id: userId,
     lesson_id: lessonId,
     status: 'completed',
-    completed_at: new Date().toISOString(),
-  }, {
-    onConflict: 'user_id,lesson_id'
-  });
+    completed_at: new Date().toISOString()
+  }, { onConflict: 'user_id,lesson_id' });
 
-  if (error) {
-    console.warn('[DriveDE] Failed to sync lesson progress', error.message);
-    if (!isRetry) await addToQueue('lesson', { lessonId });
+  if (error && !isRetry) {
+    await addToQueue('lesson', { lessonId });
   }
 }
 
 export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
 
-  if (!navigator.onLine && !isRetry) {
-    await addToQueue('session', { session, transmissionType });
+  if (!userId) {
+    if (!isRetry) await addToQueue('session', { session, transmissionType });
     return;
   }
 
-  const userId = await getCurrentUserId();
-  if (!userId) return;
-
-  // First Attempt: Full sync with enhanced fields using upsert on external_id
-  const { error: fullError } = await supabase.from('driving_sessions').upsert({
+  const { error } = await supabase.from('driving_sessions').upsert({
+    id: session.id, // Using the stable external_id
     user_id: userId,
-    external_id: session.id, // Store local timestamp ID
-    session_date: session.date,
-    duration_minutes: session.duration,
-    category: mapTrackerCategoryToDb(session.type),
-    transmission_type: mapTransmissionToDb(transmissionType),
+    date: session.date,
+    duration: session.duration,
+    type: mapTrackerCategoryToDb(session.type),
     notes: session.notes,
+    instructor_name: session.instructorName,
     route: session.route,
     mistakes: session.mistakes,
     total_distance: session.totalDistance,
     location_summary: session.locationSummary,
-    instructor_name: session.instructorName || null,
-  }, { 
-    onConflict: 'user_id,external_id' 
+    transmission_type: mapTransmissionToDb(transmissionType)
   });
 
-  if (fullError) {
-    console.warn('[DriveDE] Full sync failed, attempting basic fallback save...', fullError.message);
-    
-    // Check if it's a "column missing" type error
-    if (fullError.code === '42703' || fullError.message.includes('column')) {
-       // Second Attempt: Basic sync with original columns only
-       const { error: basicError } = await supabase.from('driving_sessions').upsert({
-         user_id: userId,
-         external_id: session.id,
-         session_date: session.date,
-         duration_minutes: session.duration,
-         category: mapTrackerCategoryToDb(session.type),
-         transmission_type: mapTransmissionToDb(transmissionType),
-         notes: session.notes,
-       }, { 
-         onConflict: 'user_id,external_id' 
-       });
-
-       if (basicError) {
-         console.error('[DriveDE] CRITICAL: Both full and fallback sync failed.', basicError);
-        } else {
-          console.info('[DriveDE] Basic fallback sync completed successfully.');
-        }
-    } else {
-      console.error('[DriveDE] Sync failed with a non-schema error:', fullError);
-      if (!isRetry) await addToQueue('session', { session, transmissionType });
-    }
-  } else {
-    console.log('[DriveDE] Full session synced successfully.');
-  }
-}
-
-export async function deleteDrivingSessionFromCloud(sessionId: string) {
-  if (!isSupabaseConfigured || !supabase) return;
-  const userId = await getCurrentUserId();
-  if (!userId) return;
-
-  const { error } = await supabase
-    .from('driving_sessions')
-    .delete()
-    .eq('user_id', userId)
-    .eq('id', sessionId);
-
-  if (error) {
-    console.warn('[DriveDE] Failed to delete driving session', error.message);
-  }
-}
-
-export async function clearDrivingHistoryFromCloud() {
-  if (!isSupabaseConfigured || !supabase) return;
-  const userId = await getCurrentUserId();
-  if (!userId) return;
-
-  const { error } = await supabase
-    .from('driving_sessions')
-    .delete()
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('[DriveDE] Failed to clear cloud driving history:', error.message);
-  } else {
-    console.log('[DriveDE] Cloud driving history cleared successfully.');
-  }
-}
-
-export async function resetAllDataFromCloud() {
-  if (!isSupabaseConfigured || !supabase) return;
-  const userId = await getCurrentUserId();
-  if (!userId) return;
-
-  const results = await Promise.all([
-    supabase.from('driving_sessions').delete().eq('user_id', userId),
-    supabase.from('lesson_progress').delete().eq('user_id', userId),
-    supabase.from('quiz_attempts').delete().eq('user_id', userId),
-  ]);
-
-  const errors = results.filter(r => r.error);
-  if (errors.length > 0) {
-    console.warn('[DriveDE] Reset cloud data had some errors:', errors);
-  } else {
-    console.log('[DriveDE] All cloud data reset successfully.');
+  if (error && !isRetry) {
+    await addToQueue('session', { session, transmissionType });
   }
 }
 
 export async function syncQuizAttempt(quizId: string, score: number, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
 
-  if (!navigator.onLine && !isRetry) {
-    await addToQueue('quiz', { quizId, score });
+  if (!userId) {
+    if (!isRetry) await addToQueue('quiz', { quizId, score });
     return;
   }
 
-  const userId = await getCurrentUserId();
-  if (!userId) return;
-
   const { error } = await supabase.from('quiz_attempts').insert({
     user_id: userId,
-    question_id: quizId,
-    lesson_id: null,
-    selected_option_id: `score:${score}`,
-    is_correct: score >= 80,
+    quiz_id: quizId,
+    score: score,
+    completed_at: new Date().toISOString()
   });
 
-  if (error) {
-    console.warn('[DriveDE] Failed to sync quiz attempt', error.message);
-    if (!isRetry) await addToQueue('quiz', { quizId, score });
+  if (error && !isRetry) {
+    await addToQueue('quiz', { quizId, score });
   }
 }
 
@@ -345,13 +276,13 @@ export async function hydrateFromSupabase() {
   ]);
 
   return {
-    profile: profile ?? null,
+    profile,
     lessons: lessons ?? [],
     sessions: (sessions ?? []).map(s => ({
-      id: s.external_id,
-      date: s.session_date,
-      duration: s.duration_minutes,
-      type: s.category === 'night' ? 'nacht' : s.category, // Map back to frontend enum
+      id: s.id,
+      date: s.date,
+      duration: s.duration,
+      type: s.type === 'night' ? 'nacht' : s.type,
       notes: s.notes || '',
       instructorName: s.instructor_name || '',
       route: s.route || [],
@@ -399,34 +330,67 @@ export async function syncAllData(state: AppState) {
     }));
     syncTasks.push(Promise.resolve(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' })));
   }
-  
-  // 3. Batch Sync Driving Sessions (Single Request)
+
+  // 3. Batch Sync Driving Sessions (Already optimized by external_id)
   if (state.userProgress.drivingSessions.length > 0) {
-    const sessionData = state.userProgress.drivingSessions.map(session => ({
+    const sessionData = state.userProgress.drivingSessions.map(s => ({
+      id: s.id,
       user_id: userId,
-      external_id: session.id, // Store local timestamp ID
-      session_date: session.date,
-      duration_minutes: session.duration,
-      category: mapTrackerCategoryToDb(session.type),
-      transmission_type: mapTransmissionToDb(state.transmissionType),
-      notes: session.notes,
-      route: session.route,
-      mistakes: session.mistakes,
-      total_distance: session.totalDistance,
-      location_summary: session.locationSummary,
-      instructor_name: session.instructorName || null,
+      date: s.date,
+      duration: s.duration,
+      type: mapTrackerCategoryToDb(s.type),
+      notes: s.notes,
+      instructor_name: s.instructorName,
+      route: s.route,
+      mistakes: s.mistakes,
+      total_distance: s.totalDistance,
+      location_summary: s.locationSummary,
+      transmission_type: mapTransmissionToDb(state.transmissionType)
     }));
-    
-    syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' })));
+    syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData)));
   }
-  
-  // Execute remaining syncs in parallel (max 2-3 requests total)
-  const results = await Promise.all(syncTasks) as Array<{ error: { message: string } | null }>;
-  const errors = results.filter(r => r.error).map(r => r.error?.message);
-  
-  if (errors.length > 0) {
-    console.error('[DB-Sync] Batch sync encountered errors:', errors);
-  } else {
-    console.log('[DB-Sync] Batch sync complete!');
+
+  await Promise.allSettled(syncTasks);
+  console.log('[DB-Sync] All data synchronized with cloud.');
+}
+
+export async function deleteDrivingSessionFromCloud(sessionId: string) {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    await addToQueue('delete_session', { sessionId });
+    return;
   }
+
+  const { error } = await supabase.from('driving_sessions').delete().eq('id', sessionId).eq('user_id', userId);
+  if (error) {
+    await addToQueue('delete_session', { sessionId });
+  }
+}
+
+export async function clearDrivingHistoryFromCloud() {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    await addToQueue('clear_history', {});
+    return;
+  }
+
+  const { error } = await supabase.from('driving_sessions').delete().eq('user_id', userId);
+  if (error) {
+    await addToQueue('clear_history', {});
+  }
+}
+
+export async function resetAllDataFromCloud() {
+  if (!isSupabaseConfigured || !supabase) return;
+  const userId = await getCurrentUserId();
+  if (!userId) return;
+
+  await Promise.allSettled([
+    supabase.from('lesson_progress').delete().eq('user_id', userId),
+    supabase.from('driving_sessions').delete().eq('user_id', userId),
+    supabase.from('quiz_attempts').delete().eq('user_id', userId),
+    supabase.from('profiles_secure').delete().eq('id', userId)
+  ]);
 }
