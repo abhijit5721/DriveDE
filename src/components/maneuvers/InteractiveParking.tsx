@@ -64,18 +64,24 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
         {/* The Curb */}
         <div className="absolute top-0 h-10 w-full bg-slate-400 border-b-4 border-slate-500 dark:bg-slate-700 dark:border-slate-600">
           <div className="flex h-full w-full opacity-20">
-             {[...Array(10)].map((_, i) => <div key={i} className="w-1 border-r border-white h-full ml-10" />)}
+             {[...Array(10)].map((_, i) => <div key={i} className="w-1 border-r border-white h-full ml-10" />) }
           </div>
         </div>
 
-        {/* Existing Cars */}
-        <div className="absolute top-12 left-8 h-32 w-16 bg-blue-600 rounded-lg shadow-lg">
-           <div className="absolute inset-x-2 top-2 h-4 bg-blue-400 rounded-sm opacity-50" />
-           <div className="absolute inset-x-2 bottom-2 h-2 bg-red-400 rounded-sm opacity-50" />
+        {/* Road Markings */}
+        <div className="absolute top-24 w-full border-t border-white/10 border-dashed h-1" />
+
+        {/* Existing Cars (Parked parallel to curb) */}
+        {/* Front Car */}
+        <div className="absolute top-12 left-[280px] h-16 w-32 bg-slate-500 rounded-lg shadow-lg border border-slate-400">
+           <div className="absolute right-1 inset-y-2 w-3 bg-white/20 rounded-sm" /> {/* Windshield */}
+           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" /> {/* Tail lights */}
         </div>
         
-        <div className="absolute top-12 left-64 h-32 w-16 bg-slate-500 rounded-lg shadow-lg">
-           <div className="absolute inset-x-2 top-2 h-4 bg-white/20 rounded-sm" />
+        {/* Rear Car */}
+        <div className="absolute top-12 left-8 h-16 w-32 bg-blue-600 rounded-lg shadow-lg border border-blue-500">
+           <div className="absolute right-1 inset-y-2 w-3 bg-white/30 rounded-sm" />
+           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" />
         </div>
 
         {/* The User Car */}
@@ -83,22 +89,24 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            layout
            initial={false}
            animate={{
-             top: phase === 'final' ? 14 : phase === 'steering-out' ? 20 : phase === 'backing-in' ? 40 : 60,
-             left: phase === 'align' ? 120 : phase === 'steering-in' ? 120 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 220 : phase === 'final' ? 180 : 0,
-             rotate: phase === 'backing-in' ? 45 : phase === 'steering-out' ? 15 : 0
+             top: phase === 'final' ? 12 : phase === 'steering-out' ? 18 : phase === 'backing-in' ? 45 : 85,
+             left: phase === 'align' ? 280 : phase === 'steering-in' ? 280 : phase === 'backing-in' ? 200 : phase === 'steering-out' ? 150 : phase === 'final' ? 145 : 0,
+             rotate: phase === 'backing-in' ? 35 : phase === 'steering-out' ? 15 : 0
            }}
            transition={{ duration: 1.5, ease: 'easeInOut' }}
-           className="absolute h-32 w-16 bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400"
+           className="absolute h-16 w-32 bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400 flex items-center justify-center"
         >
-           <div className="absolute inset-x-2 top-2 h-4 bg-emerald-300 rounded-sm opacity-50" />
-           <div className="absolute inset-x-2 bottom-2 h-2 bg-red-400 rounded-sm opacity-50" />
+           {/* Details */}
+           <div className="absolute right-1 inset-y-2 w-3 bg-emerald-300 rounded-sm opacity-50" />
+           <div className="absolute left-1 inset-y-3 w-1 bg-red-400 rounded-full" />
+           
            {/* Steering Indicator */}
            {(phase === 'steering-in' || phase === 'steering-out') && (
              <motion.div 
                animate={{ rotate: phase === 'steering-in' ? 90 : -90 }}
-               className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-col items-center"
+               className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center"
              >
-                <div className="h-8 w-8 rounded-full border-4 border-white flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full border-4 border-white flex items-center justify-center bg-emerald-500 shadow-lg">
                    <div className="h-4 w-1 bg-white" />
                 </div>
              </motion.div>
