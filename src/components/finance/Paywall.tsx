@@ -73,8 +73,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { 
           tier: selectedTier, 
-          language,
-          user_id: user.id 
+          language
         }
       });
 
