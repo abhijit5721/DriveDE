@@ -87,7 +87,7 @@ describe('Tracker Component', () => {
     // Mock geolocation error (code 1 = PERMISSION_DENIED)
     const mockError = { code: 1, message: 'User denied Geolocation' };
     
-    vi.mocked(navigator.geolocation.watchPosition).mockImplementation((_success: PositionCallback, error?: PositionErrorCallback) => {
+    vi.mocked(navigator.geolocation.watchPosition).mockImplementation((_success: PositionCallback, error?: PositionErrorCallback | null) => {
       if (error) error(mockError as unknown as GeolocationPositionError);
       return 123; // watch ID
     });

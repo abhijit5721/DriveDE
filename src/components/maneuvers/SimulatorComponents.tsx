@@ -173,3 +173,15 @@ export const SteeringWheelOverlay: React.FC<{ rotation: number }> = ({ rotation 
     </motion.g>
   </g>
 );
+
+export const InstructionPopup: React.FC<{ text: string }> = ({ text }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: -20, scale: 0.9 }}
+    className="absolute top-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur shadow-2xl rounded-2xl px-6 py-3 border border-slate-200 z-50 flex items-center gap-3 whitespace-nowrap"
+  >
+    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+    <span className="text-slate-800 font-bold text-lg">{text}</span>
+  </motion.div>
+);

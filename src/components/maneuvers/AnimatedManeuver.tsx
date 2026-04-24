@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay } from './SimulatorComponents';
+import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay, InstructionPopup } from './SimulatorComponents';
 
 interface AnimationStep {
   id: number;
