@@ -21,6 +21,12 @@ vi.mock('../../store/useAppStore', () => {
     clearDrivingHistory: vi.fn(),
     setHourlyRate45: vi.fn(),
     activeTab: 'tracker',
+    activeSession: null,
+    startActiveSession: vi.fn(),
+    pauseActiveSession: vi.fn(),
+    resumeActiveSession: vi.fn(),
+    updateActiveSession: vi.fn(),
+    stopActiveSession: vi.fn(),
   };
   return {
     useAppStore: vi.fn((selector) => selector ? selector(mockState) : mockState),

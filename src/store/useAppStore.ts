@@ -140,6 +140,7 @@ export const useAppStore = create<AppState>()(
       authUserId: null,
       authStatus: 'guest',
       userProgress: initialProgress,
+      activeSession: null,
       hasVisited: false,
       activeTab: 'home',
 
@@ -529,6 +530,7 @@ export const useAppStore = create<AppState>()(
           isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
           activeTab: 'home',
           hasVisited: false,
+          activeSession: null,
         });
       },
 
@@ -593,6 +595,62 @@ export const useAppStore = create<AppState>()(
             isPremium: true,
           };
         }),
+
+      startActiveSession: (type, isSimulation, targetDestination, destinationCoords) =>
+        set({
+          activeSession: {
+            startTime: Date.now(),
+            isPaused: false,
+            pausedDuration: 0,
+            lastPauseTimestamp: null,
+            currentDistance: 0,
+            route: [],
+            mistakes: [],
+            type,
+            isSimulation,
+            targetDestination,
+            destinationCoords,
+          }
+        }),
+
+      pauseActiveSession: () =>
+        set((state) => {
+          if (!state.activeSession || state.activeSession.isPaused) return state;
+          return {
+            activeSession: {
+              ...state.activeSession,
+              isPaused: true,
+              lastPauseTimestamp: Date.now(),
+            }
+          };
+        }),
+
+      resumeActiveSession: () =>
+        set((state) => {
+          if (!state.activeSession || !state.activeSession.isPaused || !state.activeSession.lastPauseTimestamp) return state;
+          const additionalPausedTime = Date.now() - state.activeSession.lastPauseTimestamp;
+          return {
+            activeSession: {
+              ...state.activeSession,
+              isPaused: false,
+              pausedDuration: state.activeSession.pausedDuration + additionalPausedTime,
+              lastPauseTimestamp: null,
+            }
+          };
+        }),
+
+      updateActiveSession: (updates) =>
+        set((state) => {
+          if (!state.activeSession) return state;
+          return {
+            activeSession: {
+              ...state.activeSession,
+              ...updates,
+            }
+          };
+        }),
+
+      stopActiveSession: () => set({ activeSession: null }),
     }),
     {
       name: 'drivede-storage',
@@ -609,6 +667,7 @@ export const useAppStore = create<AppState>()(
         authUserId: state.authUserId,
         authStatus: state.authStatus,
         userProgress: state.userProgress,
+        activeSession: state.activeSession,
         hasVisited: state.hasVisited,
         activeTab: state.activeTab,
       }),

@@ -582,8 +582,18 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                         <Calendar className="h-3 w-3" />
                         {(() => {
                           const d = new Date(session.date);
-                          if (isNaN(d.getTime())) return session.date.split('T')[0];
-                          return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+                          if (isNaN(d.getTime())) {
+                            // Try normalization for legacy dates
+                            const normalizedDate = session.date.replace(/-/g, '/').split('T')[0];
+                            const nd = new Date(normalizedDate);
+                            return isNaN(nd.getTime()) ? session.date.split('T')[0] : nd.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+                          }
+                          const datePart = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+                          if (session.date.includes('T')) {
+                            const timePart = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                            return `${datePart} • ${timePart}`;
+                          }
+                          return datePart;
                         })()}
                         <span className="text-slate-700">•</span>
                         {session.duration} min

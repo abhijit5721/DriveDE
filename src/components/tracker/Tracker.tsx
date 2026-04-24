@@ -295,7 +295,13 @@ interface TrackerProps {
 }
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
-  const { language, licenseType, userProgress, addDrivingSession, updateDrivingSession, removeDrivingSession, clearDrivingHistory, setHourlyRate45, isPremium } = useAppStore();
+  const { 
+    language, licenseType, userProgress, addDrivingSession, 
+    updateDrivingSession, removeDrivingSession, clearDrivingHistory, 
+    setHourlyRate45, isPremium,
+    activeSession, startActiveSession, pauseActiveSession, 
+    resumeActiveSession, updateActiveSession, stopActiveSession
+  } = useAppStore();
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   
   const isDE = language === 'de';
@@ -352,10 +358,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string, showTime: boolean = false) => {
     if (!dateStr) return '---';
     
-    // Try parsing directly (works for ISO strings like '2026-04-22T00:00:00+00:00')
+    // Try parsing directly (works for ISO strings like '2026-04-22T14:30:00Z')
     let d = new Date(dateStr);
     
     // If invalid (can happen with simple 'YYYY-MM-DD' in some browsers), try normalization
@@ -369,11 +375,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return dateStr.split('T')[0];
     }
 
-    return d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
+    const datePart = d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     });
+
+    if (showTime && dateStr.includes('T')) {
+      const timePart = d.toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      return `${datePart} • ${timePart}`;
+    }
+
+    return datePart;
   };
 
 
@@ -436,6 +452,37 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const wakeLockRef = useRef<any>(null);
+
+  // Release wake lock on unmount
+  useEffect(() => {
+    return () => {
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release().catch(console.error);
+      }
+    };
+  }, []);
+
+  const requestWakeLock = async () => {
+    if ('wakeLock' in navigator) {
+      try {
+        wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+      } catch (err) {
+        console.warn('[Tracker] Wake Lock error:', err);
+      }
+    }
+  };
+
+  const releaseWakeLock = async () => {
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      } catch (err) {
+        console.warn('[Tracker] Wake Lock release error:', err);
+      }
+    }
+  };
   
   // Spatial Worker Instance
   const spatialWorker = useMemo(() => {
@@ -455,7 +502,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const logMistake = useCallback((mistake: DrivingMistake) => {
     cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistake];
     setCurrentMistakes(prev => [...prev, mistake]);
-  }, []);
+    updateActiveSession({ mistakes: cumulativeMistakesRef.current });
+  }, [updateActiveSession]);
 
   /**
    * Centralized logging helper for GPS points.
@@ -463,7 +511,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const logRoutePoint = useCallback((point: GPSPoint) => {
     cumulativeRouteRef.current = [...(cumulativeRouteRef.current || []), point];
     setGpsPoints(prev => [...prev, point]);
-  }, []);
+    updateActiveSession({ route: cumulativeRouteRef.current });
+  }, [updateActiveSession]);
 
   const handleEditOpen = useCallback((session: DrivingSession) => {
     setEditingSessionId(session.id);
@@ -494,6 +543,51 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       locationSummary: '',
     });
   }, []);
+
+  // --- HYDRATION / RECOVERY ---
+  useEffect(() => {
+    if (activeSession && !isTimerRunning) {
+      setElapsedTime(Math.floor((Date.now() - (activeSession.startTime || Date.now()) - activeSession.pausedDuration) / 1000));
+      setCurrentDistance(activeSession.currentDistance);
+      setGpsPoints(activeSession.route);
+      setCurrentMistakes(activeSession.mistakes);
+      cumulativeMistakesRef.current = activeSession.mistakes;
+      cumulativeRouteRef.current = activeSession.route;
+      setIsTimerRunning(!activeSession.isPaused);
+      setIsSimulationMode(activeSession.isSimulation);
+      setTargetDestination(activeSession.targetDestination || '');
+      setDestinationCoords(activeSession.destinationCoords || null);
+      
+      if (!activeSession.isPaused) {
+        requestWakeLock();
+      }
+    }
+  }, [activeSession]);
+
+  // Sync distance to global state
+  useEffect(() => {
+    if (isTimerRunning && Math.abs(currentDistance - (activeSession?.currentDistance || 0)) > 0.1) {
+      updateActiveSession({ currentDistance });
+    }
+  }, [currentDistance, isTimerRunning, activeSession, updateActiveSession]);
+
+  // Resync timer on visibility change (when user unlocks phone)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isTimerRunning && activeSession?.startTime) {
+        const now = Date.now();
+        const elapsedSinceStart = Math.floor((now - activeSession.startTime - activeSession.pausedDuration) / 1000);
+        setElapsedTime(Math.max(0, elapsedSinceStart));
+        
+        // Re-request wake lock if we lost it
+        if (!activeSession.isPaused) {
+          requestWakeLock();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isTimerRunning, activeSession]);
 
   const handleAddSession = useCallback(() => {
     if (!newSession.duration || newSession.duration <= 0) {
@@ -1106,6 +1200,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     cumulativeRouteRef.current = [];
     setCurrentDistance(0);
     setElapsedTime(0);
+    
+    // Global session start
+    startActiveSession(
+      newSession.type || 'normal', 
+      isSimulationMode, 
+      targetDestination, 
+      destinationCoords
+    );
+
+    requestWakeLock();
     lastWrongWayLogRef.current = 0;
     lastIllegalTurnLogRef.current = 0;
     stationaryStartRef.current = null;
@@ -1248,8 +1352,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
+    pauseActiveSession();
+    releaseWakeLock();
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
+  };
+
+  const handleResumeTimer = () => {
+    setIsTimerRunning(true);
+    resumeActiveSession();
+    requestWakeLock();
+    toast(isDE ? 'Timer fortgesetzt' : 'Timer resumed', { icon: '▶️' });
   };
 
   const handleStopTimer = async () => {
@@ -1287,7 +1400,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setNewSession(prev => ({
       ...prev,
       duration: durationInMinutes,
-      date: new Date().toISOString().split('T')[0],
+      date: activeSession?.startTime ? new Date(activeSession.startTime).toISOString() : new Date().toISOString(),
       totalDistance: Math.round(currentDistance * 10) / 10,
       route: cumulativeRouteRef.current,
       locationSummary: locationSummary || undefined,
@@ -1297,6 +1410,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setShowAddForm(true);
     setShowManualLog(false);
     setElapsedTime(0);
+    stopActiveSession();
+    releaseWakeLock();
     toast.success(isDE ? 'Bereit zum Speichern!' : 'Ready to save!');
   };
 
@@ -1656,21 +1771,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           ) : (
             <button
               onClick={() => {
-                const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-                if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
-                  onOpenPaywall?.();
+                if (activeSession && activeSession.isPaused) {
+                  handleResumeTimer();
                 } else {
-                  handleStartTimer();
+                  const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+                  if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
+                    onOpenPaywall?.();
+                  } else {
+                    handleStartTimer();
+                  }
                 }
               }}
               className={cn(
                 'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
-                !isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT
+                (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
                   ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
-                  : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
+                  : (activeSession && activeSession.isPaused) ? 'bg-indigo-500/90 hover:bg-indigo-600 shadow-indigo-500/20' : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
               )}
             >
-              {!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
+              {(activeSession && activeSession.isPaused) ? (
+                <>
+                  <Play className="h-4 w-4" />
+                  {isDE ? 'Fortsetzen' : 'Resume'}
+                </>
+              ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
                 <>
                   <Crown className="h-4 w-4" />
                   {isDE ? 'Tracking (Pro)' : 'Tracking (Pro)'}
@@ -1680,7 +1804,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   <Play className="h-4 w-4" />
                   {isDE ? 'Start Live' : 'Start Live'}
                 </>
-              )}
+              ))}
             </button>
           )}
           <button
@@ -1892,9 +2016,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           )}
                         </div>
                         <div className="flex items-center gap-2 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
-                          <div className="flex items-center gap-0.5">
+                          <div className="flex items-center gap-0.5 whitespace-nowrap">
                             <Calendar className="h-2.5 w-2.5" />
-                            {formatDate(session.date)}
+                            {formatDate(session.date, true)}
                           </div>
                           {session.instructorName && (
                             <span className="flex items-center gap-0.5 truncate uppercase tracking-tighter opacity-80">

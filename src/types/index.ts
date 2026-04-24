@@ -159,6 +159,20 @@ export interface DrivingSession {
   isSimulation?: boolean;
 }
 
+export interface ActiveSession {
+  startTime: number | null;
+  isPaused: boolean;
+  pausedDuration: number; // cumulative paused time in ms
+  lastPauseTimestamp: number | null;
+  currentDistance: number;
+  route: GPSPoint[];
+  mistakes: DrivingMistake[];
+  type: DrivingSession['type'];
+  isSimulation: boolean;
+  targetDestination?: string;
+  destinationCoords?: { lat: number; lng: number } | null;
+}
+
 export interface UserProgress {
   completedLessons: string[];
   drivingSessions: DrivingSession[];
@@ -196,6 +210,7 @@ export interface AppState {
   authUserId: string | null;
   authStatus: 'guest' | 'signed_in';
   userProgress: UserProgress;
+  activeSession: ActiveSession | null;
   hasVisited: boolean;
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
@@ -222,6 +237,13 @@ export interface AppState {
   resetProgress: () => void;
   clearDrivingHistory: () => void;
   enableDemoMode: () => void;
+  
+  // Active Session Management
+  startActiveSession: (type: DrivingSession['type'], isSimulation: boolean, targetDestination?: string, destinationCoords?: { lat: number; lng: number } | null) => void;
+  pauseActiveSession: () => void;
+  resumeActiveSession: () => void;
+  updateActiveSession: (updates: Partial<ActiveSession>) => void;
+  stopActiveSession: () => void;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
