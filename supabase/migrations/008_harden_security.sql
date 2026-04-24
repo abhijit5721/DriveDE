@@ -40,7 +40,9 @@ SELECT
   is_public_report_enabled,
   created_at,
   updated_at,
-  incorrect_questions
+  incorrect_questions,
+  hourly_rate_45,
+  fixed_costs
 FROM public.profiles_secure;
 
 GRANT ALL ON public.profiles TO anon, authenticated, service_role;

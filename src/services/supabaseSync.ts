@@ -148,7 +148,7 @@ export async function ensureProfileFromState(state: AppState) {
 
   console.log('[DB-Sync] Syncing for user:', userId);
 
-  const { error } = await supabase.from('profiles').upsert({
+  const { error } = await supabase.from('profiles_secure').upsert({
     id: userId,
     learning_path: mapLearningPathToDb(state.learningPath),
     transmission_type: mapTransmissionToDb(state.transmissionType),
@@ -338,7 +338,7 @@ export async function hydrateFromSupabase() {
   if (!userId) return null;
 
   const [{ data: profile }, { data: lessons }, { data: sessions }, { data: quizAttempts }] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+    supabase.from('profiles_secure').select('*').eq('id', userId).maybeSingle(),
     supabase.from('lesson_progress').select('*').eq('user_id', userId),
     supabase.from('driving_sessions').select('*').eq('user_id', userId),
     supabase.from('quiz_attempts').select('*').eq('user_id', userId),
