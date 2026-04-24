@@ -578,12 +578,16 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     <p className="text-sm font-bold text-white truncate">
                       {session.locationSummary || (session.type.charAt(0).toUpperCase() + session.type.slice(1))}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(session.date).toLocaleDateString()}
-                      <span className="text-slate-700">•</span>
-                      {session.duration} min
-                    </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                        <Calendar className="h-3 w-3" />
+                        {(() => {
+                          const d = new Date(session.date);
+                          if (isNaN(d.getTime())) return session.date.split('T')[0];
+                          return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+                        })()}
+                        <span className="text-slate-700">•</span>
+                        {session.duration} min
+                      </div>
                   </div>
                   {(session.mistakes?.length || 0) > 0 && (
                     <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">

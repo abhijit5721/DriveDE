@@ -354,20 +354,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '---';
-    // Use a more robust date parsing for older browsers
-    const normalizedDate = dateStr.replace(/-/g, '/');
-    const d = new Date(normalizedDate);
+    
+    // Try parsing directly (works for ISO strings like '2026-04-22T00:00:00+00:00')
+    let d = new Date(dateStr);
+    
+    // If invalid (can happen with simple 'YYYY-MM-DD' in some browsers), try normalization
     if (isNaN(d.getTime())) {
-      // Fallback: Just return the raw string if parsing fails but it looks like a date
-      if (dateStr.includes('-') || dateStr.includes('/')) return dateStr;
-      return '---';
+      const normalizedDate = dateStr.replace(/-/g, '/').split('T')[0];
+      d = new Date(normalizedDate);
     }
+    
+    // Final fallback: if still invalid, return raw but try to truncate if it's an ISO string
+    if (isNaN(d.getTime())) {
+      return dateStr.split('T')[0];
+    }
+
     return d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
     });
   };
+
 
   const getTypeColor = (type: DrivingSession['type']) => {
     switch (type) {
