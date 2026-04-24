@@ -348,7 +348,7 @@ export async function hydrateFromSupabase() {
     profile: profile ?? null,
     lessons: lessons ?? [],
     sessions: (sessions ?? []).map(s => ({
-      id: s.id,
+      id: s.external_id,
       date: s.session_date,
       duration: s.duration_minutes,
       type: s.category === 'night' ? 'nacht' : s.category, // Map back to frontend enum

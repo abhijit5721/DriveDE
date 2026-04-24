@@ -116,13 +116,11 @@ export default function App() {
                 ]));
                 
                 // Track existing sessions to avoid duplicates
-                const existingSessionKeys = new Set(state.userProgress.drivingSessions.map(s => 
-                    `${s.date}-${s.duration}`
-                ));
+                const existingSessionIds = new Set(state.userProgress.drivingSessions.map(s => s.id));
 
                 // remoteData.sessions is already mapped to frontend format by hydrateFromSupabase
                 const remoteSessions = remoteData.sessions
-                    .filter(s => !existingSessionKeys.has(`${s.date}-${s.duration}`))
+                    .filter(s => !existingSessionIds.has(s.id))
                     .map(s => ({
                         id: s.id,
                         date: s.date,
