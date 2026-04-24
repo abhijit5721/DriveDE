@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { GlobalDefinitions, TopDownCar } from './SimulatorComponents';
 
 
 type ParkingPhase = 'start' | 'align' | 'steering-in' | 'backing-in' | 'steering-out' | 'final' | 'failed';
@@ -55,10 +56,11 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           <Info className="h-4 w-4 text-blue-500" />
           {isDE ? 'Parallel-Parken Simulator' : 'Parallel Parking Simulator'}
         </h4>
-        <button onClick={handleReset} className="rounded-full p-2 text-slate-400 hover:bg-slate-200">
+        <button onClick={handleReset} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
           <RotateCcw className="h-4 w-4" />
         </button>
       </div>
+      <GlobalDefinitions />
 
       <div className="relative h-[300px] w-full overflow-hidden rounded-xl bg-slate-200 border-2 border-slate-300 dark:bg-slate-800 dark:border-slate-700">
         {/* The Curb */}
@@ -74,20 +76,22 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
         {/* Existing Cars (Parked parallel to curb) */}
         {/* Front Car */}
         <div 
-          className="absolute bg-slate-500 rounded-lg shadow-lg border border-slate-400 z-10"
-          style={{ top: '45px', left: '260px', width: '70px', height: '36px' }}
+          className="absolute z-10"
+          style={{ top: '45px', left: '260px' }}
         >
-           <div className="absolute right-1 inset-y-2 w-3 bg-white/20 rounded-sm" />
-           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" />
+          <svg width="70" height="36" viewBox="-35 -18 70 36">
+            <TopDownCar color="#94a3b8" />
+          </svg>
         </div>
         
         {/* Rear Car */}
         <div 
-          className="absolute bg-blue-600 rounded-lg shadow-lg border border-blue-500 z-10"
-          style={{ top: '45px', left: '20px', width: '70px', height: '36px' }}
+          className="absolute z-10"
+          style={{ top: '45px', left: '20px' }}
         >
-           <div className="absolute right-1 inset-y-2 w-3 bg-white/30 rounded-sm" />
-           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" />
+          <svg width="70" height="36" viewBox="-35 -18 70 36">
+            <TopDownCar color="#475569" />
+          </svg>
         </div>
 
         {/* The User Car */}
@@ -100,21 +104,25 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
              rotate: phase === 'backing-in' ? 35 : phase === 'steering-out' ? 15 : 0
            }}
            transition={{ duration: 1.5, ease: 'easeInOut' }}
-           className="absolute bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400 flex items-center justify-center"
-           style={{ width: '70px', height: '36px' }}
+           className="absolute z-20"
         >
-           {/* Details */}
-           <div className="absolute right-1 inset-y-2 w-3 bg-emerald-300 rounded-sm opacity-50" />
-           <div className="absolute left-1 inset-y-3 w-1 bg-red-400 rounded-full" />
+           <svg width="70" height="36" viewBox="-35 -18 70 36" style={{ overflow: 'visible' }}>
+              <TopDownCar 
+                color="#10b981" 
+                isUser={true} 
+                indicator={phase === 'start' ? 'none' : 'right'} 
+                brakeLights={phase === 'align' || phase === 'final'}
+              />
+           </svg>
            
            {/* Steering Indicator */}
            {(phase === 'steering-in' || phase === 'steering-out') && (
              <motion.div 
                animate={{ rotate: phase === 'steering-in' ? 90 : -90 }}
-               className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center"
+               className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
              >
-                <div className="h-8 w-8 rounded-full border-4 border-white flex items-center justify-center bg-emerald-500 shadow-lg">
-                   <div className="h-4 w-1 bg-white" />
+                <div className="h-10 w-10 rounded-full border-4 border-slate-700 flex items-center justify-center bg-slate-800 shadow-xl">
+                   <div className="h-5 w-1.5 bg-blue-400 rounded-full" />
                 </div>
              </motion.div>
            )}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay } from './SimulatorComponents';
 
 interface AnimationStep {
   id: number;
@@ -14,154 +15,7 @@ interface AnimatedManeuverProps {
   language: 'de' | 'en';
 }
 
-const GlobalDefinitions = () => (
-  <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
-    <defs>
-      {/* Simple Glass Reflection */}
-      <linearGradient id="glassReflection" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="white" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="white" stopOpacity="0.1" />
-      </linearGradient>
 
-      {/* Vision Cone Gradient */}
-      <radialGradient id="visionGradient" cx="0%" cy="50%" r="100%" fx="0%" fy="50%">
-        <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
-      </radialGradient>
-
-      {/* Indicator Pulse */}
-      <radialGradient id="indicatorGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#FACC15" stopOpacity="0.9" />
-        <stop offset="100%" stopColor="#FACC15" stopOpacity="0" />
-      </radialGradient>
-
-      {/* Shadow */}
-      <filter id="flatShadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
-        <feOffset dx="1" dy="1" result="offsetblur" />
-        <feComponentTransfer>
-          <feFuncA type="linear" slope="0.3" />
-        </feComponentTransfer>
-        <feMerge>
-          <feMergeNode />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-    <style>
-      {`
-        @keyframes blink {
-          0%, 100% { opacity: 0.1; }
-          50% { opacity: 1; }
-        }
-        .blinker {
-          animation: blink 0.5s infinite step-end;
-        }
-      `}
-    </style>
-  </svg>
-);
-
-const TopDownCar: React.FC<{
-  color: string;
-  indicator?: 'left' | 'right' | 'hazard' | 'none';
-  brakeLights?: boolean;
-  rotation?: number;
-  scale?: number;
-  isUser?: boolean;
-}> = ({ color, indicator = 'none', brakeLights = false, rotation = 0, scale = 1, isUser = false }) => (
-  <g transform={`scale(${scale}) rotate(${rotation})`} filter="url(#flatShadow)">
-    {/* Body - Horizontal: Headlights face right at 0 deg */}
-    <rect x="-35" y="-18" width="70" height="36" rx="8" fill={color} stroke="rgba(0,0,0,0.1)" strokeWidth="1" />
-    
-    {/* Windshields */}
-    <rect x="0" y="-14" width="15" height="28" rx="2" fill="#1e293b" />   {/* Front Windshield */}
-    <rect x="-30" y="-14" width="10" height="28" rx="2" fill="#1e293b" />  {/* Rear Window */}
-    
-    {/* Glass Reflection */}
-    <rect x="0" y="-14" width="15" height="28" rx="2" fill="url(#glassReflection)" opacity="0.3" />
-
-    {/* Roof */}
-    <rect x="-20" y="-12" width="20" height="24" rx="4" fill="rgba(0,0,0,0.1)" />
-
-    {/* Headlights (Pointing Right) */}
-    <rect x="32" y="-15" width="4" height="8" rx="1" fill="#f8fafc" />
-    <rect x="32" y="7" width="4" height="8" rx="1" fill="#f8fafc" />
-
-    {/* Tail Lights / Brake Lights (on the Left) */}
-    <rect x="-36" y="-15" width="4" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
-    <rect x="-36" y="7" width="4" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
-
-    {/* Indicators */}
-    {(indicator === 'left' || indicator === 'hazard') && (
-      <g className="blinker">
-        <circle cx="30" cy="-13" r="3" fill="#FACC15" />
-        <circle cx="-34" cy="-13" r="3" fill="#FACC15" />
-      </g>
-    )}
-    {(indicator === 'right' || indicator === 'hazard') && (
-      <g className="blinker">
-        <circle cx="30" cy="13" r="3" fill="#FACC15" />
-        <circle cx="-34" cy="13" r="3" fill="#FACC15" />
-      </g>
-    )}
-
-    {/* User Indicator (Ring) */}
-    {isUser && (
-      <circle cx="0" cy="0" r="45" fill="none" stroke="#38BDF8" strokeWidth="2" strokeDasharray="4,4" opacity="0.4" />
-    )}
-  </g>
-);
-
-const VisionCone: React.FC<{
-  side: 'left' | 'right' | 'round';
-  opacity?: number;
-}> = ({ side, opacity = 1 }) => {
-  const rotation = side === 'left' ? -60 : side === 'right' ? 60 : 0;
-  return (
-    <motion.g
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5 }}
-      transform={`rotate(${rotation})`}
-    >
-      {side === 'round' ? (
-        <circle cx="0" cy="0" r="80" fill="url(#visionGradient)" opacity="0.6" />
-      ) : (
-        <path
-          d="M 0 0 L 100 -40 A 100 100 0 0 1 100 40 Z"
-          fill="url(#visionGradient)"
-          opacity="0.8"
-          transform={`translate(0, ${side === 'left' ? -20 : 20}) rotate(${side === 'left' ? -90 : 90})`}
-        />
-      )}
-    </motion.g>
-  );
-};
-
-const InstructionPopup: React.FC<{ text: string }> = ({ text }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20, scale: 0.9 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, y: -20, scale: 0.9 }}
-    className="absolute top-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur shadow-2xl rounded-2xl px-6 py-3 border border-slate-200 z-50 flex items-center gap-3 whitespace-nowrap"
-  >
-    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-    <span className="text-slate-800 font-bold text-lg">{text}</span>
-  </motion.div>
-);
-
-const SteeringWheelOverlay: React.FC<{ rotation: number }> = ({ rotation }) => (
-  <g transform="translate(360, 45)">
-    <circle r="22" fill="#1e293b" />
-    <motion.g animate={{ rotate: rotation }} transition={{ type: 'spring', damping: 15 }}>
-      <circle r="20" fill="none" stroke="#64748b" strokeWidth="4" />
-      <rect x="-2" y="-20" width="4" height="12" rx="1" fill="#38BDF8" />
-      <rect x="-2" y="-2" width="4" height="4" rx="1" fill="#fff" />
-      <line x1="-18" y1="0" x2="18" y2="0" stroke="#64748b" strokeWidth="2" />
-    </motion.g>
-  </g>
-);
 
 
 const animations: Record<string, AnimationStep[]> = {
@@ -341,7 +195,7 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
     const states = [
       { x: 30, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start
       { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },      // 1: Next to car
-      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'hazard' as const },    // 2: Check
+      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },    // 2: Check
       { x: 295, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },     // 3: Position axle
       { x: 295, y: 90, rotation: 0, wheel: 45, indicator: 'right' as const },    // 4: Turn wheel
       { x: 230, y: 150, rotation: 35, wheel: 45, indicator: 'right' as const },  // 5: Back into gap
@@ -414,7 +268,7 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
     const states = [
       { x: 40, y: 70, rotation: 0, wheel: 0, indicator: 'none' as const },
       { x: 140, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
-      { x: 220, y: 70, rotation: 0, wheel: 0, indicator: 'hazard' as const },
+      { x: 220, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
       { x: 300, y: 90, rotation: 45, wheel: 60, indicator: 'right' as const },
       { x: 220, y: 150, rotation: 90, wheel: 60, indicator: 'right' as const },
       { x: 220, y: 195, rotation: 90, wheel: 0, indicator: 'none' as const },
