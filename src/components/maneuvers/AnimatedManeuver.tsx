@@ -330,12 +330,13 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
 const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 50, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },
-      { x: 80, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 105, rotation: -65, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 105, rotation: -65, wheel: 90, indicator: 'right' as const },
-      { x: 250, y: 170, rotation: -20, wheel: 90, indicator: 'right' as const },
-      { x: 250, y: 170, rotation: -20, wheel: -90, indicator: 'left' as const },
+      { x: 320, y: 155, rotation: 0, wheel: 0, indicator: 'none' as const },
+      { x: 280, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },
+      { x: 280, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },
+      { x: 180, y: 105, rotation: -30, wheel: -90, indicator: 'left' as const },
+      { x: 180, y: 105, rotation: -30, wheel: 90, indicator: 'right' as const },
+      { x: 280, y: 170, rotation: -110, wheel: 90, indicator: 'right' as const },
+      { x: 280, y: 170, rotation: -110, wheel: -90, indicator: 'left' as const },
       { x: 50, y: 120, rotation: -180, wheel: 0, indicator: 'none' as const },
     ];
 
