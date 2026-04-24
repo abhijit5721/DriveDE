@@ -194,14 +194,14 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
   const getInterpolatedState = () => {
     const states = [
       { x: 30, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start
-      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },      // 1: Next to car
-      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },    // 2: Check
-      { x: 295, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },     // 3: Position axle
-      { x: 295, y: 90, rotation: 0, wheel: 45, indicator: 'right' as const },    // 4: Turn wheel
-      { x: 230, y: 150, rotation: 35, wheel: 45, indicator: 'right' as const },  // 5: Back into gap
-      { x: 230, y: 150, rotation: 35, wheel: -45, indicator: 'right' as const }, // 6: Counter-steer
-      { x: 200, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },      // 7: Straighten
-      { x: 200, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },      // 8: End
+      { x: 150, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },      // 1: Driving
+      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },    // 2: Next to front car
+      { x: 330, y: 90, rotation: 0, wheel: 60, indicator: 'right' as const },    // 3: Turn wheel right
+      { x: 260, y: 120, rotation: -35, wheel: 60, indicator: 'right' as const },  // 4: Backing in
+      { x: 260, y: 120, rotation: -35, wheel: -60, indicator: 'right' as const }, // 5: Counter-steer
+      { x: 200, y: 150, rotation: 0, wheel: -60, indicator: 'right' as const },  // 6: Straightening
+      { x: 200, y: 150, rotation: 0, wheel: 0, indicator: 'none' as const },      // 7: Done
+      { x: 200, y: 150, rotation: 0, wheel: 0, indicator: 'none' as const },      // 8: Done
     ];
 
     const current = states[step] || states[0];
@@ -268,11 +268,11 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
     const states = [
       { x: 40, y: 70, rotation: 0, wheel: 0, indicator: 'none' as const },
       { x: 140, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
-      { x: 220, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
-      { x: 300, y: 90, rotation: 45, wheel: 60, indicator: 'right' as const },
-      { x: 220, y: 150, rotation: 90, wheel: 60, indicator: 'right' as const },
-      { x: 220, y: 195, rotation: 90, wheel: 0, indicator: 'none' as const },
-      { x: 220, y: 195, rotation: 90, wheel: 0, indicator: 'none' as const },
+      { x: 320, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
+      { x: 280, y: 110, rotation: -45, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 160, rotation: -90, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 220, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const },
     ];
 
     const current = states[step] || states[0];
