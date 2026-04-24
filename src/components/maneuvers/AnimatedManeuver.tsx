@@ -339,13 +339,14 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
 const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 40, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },      // 0: Start
-      { x: 140, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },     // 1: Stop next to car
-      { x: 140, y: 120, rotation: 0, wheel: 0, indicator: 'hazard' as const },   // 2: 360 Check
-      { x: 200, y: 120, rotation: 0, wheel: 0, indicator: 'right' as const },    // 3: Position for turn
-      { x: 250, y: 145, rotation: 35, wheel: 45, indicator: 'right' as const },  // 4: Steering in
-      { x: 300, y: 185, rotation: 35, wheel: -45, indicator: 'right' as const }, // 5: Backing in
-      { x: 260, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },     // 6: Final
+      { x: 20, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },      // 0: Approach
+      { x: 100, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },     // 1: Stop next to car
+      { x: 100, y: 120, rotation: 0, wheel: 0, indicator: 'hazard' as const },   // 2: 360 Check
+      { x: 150, y: 120, rotation: 0, wheel: 0, indicator: 'right' as const },    // 3: Position for turn
+      { x: 200, y: 150, rotation: 35, wheel: 45, indicator: 'right' as const },  // 4: Steering in
+      { x: 240, y: 185, rotation: 35, wheel: -45, indicator: 'right' as const }, // 5: Backing in
+      { x: 200, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },     // 6: Final
+      { x: 200, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },     // 7: End
     ];
 
     const current = states[step] || states[0];
@@ -381,12 +382,12 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
 
         {/* Parked Cars */}
-        <g transform="translate(60, 185)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(350, 185)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(70, 185)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(330, 185)"><TopDownCar color="#94a3b8" /></g>
 
         {/* Path Arrow */}
         {step >= 3 && step <= 5 && (
-          <path d="M 200 120 Q 280 120 300 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
+          <path d="M 150 120 Q 220 120 240 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
         )}
 
         {/* User Car */}
