@@ -19,23 +19,31 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
   const now = Date.now();
   const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
   
+  // Helper for safe date parsing across all browsers
+  const safeParseDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return new Date(0);
+    let d = new Date(dateStr);
+    if (isNaN(d.getTime())) {
+      d = new Date(dateStr.replace(/-/g, '/').split('T')[0]);
+    }
+    return isNaN(d.getTime()) ? new Date(0) : d;
+  };
+
   // Sort and filter sessions within the last 7 days
   const sortedSessions = [...drivingSessions].sort((a, b) => {
-    const timeA = a.date ? new Date(a.date).getTime() : 0;
-    const timeB = b.date ? new Date(b.date).getTime() : 0;
+    const timeA = safeParseDate(a.date).getTime();
+    const timeB = safeParseDate(b.date).getTime();
     return timeB - timeA;
   });
 
   const thisWeekSessions = sortedSessions.filter(s => {
-    if (!s.date) return false;
-    const sessionTime = new Date(s.date).getTime();
-    return (now - sessionTime) < ONE_WEEK;
+    const sessionTime = safeParseDate(s.date).getTime();
+    return sessionTime > 0 && (now - sessionTime) < ONE_WEEK;
   });
 
   const lastWeekSessions = sortedSessions.filter(s => {
-    if (!s.date) return false;
-    const time = new Date(s.date).getTime();
-    return (now - time) >= ONE_WEEK && (now - time) < (2 * ONE_WEEK);
+    const time = safeParseDate(s.date).getTime();
+    return time > 0 && (now - time) >= ONE_WEEK && (now - time) < (2 * ONE_WEEK);
   });
 
   const thisWeekMinutes = thisWeekSessions.reduce((acc, s) => acc + (s.duration || 0), 0);
@@ -108,8 +116,9 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
   const todayIndex = (new Date().getDay() + 6) % 7; // 0 = Mon, 6 = Sun
 
   thisWeekSessions.forEach(s => {
-    if (s.date) {
-      const day = (new Date(s.date).getDay() + 6) % 7;
+    const date = safeParseDate(s.date);
+    if (date.getTime() > 0) {
+      const day = (date.getDay() + 6) % 7;
       barData[day] += (s.duration || 0);
     }
   });
