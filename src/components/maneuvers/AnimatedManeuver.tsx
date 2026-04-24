@@ -413,12 +413,12 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
   const getInterpolatedState = () => {
     const states = [
       { x: 40, y: 180, rotation: 0, wheel: 0, indicator: 'none' as const },
-      { x: 180, y: 180, rotation: 0, wheel: 0, indicator: 'right' as const },
-      { x: 240, y: 180, rotation: 0, wheel: 0, indicator: 'hazard' as const },
-      { x: 280, y: 160, rotation: -45, wheel: 60, indicator: 'right' as const },
-      { x: 210, y: 100, rotation: -90, wheel: 60, indicator: 'right' as const },
-      { x: 210, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
-      { x: 210, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 140, y: 180, rotation: 0, wheel: 0, indicator: 'right' as const },
+      { x: 220, y: 180, rotation: 0, wheel: 0, indicator: 'hazard' as const },
+      { x: 300, y: 160, rotation: -45, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 100, rotation: -90, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 220, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
     ];
 
     const current = states[step] || states[0];
@@ -445,18 +445,19 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
       
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
-        <rect x="0" y="120" width="400" height="130" fill="#334155" />
+        <rect x="0" y="100" width="400" height="150" fill="#334155" />
         
-        {/* Parking Slots */}
-        {[100, 150, 210, 270, 330].map(x => (
+        {/* Parking Slots (Top row) */}
+        {[60, 140, 220, 300, 380].map(x => (
           <g key={x}>
-            <line x1={x} y1={120} x2={x} y2={250} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+            <line x1={x - 40} y1={0} x2={x - 40} y2={100} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+            <line x1={x + 40} y1={0} x2={x + 40} y2={100} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
           </g>
         ))}
         
         {/* Stationary Cars */}
-        <g transform="translate(155, 45) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(265, 45) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(140, 50) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(300, 50) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
