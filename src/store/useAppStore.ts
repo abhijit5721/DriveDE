@@ -13,7 +13,8 @@
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
   AppState,
@@ -585,17 +586,31 @@ export const useAppStore = create<AppState>()(
     {
       name: 'drivede-storage',
       storage: createJSONStorage(() => ({
-        getItem: (name) => {
-          return localStorage.getItem(name) || sessionStorage.getItem(name);
+        getItem: async (name): Promise<string | null> => {
+          // 1. Try to get from IndexedDB first
+          const value = await getIDB(name);
+          if (value) return value as string;
+
+          // 2. Fallback to localStorage for one-time migration
+          if (typeof window !== 'undefined') {
+            const legacyValue = localStorage.getItem(name);
+            if (legacyValue) {
+              console.log('Migrating legacy localStorage data to IndexedDB...');
+              await setIDB(name, legacyValue);
+              // We don't remove immediately to be safe, but you could:
+              // localStorage.removeItem(name);
+              return legacyValue;
+            }
+          }
+          return null;
         },
-        setItem: (name, value) => {
-          localStorage.setItem(name, value);
+        setItem: async (name, value): Promise<void> => {
+          await setIDB(name, value);
         },
-        removeItem: (name) => {
-          localStorage.removeItem(name);
-          sessionStorage.removeItem(name);
+        removeItem: async (name): Promise<void> => {
+          await delIDB(name);
         },
-      })),
+      } as StateStorage)),
     }
   )
 );

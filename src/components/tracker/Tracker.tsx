@@ -17,7 +17,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
 import toast from 'react-hot-toast';
@@ -61,8 +61,6 @@ interface NominatimResponse {
 interface DeviceMotionEventStatic {
   requestPermission?: () => Promise<'granted' | 'denied'>;
 }
-
-
 
 // Leaflet imports for Map rendering
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
@@ -416,6 +414,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  
+  // Spatial Worker Instance
+  const spatialWorker = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return new Worker(new URL('../../workers/spatial.worker.ts', import.meta.url));
+    }
+    return null;
+  }, []);
 
   /**
    * Centralized logging helper for driving mistakes.
@@ -617,30 +623,32 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const nodes = way.geometry as { lat: number; lon: number }[];
       if (!nodes || nodes.length < 2) return;
 
-      const roadBearing = calculateBearing(
-        nodes[0].lat, nodes[0].lon,
-        nodes[1].lat, nodes[1].lon
-      );
+      // Delegate the math to the worker
+      spatialWorker?.postMessage({
+        type: 'wrongWayCheck',
+        data: { travelBearing, roadNodes: nodes }
+      });
 
-      let angleDiff = Math.abs(travelBearing - roadBearing);
-      if (angleDiff > 180) angleDiff = 360 - angleDiff;
+      const onWorkerMessage = (e: MessageEvent) => {
+        if (e.data.type === 'wrongWayCheck' && e.data.result === true) {
+          lastWrongWayLogRef.current = Date.now();
+          toast.error(
+            isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
+            { position: 'bottom-center', duration: 6000 }
+          );
+          logMistake({
+            type: 'wrong_way',
+            timestamp: Date.now(),
+            location: { lat, lng }
+          });
+        }
+      };
 
-      if (angleDiff > 120) {
-        lastWrongWayLogRef.current = Date.now();
-        toast.error(
-          isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
-          { position: 'bottom-center', duration: 6000 }
-        );
-        logMistake({
-          type: 'wrong_way',
-          timestamp: Date.now(),
-          location: { lat, lng }
-        });
-      }
+      spatialWorker?.addEventListener('message', onWorkerMessage, { once: true });
     } catch (e) {
       console.error('[Tracker] Wrong way check error:', e);
     }
-  }, [currentSpeed, isDE, logMistake]);
+  }, [currentSpeed, isDE, logMistake, spatialWorker]);
 
   const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
