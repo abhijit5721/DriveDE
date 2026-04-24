@@ -7,6 +7,21 @@
 
 import type { AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { get as getIDB, set as setIDB } from 'idb-keyval';
+
+// --- SYNC QUEUE TYPES ---
+
+type SyncTaskType = 'profile' | 'lesson' | 'session' | 'quiz' | 'delete_session' | 'clear_history';
+
+interface SyncTask {
+  id: string;
+  type: SyncTaskType;
+  payload: Record<string, unknown>;
+  timestamp: number;
+  retryCount: number;
+}
+
+const QUEUE_KEY = 'drivede-sync-queue';
 
 // --- MAPPING HELPERS ---
 // These ensure that local TS types match the naming conventions and constraints of the DB.
@@ -21,6 +36,86 @@ const mapTrackerCategoryToDb = (type: DrivingSession['type']): 'normal' | 'ueber
   if (type === 'nacht') return 'night';
   return type;
 };
+
+// --- QUEUE MANAGEMENT ---
+
+async function getQueue(): Promise<SyncTask[]> {
+  const queue = await getIDB(QUEUE_KEY);
+  return (queue as SyncTask[]) || [];
+}
+
+async function saveQueue(queue: SyncTask[]) {
+  await setIDB(QUEUE_KEY, queue);
+}
+
+async function addToQueue(type: SyncTaskType, payload: Record<string, unknown>) {
+  const queue = await getQueue();
+  const task: SyncTask = {
+    id: `${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    type,
+    payload,
+    timestamp: Date.now(),
+    retryCount: 0
+  };
+  queue.push(task);
+  await saveQueue(queue);
+  console.log(`[SyncQueue] Task added: ${type}. Queue length: ${queue.length}`);
+}
+
+/**
+ * Processes the offline sync queue.
+ */
+export async function processSyncQueue() {
+  if (!navigator.onLine) return;
+  
+  const queue = await getQueue();
+  if (queue.length === 0) return;
+
+  console.log(`[SyncQueue] Processing ${queue.length} pending tasks...`);
+  const remainingTasks: SyncTask[] = [];
+
+  for (const task of queue) {
+    try {
+      let success = false;
+      
+      switch (task.type) {
+        case 'lesson':
+          await syncCompletedLesson(task.payload.lessonId as string, true);
+          success = true;
+          break;
+        case 'session':
+          await syncDrivingSession(task.payload.session as DrivingSession, task.payload.transmissionType as TransmissionType, true);
+          success = true;
+          break;
+        case 'quiz':
+          await syncQuizAttempt(task.payload.quizId as string, task.payload.score as number, true);
+          success = true;
+          break;
+      }
+
+      if (!success && task.retryCount < 5) {
+        task.retryCount++;
+        remainingTasks.push(task);
+      }
+    } catch (error) {
+      console.warn(`[SyncQueue] Task ${task.id} failed:`, error);
+      if (task.retryCount < 5) {
+        task.retryCount++;
+        remainingTasks.push(task);
+      }
+    }
+  }
+
+  await saveQueue(remainingTasks);
+}
+
+// Add online listener
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log('[SyncQueue] Back online! Processing queue...');
+    processSyncQueue();
+  });
+}
 
 /**
  * Retrieves the currently authenticated user's ID.
@@ -66,13 +161,21 @@ export async function ensureProfileFromState(state: AppState) {
 
   if (error) {
     console.error('[DB-Sync] FAILED to sync profile:', error.message);
+    // Profile sync is often high frequency, we might not want to queue EVERY change
+    // but the final state should definitely be synced.
   } else {
     console.log('[DB-Sync] Profile sync successful!');
   }
 }
 
-export async function syncCompletedLesson(lessonId: string) {
+export async function syncCompletedLesson(lessonId: string, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+  
+  if (!navigator.onLine && !isRetry) {
+    await addToQueue('lesson', { lessonId });
+    return;
+  }
+
   const userId = await getCurrentUserId();
   if (!userId) return;
 
@@ -87,11 +190,18 @@ export async function syncCompletedLesson(lessonId: string) {
 
   if (error) {
     console.warn('[DriveDE] Failed to sync lesson progress', error.message);
+    if (!isRetry) await addToQueue('lesson', { lessonId });
   }
 }
 
-export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType) {
+export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+
+  if (!navigator.onLine && !isRetry) {
+    await addToQueue('session', { session, transmissionType });
+    return;
+  }
+
   const userId = await getCurrentUserId();
   if (!userId) return;
 
@@ -133,11 +243,12 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
 
        if (basicError) {
          console.error('[DriveDE] CRITICAL: Both full and fallback sync failed.', basicError);
-       } else {
-         console.info('[DriveDE] Basic fallback sync completed successfully.');
-       }
+        } else {
+          console.info('[DriveDE] Basic fallback sync completed successfully.');
+        }
     } else {
       console.error('[DriveDE] Sync failed with a non-schema error:', fullError);
+      if (!isRetry) await addToQueue('session', { session, transmissionType });
     }
   } else {
     console.log('[DriveDE] Full session synced successfully.');
@@ -196,8 +307,14 @@ export async function resetAllDataFromCloud() {
   }
 }
 
-export async function syncQuizAttempt(quizId: string, score: number) {
+export async function syncQuizAttempt(quizId: string, score: number, isRetry = false) {
   if (!isSupabaseConfigured || !supabase) return;
+
+  if (!navigator.onLine && !isRetry) {
+    await addToQueue('quiz', { quizId, score });
+    return;
+  }
+
   const userId = await getCurrentUserId();
   if (!userId) return;
 
@@ -211,6 +328,7 @@ export async function syncQuizAttempt(quizId: string, score: number) {
 
   if (error) {
     console.warn('[DriveDE] Failed to sync quiz attempt', error.message);
+    if (!isRetry) await addToQueue('quiz', { quizId, score });
   }
 }
 
@@ -257,6 +375,10 @@ export async function hydrateFromSupabase() {
 
 export async function syncAllData(state: AppState) {
   if (!isSupabaseConfigured || !supabase) return;
+  
+  // First process any pending offline tasks
+  await processSyncQueue();
+
   const userId = await getCurrentUserId();
   if (!userId) return;
 
