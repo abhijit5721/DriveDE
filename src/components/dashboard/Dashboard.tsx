@@ -42,8 +42,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
   
   const progressPercent = Math.round((activeLessonsPercent * 0.7) + (mainQuizScore * 0.3));
 
-  const totalHours = Math.floor(userProgress.totalDrivingMinutes / 60);
-  const totalMinutes = userProgress.totalDrivingMinutes % 60;
+  const totalHours = Math.floor((Number(userProgress.totalDrivingMinutes) || 0) / 60);
+  const totalMinutes = (Number(userProgress.totalDrivingMinutes) || 0) % 60;
 
   const isDE = language === 'de';
   const isUmschreibung = learningPath === 'umschreibung';

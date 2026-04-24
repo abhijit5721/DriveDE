@@ -295,7 +295,7 @@ export const useAppStore = create<AppState>()(
           const nextProgress = {
             ...state.userProgress,
             drivingSessions: [newSession, ...state.userProgress.drivingSessions],
-            totalDrivingMinutes: state.userProgress.totalDrivingMinutes + Number(session.duration),
+            totalDrivingMinutes: (Number(state.userProgress.totalDrivingMinutes) || 0) + (Number(session.duration) || 0),
           };
 
           if (session.type !== 'normal') {

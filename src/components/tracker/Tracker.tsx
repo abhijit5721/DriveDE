@@ -306,7 +306,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     .reduce((sum, s) => sum + s.duration, 0);
 
   const totalSpending = userProgress.drivingSessions
-    .reduce((sum, s) => sum + (s.duration / 45) * userProgress.hourlyRate45, 0);
+    .reduce((sum, s) => {
+      const duration = Number(s.duration) || 0;
+      const rate = Number(userProgress.hourlyRate45) || 0;
+      return sum + (duration / 45) * rate;
+    }, 0);
 
   const getMistakeLabel = useCallback((type: DrivingMistake['type']) => {
     const labels: Record<string, { de: string, en: string }> = {
@@ -349,7 +353,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   };
 
   const formatDate = (dateStr: string) => {
+    if (!dateStr) return '---';
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '---';
     return d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       day: '2-digit',
       month: 'short',
@@ -1889,7 +1895,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     <div className="flex items-center gap-3">
                       {userProgress.hourlyRate45 > 0 && !isExpanded && (
                         <span className="hidden sm:block text-xs font-black text-green-600 dark:text-green-500">
-                          €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
+                          €{(( (Number(session.duration) || 0) / 45) * (Number(userProgress.hourlyRate45) || 0)).toFixed(2)}
                         </span>
                       )}
                       {!isExpanded && session.route && (Array.isArray(session.route) ? session.route.length > 0 : false) && (
@@ -1943,7 +1949,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             )}
                             {userProgress.hourlyRate45 > 0 && (
                               <div className="ml-auto font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
-                                €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
+                                €{(( (Number(session.duration) || 0) / 45) * (Number(userProgress.hourlyRate45) || 0)).toFixed(2)}
                               </div>
                             )}
                           </div>
