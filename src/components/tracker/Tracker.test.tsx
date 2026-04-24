@@ -1,24 +1,46 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Tracker } from './Tracker';
-import { useAppStore } from '../../store/useAppStore';
 import toast from 'react-hot-toast';
 
 // Mock Dependencies
-vi.mock('../../store/useAppStore', () => ({
-  useAppStore: vi.fn(),
-}));
+vi.mock('../../store/useAppStore', () => {
+  const mockState = {
+    language: 'en',
+    licenseType: 'manual',
+    isPremium: true,
+    userProgress: { 
+      drivingSessions: [],
+      hourlyRate45: 60,
+      fixedCosts: {},
+      specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 }
+    },
+    addDrivingSession: vi.fn(),
+    updateDrivingSession: vi.fn(),
+    removeDrivingSession: vi.fn(),
+    clearDrivingHistory: vi.fn(),
+    setHourlyRate45: vi.fn(),
+    activeTab: 'tracker',
+  };
+  return {
+    useAppStore: vi.fn((selector) => selector ? selector(mockState) : mockState),
+  };
+});
 
-vi.mock('react-hot-toast', () => ({
-  default: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+// Mock react-hot-toast correctly as a function and an object
+vi.mock('react-hot-toast', () => {
+  const mockToast = vi.fn();
+  (mockToast as any).success = vi.fn();
+  (mockToast as any).error = vi.fn();
+  return {
+    default: mockToast,
+    toast: mockToast,
+  };
+});
 
 // Mock Leaflet
 vi.mock('react-leaflet', () => ({
-  MapContainer: ({ children }: any) => <div>{children}</div>,
+  MapContainer: ({ children }: any) => <div data-testid="map-container">{children}</div>,
   TileLayer: () => null,
   Polyline: () => null,
   Marker: () => null,
@@ -41,19 +63,7 @@ vi.mock('react-leaflet', () => ({
 describe('Tracker Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAppStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      language: 'en',
-      isPremium: true,
-      userProgress: { 
-        drivingSessions: [],
-        hourlyRate45: 60,
-        fixedCosts: {},
-        specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 }
-      },
-      addDrivingSession: vi.fn(),
-      activeTab: 'tracker',
-    });
-
+    
     // Mock geolocation
     const mockGeolocation = {
       getCurrentPosition: vi.fn(),
@@ -81,6 +91,6 @@ describe('Tracker Component', () => {
     // Verify that the error toast is called
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Location access denied'));
-    });
+    }, { timeout: 2000 });
   });
 });

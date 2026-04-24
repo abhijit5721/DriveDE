@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ensureProfileFromState, processSyncQueue, getCurrentUserId } from './supabaseSync';
+import { ensureProfileFromState, processSyncQueue } from './supabaseSync';
 import { supabase } from '../lib/supabase';
 import { get as getIDB, set as setIDB } from 'idb-keyval';
 import type { AppState } from '../types';
@@ -28,7 +28,7 @@ vi.mock('idb-keyval', () => ({
 describe('supabaseSync', () => {
   const mockState = {
     authUserId: 'user_123',
-    learningPath: 'fahrschule',
+    learningPath: 'standard',
     transmissionType: 'manual',
     language: 'de',
     darkMode: false,
@@ -51,19 +51,15 @@ describe('supabaseSync', () => {
 
   it('should add to queue when sync fails', async () => {
     // Mock user ID
-    (supabase.auth.getUser as any).mockResolvedValue({ data: { user: { id: 'user_123' } } });
+    (supabase!.auth.getUser as any).mockResolvedValue({ data: { user: { id: 'user_123' } } });
     
     // Mock a network failure (return error from supabase)
     const mockUpsert = vi.fn().mockResolvedValue({ error: { message: 'Network Error' } });
-    (supabase.from as any).mockReturnValue({ upsert: mockUpsert });
+    (supabase!.from as any).mockReturnValue({ upsert: mockUpsert });
 
     // Mock empty queue initially
     (getIDB as any).mockResolvedValue([]);
 
-    // We need to wait for the debounce (or mock it)
-    // For testing, we'll just call the performSync logic indirectly or mock the timer
-    // Actually, ensureProfileFromState returns a promise that resolves after the timer fires
-    // But since it's a 2s timer, we should probably mock setTimeout
     vi.useFakeTimers();
     
     const syncPromise = ensureProfileFromState(mockState);
@@ -94,7 +90,7 @@ describe('supabaseSync', () => {
 
     // Mock success for the task
     const mockUpsert = vi.fn().mockResolvedValue({ error: null });
-    (supabase.from as any).mockReturnValue({ 
+    (supabase!.from as any).mockReturnValue({ 
       upsert: mockUpsert,
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis()

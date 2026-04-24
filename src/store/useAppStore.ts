@@ -18,13 +18,11 @@ import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
   AppState,
-  DrivingSession,
   Language,
   LicenseType,
   LearningPathType,
   TransmissionType,
   UserProgress,
-  TabType,
 } from '../types';
 import {
   ensureProfileFromState,
@@ -68,22 +66,22 @@ const initialProgress: UserProgress = {
  * Helper to derive default selection state based on license type.
  */
 const deriveSelectionState = (type: LicenseType) => {
-  if (type === 'B') {
+  if (type === 'manual') {
     return {
-      learningPath: 'fahrschule' as const,
+      learningPath: 'standard' as const,
       transmissionType: 'manual' as const,
     };
   }
-  if (type === 'B197') {
+  if (type === 'automatic') {
     return {
-      learningPath: 'fahrschule' as const,
+      learningPath: 'standard' as const,
       transmissionType: 'automatic' as const,
     };
   }
-  if (type === 'B78') {
+  if (type === 'umschreibung' || type === 'umschreibung-manual' || type === 'umschreibung-automatic') {
     return {
-      learningPath: 'fahrschule' as const,
-      transmissionType: 'automatic' as const,
+      learningPath: 'umschreibung' as const,
+      transmissionType: (type === 'umschreibung-automatic' ? 'automatic' : 'manual') as TransmissionType,
     };
   }
   return {
@@ -130,7 +128,7 @@ const isYesterday = (date1: Date, date2: Date) => {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       language: 'de',
       darkMode: false,
       licenseType: null,
