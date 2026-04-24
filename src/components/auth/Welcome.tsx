@@ -7,14 +7,19 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 
 export function Welcome() {
-  const { language, setLanguage, setLicenseType, setHasVisited, licenseType } = useAppStore();
+  const { 
+    language, setLanguage, setLicenseType, setHasVisited, licenseType,
+    authStatus, userProgress 
+  } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const isDE = language === 'de';
 
-  // Strict check for returning user status
-  const isReturningUser = licenseType !== null && licenseType !== undefined;
+  // Strict check for returning user status: 
+  // Either signed in OR has actual progress (lessons or sessions)
+  const isReturningUser = authStatus === 'signed_in' || 
+    (licenseType !== null && (userProgress.completedLessons.length > 0 || userProgress.drivingSessions.length > 0));
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
