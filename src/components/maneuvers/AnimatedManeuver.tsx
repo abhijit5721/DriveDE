@@ -336,20 +336,33 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
 };
 
 // Animation Components
-const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
-  const getCarState = () => {
-    switch (step) {
-      case 0: return { x: 100, y: 140, rotation: 0, wheel: 0, indicator: 'none' as const };
-      case 1: return { x: 100, y: 140, rotation: 0, wheel: 0, indicator: 'hazard' as const };
-      case 2: return { x: 180, y: 140, rotation: 0, wheel: 0, indicator: 'right' as const };
-      case 3: return { x: 230, y: 155, rotation: 30, wheel: 45, indicator: 'right' as const };
-      case 4: return { x: 280, y: 175, rotation: 25, wheel: 45, indicator: 'right' as const };
-      case 5: return { x: 300, y: 190, rotation: 5, wheel: -45, indicator: 'right' as const };
-      case 6: return { x: 260, y: 195, rotation: 0, wheel: 0, indicator: 'none' as const };
-      default: return { x: 100, y: 140, rotation: 0, wheel: 0, indicator: 'none' as const };
-    }
+const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },      // 0: Start
+      { x: 140, y: 120, rotation: 0, wheel: 0, indicator: 'none' as const },     // 1: Stop next to car
+      { x: 140, y: 120, rotation: 0, wheel: 0, indicator: 'hazard' as const },   // 2: 360 Check
+      { x: 200, y: 120, rotation: 0, wheel: 0, indicator: 'right' as const },    // 3: Position for turn
+      { x: 250, y: 145, rotation: 35, wheel: 45, indicator: 'right' as const },  // 4: Steering in
+      { x: 300, y: 185, rotation: 35, wheel: -45, indicator: 'right' as const }, // 5: Backing in
+      { x: 260, y: 190, rotation: 0, wheel: 0, indicator: 'none' as const },     // 6: Final
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+
+    const p = progress / 100;
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
   };
-  const state = getCarState();
+
+  const state = getInterpolatedState();
+  
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
@@ -368,16 +381,16 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
 
         {/* Parked Cars */}
-        <g transform="translate(100, 180)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(340, 180)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(60, 185)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(350, 185)"><TopDownCar color="#94a3b8" /></g>
 
         {/* Path Arrow */}
-        {step >= 2 && step <= 4 && (
-          <path d="M 180 140 Q 250 140 300 195" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
+        {step >= 3 && step <= 5 && (
+          <path d="M 200 120 Q 280 120 300 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
         )}
 
         {/* User Car */}
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 20 }}>
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && (
@@ -387,27 +400,40 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
             )}
             {step === 3 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
   );
 };
 
-const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
-  const getCarState = () => {
-    switch (step) {
-      case 0: return { x: 100, y: 180, rotation: 0, wheel: 0, indicator: 'none' as const };
-      case 1: return { x: 205, y: 180, rotation: 0, wheel: 0, indicator: 'hazard' as const };
-      case 2: return { x: 270, y: 180, rotation: 0, wheel: 0, indicator: 'right' as const };
-      case 3: return { x: 240, y: 140, rotation: -45, wheel: 60, indicator: 'right' as const };
-      case 4: return { x: 210, y: 80, rotation: -90, wheel: 60, indicator: 'right' as const };
-      case 5: return { x: 210, y: 50, rotation: -90, wheel: 0, indicator: 'none' as const };
-      case 6: return { x: 210, y: 40, rotation: -90, wheel: 0, indicator: 'none' as const };
-      default: return { x: 100, y: 180, rotation: 0, wheel: 0, indicator: 'none' as const };
-    }
+const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 180, rotation: 0, wheel: 0, indicator: 'none' as const },
+      { x: 180, y: 180, rotation: 0, wheel: 0, indicator: 'right' as const },
+      { x: 240, y: 180, rotation: 0, wheel: 0, indicator: 'hazard' as const },
+      { x: 280, y: 160, rotation: -45, wheel: 60, indicator: 'right' as const },
+      { x: 210, y: 100, rotation: -90, wheel: 60, indicator: 'right' as const },
+      { x: 210, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 210, y: 55, rotation: -90, wheel: 0, indicator: 'none' as const },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
   };
-  const state = getCarState();
+
+  const state = getInterpolatedState();
+
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
@@ -422,42 +448,55 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
         {/* Parking Slots */}
         {[100, 150, 210, 270, 330].map(x => (
           <g key={x}>
-            <line x1={x} y1={140} x2={x} y2={250} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" />
+            <line x1={x} y1={120} x2={x} y2={250} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
           </g>
         ))}
         
         {/* Stationary Cars */}
-        <g transform="translate(155, 40) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(265, 40) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(155, 45) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(265, 45) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
 
         {/* User Car */}
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="round" opacity={0.4} />}
             {step === 3 && <VisionCone side="right" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
   );
 };
 
-const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
-  const getCarState = () => {
-    switch (step) {
-      case 0: return { x: 50, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const };
-      case 1: return { x: 80, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const };
-      case 2: return { x: 150, y: 80, rotation: -80, wheel: -90, indicator: 'left' as const };
-      case 3: return { x: 150, y: 80, rotation: -80, wheel: 90, indicator: 'right' as const };
-      case 4: return { x: 180, y: 170, rotation: 60, wheel: 90, indicator: 'right' as const };
-      case 5: return { x: 180, y: 170, rotation: 180, wheel: -90, indicator: 'left' as const };
-      case 6: return { x: 50, y: 105, rotation: 180, wheel: 0, indicator: 'none' as const };
-      default: return { x: 50, y: 155, rotation: 0, wheel: 0, indicator: 'none' as const };
-    }
+const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 50, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },
+      { x: 80, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },
+      { x: 150, y: 85, rotation: -75, wheel: -90, indicator: 'left' as const },
+      { x: 150, y: 85, rotation: -75, wheel: 90, indicator: 'right' as const },
+      { x: 200, y: 165, rotation: 60, wheel: 90, indicator: 'right' as const },
+      { x: 200, y: 165, rotation: 180, wheel: -90, indicator: 'left' as const },
+      { x: 50, y: 95, rotation: 180, wheel: 0, indicator: 'none' as const },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
   };
-  const state = getCarState();
+
+  const state = getInterpolatedState();
+
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
@@ -471,32 +510,44 @@ const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({
         <rect x="0" y="70" width="400" height="2" fill="#94a3b8" />
         <rect x="0" y="178" width="400" height="2" fill="#94a3b8" />
         
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 3 && <VisionCone side="round" opacity={0.4} />}
             {step === 5 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
   );
 };
 
-const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
-  const getCarState = () => {
-    switch (step) {
-      case 0: return { x: 50, y: 145, rotation: 0, speed: 30, brake: false };
-      case 1: return { x: 120, y: 145, rotation: 0, speed: 30, brake: false };
-      case 2: return { x: 160, y: 145, rotation: 0, speed: 10, brake: true };
-      case 3: return { x: 175, y: 145, rotation: 0, speed: 0, brake: true };
-      case 4: return { x: 175, y: 145, rotation: 0, speed: 0, brake: false };
-      default: return { x: 50, y: 145, rotation: 0, speed: 30, brake: false };
-    }
+const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 145, speed: 30, brake: false },
+      { x: 120, y: 145, speed: 30, brake: false },
+      { x: 160, y: 145, speed: 10, brake: true },
+      { x: 180, y: 145, speed: 0, brake: true },
+      { x: 180, y: 145, speed: 0, brake: false },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      speed: current.speed + (next.speed - current.speed) * p,
+      brake: p > 0.1 ? next.brake : current.brake
+    };
   };
-  const state = getCarState();
+
+  const state = getInterpolatedState();
+
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
@@ -508,20 +559,15 @@ const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({
         <rect x="0" y="80" width="400" height="90" fill="#334155" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
 
-        <motion.g animate={{ x: state.x, y: state.y }} transition={{ type: 'spring', stiffness: 100, damping: 20 }}>
+        <g transform={`translate(${state.x}, ${state.y})`}>
           <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
-        </motion.g>
+        </g>
 
         {/* Speedometer */}
         <g transform="translate(330, 190)">
           <circle r="40" fill="#1e293b" stroke="#334155" strokeWidth="2" />
-          <motion.path
-            d="M -30 0 A 30 30 0 1 1 30 0"
-            fill="none"
-            stroke="#1e293b"
-            strokeWidth="4"
-          />
+          <path d="M -30 0 A 30 30 0 1 1 30 0" fill="none" stroke="#1e293b" strokeWidth="4" />
           <motion.line
             animate={{ rotate: (state.speed / 50) * 180 - 90 }}
             x1="0" y1="0" x2="0" y2="-25"
@@ -542,29 +588,47 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
     const cx = 200;
     const cy = 125;
     const r = 65;
+    const p = progress / 100;
+
     switch (step) {
-      case 0: return { x: 212, y: 220, rotation: -90, indicator: 'none' as const };
+      case 0: return { x: 212, y: 220 - 25 * p, rotation: -90, indicator: 'none' as const };
       case 1: return { x: 212, y: 195, rotation: -90, indicator: 'none' as const };
       case 2: { // Enter
-        const angleEnter = 90 - 45 * progress;
+        const startAngle = 90;
+        const endAngle = 45;
+        const angle = startAngle + (endAngle - startAngle) * p;
         return { 
-          x: cx + r * Math.cos(angleEnter * Math.PI / 180),
-          y: cy + r * Math.sin(angleEnter * Math.PI / 180),
-          rotation: angleEnter - 90,
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
           indicator: 'none' as const
         };
       }
-      case 3: { // Circulate (Counter-clockwise movement around from bottom towards top)
-        const angleCirc = 45 - 225 * progress;
+      case 3: { // Circulate
+        const startAngle = 45;
+        const endAngle = -180;
+        const angle = startAngle + (endAngle - startAngle) * p;
         return {
-          x: cx + r * Math.cos(angleCirc * Math.PI / 180),
-          y: cy + r * Math.sin(angleCirc * Math.PI / 180),
-          rotation: angleCirc - 90,
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
           indicator: 'none' as const
         };
       }
-      case 4: return { x: 265, y: 112, rotation: 0, indicator: 'right' as const };
-      case 5: return { x: 265 + 100 * progress, y: 112, rotation: 0, indicator: 'right' as const };
+      case 4: { // Signal
+        const angle = -180;
+        return {
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
+          indicator: 'right' as const
+        };
+      }
+      case 5: { // Exit
+        const startX = 135;
+        const endX = -50;
+        return { x: startX + (endX - startX) * p, y: 125, rotation: -180, indicator: 'right' as const };
+      }
       default: return { x: 212, y: 220, rotation: -90, indicator: 'none' as const };
     }
   };
@@ -580,34 +644,47 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
         <circle cx="200" cy="125" r="90" fill="#334155" />
         <circle cx="200" cy="125" r="40" fill="#ecfdf5" />
         <rect x="175" y="180" width="50" height="70" fill="#334155" />
-        <rect x="270" y="100" width="130" height="50" fill="#334155" />
+        <rect x="0" y="100" width="130" height="50" fill="#334155" />
         
         {/* Yield Line */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
 
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 4 && <VisionCone side="right" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
       </svg>
     </div>
   );
 };
 
-const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ step }) => {
-  const getCarState = () => {
-    switch (step) {
-      case 0: return { x: 50, y: 180, rotation: -5, speed: 40, indicator: 'none' as const };
-      case 1: return { x: 120, y: 175, rotation: -10, speed: 70, indicator: 'left' as const };
-      case 2: return { x: 250, y: 135, rotation: -15, speed: 95, indicator: 'left' as const };
-      case 3: return { x: 380, y: 115, rotation: 0, speed: 100, indicator: 'none' as const };
-      default: return { x: 50, y: 180, rotation: -5, speed: 40, indicator: 'none' as const };
-    }
+const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 190, rotation: -5, speed: 40, indicator: 'none' as const },
+      { x: 120, y: 180, rotation: -8, speed: 70, indicator: 'left' as const },
+      { x: 250, y: 130, rotation: -12, speed: 95, indicator: 'left' as const },
+      { x: 420, y: 110, rotation: 0, speed: 110, indicator: 'none' as const },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      speed: current.speed + (next.speed - current.speed) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
   };
-  const state = getCarState();
+
+  const state = getInterpolatedState();
+
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
@@ -621,18 +698,18 @@ const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ s
         <path d="M 0 210 Q 150 200 400 150" fill="#334155" />
         <line x1="150" y1="180" x2="400" y2="140" stroke="#fff" strokeWidth="3" strokeDasharray="8,8" opacity="0.5" />
 
-        <g transform="translate(300, 65)"><TopDownCar color="#94a3b8" scale={0.8} /></g>
+        <g transform="translate(320, 65)"><TopDownCar color="#94a3b8" scale={0.8} /></g>
 
-        <motion.g animate={{ x: state.x, y: state.y, rotate: state.rotation }} transition={{ type: 'spring', damping: 25 }}>
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
-        </motion.g>
+        </g>
 
         {/* Speed Bar */}
-        <g transform="translate(20, 200)">
-          <rect width="100" height="10" rx="5" fill="#1e293b" />
+        <g transform="translate(20, 20)">
+          <rect width="100" height="10" rx="5" fill="#1e293b" opacity="0.2" />
           <motion.rect animate={{ width: (state.speed / 120) * 100 }} height="10" rx="5" fill="#38BDF8" />
-          <text x="110" y="10" fill="#1e293b" className="text-[10px] font-black">{state.speed} KM/H</text>
+          <text x="110" y="10" fill="#1e293b" className="text-[10px] font-black">{Math.round(state.speed)} KM/H</text>
         </g>
       </svg>
     </div>
