@@ -332,11 +332,11 @@ const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({
     const states = [
       { x: 50, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },
       { x: 80, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 85, rotation: -75, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 85, rotation: -75, wheel: 90, indicator: 'right' as const },
-      { x: 200, y: 165, rotation: 60, wheel: 90, indicator: 'right' as const },
-      { x: 200, y: 165, rotation: 180, wheel: -90, indicator: 'left' as const },
-      { x: 50, y: 95, rotation: 180, wheel: 0, indicator: 'none' as const },
+      { x: 150, y: 105, rotation: -65, wheel: -90, indicator: 'left' as const },
+      { x: 150, y: 105, rotation: -65, wheel: 90, indicator: 'right' as const },
+      { x: 220, y: 145, rotation: 65, wheel: 90, indicator: 'right' as const },
+      { x: 220, y: 145, rotation: 180, wheel: 90, indicator: 'left' as const },
+      { x: 50, y: 110, rotation: 180, wheel: 0, indicator: 'none' as const },
     ];
 
     const current = states[step] || states[0];
