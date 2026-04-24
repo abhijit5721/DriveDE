@@ -237,6 +237,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           zoom={15} 
           scrollWheelZoom={false}
           style={{ height: '100%', width: '100%' }}
+          preferCanvas={true}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -1465,6 +1466,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               zoom={17} 
               zoomControl={false}
               attributionControl={false}
+              preferCanvas={true}
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

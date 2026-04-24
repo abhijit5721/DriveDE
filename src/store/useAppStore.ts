@@ -608,6 +608,14 @@ export const useAppStore = create<AppState>()(
         hasVisited: state.hasVisited,
         activeTab: state.activeTab,
       }),
+      onRehydrateStorage: () => (_, error) => {
+        if (error) {
+          console.error('[Store] Hydration failed (possible corruption):', error);
+          // In a real app, we might trigger a state reset or alert the user here.
+        } else {
+          console.log('[Store] Hydration successful.');
+        }
+      },
     }
   )
 );

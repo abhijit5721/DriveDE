@@ -72,9 +72,21 @@ export default function App() {
       console.log('[Network] App is back online, processing sync queue...');
       import('./services/supabaseSync').then(m => m.processSyncQueue());
     };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        console.log('[App] App backgrounded, triggering emergency sync...');
+        import('./services/supabaseSync').then(m => m.processSyncQueue());
+      }
+    };
     
     window.addEventListener('online', handleOnline);
-    return () => window.removeEventListener('online', handleOnline);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -188,20 +200,41 @@ export default function App() {
     };
   }, [setAuthState]);
 
-  // Handle post-payment success refresh
+  // Handle post-payment success refresh (Web & Mobile)
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('session_id') && useAppStore.getState().authStatus === 'signed_in') {
-      const triggerHydration = async () => {
-        const remoteData = await hydrateFromSupabase();
-        if (remoteData?.profile?.is_premium) {
-          useAppStore.setState({ isPremium: true });
-          // Clear the URL param without refreshing
+    const triggerHydration = async () => {
+      const remoteData = await hydrateFromSupabase();
+      if (remoteData?.profile?.is_premium) {
+        useAppStore.setState({ isPremium: true });
+        // Clear the URL param without refreshing (Web)
+        if (typeof window !== 'undefined' && window.location.search) {
           window.history.replaceState({}, document.title, window.location.pathname);
         }
-      };
+      }
+    };
+
+    // 1. Web Check (URL Params)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('session_id') && useAppStore.getState().authStatus === 'signed_in') {
       triggerHydration();
     }
+
+    // 2. Mobile Check (Capacitor Deep Links)
+    const initDeepLinks = async () => {
+      try {
+        const { App } = await import('@capacitor/app');
+        App.addListener('appUrlOpen', (data: { url: string }) => {
+          console.log('[App] Deep link received:', data.url);
+          // Example: drivede://checkout/success?session_id=...
+          if (data.url.includes('checkout/success')) {
+            triggerHydration();
+          }
+        });
+      } catch {
+        console.log('[App] Capacitor App plugin not found, skipping deep link listener.');
+      }
+    };
+    initDeepLinks();
   }, []);
 
   useEffect(() => {
