@@ -73,13 +73,19 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
 
         {/* Existing Cars (Parked parallel to curb) */}
         {/* Front Car */}
-        <div className="absolute top-12 left-[280px] h-16 w-32 bg-slate-500 rounded-lg shadow-lg border border-slate-400">
-           <div className="absolute right-1 inset-y-2 w-3 bg-white/20 rounded-sm" /> {/* Windshield */}
-           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" /> {/* Tail lights */}
+        <div 
+          className="absolute bg-slate-500 rounded-lg shadow-lg border border-slate-400 z-10"
+          style={{ top: '45px', left: '260px', width: '70px', height: '36px' }}
+        >
+           <div className="absolute right-1 inset-y-2 w-3 bg-white/20 rounded-sm" />
+           <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" />
         </div>
         
         {/* Rear Car */}
-        <div className="absolute top-12 left-8 h-16 w-32 bg-blue-600 rounded-lg shadow-lg border border-blue-500">
+        <div 
+          className="absolute bg-blue-600 rounded-lg shadow-lg border border-blue-500 z-10"
+          style={{ top: '45px', left: '20px', width: '70px', height: '36px' }}
+        >
            <div className="absolute right-1 inset-y-2 w-3 bg-white/30 rounded-sm" />
            <div className="absolute left-1 inset-y-3 w-1 bg-red-500/50 rounded-full" />
         </div>
@@ -89,12 +95,13 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            layout
            initial={false}
            animate={{
-             top: phase === 'final' ? 12 : phase === 'steering-out' ? 18 : phase === 'backing-in' ? 45 : 85,
-             left: phase === 'align' ? 280 : phase === 'steering-in' ? 280 : phase === 'backing-in' ? 200 : phase === 'steering-out' ? 150 : phase === 'final' ? 145 : 0,
+             top: phase === 'final' ? 45 : phase === 'steering-out' ? 55 : phase === 'backing-in' ? 80 : 130,
+             left: phase === 'align' ? 260 : phase === 'steering-in' ? 260 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 140 : phase === 'final' ? 140 : 20,
              rotate: phase === 'backing-in' ? 35 : phase === 'steering-out' ? 15 : 0
            }}
            transition={{ duration: 1.5, ease: 'easeInOut' }}
-           className="absolute h-16 w-32 bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400 flex items-center justify-center"
+           className="absolute bg-emerald-500 rounded-lg shadow-2xl z-20 border-2 border-emerald-400 flex items-center justify-center"
+           style={{ width: '70px', height: '36px' }}
         >
            {/* Details */}
            <div className="absolute right-1 inset-y-2 w-3 bg-emerald-300 rounded-sm opacity-50" />
