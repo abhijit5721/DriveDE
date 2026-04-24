@@ -354,8 +354,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '---';
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return '---';
+    // Use a more robust date parsing for older browsers
+    const normalizedDate = dateStr.replace(/-/g, '/');
+    const d = new Date(normalizedDate);
+    if (isNaN(d.getTime())) {
+      // Fallback: Just return the raw string if parsing fails but it looks like a date
+      if (dateStr.includes('-') || dateStr.includes('/')) return dateStr;
+      return '---';
+    }
     return d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       day: '2-digit',
       month: 'short',
@@ -1877,7 +1883,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                        <div className="flex items-center gap-2 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
                           <div className="flex items-center gap-0.5">
                             <Calendar className="h-2.5 w-2.5" />
                             {formatDate(session.date)}

@@ -225,9 +225,9 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
   const { error } = await supabase.from('driving_sessions').upsert({
     id: session.id, // Using the stable external_id
     user_id: userId,
-    date: session.date,
-    duration: session.duration,
-    type: mapTrackerCategoryToDb(session.type),
+    session_date: session.date,
+    duration_minutes: session.duration,
+    category: mapTrackerCategoryToDb(session.type),
     notes: session.notes,
     instructor_name: session.instructorName,
     route: session.route,
@@ -280,9 +280,9 @@ export async function hydrateFromSupabase() {
     lessons: lessons ?? [],
     sessions: (sessions ?? []).map(s => ({
       id: s.id,
-      date: s.date || '',
-      duration: Number(s.duration) || 0,
-      type: s.type === 'night' ? 'nacht' : (s.type || 'normal'),
+      date: s.session_date || '',
+      duration: Number(s.duration_minutes) || 0,
+      type: s.category === 'night' ? 'nacht' : (s.category || 'normal'),
       notes: s.notes || '',
       instructorName: s.instructor_name || '',
       route: s.route || [],
