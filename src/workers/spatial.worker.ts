@@ -8,7 +8,7 @@
  */
 
 interface WorkerMessage {
-  type: 'bearing' | 'distance' | 'wrongWayCheck';
+  type: 'bearing' | 'distance' | 'wrongWayCheck' | 'findNearest';
   data: {
     start?: { lat: number; lng: number };
     end?: { lat: number; lng: number };
@@ -16,6 +16,18 @@ interface WorkerMessage {
     p2?: { lat: number; lng: number };
     travelBearing?: number;
     roadNodes?: { lat: number; lon: number }[];
+    // For local cache searches
+    position?: { lat: number; lng: number };
+    features?: {
+      type: 'node' | 'way';
+      id: number;
+      lat: number;
+      lon: number;
+      tags: Record<string, string>;
+      geometry?: { lat: number; lon: number }[];
+    }[];
+    maxDistKm?: number;
+    tagFilter?: { key: string; value: string };
   };
 }
 
@@ -89,6 +101,30 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
 
       // Threshold for wrong way: 120 degrees
       self.postMessage({ type: 'wrongWayCheck', result: angleDiff > 120 });
+      break;
+    }
+
+    case 'findNearest': {
+      const { position, features, maxDistKm, tagFilter } = data;
+      if (!position || !features) return;
+
+      let nearest = null;
+      let minDist = maxDistKm || 0.05;
+
+      for (const feature of features) {
+        if (tagFilter && feature.tags?.[tagFilter.key] !== tagFilter.value) continue;
+
+        const fLat = feature.lat || (feature.geometry ? feature.geometry[0].lat : 0);
+        const fLon = feature.lon || (feature.geometry ? feature.geometry[0].lon : 0);
+        
+        const dist = calculateDistance(position.lat, position.lng, fLat, fLon);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = feature;
+        }
+      }
+
+      self.postMessage({ type: 'findNearest', result: nearest, tagFilter });
       break;
     }
   }

@@ -31,6 +31,7 @@ import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { EmptyState } from '../common/EmptyState';
+import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 
 interface PhotonFeature {
   properties: {
@@ -423,6 +424,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     return null;
   }, []);
 
+  const [spatialCache, setSpatialCache] = useState<SpatialCacheData | null>(null);
+  const lastCacheUpdateRef = useRef<number>(0);
+
   /**
    * Centralized logging helper for driving mistakes.
    * Updates both UI state and persistent ref.
@@ -583,6 +587,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   };
 
   const checkNearbyStopSign = useCallback(async (lat: number, lng: number) => {
+    if (spatialCache) {
+      spatialWorker?.postMessage({
+        type: 'findNearest',
+        data: {
+          position: { lat, lng },
+          features: spatialCache.features,
+          tagFilter: { key: 'highway', value: 'stop' }
+        }
+      });
+      return;
+    }
+
     try {
       const query = `[out:json];node(around:25,${lat},${lng})["highway"="stop"];out;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
@@ -603,11 +619,58 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (e) {
       console.error('[Tracker] Stop sign fetch failed:', e);
     }
-  }, [activeStopSign, isDE]);
+  }, [activeStopSign, isDE, spatialCache, spatialWorker]);
+
+  // Handle worker responses for findNearest
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (e.data.type === 'findNearest' && e.data.result) {
+        const feature = e.data.result;
+        const tagFilter = e.data.tagFilter;
+
+        if (tagFilter?.key === 'highway' && tagFilter?.value === 'stop') {
+          if (!activeStopSign || activeStopSign.id !== feature.id.toString()) {
+            setActiveStopSign({
+              lat: feature.lat,
+              lng: feature.lon,
+              id: feature.id.toString()
+            });
+            setHasStoppedAtSign(false);
+            toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
+          }
+        }
+      }
+    };
+    spatialWorker?.addEventListener('message', onMessage);
+    return () => spatialWorker?.removeEventListener('message', onMessage);
+  }, [spatialWorker, activeStopSign, isDE]);
+
+  // Update spatial cache on movement
+  useEffect(() => {
+    if (!isTimerRunning || gpsPoints.length === 0) return;
+    const lastPoint = gpsPoints[gpsPoints.length - 1];
+    
+    if (Date.now() - lastCacheUpdateRef.current > 30000) {
+      lastCacheUpdateRef.current = Date.now();
+      updateSpatialCache(lastPoint.lat, lastPoint.lng).then(setSpatialCache);
+    }
+  }, [gpsPoints, isTimerRunning]);
 
   const checkWrongWayDriving = useCallback(async (lat: number, lng: number, travelBearing: number) => {
     if (Date.now() - lastWrongWayLogRef.current < 30000) return;
     if (currentSpeed < 10) return;
+
+    if (spatialCache) {
+      // Find the nearest way in the cache that is oneway or a residential street
+      const nearestWay = findNearestFeature(lat, lng, spatialCache, (f) => f.type === 'way' && (f.tags?.oneway === 'yes' || !!f.tags?.highway), 0.03);
+      if (nearestWay && nearestWay.geometry) {
+        spatialWorker?.postMessage({
+          type: 'wrongWayCheck',
+          data: { travelBearing, roadNodes: nearestWay.geometry }
+        });
+      }
+      return;
+    }
 
     try {
       const query = `[out:json];way(around:20,${lat},${lng})[oneway=yes];out geom 1;`;
@@ -648,7 +711,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (e) {
       console.error('[Tracker] Wrong way check error:', e);
     }
-  }, [currentSpeed, isDE, logMistake, spatialWorker]);
+  }, [currentSpeed, isDE, logMistake, spatialWorker, spatialCache]);
 
   const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
