@@ -51,14 +51,14 @@ describe('supabaseSync', () => {
 
   it('should add to queue when sync fails', async () => {
     // Mock user ID
-    (supabase!.auth.getUser as any).mockResolvedValue({ data: { user: { id: 'user_123' } } });
+    vi.mocked(supabase!.auth.getUser).mockResolvedValue({ data: { user: { id: 'user_123' } }, error: null } as any);
     
     // Mock a network failure (return error from supabase)
     const mockUpsert = vi.fn().mockResolvedValue({ error: { message: 'Network Error' } });
-    (supabase!.from as any).mockReturnValue({ upsert: mockUpsert });
+    vi.mocked(supabase!.from).mockReturnValue({ upsert: mockUpsert } as any);
 
     // Mock empty queue initially
-    (getIDB as any).mockResolvedValue([]);
+    vi.mocked(getIDB).mockResolvedValue([]);
 
     vi.useFakeTimers();
     
@@ -86,15 +86,15 @@ describe('supabaseSync', () => {
       timestamp: Date.now(),
       retryCount: 0
     };
-    (getIDB as any).mockResolvedValue([mockTask]);
+    vi.mocked(getIDB).mockResolvedValue([mockTask]);
 
     // Mock success for the task
     const mockUpsert = vi.fn().mockResolvedValue({ error: null });
-    (supabase!.from as any).mockReturnValue({ 
+    vi.mocked(supabase!.from).mockReturnValue({ 
       upsert: mockUpsert,
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis()
-    });
+    } as any);
 
     await processSyncQueue();
 

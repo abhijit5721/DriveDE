@@ -35,9 +35,10 @@ vi.mock('../../store/useAppStore', () => {
 
 // Mock react-hot-toast correctly as a function and an object
 vi.mock('react-hot-toast', () => {
-  const mockToast = vi.fn();
-  (mockToast as any).success = vi.fn();
-  (mockToast as any).error = vi.fn();
+  const mockToast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn()
+  });
   return {
     default: mockToast,
     toast: mockToast,
@@ -46,7 +47,7 @@ vi.mock('react-hot-toast', () => {
 
 // Mock Leaflet
 vi.mock('react-leaflet', () => ({
-  MapContainer: ({ children }: any) => <div data-testid="map-container">{children}</div>,
+  MapContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="map-container">{children}</div>,
   TileLayer: () => null,
   Polyline: () => null,
   Marker: () => null,
@@ -57,14 +58,17 @@ vi.mock('react-leaflet', () => ({
 }));
 
 // Mock Worker and URL
-(global as any).Worker = class {
-  onmessage = () => {};
-  postMessage = () => {};
-  terminate = () => {};
-  addEventListener = () => {};
-  removeEventListener = () => {};
-};
-(global as any).URL.createObjectURL = vi.fn();
+Object.defineProperty(globalThis, 'Worker', {
+  value: class {
+    onmessage = () => {};
+    postMessage = () => {};
+    terminate = () => {};
+    addEventListener = () => {};
+    removeEventListener = () => {};
+  },
+  configurable: true
+});
+Object.defineProperty(globalThis.URL, 'createObjectURL', { value: vi.fn(), configurable: true });
 
 describe('Tracker Component', () => {
   beforeEach(() => {
@@ -76,15 +80,15 @@ describe('Tracker Component', () => {
       watchPosition: vi.fn(),
       clearWatch: vi.fn(),
     };
-    (global.navigator as any).geolocation = mockGeolocation;
+    Object.defineProperty(globalThis.navigator, 'geolocation', { value: mockGeolocation, configurable: true });
   });
 
   it('should display error toast when GPS permission is denied', async () => {
     // Mock geolocation error (code 1 = PERMISSION_DENIED)
     const mockError = { code: 1, message: 'User denied Geolocation' };
     
-    (navigator.geolocation.watchPosition as any).mockImplementation((_success: any, error: any) => {
-      error(mockError);
+    vi.mocked(navigator.geolocation.watchPosition).mockImplementation((_success: PositionCallback, error?: PositionErrorCallback) => {
+      if (error) error(mockError as unknown as GeolocationPositionError);
       return 123; // watch ID
     });
 

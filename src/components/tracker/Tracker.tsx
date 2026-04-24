@@ -48,6 +48,12 @@ interface PhotonFeature {
   };
 }
 
+interface WakeLockSentinel extends EventTarget {
+  readonly released: boolean;
+  onrelease: ((this: WakeLockSentinel, ev: Event) => void) | null;
+  release(): Promise<void>;
+}
+
 interface NominatimResponse {
   address: {
     suburb?: string;
@@ -452,7 +458,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-  const wakeLockRef = useRef<any>(null);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   // Release wake lock on unmount
   useEffect(() => {
@@ -466,7 +472,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const requestWakeLock = async () => {
     if ('wakeLock' in navigator) {
       try {
-        wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
+        wakeLockRef.current = await (navigator as unknown as { wakeLock: { request: (type: string) => Promise<WakeLockSentinel> } }).wakeLock.request('screen');
       } catch (err) {
         console.warn('[Tracker] Wake Lock error:', err);
       }
@@ -562,7 +568,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         requestWakeLock();
       }
     }
-  }, [activeSession]);
+  }, [activeSession, isTimerRunning]);
 
   // Sync distance to global state
   useEffect(() => {

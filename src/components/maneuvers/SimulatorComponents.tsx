@@ -100,7 +100,7 @@ export const TopDownCar: React.FC<{
       {/* Indicators */}
       <AnimatePresence>
         {(indicator === 'left' || indicator === 'hazard') && (
-          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: "linear" }}>
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
             <circle cx="28" cy="-14" r="3.5" fill="#fbbf24" />
             <circle cx="-32" cy="-14" r="3.5" fill="#fbbf24" />
             <circle cx="28" cy="-14" r="8" fill="url(#indicatorGlow)" />
@@ -110,7 +110,7 @@ export const TopDownCar: React.FC<{
       </AnimatePresence>
       <AnimatePresence>
         {(indicator === 'right' || indicator === 'hazard') && (
-          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: "linear" }}>
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
             <circle cx="28" cy="14" r="3.5" fill="#fbbf24" />
             <circle cx="-32" cy="14" r="3.5" fill="#fbbf24" />
             <circle cx="28" cy="14" r="8" fill="url(#indicatorGlow)" />
@@ -128,7 +128,7 @@ export const TopDownCar: React.FC<{
           strokeWidth="2"
           strokeDasharray="4,4"
           animate={{ rotate: 360 }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
           opacity="0.3"
         />
       )}
