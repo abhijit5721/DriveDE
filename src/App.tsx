@@ -68,6 +68,16 @@ export default function App() {
   const [reportUserId, setReportUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    const handleOnline = () => {
+      console.log('[Network] App is back online, processing sync queue...');
+      import('./services/supabaseSync').then(m => m.processSyncQueue());
+    };
+    
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const reportId = params.get('report');
     if (reportId) {
