@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PiggyBank, 
@@ -26,7 +26,7 @@ interface BudgetEstimatorProps {
 }
 
 export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
-  const { language, userProgress, licenseType, updateFixedCosts, setHourlyRate45, isPremium } = useAppStore();
+  const { language, userProgress, licenseType, updateFinanceSettings, isPremium } = useAppStore();
   const isDE = language === 'de';
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -61,6 +61,21 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
     hourlyRate: hourlyRate45
   });
 
+  // Sync local state when modal opens
+  useEffect(() => {
+    if (isSettingsOpen) {
+      setEditValues({
+        registration: costs.registration,
+        theoryExam: costs.theoryExam,
+        practicalExam: costs.practicalExam,
+        learningMaterial: costs.learningMaterial,
+        firstAid: costs.firstAid,
+        visionTest: costs.visionTest,
+        hourlyRate: hourlyRate45
+      });
+    }
+  }, [isSettingsOpen, costs, hourlyRate45]);
+
   const handleSave = () => {
     // Validation: Ensure no negative values
     const hasNegative = Object.values(editValues).some(v => Number(v) < 0);
@@ -69,15 +84,15 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
       return;
     }
 
-    updateFixedCosts({
+    updateFinanceSettings({
       registration: Number(editValues.registration),
       theoryExam: Number(editValues.theoryExam),
       practicalExam: Number(editValues.practicalExam),
       learningMaterial: Number(editValues.learningMaterial),
       firstAid: Number(editValues.firstAid),
       visionTest: Number(editValues.visionTest),
-    });
-    setHourlyRate45(Number(editValues.hourlyRate));
+    }, Number(editValues.hourlyRate));
+    
     setIsSettingsOpen(false);
   };
 

@@ -445,20 +445,29 @@ export const useAppStore = create<AppState>()(
           };
         }),
 
-      updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) =>
+      updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => {
+        get().updateFinanceSettings(costs);
+      },
+
+      updateFinanceSettings: (costs: Partial<UserProgress['fixedCosts']>, rate?: number) =>
         set((state) => {
+          const nextCosts = { ...state.userProgress.fixedCosts, ...costs };
+          const nextRate = rate !== undefined ? rate : state.userProgress.hourlyRate45;
+          
           const nextState = {
             ...state,
             userProgress: {
               ...state.userProgress,
-              fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
+              fixedCosts: nextCosts,
+              hourlyRate45: nextRate,
             },
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             userProgress: {
               ...state.userProgress,
-              fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
+              fixedCosts: nextCosts,
+              hourlyRate45: nextRate,
             },
           };
         }),

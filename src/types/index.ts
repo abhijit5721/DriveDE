@@ -216,6 +216,7 @@ export interface AppState {
   removeMistake: (questionId: string) => void;
   setHourlyRate45: (rate: number) => void;
   updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => void;
+  updateFinanceSettings: (costs: Partial<UserProgress['fixedCosts']>, rate?: number) => void;
   resetProgress: () => void;
   clearDrivingHistory: () => void;
   enableDemoMode: () => void;
