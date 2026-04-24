@@ -928,7 +928,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 return [newPoint];
               });
             },
-            (error) => console.error('[Tracker] GPS Error:', error),
+            (error) => {
+              console.error('[Tracker] GPS Error:', error);
+              if (error.code === 1) {
+                toast.error(isDE ? 'Standortzugriff verweigert. Bitte aktiviere GPS in den Einstellungen.' : 'Location access denied. Please enable GPS in settings.');
+              } else {
+                toast.error(isDE ? 'GPS-Fehler. Bitte überprüfe deine Verbindung.' : 'GPS error. Please check your connection.');
+              }
+            },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
           );
         }

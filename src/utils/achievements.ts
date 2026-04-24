@@ -1,18 +1,21 @@
-import { useAppStore } from '../store/useAppStore';
+import { AppState } from '../types';
 import { achievements } from '../data/achievements';
 import toast from 'react-hot-toast';
 
-export function checkAndUnlockAchievements() {
-  const { userProgress, unlockAchievement } = useAppStore.getState();
+export function checkAndUnlockAchievements(state: AppState): string[] {
+  const { userProgress } = state;
+  const newlyUnlocked: string[] = [];
 
   achievements.forEach((achievement) => {
     if (!userProgress.unlockedAchievements.includes(achievement.id)) {
       if (achievement.criteria(userProgress)) {
-        unlockAchievement(achievement.id);
+        newlyUnlocked.push(achievement.id);
         toast.success(`Achievement Unlocked: ${achievement.title}`, {
           icon: achievement.icon,
         });
       }
     }
   });
+
+  return newlyUnlocked;
 }

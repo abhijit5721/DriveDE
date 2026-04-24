@@ -24,13 +24,16 @@ import type {
   LearningPathType,
   TransmissionType,
   UserProgress,
-} from '@/types';
+  TabType,
+} from '../types';
 import {
   ensureProfileFromState,
   syncCompletedLesson,
   syncDrivingSession,
   deleteDrivingSessionFromCloud,
   syncQuizAttempt,
+  resetAllDataFromCloud,
+  clearDrivingHistoryFromCloud,
 } from '../services/supabaseSync';
 
 /**
@@ -62,39 +65,58 @@ const initialProgress: UserProgress = {
 };
 
 /**
- * Automatically sets the correct LearningPath and TransmissionType based on the selected license.
+ * Helper to derive default selection state based on license type.
  */
 const deriveSelectionState = (type: LicenseType) => {
-  let learningPath: LearningPathType = null;
-  let transmissionType: TransmissionType = null;
-
-  if (type === 'manual') {
-    learningPath = 'standard';
-    transmissionType = 'manual';
-  } else if (type === 'automatic') {
-    learningPath = 'standard';
-    transmissionType = 'automatic';
-  } else if (type === 'umschreibung') {
-    learningPath = 'umschreibung';
-    transmissionType = null;
-  } else if (type === 'umschreibung-manual') {
-    learningPath = 'umschreibung';
-    transmissionType = 'manual';
-  } else if (type === 'umschreibung-automatic') {
-    learningPath = 'umschreibung';
-    transmissionType = 'automatic';
+  if (type === 'B') {
+    return {
+      learningPath: 'fahrschule' as const,
+      transmissionType: 'manual' as const,
+    };
   }
-
-  return { learningPath, transmissionType };
+  if (type === 'B197') {
+    return {
+      learningPath: 'fahrschule' as const,
+      transmissionType: 'automatic' as const,
+    };
+  }
+  if (type === 'B78') {
+    return {
+      learningPath: 'fahrschule' as const,
+      transmissionType: 'automatic' as const,
+    };
+  }
+  return {
+    learningPath: null,
+    transmissionType: null,
+  };
 };
 
 /**
- * Helper to check if two dates fall on the same calendar day.
+ * Custom storage for Zustand using idb-keyval (IndexedDB).
+ * This allows storing larger datasets (like route coordinates) without hitting the 5MB localStorage limit.
  */
-const isSameDay = (date1: Date, date2: Date) => {
-  return date1.getFullYear() === date2.getFullYear() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getDate() === date2.getDate();
+const idbStorage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    return (await getIDB(name)) || null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await setIDB(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await delIDB(name);
+  },
+};
+
+/**
+ * Helper to check if two dates are the same day.
+ */
+const isSameDay = (d1: Date, d2: Date) => {
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
 };
 
 /**
@@ -162,315 +184,348 @@ export const useAppStore = create<AppState>()(
           const licenseType =
             path === null
               ? null
-              : path === 'standard'
-                ? state.transmissionType === 'manual'
-                  ? 'manual'
-                  : state.transmissionType === 'automatic'
-                    ? 'automatic'
-                    : null
-                : state.transmissionType === 'manual'
-                  ? 'umschreibung-manual'
-                  : state.transmissionType === 'automatic'
-                    ? 'umschreibung-automatic'
-                    : 'umschreibung';
-
+              : path === 'umschreibung'
+                ? 'B'
+                : state.licenseType || 'B';
+          
           const nextState = {
             ...state,
             learningPath: path,
-            licenseType,
+            licenseType: licenseType as LicenseType,
           };
           void ensureProfileFromState(nextState as AppState);
-          return { learningPath: path, licenseType };
+          return {
+            learningPath: path,
+            licenseType: licenseType as LicenseType,
+          };
         }),
 
       setTransmissionType: (type: TransmissionType) =>
         set((state) => {
-          const licenseType =
-            type === null
-              ? state.learningPath === 'umschreibung'
-                ? 'umschreibung'
-                : null
-              : state.learningPath === 'umschreibung'
-                ? type === 'manual'
-                  ? 'umschreibung-manual'
-                  : 'umschreibung-automatic'
-                : type;
+          const nextState = { ...state, transmissionType: type };
+          void ensureProfileFromState(nextState as AppState);
+          return { transmissionType: type };
+        }),
+
+      setPremium: (isPremium: boolean) => set({ isPremium }),
+
+      setAuthState: (email, status, displayName, userId) =>
+        set({
+          authEmail: email,
+          authStatus: status,
+          authDisplayName: displayName,
+          authUserId: userId,
+        }),
+
+      unlockAchievement: (id) =>
+        set((state) => {
+          if (state.userProgress.unlockedAchievements.includes(id)) return state;
+          return {
+            userProgress: {
+              ...state.userProgress,
+              unlockedAchievements: [...state.userProgress.unlockedAchievements, id],
+            },
+          };
+        }),
+
+      updateStreak: () =>
+        set((state) => {
+          const now = new Date();
+          const lastDate = state.userProgress.lastActivityDate
+            ? new Date(state.userProgress.lastActivityDate)
+            : null;
+
+          if (!lastDate) {
+            return {
+              userProgress: {
+                ...state.userProgress,
+                currentStreak: 1,
+                lastActivityDate: now.toISOString(),
+              },
+            };
+          }
+
+          if (isSameDay(now, lastDate)) return state;
+
+          const newStreak = isYesterday(lastDate, now) ? state.userProgress.currentStreak + 1 : 1;
+
+          return {
+            userProgress: {
+              ...state.userProgress,
+              currentStreak: newStreak,
+              lastActivityDate: now.toISOString(),
+            },
+          };
+        }),
+
+      completeLesson: (lessonId) =>
+        set((state) => {
+          if (state.userProgress.completedLessons.includes(lessonId)) return state;
+
+          const nextProgress = {
+            ...state.userProgress,
+            completedLessons: [...state.userProgress.completedLessons, lessonId],
+          };
 
           const nextState = {
             ...state,
-            transmissionType: type,
-            licenseType,
+            userProgress: nextProgress,
           };
-          void ensureProfileFromState(nextState as AppState);
-          return { transmissionType: type, licenseType };
-        }),
 
-      setPremium: (premium: boolean) =>
-        set((state) => {
-          const nextState = { ...state, isPremium: premium };
-          void ensureProfileFromState(nextState as AppState);
-          return { isPremium: premium };
-        }),
+          // Check for achievements
+          const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          if (newlyUnlocked.length > 0) {
+            nextProgress.unlockedAchievements = [
+              ...nextProgress.unlockedAchievements,
+              ...newlyUnlocked,
+            ];
+          }
 
-      setAuthState: (email, status, displayName = null, userId = null) =>
-        set(() => ({ 
-          authEmail: email, 
-          authStatus: status, 
-          authDisplayName: displayName,
-          authUserId: userId
-        })),
-
-      unlockAchievement: (achievementId: string) =>
-        set((state) => ({
-          userProgress: {
-            ...state.userProgress,
-            unlockedAchievements: [
-              ...state.userProgress.unlockedAchievements,
-              achievementId,
-            ],
-          },
-        })),
-      
-      updateStreak: () => {
-        const state = get();
-        const today = new Date();
-        const lastActivity = state.userProgress.lastActivityDate ? new Date(state.userProgress.lastActivityDate) : null;
-
-        if (lastActivity && isSameDay(lastActivity, today)) {
-          return; // Already active today
-        }
-
-        let newStreak = state.userProgress.currentStreak;
-        if (lastActivity && isYesterday(lastActivity, today)) {
-          newStreak += 1;
-        } else {
-          newStreak = 1;
-        }
-
-        set({
-          userProgress: {
-            ...state.userProgress,
-            currentStreak: newStreak,
-            lastActivityDate: today.toISOString(),
-          },
-        });
-      },
-
-      completeLesson: (lessonId: string) => {
-        const state = get();
-        const completedLessons = state.userProgress.completedLessons.includes(lessonId)
-          ? state.userProgress.completedLessons
-          : [...state.userProgress.completedLessons, lessonId];
-
-        if (!state.userProgress.completedLessons.includes(lessonId)) {
           void syncCompletedLesson(lessonId);
-        }
+          void ensureProfileFromState(nextState as AppState);
 
-        set({
-          userProgress: {
+          return { userProgress: nextProgress };
+        }),
+
+      addDrivingSession: (session) =>
+        set((state) => {
+          const newSession = {
+            ...session,
+            id: `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          };
+
+          const nextProgress = {
             ...state.userProgress,
-            completedLessons,
-          },
-        });
-        
-        get().updateStreak();
-        checkAndUnlockAchievements();
-      },
+            drivingSessions: [newSession, ...state.userProgress.drivingSessions],
+            totalDrivingMinutes: state.userProgress.totalDrivingMinutes + Number(session.duration),
+          };
 
-      addDrivingSession: (session: Omit<DrivingSession, 'id'>) => {
-        const state = get();
-        const newSession: DrivingSession = {
-          ...session,
-          id: Date.now().toString(),
-        };
+          if (session.type !== 'normal') {
+            const key = session.type as keyof typeof state.userProgress.specialDrivingMinutes;
+            nextProgress.specialDrivingMinutes = {
+              ...nextProgress.specialDrivingMinutes,
+              [key]: nextProgress.specialDrivingMinutes[key] + Number(session.duration),
+            };
+          }
 
-        const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
-        if (session.type === 'ueberland') {
-          newSpecialMinutes.ueberland += session.duration;
-        } else if (session.type === 'autobahn') {
-          newSpecialMinutes.autobahn += session.duration;
-        } else if (session.type === 'nacht') {
-          newSpecialMinutes.nacht += session.duration;
-        }
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
 
-        void syncDrivingSession(newSession, state.transmissionType);
+          // Check for achievements
+          const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          if (newlyUnlocked.length > 0) {
+            nextProgress.unlockedAchievements = [
+              ...nextProgress.unlockedAchievements,
+              ...newlyUnlocked,
+            ];
+          }
 
-        set({
-          userProgress: {
-            ...state.userProgress,
-            drivingSessions: [...state.userProgress.drivingSessions, newSession],
-            totalDrivingMinutes: state.userProgress.totalDrivingMinutes + session.duration,
-            specialDrivingMinutes: newSpecialMinutes,
-          },
-        });
+          void syncDrivingSession(newSession, state.transmissionType);
+          void ensureProfileFromState(nextState as AppState);
 
-        get().updateStreak();
-        checkAndUnlockAchievements();
-      },
+          return { userProgress: nextProgress };
+        }),
 
-      updateDrivingSession: (sessionId: string, updatedFields: Partial<DrivingSession>) => {
-        const state = get();
-        const sessionIndex = state.userProgress.drivingSessions.findIndex((s) => s.id === sessionId);
-        if (sessionIndex === -1) return;
+      updateDrivingSession: (sessionId, updates) =>
+        set((state) => {
+          const sessionIndex = state.userProgress.drivingSessions.findIndex((s) => s.id === sessionId);
+          if (sessionIndex === -1) return state;
 
-        const oldSession = state.userProgress.drivingSessions[sessionIndex];
-        const newSession = { ...oldSession, ...updatedFields };
+          const oldSession = state.userProgress.drivingSessions[sessionIndex];
+          const updatedSession = { ...oldSession, ...updates };
+          const newSessions = [...state.userProgress.drivingSessions];
+          newSessions[sessionIndex] = updatedSession;
 
-        const newSessions = [...state.userProgress.drivingSessions];
-        newSessions[sessionIndex] = newSession;
+          // Recalculate totals
+          let totalMins = 0;
+          const specialMins = { ueberland: 0, autobahn: 0, nacht: 0 };
 
-        // Recalculate totals
-        let totalMinutes = 0;
-        const specialMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
+          newSessions.forEach((s) => {
+            const d = Number(s.duration) || 0;
+            totalMins += d;
+            if (s.type !== 'normal') {
+              const key = s.type as keyof typeof specialMins;
+              specialMins[key] += d;
+            }
+          });
 
-        newSessions.forEach(s => {
-          totalMinutes += s.duration;
-          if (s.type === 'ueberland') specialMinutes.ueberland += s.duration;
-          else if (s.type === 'autobahn') specialMinutes.autobahn += s.duration;
-          else if (s.type === 'nacht') specialMinutes.nacht += s.duration;
-        });
-
-        void syncDrivingSession(newSession, state.transmissionType);
-
-        set({
-          userProgress: {
+          const nextProgress = {
             ...state.userProgress,
             drivingSessions: newSessions,
-            totalDrivingMinutes: totalMinutes,
-            specialDrivingMinutes: specialMinutes,
-          },
-        });
-      },
+            totalDrivingMinutes: totalMins,
+            specialDrivingMinutes: specialMins,
+          };
 
-      removeDrivingSession: (sessionId: string) => {
-        const state = get();
-        const session = state.userProgress.drivingSessions.find((s) => s.id === sessionId);
-        if (!session) return;
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
 
-        void deleteDrivingSessionFromCloud(sessionId);
+          void syncDrivingSession(updatedSession, state.transmissionType);
+          void ensureProfileFromState(nextState as AppState);
 
-        const newSpecialMinutes = { ...state.userProgress.specialDrivingMinutes };
-        if (session.type === 'ueberland') {
-          newSpecialMinutes.ueberland -= session.duration;
-        } else if (session.type === 'autobahn') {
-          newSpecialMinutes.autobahn -= session.duration;
-        } else if (session.type === 'nacht') {
-          newSpecialMinutes.nacht -= session.duration;
-        }
+          return { userProgress: nextProgress };
+        }),
 
-        set({
-          userProgress: {
+      removeDrivingSession: (sessionId) =>
+        set((state) => {
+          const session = state.userProgress.drivingSessions.find((s) => s.id === sessionId);
+          if (!session) return state;
+
+          const newSessions = state.userProgress.drivingSessions.filter((s) => s.id !== sessionId);
+
+          // Recalculate totals
+          let totalMins = 0;
+          const specialMins = { ueberland: 0, autobahn: 0, nacht: 0 };
+
+          newSessions.forEach((s) => {
+            const d = Number(s.duration) || 0;
+            totalMins += d;
+            if (s.type !== 'normal') {
+              const key = s.type as keyof typeof specialMins;
+              specialMins[key] += d;
+            }
+          });
+
+          const nextProgress = {
             ...state.userProgress,
-            drivingSessions: state.userProgress.drivingSessions.filter((s) => s.id !== sessionId),
-            totalDrivingMinutes: state.userProgress.totalDrivingMinutes - session.duration,
-            specialDrivingMinutes: newSpecialMinutes,
-          },
-        });
-      },
+            drivingSessions: newSessions,
+            totalDrivingMinutes: totalMins,
+            specialDrivingMinutes: specialMins,
+          };
 
-      setQuizScore: (quizId: string, score: number) =>
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+
+          void deleteDrivingSessionFromCloud(sessionId);
+          void ensureProfileFromState(nextState as AppState);
+
+          return { userProgress: nextProgress };
+        }),
+
+      setQuizScore: (quizId, score) =>
         set((state) => {
+          const nextProgress = {
+            ...state.userProgress,
+            quizScores: {
+              ...state.userProgress.quizScores,
+              [quizId]: Math.max(state.userProgress.quizScores[quizId] || 0, score),
+            },
+          };
+
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+
+          // Check for achievements
+          const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          if (newlyUnlocked.length > 0) {
+            nextProgress.unlockedAchievements = [
+              ...nextProgress.unlockedAchievements,
+              ...newlyUnlocked,
+            ];
+          }
+
           void syncQuizAttempt(quizId, score);
-          return {
-            userProgress: {
-              ...state.userProgress,
-              quizScores: {
-                ...state.userProgress.quizScores,
-                [quizId]: score,
-              },
-            },
-          };
+          void ensureProfileFromState(nextState as AppState);
+
+          return { userProgress: nextProgress };
         }),
 
-      addMistake: (questionId: string) =>
+      addMistake: (questionId) =>
         set((state) => {
-          const currentMistakes = Array.isArray(state.userProgress.incorrectQuestions) 
-            ? state.userProgress.incorrectQuestions 
-            : [];
-            
-          if (currentMistakes.includes(questionId)) return state;
-          
-          const nextMistakes = [...currentMistakes, questionId];
+          if (state.userProgress.incorrectQuestions.includes(questionId)) return state;
+
+          const nextProgress = {
+            ...state.userProgress,
+            incorrectQuestions: [...state.userProgress.incorrectQuestions, questionId],
+          };
+
           const nextState = {
             ...state,
-            userProgress: {
-              ...state.userProgress,
-              incorrectQuestions: nextMistakes,
-            },
+            userProgress: nextProgress,
           };
+
           void ensureProfileFromState(nextState as AppState);
-          return {
-            userProgress: {
-              ...state.userProgress,
-              incorrectQuestions: nextMistakes,
-            },
-          };
+          return { userProgress: nextProgress };
         }),
 
-      removeMistake: (questionId: string) =>
+      removeMistake: (questionId) =>
         set((state) => {
-          const currentMistakes = Array.isArray(state.userProgress.incorrectQuestions) 
-            ? state.userProgress.incorrectQuestions 
-            : [];
+          const nextProgress = {
+            ...state.userProgress,
+            incorrectQuestions: state.userProgress.incorrectQuestions.filter((id) => id !== questionId),
+          };
 
-          const nextMistakes = currentMistakes.filter((id) => id !== questionId);
           const nextState = {
             ...state,
-            userProgress: {
-              ...state.userProgress,
-              incorrectQuestions: nextMistakes,
-            },
+            userProgress: nextProgress,
           };
+
           void ensureProfileFromState(nextState as AppState);
-          return {
-            userProgress: {
-              ...state.userProgress,
-              incorrectQuestions: nextMistakes,
-            },
-          };
+          return { userProgress: nextProgress };
         }),
-      
-      setHourlyRate45: (rate: number) => {
-        get().updateFinanceSettings({}, rate);
-      },
 
-      updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => {
-        get().updateFinanceSettings(costs);
-      },
-
-      updateFinanceSettings: (costs: Partial<UserProgress['fixedCosts']>, rate?: number) =>
+      setHourlyRate45: (rate) =>
         set((state) => {
-          const nextCosts = { ...state.userProgress.fixedCosts, ...costs };
-          const nextRate = rate !== undefined ? rate : state.userProgress.hourlyRate45;
-          
+          const nextProgress = {
+            ...state.userProgress,
+            hourlyRate45: rate,
+          };
+
           const nextState = {
             ...state,
-            userProgress: {
-              ...state.userProgress,
-              fixedCosts: nextCosts,
-              hourlyRate45: nextRate,
-            },
+            userProgress: nextProgress,
           };
+
           void ensureProfileFromState(nextState as AppState);
-          return {
-            userProgress: {
-              ...state.userProgress,
-              fixedCosts: nextCosts,
-              hourlyRate45: nextRate,
-            },
+          return { userProgress: nextProgress };
+        }),
+
+      updateFixedCosts: (costs) =>
+        set((state) => {
+          const nextProgress = {
+            ...state.userProgress,
+            fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
           };
+
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+
+          void ensureProfileFromState(nextState as AppState);
+          return { userProgress: nextProgress };
+        }),
+
+      updateFinanceSettings: (costs, rate) =>
+        set((state) => {
+          const nextProgress = {
+            ...state.userProgress,
+            fixedCosts: { ...state.userProgress.fixedCosts, ...costs },
+            hourlyRate45: rate !== undefined ? rate : state.userProgress.hourlyRate45,
+          };
+
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+
+          void ensureProfileFromState(nextState as AppState);
+          return { userProgress: nextProgress };
         }),
 
       resetProgress: () => {
         // NEW: Reset cloud data as well
-        import('../services/supabaseSync').then(m => m.resetAllDataFromCloud());
+        resetAllDataFromCloud();
         set({
           userProgress: initialProgress,
           isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
-          licenseType: null,
-          learningPath: null,
-          transmissionType: null,
-          hasVisited: false,
           activeTab: 'home',
         });
       },
@@ -481,135 +536,80 @@ export const useAppStore = create<AppState>()(
             ...state.userProgress,
             drivingSessions: [],
             totalDrivingMinutes: 0,
-            specialDrivingMinutes: {
-              ueberland: 0,
-              autobahn: 0,
-              nacht: 0,
-            },
+            specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 },
           };
           const nextState = {
             ...state,
             userProgress: nextProgress,
           };
           void ensureProfileFromState(nextState as AppState);
-          // NEW: Clear from cloud as well
-          import('../services/supabaseSync').then(m => m.clearDrivingHistoryFromCloud());
+          // NEW: Clear cloud history as well
+          clearDrivingHistoryFromCloud();
           return { userProgress: nextProgress };
         }),
 
-      enableDemoMode: () => {
-        const now = new Date();
-        const demoSessions: DrivingSession[] = [
-          {
-            id: 'demo-1',
-            date: new Date(now.getTime() - 10 * 86400000).toISOString(),
-            duration: 90,
-            type: 'ueberland',
-            notes: 'Fahrt über Landstraßen, Vorbeifahrt an landwirtschaftlichen Fahrzeugen geübt.',
-            instructorName: 'Hans Müller',
-            totalDistance: 45.2,
-            locationSummary: 'Potsdam & Umland',
-            mistakes: [],
-          },
-          {
-            id: 'demo-2',
-            date: new Date(now.getTime() - 7 * 86400000).toISOString(),
-            duration: 135,
-            type: 'autobahn',
-            notes: 'A115 Richtung Dreilinden. Auffahren und Überholen bei hohem Verkehrsaufkommen.',
-            instructorName: 'Hans Müller',
-            totalDistance: 120.5,
-            locationSummary: 'A115 Autobahn',
-            mistakes: [
-              { type: 'speeding', speed: 128, limit: 120, timestamp: now.getTime() - 7 * 86400000 + 1500000 }
-            ],
-          },
-          {
-            id: 'demo-3',
-            date: new Date(now.getTime() - 3 * 86400000).toISOString(),
-            duration: 45,
-            type: 'normal',
-            notes: 'Stadtverkehr, Rechts vor Links und Zebrastreifen.',
-            instructorName: 'Hans Müller',
-            totalDistance: 12.8,
-            locationSummary: 'Berlin Mitte',
-            route: [
-              { lat: 52.5200, lng: 13.4050, timestamp: 0 },
-              { lat: 52.5210, lng: 13.4060, timestamp: 60000 },
-              { lat: 52.5220, lng: 13.4070, timestamp: 120000 },
-            ],
-            mistakes: [
-              { type: 'signal', timestamp: now.getTime() - 3 * 86400000 + 500000 },
-              { type: 'stop_sign', timestamp: now.getTime() - 3 * 86400000 + 900000 }
-            ]
-          },
-          {
-            id: 'demo-4',
-            date: new Date(now.getTime() - 1 * 86400000).toISOString(),
-            duration: 90,
-            type: 'nacht',
-            notes: 'Nachtfahrt bei Regen. Abblendlicht und Fernlicht-Einsatz.',
-            instructorName: 'Hans Müller',
-            totalDistance: 65.0,
-            locationSummary: 'Berlin Spandau',
-            mistakes: []
-          }
-        ];
+      enableDemoMode: () =>
+        set((state) => {
+          const demoSessions = [
+            {
+              id: 'demo-1',
+              date: new Date().toISOString(),
+              duration: 90,
+              type: 'ueberland' as const,
+              notes: 'Demo: Perfect countryside drive.',
+              instructorName: 'Demo Instructor',
+              route: [],
+              mistakes: [],
+              totalDistance: 15.5,
+            },
+            {
+              id: 'demo-2',
+              date: new Date(Date.now() - 86400000).toISOString(),
+              duration: 45,
+              type: 'nacht' as const,
+              notes: 'Demo: Night driving practice.',
+              instructorName: 'Demo Instructor',
+              route: [],
+              mistakes: [],
+              totalDistance: 8.2,
+            },
+          ];
 
-        set({
-          licenseType: 'manual',
-          learningPath: 'standard',
-          transmissionType: 'manual',
-          isPremium: true,
-          hasVisited: true,
-          userProgress: {
-            ...get().userProgress,
-            completedLessons: ['l-grundlagen-1', 'l-grundlagen-2', 'l-vorfahrt-1', 'l-autobahn-1'],
+          const nextProgress = {
+            ...state.userProgress,
             drivingSessions: demoSessions,
-            totalDrivingMinutes: 360,
+            totalDrivingMinutes: 135,
             specialDrivingMinutes: {
               ueberland: 90,
-              autobahn: 135,
-              nacht: 90,
+              autobahn: 0,
+              nacht: 45,
             },
-            unlockedAchievements: ['first-drive', 'highway-hero', 'night-owl'],
-            currentStreak: 5,
-            quizScores: {
-              'q-vorfahrt': 95,
-              'q-technik': 100
-            }
-          }
-        });
-      },
+          };
+
+          return {
+            userProgress: nextProgress,
+            isPremium: true,
+          };
+        }),
     }),
     {
       name: 'drivede-storage',
-      storage: createJSONStorage(() => ({
-        getItem: async (name): Promise<string | null> => {
-          // 1. Try to get from IndexedDB first
-          const value = await getIDB(name);
-          if (value) return value as string;
-
-          // 2. Fallback to localStorage for one-time migration
-          if (typeof window !== 'undefined') {
-            const legacyValue = localStorage.getItem(name);
-            if (legacyValue) {
-              console.log('Migrating legacy localStorage data to IndexedDB...');
-              await setIDB(name, legacyValue);
-              // We don't remove immediately to be safe, but you could:
-              // localStorage.removeItem(name);
-              return legacyValue;
-            }
-          }
-          return null;
-        },
-        setItem: async (name, value): Promise<void> => {
-          await setIDB(name, value);
-        },
-        removeItem: async (name): Promise<void> => {
-          await delIDB(name);
-        },
-      } as StateStorage)),
+      storage: createJSONStorage(() => idbStorage),
+      partialize: (state) => ({
+        language: state.language,
+        darkMode: state.darkMode,
+        licenseType: state.licenseType,
+        learningPath: state.learningPath,
+        transmissionType: state.transmissionType,
+        isPremium: state.isPremium,
+        authEmail: state.authEmail,
+        authDisplayName: state.authDisplayName,
+        authUserId: state.authUserId,
+        authStatus: state.authStatus,
+        userProgress: state.userProgress,
+        hasVisited: state.hasVisited,
+        activeTab: state.activeTab,
+      }),
     }
   )
 );
