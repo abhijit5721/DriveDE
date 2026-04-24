@@ -523,8 +523,12 @@ export const useAppStore = create<AppState>()(
         resetAllDataFromCloud();
         set({
           userProgress: initialProgress,
+          licenseType: null,
+          learningPath: null,
+          transmissionType: null,
           isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
           activeTab: 'home',
+          hasVisited: false,
         });
       },
 
