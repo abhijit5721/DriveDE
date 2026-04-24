@@ -102,15 +102,19 @@ export default function App() {
   // --- AUTH & DATA SYNC LOGIC ---
   useEffect(() => {
     const unsubscribe = subscribeToAuthChanges(async (session) => {
-      const isNewUser = !useAppStore.getState().authEmail && !!session?.user;
-      
-      if (session?.user) {
-        const { user } = session;
-        const displayName = user.user_metadata?.full_name || user.email || null;
-        console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
-        setAuthState(user.email || null, 'signed_in', displayName, user.id);
+      try {
+        const isNewUser = !useAppStore.getState().authEmail && !!session?.user;
         
-        const remoteData = await hydrateFromSupabase();
+        if (session?.user) {
+          const { user } = session;
+          const displayName = user.user_metadata?.full_name || user.email || null;
+          console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
+          setAuthState(user.email || null, 'signed_in', displayName, user.id);
+          
+          const remoteData = await hydrateFromSupabase().catch(err => {
+            console.error('[App] Hydration failed:', err);
+            return null;
+          });
         if (remoteData) {
           console.log('[App] State hydrated from Supabase');
         }
@@ -188,11 +192,15 @@ export default function App() {
                 };
             });
         }
-
-      } else {
+        } else {
+          setAuthState(null, 'guest', null, null);
+        }
+      } catch (error) {
+        console.error('[App] Auth subscription error:', error);
         setAuthState(null, 'guest', null, null);
+      } finally {
+        setIsAuthLoading(false);
       }
-      setIsAuthLoading(false);
     });
 
     return () => {
