@@ -197,6 +197,8 @@ export interface AppState {
   authStatus: 'guest' | 'signed_in';
   userProgress: UserProgress;
   hasVisited: boolean;
+  activeTab: TabType;
+  setActiveTab: (tab: TabType) => void;
   setHasVisited: (hasVisited: boolean) => void;
   setLanguage: (lang: Language) => void;
   toggleDarkMode: () => void;

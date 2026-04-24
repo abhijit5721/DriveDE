@@ -121,6 +121,9 @@ export const useAppStore = create<AppState>()(
       authStatus: 'guest',
       userProgress: initialProgress,
       hasVisited: false,
+      activeTab: 'home',
+
+      setActiveTab: (tab) => set({ activeTab: tab }),
 
       setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
 
@@ -468,6 +471,7 @@ export const useAppStore = create<AppState>()(
           learningPath: null,
           transmissionType: null,
           hasVisited: false,
+          activeTab: 'home',
         });
       },
 

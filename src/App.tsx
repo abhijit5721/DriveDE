@@ -43,7 +43,6 @@ import { PublicReport } from './components/maneuvers/PublicReport';
 
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedLegalPage, setSelectedLegalPage] = useState<LegalPageType | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -62,6 +61,8 @@ export default function App() {
     hasVisited,
     setHasVisited,
     resetProgress,
+    activeTab,
+    setActiveTab,
   } = useAppStore();
   
   const [reportUserId, setReportUserId] = useState<string | null>(null);
