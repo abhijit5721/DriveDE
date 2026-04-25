@@ -1,3 +1,8 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ */
+
 import { Shield, FileText, Scale, Building2, AlertTriangle, ChevronRight } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 

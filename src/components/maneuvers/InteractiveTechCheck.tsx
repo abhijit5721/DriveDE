@@ -1,3 +1,8 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ */
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Info, Droplets, Thermometer, Battery, Droplet, Gauge } from 'lucide-react';

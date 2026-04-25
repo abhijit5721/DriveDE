@@ -1,3 +1,13 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ * 
+ * AnimatedManeuver.tsx
+ * 
+ * Interactive 3D-style animations for driving maneuvers (parking, three-point turns, etc).
+ * Uses Framer Motion for state interpolation and SVG for top-down rendering.
+ */
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

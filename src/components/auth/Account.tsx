@@ -1,3 +1,8 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ */
+
 import { useState } from 'react';
 import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';

@@ -1,3 +1,8 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ */
+
 import { useState, useEffect } from 'react';
 import { 
   Car, BadgeCheck, Cog, Zap, Users, Trophy, Shield, 

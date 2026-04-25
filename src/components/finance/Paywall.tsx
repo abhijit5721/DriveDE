@@ -1,3 +1,8 @@
+/**
+ * (c) 2026 DriveDE. All rights reserved.
+ * This source code is proprietary and protected under international copyright law.
+ */
+
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { Check, X, Clock, Calendar, Sparkles, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
