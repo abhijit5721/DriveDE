@@ -289,14 +289,14 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 50, y: 140, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start (Facing Right)
-      { x: 80, y: 165, rotation: 0, wheel: 0, indicator: 'right' as const },     // 1: Pull over Right
-      { x: 80, y: 165, rotation: 0, wheel: -90, indicator: 'left' as const },    // 2: Steer Left
-      { x: 250, y: 85, rotation: -70, wheel: -90, indicator: 'left' as const },   // 3: Forward across (to Top curb)
-      { x: 250, y: 85, rotation: -70, wheel: 90, indicator: 'right' as const },  // 4: Steer Right
-      { x: 320, y: 165, rotation: -110, wheel: 90, indicator: 'right' as const }, // 5: Reverse across (to Bottom curb)
-      { x: 320, y: 165, rotation: -110, wheel: -90, indicator: 'left' as const }, // 6: Steer Left
-      { x: 50, y: 125, rotation: -180, wheel: 0, indicator: 'none' as const },    // 7: Done
+      { x: 225, y: 220, rotation: -90, wheel: 0, indicator: 'none' as const },      // 0: Start (Facing Up, Right Lane)
+      { x: 245, y: 200, rotation: -90, wheel: 0, indicator: 'right' as const },    // 1: Pull over Right
+      { x: 245, y: 200, rotation: -90, wheel: -90, indicator: 'left' as const },   // 2: Steer Left
+      { x: 155, y: 110, rotation: -170, wheel: -90, indicator: 'left' as const },  // 3: Forward across (to Left curb)
+      { x: 155, y: 110, rotation: -170, wheel: 90, indicator: 'right' as const },  // 4: Steer Right
+      { x: 245, y: 180, rotation: -260, wheel: 90, indicator: 'right' as const },  // 5: Reverse across (to Right curb)
+      { x: 245, y: 180, rotation: -260, wheel: -90, indicator: 'left' as const },  // 6: Steer Left
+      { x: 175, y: 220, rotation: -270, wheel: 0, indicator: 'none' as const },    // 7: Done (Facing Down, Left Lane)
     ];
 
     const current = states[step] || states[0];
@@ -322,10 +322,15 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {step === 5 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
+        {/* Grass Background */}
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
-        <rect x="0" y="70" width="400" height="110" fill="#334155" />
-        <rect x="0" y="70" width="400" height="2" fill="#94a3b8" />
-        <rect x="0" y="178" width="400" height="2" fill="#94a3b8" />
+        {/* Vertical Road */}
+        <rect x="145" y="0" width="110" height="250" fill="#334155" />
+        {/* Center Line */}
+        <line x1="200" y1="0" x2="200" y2="250" stroke="#94a3b8" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
+        {/* Curbs */}
+        <rect x="143" y="0" width="2" height="250" fill="#94a3b8" />
+        <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
         
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />

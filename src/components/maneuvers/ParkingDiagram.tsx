@@ -130,12 +130,13 @@ function ReverseParkingDiagram({ step }: { step: number }) {
 
 function ThreePointTurnDiagram({ step }: { step: number }) {
   const positions = [
-    { x: 40, y: 80, rotate: 0 }, // Step 1: Check traffic
-    { x: 40, y: 80, rotate: 0 }, // Step 2: Signal left
-    { x: 150, y: 40, rotate: 45 }, // Step 3: First forward
-    { x: 150, y: 40, rotate: 45 }, // Step 4: Stop, check
-    { x: 150, y: 120, rotate: -45 }, // Step 5: Reverse
-    { x: 240, y: 80, rotate: 180 }, // Step 6: Complete
+    { x: 160, y: 140, rotate: -90 }, // Step 0: Pull over right
+    { x: 175, y: 120, rotate: -90 }, // Step 1: Check traffic
+    { x: 105, y: 60, rotate: -170 }, // Step 2: Full lock left
+    { x: 105, y: 60, rotate: -170 }, // Step 3: Reverse gear, check
+    { x: 175, y: 110, rotate: -260 }, // Step 4: Reverse to opposite curb
+    { x: 175, y: 110, rotate: -260 }, // Step 5: First gear, check
+    { x: 125, y: 140, rotate: -270 }, // Step 6: Complete
   ];
 
   const pos = positions[Math.min(step, positions.length - 1)];
@@ -143,17 +144,17 @@ function ThreePointTurnDiagram({ step }: { step: number }) {
   return (
     <>
       {/* Road */}
-      <rect x="0" y="50" width="280" height="60" fill="#94a3b8" className="dark:fill-slate-600" />
-      <line x1="0" y1="80" x2="280" y2="80" stroke="#fbbf24" strokeWidth="2" strokeDasharray="10 5" />
+      <rect x="100" y="0" width="80" height="160" fill="#94a3b8" className="dark:fill-slate-600" />
+      <line x1="140" y1="0" x2="140" y2="160" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="10 5" opacity="0.3" />
       
       {/* Curbs */}
-      <rect x="0" y="40" width="280" height="10" fill="#64748b" className="dark:fill-slate-500" />
-      <rect x="0" y="110" width="280" height="10" fill="#64748b" className="dark:fill-slate-500" />
+      <rect x="98" y="0" width="2" height="160" fill="#64748b" className="dark:fill-slate-500" />
+      <rect x="180" y="0" width="2" height="160" fill="#64748b" className="dark:fill-slate-500" />
       
       {/* Path visualization */}
-      {step >= 2 && (
+      {step >= 1 && (
         <path
-          d="M 40 80 Q 100 20 150 40"
+          d="M 160 140 Q 170 100 105 60"
           fill="none"
           stroke="#3b82f6"
           strokeWidth="2"
@@ -161,9 +162,9 @@ function ThreePointTurnDiagram({ step }: { step: number }) {
           opacity="0.5"
         />
       )}
-      {step >= 4 && (
+      {step >= 3 && (
         <path
-          d="M 150 40 Q 170 80 150 120"
+          d="M 105 60 Q 140 85 175 110"
           fill="none"
           stroke="#3b82f6"
           strokeWidth="2"
@@ -173,7 +174,7 @@ function ThreePointTurnDiagram({ step }: { step: number }) {
       )}
       {step >= 5 && (
         <path
-          d="M 150 120 Q 200 100 240 80"
+          d="M 175 110 Q 150 125 125 140"
           fill="none"
           stroke="#3b82f6"
           strokeWidth="2"
@@ -188,7 +189,7 @@ function ThreePointTurnDiagram({ step }: { step: number }) {
       </g>
       
       {/* Check indicators */}
-      {(step === 0 || step === 3) && (
+      {(step === 1 || step === 3 || step === 5) && (
         <text x={pos.x} y={pos.y - 25} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold" className="animate-pulse">
           👀
         </text>
