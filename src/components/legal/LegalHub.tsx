@@ -5,6 +5,7 @@
 
 import { Shield, FileText, Scale, Building2, AlertTriangle, ChevronRight } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface LegalHubProps {
   onOpenPage: (page: 'privacy' | 'terms' | 'gdpr' | 'impressum' | 'disclaimer') => void;
@@ -12,52 +13,42 @@ interface LegalHubProps {
 
 export function LegalHub({ onOpenPage }: LegalHubProps) {
   const language = useAppStore((state) => state.language);
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
 
   const items = [
     {
       id: 'privacy' as const,
       icon: Shield,
-      title: isDE ? 'Datenschutzerklärung' : 'Privacy Policy',
-      subtitle: isDE
-        ? 'Wie Daten verarbeitet, gespeichert und geschützt werden'
-        : 'How data is processed, stored, and protected',
+      title: t.legal.privacy,
+      subtitle: t.legal.hub.items.privacy,
       color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
     },
     {
       id: 'terms' as const,
       icon: FileText,
-      title: isDE ? 'AGB / Nutzungsbedingungen' : 'Terms & Conditions',
-      subtitle: isDE
-        ? 'Regeln für Nutzung, Haftung und Inhalte'
-        : 'Rules for usage, liability, and content',
+      title: t.legal.terms,
+      subtitle: t.legal.hub.items.terms,
       color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
     },
     {
       id: 'gdpr' as const,
       icon: Scale,
-      title: isDE ? 'DSGVO & Betroffenenrechte' : 'GDPR & Data Rights',
-      subtitle: isDE
-        ? 'Auskunft, Löschung, Berichtigung und Datenexport'
-        : 'Access, deletion, rectification, and data export rights',
+      title: t.legal.gdpr,
+      subtitle: t.legal.hub.items.gdpr,
       color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
     },
     {
       id: 'impressum' as const,
       icon: Building2,
-      title: isDE ? 'Impressum' : 'Imprint / Legal Notice',
-      subtitle: isDE
-        ? 'Anbieterkennzeichnung nach deutschem Recht'
-        : 'Provider and legal notice information under German law',
+      title: t.legal.impressum,
+      subtitle: t.legal.hub.items.impressum,
       color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
     },
     {
       id: 'disclaimer' as const,
       icon: AlertTriangle,
-      title: isDE ? 'Haftungsausschluss & Sicherheitshinweis' : 'Disclaimer & Safety Notice',
-      subtitle: isDE
-        ? 'Wichtige Hinweise zur Nutzung der App'
-        : 'Important usage and safety limitations of the app',
+      title: t.legal.disclaimer,
+      subtitle: t.legal.hub.items.disclaimer,
       color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
     },
   ];
@@ -71,12 +62,10 @@ export function LegalHub({ onOpenPage }: LegalHubProps) {
           </div>
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {isDE ? 'Rechtliches & Datenschutz' : 'Legal & Privacy'}
+              {t.legal.hub.title}
             </h2>
             <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              {isDE
-                ? 'Diese Seite bündelt die wichtigsten rechtlichen Informationen für einen Beta- oder Launch-Betrieb in Deutschland und der EU. Bitte ergänze vor Veröffentlichung deine echten Kontaktdaten und finalen Unternehmensangaben.'
-                : 'This page bundles the key legal information needed for beta or launch operation in Germany and the EU. Before publishing, replace placeholders with your real contact and company details.'}
+              {t.legal.hub.desc}
             </p>
           </div>
         </div>

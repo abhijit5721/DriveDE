@@ -7,31 +7,32 @@ import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Star, Wallet }
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface BottomNavProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
 }
 
-const tabs: { id: TabType; labelDe: string; labelEn: string; icon: React.ReactNode }[] = [
-  { id: 'home', labelDe: 'Start', labelEn: 'Home', icon: <Home className="h-5 w-5" /> },
-  { id: 'curriculum', labelDe: 'Plan', labelEn: 'Plan', icon: <BookOpen className="h-5 w-5" /> },
-  { id: 'maneuvers', labelDe: 'Manöver', labelEn: 'Moves', icon: <ParkingSquare className="h-5 w-5" /> },
-  { id: 'review', labelDe: 'Review', labelEn: 'Review', icon: <Star className="h-5 w-5" /> },
-  { id: 'tracker', labelDe: 'Log', labelEn: 'Log', icon: <ClipboardList className="h-5 w-5" /> },
-  { id: 'finance', labelDe: 'Geld', labelEn: 'Finance', icon: <Wallet className="h-5 w-5" /> },
-  { id: 'account', labelDe: 'Konto', labelEn: 'Account', icon: <UserRound className="h-5 w-5" /> },
-];
-
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { language, userProgress } = useAppStore();
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language as 'de' | 'en'];
   const mistakesCount = (userProgress.incorrectQuestions || []).length;
+
+  const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
+    { id: 'home', label: t.common.nav.home, icon: <Home className="h-5 w-5" /> },
+    { id: 'curriculum', label: t.common.nav.curriculum, icon: <BookOpen className="h-5 w-5" /> },
+    { id: 'maneuvers', label: t.common.nav.maneuvers, icon: <ParkingSquare className="h-5 w-5" /> },
+    { id: 'review', label: t.common.nav.review, icon: <Star className="h-5 w-5" /> },
+    { id: 'tracker', label: t.common.nav.tracker, icon: <ClipboardList className="h-5 w-5" /> },
+    { id: 'finance', label: t.common.nav.finance, icon: <Wallet className="h-5 w-5" /> },
+    { id: 'account', label: t.common.nav.account, icon: <UserRound className="h-5 w-5" /> },
+  ];
 
   return (
     <nav 
       role="navigation"
-      aria-label={isDE ? 'Mobile Navigation' : 'Mobile Navigation'}
+      aria-label={t.common.nav.mobileNav}
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95"
     >
       <div className="px-1 pt-1" style={{ paddingBottom: 'max(4px, env(safe-area-inset-bottom))' }}>
@@ -41,7 +42,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               key={tab.id}
               role="tab"
               aria-selected={activeTab === tab.id}
-              aria-label={isDE ? tab.labelDe : tab.labelEn}
+              aria-label={tab.label}
               onClick={() => onTabChange(tab.id)}
               className={cn(
                 'flex flex-1 min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 transition-all duration-200',
@@ -64,7 +65,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 )}
               </div>
               <span className="text-[10px] font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                {isDE ? tab.labelDe : tab.labelEn}
+                {tab.label}
               </span>
             </button>
           ))}

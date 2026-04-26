@@ -12,6 +12,7 @@ import { cn } from '../../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
 import { filterLessonsForSelection } from '../../utils/contentFilter';
 import { EmptyState } from '../common/EmptyState';
+import { TRANSLATIONS } from '../../data/translations';
 import type { Lesson } from '../../types';
 import AnimatedManeuver from './AnimatedManeuver';
 
@@ -46,7 +47,7 @@ const itemVariants = {
 
 export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
   const { language, licenseType, isPremium } = useAppStore();
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationType | null>(null);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -84,12 +85,10 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
     >
       <motion.div variants={itemVariants}>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {isDE ? 'Grundfahraufgaben' : 'Basic Maneuvers'}
+          {t.maneuvers.title}
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {isDE
-            ? 'Schritt-für-Schritt Anleitungen für die Prüfung'
-            : 'Step-by-step guides for the exam'}
+          {t.maneuvers.subtitle}
         </p>
       </motion.div>
 
@@ -98,8 +97,8 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
         <motion.div variants={itemVariants}>
           <EmptyState
             icon={<Wrench className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
-            title={isDE ? 'Keine Manöver' : 'No Maneuvers'}
-            message={isDE ? 'Für diesen Lernpfad sind keine speziellen Grundfahraufgaben erforderlich.' : 'No special maneuvers are required for this learning path.'}
+            title={t.maneuvers.noManeuversTitle}
+            message={t.maneuvers.noManeuversMessage}
           />
         </motion.div>
       ) : (
@@ -111,9 +110,9 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
             <motion.button
               key={maneuver.id}
               onClick={() => onLessonSelect(maneuver)}
-              aria-label={isDE 
-                ? `${maneuver.titleDe}: ${maneuver.steps?.length || 0} Schritte ansehen` 
-                : `${maneuver.titleEn}: View ${maneuver.steps?.length || 0} steps`}
+              aria-label={language === 'de' 
+                ? `${maneuver.titleDe}: ${maneuver.steps?.length || 0} ${t.maneuvers.steps} ansehen` 
+                : `${maneuver.titleEn}: View ${maneuver.steps?.length || 0} ${t.maneuvers.steps}`}
               className="group relative overflow-hidden rounded-2xl p-4 text-left"
               variants={itemVariants}
               whileHover={{ scale: 1.03 }}
@@ -133,14 +132,14 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
                   )}
                 </div>
                 <h3 className="font-semibold text-white">
-                  {isDE ? maneuver.titleDe : maneuver.titleEn}
+                  {t.maneuvers.items?.[maneuver.id as keyof typeof t.maneuvers.items]?.title || (language === 'de' ? maneuver.titleDe : maneuver.titleEn)}
                 </h3>
                 <p className="mt-1 text-xs text-white/80">
-                  {maneuver.steps?.length || 0} {isDE ? 'Schritte' : 'steps'}
+                  {maneuver.steps?.length || 0} {t.maneuvers.steps}
                 </p>
                 <div className="mt-3 flex items-center gap-1 text-xs font-medium text-white">
                   <Play className="h-3 w-3" />
-                  {isDE ? 'Starten' : 'Start'}
+                  {t.maneuvers.start}
                 </div>
               </div>
             </motion.button>
@@ -154,7 +153,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
         variants={itemVariants}
       >
         <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
-          {isDE ? 'Wichtige Hinweise' : 'Important Tips'}
+          {t.maneuvers.importantTips}
         </h3>
         
         <div className="space-y-3">
@@ -162,12 +161,10 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
             <span className="text-xl">👀</span>
             <div>
               <p className="text-sm font-medium text-red-800 dark:text-red-300">
-                {isDE ? 'Rundum-Blick + Schulterblick!' : '360° check + shoulder check!'}
+                {t.maneuvers.check360}
               </p>
               <p className="mt-0.5 text-xs text-red-700 dark:text-red-400">
-                {isDE
-                  ? 'Vor jedem Rückwärtsweg Rundum-Blick, bei Spurwechsel und Richtungswechsel klarer Schulterblick'
-                  : 'Before every reverse movement use a 360° check; for lane or direction changes show a clear shoulder check'}
+                {t.maneuvers.check360Desc}
               </p>
             </div>
           </div>
@@ -176,12 +173,10 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
             <span className="text-xl">🐌</span>
             <div>
               <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
-                {isDE ? 'Langsam fahren' : 'Drive Slowly'}
+                {t.maneuvers.driveSlowly}
               </p>
               <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
-                {isDE
-                  ? 'Bei Manövern gilt: Geschwindigkeit = Kontrolle'
-                  : 'For maneuvers: Speed = Control'}
+                {t.maneuvers.driveSlowlyDesc}
               </p>
             </div>
           </div>
@@ -190,12 +185,10 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
             <span className="text-xl">✅</span>
             <div>
               <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                {isDE ? 'Korrigieren erlaubt' : 'Corrections Allowed'}
+                {t.maneuvers.correctionsAllowed}
               </p>
               <p className="mt-0.5 text-xs text-green-700 dark:text-green-400">
-                {isDE
-                  ? 'Rangieren ist bei der Prüfung kein Problem'
-                  : 'Adjusting position is fine in the exam'}
+                {t.maneuvers.correctionsAllowedDesc}
               </p>
             </div>
           </div>
@@ -208,16 +201,11 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
         variants={itemVariants}
       >
         <h3 className="mb-3 font-semibold text-slate-900 dark:text-white">
-          {isDE ? 'Prüfungs-Checkliste' : 'Exam Checklist'}
+          {t.maneuvers.checklistTitle}
         </h3>
         <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
-          {[
-            { de: '✓ Beobachten → Blinken → Schulterblick → Manöver', en: '✓ Observe → Signal → Shoulder check → Maneuver' },
-            { de: '✓ Kupplung am Schleifpunkt halten', en: '✓ Hold clutch at biting point' },
-            { de: '✓ Orientierungspunkte nutzen', en: '✓ Use reference points' },
-            { de: '✓ Ruhe bewahren, Zeit lassen', en: '✓ Stay calm, take your time' },
-          ].map((item, idx) => (
-            <li key={idx}>{isDE ? item.de : item.en}</li>
+          {t.maneuvers.checklist.map((item, idx) => (
+            <li key={idx}>{item}</li>
           ))}
         </ul>
       </motion.div>
@@ -230,18 +218,18 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
         <div className="flex items-center gap-2 mb-4">
           <Film className="h-5 w-5 text-blue-500" />
           <h3 className="font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Animierte Anleitungen' : 'Animated Guides'}
+            {t.maneuvers.animatedGuides}
           </h3>
         </div>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
-            { id: 'parallel-parking' as AnimationType, label: isDE ? 'Einparken' : 'Parallel', icon: '🅿️' },
-            { id: 'reverse-parking' as AnimationType, label: isDE ? 'Rückwärts' : 'Reverse', icon: '⬇️' },
-            { id: 'three-point-turn' as AnimationType, label: isDE ? 'Wenden' : '3-Point', icon: '🔄' },
-            { id: 'emergency-brake' as AnimationType, label: isDE ? 'Notbremse' : 'Emergency', icon: '🛑' },
-            { id: 'roundabout' as AnimationType, label: isDE ? 'Kreisverkehr' : 'Roundabout', icon: '🔵' },
-            { id: 'highway-merge' as AnimationType, label: isDE ? 'Autobahn' : 'Highway', icon: '🛣️' },
+            { id: 'parallel-parking' as AnimationType, label: t.maneuvers.parking, icon: '🅿️' },
+            { id: 'reverse-parking' as AnimationType, label: t.maneuvers.reverse, icon: '⬇️' },
+            { id: 'three-point-turn' as AnimationType, label: t.maneuvers.threePoint, icon: '🔄' },
+            { id: 'emergency-brake' as AnimationType, label: t.maneuvers.emergency, icon: '🛑' },
+            { id: 'roundabout' as AnimationType, label: t.maneuvers.roundabout, icon: '🔵' },
+            { id: 'highway-merge' as AnimationType, label: t.maneuvers.highway, icon: '🛣️' },
           ].map((anim) => (
             <button
               key={anim.id}
@@ -252,7 +240,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
                   onOpenPaywall?.();
                 }
               }}
-              aria-label={isDE ? `Animation für ${anim.label} ${selectedAnimation === anim.id ? 'schließen' : 'öffnen'}` : `${selectedAnimation === anim.id ? 'Close' : 'Open'} ${anim.label} animation`}
+              aria-label={t.maneuvers.animationAria(anim.label, selectedAnimation === anim.id)}
               aria-pressed={selectedAnimation === anim.id}
               className={cn(
                 'relative flex flex-col items-center gap-1 rounded-lg p-3 transition-all outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',

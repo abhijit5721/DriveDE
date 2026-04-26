@@ -1,20 +1,6 @@
 /**
  * (c) 2026 DriveDE. All rights reserved.
  * This source code is proprietary and protected under international copyright law.
- * 
- * Tracker.tsx
- * 
- * This is the central component for managing driving sessions.
- * It provides:
- * 1. Live GPS tracking and speed monitoring.
- * 2. Real-time mistake detection (simulated and manual).
- * 3. History of previous sessions with route playback.
- * 4. Manual session logging for users without GPS access.
- */
-
-/**
- * (c) 2026 DriveDE. All rights reserved.
- * This source code is proprietary and protected under international copyright law.
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -30,6 +16,7 @@ import {
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 
@@ -141,7 +128,7 @@ const MapBounds = ({ playbackIndex, polyline, route }: {
  * Used in the session history list expanded view.
  */
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language as 'de' | 'en'];
   
   const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -224,17 +211,17 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
       <div className="flex items-center justify-between bg-slate-50 px-3 py-2 dark:bg-slate-900/80">
         <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
           <MapPin className="h-3 w-3" />
-          {isDE ? 'Streckenverlauf (Echtzeit)' : 'Live Route Trace'}
+          {t.tracker.liveRouteTrace}
         </span>
         <button 
           onClick={handleTogglePlayback}
           className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-[9px] font-bold text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
         >
-          {isPlaying ? (
-            <><Pause className="h-3 w-3" /> {isDE ? 'Pause' : 'Pause'}</>
-          ) : (
-            <><Play className="h-3 w-3" /> {isDE ? 'Abspielen' : 'Replay'}</>
-          )}
+            {isPlaying ? (
+              <><Pause className="h-3 w-3" /> {t.common.pause}</>
+            ) : (
+              <><Play className="h-3 w-3" /> {t.common.replay}</>
+            )}
         </button>
       </div>
       <div className="h-[250px] w-full z-0">
@@ -253,10 +240,10 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           <Polyline positions={polyline} color="#3b82f6" weight={4} opacity={0.7} />
           
           <Marker position={startPoint}>
-             <Popup>{isDE ? 'Startpunkt' : 'Start Point'}</Popup>
+             <Popup>{t.tracker.startPoint}</Popup>
           </Marker>
           <Marker position={endPoint}>
-             <Popup>{isDE ? 'Endpunkt' : 'End Point'}</Popup>
+             <Popup>{t.tracker.endPoint}</Popup>
           </Marker>
 
           {currentPlaybackPoint && (
@@ -271,21 +258,21 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
             <Marker key={i} position={[m.location.lat, m.location.lng]} icon={getMistakeIcon(m.type)}>
               <Popup>
                 <div className="text-xs font-bold">
-                  {m.type === 'speeding' && (isDE ? 'Geschwindigkeitsüberschreitung' : 'Speeding')}
-                  {m.type === 'harsh_braking' && (isDE ? 'Starkes Bremsen' : 'Harsh Braking')}
-                  {m.type === 'rapid_acceleration' && (isDE ? 'Starke Beschleunigung' : 'Rapid Acceleration')}
-                  {m.type === 'shoulder_check' && (isDE ? 'Schulterblick vergessen' : 'Missed Shoulder Check')}
-                  {m.type === 'signal' && (isDE ? 'Blinker vergessen' : 'Missed Signal')}
-                  {m.type === 'priority' && (isDE ? 'Vorfahrtsfehler' : 'Priority Violation')}
-                  {m.type === 'stop_sign' && (isDE ? 'Stoppschild überfahren' : 'Stop Sign Violation')}
-                  {m.type === 'wrong_way' && (isDE ? '⛔ Falschfahrer' : '⛔ Wrong Way Driving')}
-                  {m.type === 'illegal_turn' && (isDE ? '⛔ Unzulässiges Abbiegen' : '⛔ Illegal Turn / Entry')}
-                  {m.type === 'roundabout_signal' && (isDE ? '🔄 Kreisverkehr: Blinker' : '🔄 Roundabout: Signal')}
-                  {m.type === 'curve_speeding' && (isDE ? '⚠️ Unangepasste Geschwind.' : '⚠️ Speed in Curve')}
-                  {m.type === 'aggressive_cornering' && (isDE ? '🏎️ Aggressives Kurvenfahren' : '🏎️ Aggressive Cornering')}
-                  {m.type === 'right_before_left' && (isDE ? '👉 Rechts vor Links' : '👉 Right-Before-Left')}
-                  {m.type === 'school_zone_speeding' && (isDE ? '🏫 Schulzone' : '🏫 School Zone')}
-                  {m.type === 'other' && (isDE ? 'Sonstiger Fehler' : 'Other Mistake')}
+                  {m.type === 'speeding' && t.tracker.mistakes.speeding}
+                  {m.type === 'harsh_braking' && t.tracker.mistakes.harshBraking}
+                  {m.type === 'rapid_acceleration' && t.tracker.mistakes.rapidAcceleration}
+                  {m.type === 'shoulder_check' && t.tracker.mistakes.shoulderCheck}
+                  {m.type === 'signal' && t.tracker.mistakes.signal}
+                  {m.type === 'priority' && t.tracker.mistakes.priority}
+                  {m.type === 'stop_sign' && t.tracker.mistakes.stopSign}
+                  {m.type === 'wrong_way' && t.tracker.mistakes.wrongWay}
+                  {m.type === 'illegal_turn' && t.tracker.mistakes.illegalTurn}
+                  {m.type === 'roundabout_signal' && t.tracker.mistakes.roundaboutSignal}
+                  {m.type === 'curve_speeding' && t.tracker.mistakes.curveSpeeding}
+                  {m.type === 'aggressive_cornering' && t.tracker.mistakes.aggressiveCornering}
+                  {m.type === 'right_before_left' && t.tracker.mistakes.rightBeforeLeft}
+                  {m.type === 'school_zone_speeding' && t.tracker.mistakes.schoolZone}
+                  {m.type === 'other' && t.tracker.mistakes.other}
                 </div>
               </Popup>
             </Marker>
@@ -309,8 +296,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     resumeActiveSession, updateActiveSession, stopActiveSession
   } = useAppStore();
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
-  
+  const t = TRANSLATIONS[language as 'de' | 'en'];
   const isDE = language === 'de';
+  
   const isUmschreibung = licenseType === 'umschreibung';
 
   const normalMinutes = userProgress.drivingSessions
@@ -324,27 +312,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return sum + (duration / 45) * rate;
     }, 0);
 
-  const getMistakeLabel = useCallback((type: DrivingMistake['type']) => {
-    const labels: Record<string, { de: string, en: string }> = {
-      speeding: { de: 'Geschw.-Überschreitung', en: 'Speeding' },
-      harsh_braking: { de: 'Starkes Bremsen', en: 'Harsh Braking' },
-      rapid_acceleration: { de: 'Starke Beschleunigung', en: 'Rapid Accel.' },
-      shoulder_check: { de: 'Schulterblick vergessen', en: 'Missed Shoulder Check' },
-      signal: { de: 'Blinker vergessen', en: 'Missed Signal' },
-      priority: { de: 'Vorfahrtsfehler', en: 'Priority Violation' },
-      stop_sign: { de: 'Stoppschild überfahren', en: 'Stop Sign Violation' },
-      wrong_way: { de: 'Falschfahrer', en: 'Wrong Way Driving' },
-      illegal_turn: { de: 'Unzulässiges Abbiegen', en: 'Illegal Turn' },
-      idling: { de: 'Motor laufen gelassen', en: 'Engine Idling' },
-      roundabout_signal: { de: 'Kreisverkehr Blinker', en: 'Roundabout Signal' },
-      curve_speeding: { de: 'Geschw. in Kurve', en: 'Curve Speeding' },
-      aggressive_cornering: { de: 'Aggressives Kurvenfahren', en: 'Aggressive Cornering' },
-      right_before_left: { de: 'Rechts vor Links', en: 'Right-Before-Left' },
-      school_zone_speeding: { de: 'Schulzone Speeding', en: 'School Zone Spd.' },
-      other: { de: 'Sonstiger Fehler', en: 'Other Mistake' }
-    };
-    return isDE ? labels[type]?.de || type : labels[type]?.en || type;
-  }, [isDE]);
+  const getMistakeLabel = useCallback((type: string) => {
+    return t.tracker.mistakes[type as keyof typeof t.tracker.mistakes] || type;
+  }, [t]);
 
   const getTypeIcon = (type: DrivingSession['type']) => {
     switch (type) {
@@ -356,12 +326,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   };
 
   const getTypeLabel = (type: DrivingSession['type']) => {
-    switch (type) {
-      case 'nacht': return isDE ? 'Nachtfahrt' : 'Night';
-      case 'autobahn': return isDE ? 'Autobahn' : 'Highway';
-      case 'ueberland': return isDE ? 'Überland' : 'Country';
-      default: return isDE ? 'Übungsstunde' : 'Practice';
-    }
+    return t.tracker.types[type] || type;
   };
 
   const formatDate = (dateStr: string, showTime: boolean = false) => {
@@ -597,24 +562,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const handleAddSession = useCallback(() => {
     if (!newSession.duration || newSession.duration <= 0) {
-      toast.error(isDE ? 'Bitte Dauer eingeben' : 'Please enter duration');
+      toast.error(t.tracker.enterDurationError);
       return;
     }
 
     if (editingSessionId) {
       updateDrivingSession(editingSessionId, newSession);
-      toast.success(isDE ? 'Fahrt aktualisiert' : 'Session updated');
+      toast.success(t.tracker.sessionUpdated);
     } else {
       addDrivingSession(newSession as Omit<DrivingSession, 'id'>);
-      toast.success(isDE ? 'Fahrt gespeichert' : 'Session saved');
+      toast.success(t.tracker.sessionSaved);
     }
     handleCloseForm();
   }, [newSession, editingSessionId, isDE, updateDrivingSession, addDrivingSession, handleCloseForm]);
 
   const handleRemoveSession = useCallback((id: string) => {
-    if (window.confirm(isDE ? 'Möchtest du diese Fahrt wirklich löschen?' : 'Are you sure you want to delete this session?')) {
+    if (window.confirm(t.tracker.deleteConfirm)) {
       removeDrivingSession(id);
-      toast.success(isDE ? 'Fahrt gelöscht' : 'Session deleted');
+      toast.success(t.tracker.sessionDeleted);
     }
   }, [isDE, removeDrivingSession]);
 
@@ -734,13 +699,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             id: sign.id.toString()
           });
           setHasStoppedAtSign(false);
-          toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
+          toast(t.tracker.stopSignAhead, { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
         }
       }
     } catch (e) {
       console.error('[Tracker] Stop sign fetch failed:', e);
     }
-  }, [activeStopSign, isDE, spatialCache, spatialWorker]);
+  }, [activeStopSign, t, spatialCache, spatialWorker]);
 
   // Handle worker responses for findNearest
   useEffect(() => {
@@ -757,14 +722,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               id: feature.id.toString()
             });
             setHasStoppedAtSign(false);
-            toast(isDE ? 'Stoppschild voraus!' : 'Stop Sign Ahead!', { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
+            toast(t.tracker.stopSignAhead, { icon: <Info className="h-4 w-4" />, id: 'stop-sign-alert' });
           }
         }
       }
     };
     spatialWorker?.addEventListener('message', onMessage);
     return () => spatialWorker?.removeEventListener('message', onMessage);
-  }, [spatialWorker, activeStopSign, isDE]);
+  }, [spatialWorker, activeStopSign, t]);
 
   // Update spatial cache on movement
   useEffect(() => {
@@ -817,7 +782,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if (e.data.type === 'wrongWayCheck' && e.data.result === true) {
           lastWrongWayLogRef.current = Date.now();
           toast.error(
-            isDE ? '⛔ Falschfahrer erkannt! Sofort anhalten!' : '⛔ Wrong Way! Stop immediately!',
+            t.tracker.wrongWayAlert,
             { position: 'bottom-center', duration: 6000 }
           );
           logMistake({
@@ -832,7 +797,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (e) {
       console.error('[Tracker] Wrong way check error:', e);
     }
-  }, [currentSpeed, isDE, logMistake, spatialWorker, spatialCache]);
+  }, [currentSpeed, t, logMistake, spatialWorker, spatialCache]);
 
   const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
@@ -849,12 +814,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       if (data.elements && data.elements.length > 0) {
         lastIllegalTurnLogRef.current = Date.now();
         const tag = data.elements[0].tags;
-        const reason = tag.footway === 'pedestrian' ? (isDE ? 'Fußgängerzone' : 'Pedestrian Zone') 
-                     : tag.access === 'private' ? (isDE ? 'Privatweg' : 'Private Access')
-                     : (isDE ? 'Einfahrt verboten' : 'Illegal Turn / Entry');
+        const reason = tag.footway === 'pedestrian' ? t.tracker.pedestrianZone
+                     : tag.access === 'private' ? t.tracker.privateAccess
+                     : t.tracker.entryForbidden;
 
         toast.error(
-          `${isDE ? '⛔ Unzulässiges Abbiegen!' : '⛔ Illegal Turn!'} (${reason})`,
+          `${t.tracker.illegalTurn} (${reason})`,
           { position: 'bottom-center', duration: 6000 }
         );
 
@@ -867,7 +832,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] Illegal turn check failed:', error);
     }
-  }, [currentSpeed, isDE, logMistake]);
+  }, [currentSpeed, t, logMistake]);
 
   const checkRightBeforeLeft = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastRvlCheckRef.current < 30000) return;
@@ -882,7 +847,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if (currentSpeed > 22) { 
           lastRvlCheckRef.current = Date.now();
           toast.error(
-            isDE ? '👉 Rechts vor Links beachten! (Zu schnell)' : '👉 Watch Right-Before-Left! (Too fast)',
+            t.tracker.rightBeforeLeftAlert,
             { position: 'bottom-center', duration: 7000 }
           );
           logMistake({
@@ -896,7 +861,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] RVL check failed:', error);
     }
-  }, [currentSpeed, isDE, logMistake]);
+  }, [currentSpeed, t, logMistake]);
 
   const checkSchoolArea = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastSchoolCheckRef.current < 30000) return;
@@ -910,7 +875,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if (currentSpeed > 32) {
           lastSchoolCheckRef.current = Date.now();
           toast.error(
-            isDE ? '🏫 Vorsicht: Schulzone / Spielplatz! (Max 30 empfohlen)' : '🏫 Caution: School Zone / Playground! (Max 30 recommended)',
+            t.tracker.schoolZoneCaution,
             { position: 'bottom-center', duration: 7000, icon: '🏫' }
           );
           logMistake({
@@ -925,7 +890,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] School check failed:', error);
     }
-  }, [currentSpeed, isDE, logMistake]);
+  }, [currentSpeed, t, logMistake]);
 
   const fetchSpeedLimit = useCallback(async (lat: number, lng: number) => {
     try {
@@ -967,13 +932,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const data = await response.json();
       if (data && data.length > 0) {
         setDestinationCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
-        toast.success(isDE ? 'Ziel gefunden!' : 'Destination found!');
+        toast.success(t.tracker.destinationFound);
       } else {
-        toast.error(isDE ? 'Ziel nicht gefunden' : 'Destination not found');
+        toast.error(t.tracker.destinationNotFound);
       }
     } catch (e) {
       console.error('[Tracker] Reverse geocoding search failed:', e);
-      toast.error(isDE ? 'Suche fehlgeschlagen' : 'Search failed');
+      toast.error(t.tracker.searchFailed);
     } finally {
       setIsSearchingDestination(false);
     }
@@ -982,12 +947,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const handleSaveRate = () => {
     const rate = parseFloat(tempRate) || 0;
     if (rate <= 0) {
-      toast.error(isDE ? 'Bitte geben Sie einen gültigen Betrag ein' : 'Please enter a valid amount');
+      toast.error(t.tracker.invalidAmountError);
       return;
     }
     setHourlyRate45(rate);
     setIsEditingRate(false);
-    toast.success(isDE ? 'Stundensatz aktualisiert!' : 'Rate updated!');
+    toast.success(t.tracker.rateUpdated);
   };
 
   useEffect(() => {
@@ -1052,9 +1017,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             (error) => {
               console.error('[Tracker] GPS Error:', error);
               if (error.code === 1) {
-                toast.error(isDE ? 'Standortzugriff verweigert. Bitte aktiviere GPS in den Einstellungen.' : 'Location access denied. Please enable GPS in settings.');
+                toast.error(t.tracker.gpsDenied);
               } else {
-                toast.error(isDE ? 'GPS-Fehler. Bitte überprüfe deine Verbindung.' : 'GPS error. Please check your connection.');
+                toast.error(t.tracker.gpsError);
               }
             },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -1081,17 +1046,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             const isBraking = !isCornering && y < -3.0;
             
             let type: DrivingMistake['type'] = 'rapid_acceleration';
-            let messageDE = 'Starke Beschleunigung erkannt!';
-            let messageEN = 'Rapid acceleration detected!';
-
             if (isCornering) {
               type = 'aggressive_cornering';
-              messageDE = '🏎️ Fliehkraft: Aggressives Kurvenfahren!';
-              messageEN = '🏎️ High G-Force: Aggressive Cornering!';
             } else if (isBraking) {
               type = 'harsh_braking';
-              messageDE = 'Starkes Bremsen erkannt!';
-              messageEN = 'Harsh braking detected!';
             }
             
             logMistake({
@@ -1100,7 +1058,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
             });
 
-            toast.error(isDE ? messageDE : messageEN, { position: 'bottom-center', duration: 4000 });
+            toast.error(t.tracker[type === 'aggressive_cornering' ? 'aggressiveCorneringAlert' : type === 'harsh_braking' ? 'harshBrakingAlert' : 'rapidAccelAlert'], { position: 'bottom-center', duration: 4000 });
           });
         }
       };
@@ -1117,7 +1075,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, isDE, logRoutePoint, logMistake, currentSpeed]);
+  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, t, logRoutePoint, logMistake, currentSpeed]);
 
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
@@ -1133,7 +1091,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       
       if (distFromSign > 0.03 && gpsPoints.length > 3) { 
         if (!hasStoppedAtSign) {
-          toast.error(isDE ? 'Stoppschild überfahren!' : 'Stop Sign Violation!', { position: 'bottom-center' });
+          toast.error(t.tracker.stopSignViolation, { position: 'bottom-center' });
           logMistake({
             type: 'stop_sign',
             timestamp: Date.now(),
@@ -1149,7 +1107,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       setCurrentMistakes(prev => {
         const lastMistake = prev[prev.length - 1];
         if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000) || lastMistake.type !== 'speeding') {
-          toast.error(isDE ? `Geschwindigkeitsüberschreitung! (Limit: ${currentLimit})` : `Speeding! (Limit: ${currentLimit})`, { position: 'bottom-center' });
+          toast.error(t.tracker.speedingAlert(currentLimit!), { position: 'bottom-center' });
           
           const mistakeObj: DrivingMistake = {
             type: 'speeding',
@@ -1176,7 +1134,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const timeSinceLastLog = Date.now() - lastIdlingLogRef.current;
 
         if (idlingDuration > IDLING_THRESHOLD && timeSinceLastLog > 120000) {
-          toast.error(isDE ? 'Umweltschutz: Motor abstellen!' : 'Eco: Stop Engine!', { 
+          toast.error(t.tracker.ecoStopEngine, { 
             position: 'bottom-center',
             icon: '🌱'
           });
@@ -1194,7 +1152,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       stationaryStartRef.current = null;
       lastIdlingLogRef.current = 0;
     }
-  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, isDE, isSimulationMode, logMistake]);
+  }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, t, isSimulationMode, logMistake]);
 
   const handleStartTimer = async () => {
     setShowSuggestions(false);
@@ -1226,7 +1184,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       try {
         const permissionState = await MotionEvent.requestPermission();
         if (permissionState !== 'granted') {
-          toast.error(isDE ? 'Bewegungssensoren-Zugriff verweigert' : 'Motion sensor access denied');
+          toast.error(t.tracker.motionSensorDenied);
         }
       } catch (e) {
         console.error('Motion permission error', e);
@@ -1280,7 +1238,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           setHasStoppedAtSign(false);
           lastIllegalTurnLogRef.current = 0;
           lastWrongWayLogRef.current = 0;
-          toast(isDE ? 'Simulation wird wiederholt...' : 'Simulation looping...', { icon: '🔄' });
+          toast(t.tracker.simulationLooping, { icon: '🔄' });
           return;
         }
 
@@ -1293,47 +1251,47 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         if (currentStep === 0) {
           setActiveStopSign({ lat: 52.52005, lng: 13.40505, id: 'mock-stop-1' });
-          toast(isDE ? '🛑 Stoppschild voraus!' : '🛑 Stop Sign Ahead!', { id: 'mock-stop-toast' });
+          toast(t.tracker.stopSignAhead, { id: 'mock-stop-toast' });
         }
 
         if (currentStep === 28) {
           toast.dismiss();
-          toast.error(isDE ? '⛔ FALSCHFAHRER ERKANNT! Sofort anhalten!' : '⛔ WRONG WAY! Stop immediately!', { position: 'bottom-center', duration: 8000 });
+          toast.error(t.tracker.wrongWayAlert, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'wrong_way', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep === 30) {
-          toast.error(isDE ? '⛔ Unzulässiges Abbiegen! (Fußgängerzone)' : '⛔ Illegal Turn! (Pedestrian Zone)', { position: 'bottom-center', duration: 8000 });
+          toast.error(`${t.tracker.illegalTurn} (${t.tracker.pedestrianZone})`, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'illegal_turn', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep === 8) {
-          toast.error(isDE ? '⛔ Kreisverkehr: Blinker beim Ausfahren vergessen!' : '⛔ Roundabout: Missed Exit Signal!', { position: 'bottom-center', duration: 8000 });
+          toast.error(t.tracker.mistakes.roundaboutSignal, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'roundabout_signal', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
         
         if (currentStep === 11) {
-          toast.error(isDE ? '⚠️ Unangepasste Geschwindigkeit (Kurve)!' : '⚠️ Inappropriate Speed (Curve)!', { position: 'bottom-center', duration: 8000 });
+          toast.error(t.tracker.mistakes.curveSpeeding, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'curve_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
         
         if (currentStep === 14) {
-          toast.error(isDE ? '🏎️ Fliehkraft: Aggressives Kurvenfahren / Spurwechsel!' : '🏎️ High G-Force: Aggressive Cornering!', { position: 'bottom-center', duration: 8000 });
+          toast.error(t.tracker.mistakes.aggressiveCornering, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'aggressive_cornering', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep === 22) {
-          toast.error(isDE ? '👉 Rechts vor Links missachtet! (Wohngebiet)' : '👉 Right-Before-Left Violation! (Residential)', { position: 'bottom-center', duration: 8000 });
+          toast.error(t.tracker.mistakes.rightBeforeLeft, { position: 'bottom-center', duration: 8000 });
           logMistake({ type: 'right_before_left', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep === 25) {
-          toast.error(isDE ? '🏫 Zu schnell in Schulzone! (Max 30 empfohlen)' : '🏫 Speeding in School Zone! (Max 30 recommended)', { position: 'bottom-center', duration: 8000, icon: '🏫' });
+          toast.error(t.tracker.schoolZoneCaution, { position: 'bottom-center', duration: 8000, icon: '🏫' });
           logMistake({ type: 'school_zone_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
         if (currentStep === 19) {
-          toast.error(isDE ? '🌱 Umweltschutz: Motor abstellen bei längerem Halt!' : '🌱 Eco: Stop engine during long stationary periods!', { position: 'bottom-center', duration: 8000, icon: '🌱' });
+          toast.error(t.tracker.ecoStopEngine, { position: 'bottom-center', duration: 8000, icon: '🌱' });
           logMistake({ type: 'idling', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
         }
 
@@ -1350,8 +1308,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setIsTimerRunning(true);
     toast(
       isSimulationMode 
-        ? (isDE ? 'Simulation gestartet...' : 'Simulation started...') 
-        : (isDE ? 'Fahrt-Timer & Sensoren gestartet!' : 'Drive timer & Sensors started!'), 
+        ? t.tracker.simulationStarted 
+        : t.tracker.sensorsStarted, 
       { icon: isSimulationMode ? '🎮' : '🚀' }
     );
   };
@@ -1361,14 +1319,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     pauseActiveSession();
     releaseWakeLock();
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
-    toast(isDE ? 'Timer pausiert' : 'Timer paused', { icon: '⏸️' });
+    toast(t.tracker.timerPaused, { icon: '⏸️' });
   };
 
   const handleResumeTimer = () => {
     setIsTimerRunning(true);
     resumeActiveSession();
     requestWakeLock();
-    toast(isDE ? 'Timer fortgesetzt' : 'Timer resumed', { icon: '▶️' });
+    toast(t.tracker.timerResumed, { icon: '▶️' });
   };
 
   const handleStopTimer = async () => {
@@ -1418,7 +1376,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setElapsedTime(0);
     stopActiveSession();
     releaseWakeLock();
-    toast.success(isDE ? 'Bereit zum Speichern!' : 'Ready to save!');
+    toast.success(t.tracker.readyToSave);
   };
 
   const handleManualMistake = (type: DrivingMistake['type']) => {
@@ -1429,7 +1387,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         location: { lat: pos.coords.latitude, lng: pos.coords.longitude }
       };
       logMistake(mistakeObj);
-      toast.error(isDE ? 'Fehler manuell hinzugefügt' : 'Mistake added manually', { position: 'bottom-center' });
+      toast.error(t.tracker.mistakeAddedManually, { position: 'bottom-center' });
     });
     setShowManualLog(false);
   };
@@ -1446,10 +1404,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {isDE ? 'Fahrtenbuch' : 'Driving Log'}
+            {t.tracker.title}
           </h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {isDE ? 'Dokumentiere deine Fahrstunden' : 'Track your driving lessons'}
+            {t.tracker.subtitle}
           </p>
         </div>
         <div className="flex gap-2">
@@ -1458,7 +1416,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               if (!isPremium) {
                 onOpenPaywall?.();
               } else {
-                if (window.confirm(isDE ? 'Möchtest du wirklich eine simulierte Fahrt mit Leaflet-Karte und Fehlverhaltens-Daten hinzufügen?' : 'Do you want to add a simulated drive with Leaflet Map and mistake data?')) {
+                if (window.confirm(t.tracker.confirmSimulate)) {
                   addDrivingSession({
                     date: new Date().toISOString().split('T')[0],
                     duration: 45,
@@ -1478,7 +1436,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             className="flex h-10 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:border-blue-900/30 dark:bg-blue-900/20"
           >
             {!isPremium && <Lock className="h-3 w-3" />}
-            {isDE ? 'Simulation' : 'Simulate'}
+            {t.tracker.simulateButton}
           </button>
           <button
             onClick={() => setShowAddForm(true)}
@@ -1497,7 +1455,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {isDE ? 'Fahrschul-Tarif' : 'Driving School Rate'}
+                {t.tracker.drivingSchoolRate}
               </p>
               {isEditingRate ? (
                 <div className="mt-1 flex items-center gap-2">
@@ -1513,7 +1471,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     onClick={handleSaveRate}
                     className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-bold text-white hover:bg-blue-600"
                   >
-                    OK
+                    {t.common.ok}
                   </button>
                 </div>
               ) : (
@@ -1538,7 +1496,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           >
             <div className="mb-4 flex items-center justify-between w-full">
               <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">
-                {isDE ? 'Fehler manuell erfassen' : 'Log Manual Mistake'}
+                {t.tracker.manualLogTitle}
               </h4>
               <button onClick={() => setShowManualLog(false)} className="rounded-full bg-slate-800 p-1">
                 <X className="h-4 w-4" />
@@ -1547,19 +1505,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <div className="grid w-full grid-cols-2 gap-2">
               <button onClick={() => handleManualMistake('shoulder_check')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
                 <Eye className="h-5 w-5 text-blue-400" />
-                {isDE ? 'Schulterblick' : 'Shoulder Check'}
+                {t.tracker.mistakes.shoulderCheck}
               </button>
               <button onClick={() => handleManualMistake('signal')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
                 <Signal className="h-5 w-5 text-amber-400" />
-                {isDE ? 'Blinker' : 'Signal'}
+                {t.tracker.mistakes.signal}
               </button>
               <button onClick={() => handleManualMistake('priority')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
                 <AlertTriangle className="h-5 w-5 text-red-500" />
-                {isDE ? 'Vorfahrt' : 'Priority'}
+                {t.tracker.mistakes.priority}
               </button>
               <button onClick={() => handleManualMistake('stop_sign')} className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 p-3 text-xs font-bold transition-colors hover:bg-slate-700">
                 <Square className="h-5 w-5 text-red-600" />
-                {isDE ? 'Stoppschild' : 'Stop Sign'}
+                {t.tracker.mistakes.stopSign}
               </button>
             </div>
           </motion.div>
@@ -1568,12 +1526,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-slate-300" />
-            <h3 className="font-semibold">{isDE ? 'Live-Fahrt-Timer' : 'Live Drive Timer'}</h3>
+            <h3 className="font-semibold">{t.tracker.liveTimerTitle}</h3>
           </div>
           <div className="flex items-center gap-3">
              <div className="flex items-center gap-2 mr-2">
                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
-                 {isDE ? 'Simulation' : 'Demo Mode'}
+                {t.tracker.simulationMode}
                </span>
                <button 
                  onClick={() => setIsSimulationMode(!isSimulationMode)}
@@ -1594,7 +1552,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                  className="flex h-8 items-center gap-1.5 rounded-full bg-red-500/20 px-3 text-[10px] font-black uppercase tracking-widest text-red-400 border border-red-500/30 hover:bg-red-500/30 transition-all"
                >
                  <AlertTriangle className="h-3 w-3" />
-                 {isDE ? 'Problem!' : 'Problem!'}
+                 {t.common.problem}
                </button>
              )}
           </div>
@@ -1615,7 +1573,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               
               {destinationCoords && (
                 <Marker position={[destinationCoords.lat, destinationCoords.lng]} icon={getFlagMarkerIcon()}>
-                  <Popup>{isDE ? 'Dein Ziel' : 'Your Destination'}</Popup>
+                  <Popup>{t.tracker.yourDestination}</Popup>
                 </Marker>
               )}
 
@@ -1640,7 +1598,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <div className="relative group">
               <input
                 type="text"
-                placeholder={isDE ? 'Ziel (z.B. Berlin Hbf)' : 'Destination (e.g. Berlin Hbf)'}
+                placeholder={t.tracker.destinationPlaceholder}
                 value={targetDestination}
                 onChange={(e) => setTargetDestination(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
@@ -1652,7 +1610,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 disabled={isSearchingDestination}
                 className="absolute right-2 top-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-[10px] font-bold text-white hover:bg-indigo-500 transition-all border border-indigo-400/20 shadow-lg shadow-indigo-500/20"
               >
-                {isSearchingDestination ? '...' : (isDE ? 'SUCHEN' : 'SEARCH')}
+                {isSearchingDestination ? '...' : t.common.search}
               </button>
 
               {/* Autocomplete Suggestions Dropdown */}
@@ -1710,7 +1668,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           {isTimerRunning && (
             <div className="mt-2 w-full max-w-[200px]">
               <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
-                <span>{isDE ? 'Sicherheits-Score' : 'Safety Score'}</span>
+                <span>{t.tracker.safetyScore}</span>
                 <span>{Math.max(0, 100 - (currentMistakes.length * 10))}%</span>
               </div>
               <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
@@ -1731,19 +1689,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
           <div className="text-center">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {isDE ? 'Strecke' : 'Dist.'}
+              {t.tracker.distance}
             </p>
             <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
           </div>
           <div className="text-center border-l border-white/10">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {isDE ? 'Tempo' : 'Speed'}
+              {t.tracker.speed}
             </p>
             <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
           </div>
           <div className="text-center border-l border-white/10">
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {isDE ? 'Limit' : 'Limit'}
+              {t.tracker.limit}
             </p>
             <div className={cn(
               'text-lg font-bold flex items-center justify-center gap-1',
@@ -1761,7 +1719,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         {!isPremium && isTimerRunning && (
           <p className="mt-2 text-[10px] text-slate-400 italic text-center">
-            {isDE ? 'Live-Tracking aktiv (Basis-Modus)' : 'Live tracking active (Basic mode)'}
+            {t.tracker.liveTrackingActive}
           </p>
         )}
         {/* Primary Control Actions (Integrated) */}
@@ -1772,7 +1730,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
             >
               <Pause className="h-4 w-4" />
-              {isDE ? 'Pause' : 'Pause'}
+              {t.common.pause}
             </button>
           ) : (
             <button
@@ -1798,17 +1756,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               {(activeSession && activeSession.isPaused) ? (
                 <>
                   <Play className="h-4 w-4" />
-                  {isDE ? 'Fortsetzen' : 'Resume'}
+                  {t.common.resume}
                 </>
               ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
                 <>
                   <Crown className="h-4 w-4" />
-                  {isDE ? 'Tracking (Pro)' : 'Tracking (Pro)'}
+                  {t.tracker.trackingPro}
                 </>
               ) : (
                 <>
                   <Play className="h-4 w-4" />
-                  {isDE ? 'Start Live' : 'Start Live'}
+                  {t.tracker.startLive}
                 </>
               ))}
             </button>
@@ -1819,7 +1777,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
           >
             <Square className="h-4 w-4" />
-            {isDE ? 'Stopp & Speichern' : 'Stop & Save'}
+            {t.common.stopAndSave}
           </button>
         </div>
       </div>
@@ -1829,7 +1787,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
           <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
             <Clock className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Gesamt' : 'Total'}</span>
+            <span className="text-[10px] font-bold uppercase tracking-tight">{t.common.total}</span>
           </div>
           <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
             {Math.floor(userProgress.totalDrivingMinutes / 60)}h {userProgress.totalDrivingMinutes % 60}m
@@ -1839,7 +1797,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
           <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
             <Car className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Normal' : 'Regular'}</span>
+            <span className="text-[10px] font-bold uppercase tracking-tight">{t.tracker.regularDrive}</span>
           </div>
           <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
             {Math.floor(normalMinutes / 45)}
@@ -1848,7 +1806,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         <div className="rounded-xl bg-blue-500 p-3 shadow-lg shadow-blue-500/20 dark:bg-blue-600">
           <div className="flex items-center gap-1.5 text-blue-100">
-            <span className="text-[10px] font-bold uppercase tracking-tight">{isDE ? 'Kosten' : 'Cost'}</span>
+            <span className="text-[10px] font-bold uppercase tracking-tight">{t.common.cost}</span>
           </div>
           <p className="mt-2 text-lg font-black text-white italic">
             €{totalSpending.toFixed(0)}
@@ -1861,16 +1819,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         {isUmschreibung ? (
           <>
             <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {isDE ? 'Umschreibung: Fahrpraxis-Überblick' : 'Conversion: Practice Overview'}
+              {t.tracker.conversionOverview}
             </h3>
             <div className="rounded-xl border border-purple-200 bg-purple-50 p-4 dark:border-purple-900/40 dark:bg-purple-900/10">
               <p className="text-sm font-medium text-purple-900 dark:text-purple-200">
-                {isDE ? 'Keine gesetzlichen Pflicht-Sonderfahrten' : 'No legal mandatory special drives'}
+                {t.tracker.noMandatorySpecialDrives}
               </p>
               <p className="mt-1 text-xs text-purple-700 dark:text-purple-300">
-                {isDE
-                  ? 'Bei der Umschreibung gibt es in der Regel keine vorgeschriebenen 5-4-3 Sonderfahrten. Dein Fahrlehrer kann trotzdem Übungsstunden für Autobahn, Überland oder Nacht empfehlen.'
-                  : 'For license conversion, the usual 5-4-3 special drives are generally not legally required. Your instructor may still recommend country road, highway, or night practice.'}
+                {t.tracker.conversionNote}
               </p>
             </div>
 
@@ -1894,7 +1850,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         ) : (
           <>
             <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {isDE ? 'Pflicht-Sonderfahrten' : 'Required Special Drives'}
+              {t.tracker.requiredSpecialDrives}
             </h3>
             
             <div className="space-y-4">
@@ -1943,9 +1899,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             </div>
 
             <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-              {isDE
-                ? '* Gesetzliche Pflichtfahrten (§ 5 Fahrschüler-Ausbildungsordnung): 5×45min Überland, 4×45min Autobahn, 3×45min Nacht'
-                : '* Legal special drives (§ 5 FahrschAusbO): 5×45min country roads, 4×45min highway, 3×45min night'}
+              {t.tracker.specialDrivesNote}
             </p>
           </>
         )}
@@ -1955,25 +1909,25 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4 px-1">
           <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
-            {isDE ? 'Fahrtenbuch' : 'Driving Logbook'}
+            {t.tracker.title}
           </h3>
           <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-            {userProgress.drivingSessions.length} {isDE ? 'Einträge' : 'Entries'}
+            {userProgress.drivingSessions.length} {t.tracker.entries}
           </span>
         </div>
 
         {userProgress.drivingSessions.length === 0 ? (
           <EmptyState
             icon={<Car className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
-            title={isDE ? 'Keine Fahrstunden' : 'No Driving Sessions'}
-            message={isDE ? 'Hier werden deine eingetragenen Fahrstunden angezeigt.' : 'Your logged driving sessions will appear here.'}
+            title={t.tracker.noSessionsTitle}
+            message={t.tracker.noSessionsMessage}
             action={
               <button
                 onClick={() => setShowAddForm(true)}
                 className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-5 py-2 text-sm font-bold text-white transition-all hover:bg-blue-600 hover:shadow-lg active:scale-95"
               >
                 <Plus className="h-4 w-4" />
-                {isDE ? 'Fahrstunde eintragen' : 'Log First Session'}
+                {t.tracker.logFirstSession}
               </button>
             }
           />
@@ -2017,7 +1971,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           </span>
                           {session.route && session.route.length > 30 && (
                             <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
-                              {isDE ? 'SIMULIERT' : 'SIMULATED'}
+                              {t.tracker.simulated}
                             </span>
                           )}
                         </div>
@@ -2106,14 +2060,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500' : 'bg-red-500'
                               )} />
                               <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                                {isDE ? 'Sicherheits-Fahrweise' : 'Safety Balance'}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
+                                {t.tracker.safetyBalance}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
                               </span>
                             </div>
                             {(session.mistakes || []).some(m => m.type === 'idling') && (
                               <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30">
                                 <Wind className="h-3.5 w-3.5 text-emerald-500" />
                                 <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                  {isDE ? 'Öko-Fahrweise' : 'Eco Friendly'}
+                                  {t.tracker.ecoFriendly}
                                 </span>
                               </div>
                             )}
@@ -2121,7 +2075,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
                           {session.notes && (
                             <div className="mt-4 rounded-2xl bg-slate-50/50 p-3 text-xs text-slate-600 border border-slate-100/50 dark:bg-slate-900/40 dark:text-slate-400 dark:border-slate-800">
-                              <p className="font-bold uppercase tracking-widest text-[8px] text-slate-400 mb-2">{isDE ? 'NOTIZEN' : 'NOTES'}</p>
+                              <p className="font-bold uppercase tracking-widest text-[8px] text-slate-400 mb-2">{t.tracker.notesLabel}</p>
                               {session.notes}
                             </div>
                           )}
@@ -2137,10 +2091,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   </div>
                                   <div>
                                     <p className="text-sm font-bold text-slate-900 dark:text-white">
-                                      {isDE ? 'Streckenverlauf verfügbar' : 'Route Map Available'}
+                                      {t.tracker.routeMapAvailable}
                                     </p>
                                     <p className="max-w-[200px] text-[10px] text-slate-500">
-                                      {isDE ? 'Upgrade auf Pro, um deine gefahrene Strecke auf der Karte zu sehen.' : 'Upgrade to Pro to view your driven route on the map.'}
+                                      {t.tracker.routeMapUpgradeNote}
                                     </p>
                                   </div>
                                   <button
@@ -2148,7 +2102,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                     className="flex items-center gap-2 rounded-full bg-blue-500 px-4 py-1.5 text-[10px] font-bold text-white shadow-md transition-transform hover:scale-105 active:scale-95"
                                   >
                                     <Crown className="h-3 w-3 text-amber-300" />
-                                    {isDE ? 'PRO FREISCHALTEN' : 'UNLOCK PRO'}
+                                    {t.tracker.unlockPro}
                                   </button>
                                 </div>
                               )}
@@ -2160,7 +2114,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               <div className="mb-4 flex items-center justify-between">
                                 <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400">
                                   <AlertTriangle className="h-4 w-4" />
-                                  {isDE ? 'FAHRFEHLER ANALYSE' : 'DRIVING FAULT ANALYSIS'}
+                                  {t.tracker.faultAnalysis}
                                 </div>
                                 <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
                                   {session.mistakes.filter(m => m && m.type).length}
@@ -2206,7 +2160,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                           </span>
                                           {mistake.count && mistake.count > 1 && (
                                             <span className="text-[9px] font-black text-rose-500">
-                                              {mistake.count}x {isDE ? 'Vorkommen' : 'Occurrences'}
+                                              {mistake.count}x {t.tracker.occurrences}
                                             </span>
                                           )}
                                         </div>
@@ -2225,14 +2179,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               ) : (
                                 <div className="flex items-center justify-between gap-4 p-2">
                                   <p className="text-[10px] text-slate-600 dark:text-slate-400">
-                                    {isDE ? 'Upgrade auf Pro für detaillierte Fehler-Analyse und Verbesserungstipps.' : 'Upgrade to Pro for detailed mistake analysis and improvement tips.'}
+                                    {t.tracker.faultAnalysisUpgradeNote}
                                   </p>
                                   <button
                                     onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
                                     className="flex shrink-0 items-center gap-2 rounded-lg bg-red-100 px-3 py-1.5 text-[9px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400"
                                   >
                                     <Lock className="h-3 w-3" />
-                                    {isDE ? 'DETAILS SEHEN' : 'SEE DETAILS'}
+                                    {t.tracker.seeDetails}
                                   </button>
                                 </div>
                               )}
@@ -2244,10 +2198,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               </div>
                               <div className="flex flex-col">
                                 <p className="text-xs font-bold text-green-700 dark:text-green-500">
-                                  {isDE ? 'Keine nennenswerten Fehler' : 'No Critical Mistakes'}
+                                  {t.tracker.noCriticalMistakes}
                                 </p>
                                 <p className="text-[10px] text-green-600/80">
-                                  {isDE ? 'Sehr sichere Fahrt!' : 'Excellent driving performance!'}
+                                  {t.tracker.safeDriveMessage}
                                 </p>
                               </div>
                             </div>
@@ -2260,14 +2214,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-600 transition-all hover:bg-blue-50 hover:text-blue-600 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-blue-900/30"
                             >
                               <Pencil className="h-3.5 w-3.5" />
-                              {isDE ? 'SITZUNG BEARBEITEN' : 'EDIT SESSION'}
+                              {t.tracker.editSession}
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); handleRemoveSession(session.id); }}
                               className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-400 transition-all hover:bg-red-50 hover:text-red-500 dark:bg-slate-900 dark:text-slate-500 dark:hover:bg-red-900/30"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
-                              {isDE ? 'LÖSCHEN' : 'DELETE'}
+                              {t.tracker.deleteSession}
                             </button>
                           </div>
                         </div>
@@ -2286,14 +2240,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <div className="mt-8 flex justify-center border-t border-slate-100 pt-6 dark:border-slate-800">
               <button
                 onClick={() => {
-                  if (window.confirm(isDE ? 'Möchtest du wirklich alle Fahrstunden löschen?' : 'Are you sure you want to delete all driving sessions?')) {
+                  if (window.confirm(t.tracker.confirmClearHistory)) {
                     clearDrivingHistory();
                   }
                 }}
                 className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-red-600 transition-all hover:bg-red-50 dark:border-red-900/30 dark:bg-red-900/10 dark:hover:bg-red-900/20"
               >
                 <Trash2 className="h-4 w-4" />
-                {isDE ? 'Fahrtenbuch zurücksetzen' : 'Clear All History'}
+                {t.tracker.clearHistory}
               </button>
             </div>
           )}
@@ -2316,8 +2270,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {editingSessionId 
-                  ? (isDE ? 'Fahrstunde bearbeiten' : 'Edit Driving Session')
-                  : (isDE ? 'Fahrstunde eintragen' : 'Log Driving Session')}
+                  ? t.tracker.editSessionTitle
+                  : t.tracker.addSessionTitle}
               </h3>
               <button
                 onClick={handleCloseForm}
@@ -2331,7 +2285,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <div className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-6 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Datum' : 'Date'}
+                  {t.tracker.dateLabel}
                 </label>
                 <input
                   type="date"
@@ -2343,7 +2297,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Art der Fahrt' : 'Drive Type'}
+                  {t.tracker.driveTypeLabel}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['normal', 'ueberland', 'autobahn', 'nacht'] as const).map((type) => (
@@ -2367,7 +2321,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {isDE ? 'Dauer (Minuten)' : 'Duration (minutes)'}
+                    {t.tracker.durationLabel}
                   </label>
                   <input
                     type="number"
@@ -2379,7 +2333,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {isDE ? 'Distanz (km)' : 'Distance (km)'}
+                    {t.tracker.distanceLabel}
                   </label>
                   <input
                     type="number"
@@ -2394,38 +2348,38 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Fahrlehrer (optional)' : 'Instructor (optional)'}
+                  {t.tracker.instructorLabel}
                 </label>
                 <input
                   type="text"
                   value={newSession.instructorName}
                   onChange={(e) => setNewSession({ ...newSession, instructorName: e.target.value })}
-                  placeholder={isDE ? 'Name' : 'Name'}
+                  placeholder={t.common.name}
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Ort / Stadt' : 'Location / City'}
+                  {t.tracker.locationLabel}
                 </label>
                 <input
                   type="text"
                   value={newSession.locationSummary || ''}
                   onChange={(e) => setNewSession({ ...newSession, locationSummary: e.target.value })}
-                  placeholder={isDE ? 'z.B. Berlin, Mitte' : 'e.g. Berlin, Mitte'}
+                  placeholder={t.tracker.locationPlaceholder}
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {isDE ? 'Notizen (optional)' : 'Notes (optional)'}
+                  {t.common.notes} (optional)
                 </label>
                 <textarea
                   value={newSession.notes}
                   onChange={(e) => setNewSession({ ...newSession, notes: e.target.value })}
-                  placeholder={isDE ? 'Was hast du gelernt?' : 'What did you learn?'}
+                  placeholder={t.tracker.notesPlaceholder}
                   rows={2}
                   className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder-slate-500"
                 />
@@ -2439,8 +2393,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:from-blue-600 hover:to-blue-700 active:scale-[0.98]"
               >
                 {editingSessionId 
-                  ? (isDE ? 'ÄNERUNGEN SPEICHERN' : 'SAVE CHANGES')
-                  : (isDE ? 'FAHRSTUNDE SPEICHERN' : 'SAVE SESSION')}
+                  ? t.common.saveChanges
+                  : t.common.saveSession}
               </button>
             </div>
           </motion.div>

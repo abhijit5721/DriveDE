@@ -10,48 +10,27 @@ import { cn } from '../../utils/cn';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TRANSLATIONS } from '../../data/translations';
 
 type Tier = '30-days' | '90-days' | 'lifetime';
-
-interface TierInfo {
-  price: number;
-  period: { de: string; en: string };
-  icon: React.ElementType;
-  label: { de: string; en: string };
-  description: { de: string; en: string };
-  popular?: boolean;
-}
 
 export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { language, setPremium } = useAppStore();
   const [selectedTier, setSelectedTier] = useState<Tier>('90-days');
   const [isLoading, setIsLoading] = useState(false);
 
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language].instructor.paywall;
 
-  const tiers: Record<Tier, TierInfo> = {
-    '30-days': {
-      price: 9.99,
-      period: { de: 'für 30 Tage', en: 'for 30 days' },
-      icon: Clock,
-      label: { de: 'Starter', en: 'Starter' },
-      description: { de: 'Perfekt zum Ausprobieren', en: 'Perfect for a quick start' }
-    },
-    '90-days': {
-      price: 19.99,
-      period: { de: '90 Tage Fokus', en: '90 Day Focus' },
-      icon: Calendar,
-      label: { de: 'Meistgewählt', en: 'Most Popular' },
-      description: { de: 'Beste Prüfungsvorbereitung', en: 'Best exam preparation' },
-      popular: true
-    },
-    'lifetime': {
-      price: 29.99,
-      period: { de: 'Lebenslanger Zugriff', en: 'Lifetime Access' },
-      icon: Sparkles,
-      label: { de: 'Rundum Sorglos', en: 'Ultimate' },
-      description: { de: 'Für immer dein Begleiter', en: 'Your companion forever' }
-    }
+  const tierIcons = {
+    '30-days': Clock,
+    '90-days': Calendar,
+    'lifetime': Sparkles,
+  };
+
+  const tierPrices = {
+    '30-days': 9.99,
+    '90-days': 19.99,
+    'lifetime': 29.99,
   };
 
   const handleSubscribe = async () => {
@@ -61,7 +40,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         setPremium(true);
         setIsLoading(false);
         onClose();
-        toast.success(isDE ? 'Pro (Demo) aktiviert! Viel Erfolg!' : 'Pro (Demo) activated! Good luck!');
+        toast.success(language === 'de' ? 'Pro (Demo) aktiviert! Viel Erfolg!' : 'Pro (Demo) activated! Good luck!');
       }, 1500);
       return;
     }
@@ -71,7 +50,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        toast.error(isDE ? 'Bitte erstelle ein Konto, um Pro freizuschalten.' : 'Please create an account to unlock Pro.');
+        toast.error(language === 'de' ? 'Bitte erstelle ein Konto, um Pro freizuschalten.' : 'Please create an account to unlock Pro.');
         return;
       }
 
@@ -88,48 +67,11 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       }
     } catch (err) {
       console.error('Payment error:', err);
-      toast.error(isDE ? 'Zahlungsfehler. Bitte versuche es später erneut.' : 'Payment error. Please try again later.');
+      toast.error(language === 'de' ? 'Zahlungsfehler. Bitte versuche es später erneut.' : 'Payment error. Please try again later.');
     } finally {
       setIsLoading(false);
     }
   };
-
-  const content = {
-    de: {
-      title: 'DriveDE Pro',
-      badge: 'PREMIUM FREISCHALTEN',
-      subtitle: 'Deine Abkürzung zum Führerschein',
-      features: [
-        'GPS Live-Tracking & Fehler-Analyse',
-        'AI Fahr-Coach & Individuelle Tipps',
-        'Alle Video-Lektionen & 3D-Szenarien',
-        'Exklusives PDF Fahrlehrer-Review',
-        'Priorisierter Cloud-Sync & Support'
-      ],
-      cta: 'Jetzt Pro freischalten',
-      cancel: 'Vielleicht später',
-      secure: 'Sicher via Stripe',
-      trust: 'TÜV / DEKRA Richtlinien 2026'
-    },
-    en: {
-      title: 'DriveDE Pro',
-      badge: 'UNLOCK PREMIUM',
-      subtitle: 'Your shortcut to the license',
-      features: [
-        'GPS Live Tracking & Fault Analysis',
-        'AI Driving Coach & Custom Tips',
-        'All Video Lessons & 3D Scenarios',
-        'Exclusive PDF Instructor Review',
-        'Priority Cloud Sync & Support'
-      ],
-      cta: 'Unlock Pro Now',
-      cancel: 'Maybe later',
-      secure: 'Secure Stripe Checkout',
-      trust: '2026 TÜV / DEKRA guidelines'
-    }
-  };
-
-  const t = content[language];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl overflow-hidden">
@@ -178,7 +120,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             {/* Features (Left side on large screens) */}
             <div className="lg:col-span-2 space-y-6">
               <div className="space-y-4">
-                {t.features.map((feature, i) => (
+                {t.features.map((feature: string, i: number) => (
                   <motion.div 
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
@@ -205,16 +147,18 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <ShieldCheck className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-white italic">{isDE ? 'Geld-Zurück-Garantie' : 'Money-Back Guarantee'}</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{isDE ? 'Falls du die Prüfung nicht bestehst' : 'If you don\'t pass your exam'}</p>
+                  <p className="text-xs font-black text-white italic">{t.moneyBack}</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{t.moneyBackDesc}</p>
                 </div>
               </motion.div>
             </div>
 
             {/* Pricing Selection (Right side on large screens) */}
             <div className="lg:col-span-3 space-y-3">
-              {(Object.entries(tiers) as [Tier, TierInfo][]).map(([key, tier], index) => {
-                const Icon = tier.icon;
+              {(Object.keys(t.tiers) as Tier[]).map((key, index) => {
+                const Icon = tierIcons[key];
+                const tierInfo = t.tiers[key];
+                const price = tierPrices[key];
                 const isSelected = selectedTier === key;
                 return (
                   <motion.button
@@ -244,20 +188,20 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <div className="flex-1 text-left">
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className={cn('text-[10px] font-black uppercase tracking-[0.2em]', isSelected ? 'text-blue-100' : 'text-slate-500')}>
-                          {tier.label[language]}
+                          {tierInfo.label}
                         </span>
-                        {tier.popular && (
+                        {key === '90-days' && (
                           <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter shadow-lg shadow-amber-400/20">
-                            {isDE ? 'EMPFOHLEN' : 'RECOMMENDED'}
+                            {t.recommended}
                           </span>
                         )}
                       </div>
                       <div className="flex items-baseline gap-2">
                         <span className={cn('text-3xl font-black italic tracking-tighter', isSelected ? 'text-white' : 'text-slate-100')}>
-                          €{tier.price}
+                          €{price}
                         </span>
                         <span className={cn('text-xs font-bold', isSelected ? 'text-blue-100/70' : 'text-slate-500')}>
-                          {tier.period[language]}
+                          {tierInfo.period}
                         </span>
                       </div>
                     </div>

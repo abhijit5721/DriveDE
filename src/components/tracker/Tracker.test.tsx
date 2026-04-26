@@ -100,7 +100,7 @@ describe('Tracker Component', () => {
     render(<Tracker />);
 
     // Click Start Live to trigger watchPosition
-    const startBtn = screen.getByText(/Start Live/i);
+    const startBtn = screen.getByRole('button', { name: /Start Live/i });
     fireEvent.click(startBtn);
     
     // Verify that the error toast is called

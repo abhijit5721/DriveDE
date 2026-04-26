@@ -6,6 +6,7 @@
 import { motion } from 'framer-motion';
 import { Zap, Eye, RotateCw, ShieldCheck } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface SimulatorRadarProps {
   stats: {
@@ -18,15 +19,15 @@ interface SimulatorRadarProps {
 }
 
 export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   
   // Define axes (4 points)
   // Top: Braking, Right: Vorfahrt, Bottom: Mirrors, Left: Roundabout
   const points = [
-    { label: isDE ? 'Reaktion' : 'Reaction', value: stats.braking ? 100 : 20, icon: Zap },
-    { label: isDE ? 'Vorfahrt' : 'Priority', value: stats.vorfahrt ? 100 : 20, icon: ShieldCheck },
-    { label: isDE ? 'Blick' : 'Scan', value: stats.mirrors ? 100 : 20, icon: Eye },
-    { label: isDE ? 'Kreisel' : 'Roundabout', value: stats.roundabout ? 100 : 20, icon: RotateCw },
+    { label: t.tracker.radar.reaction, value: stats.braking ? 100 : 20, icon: Zap },
+    { label: t.tracker.radar.priority, value: stats.vorfahrt ? 100 : 20, icon: ShieldCheck },
+    { label: t.tracker.radar.scan, value: stats.mirrors ? 100 : 20, icon: Eye },
+    { label: t.tracker.radar.roundabout, value: stats.roundabout ? 100 : 20, icon: RotateCw },
   ];
 
   const size = 160;
@@ -150,11 +151,15 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
       <div className="mt-4 flex gap-4">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-emerald-400" />
-          <span className="text-[10px] font-bold text-white/60">Mastered</span>
+          <span className="text-[10px] font-bold text-white/60">
+            {t.tracker.radar.mastered}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-blue-400" />
-          <span className="text-[10px] font-bold text-white/60">Practice</span>
+          <span className="text-[10px] font-bold text-white/60">
+            {t.tracker.radar.practice}
+          </span>
         </div>
       </div>
     </div>

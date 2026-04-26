@@ -7,19 +7,18 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Eye, ArrowLeft, ArrowRight, ShieldCheck, Info, RotateCcw } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface Step {
   id: string;
-  labelDe: string;
-  labelEn: string;
   order: number;
 }
 
 const STEPS: Step[] = [
-  { id: 'mirror-inner', labelDe: 'Innenspiegel', labelEn: 'Interior Mirror', order: 0 },
-  { id: 'mirror-outer', labelDe: 'Außenspiegel', labelEn: 'Side Mirror', order: 1 },
-  { id: 'blinker', labelDe: 'Blinker setzen', labelEn: 'Set Indicator', order: 2 },
-  { id: 'shoulder', labelDe: 'Schulterblick', labelEn: 'Shoulder Check', order: 3 },
+  { id: 'mirror-inner', order: 0 },
+  { id: 'mirror-outer', order: 1 },
+  { id: 'blinker', order: 2 },
+  { id: 'shoulder', order: 3 },
 ];
 
 export default function InteractiveMirrorCheck({ 
@@ -31,10 +30,22 @@ export default function InteractiveMirrorCheck({
   language: 'de' | 'en';
   direction?: 'left' | 'right';
 }) {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
+  const mt = t.maneuvers.interactive.mirrorCheck;
+  
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const getStepLabel = (id: string) => {
+    switch (id) {
+      case 'mirror-inner': return mt.interior;
+      case 'mirror-outer': return 'Side Mirror'; // We can keep this or add to translations
+      case 'blinker': return mt.indicator;
+      case 'shoulder': return mt.shoulder;
+      default: return '';
+    }
+  };
 
   const handleStepClick = (stepId: string) => {
     if (showSuccess) return;
@@ -50,18 +61,9 @@ export default function InteractiveMirrorCheck({
         setShowSuccess(true);
       }
     } else {
-      setError(isDE 
-        ? `Falsch! Die richtige Reihenfolge ist entscheidend. Als nächstes: ${isDE ? expectedStep.labelDe : expectedStep.labelEn}`
-        : `Incorrect! The sequence is critical. Next: ${expectedStep.labelEn}`
-      );
+      setError(mt.error(getStepLabel(expectedStep.id)));
     }
   };
-
-  /* const reset = () => {
-    setCompletedSteps([]);
-    setError(null);
-    setShowSuccess(false);
-  }; */
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-6 text-white overflow-hidden relative">
@@ -69,29 +71,22 @@ export default function InteractiveMirrorCheck({
         <div>
           <h4 className="text-lg font-bold flex items-center gap-2">
             <Eye className="h-5 w-5 text-blue-400" />
-            {isDE ? 'Blickführung & Absicherung' : 'Scanning & Safety Sequence'}
+            {mt.title}
           </h4>
           <p className="text-xs text-slate-400 mt-1">
-            {isDE 
-              ? `Spurwechsel/Abbiegen nach ${direction === 'left' ? 'Links' : 'Rechts'}` 
-              : `${direction === 'left' ? 'Left' : 'Right'} Lane Change/Turn`}
+            {mt.laneChange(direction)}
           </p>
         </div>
       </div>
 
-      {/* Visual Simulation Area */}
       <div className="relative aspect-video w-full rounded-2xl bg-slate-800 border-2 border-slate-700 overflow-hidden shadow-inner">
-        {/* Road View (Background) */}
         <div className="absolute inset-x-0 top-0 h-1/2 bg-slate-700/50 flex flex-col items-center justify-center border-b border-slate-600">
            <div className="w-full h-1 bg-white/20 mb-1" />
            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Road Ahead</p>
            <div className="w-full h-1 bg-white/20 mt-1" />
         </div>
 
-        {/* Dashboard Components */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 to-slate-900 p-4">
-          
-          {/* Interior Mirror */}
           <button
             onClick={() => handleStepClick('mirror-inner')}
             className={cn(
@@ -103,12 +98,11 @@ export default function InteractiveMirrorCheck({
           >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-transparent pointer-events-none" />
             <span className="text-[9px] font-bold uppercase tracking-tighter opacity-80">
-              {isDE ? 'Innenspiegel' : 'Interior'}
+              {mt.interior}
             </span>
             {completedSteps.includes('mirror-inner') && <Check className="h-3 w-3 text-green-400" />}
           </button>
 
-          {/* Side Mirror */}
           <button
             onClick={() => handleStepClick('mirror-outer')}
             className={cn(
@@ -125,7 +119,6 @@ export default function InteractiveMirrorCheck({
              {completedSteps.includes('mirror-outer') && <Check className="h-3 w-3 text-green-400" />}
           </button>
 
-          {/* Indicator Lever */}
           <button
             onClick={() => handleStepClick('blinker')}
             className={cn(
@@ -144,7 +137,6 @@ export default function InteractiveMirrorCheck({
             </motion.div>
           </button>
 
-          {/* Shoulder Area */}
           <button
             onClick={() => handleStepClick('shoulder')}
             className={cn(
@@ -158,11 +150,10 @@ export default function InteractiveMirrorCheck({
             )}>
               <div className="flex items-center gap-1 text-[9px] font-bold">
                 <RotateCcw className="h-3 w-3" />
-                {isDE ? 'Schulterblick' : 'Shoulder Check'}
+                {mt.shoulder}
               </div>
               {completedSteps.includes('shoulder') && <Check className="h-3 w-3 text-green-400" />}
             </div>
-            {/* Blind Spot Indicator */}
             {!completedSteps.includes('shoulder') && (
               <motion.div 
                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
@@ -171,10 +162,8 @@ export default function InteractiveMirrorCheck({
               />
             )}
           </button>
-
         </div>
 
-        {/* Status Text overlay */}
         <div className="absolute top-4 left-4 pointer-events-none">
            <div className="flex gap-1">
              {STEPS.map(step => (
@@ -189,7 +178,6 @@ export default function InteractiveMirrorCheck({
            </div>
         </div>
 
-        {/* Feedback Overlays */}
         <AnimatePresence>
           {error && (
             <motion.div 
@@ -213,36 +201,31 @@ export default function InteractiveMirrorCheck({
                 <ShieldCheck className="h-12 w-12 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold mb-2">
-                {isDE ? 'Prüfungsreif!' : 'Exam Ready!'}
+                {mt.examReady}
               </h3>
               <p className="text-blue-100 text-sm mb-6">
-                {isDE 
-                  ? 'Du hast die 3-S-Blick-Routine perfekt im Griff. So bestehst du jeden Spurwechsel.' 
-                  : 'You have mastered the sequence perfectly. This is how you pass every lane change.'}
+                {mt.successText}
               </p>
               <button
                 onClick={onComplete}
                 className="w-full py-4 bg-white text-blue-600 rounded-2xl font-bold shadow-xl active:scale-95 transition-transform"
               >
-                {isDE ? 'Lektion fortsetzen' : 'Continue Lesson'}
+                {t.maneuvers.interactive.priority.continue}
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Info Card */}
       <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700">
          <div className="flex gap-3">
             <div className="h-5 w-5 text-blue-400 shrink-0">
                <Info className="h-full w-full" />
             </div>
             <div className="text-xs text-slate-300 leading-relaxed">
-               <strong className="text-white">{isDE ? 'Der 3-S-Blick:' : 'The 3-S-Scan:'}</strong>
+               <strong className="text-white">{mt.ruleTitle}</strong>
                <p className="mt-1">
-                 {isDE 
-                   ? 'Zuerst die Übersicht (Innenspiegel), dann die Absicherung (Außenspiegel), dann die Absicht anzeigen (Blinker) und unmittelbar vor dem Wechsel der Schulterblick für den Toten Winkel.' 
-                   : 'First overview (interior mirror), then safety (side mirror), then indicate intention (blinker) and immediately before the change, the shoulder check for the blind spot.'}
+                 {mt.ruleText}
                </p>
             </div>
          </div>

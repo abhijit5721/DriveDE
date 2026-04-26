@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
+import { TRANSLATIONS } from '../../data/translations';
 
 
 interface Car {
@@ -14,25 +15,15 @@ interface Car {
   position: { x: number; y: number; rotate: number };
   target: { x: number; y: number };
   order: number;
-  labelEn: string;
-  labelDe: string;
+  label: string;
 }
 
 export default function InteractiveVorfahrt({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [animatingCar, setAnimatingCar] = useState<string | null>(null);
-
-
-
-  /* 
-     Scenario: Right before Left
-     Blue car is on the right of the Red car.
-     Blue car goes first (Order 0), Blue car is 'red' in my simplified logic below 
-     Wait, let's fix the IDs to match labels.
-  */
 
   const scenarioCars: Car[] = [
     {
@@ -41,8 +32,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
       position: { x: 260, y: 150, rotate: 0 }, // Coming from Right
       target: { x: 40, y: 150 },
       order: 0,
-      labelDe: 'Blaues Auto (von Rechts)',
-      labelEn: 'Blue Car (from Right)',
+      label: t.maneuvers.interactive.priority.blueCar,
     },
     {
       id: 'red-car',
@@ -50,8 +40,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
       position: { x: 150, y: 260, rotate: -90 }, // Coming from Bottom
       target: { x: 150, y: 40 },
       order: 1,
-      labelDe: 'Rotes Auto (von Unten)',
-      labelEn: 'Red Car (from Bottom)',
+      label: t.maneuvers.interactive.priority.redCar,
     }
   ];
 
@@ -75,11 +64,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
         }
       }, 800);
     } else {
-      setError(isDE 
-        ? `Falsch! Beachte die 'Rechts vor Links' Regel. Das ${isDE ? expectedCar.labelDe : expectedCar.labelEn} hat Vorrang.`
-        : `Incorrect! Remember 'Right before Left'. The ${expectedCar.labelEn} has priority.`
-      );
-      // Haptic feedback or shake could go here
+      setError(t.maneuvers.interactive.priority.error(expectedCar.label));
     }
   };
 
@@ -95,7 +80,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
       <div className="flex items-center justify-between">
         <h4 className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
           <Play className="h-4 w-4 text-blue-500" />
-          {isDE ? 'Mini-Simulator: Wer darf zuerst?' : 'Mini-Simulator: Who goes first?'}
+          {t.maneuvers.interactive.priority.title}
         </h4>
         <button 
           onClick={reset}
@@ -106,9 +91,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
       </div>
 
       <p className="text-sm text-slate-600 dark:text-slate-400">
-        {isDE 
-          ? 'Klicke auf die Fahrzeuge in der richtigen Reihenfolge.'
-          : 'Click on the vehicles in the correct order.'}
+        {t.maneuvers.interactive.priority.instructions}
       </p>
 
       {/* SVG Intersections */}
@@ -195,18 +178,16 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
                 <Check className="h-8 w-8" />
               </motion.div>
               <h3 className="text-lg font-bold">
-                {isDE ? 'Super!' : 'Excellent!'}
+                {t.maneuvers.interactive.priority.successTitle}
               </h3>
               <p className="mb-4 text-sm opacity-90">
-                {isDE 
-                  ? 'Du hast die Vorfahrtsregel korrekt angewendet.'
-                  : 'You applied the right-of-way rule correctly.'}
+                {t.maneuvers.interactive.priority.successMessage}
               </p>
               <button 
                 onClick={onComplete}
                 className="rounded-lg bg-white px-4 py-2 text-sm font-bold text-blue-600 shadow-lg hover:bg-slate-100"
               >
-                {isDE ? 'Lektion fortsetzen' : 'Continue Lesson'}
+                {t.maneuvers.interactive.priority.continue}
               </button>
             </motion.div>
           )}
@@ -216,10 +197,8 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
       <div className="flex gap-3 rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/20">
         <Info className="h-5 w-5 shrink-0 text-blue-500" />
         <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-          <strong>{isDE ? 'Wusstest du?' : 'Did you know?'}</strong><br />
-          {isDE 
-            ? 'In Deutschland gilt an Kreuzungen ohne Schilder immer "Rechts vor Links". Wer von rechts kommt, darf zuerst fahren.'
-            : 'In Germany, at intersections without signs, "Right before Left" always applies. Whoever comes from the right has priority.'}
+          <strong>{t.maneuvers.interactive.priority.didYouKnow}</strong><br />
+          {t.maneuvers.interactive.priority.fact}
         </p>
       </div>
     </div>

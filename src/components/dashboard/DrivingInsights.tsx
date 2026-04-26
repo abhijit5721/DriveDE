@@ -6,6 +6,7 @@
 import { TrendingUp, Target, ChevronRight, Zap, Calendar, Wind, Star, Lock, Crown } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface DrivingInsightsProps {
   onDirectLessonSelect: (lessonId: string) => void;
@@ -17,7 +18,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
   const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
     .filter(s => s.instructorName !== 'AI Safety Auditor' && !s.isSimulation);
 
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language].instructor.drivingInsights;
 
   if (drivingSessions.length === 0) return null;
 
@@ -96,23 +97,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
 
 
   const getMistakeLabel = (type: string) => {
-    switch (type) {
-      case 'speeding': return isDE ? 'Geschwindigkeit' : 'Speeding';
-      case 'shoulder_check': return isDE ? 'Schulterblick' : 'Shoulder Check';
-      case 'priority': return isDE ? 'Vorfahrt' : 'Priority';
-      case 'right_before_left': return isDE ? 'Rechts vor Links' : 'Right-Before-Left';
-      case 'idling': return isDE ? 'Umweltschutz' : 'Eco/Idling';
-      case 'roundabout_signal': return isDE ? 'Kreisverkehr' : 'Roundabout Signal';
-      case 'harsh_braking': return isDE ? 'Harte Bremsung' : 'Harsh Braking';
-      case 'harsh_cornering': return isDE ? 'Kurvenverhalten' : 'Harsh Cornering';
-      case 'school_zone': return isDE ? 'Schulzone' : 'School Zone';
-      case 'school_zone_speeding': return isDE ? 'Schulzone (+km/h)' : 'School Zone Speed';
-      case 'curve_speeding': return isDE ? 'Geschw. in Kurve' : 'Cornering Speed';
-      case 'aggressive_cornering': return isDE ? 'G-Kräfte Kurve' : 'Aggressive Cornering';
-      case 'wrong_way': return isDE ? 'Falschfahrer' : 'Wrong Way';
-      case 'illegal_turn': return isDE ? 'Abbiegefehler' : 'Illegal Turn';
-      default: return type.replace(/_/g, ' ');
-    }
+    return t.mistakeLabels[type as keyof typeof t.mistakeLabels] || type.replace(/_/g, ' ');
   };
 
   // Real data for bars (last 7 days)
@@ -132,7 +117,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-          {isDE ? 'Wöchentliche Analyse' : 'Weekly Insights'}
+          {t.title}
         </h3>
         <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
           <Star className="h-3 w-3 fill-current" />
@@ -150,9 +135,9 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Wochen-Aktivität' : 'Weekly Activity'}
+                  {t.activity}
                 </p>
-                <p className="text-[10px] text-slate-500">{isDE ? 'Letzte 7 Tage' : 'Last 7 Days'}</p>
+                <p className="text-[10px] text-slate-500">{t.last7Days}</p>
               </div>
             </div>
             <div className={cn(
@@ -188,7 +173,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                 className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg"
                >
                  <Crown className="h-3 w-3 text-amber-400" />
-                 {isDE ? 'Werte freischalten' : 'Unlock Insights'}
+                 {t.unlockInsights}
                </button>
             </div>
           )}
@@ -209,10 +194,10 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900 dark:text-white">
-                {isDE ? 'Fokus-Themen' : 'Focus Areas'}
+                {t.focusAreas}
               </p>
               <p className="text-[10px] text-slate-500">
-                {isDE ? 'Basierend auf deinen Fahrern' : 'Based on your driving history'}
+                {t.basedOnHistory}
               </p>
             </div>
           </div>
@@ -232,7 +217,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                     onClick={() => onDirectLessonSelect(lessonMap[type] || 'basics-0')}
                     className="group flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
                   >
-                    {isDE ? 'Lektion wiederholen' : 'Review Lesson'}
+                    {t.reviewLesson}
                     <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                   </button>
                 </div>
@@ -240,7 +225,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                 <div className="flex flex-col items-center justify-center py-4 text-center">
                   <Zap className="h-8 w-8 text-emerald-500 mb-2" />
                   <p className="text-xs font-bold text-emerald-600">
-                    {isDE ? 'Perfekt! Keine Fehler-Häufung.' : 'Perfect! No recurring faults.'}
+                    {t.noRecurringFaults}
                   </p>
                 </div>
               )
@@ -248,13 +233,13 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               <div className="flex flex-col items-center justify-center py-4 text-center">
                 <Lock className="h-8 w-8 text-slate-300 mb-2" />
                 <p className="text-[10px] font-medium text-slate-400 px-4">
-                  {isDE ? 'Die KI-Fehleranalyse ist für Pro-Mitglieder verfügbar.' : 'AI mistake analysis is available for Pro members.'}
+                  {t.aiAnalysisPro}
                 </p>
                 <button 
                   onClick={onOpenPaywall}
                   className="mt-3 text-[10px] font-black text-indigo-600 underline"
                 >
-                  {isDE ? 'PRO FREISCHALTEN' : 'UNLOCK PRO'}
+                  {t.unlockPro}
                 </button>
               </div>
             )}
@@ -271,18 +256,16 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
             </div>
             <div>
               <p className="text-xs font-bold text-emerald-900 dark:text-emerald-100">
-                {isDE ? 'Eco-Coach Insight' : 'Eco-Coach Insight'}
+                {t.ecoCoachTitle}
               </p>
               <p className="mt-1 text-xs text-emerald-800/80 dark:text-emerald-400/80 leading-relaxed">
-                {isDE 
-                  ? `Du hast in dieser Woche ${mistakeCounts['idling']}x den Motor unnötig laufen lassen. Das kostet ca. 1.2L Kraftstoff pro Stunde und ist ein Prüfungsfehler.` 
-                  : `You left the engine idling ${mistakeCounts['idling']}x this week. This wastes ~1.2L of fuel per hour and is recorded as an environmental fault in the exam.`}
+                {t.ecoCoachIdling.replace('{count}', mistakeCounts['idling'].toString())}
               </p>
               <button 
                 onClick={() => onDirectLessonSelect('exam-1')}
                 className="mt-3 text-[10px] font-bold uppercase tracking-wider text-emerald-700 underline underline-offset-4 dark:text-emerald-300"
               >
-                {isDE ? 'Energiesparende Fahrweise lernen' : 'Learn energy-saving driving'}
+                {t.ecoCoachLearn}
               </button>
             </div>
           </div>

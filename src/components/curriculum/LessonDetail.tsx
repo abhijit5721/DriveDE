@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 import { ParkingDiagram } from '../maneuvers/ParkingDiagram';
 import AnimatedManeuver from '../maneuvers/AnimatedManeuver';
 import { TrafficSignIcon } from '../common/TrafficSignIcon';
@@ -70,6 +71,7 @@ const getAnimationType = (lessonId: string): AnimationType | null => {
 
 export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const { language, completeLesson, userProgress } = useAppStore();
+  const isDE = language === 'de';
   const [currentStep, setCurrentStep] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -77,7 +79,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const [showAnimation, setShowAnimation] = useState(false);
   const [isSimulatorComplete, setIsSimulatorComplete] = useState(false);
 
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
   const animationType = getAnimationType(lesson.id);
 
@@ -167,11 +169,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
     return (
       <div className="pb-6">
-        <PageHeader title={isDE ? 'Quiz' : 'Quiz'} onBack={() => setShowQuiz(false)} />
+        <PageHeader title={t.curriculum.quiz} onBack={() => setShowQuiz(false)} />
 
         <div className="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800 mt-4">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-            {isDE ? question.questionDe : question.questionEn}
+            {language === 'de' ? question.questionDe : question.questionEn}
           </h3>
 
           <div className="mt-4 space-y-2">
@@ -204,7 +206,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   {option.id.toUpperCase()}
                 </div>
                 <span className="text-sm text-slate-700 dark:text-slate-200">
-                  {isDE ? option.textDe : option.textEn}
+                  {language === 'de' ? option.textDe : option.textEn}
                 </span>
               </button>
             ))}
@@ -234,12 +236,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   )}
                 >
                   {isCorrect
-                    ? isDE ? 'Richtig!' : 'Correct!'
-                    : isDE ? 'Falsch!' : 'Incorrect!'}
+                    ? t.curriculum.correct
+                    : t.curriculum.incorrect}
                 </span>
               </div>
               <p className="mt-2 text-sm text-slate-700 dark:text-slate-300">
-                {isDE ? question.explanationDe : question.explanationEn}
+                {language === 'de' ? question.explanationDe : question.explanationEn}
               </p>
             </div>
           )}
@@ -249,7 +251,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               onClick={handleFinish}
               className="mt-4 w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
             >
-              {isDE ? 'Lektion abschließen' : 'Complete Lesson'}
+              {t.curriculum.completeLesson}
             </button>
           )}
         </div>
@@ -259,11 +261,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
   return (
     <div className="pb-6">
-      <PageHeader title={isDE ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
+      <PageHeader title={language === 'de' ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
 
       <div className="mb-6 mt-4">
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {isDE ? lesson.descriptionDe : lesson.descriptionEn}
+          {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
       </div>
 
@@ -276,12 +278,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? 'Interaktiver Simulator' : 'Interactive Simulator'}
+                {t.curriculum.interactiveSimulator}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isDE 
-                  ? 'Meistere die Situation, um die Lektion abzuschließen' 
-                  : 'Master the situation to complete the lesson'}
+                {t.curriculum.masterSituation}
               </p>
             </div>
           </div>
@@ -297,7 +297,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 >
                   <div className="flex items-center justify-center gap-2">
                     <CheckCircle className="h-5 w-5" />
-                    {isDE ? 'Lektion erfolgreich abgeschlossen!' : 'Lesson Successfully Completed!'}
+                    {t.curriculum.lessonCompleted}
                   </div>
                 </button>
               </div>
@@ -306,9 +306,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           
           {!isSimulatorComplete && (
             <p className="mt-4 text-center text-sm font-medium text-amber-600 dark:text-amber-400">
-              {isDE 
-                ? '💡 Löse den Simulator oben, um fortzufahren' 
-                : '💡 Solve the simulator above to proceed'}
+              {t.curriculum.solveSimulatorHint}
             </p>
           )}
         </div>
@@ -323,10 +321,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Praxis-Check: Schulterblick' : 'Practical Check: Shoulder Scan'}
+                {t.curriculum.shoulderScan}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Trainiere die lebenswichtige Blickfolge' : 'Practice the life-saving scanning sequence'}
+                {t.curriculum.scanningSequence}
               </p>
             </div>
           </div>
@@ -342,7 +340,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <div className="mx-4 mb-4">
                 <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
                   <Check className="h-5 w-5" />
-                  {language === 'de' ? 'Blickfolge korrekt trainiert!' : 'Scanning sequence trained correctly!'}
+                  {t.curriculum.scanningTrained}
                 </div>
               </div>
             )}
@@ -359,10 +357,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Praxis-Check: Kreisverkehr' : 'Practical Check: Roundabout'}
+                {t.curriculum.roundaboutCheck}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Meistere die Blinkregeln im Kreisel' : 'Master signaling rules in the circle'}
+                {t.curriculum.signalingRules}
               </p>
             </div>
           </div>
@@ -374,7 +372,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <div className="mx-4 mb-4">
                 <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
                   <Check className="h-5 w-5" />
-                  {language === 'de' ? 'Kreisverkehr erfolgreich beendet!' : 'Roundabout successfully completed!'}
+                  {t.curriculum.roundaboutCompleted}
                 </div>
               </div>
             )}
@@ -391,10 +389,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Praxis-Check: Gefahrenbremsung' : 'Practical Check: Emergency Brake'}
+                {t.curriculum.emergencyBrakeCheck}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Reaktionszeit & Vollbremsung trainieren' : 'Train reaction time & full emergency brake'}
+                {t.curriculum.reactionTimeTraining}
               </p>
             </div>
           </div>
@@ -413,10 +411,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Praxis-Check: Einparken' : 'Practical Check: Parking'}
+                {t.curriculum.parkingCheck}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Parallel-Parken Schritt für Schritt' : 'Parallel parking step by step'}
+                {t.curriculum.parallelParkingStep}
               </p>
             </div>
           </div>
@@ -435,10 +433,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Interaktive Fahrzeugkontrolle' : 'Interactive Vehicle Check'}
+                {t.curriculum.vehicleCheck}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? 'Prüfen Sie Ihr technisches Wissen am Fahrzeug' : 'Check your technical knowledge of the vehicle'}
+                {t.curriculum.techKnowledge}
               </p>
             </div>
           </div>
@@ -457,10 +455,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {language === 'de' ? 'Full Final Check: Prüfungssimulation' : 'Full Final Check: Exam Simulation'}
+                {t.curriculum.examSimulation}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {language === 'de' ? '15-minütige Live-Simulation mit Experten-Feedback' : '15-minute live simulation with expert feedback'}
+                {t.curriculum.expertFeedback}
               </p>
             </div>
           </div>
@@ -505,8 +503,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               >
                 <Film className="h-5 w-5" />
                 {showAnimation
-                  ? (isDE ? 'Animation ausblenden' : 'Hide Animation')
-                  : (isDE ? '🎬 Animation ansehen' : '🎬 Watch Animation')}
+                  ? t.curriculum.animationHide
+                  : t.curriculum.animationWatch}
               </button>
             </div>
           )}
@@ -522,12 +520,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
             <div className="mb-4 flex items-center justify-between">
               <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                {isDE ? 'Schritt' : 'Step'} {currentStep + 1}/{lesson.steps.length}
+                {t.curriculum.step} {currentStep + 1}/{lesson.steps.length}
               </span>
               {lesson.steps[currentStep].critical && (
                 <span className="flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
                   <AlertTriangle className="h-3 w-3" />
-                  {isDE ? 'Wichtig!' : 'Critical!'}
+                  {t.curriculum.critical}
                 </span>
               )}
             </div>
@@ -560,13 +558,13 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
 
             <h3 className="mb-2 text-center text-lg font-semibold text-slate-900 dark:text-white">
-              {isDE
+              {language === 'de'
                 ? lesson.steps[currentStep].titleDe
                 : lesson.steps[currentStep].titleEn}
             </h3>
 
             <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-              {isDE
+              {language === 'de'
                 ? lesson.steps[currentStep].descriptionDe
                 : lesson.steps[currentStep].descriptionEn}
             </p>
@@ -592,9 +590,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               >
                 {currentStep === lesson.steps.length - 1
                   ? lesson.quiz && lesson.quiz.length > 0
-                    ? isDE ? 'Zum Quiz' : 'Go to Quiz'
-                    : isDE ? 'Abschließen' : 'Complete'
-                  : isDE ? 'Nächster Schritt' : 'Next Step'}
+                    ? t.curriculum.goToQuiz
+                    : t.curriculum.complete
+                  : t.curriculum.nextStep}
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
@@ -603,7 +601,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {/* Step Overview */}
           <div className="mt-4 rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
             <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {isDE ? 'Alle Schritte' : 'All Steps'}
+              {t.curriculum.allSteps}
             </h4>
             <div className="space-y-2">
               {lesson.steps.map((step, idx) => (
@@ -637,7 +635,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                         : 'text-slate-600 dark:text-slate-400'
                     )}
                   >
-                    {isDE ? step.titleDe : step.titleEn}
+                    {language === 'de' ? step.titleDe : step.titleEn}
                   </span>
                   {step.critical && (
                     <AlertTriangle className="ml-auto h-4 w-4 text-red-500" />
@@ -658,10 +656,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-                {isDE ? 'Wichtige Begriffe' : 'Key Terms'}
+                {t.curriculum.keyTerms}
               </h4>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Deutsch und Englisch für Unterricht und Prüfung' : 'German and English for lessons and exam situations'}
+                {t.curriculum.glossarySub}
               </p>
             </div>
           </div>
@@ -673,7 +671,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{term.english}</p>
                 {(term.noteDe || term.noteEn) && (
                   <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                    {isDE ? term.noteDe : term.noteEn}
+                    {language === 'de' ? term.noteDe : term.noteEn}
                   </p>
                 )}
               </div>
@@ -691,10 +689,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-                {isDE ? 'Typische Prüferanweisungen' : 'Typical Examiner Commands'}
+                {t.curriculum.typicalExaminer}
               </h4>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Originalformulierung verstehen und sicher umsetzen' : 'Understand the original wording and act on it calmly'}
+                {t.curriculum.examinerSub}
               </p>
             </div>
           </div>
@@ -706,7 +704,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{command.commandEn}</p>
                 {(command.noteDe || command.noteEn) && (
                   <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                    {isDE ? command.noteDe : command.noteEn}
+                    {language === 'de' ? command.noteDe : command.noteEn}
                   </p>
                 )}
               </div>
@@ -724,10 +722,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-                {isDE ? 'Wichtige Verkehrszeichen' : 'Important Traffic Signs'}
+                {t.curriculum.importantSigns}
               </h4>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zeichen, die in dieser Situation häufig relevant sind' : 'Signs often relevant in this situation'}
+                {t.curriculum.signsSub}
               </p>
             </div>
           </div>
@@ -743,7 +741,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
-                        {isDE ? sign.titleDe : sign.titleEn}
+                        {language === 'de' ? sign.titleDe : sign.titleEn}
                       </p>
                       {sign.code && (
                         <span className="rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-700 dark:text-slate-300">
@@ -752,7 +750,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                       )}
                     </div>
                     <p className="mt-2 text-base leading-7 text-slate-600 dark:text-slate-400">
-                      {isDE ? sign.descriptionDe : sign.descriptionEn}
+                      {language === 'de' ? sign.descriptionDe : sign.descriptionEn}
                     </p>
                   </div>
                 </div>
@@ -771,10 +769,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
             <div>
               <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                {isDE ? 'Geführte Lernpunkte' : 'Guided Learning Points'}
+                {t.curriculum.guidedPoints}
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isDE ? 'Prüfungsrelevante Beobachtungs- und Handlungspunkte' : 'Exam-relevant observation and action points'}
+                {t.curriculum.guidedPointsSub}
               </p>
             </div>
           </div>
@@ -791,10 +789,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   </div>
                   <div>
                     <p className="font-medium text-slate-900 dark:text-white">
-                      {isDE ? point.titleDe : point.titleEn}
+                      {language === 'de' ? point.titleDe : point.titleEn}
                     </p>
                     <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                      {isDE ? point.contentDe : point.contentEn}
+                      {language === 'de' ? point.contentDe : point.contentEn}
                     </p>
                   </div>
                 </div>
@@ -810,24 +808,24 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           <div>
             <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
               {isDE
-                ? (lesson.scenarioSectionTitleDe || 'Typische Fahrsituationen')
-                : (lesson.scenarioSectionTitleEn || 'Typical Driving Scenarios')}
+                ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
+                : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
             </h4>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               {isDE
-                ? (lesson.scenarioSectionSubtitleDe || 'Schritt-für-Schritt für knifflige Praxis-Situationen')
-                : (lesson.scenarioSectionSubtitleEn || 'Step-by-step guidance for tricky practical situations')}
+                ? (lesson.scenarioSectionSubtitleDe || t.curriculum.scenarioSub)
+                : (lesson.scenarioSectionSubtitleEn || t.curriculum.scenarioSub)}
             </p>
             {!lesson.scenarioSectionTitleDe && !lesson.scenarioSectionTitleEn && (
               <div className="mt-2 flex flex-wrap gap-2">
                 <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                  {isDE ? 'Ampel' : 'Traffic lights'}
+                  {t.curriculum.trafficLights}
                 </span>
                 <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                  {isDE ? 'Spur & Straßenform' : 'Lanes & road shape'}
+                  {t.curriculum.laneShape}
                 </span>
                 <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                  {isDE ? 'Sonderregeln' : 'Special rules'}
+                  {t.curriculum.specialRules}
                 </span>
               </div>
             )}
@@ -861,11 +859,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-slate-900 dark:text-white">
-                          {isDE ? step.titleDe : step.titleEn}
+                          {language === 'de' ? step.titleDe : step.titleEn}
                         </p>
                         {step.critical && (
                           <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                            {isDE ? 'Wichtig' : 'Critical'}
+                            {t.curriculum.scenarioStep}
                           </span>
                         )}
                       </div>
@@ -882,7 +880,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   <div className="mb-2 flex items-center gap-2 text-amber-800 dark:text-amber-300">
                     <AlertTriangle className="h-4 w-4" />
                     <p className="text-sm font-semibold">
-                      {isDE ? 'Häufige Fehler in dieser Situation' : 'Common mistakes in this scenario'}
+                      {t.curriculum.commonMistakes}
                     </p>
                   </div>
                   <div className="space-y-2">
@@ -908,7 +906,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       {lesson.tips && lesson.tips.length > 0 && (
         <div className="mt-4 space-y-3">
           <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Tipps vom Fahrlehrer' : 'Instructor Tips'}
+            {t.curriculum.instructorTips}
           </h4>
           {lesson.tips.map((tip) => (
             <div
@@ -971,7 +969,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           }}
           className="mt-6 w-full rounded-xl bg-gradient-to-r from-green-500 to-green-600 py-3 font-semibold text-white transition-all hover:from-green-600 hover:to-green-700"
         >
-          {isDE ? 'Als gelernt markieren' : 'Mark as Learned'}
+          {t.curriculum.markAsLearned}
         </button>
       )}
     </div>

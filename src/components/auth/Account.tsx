@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -13,8 +13,7 @@ import GoogleLogo from '../../assets/google-logo.svg';
 import { syncAllData } from '../../services/supabaseSync';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Share2, X } from 'lucide-react';
-
+import { TRANSLATIONS } from '../../data/translations';
 
 interface AccountProps {
   onOpenAuth: () => void;
@@ -35,21 +34,22 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     authDisplayName,
     authUserId,
     userProgress,
-
     learningPath,
     transmissionType,
     resetProgress,
     enableDemoMode,
     isPremium,
   } = useAppStore();
+  
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
 
-
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language].account;
+  const lt = TRANSLATIONS[language].licenseSelector;
+  
   const completedLessons = userProgress.completedLessons.length;
   const drivingHours = Math.floor(userProgress.totalDrivingMinutes / 60);
   const drivingMinutes = userProgress.totalDrivingMinutes % 60;
@@ -59,11 +59,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     setAuthError(null);
 
     if (!isSupabaseConfigured) {
-      setAuthError(
-        isDE
-          ? 'Google-Login ist erst verfügbar, sobald Supabase im Projekt eingerichtet wurde.'
-          : 'Google login becomes available once Supabase is configured for this project.'
-      );
+      setAuthError(t.errors.googleNotConfigured);
       return;
     }
 
@@ -71,18 +67,12 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
 
     try {
       await signInWithProvider('google');
-      setAuthMessage(
-        isDE
-          ? 'Google-Anmeldung wird geöffnet …'
-          : 'Opening Google sign-in …'
-      );
+      setAuthMessage(t.openingGoogle);
     } catch (error) {
       setAuthError(
         error instanceof Error && error.message
           ? error.message
-          : isDE
-            ? 'Google-Anmeldung konnte nicht gestartet werden.'
-            : 'Could not start Google sign-in.'
+          : t.errors.googleFail
       );
       setAuthLoading(false);
       return;
@@ -93,49 +83,35 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
 
   const handleOpenShare = async () => {
     if (authStatus !== 'signed_in') {
-      setAuthError(isDE ? 'Bitte melde dich zuerst an, um deinen Report zu teilen.' : 'Please sign in first to share your report.');
+      setAuthError(t.errors.shareSignIn);
       return;
     }
     
-    // Ensure all data is synced to cloud before sharing
     setAuthLoading(true);
     await syncAllData(useAppStore.getState());
     setAuthLoading(false);
 
-    // Get the base URL (works in dev and production)
     const baseUrl = window.location.origin + window.location.pathname;
     
     if (authUserId) {
       setShareUrl(`${baseUrl}?report=${authUserId}`);
       setShowShareModal(true);
     } else {
-      setAuthError(isDE ? 'User ID konnte nicht gefunden werden.' : 'User ID could not be found.');
+      setAuthError(t.errors.userNotFound);
     }
   };
 
-
-
   const pathLabel =
     learningPath === 'umschreibung'
-      ? isDE
-        ? 'Umschreibung'
-        : 'Conversion'
-      : isDE
-        ? 'Neuer Führerschein'
-        : 'New license';
+      ? lt.conversion.title
+      : lt.standard.title;
 
   const transmissionLabel =
     transmissionType === 'manual'
-      ? isDE
-        ? 'Manuell'
-        : 'Manual'
+      ? lt.manual.title
       : transmissionType === 'automatic'
-        ? isDE
-          ? 'Automatik'
-          : 'Automatic'
-        : isDE
-          ? 'Noch nicht gewählt'
-          : 'Not selected yet';
+        ? lt.automatic.title
+        : t.notSelectedYet;
 
   return (
     <div className="space-y-6 pb-6">
@@ -146,14 +122,12 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
-              {isDE ? 'Konto & Profil' : 'Account & Profile'}
+              {t.title}
             </p>
             <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold leading-tight truncate">
               {authStatus === 'signed_in'
                  ? authDisplayName
-                : isDE
-                  ? 'Gastmodus aktiv'
-                  : 'Guest mode active'}
+                : t.guestMode}
               {isPremium && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                   <Crown className="h-3 w-3" />
@@ -164,9 +138,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
             <p className="mt-2 text-sm leading-6 text-slate-300 truncate">
               {authStatus === 'signed_in'
                 ? authEmail
-                : isDE
-                  ? 'Du kannst die App ohne Konto nutzen oder dich anmelden, um später Cloud-Synchronisierung zu aktivieren.'
-                  : 'You can use the app without an account, or sign in to enable cloud sync later.'}
+                : t.guestDesc}
             </p>
           </div>
         </div>
@@ -179,14 +151,14 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
               >
                 <LogOut className="h-4 w-4" />
-                {isDE ? 'Abmelden' : 'Sign out'}
+                {t.signOut}
               </button>
 
               <button
                 disabled
                 className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/50 cursor-not-allowed"
               >
-                {isDE ? 'Konto verwalten' : 'Manage account'}
+                {t.manageAccount}
               </button>
 
               <button
@@ -194,7 +166,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 className="col-span-full inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
               >
                 <Share2 className="h-4 w-4" />
-                {isDE ? 'Report mit Fahrlehrer teilen' : 'Share report with instructor'}
+                {t.shareWithInstructor}
               </button>
             </div>
           ) : (
@@ -207,12 +179,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 >
                   <img src={GoogleLogo} alt="Google" className="h-5 w-5" />
                   {authLoading
-                    ? isDE
-                      ? 'Google wird geöffnet …'
-                      : 'Opening Google …'
-                    : isDE
-                      ? 'Mit Google fortfahren'
-                      : 'Continue with Google'}
+                    ? t.openingGoogle
+                    : t.continueWithGoogle}
                 </button>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -221,7 +189,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
                   >
                     <LogIn className="h-4 w-4" />
-                    {isDE ? 'E-Mail anmelden' : 'Sign in with email'}
+                    {t.signInEmail}
                   </button>
 
                   <button
@@ -229,15 +197,13 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
                   >
                     <ShieldCheck className="h-4 w-4" />
-                    {isDE ? 'Als Gast fortfahren' : 'Continue as guest'}
+                    {t.continueGuest}
                   </button>
                 </div>
               </div>
 
               <p className="text-xs text-slate-300">
-                {isDE
-                  ? 'Google und E-Mail sind optional. Du kannst die App auch komplett im Gastmodus verwenden.'
-                  : 'Google and email are optional. You can also use the app entirely in guest mode.'}
+                {t.guestNote}
               </p>
             </>
           )}
@@ -260,20 +226,20 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-          <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Lernpfad' : 'Learning path'}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{t.learningPath}</p>
           <p className="mt-1 text-base font-bold text-slate-900 dark:text-white">{pathLabel}</p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{transmissionLabel}</p>
         </div>
         <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-          <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Fortschritt' : 'Progress'}</p>
-          <p className="mt-1 text-base font-bold text-slate-900 dark:text-white">{completedLessons} {isDE ? 'Lektionen' : 'lessons'}</p>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{drivingHours}h {drivingMinutes}m {isDE ? 'Fahrzeit' : 'driving time'}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{t.progress}</p>
+          <p className="mt-1 text-base font-bold text-slate-900 dark:text-white">{completedLessons} {t.lessons}</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{drivingHours}h {drivingMinutes}m {t.drivingTime}</p>
         </div>
       </div>
 
       <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
         <h3 className="text-base font-bold text-slate-900 dark:text-white">
-          {isDE ? 'Profil-Einstellungen' : 'Profile settings'}
+          {t.profileSettings}
         </h3>
         <div className="mt-4 space-y-3">
           <button
@@ -285,14 +251,14 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 {darkMode ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5 text-slate-700 dark:text-slate-200" />}
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Dark Mode' : 'Dark mode'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.darkMode}</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {darkMode ? (isDE ? 'Aktiv' : 'Enabled') : (isDE ? 'Deaktiviert' : 'Disabled')}
+                  {darkMode ? t.active : t.disabled}
                 </p>
               </div>
             </div>
             <span className={cn('rounded-full px-3 py-1 text-xs font-semibold', darkMode ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200')}>
-              {darkMode ? (isDE ? 'An' : 'On') : (isDE ? 'Aus' : 'Off')}
+              {darkMode ? t.on : t.off}
             </span>
           </button>
 
@@ -305,12 +271,12 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <Globe className="h-5 w-5 text-slate-700 dark:text-slate-200" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Sprache' : 'Language'}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Deutsch aktiv' : 'English active'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{TRANSLATIONS[language].common.language}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.languageActive}</p>
               </div>
             </div>
             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-              {isDE ? 'DE' : 'EN'}
+              {language.toUpperCase()}
             </span>
           </button>
 
@@ -323,8 +289,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <RefreshCcw className="h-5 w-5 text-slate-700 dark:text-slate-200" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Pfad ändern' : 'Change learning path'}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Manual, Automatik oder Umschreibung neu wählen' : 'Re-select manual, automatic, or conversion path'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.changePath}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.changePathDesc}</p>
               </div>
             </div>
           </button>
@@ -338,8 +304,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Landing Page ansehen' : 'View landing page'}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Die Startseite mit allen Informationen anzeigen' : 'Show the introductory page with all info'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.viewLanding}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.viewLandingDesc}</p>
               </div>
             </div>
           </button>
@@ -353,15 +319,15 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <RotateCcw className="h-5 w-5 text-rose-600 dark:text-rose-300" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Fortschritt zurücksetzen' : 'Reset progress'}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'Lokale Lernstände und Fahrtenbuch löschen' : 'Clear local learning progress and tracker entries'}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.resetProgress}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.resetProgressDesc}</p>
               </div>
             </div>
           </button>
 
           <div className="pt-2">
             <div className="mb-2 px-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{isDE ? 'Entwickler-Tools' : 'Developer Tools'}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.developerTools}</p>
             </div>
             <button
               onClick={enableDemoMode}
@@ -372,8 +338,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                   <Zap className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{isDE ? 'Demo-Modus aktivieren' : 'Enable Demo Mode'}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{isDE ? 'App mit Beispieldaten für Videoaufnahmen füllen' : 'Fill app with sample data for video recording'}</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.enableDemo}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t.enableDemoDesc}</p>
                 </div>
               </div>
               <ChevronRight className="h-4 w-4 text-slate-400" />
@@ -392,8 +358,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
               <FileText className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{isDE ? 'Datenschutz & Rechtliches' : 'Privacy & legal'}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{isDE ? 'DSGVO, AGB, Impressum und Hinweise prüfen' : 'Review GDPR, terms, imprint, and legal notices'}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{t.privacyLegal}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{t.privacyLegalDesc}</p>
             </div>
           </div>
         </button>
@@ -407,14 +373,13 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
               <ClipboardCheck className="h-6 w-6 text-blue-700 dark:text-blue-300" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{isDE ? 'Fahrlehrer-Review' : 'Instructor review'}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{isDE ? 'PDF, Musterlektionen und Review-Paket öffnen' : 'Open the PDF, sample lessons, and review pack'}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{t.instructorReview}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{t.instructorReviewDesc}</p>
             </div>
           </div>
         </button>
       </div>
 
-      {/* Share Modal */}
       <AnimatePresence>
         {showShareModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -443,12 +408,10 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
               </div>
 
               <h3 className="text-xl font-bold text-white mb-2">
-                {isDE ? 'Fahrlehrer-Sync' : 'Instructor Sync'}
+                {t.shareModal.title}
               </h3>
               <p className="text-sm text-slate-400 mb-8">
-                {isDE 
-                  ? 'Dein Fahrlehrer kann diesen Code scannen, um deinen aktuellen Lernstand und deine Fahrten zu prüfen.'
-                  : 'Your instructor can scan this code to review your current progress and driving logs.'}
+                {t.shareModal.desc}
               </p>
 
               <div className="mx-auto mb-8 flex items-center justify-center rounded-3xl bg-white p-6 shadow-inner">
@@ -458,7 +421,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                   level="H"
                   includeMargin={false}
                   imageSettings={{
-                    src: '/favicon.ico', // Or app logo
+                    src: '/favicon.ico',
                     x: undefined,
                     y: undefined,
                     height: 40,
@@ -471,7 +434,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
               <div className="space-y-4">
                 <div className="p-3 rounded-xl bg-slate-800/50 border border-white/5">
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">
-                    {isDE ? 'Direkter Link' : 'Direct Link'}
+                    {t.shareModal.directLink}
                   </p>
                   <p className="text-xs text-blue-400 truncate font-mono">
                     {shareUrl}
@@ -480,11 +443,11 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <button 
                   onClick={() => {
                     navigator.clipboard.writeText(shareUrl);
-                    alert(isDE ? 'Link kopiert!' : 'Link copied!');
+                    alert(t.shareModal.linkCopied);
                   }}
                   className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-bold transition"
                 >
-                  {isDE ? 'Link kopieren' : 'Copy link'}
+                  {t.shareModal.copyLink}
                 </button>
               </div>
             </motion.div>
@@ -494,4 +457,3 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     </div>
   );
 }
-

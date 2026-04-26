@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { ChevronRight, RotateCcw, Trophy, X } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-
+import { TRANSLATIONS } from '../../data/translations';
 import { scenarios } from '../../data/scenarios';
 
 interface ScenarioQuizProps {
@@ -22,7 +22,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
   const [score, setScore] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const scenario = scenarios[currentIndex];
 
   const handleSelect = (optionId: string) => {
@@ -77,15 +77,11 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           </div>
 
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-            {isPassing
-              ? isDE ? 'Sehr gut!' : 'Great Job!'
-              : isDE ? 'Weiter üben!' : 'Keep Practicing!'}
+            {isPassing ? t.quiz.greatJob : t.quiz.keepPracticing}
           </h2>
 
           <p className="mt-2 text-slate-600 dark:text-slate-400">
-            {isDE
-              ? `Du hast ${score} von ${scenarios.length} richtig beantwortet`
-              : `You got ${score} out of ${scenarios.length} correct`}
+            {t.quiz.resultsSummary(score, scenarios.length)}
           </p>
 
           <div className="mt-4 text-5xl font-bold text-slate-900 dark:text-white">
@@ -95,18 +91,18 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           <div className="mt-6 flex gap-3">
             <button
               onClick={handleRestart}
-              aria-label={isDE ? 'Quiz neustarten' : 'Restart quiz'}
+              aria-label={t.quiz.restartAria}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 py-3 font-semibold text-slate-700 transition-all hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
             >
               <RotateCcw className="h-4 w-4" />
-              {isDE ? 'Nochmal' : 'Retry'}
+              {t.quiz.retry}
             </button>
             <button
               onClick={onClose}
-              aria-label={isDE ? 'Quiz beenden' : 'Close quiz and return to dashboard'}
+              aria-label={t.quiz.closeAria}
               className="flex-1 rounded-xl bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600"
             >
-              {isDE ? 'Fertig' : 'Done'}
+              {t.quiz.done}
             </button>
           </div>
         </div>
@@ -121,12 +117,12 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           <div className="flex items-center gap-2">
             <span className="text-2xl">{scenario.icon}</span>
             <span className="font-semibold text-slate-900 dark:text-white">
-              {isDE ? scenario.titleDe : scenario.titleEn}
+              {language === 'de' ? scenario.titleDe : scenario.titleEn}
             </span>
           </div>
           <button
             onClick={onClose}
-            aria-label={isDE ? 'Quiz schließen' : 'Close quiz'}
+            aria-label={t.quiz.closeX}
             className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             <X className="h-5 w-5" />
@@ -150,13 +146,13 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           {/* Situation */}
           <div className="mb-4 rounded-xl bg-blue-50 p-4 dark:bg-blue-900/20">
             <p className="text-sm text-blue-800 dark:text-blue-300">
-              {isDE ? scenario.situationDe : scenario.situationEn}
+              {language === 'de' ? scenario.situationDe : scenario.situationEn}
             </p>
           </div>
 
           {/* Question */}
           <h3 className="mb-4 font-semibold text-slate-900 dark:text-white">
-            {isDE ? scenario.questionDe : scenario.questionEn}
+            {language === 'de' ? scenario.questionDe : scenario.questionEn}
           </h3>
 
           {/* Options */}
@@ -170,7 +166,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
                   key={option.id}
                   onClick={() => handleSelect(option.id)}
                   disabled={showResult}
-                  aria-label={isDE ? `Option ${option.id.toUpperCase()}: ${option.textDe}` : `Option ${option.id.toUpperCase()}: ${option.textEn}`}
+                  aria-label={language === 'de' ? `Option ${option.id.toUpperCase()}: ${option.textDe}` : `Option ${option.id.toUpperCase()}: ${option.textEn}`}
                   className={cn(
                     'flex w-full items-center gap-3 rounded-xl p-4 text-left transition-all',
                     showResult
@@ -195,7 +191,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
                     {option.id.toUpperCase()}
                   </div>
                   <span className="text-sm text-slate-700 dark:text-slate-200">
-                    {isDE ? option.textDe : option.textEn}
+                    {language === 'de' ? option.textDe : option.textEn}
                   </span>
                 </button>
               );
@@ -211,7 +207,7 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
                 : 'bg-amber-50 dark:bg-amber-900/20'
             )}>
               <p className="text-sm text-slate-700 dark:text-slate-300">
-                {isDE ? scenario.explanationDe : scenario.explanationEn}
+                {language === 'de' ? scenario.explanationDe : scenario.explanationEn}
               </p>
             </div>
           )}
@@ -220,12 +216,12 @@ export function ScenarioQuiz({ onClose }: ScenarioQuizProps) {
           {showResult && (
             <button
               onClick={handleNext}
-              aria-label={currentIndex < scenarios.length - 1 ? (isDE ? 'Nächste Frage' : 'Next question') : (isDE ? 'Ergebnis anzeigen' : 'Show results')}
+              aria-label={currentIndex < scenarios.length - 1 ? t.quiz.nextQuestionAria : t.quiz.showResultsAria}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 py-3 font-semibold text-white transition-all hover:bg-blue-600"
             >
               {currentIndex < scenarios.length - 1
-                ? isDE ? 'Weiter' : 'Next'
-                : isDE ? 'Ergebnis anzeigen' : 'Show Results'}
+                ? t.quiz.nextQuestion
+                : t.quiz.showResults}
               <ChevronRight className="h-5 w-5" />
             </button>
           )}

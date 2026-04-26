@@ -3,16 +3,6 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-/**
- * Curriculum.tsx
- * 
- * Displays the structured learning path for the user.
- * It dynamically filters chapters and lessons based on:
- * 1. License Type (Standard vs Conversion/Umschreibung).
- * 2. Transmission Type (Manual vs Automatic).
- * 3. Premium status (locking Pro content).
- */
-
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -20,6 +10,7 @@ import {
   Settings2, BadgeCheck, BookOpen, Crown, Activity 
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
+import { TRANSLATIONS } from '../../data/translations';
 import { chapters } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
@@ -33,10 +24,9 @@ interface CurriculumProps {
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const { language, userProgress, licenseType, setLicenseType, isPremium } = useAppStore();
+  const t = TRANSLATIONS[language];
   const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
-  
-  const isDE = language === 'de';
   
   // --- DERIVED LICENSE STATE ---
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -85,7 +75,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700 dark:bg-orange-900/50 dark:text-orange-300">
           <Cog className="h-3 w-3" />
-          {isDE ? 'Schaltung' : 'Manual'}
+          {t.curriculum.manualBadge}
         </span>
       );
     }
@@ -93,7 +83,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
           <Zap className="h-3 w-3" />
-          {isDE ? 'Automatik' : 'Auto'}
+          {t.curriculum.autoBadge}
         </span>
       );
     }
@@ -101,7 +91,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200 shadow-sm shadow-indigo-500/10">
           <Activity className="h-3 w-3" />
-          {isDE ? 'Interaktiv' : 'Interactive'}
+          {t.curriculum.interactiveBadge}
         </span>
       );
     }
@@ -155,16 +145,16 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           </div>
           <div className="text-left">
             <p className="text-sm font-medium opacity-90">
-              {isDE ? 'Führerscheinpfad' : 'License Path'}
+              {t.curriculum.licensePath}
             </p>
             <p className="text-lg font-bold">
               {learningPath === 'umschreibung'
                 ? transmissionType === 'manual'
-                  ? (isDE ? 'Umschreibung · Schaltgetriebe' : 'Conversion · Manual')
-                  : (isDE ? 'Umschreibung · Automatik' : 'Conversion · Automatic')
+                  ? t.curriculum.umschreibungManual
+                  : t.curriculum.umschreibungAutomatic
                 : transmissionType === 'manual'
-                  ? (isDE ? 'Klasse B (Schaltgetriebe)' : 'Class B (Manual)')
-                  : (isDE ? 'Klasse B197 (Automatik)' : 'Class B197 (Automatic)')}
+                  ? t.curriculum.classBManual
+                  : t.curriculum.classB197Automatic}
             </p>
           </div>
         </div>
@@ -187,7 +177,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               exit={{ scale: 0.9, opacity: 0 }}
             >
               <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? 'Führerscheinklasse ändern' : 'Change License Class'}
+                {t.curriculum.changeLicense}
               </h3>
               
               <div className="space-y-3">
@@ -208,10 +198,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">
-                      {isDE ? 'Schaltgetriebe' : 'Manual Transmission'}
+                      {t.curriculum.manual}
                     </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {isDE ? 'Klasse B - Kupplung & Schalten' : 'Class B - Clutch & Shifting'}
+                      {t.curriculum.manualDesc}
                     </p>
                   </div>
                   {isManualSelection && (
@@ -236,10 +226,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">
-                      {isDE ? 'Automatik' : 'Automatic'}
+                      {t.curriculum.automatic}
                     </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {isDE ? 'Klasse B197 - Ohne Kupplung' : 'Class B197 - No Clutch'}
+                      {t.curriculum.automaticDesc}
                     </p>
                   </div>
                   {isAutomaticSelection && (
@@ -264,10 +254,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">
-                      {isDE ? 'Umschreibung · Schaltgetriebe' : 'Conversion · Manual'}
+                      {t.curriculum.conversionManual}
                     </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {isDE ? 'Keine Pflichtstunden, aber mit Schaltung' : 'No mandatory hours, but with manual transmission'}
+                      {t.curriculum.conversionManualDesc}
                     </p>
                   </div>
                   {isConversionManualSelection && (
@@ -292,10 +282,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-white">
-                      {isDE ? 'Umschreibung · Automatik' : 'Conversion · Automatic'}
+                      {t.curriculum.conversionAutomatic}
                     </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {isDE ? 'Keine Pflichtstunden, nur Automatik-Inhalte' : 'No mandatory hours, automatic-only content'}
+                      {t.curriculum.conversionAutomaticDesc}
                     </p>
                   </div>
                   {isConversionAutomaticSelection && (
@@ -308,7 +298,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 onClick={() => setShowLicenseModal(false)}
                 className="mt-4 w-full rounded-lg bg-slate-100 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
               >
-                {isDE ? 'Schließen' : 'Close'}
+                {t.common.close}
               </button>
             </motion.div>
           </motion.div>
@@ -317,16 +307,12 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
       <motion.div className="mb-6" variants={itemVariants}>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {isDE ? 'Lehrplan' : 'Curriculum'}
+          {t.curriculum.title}
         </h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {learningPath === 'umschreibung'
-            ? isDE
-              ? 'Fokussierter Deutschland-Pfad für Umschreibung: deutsche Prüfungsfallen, Vorfahrtsregeln, Schulterblick und Prüfer-Kommandos.'
-              : 'Focused Germany path for license conversion: German exam traps, right-of-way rules, shoulder checks, and examiner commands.'
-            : isDE
-              ? 'Vollständiger Lernpfad von Grundlagen über Manöver bis zur praktischen Prüfung.'
-              : 'Complete learning path from basics through maneuvers to the practical exam.'}
+            ? t.curriculum.pathDescUmschreibung
+            : t.curriculum.pathDescStandard}
         </p>
       </motion.div>
 
@@ -335,8 +321,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
         <motion.div variants={itemVariants}>
           <EmptyState
             icon={<BookOpen className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
-            title={isDE ? 'Keine Lektionen' : 'No Lessons'}
-            message={isDE ? 'Für diesen Lernpfad sind noch keine Lektionen verfügbar. Schau bald wieder vorbei!' : 'No lessons are available for this learning path yet. Check back soon!'}
+            title={t.curriculum.noLessonsTitle}
+            message={t.curriculum.noLessonsMessage}
           />
         </motion.div>
       ) : (
@@ -392,7 +378,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-slate-900 dark:text-white">
-                          {isDE ? chapter.titleDe : chapter.titleEn}
+                          {language === 'de' ? chapter.titleDe : chapter.titleEn}
                         </h3>
                         {isCompleted && (
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white">
@@ -401,7 +387,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         )}
                       </div>
                       <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                        {isDE ? chapter.descriptionDe : chapter.descriptionEn}
+                        {language === 'de' ? chapter.descriptionDe : chapter.descriptionEn}
                       </p>
                       <div className="mt-2 flex items-center gap-2">
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
@@ -473,12 +459,12 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                             <div className="flex-1">
                               <div className="flex items-center">
                                 <h4 className="text-sm font-medium text-slate-900 dark:text-white">
-                                  {isDE ? lesson.titleDe : lesson.titleEn}
+                                  {language === 'de' ? lesson.titleDe : lesson.titleEn}
                                 </h4>
                                 {getLessonBadge(lesson)}
                               </div>
                               <p className="text-xs text-slate-500 dark:text-slate-400">
-                                {isDE ? lesson.descriptionDe : lesson.descriptionEn}
+                                {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
                               </p>
                             </div>
                             {isLessonUnlocked && !isLockedForFreeUser && (

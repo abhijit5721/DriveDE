@@ -6,6 +6,7 @@
 import React, { useMemo } from 'react';
 import { Car, Cog, Zap, CheckCircle, Info, ArrowRight, BadgeCheck } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
+import { TRANSLATIONS } from '../../data/translations';
 
 export const LicenseSelector: React.FC = () => {
   const {
@@ -17,98 +18,7 @@ export const LicenseSelector: React.FC = () => {
     language,
   } = useAppStore();
 
-  const content = {
-    de: {
-      title: 'Willkommen bei DriveDE',
-      subtitle: 'Wähle zuerst deinen Führerscheinpfad und dann das Getriebe',
-      pathTitle: '1. Lernpfad wählen',
-      transmissionTitle: '2. Getriebe wählen',
-      standard: {
-        title: 'Neuer Führerschein',
-        subtitle: 'Normale Fahrschulausbildung',
-        description: 'Für Fahrschülerinnen und Fahrschüler, die den deutschen Führerschein neu machen.',
-        features: [
-          'Vollständiger Lernpfad von Grundlagen bis Prüfungsreife',
-          'Manöver, Stadtverkehr, Sonderfahrten und Technikfragen',
-          'Schritt-für-Schritt-Anleitungen mit Prüfungsfokus',
-          'Fahrstunden-Tracker und Sonderfahrten-Überblick',
-        ],
-      },
-      conversion: {
-        title: 'Umschreibung',
-        subtitle: 'Ausländischen Führerschein umschreiben',
-        description: 'Für Personen mit bestehendem Führerschein aus dem Ausland, die sich auf die praktische Prüfung in Deutschland vorbereiten.',
-        features: [
-          'Deutschland-Schnellstart mit Prüfungsfallen',
-          'Grüner Pfeil, Rechts-vor-links-Ausnahmen & Spielstraße',
-          'Prüfer-Kommandos auf Deutsch + Englisch',
-          'Sofortiges Nichtbestehen & Schulterblick-Pflichten',
-        ],
-      },
-      manual: {
-        title: 'Schaltgetriebe',
-        subtitle: 'Kupplung & Gangschaltung',
-        description: 'Zeigt Schalt- und Kupplungsinhalte, manuelle Gefahrenbremsung und schaltungsrelevante Tipps.',
-      },
-      automatic: {
-        title: 'Automatik',
-        subtitle: 'Ohne Kupplung',
-        description: 'Zeigt nur Automatik-Inhalte, automatische Gefahrenbremsung und vereinfachte Fahrzeugbedienung.',
-      },
-      conversionNote: 'Bei der Umschreibung kann die Prüfung auf Schaltwagen oder Automatik stattfinden. Deshalb musst du auch dort ein Getriebe auswählen.',
-      standardNote: 'Bei der normalen Ausbildung steuert die Getriebewahl, welche Lektionen zu Kupplung, Schalten und Gefahrenbremsung sichtbar sind.',
-      continue: 'App starten',
-      selectPath: 'Pfad auswählen',
-      selectTransmission: 'Getriebe auswählen',
-      selected: 'Ausgewählt',
-    },
-    en: {
-      title: 'Welcome to DriveDE',
-      subtitle: 'First choose your learning path and then the transmission type',
-      pathTitle: '1. Choose learning path',
-      transmissionTitle: '2. Choose transmission',
-      standard: {
-        title: 'New License',
-        subtitle: 'Regular driving school training',
-        description: 'For learners who are taking the German driving license from scratch.',
-        features: [
-          'Complete learning path from basics to exam readiness',
-          'Maneuvers, city driving, special drives, and technical questions',
-          'Step-by-step guides with strong practical-exam focus',
-          'Driving lesson tracker and special-drive overview',
-        ],
-      },
-      conversion: {
-        title: 'License Conversion',
-        subtitle: 'Convert a foreign license',
-        description: 'For people with an existing foreign driving license preparing for the German practical test.',
-        features: [
-          'Germany quick-start with common exam traps',
-          'Green arrow, right-before-left exceptions, and traffic-calmed zones',
-          'Examiner commands in German + English',
-          'Instant-fail criteria and shoulder-check requirements',
-        ],
-      },
-      manual: {
-        title: 'Manual',
-        subtitle: 'Clutch & gear shifting',
-        description: 'Shows clutch/shifting lessons, manual emergency braking, and manual-specific tips.',
-      },
-      automatic: {
-        title: 'Automatic',
-        subtitle: 'No clutch',
-        description: 'Shows only automatic content, automatic emergency braking, and simplified vehicle handling.',
-      },
-      conversionNote: 'License conversion can also be done with a manual or automatic exam car. That is why you must choose a transmission there as well.',
-      standardNote: 'In regular training, the transmission choice controls which clutch, shifting, and emergency braking lessons are shown.',
-      continue: 'Start app',
-      selectPath: 'Select path',
-      selectTransmission: 'Select transmission',
-      selected: 'Selected',
-    },
-  };
-
-  const t = content[language];
+  const t = TRANSLATIONS[language].licenseSelector;
 
   const canContinue = useMemo(() => {
     return Boolean(learningPath && transmissionType);
@@ -172,7 +82,7 @@ export const LicenseSelector: React.FC = () => {
                 </div>
                 <p className="text-gray-600">{t.standard.description}</p>
                 <div className="mt-4 space-y-2">
-                  {t.standard.features.map((feature) => (
+                  {t.standard.features.map((feature: string) => (
                     <div key={feature} className="flex items-start gap-2 text-sm text-gray-600">
                       <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
                       <span>{feature}</span>
@@ -208,7 +118,7 @@ export const LicenseSelector: React.FC = () => {
                 </div>
                 <p className="text-gray-600">{t.conversion.description}</p>
                 <div className="mt-4 space-y-2">
-                  {t.conversion.features.map((feature) => (
+                  {t.conversion.features.map((feature: string) => (
                     <div key={feature} className="flex items-start gap-2 text-sm text-gray-600">
                       <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-purple-600" />
                       <span>{feature}</span>
@@ -227,7 +137,7 @@ export const LicenseSelector: React.FC = () => {
               </p>
               {!learningPath && (
                 <p className="mt-2 text-xs font-medium text-amber-600">
-                  {language === 'de' ? 'Bitte zuerst Lernpfad wählen.' : 'Please choose a learning path first.'}
+                  {t.choosePathFirst}
                 </p>
               )}
             </div>
@@ -318,7 +228,7 @@ export const LicenseSelector: React.FC = () => {
             className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
           >
             <span className="text-xl">{language === 'de' ? '🇬🇧' : '🇩🇪'}</span>
-            <span>{language === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln'}</span>
+            <span>{language === 'de' ? t.switchToEnglish : t.switchToGerman}</span>
           </button>
         </div>
       </div>

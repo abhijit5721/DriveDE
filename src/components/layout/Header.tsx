@@ -7,6 +7,7 @@ import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, LogIn, LogOut } from 'lu
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface HeaderProps {
   onOpenAuth?: () => void;
@@ -15,28 +16,21 @@ interface HeaderProps {
 
 export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
   const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authStatus } = useAppStore();
+  const t = TRANSLATIONS[language].common;
 
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
 
   const pathLabel =
     learningPath === 'umschreibung'
-      ? language === 'de'
-        ? 'Umschreibung'
-        : 'Conversion'
-      : language === 'de'
-        ? 'Fahrschule'
-        : 'Training';
+      ? t.paths.umschreibung
+      : t.paths.fahrschule;
 
   const transmissionLabel =
     transmissionType === 'manual'
-      ? language === 'de'
-        ? 'Manuell'
-        : 'Manual'
+      ? t.transmissions.manual
       : transmissionType === 'automatic'
-        ? language === 'de'
-          ? 'Automatik'
-          : 'Auto'
+        ? t.transmissions.automatic
         : null;
 
   return (
@@ -70,7 +64,7 @@ export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
               )}
             </div>
             <p className="truncate text-[10px] text-slate-500 dark:text-slate-400">
-              {language === 'de' ? 'Fahrschule App' : 'Driving School App'}
+              {t.appSubtitle}
             </p>
           </div>
         </div>

@@ -7,84 +7,44 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Info, Droplets, Thermometer, Battery, Droplet, Gauge } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 
-interface Hotspot {
-  id: string;
-  nameDe: string;
-  nameEn: string;
-  descriptionDe: string;
-  descriptionEn: string;
-  x: number; // %
-  y: number; // %
-  icon: React.ElementType;
-}
+const HOTSPOT_ICONS: Record<string, React.ElementType> = {
+  oil: Droplet,
+  coolant: Thermometer,
+  washer: Droplets,
+  brake: Gauge,
+  battery: Battery,
+};
 
-const hotspots: Hotspot[] = [
-  {
-    id: 'oil',
-    nameDe: 'Ölmessstab',
-    nameEn: 'Oil Dipstick',
-    descriptionDe: 'Zum Prüfen des Motorölstands. Der Stand muss zwischen MIN und MAX liegen.',
-    descriptionEn: 'To check the engine oil level. The level must be between MIN and MAX.',
-    x: 45,
-    y: 50,
-    icon: Droplet,
-  },
-  {
-    id: 'coolant',
-    nameDe: 'Kühlwasser',
-    nameEn: 'Coolant',
-    descriptionDe: 'Niemals bei heißem Motor öffnen! Verbrennungsgefahr.',
-    descriptionEn: 'Never open when the engine is hot! Danger of burns.',
-    x: 75,
-    y: 35,
-    icon: Thermometer,
-  },
-  {
-    id: 'washer',
-    nameDe: 'Scheibenwischwasser',
-    nameEn: 'Washer Fluid',
-    descriptionDe: 'Blauer Deckel. Wichtig für gute Sicht, besonders im Winter mit Frostschutz.',
-    descriptionEn: 'Blue cap. Important for good visibility, especially in winter with antifreeze.',
-    x: 20,
-    y: 30,
-    icon: Droplets,
-  },
-  {
-    id: 'brake',
-    nameDe: 'Bremsflüssigkeit',
-    nameEn: 'Brake Fluid',
-    descriptionDe: 'Wenn der Stand sinkt, sofort in die Werkstatt. Sicherheitssystem!',
-    descriptionEn: 'If the level drops, go to the workshop immediately. Safety system!',
-    x: 48,
-    y: 15,
-    icon: Gauge,
-  },
-  {
-    id: 'battery',
-    nameDe: 'Batterie',
-    nameEn: 'Battery',
-    descriptionDe: 'Prüfen auf festen Sitz der Pole und Sauberkeit.',
-    descriptionEn: 'Check for tight terminals and cleanliness.',
-    x: 82,
-    y: 75,
-    icon: Battery,
-  },
-];
+const HOTSPOT_POSITIONS: Record<string, { x: number; y: number }> = {
+  oil: { x: 45, y: 50 },
+  coolant: { x: 75, y: 35 },
+  washer: { x: 20, y: 30 },
+  brake: { x: 48, y: 15 },
+  battery: { x: 82, y: 75 },
+};
 
 export default function InteractiveTechCheck({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const [foundIds, setFoundIds] = useState<string[]>([]);
-  const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const hotspots = Object.keys(t.maneuvers.interactive.techCheck.hotspots).map(id => ({
+    id,
+    ...t.maneuvers.interactive.techCheck.hotspots[id as keyof typeof t.maneuvers.interactive.techCheck.hotspots],
+    ...HOTSPOT_POSITIONS[id],
+    icon: HOTSPOT_ICONS[id] || Info,
+  }));
 
   const handleHotspotClick = (id: string) => {
     if (!foundIds.includes(id)) {
       setFoundIds([...foundIds, id]);
     }
-    const hotspot = hotspots.find(h => h.id === id);
-    if (hotspot) setActiveHotspot(hotspot);
+    setActiveId(id);
   };
 
+  const activeHotspot = activeId ? hotspots.find(h => h.id === activeId) : null;
   const progress = (foundIds.length / hotspots.length) * 100;
 
   return (
@@ -93,10 +53,10 @@ export default function InteractiveTechCheck({ onComplete, language }: { onCompl
       <div className="p-4 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center justify-between mb-2">
           <h4 className="font-bold text-slate-900 dark:text-white">
-            {isDE ? 'Fahrzeugtechnik-Check' : 'Vehicle Tech Check'}
+            {t.maneuvers.interactive.techCheck.title}
           </h4>
           <span className="text-xs font-bold text-blue-500">
-            {foundIds.length} / {hotspots.length} {isDE ? 'gefunden' : 'found'}
+            {foundIds.length} / {hotspots.length} {t.maneuvers.interactive.techCheck.found}
           </span>
         </div>
         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
@@ -165,10 +125,10 @@ export default function InteractiveTechCheck({ onComplete, language }: { onCompl
                 </div>
                 <div>
                   <h5 className="font-bold text-slate-900 dark:text-white">
-                    {isDE ? activeHotspot.nameDe : activeHotspot.nameEn}
+                    {activeHotspot.name}
                   </h5>
                   <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-                    {isDE ? activeHotspot.descriptionDe : activeHotspot.descriptionEn}
+                    {activeHotspot.desc}
                   </p>
                 </div>
               </div>
@@ -178,9 +138,7 @@ export default function InteractiveTechCheck({ onComplete, language }: { onCompl
               <div className="flex flex-col items-center gap-2 text-center text-slate-400">
                 <Info className="h-8 w-8 opacity-20" />
                 <p className="text-xs font-medium">
-                  {isDE 
-                    ? 'Klicke auf die Markierungen im Motorraum, um mehr zu erfahren.' 
-                    : 'Click on the markers in the engine bay to learn more.'}
+                  {t.maneuvers.interactive.techCheck.instruction}
                 </p>
               </div>
             </div>
@@ -200,7 +158,7 @@ export default function InteractiveTechCheck({ onComplete, language }: { onCompl
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 font-bold text-white shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform"
           >
             <Check className="h-5 w-5" />
-            {isDE ? 'Technik-Check bestanden!' : 'Tech Check Passed!'}
+            {t.maneuvers.interactive.techCheck.passed}
           </button>
         </motion.div>
       )}

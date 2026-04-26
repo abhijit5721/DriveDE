@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
 import { getAllLessons } from '../../data/curriculum';
 import { filterLessonsForSelection } from '../../utils/contentFilter';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
@@ -32,8 +33,9 @@ interface BudgetEstimatorProps {
 
 export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
   const { language, userProgress, licenseType, updateFinanceSettings, isPremium } = useAppStore();
-  const isDE = language === 'de';
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  const t = TRANSLATIONS[language];
 
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -85,7 +87,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
     // Validation: Ensure no negative values
     const hasNegative = Object.values(editValues).some(v => Number(v) < 0);
     if (hasNegative) {
-      alert(isDE ? 'Beträge können nicht negativ sein' : 'Values cannot be negative');
+      alert(t.budget.negativeError);
       return;
     }
 
@@ -195,8 +197,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 <PiggyBank className="h-8 w-8 text-emerald-400" />
               </div>
               <div>
-                <h2 className="text-2xl font-black tracking-tight">{isDE ? 'Finanzen' : 'Finances'}</h2>
-                <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">{isDE ? 'Kosten-Monitor' : 'Cost Monitor'}</p>
+                <h2 className="text-2xl font-black tracking-tight">{t.budget.title}</h2>
+                <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">{t.budget.costMonitor}</p>
               </div>
             </div>
             <button 
@@ -209,13 +211,13 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
 
           <div className="mt-12 grid grid-cols-2 gap-8">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{isDE ? 'Bisher ausgegeben' : 'Spent So Far'}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{t.budget.spentSoFar}</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-black text-white">€{currentSpend.toLocaleString()}</span>
               </div>
             </div>
             <div className="relative text-right space-y-1 border-l border-white/5 pl-8">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{isDE ? 'Voraussichtliches Ziel' : 'Total Goal'}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{t.budget.totalGoal}</p>
               {isPremium ? (
                 <div className="flex items-baseline justify-end gap-1">
                   <span className="text-4xl font-black text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
@@ -230,7 +232,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                     onClick={onOpenPaywall}
                     className="text-[10px] font-black text-indigo-400 underline uppercase tracking-tighter"
                   >
-                    {isDE ? 'SCHÄTZUNG FREISCHALTEN' : 'UNLOCK ESTIMATION'}
+                    {t.budget.unlockEstimation}
                   </button>
                 </div>
               )}
@@ -252,8 +254,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 <Calculator className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white">{isDE ? 'Nächste Schritte' : 'Next Steps'}</h3>
-                <p className="text-[10px] text-slate-500">{isDE ? 'Geschätzte Fahrstunden' : 'Est. lessons remaining'}</p>
+                <h3 className="font-bold text-slate-900 dark:text-white">{t.budget.nextSteps}</h3>
+                <p className="text-[10px] text-slate-500">{t.budget.estLessonsRemaining}</p>
               </div>
             </div>
             <div className="flex flex-col items-end">
@@ -267,14 +269,14 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
-                 <span className="text-xs text-slate-500">{isDE ? 'Normalfahrten' : 'Normal Lessons'}</span>
+                 <span className="text-xs text-slate-500">{t.budget.normalLessons}</span>
               </div>
               <span className="text-xs font-bold">{isPremium ? estimation.remainingNormal : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-1.5 w-1.5 rounded-full bg-orange-400" />
-                 <span className="text-xs text-slate-500">{isDE ? 'Sonderfahrten' : 'Special Drives'}</span>
+                 <span className="text-xs text-slate-500">{t.budget.specialDrives}</span>
               </div>
               <span className="text-xs font-bold text-orange-600">{isPremium ? estimation.remainingSpecial : '-'}</span>
             </div>
@@ -312,8 +314,8 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               <Wallet className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 dark:text-white">{isDE ? 'Restbudget' : 'Remaining'}</h3>
-              <p className="text-[10px] text-slate-500">{isDE ? 'Noch zu investieren' : 'Yet to be invested'}</p>
+              <h3 className="font-bold text-slate-900 dark:text-white">{t.budget.remaining}</h3>
+              <p className="text-[10px] text-slate-500">{t.budget.yetToBeInvested}</p>
             </div>
           </div>
           <div className="mt-8">
@@ -323,9 +325,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
               <Info className="h-4 w-4 text-blue-500 shrink-0" />
               <p className="text-[10px] font-medium leading-tight text-blue-600 dark:text-blue-400">
-                {isDE 
-                  ? 'Exkl. Fremdkosten wie TÜV-Gebühren (~€200).' 
-                  : 'Excl. external costs like TÜV fees (~€200).'}
+                {t.budget.externalFeesNote}
               </p>
             </div>
           </div>
@@ -368,7 +368,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 'font-black uppercase tracking-widest text-[10px]',
                 estimation.isHighReadiness ? 'text-emerald-600' : 'text-amber-600'
               )}>
-                {isDE ? 'DriveDE Strategie' : 'DriveDE Strategy'}
+                {t.budget.strategyTitle}
               </h4>
               {!isPremium && <Crown className="h-3 w-3 text-amber-500" />}
             </div>
@@ -379,40 +379,32 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   'mt-2 text-sm font-semibold leading-relaxed',
                   estimation.isHighReadiness ? 'text-emerald-900 dark:text-emerald-200' : 'text-amber-900 dark:text-amber-200'
                 )}>
-                  {estimation.isHighReadiness
-                    ? (isDE 
-                        ? 'Maximale Ersparnis möglich!' 
-                        : 'Maximum savings possible!')
-                    : (isDE 
-                        ? 'Effizienz-Potential erkannt' 
-                        : 'Efficiency potential detected')}
+                  {estimation.isHighReadiness ? t.budget.savingsPossible : t.budget.efficiencyDetected}
                 </p>
                 <p className={cn(
                   'mt-1 text-sm opacity-80',
                   estimation.isHighReadiness ? 'text-emerald-800 dark:text-emerald-400' : 'text-amber-800 dark:text-amber-400'
                 )}>
                   {estimation.isHighReadiness
-                    ? (isDE 
-                        ? 'Deine Bereitschaft ist top. Schließe die Sonderfahrten zügig ab, um unnötige Übungsstunden zu vermeiden.' 
-                        : 'Your readiness is peak. Finish special drives quickly to avoid extra practice lessons.')
-                    : (isDE 
-                        ? `Fokussiere dich auf Theorie & Simulation. Jede Stunde, die du dadurch sparst, bringt dir ca. €${hourlyRate45} zurück.` 
-                        : `Focus on theory & simulation. Every lesson you save through prep puts €${hourlyRate45} back in your pocket.`)}
+                    ? t.budget.highReadinessAdvice
+                    : typeof t.budget.lowReadinessAdvice === 'function' 
+                      ? t.budget.lowReadinessAdvice(hourlyRate45) 
+                      : t.budget.lowReadinessAdvice}
                 </p>
               </>
             ) : (
               <div className="mt-2">
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
-                  {isDE ? 'Strategische Optimierung verfügbar' : 'Strategic optimization available'}
+                  {t.budget.optimizationAvailable}
                 </p>
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  {isDE ? 'Upgrade auf Pro, um deine persönliche Finanz-Strategie und Spar-Tipps zu sehen.' : 'Upgrade to Pro to see your personal financial strategy and savings tips.'}
+                  {t.budget.upgradeProAdvice}
                 </p>
                 <button 
                   onClick={onOpenPaywall}
                   className="mt-3 text-[10px] font-black text-indigo-600 underline"
                 >
-                  {isDE ? 'PRO FREISCHALTEN' : 'UNLOCK PRO'}
+                  {t.budget.unlockPro}
                 </button>
               </div>
             )}
@@ -444,7 +436,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                       <Settings2 className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                     </div>
                     <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                      {isDE ? 'Preise anpassen' : 'Adjust Rates'}
+                      {t.budget.adjustRates}
                     </h3>
                   </div>
                   <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -457,7 +449,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                       <GraduationCap className="h-3 w-3" />
-                      {isDE ? 'Stundenpreis (45 Min)' : 'Hourly Rate (45 Min)'}
+                      {t.budget.hourlyRate}
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">€</span>
@@ -475,7 +467,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
                       <CreditCard className="h-3 w-3" />
-                      {isDE ? 'Grundbetrag' : 'Registration Fee'}
+                      {t.budget.registrationFee}
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">€</span>
@@ -492,7 +484,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   {/* Exams */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{isDE ? 'Theorie-Prüf.' : 'Theory Exam'}</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.theoryExam}</label>
                       <input 
                         type="number"
                         min="0"
@@ -502,7 +494,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{isDE ? 'Praxis-Prüf.' : 'Practical Exam'}</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.practicalExam}</label>
                       <input 
                         type="number"
                         min="0"
@@ -516,7 +508,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                    {/* Other */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{isDE ? 'Lernmaterial' : 'Materials'}</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.materials}</label>
                       <input 
                         type="number"
                         min="0"
@@ -526,7 +518,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{isDE ? 'Erste Hilfe' : 'First Aid'}</label>
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.firstAid}</label>
                       <input 
                         type="number"
                         min="0"
@@ -543,14 +535,14 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                     onClick={() => setIsSettingsOpen(false)}
                     className="flex-1 rounded-2xl border-2 border-slate-100 py-4 font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
                   >
-                    {isDE ? 'Abbrechen' : 'Cancel'}
+                    {t.common.cancel}
                   </button>
                   <button 
                     onClick={handleSave}
                     className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all"
                   >
                     <Save className="h-5 w-5" />
-                    {isDE ? 'Speichern' : 'Save'}
+                    {t.common.save}
                   </button>
                 </div>
               </div>

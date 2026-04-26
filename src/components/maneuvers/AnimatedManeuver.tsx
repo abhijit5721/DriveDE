@@ -12,79 +12,21 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay, InstructionPopup } from './SimulatorComponents';
-
-interface AnimationStep {
-  id: number;
-  description: string;
-  descriptionEn: string;
-  duration: number; // in ms
-}
+import { MANEUVER_STEPS } from '../../data/maneuvers';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface AnimatedManeuverProps {
   type: 'parallel-parking' | 'reverse-parking' | 'three-point-turn' | 'emergency-brake' | 'roundabout' | 'highway-merge';
   language: 'de' | 'en';
 }
 
-
-
-
-const animations: Record<string, AnimationStep[]> = {
-  'parallel-parking': [
-    { id: 0, description: 'Neben dem parkenden Fahrzeug anhalten (ca. 50cm Abstand)', descriptionEn: 'Stop next to parked car (approx. 50cm gap)', duration: 2000 },
-    { id: 1, description: 'Rundum-Blick durchführen, beide Seiten und den Heckraum prüfen', descriptionEn: 'Perform a 360° check, scanning both sides and the rear area', duration: 1800 },
-    { id: 2, description: 'Rückwärts fahren bis Hinterachse auf Höhe des hinteren Stoßfängers', descriptionEn: 'Reverse until rear axle aligns with rear bumper', duration: 2500 },
-    { id: 3, description: 'Lenkrad nach rechts einschlagen (ca. 45°)', descriptionEn: 'Turn steering wheel right (approx. 45°)', duration: 2000 },
-    { id: 4, description: 'Langsam rückwärts in die Lücke fahren', descriptionEn: 'Slowly reverse into the gap', duration: 3000 },
-    { id: 5, description: 'Gegenlenken wenn Fahrzeug im 45° Winkel steht', descriptionEn: 'Counter-steer when car is at 45° angle', duration: 2000 },
-    { id: 6, description: 'Gerade ausrichten, max. 30cm vom Bordstein', descriptionEn: 'Straighten up, max 30cm from curb', duration: 2000 },
-  ],
-  'reverse-parking': [
-    { id: 0, description: 'An der Parklücke vorbeifahren, Blinker rechts setzen', descriptionEn: 'Drive past parking space, signal right', duration: 2000 },
-    { id: 1, description: 'Rundum-Blick durchführen und die Umgebung vollständig prüfen', descriptionEn: 'Perform a full 360° check and scan the surroundings completely', duration: 1800 },
-    { id: 2, description: 'Rückwärtsgang einlegen, langsam zurücksetzen', descriptionEn: 'Engage reverse, slowly back up', duration: 2000 },
-    { id: 3, description: 'Lenkrad nach rechts einschlagen', descriptionEn: 'Turn steering wheel right', duration: 2000 },
-    { id: 4, description: 'In die Lücke einfahren, auf Markierungen achten', descriptionEn: 'Enter space, watch for markings', duration: 3000 },
-    { id: 5, description: 'Fahrzeug gerade ausrichten', descriptionEn: 'Straighten the vehicle', duration: 2000 },
-    { id: 6, description: 'Mittig in der Lücke positionieren', descriptionEn: 'Position centered in space', duration: 1500 },
-  ],
-  'three-point-turn': [
-    { id: 0, description: 'Rechts ranfahren, Blinker links setzen', descriptionEn: 'Pull over right, signal left', duration: 1500 },
-    { id: 1, description: 'Spiegel- & Schulterblick links!', descriptionEn: 'Mirror & shoulder check left!', duration: 1500 },
-    { id: 2, description: 'Einschlagen und bis zum Bordstein vorfahren', descriptionEn: 'Full lock left and drive to curb', duration: 2500 },
-    { id: 3, description: 'Rückwärtsgang, Blinker RECHTS, Rundum-Blick!', descriptionEn: 'Reverse gear, signal RIGHT, 360° check!', duration: 2000 },
-    { id: 4, description: 'Rückwärts bis zum gegenüberliegenden Bordstein', descriptionEn: 'Reverse to opposite curb', duration: 2500 },
-    { id: 5, description: 'Ersten Gang, Blinker LINKS, Schulterblick!', descriptionEn: 'First gear, signal LEFT, shoulder check!', duration: 2000 },
-    { id: 6, description: 'Fahrt in Gegenrichtung fortsetzen', descriptionEn: 'Continue in opposite direction', duration: 2000 },
-  ],
-  'emergency-brake': [
-    { id: 0, description: 'Konstante Fahrt (ca. 30 km/h)', descriptionEn: 'Constant driving (approx. 30 km/h)', duration: 2000 },
-    { id: 1, description: 'Kommando "GEFAHR! STOPP!" vom Prüfer', descriptionEn: 'Instructor command: "DANGER! STOP!"', duration: 1000 },
-    { id: 2, description: 'Schlagartige Vollbremsung (Kupplung + Bremse)', descriptionEn: 'Sudden full braking (clutch + brake)', duration: 1500 },
-    { id: 3, description: 'Fahrzeug halten bis zum Stillstand', descriptionEn: 'Hold vehicle until full stop', duration: 1500 },
-    { id: 4, description: 'Umfeld prüfen vor erneutem Anfahren', descriptionEn: 'Check surroundings before moving off', duration: 2000 },
-  ],
-  'roundabout': [
-    { id: 0, description: 'An den Kreisverkehr heranfahren', descriptionEn: 'Approach the roundabout', duration: 2000 },
-    { id: 1, description: 'Vorfahrt beachten, links prüfen!', descriptionEn: 'Yield, check left!', duration: 2000 },
-    { id: 2, description: 'Einfahren (OHNE Blinken!)', descriptionEn: 'Enter (WITHOUT signaling!)', duration: 2000 },
-    { id: 3, description: 'Im Kreisel fahren', descriptionEn: 'Drive in roundabout', duration: 2500 },
-    { id: 4, description: 'Blinker RECHTS & Schulterblick!', descriptionEn: 'Signal RIGHT & shoulder check!', duration: 2000 },
-    { id: 5, description: 'Kreisverkehr verlassen', descriptionEn: 'Exit roundabout', duration: 2000 },
-  ],
-  'highway-merge': [
-    { id: 0, description: 'Beschleunigungsstreifen befahren', descriptionEn: 'Enter acceleration lane', duration: 2000 },
-    { id: 1, description: 'Blinker LINKS, Geschwindigkeit aufbauen', descriptionEn: 'Signal LEFT, build speed', duration: 2000 },
-    { id: 2, description: 'Spiegel- & Schulterblick links!', descriptionEn: 'Mirror & shoulder check left!', duration: 2000 },
-    { id: 3, description: 'In den fließenden Verkehr einordnen', descriptionEn: 'Merge into flowing traffic', duration: 2500 },
-  ],
-};
-
 const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) => {
+  const t = TRANSLATIONS[language];
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const steps = useMemo(() => animations[type] || [], [type]);
+  const steps = useMemo(() => MANEUVER_STEPS[type] || [], [type]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -130,13 +72,14 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
   };
 
   const renderAnimation = () => {
+    const props = { step: currentStep, progress, t };
     switch (type) {
-      case 'parallel-parking': return <ParallelParkingAnimation step={currentStep} progress={progress} />;
-      case 'reverse-parking': return <ReverseParkingAnimation step={currentStep} progress={progress} />;
-      case 'three-point-turn': return <ThreePointTurnAnimation step={currentStep} progress={progress} />;
-      case 'emergency-brake': return <EmergencyBrakeAnimation step={currentStep} progress={progress} />;
-      case 'roundabout': return <RoundaboutAnimation step={currentStep} progress={progress} />;
-      case 'highway-merge': return <HighwayMergeAnimation step={currentStep} progress={progress} />;
+      case 'parallel-parking': return <ParallelParkingAnimation {...props} />;
+      case 'reverse-parking': return <ReverseParkingAnimation {...props} />;
+      case 'three-point-turn': return <ThreePointTurnAnimation {...props} />;
+      case 'emergency-brake': return <EmergencyBrakeAnimation {...props} />;
+      case 'roundabout': return <RoundaboutAnimation {...props} />;
+      case 'highway-merge': return <HighwayMergeAnimation {...props} />;
       default: return null;
     }
   };
@@ -199,8 +142,14 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
   );
 };
 
+interface AnimationProps {
+  step: number;
+  progress: number;
+  t: any;
+}
+
 // Animation Components
-const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
       { x: 30, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start
@@ -232,9 +181,9 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="Umfeld beobachten (360° Check)!" />}
-        {step === 4 && <InstructionPopup text="Einschlagen & Rückwärts!" />}
-        {step === 6 && <InstructionPopup text="Gegenlenken & Ausrichten!" />}
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.steerAndReverse} />}
+        {step === 6 && <InstructionPopup text={t.maneuvers.interactive.simulator.counterSteer} />}
       </AnimatePresence>
       
       <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -273,7 +222,7 @@ const ParallelParkingAnimation: React.FC<{ step: number; progress: number }> = (
   );
 };
 
-const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
       { x: 40, y: 70, rotation: 0, wheel: 0, indicator: 'none' as const },
@@ -303,8 +252,8 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="Rundum-Blick durchführen!" />}
-        {step === 3 && <InstructionPopup text="Schulterblick RECHTS!" />}
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckRight} />}
       </AnimatePresence>
       
       <svg viewBox="0 0 400 250" className="w-full h-full">
@@ -337,7 +286,7 @@ const ReverseParkingAnimation: React.FC<{ step: number; progress: number }> = ({
   );
 };
 
-const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
       { x: 350, y: 155, rotation: 0, wheel: 0, indicator: 'none' as const },
@@ -368,9 +317,9 @@ const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="Schulterblick LINKS!" />}
-        {step === 3 && <InstructionPopup text="Rundum-Blick & RECHTS blinken!" />}
-        {step === 5 && <InstructionPopup text="Schulterblick vor Abfahrt!" />}
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
+        {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.fullCheckAndSignalRight} />}
+        {step === 5 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
@@ -392,7 +341,7 @@ const ThreePointTurnAnimation: React.FC<{ step: number; progress: number }> = ({
   );
 };
 
-const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
       { x: 40, y: 145, speed: 30, brake: false },
@@ -419,8 +368,8 @@ const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="🚨 GEFAHR! VOLLBREMSUNG! 🚨" />}
-        {step === 4 && <InstructionPopup text="Umfeld prüfen!" />}
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.dangerEmergencyBrake} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkBeforeDrive} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
@@ -451,7 +400,7 @@ const EmergencyBrakeAnimation: React.FC<{ step: number; progress: number }> = ({
   );
 };
 
-const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getCarState = () => {
     const cx = 200;
     const cy = 125;
@@ -504,8 +453,8 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="Links prüfen (Vorfahrt gewähren)!" />}
-        {step === 4 && <InstructionPopup text="Blinker RECHTS & Schulterblick!" />}
+        {step === 1 && <InstructionPopup text={t.tracker.priorityCheck || t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalRightAndShoulder} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
@@ -529,7 +478,7 @@ const RoundaboutAnimation: React.FC<{ step: number; progress: number }> = ({ ste
   );
 };
 
-const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ step, progress }) => {
+const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
       { x: 40, y: 190, rotation: -5, speed: 40, indicator: 'none' as const },
@@ -556,8 +505,8 @@ const HighwayMergeAnimation: React.FC<{ step: number; progress: number }> = ({ s
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
       <AnimatePresence>
-        {step === 1 && <InstructionPopup text="Blinker LINKS & Gas geben!" />}
-        {step === 2 && <InstructionPopup text="Spiegel- & Schulterblick!" />}
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalLeftAndAccelerate} />}
+        {step === 2 && <InstructionPopup text={t.maneuvers.interactive.simulator.mirrorAndShoulderLeft} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />

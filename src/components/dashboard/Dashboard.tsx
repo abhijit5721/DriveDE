@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, Cloud, LogIn, Flame, Mic } from 'lucide-react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
@@ -11,6 +11,8 @@ import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '
 import { filterChaptersForSelection, filterLessonsForSelection } from '../../utils/contentFilter';
 import type { TabType } from '../../types';
 import { ExamReadinessGauge } from './ExamReadinessGauge';
+import { TRANSLATIONS } from '../../data/translations';
+import { DrivingInsights } from './DrivingInsights';
 
 interface DashboardProps {
   onNavigate: (tab: TabType) => void;
@@ -21,11 +23,9 @@ interface DashboardProps {
   onOpenAuth?: () => void;
 }
 
-import { DrivingInsights } from './DrivingInsights';
-
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
-
   const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
+  const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
 
@@ -45,7 +45,6 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
   const totalHours = Math.floor((Number(userProgress.totalDrivingMinutes) || 0) / 60);
   const totalMinutes = (Number(userProgress.totalDrivingMinutes) || 0) % 60;
 
-  const isDE = language === 'de';
   const isUmschreibung = learningPath === 'umschreibung';
 
   const requiredSpecial = {
@@ -62,15 +61,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
   const pathConfig = isUmschreibung
     ? {
-        title: isDE ? 'Umschreibung' : 'License Conversion',
-        subtitle:
-          transmissionType === 'manual'
-            ? isDE
-              ? 'Mit Schaltwagen-Prüfung und Fokus auf deutsche Regeln'
-              : 'With manual exam car and focus on German rules'
-            : isDE
-              ? 'Mit Automatik-Prüfung und Fokus auf deutsche Regeln'
-              : 'With automatic exam car and focus on German rules',
+        title: t.dashboard.conversionPath.title,
+        subtitle: transmissionType === 'manual' 
+          ? t.dashboard.conversionPath.subtitleManual 
+          : t.dashboard.conversionPath.subtitleAuto,
         badgeClass: 'bg-purple-100 dark:bg-purple-900/30',
         iconClass: 'bg-purple-200 dark:bg-purple-800',
         textClass: 'text-purple-800 dark:text-purple-200',
@@ -79,8 +73,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       }
     : transmissionType === 'manual'
       ? {
-          title: isDE ? 'Klasse B - Schaltgetriebe' : 'Class B - Manual',
-          subtitle: isDE ? 'Mit Kupplung & Gangschaltung' : 'With clutch & gear stick',
+          title: t.dashboard.manualPath.title,
+          subtitle: t.dashboard.manualPath.subtitle,
           badgeClass: 'bg-orange-100 dark:bg-orange-900/30',
           iconClass: 'bg-orange-200 dark:bg-orange-800',
           textClass: 'text-orange-800 dark:text-orange-200',
@@ -88,8 +82,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           icon: <Cog className="h-5 w-5 text-orange-700 dark:text-orange-300" />,
         }
       : {
-          title: isDE ? 'Klasse B197 - Automatik' : 'Class B197 - Automatic',
-          subtitle: isDE ? 'Automatisches Getriebe' : 'Automatic transmission',
+          title: t.dashboard.automaticPath.title,
+          subtitle: t.dashboard.automaticPath.subtitle,
           badgeClass: 'bg-blue-100 dark:bg-blue-900/30',
           iconClass: 'bg-blue-200 dark:bg-blue-800',
           textClass: 'text-blue-800 dark:text-blue-200',
@@ -108,34 +102,32 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 {pathConfig.title}
               </span>
               <p className="text-sm text-blue-100/80">
-                {isDE ? 'Dein Lernfortschritt' : 'Your Learning Progress'}
+                {t.dashboard.learningProgress}
               </p>
             </div>
             <button
               onClick={onChangePath}
-              aria-label={isDE ? 'Lernpfad ändern' : 'Change learning path'}
+              aria-label={t.dashboard.changePath}
               className="rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20"
             >
               <RefreshCcw className="h-4 w-4" />
             </button>
           </div>
 
-            <ExamReadinessGauge 
-              progress={progressPercent}
-              label={isDE ? 'Prüfungschance' : 'Exam Score'}
-              subLabel={isDE 
-? 'Kombination aus Lektionen & Tests' 
-: 'Combined Lessons & Quiz Score'}
-              className="w-full"
-            />
-          </div>
+          <ExamReadinessGauge 
+            progress={progressPercent}
+            label={t.dashboard.examChance}
+            subLabel={t.dashboard.combinedScore}
+            className="w-full"
+          />
+        </div>
         
         {/* Quick Progress Bar (Alternative visualization) */}
         {!isPremium && (
           <div className="border-t border-slate-100 p-4 dark:border-slate-700">
             <button
               onClick={onOpenPaywall}
-              aria-label={isDE ? 'Premium freischalten' : 'Unlock Premium'}
+              aria-label={t.dashboard.unlockPro}
               className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 transition-transform hover:scale-[1.01] dark:from-amber-900/10 dark:to-orange-900/10"
             >
               <div className="flex items-center gap-3">
@@ -145,7 +137,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 <div className="text-left">
                   <p className="text-sm font-bold text-amber-900 dark:text-amber-200">DriveDE Pro</p>
                   <p className="text-xs text-amber-700 dark:text-amber-400">
-                    {isDE ? 'Alle Funktionen freischalten' : 'Unlock all premium features'}
+                    {t.dashboard.unlockPro}
                   </p>
                 </div>
               </div>
@@ -158,7 +150,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       <div className="grid grid-cols-1 gap-4">
         <button
           onClick={onStartSimulation}
-          aria-label={isDE ? 'Prüfungssimulation starten' : 'Start Exam Simulation'}
+          aria-label={t.dashboard.examSimulation}
           className="group flex w-full items-center justify-between rounded-2xl bg-slate-900 p-5 text-white shadow-lg transition-all hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
         >
           <div className="flex items-center gap-4 text-left">
@@ -171,9 +163,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               )}
             </div>
             <div>
-              <p className="text-base font-bold">{isDE ? 'Prüfungssimulation' : 'Exam Simulation'}</p>
+              <p className="text-base font-bold">{t.dashboard.examSimulation}</p>
               <p className="text-xs text-slate-400">
-                {isDE ? 'Echte Prüfungsfragen und Zeitdruck' : 'Real exam questions and time pressure'}
+                {t.dashboard.simulationDesc}
               </p>
             </div>
           </div>
@@ -190,7 +182,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {isDE ? 'Fahrstunden' : 'Driving Hours'}
+                {t.dashboard.drivingHours}
               </p>
               <p className="text-lg font-bold text-slate-900 dark:text-white">
                 {totalHours}h {totalMinutes}m
@@ -206,7 +198,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {isDE ? 'Kapitel' : 'Chapters'}
+                {t.dashboard.chapters}
               </p>
               <p className="text-lg font-bold text-slate-900 dark:text-white">
                 {visibleChapters.filter((ch) => ch.lessons.some((l) => userProgress.completedLessons.includes(l.id))).length}/{visibleChapters.length}
@@ -225,7 +217,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {isDE ? 'Serie' : 'Streak'}
+                {t.dashboard.streak}
               </p>
               <p className="text-lg font-bold text-slate-900 dark:text-white">
                 {userProgress.currentStreak}
@@ -241,7 +233,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       {isUmschreibung && (
         <button
           onClick={() => onDirectLessonSelect('basics-0')}
-          aria-label={isDE ? 'Umschreibung Schnellstart: Zu deutschen Prüfungsfallen springen' : 'Conversion Quick Start: Jump to German exam traps'}
+          aria-label={t.dashboard.conversionQuickstart}
           className="w-full rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-purple-900/40 dark:from-purple-900/20 dark:to-indigo-900/10"
         >
           <div className="flex items-start gap-3">
@@ -251,7 +243,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <div className="flex-1">
               <div className="flex flex-wrap items-start gap-2">
                 <h3 className="min-w-0 flex-1 text-base font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Umschreibung Schnellstart' : 'Conversion Quick Start'}
+                  {t.dashboard.conversionQuickstart}
                 </h3>
                 <div className="flex items-center gap-2">
                   {!isPremium && (
@@ -260,22 +252,20 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                     </span>
                   )}
                   <span className="inline-flex rounded-full bg-purple-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-purple-800 dark:bg-purple-800/60 dark:text-purple-100">
-                    {isDE ? 'Deutschland-Fokus' : 'Germany Focus'}
+                    {t.dashboard.germanyFocus}
                   </span>
                   <ChevronRight className="h-5 w-5 shrink-0 text-purple-500 dark:text-purple-300" />
                 </div>
               </div>
               <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                {isDE
-                  ? 'Springe direkt zu deutschen Prüfungsfallen: Grüner Pfeil, Rechts-vor-links-Ausnahmen, Schulterblick-Pflichten, Spielstraße vs. Zone 30 und Sofort-Durchfallen-Kriterien.'
-                  : 'Jump straight to German exam traps: green arrow, right-before-left exceptions, shoulder-check duties, traffic-calmed zones vs. Zone 30, and instant-fail criteria.'}
+                {t.dashboard.jumpToTraps}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {[
-                  isDE ? 'Grüner Pfeil' : 'Green Arrow',
-                  isDE ? 'Schulterblick' : 'Shoulder Check',
-                  isDE ? 'Rechts-vor-links' : 'Right-before-left',
-                  isDE ? 'Sofort durchgefallen' : 'Instant fail',
+                  t.dashboard.pills.greenArrow,
+                  t.dashboard.pills.shoulderCheck,
+                  t.dashboard.pills.priority,
+                  t.dashboard.pills.instantFail,
                 ].map((pill) => (
                   <span
                     key={pill}
@@ -293,7 +283,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <button
           onClick={() => onNavigate('maneuvers')}
-          aria-label={isDE ? 'Manöver: Grundfahraufgaben und Animationen ansehen' : 'Maneuvers: View basic maneuvers and animations'}
+          aria-label={t.dashboard.maneuvers}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
         >
           <div className="flex items-start gap-4">
@@ -303,27 +293,23 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Manöver' : 'Maneuvers'}
+                  {t.dashboard.maneuvers}
                 </p>
                 <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase text-blue-600 dark:bg-blue-900/30">
-                  {isDE ? 'Animationen' : 'Animations'}
+                  {t.dashboard.animations}
                 </span>
               </div>
               <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {isDE
-                  ? 'Grundfahraufgaben wie Einparken und Wenden.'
-                  : 'Basic maneuvers like parking and turning.'}
+                {t.dashboard.maneuversDesc}
               </p>
             </div>
             <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
           </div>
         </button>
 
-
-
         <button
           onClick={() => onDirectLessonSelect('basics-1a')}
-          aria-label={isDE ? 'Fahrzeugtechnik: Reifen, Lichter und Kontrollleuchten lernen' : 'Vehicle Tech: Learn about tires, lights, and indicators'}
+          aria-label={t.dashboard.tech}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
         >
           <div className="flex items-start gap-4">
@@ -333,16 +319,14 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Fahrzeugtechnik' : 'Vehicle Tech'}
+                  {t.dashboard.tech}
                 </p>
                 <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-600 dark:bg-amber-900/30">
-                  {isDE ? 'Prüfung' : 'Exam'}
+                  {t.dashboard.exam}
                 </span>
               </div>
               <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {isDE
-                  ? 'Reifen, Lichter und Kontrollleuchten.'
-                  : 'Tires, lights, and check indicators.'}
+                {t.dashboard.techDesc}
               </p>
             </div>
             <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
@@ -351,7 +335,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
         <button
           onClick={() => onNavigate('review')}
-          aria-label={isDE ? 'Fahrlehrer-Review-Paket: Fortschritt als PDF exportieren' : 'Instructor Review Pack: Export progress as PDF'}
+          aria-label={t.dashboard.reviewPack}
           className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800 lg:col-span-2"
         >
           <div className="flex items-start gap-4">
@@ -361,16 +345,14 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {isDE ? 'Fahrlehrer-Review-Paket' : 'Instructor Review Pack'}
+                  {t.dashboard.reviewPack}
                 </p>
                 <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase text-indigo-600 dark:bg-indigo-900/30">
-                  {isDE ? 'PDF Export' : 'PDF Export'}
+                  {t.dashboard.pdfExport}
                 </span>
               </div>
               <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {isDE
-                  ? 'Lehrplan und Fortschritt zum Teilen mit dem Fahrlehrer exportieren.'
-                  : 'Export curriculum and progress to share with your instructor.'}
+                {t.dashboard.reviewDesc}
               </p>
             </div>
             <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
@@ -382,22 +364,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              {isUmschreibung
-                ? isDE
-                  ? 'Praxis-Check'
-                  : 'Conversion Checks'
-                : isDE
-                  ? 'Sonderfahrten'
-                  : 'Special Drives'}
+              {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}
             </h3>
             <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {isUmschreibung
-                ? isDE
-                  ? 'Fokus-Themen'
-                  : 'Required Areas'
-                : isDE
-                  ? 'Gesetzliche Pflicht'
-                  : 'Mandatory Hours'}
+              {isUmschreibung ? t.dashboard.focusThemes : t.dashboard.mandatoryHours}
             </p>
           </div>
         </div>
@@ -405,21 +375,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         {isUmschreibung ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
-              {
-                icon: '👀',
-                title: isDE ? 'Schulterblick' : 'Shoulder check',
-                text: isDE ? 'Immer ausführen.' : 'Always perform.',
-              },
-              {
-                icon: '🚦',
-                title: isDE ? 'Vorfahrt' : 'Right-of-way',
-                text: isDE ? 'Rechts-vor-links.' : 'Right-before-left.',
-              },
-              {
-                icon: '📝',
-                title: isDE ? 'Routine' : 'Routine',
-                text: isDE ? 'Ruhige Fahrweise.' : 'Calm driving.',
-              },
+              { icon: '👀', ...t.dashboard.conversionChecks[0] },
+              { icon: '🚦', ...t.dashboard.conversionChecks[1] },
+              { icon: '📝', ...t.dashboard.conversionChecks[2] },
             ].map((item) => (
               <div key={item.title} className="rounded-xl bg-slate-50 p-3 dark:bg-slate-900/30">
                 <div className="flex items-center gap-2">
@@ -433,18 +391,18 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         ) : (
           <div className="space-y-4">
             {[
-              { key: 'ueberland', labelDe: 'Überland', labelEn: 'Country', required: '5×45', icon: <Target className="h-3.5 w-3.5" /> },
-              { key: 'autobahn', labelDe: 'Autobahn', labelEn: 'Highway', required: '4×45', icon: <Zap className="h-3.5 w-3.5" /> },
-              { key: 'nacht', labelDe: 'Nacht', labelEn: 'Night', required: '3×45', icon: <Clock className="h-3.5 w-3.5" /> },
+              { key: 'ueberland', label: t.dashboard.specialDriveTypes.ueberland, required: '5×45', icon: <Target className="h-3.5 w-3.5" /> },
+              { key: 'autobahn', label: t.dashboard.specialDriveTypes.autobahn, required: '4×45', icon: <Zap className="h-3.5 w-3.5" /> },
+              { key: 'nacht', label: t.dashboard.specialDriveTypes.nacht, required: '3×45', icon: <Clock className="h-3.5 w-3.5" /> },
             ].map((item) => (
               <div key={item.key}>
                 <div className="flex items-center justify-between text-[11px] mb-1.5">
                   <div className="flex items-center gap-2 font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     <span className="text-slate-400">{item.icon}</span>
-                    <span>{isDE ? item.labelDe : item.labelEn}</span>
+                    <span>{item.label}</span>
                   </div>
                   <span className="font-mono text-slate-400">
-                    {Math.floor(userProgress.specialDrivingMinutes[item.key as keyof typeof userProgress.specialDrivingMinutes] / 45)}/{item.required.split('×')[0]} {isDE ? 'Std' : 'hrs'}
+                    {Math.floor(userProgress.specialDrivingMinutes[item.key as keyof typeof userProgress.specialDrivingMinutes] / 45)}/{item.required.split('×')[0]} {t.dashboard.hoursSuffix}
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
@@ -467,13 +425,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-            {isDE ? 'Weiter lernen' : 'Continue Learning'}
+            {t.dashboard.continueLearning}
           </h3>
           <button
             onClick={() => onNavigate('curriculum')}
             className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
           >
-            {isDE ? 'Alle Lektionen' : 'View All'}
+            {t.dashboard.viewAll}
           </button>
         </div>
 
@@ -489,11 +447,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                          chapter.id === 'chapter-3' ? Zap :
                          chapter.id === 'chapter-4' ? BookOpen : Flame;
 
+            const chapterTitle = language === 'de' ? chapter.titleDe : chapter.titleEn;
+
             return (
               <button
                 key={chapter.id}
                 onClick={() => onNavigate('curriculum')}
-                aria-label={isDE ? `${chapter.titleDe}: Fortschritt ${chapterProgress}%` : `${chapter.titleEn}: Progress ${chapterProgress}%`}
+                aria-label={`${chapterTitle}: Fortschritt ${chapterProgress}%`}
                 className="group flex w-full items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-900 dark:group-hover:bg-indigo-900/30">
@@ -501,7 +461,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-bold text-slate-900 truncate dark:text-white">
-                    {isDE ? chapter.titleDe : chapter.titleEn}
+                    {chapterTitle}
                   </h4>
                   <div className="mt-1.5 flex items-center gap-3">
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
@@ -524,16 +484,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </div>
           <div>
             <h4 className="text-lg font-bold">
-              {isDE ? 'Prüfungs-Pro-Tipp' : 'Exam Pro Tip'}
+              {t.dashboard.proTip}
             </h4>
             <p className="mt-2 text-sm leading-relaxed text-indigo-100">
-              {isUmschreibung
-                ? isDE
-                  ? 'Der Schulterblick ist entscheidend. Führe ihn deutlich und sichtbar aus.'
-                  : 'The shoulder check is vital. Execute it clearly and visibly.'
-                : isDE
-                  ? 'Schulterblick ist der häufigste Fehler! Üben Sie ihn bei jedem Spurwechsel.'
-                  : 'Shoulder check is the most common mistake! Practice it with every lane change.'}
+              {isUmschreibung ? t.dashboard.tips.conversion : t.dashboard.tips.regular}
             </p>
           </div>
         </div>
@@ -542,7 +496,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       <div className="mt-12 flex flex-col items-center gap-4">
         <button
           onClick={() => onOpenAuth?.()}
-          aria-label={isDE ? 'Kontoeinstellungen' : 'Account Settings'}
+          aria-label={t.dashboard.accountSettings}
           className={cn(
             'flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-all',
             authStatus === 'signed_in' 
@@ -554,17 +508,17 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <>
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <Cloud className="h-3.5 w-3.5" />
-              {isDE ? 'Cloud-Sync aktiv' : 'Cloud sync active'}
+              {t.dashboard.cloudSyncActive}
             </>
           ) : (
             <>
               <LogIn className="h-3.5 w-3.5" />
-              {isDE ? 'Anmelden für Cloud-Sync' : 'Sign in for Cloud Sync'}
+              {t.dashboard.signInForSync}
             </>
           )}
         </button>
         <p className="text-[10px] text-slate-400 dark:text-slate-500">
-          DriveDE v1.2.0 • {isDE ? 'Präzise Fahrvorbereitung' : 'Precision Driving Prep'}
+          DriveDE v1.2.0 • {t.dashboard.precisionPrep}
         </p>
       </div>
     </div>

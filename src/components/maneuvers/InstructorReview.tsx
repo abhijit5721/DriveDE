@@ -10,6 +10,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons, getLessonById } from '../../data/curriculum';
 import { scenarios } from '../../data/scenarios';
 import { PageHeader } from '../layout/PageHeader';
+import { TRANSLATIONS } from '../../data/translations';
 import type { Lesson, ManeuverStep, Tip } from '../../types';
 
 interface InstructorReviewProps {
@@ -20,91 +21,7 @@ interface InstructorReviewProps {
 const sampleLessonIds = ['basics-1a', 'city-2', 'maneuver-1'];
 const maneuverLessonIds = ['maneuver-1', 'maneuver-2', 'maneuver-3', 'maneuver-4', 'city-2', 'city-6'];
 
-const rubricItems = [
-  {
-    areaDe: 'Blickführung & Schulterblick',
-    areaEn: 'Observation & shoulder checks',
-    checkDe: 'Spiegelarbeit, Schulterblick beim Anfahren, Spurwechsel, Abbiegen und Rückwärtsfahren klar sichtbar.',
-    checkEn: 'Mirror use and clear shoulder checks during moving off, lane changes, turning, and reversing.',
-    riskDe: 'Fehlender Schulterblick ist einer der häufigsten schweren Prüfungsfehler.',
-    riskEn: 'Missing shoulder checks are among the most common serious exam faults.',
-  },
-  {
-    areaDe: 'Vorfahrt & Regelverständnis',
-    areaEn: 'Priority & rule application',
-    checkDe: 'Rechts-vor-links, Kreisverkehr, Zebrastreifen, Ampeln, abknickende Vorfahrt, Fußgänger/Cyclists.',
-    checkEn: 'Right-before-left, roundabouts, zebra crossings, traffic lights, bending priority roads, pedestrians/cyclists.',
-    riskDe: 'Unklare Vorfahrtslage oder falsches Verhalten gegenüber Schutzbedürftigen.',
-    riskEn: 'Uncertain priority handling or incorrect behavior toward vulnerable road users.',
-  },
-  {
-    areaDe: 'Fahrstreifen & Positionierung',
-    areaEn: 'Lane discipline & positioning',
-    checkDe: 'Sauberes Einordnen, korrektes Rechtsfahrgebot, Abbiegespuren, Abstand zum Bordstein beim Parken.',
-    checkEn: 'Clean positioning, correct keep-right behavior, turning lanes, and curb distance when parking.',
-    riskDe: 'Falsche Spurwahl, zu spätes Einordnen oder unsaubere Fahrzeugposition.',
-    riskEn: 'Wrong lane choice, late positioning, or poor vehicle placement.',
-  },
-  {
-    areaDe: 'Geschwindigkeit & Fahrzeugkontrolle',
-    areaEn: 'Speed & vehicle control',
-    checkDe: 'Angepasste Geschwindigkeit, ruhiges Anfahren, Kupplung/Gangwahl bei Schaltwagen, präzises Lenken und Bremsen.',
-    checkEn: 'Appropriate speed, smooth moving off, clutch/gear use in manual cars, and precise steering/braking.',
-    riskDe: 'Hektik, Abwürgen, unnötig harte Bremsungen oder zu schnelles Heranfahren an Gefahrstellen.',
-    riskEn: 'Rushing, stalling, unnecessary harsh braking, or approaching hazards too quickly.',
-  },
-  {
-    areaDe: 'Grundfahraufgaben',
-    areaEn: 'Basic maneuvers',
-    checkDe: 'Parallelparken, Rückwärts einparken, Wenden, Gefahrenbremsung mit korrekten Beobachtungs- und Pedalabläufen.',
-    checkEn: 'Parallel parking, reverse parking, turning, and emergency braking with correct observation and pedal sequence.',
-    riskDe: 'Fehlende Beobachtung, falsche Referenzpunkte, unsaubere Endposition, falsche Gefahrenbremsung.',
-    riskEn: 'Missing observation, wrong reference points, poor final position, or incorrect emergency braking.',
-  },
-  {
-    areaDe: 'Technikfragen & Abfahrtskontrolle',
-    areaEn: 'Technical questions & vehicle check',
-    checkDe: 'Ölstand, Reifenprofil, Beleuchtung, Warnleuchten, Warndreieck, Warnweste, Erste-Hilfe-Set.',
-    checkEn: 'Oil level, tyre tread, lighting, warning lights, warning triangle, safety vest, first-aid kit.',
-    riskDe: 'Unsichere oder auswendig gelernte Antworten ohne praktische Zeigekompetenz.',
-    riskEn: 'Unsure answers or memorized responses without being able to physically show the item.',
-  },
-];
-
-const screenDescriptions = [
-  {
-    nameDe: 'Dashboard / Startseite',
-    nameEn: 'Dashboard / Home',
-    textDe: 'Zeigt Lernfortschritt, Fahrstunden, Sonderfahrten bzw. Umschreibungs-Hinweise, Pro-Funktionen und Schnellzugriffe auf prüfungsrelevante Inhalte.',
-    textEn: 'Shows learning progress, driving hours, special-drive or conversion notes, premium prompts, and quick access to exam-relevant content.',
-  },
-  {
-    nameDe: 'Kapitelübersicht',
-    nameEn: 'Curriculum overview',
-    textDe: 'Listet alle Kapitel und Lektionen in didaktischer Reihenfolge, inklusive Schalt/Automatik-Filter, Prüfungs-Badges und Fortschritt je Kapitel.',
-    textEn: 'Lists all chapters and lessons in didactic order, including manual/automatic filtering, exam badges, and chapter progress.',
-  },
-  {
-    nameDe: 'Lektionsdetail',
-    nameEn: 'Lesson detail',
-    textDe: 'Kombiniert geführte Lernpunkte, typische Prüfungsszenarien, Verkehrszeichen, Schritt-für-Schritt-Anleitungen, typische Fehler und Quizfragen.',
-    textEn: 'Combines guided learning points, typical exam scenarios, traffic signs, step-by-step guidance, common mistakes, and quizzes.',
-  },
-  {
-    nameDe: 'Manöver-Schnellansicht',
-    nameEn: 'Maneuver quick reference',
-    textDe: 'Bietet schnelle Wiederholung von Einparken, Wenden, Gefahrenbremsung und animierten Visualisierungen.',
-    textEn: 'Provides quick review of parking, turning, emergency braking, and animated visualizations.',
-  },
-  {
-    nameDe: 'Fahrtenbuch / Tracker',
-    nameEn: 'Logbook / Tracker',
-    textDe: 'Erfasst Normalfahrten und Sonderfahrten, zeigt Soll/Ist-Stände und behandelt Umschreibung ohne gesetzliche Pflichtstunden separat.',
-    textEn: 'Tracks normal and special drives, shows target/actual values, and handles conversion cases separately without legal mandatory hours.',
-  },
-];
-
-function renderStepList(steps: ManeuverStep[] | undefined, isDE: boolean) {
+function renderStepList(steps: ManeuverStep[] | undefined, language: 'de' | 'en') {
   if (!steps || steps.length === 0) return null;
 
   return (
@@ -117,10 +34,10 @@ function renderStepList(steps: ManeuverStep[] | undefined, isDE: boolean) {
             </span>
             <div>
               <p className="font-semibold text-slate-900 dark:text-white">
-                {isDE ? step.titleDe : step.titleEn}
+                {language === 'de' ? step.titleDe : step.titleEn}
               </p>
               <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                {isDE ? step.descriptionDe : step.descriptionEn}
+                {language === 'de' ? step.descriptionDe : step.descriptionEn}
               </p>
             </div>
           </div>
@@ -130,7 +47,7 @@ function renderStepList(steps: ManeuverStep[] | undefined, isDE: boolean) {
   );
 }
 
-function renderTips(tips: Tip[] | undefined, isDE: boolean) {
+function renderTips(tips: Tip[] | undefined, language: 'de' | 'en') {
   if (!tips || tips.length === 0) return null;
 
   return (
@@ -138,10 +55,10 @@ function renderTips(tips: Tip[] | undefined, isDE: boolean) {
       {tips.map((tip) => (
         <div key={tip.id} className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/40 dark:bg-amber-900/10">
           <p className="font-semibold text-amber-900 dark:text-amber-200">
-            {isDE ? tip.titleDe : tip.titleEn}
+            {language === 'de' ? tip.titleDe : tip.titleEn}
           </p>
           <p className="mt-1 text-sm leading-6 text-amber-800 dark:text-amber-100/90">
-            {isDE ? tip.contentDe : tip.contentEn}
+            {language === 'de' ? tip.contentDe : tip.contentEn}
           </p>
         </div>
       ))}
@@ -189,19 +106,19 @@ function addPdfSectionTitle(pdf: jsPDF, title: string, y: number, pageHeight: nu
   return cursorY + 8;
 }
 
-function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
+function LessonPacket({ lesson, language, xt }: { lesson: Lesson; language: 'de' | 'en'; xt: any }) {
   return (
     <section className="print-section print-no-shadow rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print:break-inside-avoid dark:border-slate-700 dark:bg-slate-800">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600 dark:text-blue-400">
-            {isDE ? 'Beispiellektion' : 'Sample lesson'}
+            {xt.sampleLesson}
           </p>
           <h3 className="mt-1 text-xl font-bold text-slate-900 dark:text-white">
-            {isDE ? lesson.titleDe : lesson.titleEn}
+            {language === 'de' ? lesson.titleDe : lesson.titleEn}
           </h3>
           <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-            {isDE ? lesson.descriptionDe : lesson.descriptionEn}
+            {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
           </p>
         </div>
       </div>
@@ -209,12 +126,12 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
       {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
         <div className="mt-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-900/60">
           <p className="text-sm font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Relevante Zeichen / Visuals' : 'Relevant signs / visuals'}
+            {xt.relevantSigns}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {lesson.trafficSigns.map((sign) => (
               <span key={sign.id} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                {sign.code ? `${sign.code} · ` : ''}{isDE ? sign.titleDe : sign.titleEn}
+                {sign.code ? `${sign.code} · ` : ''}{language === 'de' ? sign.titleDe : sign.titleEn}
               </span>
             ))}
           </div>
@@ -224,16 +141,16 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
       {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (
         <div className="mt-5">
           <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Geführte Lernpunkte' : 'Guided learning points'}
+            {xt.guidedPoints}
           </h4>
           <div className="mt-3 grid gap-3">
             {lesson.guidedPoints.map((point) => (
               <div key={point.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
                 <p className="font-semibold text-slate-900 dark:text-white">
-                  {isDE ? point.titleDe : point.titleEn}
+                  {language === 'de' ? point.titleDe : point.titleEn}
                 </p>
                 <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  {isDE ? point.contentDe : point.contentEn}
+                  {language === 'de' ? point.contentDe : point.contentEn}
                 </p>
               </div>
             ))}
@@ -244,27 +161,27 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
       {lesson.steps && lesson.steps.length > 0 && (
         <div className="mt-5">
           <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Schritt-für-Schritt-Anleitung' : 'Step-by-step instructions'}
+            {xt.stepByStep}
           </h4>
-          {renderStepList(lesson.steps, isDE)}
+          {renderStepList(lesson.steps, language)}
         </div>
       )}
 
       {lesson.scenarios && lesson.scenarios.length > 0 && (
         <div className="mt-5 space-y-4">
           <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Prüfungsszenarien' : 'Exam scenarios'}
+            {xt.examScenarios}
           </h4>
           {lesson.scenarios.map((scenario) => (
             <div key={scenario.id} className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
               <p className="font-semibold text-slate-900 dark:text-white">
-                {isDE ? scenario.titleDe : scenario.titleEn}
+                {language === 'de' ? scenario.titleDe : scenario.titleEn}
               </p>
               <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                {isDE ? scenario.situationDe : scenario.situationEn}
+                {language === 'de' ? scenario.situationDe : scenario.situationEn}
               </p>
-              {renderStepList(scenario.steps, isDE)}
-              {renderTips(scenario.mistakes, isDE)}
+              {renderStepList(scenario.steps, language)}
+              {renderTips(scenario.mistakes, language)}
             </div>
           ))}
         </div>
@@ -273,9 +190,9 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
       {lesson.tips && lesson.tips.length > 0 && (
         <div className="mt-5">
           <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-            {isDE ? 'Dozenten-/Prüfungshinweise' : 'Instructor / exam notes'}
+            {xt.instructorNotes}
           </h4>
-          {renderTips(lesson.tips, isDE)}
+          {renderTips(lesson.tips, language)}
         </div>
       )}
     </section>
@@ -284,7 +201,9 @@ function LessonPacket({ lesson, isDE }: { lesson: Lesson; isDE: boolean }) {
 
 export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProps) {
   const { language, licenseType, userProgress, removeMistake, isPremium } = useAppStore();
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
+  const xt = t.instructor;
+  
   const documentRef = useRef<HTMLDivElement | null>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
@@ -305,29 +224,14 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
   const quizQuestions = getAllLessons()
     .flatMap((lesson) =>
       (lesson.quiz ?? []).map((question) => ({
-        lessonTitle: isDE ? lesson.titleDe : lesson.titleEn,
-        lessonCategory: isDE ? lesson.descriptionDe : lesson.descriptionEn,
+        lessonTitle: language === 'de' ? lesson.titleDe : lesson.titleEn,
+        lessonCategory: language === 'de' ? lesson.descriptionDe : lesson.descriptionEn,
         question,
       }))
     )
     .slice(0, 8);
 
-  const selectionLabel =
-    licenseType === 'umschreibung-manual'
-      ? isDE
-        ? 'Umschreibung · Schaltgetriebe'
-        : 'Conversion · Manual'
-      : licenseType === 'umschreibung-automatic'
-        ? isDE
-          ? 'Umschreibung · Automatik'
-          : 'Conversion · Automatic'
-        : licenseType === 'manual'
-          ? isDE
-            ? 'Neuer Führerschein · Schaltgetriebe'
-            : 'New License · Manual'
-          : isDE
-            ? 'Neuer Führerschein · Automatik'
-            : 'New License · Automatic';
+  const selectionLabel = xt.licenseTypes[licenseType as keyof typeof xt.licenseTypes] || licenseType;
 
   const buildReviewPdf = () => {
     const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -353,116 +257,112 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
 
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(20);
-    pdf.text(isDE ? 'DriveDE – Fahrlehrer-Review-Paket' : 'DriveDE – Instructor Review Pack', left, y);
+    pdf.text(xt.pdfTitle, left, y);
     y += 10;
 
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(11);
-    addBody(`${isDE ? 'Aktive Auswahl' : 'Active selection'}: ${selectionLabel}`);
-    addBody(
-      isDE
-        ? 'Diese PDF bündelt Lehrplan, Beispiellektionen, Manöver-Anleitungen, Bewertungsraster, UX-Beschreibung und Quizfragen für die fachliche Prüfung durch einen deutschen Fahrlehrer.'
-        : 'This PDF bundles curriculum, sample lessons, maneuver instructions, assessment rubric, UX descriptions, and quiz questions for professional review by a German driving instructor.'
-    );
+    addBody(`${xt.pdfActiveSelection}: ${selectionLabel}`);
+    addBody(xt.pdfIntro);
     addSpacer(6);
 
-    y = addPdfSectionTitle(pdf, isDE ? '1. Modulübersicht / Table of Contents' : '1. Module list / table of contents', y, pageHeight, bottomMargin);
+    y = addPdfSectionTitle(pdf, xt.pdfSection1, y, pageHeight, bottomMargin);
     chapters.forEach((chapter) => {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(12);
-      addBody(`${chapter.id} – ${isDE ? chapter.titleDe : chapter.titleEn}`);
+      addBody(`${chapter.id} – ${language === 'de' ? chapter.titleDe : chapter.titleEn}`);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(11);
-      addBody(isDE ? chapter.descriptionDe : chapter.descriptionEn, 4);
+      addBody(language === 'de' ? chapter.descriptionDe : chapter.descriptionEn, 4);
       chapter.lessons.forEach((lesson) => {
-        addBody(`• ${lesson.id} — ${isDE ? lesson.titleDe : lesson.titleEn}`, 6);
+        addBody(`• ${lesson.id} — ${language === 'de' ? lesson.titleDe : lesson.titleEn}`, 6);
       });
       addSpacer(3);
     });
 
-    y = addPdfSectionTitle(pdf, isDE ? '2. Volltext von 3 Beispiellektionen' : '2. Full text of 3 sample lessons', y, pageHeight, bottomMargin);
+    y = addPdfSectionTitle(pdf, xt.pdfSection2, y, pageHeight, bottomMargin);
     sampleLessons.forEach((lesson, index) => {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(13);
-      addBody(`${index + 1}. ${isDE ? lesson.titleDe : lesson.titleEn}`);
+      addBody(`${index + 1}. ${language === 'de' ? lesson.titleDe : lesson.titleEn}`);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(11);
-      addBody(isDE ? lesson.descriptionDe : lesson.descriptionEn, 4);
+      addBody(language === 'de' ? lesson.descriptionDe : lesson.descriptionEn, 4);
 
       if (lesson.guidedPoints?.length) {
         pdf.setFont('helvetica', 'bold');
-        addBody(isDE ? 'Geführte Lernpunkte:' : 'Guided learning points:', 4);
+        addBody(`${xt.guidedPoints}:`, 4);
         pdf.setFont('helvetica', 'normal');
         lesson.guidedPoints.forEach((point) => {
-          addBody(`• ${isDE ? point.titleDe : point.titleEn}: ${isDE ? point.contentDe : point.contentEn}`, 8);
+          addBody(`• ${language === 'de' ? point.titleDe : point.titleEn}: ${language === 'de' ? point.contentDe : point.contentEn}`, 8);
         });
       }
 
       if (lesson.steps?.length) {
         pdf.setFont('helvetica', 'bold');
-        addBody(isDE ? 'Schritt-für-Schritt:' : 'Step-by-step:', 4);
+        addBody(`${xt.stepByStep}:`, 4);
         pdf.setFont('helvetica', 'normal');
         lesson.steps.forEach((step) => {
-          addBody(`${step.id}. ${isDE ? step.titleDe : step.titleEn} — ${isDE ? step.descriptionDe : step.descriptionEn}`, 8);
+          addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn} — ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
         });
       }
 
       if (lesson.scenarios?.length) {
         pdf.setFont('helvetica', 'bold');
-        addBody(isDE ? 'Prüfungsszenarien:' : 'Exam scenarios:', 4);
+        addBody(`${xt.examScenarios}:`, 4);
         pdf.setFont('helvetica', 'normal');
         lesson.scenarios.forEach((scenario) => {
-          addBody(`• ${isDE ? scenario.titleDe : scenario.titleEn}`, 8);
-          addBody(isDE ? scenario.situationDe : scenario.situationEn, 12);
+          addBody(`• ${language === 'de' ? scenario.titleDe : scenario.titleEn}`, 8);
+          addBody(language === 'de' ? scenario.situationDe : scenario.situationEn, 12);
         });
       }
 
       if (lesson.tips?.length) {
         pdf.setFont('helvetica', 'bold');
-        addBody(isDE ? 'Dozenten-/Prüfungshinweise:' : 'Instructor / exam notes:', 4);
+        addBody(`${xt.instructorNotes}:`, 4);
         pdf.setFont('helvetica', 'normal');
         lesson.tips.forEach((tip) => {
-          addBody(`• ${isDE ? tip.titleDe : tip.titleEn}: ${isDE ? tip.contentDe : tip.contentEn}`, 8);
+          addBody(`• ${language === 'de' ? tip.titleDe : tip.titleEn}: ${language === 'de' ? tip.contentDe : tip.contentEn}`, 8);
         });
       }
 
       addSpacer(5);
     });
 
-    y = addPdfSectionTitle(pdf, isDE ? '3. Manöver-Anleitungen & Referenzpunkte' : '3. Maneuver instructions & reference points', y, pageHeight, bottomMargin);
+    y = addPdfSectionTitle(pdf, xt.pdfSection3, y, pageHeight, bottomMargin);
     maneuverLessons.forEach((lesson) => {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(12);
-      addBody(`${isDE ? lesson.titleDe : lesson.titleEn}`);
+      addBody(`${language === 'de' ? lesson.titleDe : lesson.titleEn}`);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(11);
-      addBody(isDE ? lesson.descriptionDe : lesson.descriptionEn, 4);
+      addBody(language === 'de' ? lesson.descriptionDe : lesson.descriptionEn, 4);
       lesson.steps?.forEach((step) => {
-        addBody(`${step.id}. ${isDE ? step.titleDe : step.titleEn} — ${isDE ? step.descriptionDe : step.descriptionEn}`, 8);
+        addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn} — ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
       });
       addSpacer(3);
     });
 
-    y = addPdfSectionTitle(pdf, isDE ? '4. Bewertungsraster / Review Rubric' : '4. Review rubric / assessment lens', y, pageHeight, bottomMargin);
-    rubricItems.forEach((item) => {
+    y = addPdfSectionTitle(pdf, xt.pdfSection4, y, pageHeight, bottomMargin);
+    xt.rubricItems.forEach((item: any) => {
       pdf.setFont('helvetica', 'bold');
-      addBody(`${isDE ? item.areaDe : item.areaEn}`);
+      addBody(`${item.area}`);
       pdf.setFont('helvetica', 'normal');
-      addBody(`${isDE ? 'Darauf achten' : 'What to review'}: ${isDE ? item.checkDe : item.checkEn}`, 4);
-      addBody(`${isDE ? 'Typisches Risiko' : 'Typical risk'}: ${isDE ? item.riskDe : item.riskEn}`, 4);
+      addBody(`${xt.whatToReview} ${item.check}`, 4);
+      addBody(`${xt.typicalRisk} ${item.risk}`, 4);
       addSpacer(2);
     });
 
-    y = addPdfSectionTitle(pdf, isDE ? '5. Screen Descriptions' : '5. Screen descriptions', y, pageHeight, bottomMargin);
-    screenDescriptions.forEach((screen) => {
+    y = addPdfSectionTitle(pdf, xt.pdfSection5, y, pageHeight, bottomMargin);
+    xt.screenDescriptions.forEach((screen: any) => {
       pdf.setFont('helvetica', 'bold');
-      addBody(`${isDE ? screen.nameDe : screen.nameEn}`);
+      addBody(`${screen.name}`);
       pdf.setFont('helvetica', 'normal');
-      addBody(isDE ? screen.textDe : screen.textEn, 4);
+      addBody(screen.text, 4);
       addSpacer(2);
     });
 
-    y = addPdfSectionTitle(pdf, isDE ? '6. Quiz- / Testfragen' : '6. Quiz / test questions', y, pageHeight, bottomMargin);
+    y = addPdfSectionTitle(pdf, xt.pdfSection6, y, pageHeight, bottomMargin);
     quizQuestions.forEach(({ lessonTitle, lessonCategory, question }) => {
       const correct = question.options.find((option) => option.id === question.correctOptionId);
       pdf.setFont('helvetica', 'bold');
@@ -470,14 +370,14 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
       pdf.setFont('helvetica', 'normal');
       addBody(`${lessonCategory}`, 4);
       pdf.setFont('helvetica', 'bold');
-      addBody(`${isDE ? question.questionDe : question.questionEn}`, 4);
+      addBody(`${language === 'de' ? question.questionDe : question.questionEn}`, 4);
       pdf.setFont('helvetica', 'normal');
       question.options.forEach((option) => {
-        addBody(`${option.id.toUpperCase()}. ${isDE ? option.textDe : option.textEn}`, 8);
+        addBody(`${option.id.toUpperCase()}. ${language === 'de' ? option.textDe : option.textEn}`, 8);
       });
       if (correct) {
-        addBody(`${isDE ? 'Richtige Antwort' : 'Correct answer'}: ${correct.id.toUpperCase()}. ${isDE ? correct.textDe : correct.textEn}`, 8);
-        addBody(isDE ? question.explanationDe : question.explanationEn, 12);
+        addBody(`${xt.pdfCorrectAnswer}: ${correct.id.toUpperCase()}. ${language === 'de' ? correct.textDe : correct.textEn}`, 8);
+        addBody(language === 'de' ? question.explanationDe : question.explanationEn, 12);
       }
       addSpacer(3);
     });
@@ -506,18 +406,14 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
       const printWindow = window.open(blobUrl, '_blank', 'noopener,noreferrer');
 
       if (!printWindow) {
-        window.alert(
-          isDE
-            ? 'Das Druckfenster konnte nicht geöffnet werden. Bitte erlauben Sie Pop-ups für diese Seite.'
-            : 'The print window could not be opened. Please allow pop-ups for this page.'
-        );
+        window.alert(xt.popupError);
         return;
       }
 
       printWindow.focus();
     } catch (error) {
       console.error('Print export failed', error);
-      window.alert(isDE ? 'Druckansicht konnte nicht erstellt werden. Bitte versuchen Sie es erneut.' : 'The print view could not be created. Please try again.');
+      window.alert(xt.printError);
     }
   };
 
@@ -535,7 +431,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
       pdf.save(filename);
     } catch (error) {
       console.error('PDF export failed', error);
-      window.alert(isDE ? 'PDF konnte nicht erstellt werden. Bitte versuchen Sie es erneut.' : 'The PDF could not be created. Please try again.');
+      window.alert(xt.pdfError);
     } finally {
       setIsDownloadingPdf(false);
     }
@@ -544,7 +440,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
   return (
     <div className="print-document space-y-6 pb-10 print:pb-0">
       <div className="flex items-center justify-between gap-3 print:hidden">
-        <PageHeader title={isDE ? 'Fahrlehrer-Review' : 'Instructor Review'} onBack={onBack} />
+        <PageHeader title={xt.title} onBack={onBack} />
 
         <div className="flex items-center gap-2 pr-4">
           <button
@@ -552,7 +448,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           >
             {isPremium ? <Printer className="h-4 w-4" /> : <Lock className="h-4 w-4 text-amber-500" />}
-            <span className="hidden sm:inline">{isDE ? 'Drucken' : 'Print'}</span>
+            <span className="hidden sm:inline">{xt.print}</span>
           </button>
           <button
             onClick={handleDownloadPdf}
@@ -561,7 +457,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
           >
             {isPremium ? <Download className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
             <span className="hidden sm:inline">
-              {isDownloadingPdf ? (isDE ? 'Wird erstellt…' : 'Generating…') : isDE ? 'PDF laden' : 'Download PDF'}
+              {isDownloadingPdf ? xt.generating : xt.downloadPdf}
             </span>
           </button>
         </div>
@@ -572,20 +468,18 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
-                {isDE ? 'Fahrlehrer-Review-Paket' : 'Instructor review pack'}
+                {xt.packTitle}
               </p>
               <h1 className="mt-2 text-3xl font-bold leading-tight">
-                {isDE ? 'DriveDE – Unterlagen zur fachlichen Prüfung' : 'DriveDE – materials for professional review'}
+                {xt.packSubtitle}
               </h1>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-200">
-                {isDE
-                  ? 'Diese Zusammenstellung bündelt genau die Unterlagen, die ein deutscher Fahrlehrer typischerweise für eine fachliche Beurteilung braucht: Lehrplan, Beispiellektionen, Manöver-Anleitungen, Bewertungsraster, UX-Beschreibung und Quizfragen.'
-                  : 'This package bundles exactly the materials a German driving instructor typically needs for a professional review: curriculum, sample lessons, maneuver instructions, assessment rubric, UX descriptions, and quiz questions.'}
+                {xt.packDesc}
               </p>
             </div>
 
             <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm">
-              <p className="text-blue-100">{isDE ? 'Aktive Auswahl' : 'Active selection'}</p>
+              <p className="text-blue-100">{xt.activeSelection}</p>
               <p className="mt-1 font-semibold text-white">{selectionLabel}</p>
             </div>
           </div>
@@ -600,12 +494,10 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                    {isDE ? 'Meine Fehler-Korrektur' : 'My Mistake Review'}
+                    {xt.mistakeReview}
                   </h2>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {isDE 
-                      ? `${myMistakes.length} Szenarien warten auf Wiederholung.` 
-                      : `${myMistakes.length} scenarios waiting for review.`}
+                    {xt.mistakesWaiting(myMistakes.length)}
                   </p>
                 </div>
               </div>
@@ -621,7 +513,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
                     <button
                       onClick={() => removeMistake(scenario.id)}
                       className="absolute right-3 top-3 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200"
-                      title={isDE ? 'Als gelernt markieren' : 'Mark as learned'}
+                      title={xt.markAsLearned}
                     >
                       <CheckCircle2 className="h-5 w-5" />
                     </button>
@@ -629,27 +521,27 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{scenario.icon}</span>
                       <h3 className="font-bold text-slate-900 dark:text-white">
-                        {isDE ? scenario.titleDe : scenario.titleEn}
+                        {language === 'de' ? scenario.titleDe : scenario.titleEn}
                       </h3>
                     </div>
 
                     <div className="mt-4 space-y-3">
                       <div className="rounded-xl bg-slate-100/50 p-3 text-sm text-slate-700 dark:bg-slate-900/40 dark:text-slate-300">
                         <p className="font-semibold text-slate-900 dark:text-white mb-1">
-                          {isDE ? 'Situation:' : 'Situation:'}
+                          {xt.situation}
                         </p>
-                        {isDE ? scenario.situationDe : scenario.situationEn}
+                        {language === 'de' ? scenario.situationDe : scenario.situationEn}
                       </div>
 
                       <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3 text-sm dark:border-emerald-900/30 dark:bg-emerald-900/10">
                         <p className="font-bold text-emerald-800 dark:text-emerald-400 mb-1">
-                          {isDE ? 'Richtige Antwort:' : 'Correct Answer:'}
+                          {xt.correctAnswer}
                         </p>
                         <p className="text-emerald-900 dark:text-emerald-200">
-                          {isDE ? correctOption?.textDe : correctOption?.textEn}
+                          {language === 'de' ? correctOption?.textDe : correctOption?.textEn}
                         </p>
                         <p className="mt-2 text-xs italic opacity-80">
-                          {isDE ? scenario.explanationDe : scenario.explanationEn}
+                          {language === 'de' ? scenario.explanationDe : scenario.explanationEn}
                         </p>
                       </div>
                     </div>
@@ -667,21 +559,16 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? 'Was Sie Ihrem Fahrlehrer teilen können' : 'What you can share with your instructor'}
+                {xt.shareTitle}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Direkt aus der App druckbar oder als PDF speicherbar.' : 'Can be printed directly from the app or saved as a PDF.'}
+                {xt.shareDesc}
               </p>
             </div>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            {[
-              isDE ? '1. Dieses Review-Paket als PDF exportieren' : '1. Export this review pack as PDF',
-              isDE ? '2. Den App-Link plus 3–5 Screenshots mitschicken' : '2. Send the app link plus 3–5 screenshots',
-              isDE ? '3. Fahrlehrer gezielt um StVO-, Didaktik- und Prüfungsfeedback bitten' : '3. Ask for focused feedback on StVO accuracy, didactics, and exam realism',
-              isDE ? '4. Korrekturen nach Priorität 1 → 2 → 3 einarbeiten' : '4. Implement changes in priority order 1 → 2 → 3',
-            ].map((item) => (
+            {xt.shareItems.map((item: string) => (
               <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-200">
                 {item}
               </div>
@@ -696,10 +583,10 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '1. Modulübersicht / Table of Contents' : '1. Module list / table of contents'}
+                {xt.section1Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur Bewertung der didaktischen Reihenfolge.' : 'For evaluating didactic sequencing.'}
+                {xt.section1Desc}
               </p>
             </div>
           </div>
@@ -711,16 +598,16 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
                   {chapter.id}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">
-                  {isDE ? chapter.titleDe : chapter.titleEn}
+                  {language === 'de' ? chapter.titleDe : chapter.titleEn}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  {isDE ? chapter.descriptionDe : chapter.descriptionEn}
+                  {language === 'de' ? chapter.descriptionDe : chapter.descriptionEn}
                 </p>
                 <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-200">
                   {chapter.lessons.map((lesson) => (
                     <li key={lesson.id} className="flex gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500" />
-                      <span><strong>{lesson.id}</strong> — {isDE ? lesson.titleDe : lesson.titleEn}</span>
+                      <span><strong>{lesson.id}</strong> — {language === 'de' ? lesson.titleDe : lesson.titleEn}</span>
                     </li>
                   ))}
                 </ul>
@@ -736,17 +623,17 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '2. Volltext von 3 Beispiellektionen' : '2. Full text of 3 sample lessons'}
+                {xt.section2Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur Prüfung von StVO-Genauigkeit, Tiefe und Struktur.' : 'For reviewing StVO accuracy, depth, and structure.'}
+                {xt.section2Desc}
               </p>
             </div>
           </div>
 
           <div className="grid gap-4">
             {sampleLessons.map((lesson) => (
-              <LessonPacket key={lesson.id} lesson={lesson} isDE={isDE} />
+              <LessonPacket key={lesson.id} lesson={lesson} language={language} xt={xt} />
             ))}
           </div>
         </section>
@@ -758,10 +645,10 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '3. Manöver-Anleitungen & Referenzpunkte' : '3. Maneuver instructions & reference points'}
+                {xt.section3Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur fachlichen Prüfung von Reihenfolge, Blicktechnik und Referenzpunkten.' : 'For verifying maneuver steps, observation order, and reference points.'}
+                {xt.section3Desc}
               </p>
             </div>
           </div>
@@ -770,12 +657,12 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             {maneuverLessons.map((lesson) => (
               <div key={lesson.id} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {isDE ? lesson.titleDe : lesson.titleEn}
+                  {language === 'de' ? lesson.titleDe : lesson.titleEn}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  {isDE ? lesson.descriptionDe : lesson.descriptionEn}
+                  {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
                 </p>
-                {renderStepList(lesson.steps, isDE)}
+                {renderStepList(lesson.steps, language)}
               </div>
             ))}
           </div>
@@ -788,31 +675,31 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '4. Bewertungsraster / Review Rubric' : '4. Review rubric / assessment lens'}
+                {xt.section4Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur Einordnung gegenüber realen TÜV/DEKRA-Kriterien.' : 'To compare the app against real TÜV/DEKRA assessment expectations.'}
+                {xt.section4Desc}
               </p>
             </div>
           </div>
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            {rubricItems.map((item) => (
-              <div key={item.areaEn} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
+            {xt.rubricItems.map((item: any) => (
+              <div key={item.area} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {isDE ? item.areaDe : item.areaEn}
+                  {item.area}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   <span className="font-semibold text-slate-900 dark:text-white">
-                    {isDE ? 'Darauf achten:' : 'What to review:'}
+                    {xt.whatToReview}
                   </span>{' '}
-                  {isDE ? item.checkDe : item.checkEn}
+                  {item.check}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   <span className="font-semibold text-slate-900 dark:text-white">
-                    {isDE ? 'Typisches Risiko:' : 'Typical risk:'}
+                    {xt.typicalRisk}
                   </span>{' '}
-                  {isDE ? item.riskDe : item.riskEn}
+                  {item.risk}
                 </p>
               </div>
             ))}
@@ -826,22 +713,22 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '5. Screenshots / Screen Descriptions' : '5. Screenshots / screen descriptions'}
+                {xt.section5Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur Bewertung von UX, Klarheit und pädagogischer Führung.' : 'For evaluating UX clarity and pedagogical quality.'}
+                {xt.section5Desc}
               </p>
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {screenDescriptions.map((screen) => (
-              <div key={screen.nameEn} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            {xt.screenDescriptions.map((screen: any) => (
+              <div key={screen.name} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                  {isDE ? screen.nameDe : screen.nameEn}
+                  {screen.name}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  {isDE ? screen.textDe : screen.textEn}
+                  {screen.text}
                 </p>
               </div>
             ))}
@@ -851,46 +738,47 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
         <section className="print-section print-no-shadow rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800 print:shadow-none">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-              <BookOpenText className="h-5 w-5" />
+              <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isDE ? '6. Quiz- / Testfragen' : '6. Quiz / test questions'}
+                {xt.section6Title}
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isDE ? 'Zur Prüfung juristischer und technischer Korrektheit.' : 'For verifying legal and technical correctness.'}
+                {xt.section6Desc}
               </p>
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            {quizQuestions.map(({ lessonTitle, lessonCategory, question }) => {
-              const correct = question.options.find((option) => option.id === question.correctOptionId);
+          <div className="mt-4 grid gap-6">
+            {quizQuestions.map(({ lessonTitle, lessonCategory, question }, idx) => {
+              const correct = question.options.find(o => o.id === question.correctOptionId);
               return (
-                <div key={question.id} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-700">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600 dark:text-blue-400">
+                <div key={idx} className="rounded-2xl border border-slate-200 p-5 dark:border-slate-700">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                     {lessonTitle}
                   </p>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    {lessonCategory}
-                  </p>
-                  <h3 className="mt-2 text-base font-bold text-slate-900 dark:text-white">
-                    {isDE ? question.questionDe : question.questionEn}
+                  <p className="text-xs text-slate-500 mb-2">{lessonCategory}</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    {language === 'de' ? question.questionDe : question.questionEn}
                   </h3>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-200">
-                    {question.options.map((option) => (
-                      <li key={option.id}>
-                        <span className="font-semibold">{option.id.toUpperCase()}.</span>{' '}
-                        {isDE ? option.textDe : option.textEn}
-                      </li>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {question.options.map(opt => (
+                      <div key={opt.id} className={cn(
+                        'rounded-xl border p-3 text-sm',
+                        opt.id === question.correctOptionId 
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900/30 dark:bg-emerald-900/10 dark:text-emerald-300'
+                          : 'border-slate-100 bg-slate-50/50 text-slate-600 dark:border-slate-700 dark:bg-slate-900/30 dark:text-slate-400'
+                      )}>
+                        <span className="font-bold mr-2">{opt.id.toUpperCase()}</span>
+                        {language === 'de' ? opt.textDe : opt.textEn}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                   {correct && (
-                    <div className="mt-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-900 dark:bg-emerald-900/20 dark:text-emerald-100">
-                      <p className="font-semibold">
-                        {isDE ? 'Richtige Antwort' : 'Correct answer'}: {correct.id.toUpperCase()}. {isDE ? correct.textDe : correct.textEn}
-                      </p>
-                      <p className="mt-1 leading-6">{isDE ? question.explanationDe : question.explanationEn}</p>
+                    <div className="mt-3 rounded-xl bg-blue-50/50 p-3 text-xs text-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
+                      <p className="font-bold mb-1">{xt.pdfCorrectAnswer}: {correct.id.toUpperCase()}</p>
+                      {language === 'de' ? question.explanationDe : question.explanationEn}
                     </div>
                   )}
                 </div>
@@ -901,4 +789,8 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
       </div>
     </div>
   );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
 }

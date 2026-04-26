@@ -8,37 +8,38 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { GlobalDefinitions, TopDownCar } from './SimulatorComponents';
+import { TRANSLATIONS } from '../../data/translations';
 
 
 type ParkingPhase = 'start' | 'align' | 'steering-in' | 'backing-in' | 'steering-out' | 'final' | 'failed';
 
 export default function InteractiveParking({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language];
   const [phase, setPhase] = useState<ParkingPhase>('start');
   const [hint, setHint] = useState<string>('');
 
   useEffect(() => {
     switch (phase) {
       case 'start':
-        setHint(isDE ? 'Fahre vorwärts, bis du neben dem blauen Auto stehst.' : 'Drive forward until you are next to the blue car.');
+        setHint(t.maneuvers.interactive.parking.hintStart);
         break;
       case 'align':
-        setHint(isDE ? 'Klicke "STOPP", wenn deine Hinterachse auf Höhe des Hecks vom blauen Auto ist.' : 'Click "STOP" when your rear axle aligns with the blue car’s rear.');
+        setHint(t.maneuvers.interactive.parking.hintAlign);
         break;
       case 'steering-in':
-        setHint(isDE ? 'Schlage das Lenkrad voll nach RECHTS ein.' : 'Turn the steering wheel fully to the RIGHT.');
+        setHint(t.maneuvers.interactive.parking.hintSteerIn);
         break;
       case 'backing-in':
-        setHint(isDE ? 'Fahre rückwärts, bis du das hintere Auto im linken Spiegel siehst.' : 'Reverse until you see the car behind in your left mirror.');
+        setHint(t.maneuvers.interactive.parking.hintBackIn);
         break;
       case 'steering-out':
-        setHint(isDE ? 'Schlage das Lenkrad nun voll nach LINKS ein.' : 'Now turn the steering wheel fully to the LEFT.');
+        setHint(t.maneuvers.interactive.parking.hintSteerOut);
         break;
       case 'final':
-        setHint(isDE ? 'Perfekt geparkt! Der Abstand zum Bordstein passt.' : 'Perfectly parked! The distance to the curb is correct.');
+        setHint(t.maneuvers.interactive.parking.hintFinal);
         break;
     }
-  }, [phase, isDE]);
+  }, [phase, t]);
 
   const handleAction = () => {
     if (phase === 'start') setPhase('align');
@@ -59,7 +60,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
       <div className="flex items-center justify-between">
         <h4 className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
           <Info className="h-4 w-4 text-blue-500" />
-          {isDE ? 'Parallel-Parken Simulator' : 'Parallel Parking Simulator'}
+          {t.maneuvers.interactive.parking.title}
         </h4>
         <button onClick={handleReset} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
           <RotateCcw className="h-4 w-4" />
@@ -153,7 +154,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-4 font-bold text-white shadow-lg"
             >
               <Check className="h-5 w-5" />
-              {isDE ? 'Lektion beenden' : 'Complete Lesson'}
+              {t.maneuvers.interactive.parking.complete}
             </motion.button>
           ) : (
             <button
@@ -163,11 +164,11 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
                 phase === 'align' || phase === 'backing-in' ? 'bg-red-500' : 'bg-blue-600'
               )}
             >
-              {phase === 'start' && (isDE ? 'Anfahren' : 'Start Engine')}
-              {phase === 'align' && (isDE ? 'STOPP' : 'STOP')}
-              {phase === 'steering-in' && (isDE ? 'Einschlagen ↷' : 'Turn Wheel ↷')}
-              {phase === 'backing-in' && (isDE ? 'STOPP' : 'STOP')}
-              {phase === 'steering-out' && (isDE ? 'Gegenlenken ↶' : 'Counter-steer ↶')}
+              {phase === 'start' && t.maneuvers.interactive.parking.startEngine}
+              {phase === 'align' && t.maneuvers.interactive.parking.stop}
+              {phase === 'steering-in' && t.maneuvers.interactive.parking.turnWheel}
+              {phase === 'backing-in' && t.maneuvers.interactive.parking.stop}
+              {phase === 'steering-out' && t.maneuvers.interactive.parking.counterSteer}
             </button>
           )}
         </AnimatePresence>
@@ -176,9 +177,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           <div className="flex gap-2">
             <Info className="h-4 w-4 shrink-0 text-blue-500" />
             <p className="text-[10px] leading-relaxed text-slate-600 dark:text-slate-400">
-              {isDE 
-                ? 'Wichtig: In der Prüfung musst du beim Rückwärtsfahren immer einen Rundumblick machen. Im Simulator konzentrieren wir uns auf die Orientierungspunkte.' 
-                : 'Important: In the exam, you must always perform an all-around scan when reversing. In the simulator, we focus on the reference points.'}
+              {t.maneuvers.interactive.parking.note}
             </p>
           </div>
         </div>

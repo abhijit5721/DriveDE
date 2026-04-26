@@ -6,6 +6,7 @@
 import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface DesktopNavProps {
   activeTab: TabType;
@@ -15,17 +16,17 @@ interface DesktopNavProps {
 
 export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProps) {
   const { language, setLanguage, darkMode, toggleDarkMode, isPremium, userProgress, authStatus } = useAppStore();
-  const isDE = language === 'de';
+  const t = TRANSLATIONS[language as 'de' | 'en'];
 
   const navItems = [
-    { id: 'home', label: isDE ? 'Übersicht' : 'Dashboard', icon: Home },
-    { id: 'curriculum', label: isDE ? 'Lehrplan' : 'Curriculum', icon: BookOpen },
-    { id: 'maneuvers', label: isDE ? 'Manöver' : 'Maneuvers', icon: Wrench },
-    { id: 'achievements', label: isDE ? 'Erfolge' : 'Achievements', icon: Trophy },
-    { id: 'tracker', label: isDE ? 'Fahrtenbuch' : 'Tracker', icon: ClipboardList },
-    { id: 'finance', label: isDE ? 'Finanzen' : 'Finances', icon: Wallet },
-    { id: 'review', label: isDE ? 'Review' : 'Review', icon: Star },
-    { id: 'account', label: isDE ? 'Konto' : 'Account', icon: User },
+    { id: 'home', label: t.common.nav.home, icon: Home },
+    { id: 'curriculum', label: t.common.nav.curriculum, icon: BookOpen },
+    { id: 'maneuvers', label: t.common.nav.maneuvers, icon: Wrench },
+    { id: 'achievements', label: t.common.nav.achievements, icon: Trophy },
+    { id: 'tracker', label: t.common.nav.tracker, icon: ClipboardList },
+    { id: 'finance', label: t.common.nav.finance, icon: Wallet },
+    { id: 'review', label: t.common.nav.review, icon: Star },
+    { id: 'account', label: t.common.nav.account, icon: User },
   ] as const;
 
   const mistakesCount = (userProgress.incorrectQuestions || []).length;
@@ -33,7 +34,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
   return (
     <aside 
       role="navigation"
-      aria-label={isDE ? 'Hauptnavigation' : 'Main Navigation'}
+      aria-label={t.common.nav.mainNav}
       className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0"
     >
       <div className="p-6">
@@ -82,7 +83,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           <div 
             className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl"
             role="group"
-            aria-label={isDE ? 'Sprachauswahl' : 'Language Selection'}
+            aria-label={t.common.nav.languageSelect}
           >
             <button
               onClick={() => setLanguage('de')}
@@ -112,7 +113,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
 
           <button
             onClick={toggleDarkMode}
-            aria-label={darkMode ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}
+            aria-label={darkMode ? t.common.nav.lightMode : t.common.nav.darkMode}
             className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <div className="flex items-center gap-3">
@@ -121,7 +122,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
               ) : (
                 <Moon className="h-5 w-5 text-blue-600" />
               )}
-              {isDE ? (darkMode ? 'Heller Modus' : 'Dunkler Modus') : (darkMode ? 'Light Mode' : 'Dark Mode')}
+              {darkMode ? t.common.nav.lightMode : t.common.nav.darkMode}
             </div>
           </button>
           
@@ -131,7 +132,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
               className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-red-600 transition-all hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
             >
               <LogOut className="h-5 w-5" />
-              {isDE ? 'Abmelden' : 'Sign Out'}
+              {t.common.nav.signOut}
             </button>
           )}
         </div>
