@@ -233,8 +233,8 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
       { x: 320, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
       { x: 280, y: 110, rotation: -45, wheel: 60, indicator: 'right' as const },
       { x: 220, y: 160, rotation: -90, wheel: 60, indicator: 'right' as const },
-      { x: 220, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const },
-      { x: 220, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 220, y: 175, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 220, y: 175, rotation: -90, wheel: 0, indicator: 'none' as const },
     ];
 
     const current = states[step] || states[0];
@@ -262,23 +262,25 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
-        {/* Environment */}
-        <Building x={20} y={160} width={40} height={30} />
-        <Building x={340} y={160} width={40} height={30} />
-
-        <rect x="0" y="0" width="400" height="150" fill="url(#roadTexture)" />
+        {/* Parking Lot Surface */}
+        <rect x="0" y="0" width="400" height="210" fill="url(#roadTexture)" />
+        <rect x="0" y="210" width="400" height="15" fill="#94a3b8" /> {/* Sidewalk */}
+        
+        {/* Environment - Buildings on Grass */}
+        <Building x={20} y={220} width={40} height={30} type="house" />
+        <Building x={340} y={220} width={40} height={30} type="store" />
         
         {/* Parking Slots (Bottom row) */}
         {[60, 140, 220, 300, 380].map(x => (
           <g key={x}>
-            <line x1={x - 40} y1={150} x2={x - 40} y2={250} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
-            <line x1={x + 40} y1={150} x2={x + 40} y2={250} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+            <line x1={x - 40} y1={140} x2={x - 40} y2={210} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+            <line x1={x + 40} y1={140} x2={x + 40} y2={210} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
           </g>
         ))}
         
         {/* Stationary Cars */}
-        <g transform="translate(140, 200) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(300, 200) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(140, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(300, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
