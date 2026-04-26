@@ -263,3 +263,31 @@ export const InstructionPopup: React.FC<{ text: string }> = ({ text }) => (
     <span className="text-slate-800 font-bold text-lg">{text}</span>
   </motion.div>
 );
+
+export const SideViewCar: React.FC<{ color: string; brakeLights?: boolean }> = ({ color, brakeLights }) => (
+  <g filter="url(#carShadow)">
+    {/* Body */}
+    <path d="M 0 40 L 10 20 L 40 20 L 50 35 L 120 35 L 130 55 L 0 55 Z" fill={color} />
+    <path d="M 10 20 L 40 20 L 50 35 L 10 35 Z" fill="#cbd5e1" opacity="0.6" /> {/* Windows */}
+    
+    {/* Wheels */}
+    <circle cx="25" cy="55" r="10" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+    <circle cx="105" cy="55" r="10" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+    
+    {/* Headlight */}
+    <rect x="125" y="40" width="5" height="8" fill="#fef3c7" rx="1" />
+    
+    {/* Brake Light */}
+    {brakeLights && (
+      <rect x="0" y="40" width="5" height="8" fill="#ef4444" rx="1" className="animate-pulse" />
+    )}
+  </g>
+);
+
+export const SideViewTree: React.FC = () => (
+  <g>
+    <rect x="8" y="30" width="4" height="20" fill="#78350f" />
+    <circle cx="10" cy="20" r="15" fill="#15803d" />
+    <circle cx="15" cy="15" r="10" fill="#166534" />
+  </g>
+);
