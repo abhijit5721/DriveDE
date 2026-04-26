@@ -378,8 +378,15 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkBeforeDrive} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
-        <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
-        <rect x="0" y="80" width="400" height="90" fill="#334155" />
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x="20" y="20" width="50" height="40" />
+        <Building x="80" y="15" width="40" height="30" />
+        <Building x="250" y="20" width="80" height="50" type="office" />
+        <Building x="300" y="180" width="60" height="40" />
+
+        <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
 
         <g transform={`translate(${state.x}, ${state.y})`}>
@@ -388,7 +395,7 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         </g>
 
         {/* Speedometer */}
-        <g transform="translate(330, 190)">
+        <g transform="translate(330, 200)">
           <circle r="40" fill="#1e293b" stroke="#334155" strokeWidth="2" />
           <path d="M -30 0 A 30 30 0 1 1 30 0" fill="none" stroke="#1e293b" strokeWidth="4" />
           <motion.line
@@ -463,13 +470,28 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalRightAndShoulder} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
-        <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
-        <circle cx="200" cy="125" r="90" fill="#334155" />
-        <circle cx="200" cy="125" r="40" fill="#ecfdf5" />
-        <rect x="175" y="180" width="50" height="70" fill="#334155" />
-        <rect x="0" y="100" width="130" height="50" fill="#334155" />
+        <GrassBackground />
         
-        {/* Yield Line */}
+        {/* Environment */}
+        <Building x="20" y="20" width="60" height="40" />
+        <Building x="320" y="20" width="60" height="40" />
+        <Building x="20" y="190" width="60" height="40" type="office" />
+        <Building x="320" y="190" width="60" height="40" />
+
+        {/* Roundabout Structure */}
+        <circle cx="200" cy="125" r="95" fill="url(#roadTexture)" />
+        <circle cx="200" cy="125" r="45" fill="url(#grassPattern)" stroke="#cbd5e1" strokeWidth="4" />
+        
+        {/* Road Entries */}
+        <rect x="175" y="180" width="50" height="70" fill="url(#roadTexture)" />
+        <rect x="175" y="0" width="50" height="70" fill="url(#roadTexture)" />
+        <rect x="0" y="100" width="130" height="50" fill="url(#roadTexture)" />
+        <rect x="270" y="100" width="130" height="50" fill="url(#roadTexture)" />
+        
+        {/* Center Island Details */}
+        <circle cx="200" cy="125" r="20" fill="none" stroke="#d1fae5" strokeWidth="1" />
+        
+        {/* Yield Lines */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
 
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
@@ -515,17 +537,23 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         {step === 2 && <InstructionPopup text={t.maneuvers.interactive.simulator.mirrorAndShoulderLeft} />}
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
-        <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
+        <GrassBackground />
         
+        {/* Environment Details */}
+        <Building x="30" y="20" width="60" height="40" />
+        <Building x="100" y="10" width="50" height="30" />
+        <Building x="340" y="170" width="40" height="50" />
+        <Building x="270" y="180" width="50" height="40" type="office" />
+
         {/* Main Highway */}
-        <rect x="0" y="40" width="400" height="100" fill="#334155" />
+        <rect x="0" y="40" width="400" height="100" fill="url(#roadTexture)" />
         <line x1="0" y1="90" x2="400" y2="90" stroke="#fff" strokeWidth="2" strokeDasharray="15,15" opacity="0.3" />
         
         {/* Acceleration Lane (Ramp) */}
         <path 
           d="M 0 220 Q 150 210 400 120" 
           fill="none" 
-          stroke="#334155" 
+          stroke="url(#roadTexture)" 
           strokeWidth="45" 
           strokeLinecap="round"
         />
@@ -538,8 +566,9 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
           opacity="0.6"
         />
 
-        {/* Highway Traffic */}
-        <g transform="translate(320, 65)"><TopDownCar color="#94a3b8" scale={0.8} /></g>
+        {/* Highway Traffic with varied colors */}
+        <g transform="translate(320, 65)"><TopDownCar color="#ef4444" scale={0.8} /></g>
+        <g transform="translate(100, 65)"><TopDownCar color="#10b981" scale={0.8} /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>

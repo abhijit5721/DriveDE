@@ -6,6 +6,33 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+export const Building: React.FC<{ x: number, y: number, width: number, height: number, type?: 'house' | 'office' }> = ({ x, y, width, height, type = 'house' }) => (
+  <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
+    <rect width={width} height={height} fill="#f8fafc" rx="4" />
+    <rect width={width} height={height} fill={type === 'office' ? '#e2e8f0' : '#f1f5f9'} rx="4" />
+    {/* Roof/Top */}
+    <rect width={width} height={height * 0.2} fill="#cbd5e1" rx="2" />
+    {/* Windows */}
+    {type === 'office' ? (
+      <>
+        <rect x={width * 0.2} y={height * 0.3} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
+        <rect x={width * 0.6} y={height * 0.3} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
+        <rect x={width * 0.2} y={height * 0.6} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
+        <rect x={width * 0.6} y={height * 0.6} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
+      </>
+    ) : (
+      <>
+        <rect x={width * 0.25} y={height * 0.4} width={width * 0.5} height={height * 0.4} fill="#94a3b8" rx="1" />
+        <rect x={width * 0.45} y={height * 0.4} width={width * 0.1} height={height * 0.4} fill="#cbd5e1" />
+      </>
+    )}
+  </g>
+);
+
+export const GrassBackground: React.FC = () => (
+  <rect width="100%" height="100%" fill="url(#grassPattern)" />
+);
+
 export const GlobalDefinitions = () => (
   <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
     <defs>
@@ -34,6 +61,20 @@ export const GlobalDefinitions = () => (
           <feMergeNode />
           <feMergeNode in="SourceGraphic" />
         </feMerge>
+      </filter>
+
+      <pattern id="grassPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <rect width="40" height="40" fill="#ecfdf5" />
+        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#d1fae5" strokeWidth="1" fill="none" />
+      </pattern>
+
+      <pattern id="roadTexture" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+        <rect width="100" height="100" fill="#334155" />
+        <rect width="100" height="100" fill="url(#noise)" opacity="0.05" />
+      </pattern>
+
+      <filter id="buildingShadow">
+        <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.2" />
       </filter>
     </defs>
   </svg>
