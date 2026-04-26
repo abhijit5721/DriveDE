@@ -6,28 +6,51 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const Building: React.FC<{ x: number, y: number, width: number, height: number, type?: 'house' | 'office' }> = ({ x, y, width, height, type = 'house' }) => (
-  <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
-    <rect width={width} height={height} fill="#f8fafc" rx="4" />
-    <rect width={width} height={height} fill={type === 'office' ? '#e2e8f0' : '#f1f5f9'} rx="4" />
-    {/* Roof/Top */}
-    <rect width={width} height={height * 0.2} fill="#cbd5e1" rx="2" />
-    {/* Windows */}
-    {type === 'office' ? (
-      <>
-        <rect x={width * 0.2} y={height * 0.3} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
-        <rect x={width * 0.6} y={height * 0.3} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
-        <rect x={width * 0.2} y={height * 0.6} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
-        <rect x={width * 0.6} y={height * 0.6} width={width * 0.2} height={height * 0.15} fill="#94a3b8" rx="1" />
-      </>
-    ) : (
-      <>
-        <rect x={width * 0.25} y={height * 0.4} width={width * 0.5} height={height * 0.4} fill="#94a3b8" rx="1" />
-        <rect x={width * 0.45} y={height * 0.4} width={width * 0.1} height={height * 0.4} fill="#cbd5e1" />
-      </>
-    )}
-  </g>
-);
+export const Building: React.FC<{ 
+  x: number, 
+  y: number, 
+  width: number, 
+  height: number, 
+  type?: 'house' | 'office' | 'store' | 'apartment',
+  color?: string
+}> = ({ x, y, width, height, type = 'house', color }) => {
+  const getTheme = () => {
+    if (color) return { base: color, roof: '#475569', windows: '#e2e8f0' };
+    switch (type) {
+      case 'office': return { base: '#334155', roof: '#1e293b', windows: '#38BDF8' };
+      case 'store': return { base: '#f59e0b', roof: '#b45309', windows: '#fef3c7' };
+      case 'apartment': return { base: '#3b82f6', roof: '#1d4ed8', windows: '#eff6ff' };
+      default: return { base: '#ef4444', roof: '#991b1b', windows: '#fee2e2' }; // house (red/brick)
+    }
+  };
+
+  const theme = getTheme();
+
+  return (
+    <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
+      {/* Base */}
+      <rect width={width} height={height} fill={theme.base} rx="4" />
+      
+      {/* Roof/Top with depth */}
+      <rect width={width} height={height * 0.15} fill={theme.roof} rx="2" />
+      
+      {/* Window Grid */}
+      <g opacity="0.8">
+        {[0.2, 0.5, 0.8].map(py => (
+          py > 0.2 && (
+            <g key={py}>
+              <rect x={width * 0.2} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
+              <rect x={width * 0.6} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
+            </g>
+          )
+        ))}
+      </g>
+
+      {/* Subtle details */}
+      <rect x={width * 0.45} y={height * 0.8} width={width * 0.1} height={height * 0.2} fill={theme.roof} opacity="0.3" />
+    </g>
+  );
+};
 
 export const GrassBackground: React.FC = () => (
   <rect width="100%" height="100%" fill="url(#grassPattern)" />

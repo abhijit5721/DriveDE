@@ -337,9 +337,9 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="145" y="0" width="110" height="250" fill="url(#roadTexture)" />
         
         {/* Environment Details */}
-        <Building x={50} y={30} width={60} height={40} />
+        <Building x={50} y={30} width={60} height={40} type="house" />
         <Building x={280} y={160} width={70} height={50} type="office" />
-        <Building x={290} y={40} width={50} height={40} />
+        <Building x={290} y={40} width={50} height={40} type="store" />
         {/* Center Line */}
         <line x1="200" y1="0" x2="200" y2="250" stroke="#94a3b8" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
         {/* Curbs */}
@@ -394,10 +394,10 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <GrassBackground />
         
         {/* Environment */}
-        <Building x={20} y={20} width={50} height={40} />
-        <Building x={80} y={15} width={40} height={30} />
+        <Building x={20} y={20} width={50} height={40} type="apartment" />
+        <Building x={80} y={15} width={40} height={30} type="house" />
         <Building x={250} y={20} width={80} height={50} type="office" />
-        <Building x={300} y={180} width={60} height={40} />
+        <Building x={300} y={180} width={60} height={40} type="store" />
 
         <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
@@ -486,10 +486,10 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <GrassBackground />
         
         {/* Environment */}
-        <Building x={20} y={20} width={60} height={40} />
-        <Building x={320} y={20} width={60} height={40} />
+        <Building x={20} y={20} width={60} height={40} type="store" />
+        <Building x={320} y={20} width={60} height={40} type="house" />
         <Building x={20} y={190} width={60} height={40} type="office" />
-        <Building x={320} y={190} width={60} height={40} />
+        <Building x={320} y={190} width={60} height={40} type="apartment" />
 
         {/* Roundabout Structure */}
         <circle cx="200" cy="125" r="95" fill="url(#roadTexture)" />
@@ -553,10 +553,10 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         <GrassBackground />
         
         {/* Environment Details */}
-        <Building x={30} y={20} width={60} height={40} />
-        <Building x={100} y={10} width={50} height={30} />
-        <Building x={340} y={170} width={40} height={50} />
-        <Building x={270} y={180} width={50} height={40} type="office" />
+        <Building x={30} y={20} width={60} height={40} type="office" />
+        <Building x={100} y={10} width={50} height={30} type="house" />
+        <Building x={340} y={170} width={40} height={50} type="apartment" />
+        <Building x={270} y={180} width={50} height={40} type="store" />
 
         {/* Main Highway */}
         <rect x="0" y="40" width="400" height="100" fill="url(#roadTexture)" />
