@@ -156,11 +156,11 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
       { x: 150, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },      // 1: Driving
       { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },    // 2: Next to front car
       { x: 330, y: 90, rotation: 0, wheel: 60, indicator: 'right' as const },    // 3: Turn wheel right
-      { x: 260, y: 120, rotation: -35, wheel: 60, indicator: 'right' as const },  // 4: Backing in
-      { x: 260, y: 120, rotation: -35, wheel: -60, indicator: 'right' as const }, // 5: Counter-steer
-      { x: 200, y: 150, rotation: 0, wheel: -60, indicator: 'right' as const },  // 6: Straightening
-      { x: 200, y: 150, rotation: 0, wheel: 0, indicator: 'none' as const },      // 7: Done
-      { x: 200, y: 150, rotation: 0, wheel: 0, indicator: 'none' as const },      // 8: Done
+      { x: 260, y: 135, rotation: -35, wheel: 60, indicator: 'right' as const },  // 4: Backing in
+      { x: 260, y: 135, rotation: -35, wheel: -60, indicator: 'right' as const }, // 5: Counter-steer
+      { x: 200, y: 185, rotation: 0, wheel: -60, indicator: 'right' as const },  // 6: Straightening
+      { x: 200, y: 185, rotation: 0, wheel: 0, indicator: 'none' as const },      // 7: Done
+      { x: 200, y: 185, rotation: 0, wheel: 0, indicator: 'none' as const },      // 8: Done
     ];
 
     const current = states[step] || states[0];
@@ -201,7 +201,7 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
 
         {/* Path Arrow */}
         {step >= 3 && step <= 6 && (
-          <path d="M 295 90 Q 260 120 200 190" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
+          <path d="M 295 90 Q 260 135 200 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
         )}
 
         {/* User Car */}
