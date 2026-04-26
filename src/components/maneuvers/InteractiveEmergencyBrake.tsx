@@ -87,7 +87,6 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
         <svg viewBox="0 0 400 225" className="w-full h-full">
           <GrassBackground />
           
-          {/* Parallax Background - Trees */}
           <g style={{ transform: `translateX(${- (distance * 0.5 % 400)}px)` }}>
             {[0, 100, 200, 300, 400, 500].map(x => (
               <g key={x} transform={`translate(${x}, 60) scale(1.5)`}>
@@ -141,8 +140,8 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className={cn(
-                "absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md p-6 text-center text-white z-20",
-                gameState === 'braked' ? "bg-emerald-600/90" : "bg-red-600/90"
+                'absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md p-6 text-center text-white z-20',
+                gameState === 'braked' ? 'bg-emerald-600/90' : 'bg-red-600/90'
               )}
             >
               {gameState === 'braked' ? (
@@ -167,8 +166,8 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
                   <div className="bg-white/20 p-4 rounded-full mb-4">
                     <AlertCircle className="h-12 w-12" />
                   </div>
-                  <h3 className="text-2xl font-black uppercase tracking-tight">
-                    {reactionTime ? "TOO SLOW!" : "TOO EARLY!"}
+                  <h3 className='text-2xl font-black uppercase tracking-tight'>
+                    {reactionTime ? 'TOO SLOW!' : 'TOO EARLY!'}
                   </h3>
                   {reactionTime && (
                     <div className="mt-6 flex items-center gap-3 bg-white/20 px-6 py-3 rounded-2xl">
@@ -186,52 +185,18 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
               )}
             </motion.div>
           )}
-        </AnimatePresence>
-      </div>
-              >
-                {t.maneuvers.interactive.priority.continue}
-              </button>
-            </motion.div>
-          )}
 
-          {gameState === 'failed' && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-red-600/90 p-4 text-center text-white z-20"
-            >
-              <AlertCircle className="h-12 w-12 mb-2" />
-              <h3 className="text-xl font-bold">{et.tooSlow}</h3>
-              {reactionTime && (
-                <div className="mt-2 text-lg font-mono">{reactionTime}ms</div>
-              )}
-              <p className="mt-1 text-sm">
-                {reactionTime ? et.reactFaster : et.brakeEarly}
-              </p>
-              <button 
-                onClick={reset}
-                className="mt-4 bg-white/20 hover:bg-white/30 px-6 py-2 rounded-lg font-bold"
-              >
-                {et.tryAgain}
-              </button>
-            </motion.div>
-          )}
-
+          {/* Start Overlay for Idle state */}
           {gameState === 'idle' && (
-            <motion.div 
-              className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm z-10"
-            >
+            <div className="absolute inset-0 z-30 flex items-center justify-center backdrop-blur-md bg-slate-950/40 rounded-2xl">
               <button 
                 onClick={startTest}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold shadow-xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95"
+                className="bg-[#38BDF8] text-[#030712] px-12 py-6 rounded-3xl font-black text-xl shadow-[0_0_50px_rgba(56,189,248,0.4)] hover:scale-110 transition-all flex items-center gap-3 uppercase tracking-wider"
               >
-                <Zap className="h-5 w-5 fill-current" />
+                <Zap className="h-6 w-6 fill-current" />
                 {et.startTest}
               </button>
-              <p className="mt-4 text-xs text-white/70 text-center px-6">
-                {et.ready}
-              </p>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>
@@ -240,19 +205,19 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
         onClick={brake}
         disabled={gameState === 'braked' || gameState === 'failed'}
         className={cn(
-          'w-full py-8 rounded-2xl font-black text-2xl transition-all shadow-xl active:scale-95 border-b-8 mb-2',
+          'w-full py-8 rounded-3xl font-black text-3xl transition-all shadow-2xl active:scale-95 border-b-8 mb-2 uppercase tracking-widest',
           gameState === 'signal'
-            ? 'bg-red-500 border-red-700 text-white animate-bounce shadow-red-500/50'
-            : 'bg-slate-200 border-slate-300 text-slate-400 dark:bg-slate-800 dark:border-slate-900'
+            ? 'bg-red-600 border-red-800 text-white animate-bounce shadow-[0_0_40px_rgba(220,38,38,0.4)]'
+            : 'bg-[#1e293b] border-[#0f172a] text-slate-500'
         )}
       >
         {et.brake}
       </button>
 
-      <div className="flex gap-3 rounded-xl border border-amber-100 bg-amber-50/50 p-3 dark:border-amber-900/30 dark:bg-amber-900/20">
-        <AlertCircle className="h-5 w-5 shrink-0 text-amber-500" />
-        <div className="text-[10px] leading-relaxed text-slate-600 dark:text-slate-400">
-          <strong>{et.examTip}</strong><br />
+      <div className="flex gap-4 rounded-2xl border border-[#1e293b] bg-[#020617] p-5">
+        <AlertCircle className="h-6 w-6 shrink-0 text-amber-500" />
+        <div className="text-sm leading-relaxed text-slate-400">
+          <strong className="text-amber-500 uppercase tracking-tighter text-xs">{et.examTip}</strong><br />
           {et.tipText}
         </div>
       </div>

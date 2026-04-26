@@ -42,8 +42,8 @@ export const TRANSLATIONS = {
       search: 'SUCHEN',
       loading: 'Laden...',
       close: 'Schließen',
-      back: 'Zurück',
       next: 'Weiter',
+      continue: 'Weiter',
       appSubtitle: 'Fahrschule App',
       paths: {
         umschreibung: 'Umschreibung',
@@ -1967,8 +1967,8 @@ export const TRANSLATIONS = {
       search: 'SEARCH',
       loading: 'Loading...',
       close: 'Close',
-      back: 'Back',
       next: 'Next',
+      continue: 'Continue',
       appSubtitle: 'Driving School App',
       paths: {
         umschreibung: 'Conversion',
