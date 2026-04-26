@@ -289,14 +289,14 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 225, y: 220, rotation: -90, wheel: 0, indicator: 'none' as const },      // 0: Start (Facing Up, Right Lane)
-      { x: 245, y: 200, rotation: -90, wheel: 0, indicator: 'right' as const },    // 1: Pull over Right
-      { x: 245, y: 200, rotation: -90, wheel: -90, indicator: 'left' as const },   // 2: Steer Left
-      { x: 155, y: 110, rotation: -170, wheel: -90, indicator: 'left' as const },  // 3: Forward across (to Left curb)
-      { x: 155, y: 110, rotation: -170, wheel: 90, indicator: 'right' as const },  // 4: Steer Right
-      { x: 245, y: 180, rotation: -260, wheel: 90, indicator: 'right' as const },  // 5: Reverse across (to Right curb)
-      { x: 245, y: 180, rotation: -260, wheel: -90, indicator: 'left' as const },  // 6: Steer Left
-      { x: 175, y: 220, rotation: -270, wheel: 0, indicator: 'none' as const },    // 7: Done (Facing Down, Left Lane)
+      { x: 215, y: 220, rotation: -90, wheel: 0, indicator: 'none' as const, reverse: false },      // 0: Start
+      { x: 235, y: 200, rotation: -90, wheel: 0, indicator: 'right' as const, reverse: false },    // 1: Pull over Right
+      { x: 235, y: 200, rotation: -90, wheel: -90, indicator: 'left' as const, reverse: false },   // 2: Steer Left
+      { x: 165, y: 110, rotation: -180, wheel: -90, indicator: 'left' as const, reverse: false },  // 3: Forward across
+      { x: 165, y: 110, rotation: -180, wheel: 90, indicator: 'right' as const, reverse: false },  // 4: Steer Right
+      { x: 235, y: 180, rotation: -270, wheel: 90, indicator: 'right' as const, reverse: true },   // 5: Reverse across
+      { x: 235, y: 180, rotation: -270, wheel: -90, indicator: 'left' as const, reverse: false },  // 6: Steer Left
+      { x: 180, y: 220, rotation: -270, wheel: 0, indicator: 'none' as const, reverse: false },    // 7: Done
     ];
 
     const current = states[step] || states[0];
@@ -308,7 +308,8 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
       y: current.y + (next.y - current.y) * p,
       rotation: current.rotation + (next.rotation - current.rotation) * p,
       wheel: current.wheel + (next.wheel - current.wheel) * p,
-      indicator: p > 0.5 ? next.indicator : current.indicator
+      indicator: p > 0.5 ? next.indicator : current.indicator,
+      reverse: p > 0.1 ? next.reverse : current.reverse
     };
   };
 
@@ -333,7 +334,7 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
         
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
+          <TopDownCar color="#3b82f6" indicator={state.indicator} reverseLights={state.reverse} isUser={true} scale={0.8} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 3 && <VisionCone side="round" opacity={0.4} />}

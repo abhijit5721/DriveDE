@@ -43,10 +43,11 @@ export const TopDownCar: React.FC<{
   color: string;
   indicator?: 'left' | 'right' | 'hazard' | 'none';
   brakeLights?: boolean;
+  reverseLights?: boolean;
   rotation?: number;
   scale?: number;
   isUser?: boolean;
-}> = ({ color, indicator = 'none', brakeLights = false, rotation = 0, scale = 1, isUser = false }) => {
+}> = ({ color, indicator = 'none', brakeLights = false, reverseLights = false, rotation = 0, scale = 1, isUser = false }) => {
   const bodyId = useMemo(() => `body-${color.replace('#', '')}-${Math.random().toString(36).substr(2, 9)}`, [color]);
   
   return (
@@ -101,6 +102,14 @@ export const TopDownCar: React.FC<{
       {/* Tail Lights (Rear) */}
       <rect x="-36" y="-14" width="3" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
       <rect x="-36" y="6" width="3" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
+      
+      {/* Reverse Lights */}
+      {reverseLights && (
+        <g>
+          <rect x="-36" y="-5" width="3" height="4" rx="1" fill="white" />
+          <rect x="-36" y="1" width="3" height="4" rx="1" fill="white" />
+        </g>
+      )}
 
       {/* Indicators */}
       <AnimatePresence>
