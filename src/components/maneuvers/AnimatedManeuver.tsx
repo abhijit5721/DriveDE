@@ -289,14 +289,14 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 350, y: 155, rotation: 0, wheel: 0, indicator: 'none' as const },
-      { x: 300, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },
-      { x: 300, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 105, rotation: -150, wheel: -90, indicator: 'left' as const },
-      { x: 150, y: 105, rotation: -150, wheel: 90, indicator: 'right' as const },
-      { x: 250, y: 170, rotation: -60, wheel: 90, indicator: 'right' as const },
-      { x: 250, y: 170, rotation: -60, wheel: -90, indicator: 'left' as const },
-      { x: 50, y: 120, rotation: -180, wheel: 0, indicator: 'none' as const },
+      { x: 350, y: 155, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start
+      { x: 300, y: 155, rotation: 0, wheel: 0, indicator: 'left' as const },      // 1: Signal Left
+      { x: 300, y: 155, rotation: 0, wheel: -90, indicator: 'left' as const },    // 2: Steer Full Left
+      { x: 180, y: 90, rotation: -110, wheel: -90, indicator: 'left' as const },   // 3: Forward across
+      { x: 180, y: 90, rotation: -110, wheel: 90, indicator: 'right' as const },  // 4: Steer Full Right
+      { x: 250, y: 170, rotation: -160, wheel: 90, indicator: 'right' as const },  // 5: Reverse across
+      { x: 250, y: 170, rotation: -160, wheel: -90, indicator: 'left' as const },  // 6: Steer Left
+      { x: 50, y: 110, rotation: -180, wheel: 0, indicator: 'none' as const },     // 7: Done
     ];
 
     const current = states[step] || states[0];
