@@ -487,10 +487,10 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
 const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   const getInterpolatedState = () => {
     const states = [
-      { x: 40, y: 190, rotation: -5, speed: 40, indicator: 'none' as const },
-      { x: 120, y: 180, rotation: -8, speed: 70, indicator: 'left' as const },
-      { x: 250, y: 130, rotation: -12, speed: 95, indicator: 'left' as const },
-      { x: 420, y: 110, rotation: 0, speed: 110, indicator: 'none' as const },
+      { x: 30, y: 210, rotation: -5, speed: 40, indicator: 'none' as const },
+      { x: 130, y: 195, rotation: -8, speed: 70, indicator: 'left' as const },
+      { x: 260, y: 160, rotation: -12, speed: 95, indicator: 'left' as const },
+      { x: 420, y: 115, rotation: 0, speed: 110, indicator: 'none' as const },
     ];
 
     const current = states[step] || states[0];
@@ -516,13 +516,32 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
       </AnimatePresence>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
+        
+        {/* Main Highway */}
         <rect x="0" y="40" width="400" height="100" fill="#334155" />
         <line x1="0" y1="90" x2="400" y2="90" stroke="#fff" strokeWidth="2" strokeDasharray="15,15" opacity="0.3" />
-        <path d="M 0 210 Q 150 200 400 150" fill="#334155" />
-        <line x1="150" y1="180" x2="400" y2="140" stroke="#fff" strokeWidth="3" strokeDasharray="8,8" opacity="0.5" />
+        
+        {/* Acceleration Lane (Ramp) */}
+        <path 
+          d="M 0 220 Q 150 210 400 120" 
+          fill="none" 
+          stroke="#334155" 
+          strokeWidth="45" 
+          strokeLinecap="round"
+        />
+        <path 
+          d="M 150 185 Q 250 170 400 120" 
+          fill="none" 
+          stroke="#fff" 
+          strokeWidth="2" 
+          strokeDasharray="8,8" 
+          opacity="0.6"
+        />
 
+        {/* Highway Traffic */}
         <g transform="translate(320, 65)"><TopDownCar color="#94a3b8" scale={0.8} /></g>
 
+        {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
