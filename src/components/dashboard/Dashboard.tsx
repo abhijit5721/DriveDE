@@ -92,175 +92,179 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         };
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-8 pb-10 animate-scale-in">
       {/* Premium Hero Section: Exam Readiness & Path */}
-      <div className="overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/50 dark:bg-slate-800 dark:shadow-none">
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">
-                {pathConfig.title}
-              </span>
-              <p className="text-sm text-blue-100/80">
-                {t.dashboard.learningProgress}
-              </p>
+      <div className="overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10 animate-fade-in-up">
+        <div className="bg-premium-blue p-8 text-white relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col gap-1.5">
+                <span className="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] border border-white/10">
+                  {pathConfig.title}
+                </span>
+                <p className="text-sm font-medium text-blue-100/90">
+                  {t.dashboard.learningProgress}
+                </p>
+              </div>
+              <button
+                onClick={onChangePath}
+                aria-label={t.dashboard.changePath}
+                className="rounded-xl bg-white/10 p-2.5 backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 active:scale-95 border border-white/10"
+              >
+                <RefreshCcw className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              onClick={onChangePath}
-              aria-label={t.dashboard.changePath}
-              className="rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20"
-            >
-              <RefreshCcw className="h-4 w-4" />
-            </button>
-          </div>
 
-          <ExamReadinessGauge 
-            progress={progressPercent}
-            label={t.dashboard.examChance}
-            subLabel={t.dashboard.combinedScore}
-            className="w-full"
-          />
+            <ExamReadinessGauge 
+              progress={progressPercent}
+              label={t.dashboard.examChance}
+              subLabel={t.dashboard.combinedScore}
+              className="w-full"
+            />
+          </div>
         </div>
         
-        {/* Quick Progress Bar (Alternative visualization) */}
         {!isPremium && (
-          <div className="border-t border-slate-100 p-4 dark:border-slate-700">
+          <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
             <button
               onClick={onOpenPaywall}
               aria-label={t.dashboard.unlockPro}
-              className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 transition-transform hover:scale-[1.01] dark:from-amber-900/10 dark:to-orange-900/10"
+              className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 p-5 text-white shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] animate-pulse-slow"
             >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-900/40">
-                  <Crown className="h-5 w-5" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md border border-white/20">
+                  <Crown className="h-6 w-6" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-amber-900 dark:text-amber-200">DriveDE Pro</p>
-                  <p className="text-xs text-amber-700 dark:text-amber-400">
+                  <p className="text-base font-black tracking-tight">DriveDE Pro</p>
+                  <p className="text-xs font-medium text-orange-50">
                     {t.dashboard.unlockPro}
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-amber-500" />
+              <ChevronRight className="h-6 w-6 text-white/70" />
             </button>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <button
           onClick={onStartSimulation}
           aria-label={t.dashboard.examSimulation}
-          className="group flex w-full items-center justify-between rounded-2xl bg-slate-900 p-5 text-white shadow-lg transition-all hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700"
+          className="group flex w-full items-center justify-between rounded-2xl bg-premium-dark p-6 text-white shadow-2xl transition-all hover:translate-y-[-2px] hover:shadow-slate-900/30 active:scale-[0.99]"
         >
-          <div className="flex items-center gap-4 text-left">
-            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 group-hover:scale-110 transition-transform">
-              <Mic className="h-6 w-6" />
+          <div className="flex items-center gap-5 text-left">
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:bg-blue-500/20 group-hover:border-blue-500/30 transition-all duration-300">
+              <Mic className="h-7 w-7 text-blue-400" />
               {!isPremium && (
-                <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 shadow-sm">
-                  <Crown className="h-3 w-3 text-white" />
+                <div className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 shadow-lg border-2 border-slate-900">
+                  <Crown className="h-3.5 w-3.5 text-white" />
                 </div>
               )}
             </div>
             <div>
-              <p className="text-base font-bold">{t.dashboard.examSimulation}</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-lg font-black tracking-tight">{t.dashboard.examSimulation}</p>
+              <p className="text-sm text-slate-400 font-medium">
                 {t.dashboard.simulationDesc}
               </p>
             </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-slate-500 group-hover:translate-x-1 transition-transform" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 group-hover:bg-white/10 transition-colors">
+            <ChevronRight className="h-6 w-6 text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
+          </div>
         </button>
       </div>
 
       {/* Core Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Clock className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {t.dashboard.drivingHours}
-              </p>
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
-                {totalHours}h {totalMinutes}m
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {t.dashboard.chapters}
-              </p>
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
-                {visibleChapters.filter((ch) => ch.lessons.some((l) => userProgress.completedLessons.includes(l.id))).length}/{visibleChapters.length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className={cn(
-          'rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700 transition-all',
-          userProgress.currentStreak === 0 ? 'opacity-50 grayscale' : ''
-        )}>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
-              <Flame className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {t.dashboard.streak}
-              </p>
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
-                {userProgress.currentStreak}
-              </p>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        {[
+          { 
+            icon: Clock, 
+            label: t.dashboard.drivingHours, 
+            value: `${totalHours}h ${totalMinutes}m`,
+            color: 'emerald',
+            bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+            text: 'text-emerald-600 dark:text-emerald-400'
+          },
+          { 
+            icon: BookOpen, 
+            label: t.dashboard.chapters, 
+            value: `${visibleChapters.filter((ch) => ch.lessons.some((l) => userProgress.completedLessons.includes(l.id))).length}/${visibleChapters.length}`,
+            color: 'purple',
+            bg: 'bg-purple-50 dark:bg-purple-950/40',
+            text: 'text-purple-600 dark:text-purple-400'
+          },
+          { 
+            icon: Flame, 
+            label: t.dashboard.streak, 
+            value: userProgress.currentStreak,
+            color: 'orange',
+            bg: 'bg-orange-50 dark:bg-orange-950/40',
+            text: 'text-orange-600 dark:text-orange-400',
+            disabled: userProgress.currentStreak === 0
+          }
+        ].map((stat, i) => (
+          <div key={i} className={cn(
+            'glass-card rounded-3xl p-5 shadow-sm transition-all hover:scale-[1.03]',
+            stat.disabled ? 'opacity-50 grayscale' : ''
+          )}>
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className={cn('flex h-12 w-12 items-center justify-center rounded-2xl shadow-sm border border-black/5 dark:border-white/5', stat.bg, stat.text)}>
+                <stat.icon className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1">
+                  {stat.label}
+                </p>
+                <p className="text-xl font-black text-slate-900 dark:text-white tabular-nums">
+                  {stat.value}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
       
       {/* AI Driving Insights & Weekly Stats */}
-      <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
+      <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+        <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
+      </div>
 
       {isUmschreibung && (
         <button
           onClick={() => onDirectLessonSelect('basics-0')}
           aria-label={t.dashboard.conversionQuickstart}
-          className="w-full rounded-2xl border border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-purple-900/40 dark:from-purple-900/20 dark:to-indigo-900/10"
+          className="w-full rounded-3xl glass border-purple-500/20 p-6 text-left shadow-xl transition-all hover:translate-y-[-2px] hover:shadow-purple-500/10 group animate-fade-in-up"
+          style={{ animationDelay: '400ms' }}
         >
-          <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-900/40">
-              <BadgeCheck className="h-6 w-6 text-purple-700 dark:text-purple-300" />
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-900/40 group-hover:scale-110 transition-transform">
+              <BadgeCheck className="h-8 w-8 text-purple-700 dark:text-purple-300" />
             </div>
             <div className="flex-1">
-              <div className="flex flex-wrap items-start gap-2">
-                <h3 className="min-w-0 flex-1 text-base font-bold text-slate-900 dark:text-white">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                   {t.dashboard.conversionQuickstart}
                 </h3>
                 <div className="flex items-center gap-2">
                   {!isPremium && (
-                    <span className="inline-flex rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+                    <span className="inline-flex rounded-lg bg-amber-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/30">
                       Pro
                     </span>
                   )}
-                  <span className="inline-flex rounded-full bg-purple-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-purple-800 dark:bg-purple-800/60 dark:text-purple-100">
+                  <span className="inline-flex rounded-lg bg-purple-100 dark:bg-purple-900/50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-purple-700 dark:text-purple-300 border border-purple-500/20">
                     {t.dashboard.germanyFocus}
                   </span>
-                  <ChevronRight className="h-5 w-5 shrink-0 text-purple-500 dark:text-purple-300" />
                 </div>
               </div>
-              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+              <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-400">
                 {t.dashboard.jumpToTraps}
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {[
                   t.dashboard.pills.greenArrow,
                   t.dashboard.pills.shoulderCheck,
@@ -269,7 +273,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 ].map((pill) => (
                   <span
                     key={pill}
-                    className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-purple-700 shadow-sm dark:bg-slate-800/80 dark:text-purple-200"
+                    className="rounded-lg bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:text-purple-300 border border-purple-500/10 shadow-sm"
                   >
                     {pill}
                   </span>
@@ -280,138 +284,134 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </button>
       )}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <button
-          onClick={() => onNavigate('maneuvers')}
-          aria-label={t.dashboard.maneuvers}
-          className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-              <Zap className="h-6 w-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {t.dashboard.maneuvers}
-                </p>
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase text-blue-600 dark:bg-blue-900/30">
-                  {t.dashboard.animations}
-                </span>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+        {[
+          {
+            id: 'maneuvers',
+            title: t.dashboard.maneuvers,
+            desc: t.dashboard.maneuversDesc,
+            icon: Zap,
+            badge: t.dashboard.animations,
+            color: 'blue',
+            onClick: () => onNavigate('maneuvers')
+          },
+          {
+            id: 'tech',
+            title: t.dashboard.tech,
+            desc: t.dashboard.techDesc,
+            icon: Target,
+            badge: t.dashboard.exam,
+            color: 'amber',
+            onClick: () => onDirectLessonSelect('basics-1a')
+          },
+          {
+            id: 'review',
+            title: t.dashboard.reviewPack,
+            desc: t.dashboard.reviewDesc,
+            icon: ClipboardCheck,
+            badge: t.dashboard.pdfExport,
+            color: 'indigo',
+            fullWidth: true,
+            onClick: () => onNavigate('review')
+          }
+        ].map((card) => (
+          <button
+            key={card.id}
+            onClick={card.onClick}
+            className={cn(
+              'group relative overflow-hidden rounded-3xl glass p-6 text-left transition-all hover:translate-y-[-2px] hover:shadow-xl active:scale-[0.99]',
+              card.fullWidth && 'lg:col-span-2'
+            )}
+          >
+            <div className="flex items-start gap-5">
+              <div className={cn(
+                'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110',
+                card.color === 'blue' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
+                card.color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' :
+                'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+              )}>
+                <card.icon className="h-7 w-7" />
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {t.dashboard.maneuversDesc}
-              </p>
-            </div>
-            <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
-          </div>
-        </button>
-
-        <button
-          onClick={() => onDirectLessonSelect('basics-1a')}
-          aria-label={t.dashboard.tech}
-          className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
-              <Target className="h-6 w-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {t.dashboard.tech}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-lg font-black tracking-tight text-slate-900 dark:text-white truncate">
+                    {card.title}
+                  </p>
+                  <span className={cn(
+                    'rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-wider border',
+                    card.color === 'blue' ? 'bg-blue-50/50 text-blue-600 border-blue-500/20' :
+                    card.color === 'amber' ? 'bg-amber-50/50 text-amber-600 border-amber-500/20' :
+                    'bg-indigo-50/50 text-indigo-600 border-indigo-500/20'
+                  )}>
+                    {card.badge}
+                  </span>
+                </div>
+                <p className="text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400 line-clamp-2">
+                  {card.desc}
                 </p>
-                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-600 dark:bg-amber-900/30">
-                  {t.dashboard.exam}
-                </span>
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {t.dashboard.techDesc}
-              </p>
-            </div>
-            <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigate('review')}
-          aria-label={t.dashboard.reviewPack}
-          className="group relative w-full overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800 lg:col-span-2"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-              <ClipboardCheck className="h-6 w-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  {t.dashboard.reviewPack}
-                </p>
-                <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold uppercase text-indigo-600 dark:bg-indigo-900/30">
-                  {t.dashboard.pdfExport}
-                </span>
+              <div className="mt-1 h-8 w-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                {t.dashboard.reviewDesc}
-              </p>
             </div>
-            <ChevronRight className="mt-1 h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
-          </div>
-        </button>
+          </button>
+        ))}
       </div>
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}
-            </h3>
-            <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {isUmschreibung ? t.dashboard.focusThemes : t.dashboard.mandatoryHours}
-            </p>
-          </div>
+      <div className="rounded-3xl glass p-8 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+        <div className="mb-6">
+          <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+            {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}
+          </h3>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500 mt-1">
+            {isUmschreibung ? t.dashboard.focusThemes : t.dashboard.mandatoryHours}
+          </p>
         </div>
 
         {isUmschreibung ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
               { icon: '👀', ...t.dashboard.conversionChecks[0] },
               { icon: '🚦', ...t.dashboard.conversionChecks[1] },
               { icon: '📝', ...t.dashboard.conversionChecks[2] },
             ].map((item) => (
-              <div key={item.title} className="rounded-xl bg-slate-50 p-3 dark:bg-slate-900/30">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{item.icon}</span>
-                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{item.title}</p>
+              <div key={item.title} className="rounded-2xl glass-card p-5 transition-all hover:scale-[1.02]">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 dark:bg-slate-800/50 text-xl shadow-sm">
+                    {item.icon}
+                  </div>
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-200 leading-tight">{item.title}</p>
                 </div>
-                <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">{item.text}</p>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">{item.text}</p>
               </div>
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {[
-              { key: 'ueberland', label: t.dashboard.specialDriveTypes.ueberland, required: '5×45', icon: <Target className="h-3.5 w-3.5" /> },
-              { key: 'autobahn', label: t.dashboard.specialDriveTypes.autobahn, required: '4×45', icon: <Zap className="h-3.5 w-3.5" /> },
-              { key: 'nacht', label: t.dashboard.specialDriveTypes.nacht, required: '3×45', icon: <Clock className="h-3.5 w-3.5" /> },
+              { key: 'ueberland', label: t.dashboard.specialDriveTypes.ueberland, required: '5×45', icon: Target },
+              { key: 'autobahn', label: t.dashboard.specialDriveTypes.autobahn, required: '4×45', icon: Zap },
+              { key: 'nacht', label: t.dashboard.specialDriveTypes.nacht, required: '3×45', icon: Clock },
             ].map((item) => (
               <div key={item.key}>
-                <div className="flex items-center justify-between text-[11px] mb-1.5">
-                  <div className="flex items-center gap-2 font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-                    <span className="text-slate-400">{item.icon}</span>
-                    <span>{item.label}</span>
+                <div className="flex items-center justify-between text-xs mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <span className="font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">{item.label}</span>
                   </div>
-                  <span className="font-mono text-slate-400">
+                  <span className="font-mono font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
                     {Math.floor(userProgress.specialDrivingMinutes[item.key as keyof typeof userProgress.specialDrivingMinutes] / 45)}/{item.required.split('×')[0]} {t.dashboard.hoursSuffix}
                   </span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900/50 p-0.5 border border-black/5 dark:border-white/5">
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all duration-700',
+                      'h-full rounded-full transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)',
                       specialProgress[item.key as keyof typeof specialProgress] >= 100 
-                        ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]' 
-                        : 'bg-indigo-500'
+                        ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
+                        : 'bg-premium-blue'
                     )}
                     style={{ width: `${specialProgress[item.key as keyof typeof specialProgress]}%` }}
                   />
@@ -422,20 +422,21 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         )}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">
             {t.dashboard.continueLearning}
           </h3>
           <button
             onClick={() => onNavigate('curriculum')}
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+            className="group flex items-center gap-1.5 text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors"
           >
             {t.dashboard.viewAll}
+            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-4">
           {visibleChapters.slice(0, 3).map((chapter) => {
             const chapterCompleted = chapter.lessons.filter((l) => userProgress.completedLessons.includes(l.id)).length;
             const chapterProgress = chapter.lessons.length > 0
@@ -454,72 +455,78 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 key={chapter.id}
                 onClick={() => onNavigate('curriculum')}
                 aria-label={`${chapterTitle}: Fortschritt ${chapterProgress}%`}
-                className="group flex w-full items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
+                className="group flex w-full items-center gap-5 rounded-3xl glass p-5 text-left transition-all hover:scale-[1.02] active:scale-[0.99] hover:shadow-xl"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-900 dark:group-hover:bg-indigo-900/30">
-                  <Icon className="h-6 w-6" />
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-900 group-hover:bg-premium-blue group-hover:text-white transition-all duration-300 shadow-inner">
+                  <Icon className="h-7 w-7" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-slate-900 truncate dark:text-white">
+                  <h4 className="text-base font-black tracking-tight text-slate-900 dark:text-white truncate mb-2">
                     {chapterTitle}
                   </h4>
-                  <div className="mt-1.5 flex items-center gap-3">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                      <div className="h-full rounded-full bg-indigo-500" style={{ width: `${chapterProgress}%` }} />
+                  <div className="flex items-center gap-4">
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900 shadow-inner">
+                      <div className="h-full rounded-full bg-premium-blue transition-all duration-1000" style={{ width: `${chapterProgress}%` }} />
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-slate-400">{chapterProgress}%</span>
+                    <span className="text-xs font-black font-mono text-blue-600 dark:text-blue-400 min-w-[3ch]">{chapterProgress}%</span>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1" />
+                <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-900 group-hover:bg-blue-500/10 transition-colors">
+                  <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-blue-500 transition-transform group-hover:translate-x-1" />
+                </div>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="rounded-2xl bg-indigo-600 p-6 text-white shadow-lg shadow-indigo-200 dark:shadow-none">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-            <Target className="h-6 w-6" />
+      <div className="rounded-3xl bg-premium-indigo p-8 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden animate-fade-in-up" style={{ animationDelay: '800ms' }}>
+        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+        <div className="relative z-10 flex items-start gap-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
+            <Target className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h4 className="text-lg font-bold">
+            <h4 className="text-xl font-black tracking-tight mb-2">
               {t.dashboard.proTip}
             </h4>
-            <p className="mt-2 text-sm leading-relaxed text-indigo-100">
+            <p className="text-sm font-medium leading-relaxed text-indigo-100/90">
               {isUmschreibung ? t.dashboard.tips.conversion : t.dashboard.tips.regular}
             </p>
           </div>
         </div>
       </div>
+
       {/* Footer Status: Cloud Sync */}
-      <div className="mt-12 flex flex-col items-center gap-4">
+      <div className="mt-16 flex flex-col items-center gap-6 animate-fade-in-up" style={{ animationDelay: '900ms' }}>
         <button
           onClick={() => onOpenAuth?.()}
           aria-label={t.dashboard.accountSettings}
           className={cn(
-            'flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-all',
+            'flex items-center gap-3 rounded-full px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] transition-all border shadow-sm hover:scale-105 active:scale-95',
             authStatus === 'signed_in' 
-              ? 'bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300' 
-              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+              ? 'bg-emerald-50/50 text-emerald-700 border-emerald-500/20 dark:bg-emerald-900/10 dark:text-emerald-400' 
+              : 'bg-white/50 text-slate-500 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800'
           )}
         >
           {authStatus === 'signed_in' ? (
             <>
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <Cloud className="h-3.5 w-3.5" />
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <Cloud className="h-4 w-4" />
               {t.dashboard.cloudSyncActive}
             </>
           ) : (
             <>
-              <LogIn className="h-3.5 w-3.5" />
+              <LogIn className="h-4 w-4" />
               {t.dashboard.signInForSync}
             </>
           )}
         </button>
-        <p className="text-[10px] text-slate-400 dark:text-slate-500">
-          DriveDE v1.2.0 • {t.dashboard.precisionPrep}
-        </p>
+        <div className="text-center">
+          <p className="text-[10px] font-black tracking-[0.3em] text-slate-300 dark:text-slate-600 uppercase">
+            DriveDE v1.2.0 • {t.dashboard.precisionPrep}
+          </p>
+        </div>
       </div>
     </div>
   );

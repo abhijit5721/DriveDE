@@ -427,6 +427,8 @@ const parkingScenarios: LessonScenario[] = [
 const highwayMergeScenarios: LessonScenario[] = [
   getScenario('hwy-strong-acceleration'),
   getScenario('hwy-missed-exit'),
+  getScenario('hwy-short-ramp'),
+  getScenario('hwy-truck-right-lane'),
 ];
 
 const countryRoadScenarios: LessonScenario[] = [
@@ -840,6 +842,7 @@ const cityLessons: Lesson[] = [
     isPremium: true,
     isInteractive: true,
     guidedPoints: laneChangeGuidedPoints,
+    scenarios: [getScenario('city-lane-change-dense')],
     quiz: mirrorQuiz,
   },
   {
@@ -913,7 +916,9 @@ const specialLessons: Lesson[] = [
     ...getLessonStrings('special-3'),
     completed: false,
     isPremium: true,
+    isInteractive: true,
     guidedPoints: nightDrivingGuidedPoints,
+    scenarios: [getScenario('night-pedestrian')],
     quiz: cityQuiz,
   },
   {

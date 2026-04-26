@@ -35,7 +35,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
     <aside 
       role="navigation"
       aria-label={t.common.nav.mainNav}
-      className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0"
+      className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 glass sticky top-0"
     >
       <div className="p-6">
         <button 
@@ -43,27 +43,30 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           className="group flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none"
           aria-label="Go to Home"
         >
-          <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-500">DriveDE</h2>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-premium-blue text-white shadow-lg shadow-blue-500/20">
+            <Crown className="h-6 w-6" />
+          </div>
+          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
         </button>
       </div>
       
       <nav className="flex-1 px-4 py-2">
         <ul className="space-y-1.5" role="tablist">
-          {navItems.map((item) => (
-            <li key={item.id}>
+          {navItems.map((item, index) => (
+            <li key={item.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
               <button
                 role="tab"
                 aria-selected={activeTab === item.id}
                 aria-label={item.label}
                 onClick={() => onTabChange(item.id)}
-                className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-200
+                className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-300 group
                   ${activeTab === item.id
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                    ? 'bg-premium-blue text-white shadow-lg shadow-blue-500/25 scale-[1.02]'
+                    : 'text-slate-600 hover:bg-white/50 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:translate-x-1'
                   }`}
               >
                 <div className="relative">
-                  <item.icon className={`h-5 w-5 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                  <item.icon className={`h-5 w-5 transition-colors duration-300 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} />
                   {item.id === 'review' && mistakesCount > 0 && (
                     <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
                       {mistakesCount}
@@ -71,6 +74,9 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
                   )}
                 </div>
                 <span className="flex-1">{item.label}</span>
+                {activeTab === item.id && (
+                  <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                )}
               </button>
             </li>
           ))}
@@ -80,14 +86,14 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
       <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
         <div className="flex flex-col gap-3">
           {isPremium && (
-            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
               <Crown className="h-4 w-4" />
               DriveDE Pro Member
             </div>
           )}
 
           <div 
-            className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl"
+            className="flex p-1 glass-card rounded-xl"
             role="group"
             aria-label={t.common.nav.languageSelect}
           >
@@ -120,7 +126,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           <button
             onClick={toggleDarkMode}
             aria-label={darkMode ? t.common.nav.lightMode : t.common.nav.darkMode}
-            className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:bg-white/50 dark:text-slate-400 dark:hover:bg-slate-800/50"
           >
             <div className="flex items-center gap-3">
               {darkMode ? (

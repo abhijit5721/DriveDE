@@ -1107,6 +1107,8 @@ export const TRANSLATIONS = {
               'maneuver-1': {
                 title: 'Einparken längs (Parallel)',
                 description: 'Seitliches Einparken zwischen zwei Fahrzeugen',
+                scenarioSectionTitle: 'Park-Herausforderungen',
+                scenarioSectionSubtitle: 'Häufige Situationen beim Längsparken',
                 tips: [
                   { id: 'park-tip1', title: 'Bezugspunkte nutzen', content: 'Nutzen Sie die Rückleuchten oder B-Säule des stehenden Autos als Orientierung zum Einlenken.', type: 'info' }
                 ]
@@ -1133,17 +1135,29 @@ export const TRANSLATIONS = {
                   { id: 'brake-tip2', title: 'Kupplung erst nach der Bremsung', content: 'Beim Schaltwagen zuerst hart bremsen. Die Kupplung erst danach bzw. kurz vor dem Abwürgen treten, damit die Verzögerung maximal bleibt.', type: 'warning' }
                 ]
               },
+              'maneuver-4a': {
+                title: 'Gefahrenbremsung (Automatik)',
+                description: 'Vollbremsung aus Tempo 30 - Nur Bremse',
+                tips: [
+                  { id: 'brake-auto-tip1', title: 'Volle Kraft!', content: 'Bei der Prüfung wird erwartet, dass Sie wirklich VOLL bremsen. Keine halben Sachen!', type: 'warning' },
+                  { id: 'brake-auto-tip2', title: 'Nur Bremse!', content: 'Beim Automatik-Fahrzeug entfällt das Kuppeln. Konzentrieren Sie sich voll auf den Bremsdruck.', type: 'info' }
+                ]
+              },
               'city-1': {
                 title: 'Rechts vor Links',
                 description: 'Vorfahrt an Kreuzungen ohne Schilder (§ 8 StVO)',
                 tips: [
                   { id: 'rvl-tip1', title: 'Überall möglich!', content: 'An Kreuzungen OHNE Ampel, Schilder oder Polizei. Auch in 30er-Zonen und verkehrsberuhigten Bereichen!', type: 'info' },
                   { id: 'rvl-tip2', title: '§ 10 StVO-Ausnahmen beachten!', content: 'Wer aus Grundstücken, Fußgängerzonen, verkehrsberuhigten Bereichen, Feld-/Waldwegen oder über einen abgesenkten Bordstein auf die Fahrbahn einfährt, muss allen anderen Vorrang gewähren.', type: 'warning' }
-                ]
+                ],
+                scenarioSectionTitle: 'Spezielle Rechts-vor-Links Situationen',
+                scenarioSectionSubtitle: 'Wichtige Einzelfälle, die in der Prüfung oft vorkommen'
               },
               'city-2': {
                 title: 'Abbiegen (Links)',
                 description: 'Linksabbiegen mit Gegenverkehr, Ampelphasen und Einordnung',
+                scenarioSectionTitle: 'Typische Abbiegesituationen',
+                scenarioSectionSubtitle: 'Schritt-fÃ¼r-Schritt-Anleitung fÃ¼r sicheres Linksabbiegen',
                 tips: [
                   { id: 'amp-tip1', title: 'Grünpfeilschild ≠ grüner Pfeil als Lichtzeichen', content: 'Das Grünpfeilschild (Zeichen 720) ist ein Blechschild an der roten Ampel: erst vollständig anhalten, dann vortasten und allem Verkehr Vorrang geben. Der grüne Pfeil als Lichtzeichen in der Ampel ist dagegen eine geschützte Freigabe ohne zusätzlichen Pflichtstopp.', type: 'warning' },
                   { id: 'amp-tip2', title: 'Haltlinie ist nicht Sichtlinie', content: 'Beim Grünpfeilschild muss das Fahrzeug zuerst wirklich an der Haltlinie stillstehen. Erst danach darf man sich langsam zur besseren Sicht vortasten.', type: 'info' },
@@ -1161,7 +1175,9 @@ export const TRANSLATIONS = {
               },
               'city-3': {
                 title: 'Kreisverkehr',
-                description: 'Regeln für Ein- und Ausfahrt im Kreisel',
+                description: 'Einfahren, Blinkzeichen und Vorfahrt im Kreisverkehr',
+                scenarioSectionTitle: 'Kreisverkehr-Szenarien',
+                scenarioSectionSubtitle: 'Alles zum Thema Kreisverkehr und Vorfahrt',
                 tips: [
                   { id: 'kreis-tip1', title: 'NICHT beim Einfahren blinken!', content: 'Beim Einfahren in den Kreisverkehr ist Blinken VERBOTEN (könnte als sofortiges Verlassen missverstanden werden).', type: 'warning' },
                   { id: 'kreis-tip2', title: 'Beim Ausfahren blinken!', content: 'Nach Passieren der vorherigen Ausfahrt RECHTS blinken um das Verlassen anzuzeigen.', type: 'info' },
@@ -1171,25 +1187,47 @@ export const TRANSLATIONS = {
               'city-4': {
                 title: 'Zebrastreifen',
                 description: 'Richtiges Verhalten am Fußgängerüberweg',
+                scenarioSectionTitle: 'Fußgänger-Interaktionen',
+                scenarioSectionSubtitle: 'Sicherer Umgang mit Fußgängern am Zebrastreifen',
                 tips: [
                   { id: 'zebra-tip1', title: 'Absoluter Vorrang!', content: 'Fußgänger auf dem Zebrastreifen haben IMMER Vorrang. Auch wenn sie erst einen Fuß auf die Straße setzen!', type: 'warning' }
-                ]
-              },
-              'maneuver-4a': {
-                title: 'Gefahrenbremsung (Automatik)',
-                description: 'Vollbremsung aus Tempo 30 - Nur Bremse',
-                tips: [
-                  { id: 'brake-auto-tip1', title: 'Volle Kraft!', content: 'Bei der Prüfung wird erwartet, dass Sie wirklich VOLL bremsen. Keine halben Sachen!', type: 'warning' },
-                  { id: 'brake-auto-tip2', title: 'Nur Bremse!', content: 'Beim Automatik-Fahrzeug entfällt das Kuppeln. Konzentrieren Sie sich voll auf den Bremsdruck.', type: 'info' }
                 ]
               },
               'city-5': {
                 title: 'Rechtsabbiegen',
                 description: 'Sicher rechts abbiegen mit Blick auf Radfahrer, Fußgänger und Ampelsituationen',
+                scenarioSectionTitle: 'Sicheres Rechtsabbiegen',
+                scenarioSectionSubtitle: 'Herausforderungen wie Radwege und Fußgänger meistern',
                 tips: [
-                  { id: 'vb-tip1', title: 'Prüfungs-Klassiker', content: 'Viele Umschreiber behandeln den verkehrsberuhigten Bereich wie eine normale Straße. Das ist falsch.', type: 'warning' },
-                  { id: 'vb-tip2', title: 'Blinkerfalle in der Kreuzungstasche', content: 'Nicht rechts blinken, wenn Sie sich nur kurz in die Einmündung hineintasten, um Platz zu schaffen. Rechts blinken würde fälschlich einen echten Rechtsabbiegvorgang anzeigen und andere Verkehrsteilnehmer irritieren.', type: 'warning' },
-                  { id: 'vb-tip3', title: 'Typische Fehler', content: 'Typische Fehler sind: die Kreuzung zu blockieren, dem Verkehr von rechts keinen Raum zu lassen oder beim zweiten Hindernis den Gegenverkehr bzw. den erneuten linken Schulterblick zu vergessen.', type: 'warning' }
+                  { id: 'right-tip1', title: 'Radfahrer nicht abschneiden', content: 'Der Schulterblick nach rechts unmittelbar vor dem Abbiegen ist in der Prüfung absolut entscheidend.', type: 'warning' }
+                ]
+              },
+              'city-5a': {
+                title: 'Verkehrsberuhigter Bereich & Zone 30',
+                description: 'Die oft verwechselten Unterschiede zwischen Spielstraße/verkehrsberuhigtem Bereich und 30er-Zone.',
+                guidedPoints: [
+                  { id: 'vb-gp1', title: 'Schrittgeschwindigkeit im VBB', content: 'In einem verkehrsberuhigten Bereich (Zeichen 325.1) gilt Schrittgeschwindigkeit für alle – auch für Radfahrer.' },
+                  { id: 'vb-gp2', title: 'Vorfahrt beim Verlassen', content: 'Wer aus einem verkehrsberuhigten Bereich herausfährt, muss allen anderen Verkehrsteilnehmern Vorrang gewähren (§ 10 StVO). In der 30er-Zone gilt meist Rechts-vor-Links.' },
+                  { id: 'vb-gp3', title: 'Engstelle vor T-Kreuzung richtig lösen', content: 'In 30er-Zonen gibt es häufig parkende Fahrzeuge direkt vor oder nach einer Kreuzung. Dann geht es nicht nur um Rechts-vor-Links, sondern auch um Raum schaffen, Blickführung und korrekte Blinker.' }
+                ],
+                scenarios: [
+                  {
+                    id: 'vb-sc1',
+                    title: 'Die Kreuzungstasche in der 30er-Zone',
+                    situation: 'Ein parkendes Fahrzeug blockiert Ihre Spur kurz vor einer T-Kreuzung. Von rechts kommt eine Seitenstraße. Direkt nach der Kreuzung blockiert ein weiteres Fahrzeug Ihre Spur und es kommt Gegenverkehr. Viele Fahrschüler blinken hier falsch oder blockieren die Kreuzung.',
+                    steps: [
+                      { id: 1, title: 'Links blinken für erste Engstelle', description: 'Links blinken, Innen- und Außenspiegel prüfen, Schulterblick links und am ersten parkenden Fahrzeug vorbeifahren. Das zeigt klar: Ich weiche wegen des Hindernisses zur Fahrbahnmitte aus.', icon: 'ArrowLeft' },
+                      { id: 2, title: 'In die Kreuzungstasche einfahren – OHNE Rechtsblinker', description: 'An der T-Kreuzung angekommen, ziehen Sie leicht nach rechts in die Mündung der Seitenstraße, um Raum zu schaffen. Beachten Sie Rechts-vor-Links. Blinken Sie NICHT rechts, da Sie nicht abbiegen. Ein falscher Rechtsblinker könnte den Verkehr von rechts täuschen.', icon: 'ArrowRight' },
+                      { id: 3, title: 'Fahrzeug von rechts herauslassen', description: 'Warten Sie ruhig in Ihrer Ausweichposition und lassen Sie das Fahrzeug von rechts abbiegen oder einfädeln. Sie blockieren nicht die Kreuzung, sondern schaffen bewusst Platz für den Verkehrsfluss.', icon: 'Shield' },
+                      { id: 4, title: 'Auf zweite Engstelle mit Linksblinker vorbereiten', description: 'Wenn das Fahrzeug von rechts weg ist, schauen Sie nach vorn: Wenn direkt nach der Kreuzung wieder ein Hindernis auf Ihrer Seite steht und Gegenverkehr kommt, setzen Sie den Linksblinker. Das sagt dem Gegenverkehr: Ich habe dich gesehen und warte, bis ich am zweiten Hindernis vorbeifahren darf.', icon: 'ArrowLeft' },
+                      { id: 5, title: 'Gegenverkehr durchlassen, dann sauber vorbeifahren', description: 'Da das zweite parkende Fahrzeug auf Ihrer Seite steht, hat der Gegenverkehr Vorrang. Warten Sie, bis die Straße frei ist, dann prüfen Sie erneut Spiegel und linken Schulterblick und fahren kontrolliert am zweiten Hindernis vorbei.', icon: 'Eye' }
+                    ]
+                  }
+                ],
+                tips: [
+                  { id: 'vb-tip1', title: 'Klassische Prüfungsfalle', content: 'Viele Umschreiber behandeln einen verkehrsberuhigten Bereich wie eine normale Straße. Das ist falsch.', type: 'warning' },
+                  { id: 'vb-tip2', title: 'Blinkerfalle in der Kreuzungstasche', content: 'Blinken Sie nicht rechts, wenn Sie nur kurz in die Seitenstraßenmündung einfahren, um Platz zu schaffen. Ein Rechtsblinker würde ein echtes Abbiegen vortäuschen und könnte andere Verkehrsteilnehmer täuschen.', type: 'warning' },
+                  { id: 'vb-tip3', title: 'Typische Fehler', content: 'Typische Fehler sind das Blockieren der Kreuzung, kein Platz lassen für den Verkehr von rechts oder das Vergessen des Gegenverkehrs und des erneuten Schulterblicks links beim zweiten Hindernis.', type: 'warning' }
                 ]
               },
               'city-5b': {
@@ -1262,6 +1300,8 @@ export const TRANSLATIONS = {
               'special-1': {
                 title: 'Überlandfahrt (Landstraße)',
                 description: 'Höhere Geschwindigkeiten, Überholen und Alleen',
+                scenarioSectionTitle: 'Landstraßen-Szenarien',
+                scenarioSectionSubtitle: 'Gefahren und Besonderheiten außerorts meistern',
                 tips: [
                   { id: 'country-tip1', title: 'Überholverbot beachten', content: 'Durchgezogene Linie = Absolutes Überholverbot!', type: 'warning' }
                 ]
@@ -1269,6 +1309,8 @@ export const TRANSLATIONS = {
               'special-2': {
                 title: 'Autobahn (Autobahnfahrt)',
                 description: 'Auffahren, Abfahren, Spurwechsel bei hohen Geschwindigkeiten und Rettungsgasse',
+                scenarioSectionTitle: 'Autobahn-Szenarien',
+                scenarioSectionSubtitle: 'Sicherer Umgang mit hohen Geschwindigkeiten',
                 tips: [
                   { id: 'highway-tip1', title: 'Beschleunigungsstreifen nutzen', content: 'Auf dem Beschleunigungsstreifen Gas geben und Fließverkehr beachten.', type: 'info' }
                 ]
@@ -1291,6 +1333,8 @@ export const TRANSLATIONS = {
               'special-3': {
                 title: 'Nachtfahrt (Beleuchtung)',
                 description: 'Lichtfunktionen, Sichtweiten und Wildgefahr in der Dunkelheit',
+                scenarioSectionTitle: 'Nacht-Szenarien',
+                scenarioSectionSubtitle: 'Herausforderungen bei Dunkelheit und schlechter Sicht',
                 scenarios: [
                   {
                     id: 'night-pedestrian',
@@ -1318,6 +1362,62 @@ export const TRANSLATIONS = {
               'exam-1': {
                 title: 'Prüfungsreife & Checkliste',
                 description: 'Letzte Kontrolle vor der praktischen Prüfung.',
+                scenarios: [
+                  {
+                    id: 'exam-first-minutes',
+                    title: 'Die ersten Minuten',
+                    situation: 'Der Prüfer stellt sich vor, kontrolliert den Ausweis und stellt ggf. technische Fragen zum Fahrzeug.',
+                    steps: [
+                      { id: 1, title: 'Dokumente bereithalten', description: 'Lichtbildausweis oder Reisepass griffbereit haben.', icon: 'FileText' },
+                      { id: 2, title: 'Sitz & Spiegel einstellen', description: 'Auch wenn es schon passt: Kurz prüfen und ggf. nachstellen, um Sorgfalt zu zeigen.', icon: 'Settings' },
+                      { id: 3, title: 'Gurt anlegen', description: 'Nicht vergessen, bevor der Motor gestartet wird!', icon: 'CheckCircle' }
+                    ]
+                  }
+                ],
+                tips: [
+                  { id: 'check-tip1', title: 'Mitbringen zur Prüfung', content: '✓ Personalausweis/Reisepass ✓ Ggf. Sehhilfe (Brille) ✓ Bescheinigung Theorieprüfung ✓ Ausbildungsnachweis', type: 'warning' },
+                  { id: 'check-tip2', title: 'Prüfungsdauer', content: 'Die praktische Prüfung dauert ca. 45 Minuten. 3 Grundfahraufgaben werden geprüft (aus dem Katalog ausgewählt).', type: 'info' }
+                ]
+              },
+              'exam-1a': {
+                title: 'Fahrzeug sicher verlassen (Holländischer Griff)',
+                description: 'Sicheres Türöffnen am Ende der Prüfung und im Alltag.',
+                glossary: [
+                  { term: 'Holländischer Griff', note: 'Die Tür mit der weiter entfernten Hand öffnen, damit sich der Oberkörper automatisch dreht und der Schulterblick leichter fällt.' }
+                ],
+                guidedPoints: [
+                  { id: 'exit-gp1', title: 'Vor dem Öffnen Spiegel prüfen', content: 'Blick in den Innenspiegel und linken Außenspiegel.' },
+                  { id: 'exit-gp2', title: 'Schulterblick nach hinten', content: 'Prüfen, ob ein Radfahrer oder Pkw von hinten kommt.' },
+                  { id: 'exit-gp3', title: 'Tür nur einen Spalt öffnen', content: 'Zuerst nur kurz öffnen, um erneut zu sichern, bevor man ganz aussteigt.' }
+                ]
+              },
+              'exam-2': {
+                title: 'Prüfungsangst bewältigen',
+                description: 'Tipps gegen Nervosität am Prüfungstag.',
+                tips: [
+                  { id: 'anxiety-tip1', title: 'Der Prüfer will dass Sie bestehen!', content: 'Der Prüfer bewertet nach dem Fahraufgabenkatalog - objektiv und fair. Kleine Fehler führen nicht zum Durchfallen.', type: 'success' },
+                  { id: 'anxiety-tip2', title: 'Ausreichend Schlaf', content: 'Gehen Sie früh ins Bett und verzichten Sie auf zu viel Koffein vor der Prüfung.', type: 'info' }
+                ]
+              },
+              'exam-2a': {
+                title: 'Top-Gründe für das Nichtbestehen',
+                description: 'Die wichtigsten Situationen, die in der praktischen Prüfung direkt zum Nichtbestehen führen können.',
+                guidedPoints: [
+                  { id: 'fail-gp1', title: 'Gefährdung geht immer vor Formfehler', content: 'Wer Vorfahrt nimmt, Fußgänger gefährdet, rote Ampeln missachtet oder massiv unsicher fährt, fällt in der Regel sofort durch.' },
+                  { id: 'fail-gp2', title: 'Schulterblick kann entscheidend sein', content: 'Einmal vergessen ist oft kein Problem, aber mehrmaliges Ignorieren des Schulterblicks (z.B. beim Abbiegen) führt zum Nichtbestehen.' }
+                ]
+              },
+              'exam-3': {
+                title: 'Umweltbewusstes Fahren',
+                description: 'Spritsparendes Fahren und niedrige Drehzahlen.',
+                tips: [
+                  { id: 'eco-tip1', title: 'Früh hochschalten', content: 'Zwischen 2000-2500 U/min hochschalten. Niedertouriges Fahren spart Kraftstoff.', type: 'info' },
+                  { id: 'eco-tip2', title: 'Vorausschauend fahren', content: 'Rollen lassen statt bremsen, wenn eine Ampel rot ist.', type: 'info' }
+                ]
+              },
+              'exam-sim': {
+                title: 'Test-Prüfung: Live-Sim',
+                description: 'Realistische Simulation mit Zeitdruck und Feedback.'
               }
             },
             parallelParkingSteps: [
@@ -1649,6 +1749,16 @@ export const TRANSLATIONS = {
                 ]
               },
               {
+                id: 'rvl-hidden-right',
+                title: 'Verdeckte Rechts-vor-Links-Einmündung',
+                situation: 'In engen Wohngebieten oder 30er-Zonen sind Einmündungen von rechts oft durch parkende Autos oder Hecken verdeckt. Wer hier zu schnell fährt, riskiert eine Vorfahrtsverletzung.',
+                steps: [
+                  { title: 'Annähern mit reduzierter Geschwindigkeit', description: 'Frühzeitig den Fuß vom Gas nehmen und bremsbereit sein.', icon: 'ArrowDown' },
+                  { title: 'Aktives Hineinschauen nach rechts', description: 'Den Blick deutlich nach rechts wenden, auch wenn die Einmündung noch verdeckt scheint.', icon: 'Eye', critical: true },
+                  { title: 'Vorfahrt gewähren', description: 'Bei Fahrzeugen von rechts anhalten und sie passieren lassen.', icon: 'AlertTriangle', critical: true }
+                ]
+              },
+              {
                 id: 'left-turn-one-way-into',
                 title: 'Linksabbiegen in Einbahnstraße',
                 situation: 'Sie biegen links in eine Einbahnstraße ein. Dort gibt es keinen Gegenverkehr, aber die Spurwahl bleibt wichtig.',
@@ -1846,6 +1956,37 @@ export const TRANSLATIONS = {
                   { title: 'Profiltiefe (Min. 1,6 mm)', description: 'Prüfen Sie das Profil (Tipp: 1,6 mm ist Gesetz, 3-4 mm wird empfohlen).', icon: 'Settings' },
                   { title: 'Beschädigungen suchen', description: 'Achten Sie auf Risse, Beulen oder Fremdkörper im Reifen.', icon: 'Eye', critical: true },
                   { title: 'Luftdruck erwähnen', description: 'Nennen Sie, dass der Druck regelmäßig im kalten Zustand geprüft werden muss.', icon: 'CheckCircle' }
+                ]
+              },
+              {
+                id: 'city-lane-change-dense',
+                title: 'Spurwechsel im dichten Verkehr',
+                situation: 'Viel Verkehr, kleine Lücken. Sie müssen die Spur wechseln, um abzubiegen.',
+                steps: [
+                  { title: 'Frühzeitig blinken', description: 'Geben Sie anderen Verkehrsteilnehmern Zeit, Ihre Absicht zu erkennen.', icon: 'ArrowLeft' },
+                  { title: 'Geschwindigkeit anpassen', description: 'Versuchen Sie, die Geschwindigkeit der Zielspur zu erreichen.', icon: 'Activity' },
+                  { title: 'Schulterblick!', description: 'Unmittelbar vor dem Wechsel den toten Winkel prüfen.', icon: 'Eye', critical: true },
+                  { title: 'Zügig rüberziehen', description: 'Nutzen Sie die Lücke entschlossen, sobald sie groß genug ist.', icon: 'CheckCircle' }
+                ]
+              },
+              {
+                id: 'hwy-short-ramp',
+                title: 'Kurzer Beschleunigungsstreifen',
+                situation: 'Die Auffahrt ist extrem kurz. Sie müssen schnell auf Autobahntempo kommen.',
+                steps: [
+                  { title: 'Schon in der Kurve Gas geben', description: 'Nutzen Sie jede Möglichkeit, um frühzeitig Tempo aufzubauen.', icon: 'Zap' },
+                  { title: 'Frühzeitig beobachten', description: 'Schon vor dem Streifen den Verkehr auf der Autobahn scannen.', icon: 'Search', critical: true },
+                  { title: 'Volle Beschleunigung', description: 'Nutzen Sie den gesamten Streifen, um das Tempo anzupassen.', icon: 'ArrowUp', critical: true }
+                ]
+              },
+              {
+                id: 'hwy-truck-right-lane',
+                title: 'Lkw auf der rechten Spur',
+                situation: 'Ein Lkw fährt rechts. Sie müssen entscheiden: davor oder dahinter einfädeln?',
+                steps: [
+                  { title: 'Geschwindigkeit des Lkw schätzen', description: 'Fährt der Lkw langsam oder mit Tempomat 80?', icon: 'Search' },
+                  { title: 'Lücke wählen', description: 'Entscheiden Sie sich frühzeitig für "vor" oder "hinter" den Lkw.', icon: 'CheckCircle', critical: true },
+                  { title: 'Abstand halten', description: 'Nach dem Einfädeln sofort den Sicherheitsabstand prüfen.', icon: 'AlertTriangle' }
                 ]
               }
             ],
@@ -3033,13 +3174,17 @@ export const TRANSLATIONS = {
               'maneuver-1': {
                 title: 'Parallel Parking',
                 description: 'Side parking between two vehicles',
+                scenarioSectionTitle: 'Typical Parking Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'park-tip1', title: 'Use Reference Points', content: 'Use the taillights or B-pillar of the parked car as a guide for when to steer.', type: 'info' }
                 ]
               },
               'maneuver-2': {
-                title: 'Reverse Parking',
+                title: 'Reverse Bay Parking',
                 description: 'Reversing into a parking bay',
+                scenarioSectionTitle: 'Typical Parking Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'park-rev-tip1', title: 'Use Reference Points', content: 'Turn at 45 degrees when your side mirror passes the taillight of the parked car.', type: 'info' }
                 ]
@@ -3065,11 +3210,15 @@ export const TRANSLATIONS = {
                 tips: [
                   { id: 'rvl-tip1', title: 'Possible Everywhere!', content: 'At intersections WITHOUT traffic lights, signs or police. Also in 30-zones and traffic-calmed areas!', type: 'info' },
                   { id: 'rvl-tip2', title: 'Note the § 10 StVO exceptions!', content: 'Anyone entering the road from properties, pedestrian zones, traffic-calmed areas, field/forest tracks, or over a lowered curb must yield to all other traffic.', type: 'warning' }
-                ]
+                ],
+                scenarioSectionTitle: 'Special Right-before-Left Situations',
+                scenarioSectionSubtitle: 'Important cases that frequently appear in the exam'
               },
               'city-2': {
                 title: 'Turning (Left)',
                 description: 'Turning left with oncoming traffic, traffic light phases, and positioning',
+                scenarioSectionTitle: 'Typical Driving Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'amp-tip1', title: 'Green arrow sign ≠ green arrow traffic signal', content: 'The green arrow sign (sign 720) is a metal sign at a red light: first stop completely, then creep forward and yield to all traffic. The illuminated green arrow in the traffic signal is a protected movement and does not require an additional stop.', type: 'warning' },
                   { id: 'amp-tip2', title: 'The stop line is not the sight line', content: 'With the green arrow sign, the vehicle must first come to a real stop at the stop line. Only afterwards may you creep forward for better visibility.', type: 'info' },
@@ -3088,6 +3237,8 @@ export const TRANSLATIONS = {
               'city-3': {
                 title: 'Roundabout',
                 description: 'Rules for entering and exiting roundabouts',
+                scenarioSectionTitle: 'Typical Driving Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'kreis-tip1', title: 'Do NOT signal when entering!', content: 'Signaling when ENTERING the roundabout is FORBIDDEN (could be misunderstood as immediate exit).', type: 'warning' },
                   { id: 'kreis-tip2', title: 'Signal when exiting!', content: 'After passing the previous exit, signal RIGHT to indicate you are leaving.', type: 'info' },
@@ -3097,6 +3248,8 @@ export const TRANSLATIONS = {
               'city-4': {
                 title: 'Zebra Crossing',
                 description: 'Correct behavior at pedestrian crossings',
+                scenarioSectionTitle: 'Typical Driving Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'zebra-tip1', title: 'Absolute Priority!', content: 'Pedestrians on the crosswalk ALWAYS have priority. Even if they only put one foot on the road!', type: 'warning' }
                 ]
@@ -3112,10 +3265,10 @@ export const TRANSLATIONS = {
               'city-5': {
                 title: 'Turning Right',
                 description: 'Safely turning right with attention to cyclists, pedestrians, and traffic signals',
+                scenarioSectionTitle: 'Typical Driving Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
-                  { id: 'vb-tip1', title: 'Classic exam trap', content: 'Many conversion students treat a traffic-calmed area like a normal street. That is wrong.', type: 'warning' },
-                  { id: 'vb-tip2', title: 'Indicator trap in the intersection pocket', content: 'Do not signal right when you are only tucking briefly into the side street mouth to create space. A right indicator would falsely suggest a real right turn and could mislead other road users.', type: 'warning' },
-                  { id: 'vb-tip3', title: 'Typical mistakes', content: 'Typical mistakes are blocking the junction, leaving no room for traffic from the right, or forgetting the oncoming traffic and the renewed left shoulder check at the second obstacle.', type: 'warning' }
+                  { id: 'right-tip1', title: 'Do not cut off cyclists', content: 'The right shoulder check immediately before turning is absolutely critical in the exam.', type: 'warning' }
                 ]
               },
               'city-5a': {
@@ -3171,6 +3324,8 @@ export const TRANSLATIONS = {
               'city-6': {
                 title: 'Lane Change',
                 description: 'Mirrors, indicators, and shoulder checks in city traffic',
+                scenarioSectionTitle: 'Typical Driving Scenarios',
+                scenarioSectionSubtitle: 'Step-by-step guidance for tricky practical situations',
                 tips: [
                   { id: 'spur-tip1', title: 'Follow the sequence!', content: '1. Interior mirror 2. Side mirror 3. Signal 4. Shoulder check (blind spot!) 5. Change lanes', type: 'info' }
                 ]
@@ -3238,10 +3393,68 @@ export const TRANSLATIONS = {
               'special-3': {
                 title: 'Night Driving (Lighting)',
                 description: 'Lighting features, visibility ranges, and wildlife hazards in the dark',
+                scenarioSectionTitle: 'Night Driving Scenarios',
+                scenarioSectionSubtitle: 'Handling darkness and poor visibility',
               },
               'exam-1': {
                 title: 'Exam Readiness & Checklist',
                 description: 'Final check before the practical driving exam.',
+                scenarios: [
+                  {
+                    id: 'exam-first-minutes',
+                    title: 'The First Minutes',
+                    situation: 'The examiner introduces themselves, checks your ID, and may ask technical questions about the vehicle.',
+                    steps: [
+                      { id: 1, title: 'Have documents ready', description: 'Have your photo ID or passport ready.', icon: 'FileText' },
+                      { id: 2, title: 'Adjust seat & mirrors', description: 'Even if it already fits: check and adjust if necessary to show care.', icon: 'Settings' },
+                      { id: 3, title: 'Fasten seatbelt', description: 'Don’t forget before the engine is started!', icon: 'CheckCircle' }
+                    ]
+                  }
+                ],
+                tips: [
+                  { id: 'check-tip1', title: 'Bring to the exam', content: '✓ Photo ID/Passport ✓ Glasses if needed ✓ Theory test certificate ✓ Training documentation', type: 'warning' },
+                  { id: 'check-tip2', title: 'Exam duration', content: 'The practical exam lasts approx. 45 minutes. 3 basic maneuvers are tested (selected from the catalog).', type: 'info' }
+                ]
+              },
+              'exam-1a': {
+                title: 'Exiting the Vehicle Safely (Dutch Reach)',
+                description: 'Safe door opening at the end of the exam and in everyday driving.',
+                glossary: [
+                  { term: 'Dutch Reach', note: 'Open the door with the far hand so the upper body turns automatically and the shoulder check becomes more natural.' }
+                ],
+                guidedPoints: [
+                  { id: 'exit-gp1', title: 'Check mirrors before opening', content: 'Look in the interior mirror and left side mirror.' },
+                  { id: 'exit-gp2', title: 'Shoulder check to the rear', content: 'Check if a cyclist or car is coming from behind.' },
+                  { id: 'exit-gp3', title: 'Open door only a crack', content: 'Open only a little bit first to check again before getting out completely.' }
+                ]
+              },
+              'exam-2': {
+                title: 'Handling Exam Anxiety',
+                description: 'Tips against nervousness on exam day.',
+                tips: [
+                  { id: 'anxiety-tip1', title: 'The examiner wants you to pass!', content: 'The examiner evaluates according to the driving task catalog - objectively and fairly. Small mistakes don’t mean failure.', type: 'success' },
+                  { id: 'anxiety-tip2', title: 'Get enough sleep', content: 'Go to bed early and avoid too much caffeine before the exam.', type: 'info' }
+                ]
+              },
+              'exam-2a': {
+                title: 'Top Reasons for Failing',
+                description: 'The most important situations that can lead to an immediate fail in the practical exam.',
+                guidedPoints: [
+                  { id: 'fail-gp1', title: 'Danger to others matters more than style mistakes', content: 'Taking priority, endangering pedestrians, running a red light, or driving with serious insecurity usually leads to immediate failure.' },
+                  { id: 'fail-gp2', title: 'A missing shoulder check can be decisive', content: 'Forgetting once is often no problem, but repeatedly ignoring the shoulder check (e.g. when turning) leads to failure.' }
+                ]
+              },
+              'exam-3': {
+                title: 'Eco-Friendly Driving',
+                description: 'Fuel-efficient driving and low RPMs.',
+                tips: [
+                  { id: 'eco-tip1', title: 'Shift up early', content: 'Shift up between 2000-2500 RPM. Low-rev driving saves fuel.', type: 'info' },
+                  { id: 'eco-tip2', title: 'Drive anticipatively', content: 'Coast instead of braking when a light is red.', type: 'info' }
+                ]
+              },
+              'exam-sim': {
+                title: 'Mock Exam: Live Sim',
+                description: 'Realistic simulation with time pressure and feedback.'
               }
             },
             parallelParkingSteps: [
@@ -3745,6 +3958,47 @@ export const TRANSLATIONS = {
                 ]
               },
               {
+                id: 'night-pedestrian',
+                title: 'Pedestrian in the Dark',
+                situation: 'A person in dark clothing is crossing the road at night.',
+                steps: [
+                  { title: 'Active scanning', description: 'Look specifically for shadows and movement at the edge of the road.', icon: 'Search' },
+                  { title: 'Dim high beams', description: 'Switch to low beams if you see someone to avoid blinding them.', icon: 'Eye' },
+                  { title: 'Stay ready to brake', description: 'Be prepared to stop immediately if they step onto the road.', icon: 'AlertTriangle', critical: true }
+                ]
+              },
+              {
+                id: 'city-lane-change-dense',
+                title: 'Lane Change in Dense Traffic',
+                situation: 'Heavy traffic, small gaps. You need to change lanes to turn.',
+                steps: [
+                  { title: 'Signal early', description: 'Give other road users time to recognize your intention.', icon: 'ArrowLeft' },
+                  { title: 'Adjust speed', description: 'Try to match the speed of the target lane.', icon: 'Activity' },
+                  { title: 'Shoulder check!', description: 'Check the blind spot immediately before changing.', icon: 'Eye', critical: true },
+                  { title: 'Merge decisively', description: 'Use the gap firmly once it is large enough.', icon: 'CheckCircle' }
+                ]
+              },
+              {
+                id: 'hwy-short-ramp',
+                title: 'Short Acceleration Lane',
+                situation: 'The ramp is extremely short. You must reach highway speed quickly.',
+                steps: [
+                  { title: 'Accelerate in the curve', description: 'Use every opportunity to build speed early.', icon: 'Zap' },
+                  { title: 'Observe early', description: 'Scan highway traffic even before reaching the acceleration lane.', icon: 'Search', critical: true },
+                  { title: 'Full acceleration', description: 'Use the entire lane to match the speed.', icon: 'ArrowUp', critical: true }
+                ]
+              },
+              {
+                id: 'hwy-truck-right-lane',
+                title: 'Truck on the Right Lane',
+                situation: 'A truck is driving on the right. You must decide: merge ahead or behind?',
+                steps: [
+                  { title: 'Estimate truck speed', description: 'Is the truck driving slowly or at a steady 80 km/h?', icon: 'Search' },
+                  { title: 'Choose a gap', description: 'Decide early whether to go ahead of or behind the truck.', icon: 'CheckCircle', critical: true },
+                  { title: 'Maintain distance', description: 'Check your safety distance immediately after merging.', icon: 'AlertTriangle' }
+                ]
+              },
+              {
                 id: 'vc-engine-hood',
                 title: 'Opening the Bonnet/Hood',
                 situation: 'The examiner asks you to open the engine hood.',
@@ -3763,7 +4017,17 @@ export const TRANSLATIONS = {
                   { title: 'Look for damage', description: 'Check for cracks, bulges, or foreign objects in the tyre.', icon: 'Eye', critical: true },
                   { title: 'Mention air pressure', description: 'Mention that the pressure must be checked regularly when cold.', icon: 'CheckCircle' }
                 ]
-              }
+              },
+              {
+                id: 'rvl-hidden-right',
+                title: 'Hidden Right-before-Left Intersection',
+                situation: 'In narrow residential areas or 30-zones, side streets from the right are often hidden by parked cars or hedges. Driving too fast here risks a priority violation.',
+                steps: [
+                  { title: 'Approach at reduced speed', description: 'Take your foot off the gas early and stay ready to brake.', icon: 'ArrowDown' },
+                  { title: 'Active scanning to the right', description: 'Turn your head clearly to the right, even if the intersection still seems hidden.', icon: 'Eye', critical: true },
+                  { title: 'Yield to traffic from the right', description: 'Stop for vehicles coming from the right and let them pass.', icon: 'AlertTriangle', critical: true }
+                ]
+              },
             ],
             vehicleCheckVisuals: [
               {

@@ -33,9 +33,9 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
     <nav 
       role="navigation"
       aria-label={t.common.nav.mobileNav}
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/50 glass dark:border-slate-800/50"
     >
-      <div className="px-1 pt-1" style={{ paddingBottom: 'max(4px, env(safe-area-inset-bottom))' }}>
+      <div className="px-1 pt-1" style={{ paddingBottom: 'max(6px, env(safe-area-inset-bottom))' }}>
         <div className="flex items-center justify-around" role="tablist">
           {tabs.map((tab) => (
             <button
@@ -45,16 +45,16 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               aria-label={tab.label}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex flex-1 min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 transition-all duration-200',
+                'flex flex-1 min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 transition-all duration-300',
                 activeTab === tab.id
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+                  ? 'text-blue-600 dark:text-blue-400 scale-105'
+                  : 'text-slate-500 dark:text-slate-500'
               )}
             >
               <div
                 className={cn(
-                  'relative flex items-center justify-center rounded-lg p-1 transition-all duration-200',
-                  activeTab === tab.id && 'bg-blue-100 dark:bg-blue-900/50'
+                  'relative flex items-center justify-center rounded-xl p-1.5 transition-all duration-300',
+                  activeTab === tab.id ? 'bg-blue-100/50 dark:bg-blue-900/30' : 'bg-transparent'
                 )}
               >
                 {tab.icon}
@@ -64,9 +64,15 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+              <span className={cn(
+                'text-[9px] font-bold whitespace-nowrap overflow-hidden text-ellipsis w-full text-center transition-opacity duration-300',
+                activeTab === tab.id ? 'opacity-100' : 'opacity-70'
+              )}>
                 {tab.label}
               </span>
+              {activeTab === tab.id && (
+                <div className="h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" />
+              )}
             </button>
           ))}
         </div>
