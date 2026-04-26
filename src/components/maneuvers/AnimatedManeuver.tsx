@@ -187,10 +187,13 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
       </AnimatePresence>
       
       <svg viewBox="0 0 400 250" className="w-full h-full">
-        {/* Grass */}
-        <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x={20} y={15} width={40} height={30} />
+        <Building x={340} y={15} width={40} height={30} />
         {/* Road */}
-        <rect x="0" y="50" width="400" height="180" fill="#334155" />
+        <rect x="0" y="50" width="400" height="180" fill="url(#roadTexture)" />
         {/* Curb */}
         <rect x="0" y="210" width="400" height="40" fill="#94a3b8" />
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
@@ -257,8 +260,13 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
       </AnimatePresence>
       
       <svg viewBox="0 0 400 250" className="w-full h-full">
-        <rect x="0" y="0" width="400" height="250" fill="#ecfdf5" />
-        <rect x="0" y="0" width="400" height="150" fill="#334155" />
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x={20} y={160} width={40} height={30} />
+        <Building x={340} y={160} width={40} height={30} />
+
+        <rect x="0" y="0" width="400" height="150" fill="url(#roadTexture)" />
         
         {/* Parking Slots (Bottom row) */}
         {[60, 140, 220, 300, 380].map(x => (
@@ -494,7 +502,7 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <rect x="270" y="100" width="130" height="50" fill="url(#roadTexture)" />
         
         {/* Center Island Details */}
-        <circle cx="200" cy="125" r="20" fill="none" stroke="#d1fae5" strokeWidth="1" />
+        <circle cx="200" cy="125" r="20" fill="none" stroke="#166534" strokeWidth="1" />
         
         {/* Yield Lines */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />

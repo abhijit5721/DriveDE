@@ -64,8 +64,8 @@ export const GlobalDefinitions = () => (
       </filter>
 
       <pattern id="grassPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect width="40" height="40" fill="#ecfdf5" />
-        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#d1fae5" strokeWidth="1" fill="none" />
+        <rect width="40" height="40" fill="#15803d" />
+        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#166534" strokeWidth="1" fill="none" />
       </pattern>
 
       <pattern id="roadTexture" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
