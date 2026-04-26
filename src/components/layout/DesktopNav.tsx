@@ -38,7 +38,13 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
       className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0"
     >
       <div className="p-6">
-        <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-500">DriveDE</h2>
+        <button 
+          onClick={() => onTabChange('home')}
+          className="group flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none"
+          aria-label="Go to Home"
+        >
+          <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-500">DriveDE</h2>
+        </button>
       </div>
       
       <nav className="flex-1 px-4 py-2">

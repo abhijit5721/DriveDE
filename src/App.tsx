@@ -448,7 +448,7 @@ export default function App() {
       <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} onSignOut={handleSignOut} />
         <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
-          {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} />}
+          {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} onTabChange={handleNavigate} />}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
             <div className="mx-auto max-w-4xl">
               {renderContent()}

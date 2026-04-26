@@ -12,9 +12,10 @@ import { TRANSLATIONS } from '../../data/translations';
 interface HeaderProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
+  onTabChange?: (tab: any) => void;
 }
 
-export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
+export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
   const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language].common;
 
@@ -36,7 +37,11 @@ export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95 lg:hidden">
       <div className="mx-auto flex max-w-lg items-center justify-between gap-4 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <button 
+          onClick={() => onTabChange?.('home')}
+          className="flex min-w-0 items-center gap-2 text-left focus:outline-none active:scale-95 transition-transform"
+          aria-label="Go to Home"
+        >
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-200 dark:shadow-blue-900/50">
             <span className="text-lg font-bold text-white">🚗</span>
           </div>
@@ -67,7 +72,7 @@ export function Header({ onOpenAuth, onSignOut }: HeaderProps) {
               {t.appSubtitle}
             </p>
           </div>
-        </div>
+        </button>
 
         <div className="flex flex-shrink-0 items-center gap-1">
           <button
