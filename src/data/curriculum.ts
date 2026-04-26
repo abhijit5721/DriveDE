@@ -8,13 +8,13 @@ import { TRANSLATIONS } from './translations';
 
 // Helper to map scenarios from translations
 const getScenario = (id: string, arrayName: 'scenarios' | 'vehicleCheckScenarios' = 'scenarios'): LessonScenario => {
-  const deArray = TRANSLATIONS.de.curriculumData[arrayName] as any[];
-  const enArray = TRANSLATIONS.en.curriculumData[arrayName] as any[];
+  const deArray = (TRANSLATIONS.de.curriculumData[arrayName] || []) as any[];
+  const enArray = (TRANSLATIONS.en.curriculumData[arrayName] || []) as any[];
   
   const de = deArray?.find(s => s.id === id);
   const en = enArray?.find(s => s.id === id);
   
-  if (!de || !en) {
+  if (!de) {
     console.warn(`Scenario not found: ${id} in ${arrayName}`);
     return {
       id,
@@ -28,41 +28,41 @@ const getScenario = (id: string, arrayName: 'scenarios' | 'vehicleCheckScenarios
   
   return {
     id,
-    titleDe: de.title,
-    titleEn: en.title,
-    situationDe: de.situation,
-    situationEn: en.situation,
-    steps: de.steps.map((step: any, idx: number) => ({
+    titleDe: de.title || '',
+    titleEn: en?.title || de.title || '',
+    situationDe: de.situation || '',
+    situationEn: en?.situation || de.situation || '',
+    steps: (de.steps || []).filter(Boolean).map((step: any, idx: number) => ({
       id: idx + 1,
-      titleDe: step.title,
-      titleEn: en.steps[idx]?.title || step.title,
-      descriptionDe: step.description,
-      descriptionEn: en.steps[idx]?.description || step.description,
+      titleDe: step.title || '',
+      titleEn: en?.steps?.[idx]?.title || step.title || '',
+      descriptionDe: step.description || '',
+      descriptionEn: en?.steps?.[idx]?.description || step.description || '',
       icon: step.icon || 'Circle',
       critical: step.critical || false,
     })),
-    mistakes: de.mistakes?.map((m: any, idx: number) => ({
+    mistakes: (de.mistakes || []).filter(Boolean).map((m: any, idx: number) => ({
       id: `m-${idx}`,
-      titleDe: m.title,
-      titleEn: en.mistakes?.[idx]?.title || m.title,
-      contentDe: m.content,
-      contentEn: en.mistakes?.[idx]?.content || m.content,
+      titleDe: m.title || '',
+      titleEn: en?.mistakes?.[idx]?.title || m.title || '',
+      contentDe: m.content || '',
+      contentEn: en?.mistakes?.[idx]?.content || m.content || '',
       type: 'warning'
-    })),
+    }))
   };
 };
 
 // Helper to map guided points from translations
 const getGuidedPoints = (key: keyof typeof TRANSLATIONS.de.curriculumData.guidedPoints, prefix: string): GuidedPoint[] => {
-  const dePoints = TRANSLATIONS.de.curriculumData.guidedPoints[key];
-  const enPoints = TRANSLATIONS.en.curriculumData.guidedPoints[key];
+  const dePoints = (TRANSLATIONS.de.curriculumData.guidedPoints?.[key] || []) as any[];
+  const enPoints = (TRANSLATIONS.en.curriculumData.guidedPoints?.[key] || []) as any[];
   
-  return dePoints.map((point, index) => ({
+  return dePoints.filter(Boolean).map((point, index) => ({
     id: `${prefix}-${index}`,
-    titleDe: point.title,
-    titleEn: enPoints[index].title,
-    contentDe: point.content,
-    contentEn: enPoints[index].content,
+    titleDe: point.title || '',
+    titleEn: enPoints?.[index]?.title || point.title || '',
+    contentDe: point.content || '',
+    contentEn: enPoints?.[index]?.content || point.content || '',
     emphasis: 'safety',
   }));
 };
@@ -72,6 +72,17 @@ const getTrafficSign = (id: string, overrides: Partial<TrafficSign> = {}): Traff
   const de = (TRANSLATIONS.de.curriculumData.trafficSigns as any)?.[id];
   const en = (TRANSLATIONS.en.curriculumData.trafficSigns as any)?.[id];
   
+  if (!de) {
+    return {
+      id,
+      titleDe: id,
+      titleEn: id,
+      descriptionDe: '',
+      descriptionEn: '',
+      ...overrides
+    };
+  }
+
   return {
     id,
     titleDe: de?.title || '',
