@@ -97,27 +97,27 @@ const getLessonStrings = (id: string) => {
   };
 
   if (de.tips) {
-    result.tips = de.tips.map((tip: any, index: number) => ({
+    result.tips = de.tips.filter(Boolean).map((tip: any, index: number) => ({
       ...tip,
-      titleDe: tip.title,
-      titleEn: en?.tips?.[index]?.title || tip.title,
-      contentDe: tip.content,
-      contentEn: en?.tips?.[index]?.content || tip.content,
+      titleDe: tip.title || '',
+      titleEn: en?.tips?.[index]?.title || tip.title || '',
+      contentDe: tip.content || '',
+      contentEn: en?.tips?.[index]?.content || tip.content || '',
     }));
   }
 
   if (de.guidedPoints) {
-    result.guidedPoints = de.guidedPoints.map((gp: any, index: number) => ({
+    result.guidedPoints = de.guidedPoints.filter(Boolean).map((gp: any, index: number) => ({
       ...gp,
-      titleDe: gp.title,
-      titleEn: en?.guidedPoints?.[index]?.title || gp.title,
-      contentDe: gp.content,
-      contentEn: en?.guidedPoints?.[index]?.content || gp.content,
+      titleDe: gp.title || '',
+      titleEn: en?.guidedPoints?.[index]?.title || gp.title || '',
+      contentDe: gp.content || '',
+      contentEn: en?.guidedPoints?.[index]?.content || gp.content || '',
     }));
   }
 
   if (de.glossary) {
-    result.glossary = de.glossary.map((item: any, index: number) => ({
+    result.glossary = de.glossary.filter(Boolean).map((item: any, index: number) => ({
       ...item,
       german: item.german || item.term || '',
       english: en?.glossary?.[index]?.german || en?.glossary?.[index]?.term || item.german || item.term || '',
@@ -127,7 +127,7 @@ const getLessonStrings = (id: string) => {
   }
 
   if (de.examinerCommands) {
-    result.examinerCommands = de.examinerCommands.map((cmd: any, index: number) => ({
+    result.examinerCommands = de.examinerCommands.filter(Boolean).map((cmd: any, index: number) => ({
       ...cmd,
       commandDe: cmd.commandDe || cmd.command || '',
       commandEn: en?.examinerCommands?.[index]?.commandDe || en?.examinerCommands?.[index]?.command || cmd.commandDe || cmd.command || '',
@@ -245,29 +245,29 @@ const emergencyBrakingStepsAutomatic: ManeuverStep[] = getSteps(
 
 
 
-const leftTurnGuidedPoints: GuidedPoint[] = TRANSLATIONS.de.curriculumData.leftTurnGuidedPoints.map((item, index) => ({
+const leftTurnGuidedPoints: GuidedPoint[] = (TRANSLATIONS.de.curriculumData.leftTurnGuidedPoints || []).map((item, index) => ({
   id: `left-turn-gp${index + 1}`,
   titleDe: item.title,
-  titleEn: TRANSLATIONS.en.curriculumData.leftTurnGuidedPoints[index].title,
+  titleEn: TRANSLATIONS.en.curriculumData.leftTurnGuidedPoints?.[index]?.title || item.title,
   contentDe: item.content,
-  contentEn: TRANSLATIONS.en.curriculumData.leftTurnGuidedPoints[index].content,
+  contentEn: TRANSLATIONS.en.curriculumData.leftTurnGuidedPoints?.[index]?.content || item.content,
   emphasis: (['safety', 'look', 'priority', 'exam', 'priority', 'safety', 'exam'] as const)[index],
 }));
 
-const germanRoadGlossary = TRANSLATIONS.de.curriculumData.glossary.map((item, index) => ({
+const germanRoadGlossary = (TRANSLATIONS.de.curriculumData.glossary || []).map((item, index) => ({
   id: `glossary-${item.term.toLowerCase().replace(/[^a-z]/g, '-')}`,
   german: item.term,
-  english: TRANSLATIONS.en.curriculumData.glossary[index].term,
+  english: TRANSLATIONS.en.curriculumData.glossary?.[index]?.term || item.term,
   noteDe: item.note,
-  noteEn: TRANSLATIONS.en.curriculumData.glossary[index].note,
+  noteEn: TRANSLATIONS.en.curriculumData.glossary?.[index]?.note || item.note,
 }));
 
-const examinerCommandsCore = TRANSLATIONS.de.curriculumData.examinerCommands.map((item, index) => ({
+const examinerCommandsCore = (TRANSLATIONS.de.curriculumData.examinerCommands || []).map((item, index) => ({
   id: `cmd-${index}`,
   commandDe: item.command,
-  commandEn: TRANSLATIONS.en.curriculumData.examinerCommands[index].command,
+  commandEn: TRANSLATIONS.en.curriculumData.examinerCommands?.[index]?.command || item.command,
   noteDe: item.note,
-  noteEn: TRANSLATIONS.en.curriculumData.examinerCommands[index].note,
+  noteEn: TRANSLATIONS.en.curriculumData.examinerCommands?.[index]?.note || item.note,
 }));
 
 const signGreenArrow: TrafficSign = {
