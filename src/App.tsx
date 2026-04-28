@@ -60,7 +60,7 @@ export default function App() {
     setAuthState,
     hasVisited,
     setHasVisited,
-    resetProgress,
+    logoutCleanup,
     activeTab,
     setActiveTab,
   } = useAppStore();
@@ -194,10 +194,18 @@ export default function App() {
             });
         }
         } else {
+          // If we were previously signed in, and now we are not, clear the local state
+          // to prevent the next person (or guest) from seeing the previous user's data.
+          if (useAppStore.getState().authStatus === 'signed_in') {
+            logoutCleanup();
+          }
           setAuthState(null, 'guest', null, null);
         }
       } catch (error) {
         console.error('[App] Auth subscription error:', error);
+        if (useAppStore.getState().authStatus === 'signed_in') {
+          logoutCleanup();
+        }
         setAuthState(null, 'guest', null, null);
       } finally {
         setIsAuthLoading(false);
@@ -207,7 +215,7 @@ export default function App() {
     return () => {
       unsubscribe();
     };
-  }, [setAuthState]);
+  }, [setAuthState, logoutCleanup]);
 
   // Handle post-payment success refresh (Web & Mobile)
   useEffect(() => {
@@ -312,8 +320,7 @@ export default function App() {
 
   const handleSignOut = async () => {
     await signOut();
-    setAuthState(null, 'guest', null, null);
-    resetProgress();
+    logoutCleanup();
     setHasVisited(false);
   };
 

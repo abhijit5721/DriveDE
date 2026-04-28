@@ -534,7 +534,8 @@ export const useAppStore = create<AppState>()(
         }),
 
       resetProgress: () => {
-        // NEW: Reset cloud data as well
+        // This is a DESTRUCTIVE reset (clears local AND cloud)
+        // Usually triggered by the user via settings.
         resetAllDataFromCloud();
         set({
           userProgress: initialProgress,
@@ -545,6 +546,25 @@ export const useAppStore = create<AppState>()(
           activeTab: 'home',
           hasVisited: false,
           activeSession: null,
+        });
+      },
+
+      logoutCleanup: () => {
+        // This is a NON-DESTRUCTIVE cleanup (clears local state only)
+        // Used when a user logs out or session expires.
+        set({
+          userProgress: initialProgress,
+          licenseType: null,
+          learningPath: null,
+          transmissionType: null,
+          isPremium: isLocalhost(),
+          activeTab: 'home',
+          hasVisited: false,
+          activeSession: null,
+          authEmail: null,
+          authStatus: 'guest',
+          authDisplayName: null,
+          authUserId: null,
         });
       },
 
@@ -669,22 +689,37 @@ export const useAppStore = create<AppState>()(
     {
       name: 'drivede-storage',
       storage: createJSONStorage(() => idbStorage),
-      partialize: (state) => ({
-        language: state.language,
-        darkMode: state.darkMode,
-        licenseType: state.licenseType,
-        learningPath: state.learningPath,
-        transmissionType: state.transmissionType,
-        isPremium: state.isPremium,
-        authEmail: state.authEmail,
-        authDisplayName: state.authDisplayName,
-        authUserId: state.authUserId,
-        authStatus: state.authStatus,
-        userProgress: state.userProgress,
-        activeSession: state.activeSession,
-        hasVisited: state.hasVisited,
-        activeTab: state.activeTab,
-      }),
+      partialize: (state) => {
+        const isGuest = state.authStatus === 'guest';
+        
+        // Base settings that are useful to persist for everyone
+        const baseSettings = {
+          language: state.language,
+          darkMode: state.darkMode,
+          authStatus: state.authStatus,
+          hasVisited: state.hasVisited,
+          activeTab: state.activeTab,
+        };
+
+        if (isGuest) {
+          // Guests get a fresh start on every reload (volatile progress)
+          return baseSettings;
+        }
+
+        // Signed-in users get full persistence across sessions
+        return {
+          ...baseSettings,
+          licenseType: state.licenseType,
+          learningPath: state.learningPath,
+          transmissionType: state.transmissionType,
+          isPremium: state.isPremium,
+          authEmail: state.authEmail,
+          authDisplayName: state.authDisplayName,
+          authUserId: state.authUserId,
+          userProgress: state.userProgress,
+          activeSession: state.activeSession,
+        };
+      },
       onRehydrateStorage: () => (_, error) => {
         if (error) {
           console.error('[Store] Hydration failed (possible corruption):', error);

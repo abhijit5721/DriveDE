@@ -240,6 +240,7 @@ export interface AppState {
   updateFixedCosts: (costs: Partial<UserProgress['fixedCosts']>) => void;
   updateFinanceSettings: (costs: Partial<UserProgress['fixedCosts']>, rate?: number) => void;
   resetProgress: () => void;
+  logoutCleanup: () => void;
   clearDrivingHistory: () => void;
   enableDemoMode: () => void;
   
