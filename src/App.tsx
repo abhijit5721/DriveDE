@@ -65,7 +65,17 @@ export default function App() {
     setActiveTab,
   } = useAppStore();
   
-  const [reportUserId, setReportUserId] = useState<string | null>(null);
+  const [reportUserId, setReportUserId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const reportId = params.get('report');
+      if (reportId) {
+        console.log(`[App] Public report view detected for ID: ${reportId}`);
+        return reportId;
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     const handleOnline = () => {
@@ -87,15 +97,6 @@ export default function App() {
       window.removeEventListener('online', handleOnline);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const reportId = params.get('report');
-    if (reportId) {
-      setReportUserId(reportId);
-      console.log(`[App] Public report view detected for ID: ${reportId}`);
-    }
   }, []);
 
 

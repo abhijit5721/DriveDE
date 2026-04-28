@@ -11,8 +11,34 @@ const getScenario = (id: string, arrayName: 'scenarios' | 'vehicleCheckScenarios
   const deArray = (TRANSLATIONS.de.curriculumData[arrayName] || []) as any[];
   const enArray = (TRANSLATIONS.en.curriculumData[arrayName] || []) as any[];
   
-  const de = deArray?.find(s => s.id === id);
-  const en = enArray?.find(s => s.id === id);
+  let de = deArray?.find(s => s.id === id);
+  let en = enArray?.find(s => s.id === id);
+
+  if (!de) {
+    const deLessons = (TRANSLATIONS.de.curriculumData as any).lessons;
+    if (deLessons) {
+      for (const lessonId in deLessons) {
+        const lesson = deLessons[lessonId];
+        if (lesson.scenarios) {
+          const found = lesson.scenarios.find((s: any) => s.id === id);
+          if (found) { de = found; break; }
+        }
+      }
+    }
+  }
+
+  if (!en) {
+    const enLessons = (TRANSLATIONS.en.curriculumData as any).lessons;
+    if (enLessons) {
+      for (const lessonId in enLessons) {
+        const lesson = enLessons[lessonId];
+        if (lesson.scenarios) {
+          const found = lesson.scenarios.find((s: any) => s.id === id);
+          if (found) { en = found; break; }
+        }
+      }
+    }
+  }
   
   if (!de) {
     console.warn(`Scenario not found: ${id} in ${arrayName}`);
