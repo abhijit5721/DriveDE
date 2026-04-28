@@ -33,6 +33,7 @@ import {
   Zap,
   Car,
   Trophy,
+  Wrench,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -713,19 +714,27 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         </div>
       )}
 
-      {/* Traffic Signs */}
+      {/* Traffic Signs or Vehicle Checks */}
       {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
         <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
           <div className="mb-4 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-              <Shield className="h-5 w-5" />
+              {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
+                <Wrench className="h-5 w-5" />
+              ) : (
+                <Shield className="h-5 w-5" />
+              )}
             </div>
             <div>
               <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-                {t.curriculum.importantSigns}
+                {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                  ? (language === 'de' ? 'Fahrzeugkontrolle / Technik' : 'Vehicle Check & Tech')
+                  : t.curriculum.importantSigns}
               </h4>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.signsSub}
+                {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                  ? (language === 'de' ? 'Wichtige Kontrollen vor der Fahrt' : 'Important checks before driving')
+                  : t.curriculum.signsSub}
               </p>
             </div>
           </div>

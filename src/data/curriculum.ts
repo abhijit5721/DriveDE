@@ -95,8 +95,34 @@ const getGuidedPoints = (key: keyof typeof TRANSLATIONS.de.curriculumData.guided
 
 // Helper to map traffic signs from translations
 const getTrafficSign = (id: string, overrides: Partial<TrafficSign> = {}): TrafficSign => {
-  const de = (TRANSLATIONS.de.curriculumData.trafficSigns as any)?.[id];
-  const en = (TRANSLATIONS.en.curriculumData.trafficSigns as any)?.[id];
+  let de = (TRANSLATIONS.de.curriculumData.trafficSigns as any)?.[id];
+  let en = (TRANSLATIONS.en.curriculumData.trafficSigns as any)?.[id];
+
+  if (!de) {
+    const deLessons = (TRANSLATIONS.de.curriculumData as any).lessons;
+    if (deLessons) {
+      for (const lessonId in deLessons) {
+        const lesson = deLessons[lessonId];
+        if (lesson.vehicleCheckVisuals) {
+          const found = lesson.vehicleCheckVisuals.find((s: any) => s.id === id);
+          if (found) { de = found; break; }
+        }
+      }
+    }
+  }
+
+  if (!en) {
+    const enLessons = (TRANSLATIONS.en.curriculumData as any).lessons;
+    if (enLessons) {
+      for (const lessonId in enLessons) {
+        const lesson = enLessons[lessonId];
+        if (lesson.vehicleCheckVisuals) {
+          const found = lesson.vehicleCheckVisuals.find((s: any) => s.id === id);
+          if (found) { en = found; break; }
+        }
+      }
+    }
+  }
   
   if (!de) {
     return {
