@@ -23,6 +23,10 @@ const getScenario = (id: string, arrayName: 'scenarios' | 'vehicleCheckScenarios
           const found = lesson.scenarios.find((s: any) => s.id === id);
           if (found) { de = found; break; }
         }
+        if (lesson.vehicleCheckScenarios) {
+          const found = lesson.vehicleCheckScenarios.find((s: any) => s.id === id);
+          if (found) { de = found; break; }
+        }
       }
     }
   }
@@ -34,6 +38,10 @@ const getScenario = (id: string, arrayName: 'scenarios' | 'vehicleCheckScenarios
         const lesson = enLessons[lessonId];
         if (lesson.scenarios) {
           const found = lesson.scenarios.find((s: any) => s.id === id);
+          if (found) { en = found; break; }
+        }
+        if (lesson.vehicleCheckScenarios) {
+          const found = lesson.vehicleCheckScenarios.find((s: any) => s.id === id);
           if (found) { en = found; break; }
         }
       }
@@ -100,6 +108,7 @@ const getTrafficSign = (id: string, overrides: Partial<TrafficSign> = {}): Traff
 
   if (!de) {
     const deLessons = (TRANSLATIONS.de.curriculumData as any).lessons;
+    // Check lessons
     if (deLessons) {
       for (const lessonId in deLessons) {
         const lesson = deLessons[lessonId];
@@ -109,10 +118,19 @@ const getTrafficSign = (id: string, overrides: Partial<TrafficSign> = {}): Traff
         }
       }
     }
+    // Check top-level vehicleCheckVisuals if still not found
+    if (!de) {
+      const deVCV = (TRANSLATIONS.de.curriculumData as any).vehicleCheckVisuals;
+      if (deVCV) {
+        const found = deVCV.find((s: any) => s.id === id);
+        if (found) de = found;
+      }
+    }
   }
 
   if (!en) {
     const enLessons = (TRANSLATIONS.en.curriculumData as any).lessons;
+    // Check lessons
     if (enLessons) {
       for (const lessonId in enLessons) {
         const lesson = enLessons[lessonId];
@@ -120,6 +138,14 @@ const getTrafficSign = (id: string, overrides: Partial<TrafficSign> = {}): Traff
           const found = lesson.vehicleCheckVisuals.find((s: any) => s.id === id);
           if (found) { en = found; break; }
         }
+      }
+    }
+    // Check top-level vehicleCheckVisuals if still not found
+    if (!en) {
+      const enVCV = (TRANSLATIONS.en.curriculumData as any).vehicleCheckVisuals;
+      if (enVCV) {
+        const found = enVCV.find((s: any) => s.id === id);
+        if (found) en = found;
       }
     }
   }
