@@ -3582,12 +3582,18 @@ export const TRANSLATIONS = {
                 { title: 'Wildlife hazard', content: 'In forest sections, pay particular attention to the roadside (glowing eyes).' }
               ],
               examChecklist: [
-                { title: 'Seat and mirrors', content: 'Adjust everything correctly before starting the engine.' },
-                { title: 'Fasten seatbelt', content: 'Never forget to fasten your seatbelt before moving off.' }
+                { title: 'The first 5 minutes are decisive', content: 'A calm start, clean mirror work, and early observation give the examiner a confident impression straight away.' },
+                { title: 'Better defensive than hectic', content: 'If a situation is unclear, it is better to wait briefly than to roll in with uncertainty.' },
+                { title: 'Move on from mistakes', content: 'A small error does not automatically mean failure. Focus immediately on the next situation.' }
               ],
               vehicleCheck: [
-                { id: 'vehicle-check-gp1', title: 'Explain the engine bay calmly and systematically', content: 'In the exam, simply pointing is often not enough. Name the parts clearly: engine oil, coolant, washer fluid, battery, brake fluid - as far as visible and accessible in the vehicle.' },
-                { id: 'vehicle-check-gp2', title: 'Check engine oil with the dipstick', content: 'Park on level ground if possible, switch the engine off, wait briefly, pull out the dipstick, wipe it, reinsert it, pull it out again, and read the level between min and max.' }
+                { title: 'Explain the engine bay calmly and systematically', content: 'In the exam, simply pointing is often not enough. Name the parts clearly: engine oil, coolant, washer fluid, battery, brake fluid – as far as visible and accessible in the vehicle.' },
+                { title: 'Check engine oil with the dipstick', content: 'Park on level ground if possible, switch the engine off, wait briefly, pull out the dipstick, wipe it, reinsert it, pull it out again, and read the level between min and max.' },
+                { title: 'Tyres: tread, damage, air pressure', content: 'Check the tread depth, visible damage, foreign objects, and general condition. The legal minimum is 1.6 mm, but significantly more is recommended for safety.' },
+                { title: 'Check all lights completely', content: 'Know and be able to explain dipped beam, high beam, indicators, hazard lights, brake lights, tail lights, reversing lights, number-plate lighting, and – where fitted – the rear fog light.' },
+                { title: 'Understand dashboard warning lights', content: 'Green/blue usually means the function is active, yellow is a warning, red means act immediately – depending on the symbol, stop or do not continue driving.' },
+                { title: 'Explain brakes, steering, and visibility areas', content: 'Examiners often ask about more than just fluids. Tyre age, wiper blades, clear visibility, horn, handbrake, and the effect of the foot brake can all come up.' },
+                { title: 'Know the warning triangle, high-vis vest, and first-aid kit', content: 'A typical exam question: Where are the warning triangle, high-vis vest, and first-aid kit? You should be able to show or at least plausibly name their location in the vehicle.' }
               ],
               zipper: [
                 { title: 'Use the lane until the end', content: 'Do not panic and merge far too early. The ending lane is used until shortly before the obstacle.' },
