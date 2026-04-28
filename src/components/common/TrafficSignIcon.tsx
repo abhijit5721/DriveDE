@@ -4,6 +4,10 @@
  */
 
 import type { TrafficSign } from '../../types';
+import oilDipstickImg from '../../assets/vehicle-checks/oil-dipstick.webp';
+import tyreTreadImg from '../../assets/vehicle-checks/tyre-tread.webp';
+import dashboardWarningsImg from '../../assets/vehicle-checks/dashboard-warnings.webp';
+import carLightsImg from '../../assets/vehicle-checks/car-lights.webp';
 
 interface TrafficSignIconProps {
   sign: TrafficSign;
@@ -129,55 +133,14 @@ function GreenArrowSign() {
   );
 }
 
-function DipstickCheckIcon() {
+function VehicleCheckImage({ src, alt }: { src: string; alt: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="8" y="18" width="38" height="28" rx="10" fill="#334155" />
-      <rect x="14" y="24" width="18" height="4" rx="2" fill="#f59e0b" />
-      <rect x="14" y="31" width="12" height="4" rx="2" fill="#e5e7eb" />
-      <path d="M40 32h12" stroke="#f59e0b" strokeWidth="4" strokeLinecap="round" />
-      <path d="M52 32l4-4v8z" fill="#f59e0b" />
-      <circle cx="18" cy="38" r="3" fill="#ef4444" />
-      <circle cx="27" cy="38" r="3" fill="#22c55e" />
-    </svg>
-  );
-}
-
-function TyreTreadIcon() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <circle cx="32" cy="32" r="22" fill="#111827" />
-      <circle cx="32" cy="32" r="10" fill="#cbd5e1" />
-      <path d="M20 14v36M26 12v40M32 10v44M38 12v40M44 14v36" stroke="#e5e7eb" strokeWidth="2" strokeLinecap="round" opacity="0.85" />
-      <rect x="46" y="16" width="6" height="28" rx="3" fill="#0f5bd8" />
-      <rect x="48" y="22" width="2" height="16" rx="1" fill="#ffffff" />
-    </svg>
-  );
-}
-
-function DashboardWarningIcon() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="14" width="44" height="34" rx="10" fill="#1e293b" />
-      <circle cx="22" cy="31" r="6" fill="#ef4444" />
-      <circle cx="32" cy="31" r="6" fill="#f59e0b" />
-      <circle cx="42" cy="31" r="6" fill="#22c55e" />
-      <rect x="18" y="50" width="28" height="4" rx="2" fill="#94a3b8" />
-      <path d="M22 28v6M22 37h.01" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M29 31h6" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M42 28l2 2 4-4" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-    </svg>
-  );
-}
-
-function LightsCheckIcon() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="12" y="18" width="22" height="28" rx="10" fill="#2563eb" />
-      <path d="M20 26h7M20 32h9M20 38h7" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
-      <path d="M38 22l10-6M40 28l12-2M40 36l12 2M38 42l10 6" stroke="#facc15" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="24" cy="50" r="4" fill="#ef4444" />
-    </svg>
+    <img
+      src={src}
+      alt={alt}
+      className="h-full w-full rounded-lg object-cover"
+      loading="lazy"
+    />
   );
 }
 
@@ -219,13 +182,13 @@ function getSignGraphic(sign: TrafficSign) {
     case 'sign-green-arrow':
       return <GreenArrowSign />;
     case 'visual-dipstick':
-      return <DipstickCheckIcon />;
+      return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
     case 'visual-tyre':
-      return <TyreTreadIcon />;
+      return <VehicleCheckImage src={tyreTreadImg} alt="Tyre tread inspection" />;
     case 'visual-dashboard':
-      return <DashboardWarningIcon />;
+      return <VehicleCheckImage src={dashboardWarningsImg} alt="Dashboard warning lights" />;
     case 'visual-lights':
-      return <LightsCheckIcon />;
+      return <VehicleCheckImage src={carLightsImg} alt="Car lights check" />;
     default:
       if (sign.code === 'Zeichen 205') return <YieldSign />;
       if (sign.code === 'Zeichen 314') return <ParkingSign />;
