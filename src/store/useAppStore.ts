@@ -35,6 +35,12 @@ import {
 } from '../services/supabaseSync';
 
 /**
+ * Helper: returns true when running on localhost (for dev testing).
+ */
+const isLocalhost = () =>
+  typeof window !== 'undefined' && window.location.hostname === 'localhost';
+
+/**
  * Default initial state for a new user progress tracker.
  */
 const initialProgress: UserProgress = {
@@ -134,7 +140,7 @@ export const useAppStore = create<AppState>()(
       licenseType: null,
       learningPath: null,
       transmissionType: null,
-      isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
+      isPremium: isLocalhost(),
       authEmail: null,
       authDisplayName: null,
       authUserId: null,
@@ -214,6 +220,8 @@ export const useAppStore = create<AppState>()(
           authStatus: status,
           authDisplayName: displayName,
           authUserId: userId,
+          // On localhost, always premium (dev testing). In prod, premium only when signed in.
+          isPremium: isLocalhost() || status === 'signed_in',
         }),
 
       unlockAchievement: (id) =>
@@ -527,7 +535,7 @@ export const useAppStore = create<AppState>()(
           licenseType: null,
           learningPath: null,
           transmissionType: null,
-          isPremium: typeof window !== 'undefined' && window.location.hostname === 'localhost',
+          isPremium: isLocalhost(),
           activeTab: 'home',
           hasVisited: false,
           activeSession: null,
