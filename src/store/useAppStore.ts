@@ -215,14 +215,20 @@ export const useAppStore = create<AppState>()(
       setPremium: (isPremium: boolean) => set({ isPremium }),
 
       setAuthState: (email, status, displayName, userId) =>
-        set({
+        set((state) => ({
           authEmail: email,
           authStatus: status,
           authDisplayName: displayName,
           authUserId: userId,
-          // On localhost, always premium (dev testing). In prod, premium only when signed in.
-          isPremium: isLocalhost() || status === 'signed_in',
-        }),
+          // On localhost keep premium for dev testing.
+          // In production, revoke premium on sign-out; on sign-in the DB
+          // hydration in App.tsx sets isPremium from the profile's is_premium flag.
+          isPremium: isLocalhost()
+            ? true
+            : status === 'guest'
+              ? false
+              : state.isPremium,
+        })),
 
       unlockAchievement: (id) =>
         set((state) => {
