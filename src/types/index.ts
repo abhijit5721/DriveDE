@@ -244,6 +244,11 @@ export interface AppState {
   clearDrivingHistory: () => void;
   enableDemoMode: () => void;
   
+  // Achievement Animation State
+  recentAchievements: string[];
+  clearRecentAchievements: () => void;
+  popAchievement: () => void;
+  
   // Active Session Management
   startActiveSession: (type: DrivingSession['type'], isSimulation: boolean, targetDestination?: string, destinationCoords?: { lat: number; lng: number } | null) => void;
   pauseActiveSession: () => void;

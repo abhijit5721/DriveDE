@@ -5,7 +5,6 @@
 
 import { AppState } from '../types';
 import { achievements } from '../data/achievements';
-import toast from 'react-hot-toast';
 
 export function checkAndUnlockAchievements(state: AppState): string[] {
   const { userProgress } = state;
@@ -15,9 +14,6 @@ export function checkAndUnlockAchievements(state: AppState): string[] {
     if (!userProgress.unlockedAchievements.includes(achievement.id)) {
       if (achievement.criteria(userProgress)) {
         newlyUnlocked.push(achievement.id);
-        toast.success(`Achievement Unlocked: ${achievement.title}`, {
-          icon: achievement.icon,
-        });
       }
     }
   });

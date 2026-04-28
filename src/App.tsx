@@ -37,6 +37,7 @@ import { Account } from './components/auth/Account';
 import { AccountSkeleton } from './components/auth/AccountSkeleton';
 import { BudgetEstimator } from './components/finance/BudgetEstimator';
 import { Skeleton } from './components/common/Skeleton';
+import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
 import { PublicReport } from './components/maneuvers/PublicReport';
 
@@ -462,6 +463,8 @@ export default function App() {
       {showPaywall && !isPremium && (
         <Paywall onClose={() => setShowPaywall(false)} />
       )}
+
+      <AchievementOverlay />
     </div>
   );
 }

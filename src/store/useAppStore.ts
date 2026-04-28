@@ -149,10 +149,17 @@ export const useAppStore = create<AppState>()(
       activeSession: null,
       hasVisited: false,
       activeTab: 'home',
+      recentAchievements: [],
 
       setActiveTab: (tab) => set({ activeTab: tab }),
 
       setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
+
+      clearRecentAchievements: () => set({ recentAchievements: [] }),
+
+      popAchievement: () => set((state) => ({ 
+        recentAchievements: state.recentAchievements.slice(1) 
+      })),
 
       setLanguage: (lang: Language) =>
         set((state) => {
@@ -287,17 +294,22 @@ export const useAppStore = create<AppState>()(
 
           // Check for achievements
           const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          let recentAchievements = state.recentAchievements;
           if (newlyUnlocked.length > 0) {
             nextProgress.unlockedAchievements = [
               ...nextProgress.unlockedAchievements,
               ...newlyUnlocked,
             ];
+            recentAchievements = [...state.recentAchievements, ...newlyUnlocked];
           }
 
           void syncCompletedLesson(lessonId);
           void ensureProfileFromState(nextState as AppState);
 
-          return { userProgress: nextProgress };
+          return { 
+            userProgress: nextProgress,
+            recentAchievements
+          };
         }),
 
       addDrivingSession: (session) =>
@@ -328,17 +340,22 @@ export const useAppStore = create<AppState>()(
 
           // Check for achievements
           const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          let recentAchievements = state.recentAchievements;
           if (newlyUnlocked.length > 0) {
             nextProgress.unlockedAchievements = [
               ...nextProgress.unlockedAchievements,
               ...newlyUnlocked,
             ];
+            recentAchievements = [...state.recentAchievements, ...newlyUnlocked];
           }
 
           void syncDrivingSession(newSession, state.transmissionType);
           void ensureProfileFromState(nextState as AppState);
 
-          return { userProgress: nextProgress };
+          return { 
+            userProgress: nextProgress,
+            recentAchievements
+          };
         }),
 
       updateDrivingSession: (sessionId, updates) =>
@@ -437,17 +454,22 @@ export const useAppStore = create<AppState>()(
 
           // Check for achievements
           const newlyUnlocked = checkAndUnlockAchievements(nextState as AppState);
+          let recentAchievements = state.recentAchievements;
           if (newlyUnlocked.length > 0) {
             nextProgress.unlockedAchievements = [
               ...nextProgress.unlockedAchievements,
               ...newlyUnlocked,
             ];
+            recentAchievements = [...state.recentAchievements, ...newlyUnlocked];
           }
 
           void syncQuizAttempt(quizId, score);
           void ensureProfileFromState(nextState as AppState);
 
-          return { userProgress: nextProgress };
+          return { 
+            userProgress: nextProgress,
+            recentAchievements
+          };
         }),
 
       addMistake: (questionId) =>
