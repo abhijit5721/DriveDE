@@ -344,10 +344,14 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               const isExpanded = expandedChapter === chapter.id;
               const isCompleted = chapterProgress === 100;
               
-              // A chapter is unlocked if it's the first one or the previous one has at least one completed lesson
-              const isUnlocked = index === 0 || filteredChapters[index - 1].lessons.some(l =>
+              const previousChapter = index > 0 ? filteredChapters[index - 1] : null;
+              const hasCompletedInPrevious = previousChapter?.lessons.some(l =>
                 userProgress.completedLessons.includes(l.id)
               );
+              // If previous chapter is all premium and user is not premium, allow skipping to keep progression alive
+              const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
+              
+              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium);
 
               return (
                 <motion.div key={chapter.id} variants={itemVariants}>

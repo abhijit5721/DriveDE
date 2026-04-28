@@ -38,7 +38,6 @@ import { AccountSkeleton } from './components/auth/AccountSkeleton';
 import { BudgetEstimator } from './components/finance/BudgetEstimator';
 import { Skeleton } from './components/common/Skeleton';
 import type { TabType, Lesson, LegalPageType } from './types';
-import {LicenseSelector} from './components/auth/LicenseSelector';
 import { PublicReport } from './components/maneuvers/PublicReport';
 
 
@@ -57,6 +56,7 @@ export default function App() {
     setLicenseType,
     setLearningPath,
     setTransmissionType,
+    authStatus,
     setAuthState,
     hasVisited,
     setHasVisited,
@@ -328,27 +328,16 @@ export default function App() {
     return <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />;
   }
 
-  if (!hasVisited) {
-
-    return <Welcome />;
-  }
-
   const hasCompleteSelection =
     licenseType === 'manual' ||
     licenseType === 'automatic' ||
     licenseType === 'umschreibung-manual' ||
     licenseType === 'umschreibung-automatic';
 
-  if (isAuthLoading && !hasCompleteSelection) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <Skeleton className="h-32 w-64 rounded-2xl" />
-      </div>
-    );
-  }
-
-  if (!hasCompleteSelection) {
-    return <LicenseSelector />;
+  // Always show Welcome (Landing Page) if no selection is made.
+  // Also show it if the user hasn't visited yet, unless they are already signed in with a selection.
+  if (!hasCompleteSelection || (!hasVisited && authStatus !== 'signed_in')) {
+    return <Welcome />;
   }
 
   if (showExamSimulation) {
