@@ -195,22 +195,13 @@ export const useAppStore = create<AppState>()(
 
       setLearningPath: (path: LearningPathType) =>
         set((state) => {
-          const licenseType =
-            path === null
-              ? null
-              : path === 'umschreibung'
-                ? 'manual'
-                : state.licenseType || 'manual';
-          
           const nextState = {
             ...state,
             learningPath: path,
-            licenseType: licenseType as LicenseType,
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             learningPath: path,
-            licenseType: licenseType as LicenseType,
           };
         }),
 
