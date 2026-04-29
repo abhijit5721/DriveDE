@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Home, BookOpen, ParkingSquare, ClipboardList, UserRound, Star, Wallet } from 'lucide-react';
+import { Home, BookOpen, ParkingSquare, Trophy, ClipboardList, UserRound, Star, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -23,6 +23,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
     { id: 'home', label: t.common.nav.home, icon: <Home className="h-5 w-5" /> },
     { id: 'curriculum', label: t.common.nav.curriculum, icon: <BookOpen className="h-5 w-5" /> },
     { id: 'maneuvers', label: t.common.nav.maneuvers, icon: <ParkingSquare className="h-5 w-5" /> },
+    { id: 'achievements', label: t.common.nav.achievements, icon: <Trophy className="h-5 w-5" /> },
     { id: 'review', label: t.common.nav.review, icon: <Star className="h-5 w-5" /> },
     { id: 'tracker', label: t.common.nav.tracker, icon: <ClipboardList className="h-5 w-5" /> },
     { id: 'finance', label: t.common.nav.finance, icon: <Wallet className="h-5 w-5" /> },
@@ -65,7 +66,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 )}
               </div>
               <span className={cn(
-                'text-[9px] font-bold whitespace-nowrap overflow-hidden text-ellipsis w-full text-center transition-opacity duration-300',
+                'text-[8px] font-bold whitespace-nowrap overflow-hidden text-ellipsis w-full text-center transition-opacity duration-300',
                 activeTab === tab.id ? 'opacity-100' : 'opacity-70'
               )}>
                 {tab.label}
