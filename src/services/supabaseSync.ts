@@ -275,28 +275,57 @@ export async function hydrateFromSupabase() {
   const userId = await getCurrentUserId();
   if (!userId) return null;
 
-  const [profileResult, lessonsResult, sessionsResult, quizAttemptsResult, subscriptionResult] = await Promise.all([
-    supabase.from('profiles_secure').select('*').eq('id', userId).maybeSingle(),
+  const [lessonsResult, sessionsResult, quizAttemptsResult] = await Promise.all([
     supabase.from('lesson_progress').select('*').eq('user_id', userId),
     supabase.from('driving_sessions').select('*').eq('user_id', userId),
     supabase.from('quiz_attempts').select('*').eq('user_id', userId),
-    supabase.from('subscriptions').select('status, expires_at').eq('user_id', userId).eq('status', 'active').maybeSingle()
   ]);
 
-  const profile = profileResult.data;
+  console.log(`[DB-Sync] Hydrating for user: ${userId}`);
+  
+  // 1. Fetch Profile
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles_secure')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (profileError) {
+    console.warn('[DB-Sync] Profile not found or error:', profileError.message);
+  } else {
+    console.log('[DB-Sync] Profile found, is_premium:', profile.is_premium);
+  }
+
+  // 2. Fetch Subscription (fallback)
+  const { data: subscription, error: subError } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (subError) {
+    console.error('[DB-Sync] Subscription query error:', subError.message);
+  }
+  
+  const hasActiveSubscription = subscription && (!subscription.expires_at || new Date(subscription.expires_at) > new Date());
+  console.log('[DB-Sync] Subscription check:', { 
+    found: !!subscription, 
+    hasActive: !!hasActiveSubscription,
+    expires_at: subscription?.expires_at 
+  });
+
+  const isPremium = !!(profile?.is_premium || hasActiveSubscription);
+  console.log('[DB-Sync] FINAL isPremium status:', isPremium);
+
   const lessons = lessonsResult.data;
   const sessions = sessionsResult.data;
   const quizAttempts = quizAttemptsResult.data;
-  const subscription = subscriptionResult.data;
 
-  // Derive premium status: either from profile flag or active subscription row
-  const hasActiveSubscription = subscription && (!subscription.expires_at || new Date(subscription.expires_at) > new Date());
-  const isPremium = !!(profile?.is_premium || hasActiveSubscription);
-
-  console.log('[DB-Sync] Hydration status:', { 
-    hasProfile: !!profile, 
-    isPremium, 
-    hasActiveSubscription: !!hasActiveSubscription 
+  console.log('[DB-Sync] Hydration counts:', { 
+    lessons: lessons?.length || 0,
+    sessions: sessions?.length || 0,
+    quizAttempts: quizAttempts?.length || 0
   });
 
   // Map DB values back to frontend types

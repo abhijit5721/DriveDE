@@ -251,8 +251,19 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {t.secure}
                 </div>
                 <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  {t.trust}
+                  <button 
+                    onClick={async () => {
+                      setIsLoading(true);
+                      const { hydrateFromSupabase } = await import('../../services/supabaseSync');
+                      await hydrateFromSupabase();
+                      setIsLoading(false);
+                      toast.success(language === 'de' ? 'Status aktualisiert!' : 'Status updated!');
+                    }}
+                    className="hover:text-blue-400 transition-colors cursor-pointer flex items-center gap-2"
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                    {language === 'de' ? 'KAUF WIEDERHERSTELLEN' : 'RESTORE PURCHASE'}
+                  </button>
                 </div>
               </div>
               
