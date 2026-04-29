@@ -37,9 +37,9 @@ serve(async (req) => {
       console.log(`[Webhook] Success for User: ${userId}, Tier: ${tier}`);
 
       if (userId) {
-        // 1. Update Profile (using upsert to be safe)
+        // 1. Update Profile (using direct table to ensure updatability)
         const { error: profileError } = await supabase
-          .from('profiles')
+          .from('profiles_secure')
           .upsert({ 
             id: userId,
             is_premium: true 
