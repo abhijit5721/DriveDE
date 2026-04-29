@@ -7,6 +7,7 @@ import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, C
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
+import { cn } from '../../utils/cn';
 
 interface DesktopNavProps {
   activeTab: TabType;
@@ -43,8 +44,11 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           className="group flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none"
           aria-label="Go to Home"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-premium-blue text-white shadow-lg shadow-blue-500/20">
-            <Crown className="h-6 w-6" />
+          <div className={cn(
+            'flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-lg transition-all',
+            isPremium ? 'bg-premium-gold shadow-orange-500/20' : 'bg-premium-blue shadow-blue-500/20'
+          )}>
+            <Crown className={cn('h-6 w-6 transition-transform', isPremium && 'scale-110')} />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">

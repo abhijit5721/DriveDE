@@ -45,8 +45,8 @@ export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
           <div className={cn(
             'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-lg transition-all',
             isPremium 
-              ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/20' 
-              : 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/20'
+              ? 'bg-premium-gold shadow-orange-500/20' 
+              : 'bg-premium-blue shadow-blue-500/20'
           )}>
             {isPremium ? (
               <Crown className="h-6 w-6 text-white" />
