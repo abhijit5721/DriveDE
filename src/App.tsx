@@ -360,8 +360,9 @@ export default function App() {
   }
 
   // Signed-in user with no license type selected (e.g. after a progress reset).
-  // Show the license selector inline so they can pick a path without going to Welcome.
-  if (authStatus === 'signed_in' && !hasCompleteSelection) {
+  // Show the license selector inline so they can pick a path without going to Welcome,
+  // but allow them to access Account settings to manage their profile.
+  if (authStatus === 'signed_in' && !hasCompleteSelection && activeTab !== 'account') {
     return <LicenseSelector />;
   }
 

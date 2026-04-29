@@ -566,8 +566,7 @@ export const useAppStore = create<AppState>()(
           learningPath: null,
           transmissionType: null,
           isPremium: state.isPremium || isLocalhost(),
-          activeTab: 'home',
-          hasVisited: false,
+          // Preserve current tab and visited status so they stay in the app flow
           activeSession: null,
         }));
       },
