@@ -69,6 +69,7 @@ serve(async (req) => {
       cancel_url: `${req.headers.get('origin')}/`,
       locale: language === 'de' ? 'de' : 'en',
     });
+    console.log(`[Checkout] Session created for ${user_id} (${tier})`);
 
     return new Response(
       JSON.stringify({ url: session.url }),

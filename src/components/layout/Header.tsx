@@ -42,8 +42,17 @@ export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
           className="flex min-w-0 items-center gap-2 text-left focus:outline-none active:scale-95 transition-transform"
           aria-label="Go to Home"
         >
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-200 dark:shadow-blue-900/50">
-            <span className="text-lg font-bold text-white">🚗</span>
+          <div className={cn(
+            'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-lg transition-all',
+            isPremium 
+              ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-500/20' 
+              : 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/20'
+          )}>
+            {isPremium ? (
+              <Crown className="h-6 w-6 text-white" />
+            ) : (
+              <span className="text-lg font-bold text-white">🚗</span>
+            )}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -62,7 +71,7 @@ export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
                 </span>
               )}
               {isPremium && (
-                <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
                 </span>

@@ -31,27 +31,27 @@ serve(async (req) => {
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
-      const userId = session.client_reference_id;
+      const userId = session.client_reference_id || session.metadata?.user_id;
       const tier = session.metadata?.tier;
       
-      console.log(`[Webhook] Success for User: ${userId}, Tier: ${tier}`);
+      console.log(`[Webhook] Session Completed Event. User: ${userId}, Tier: ${tier}, SessionID: ${session.id}`);
 
       if (userId) {
+        console.log(`[Webhook] Attempting to update profile_secure for ${userId}...`);
+        
         // 1. Update Profile (using direct table to ensure updatability)
-        const { error: profileError } = await supabase
+        const { data: profileUpdate, error: profileError } = await supabase
           .from('profiles_secure')
-          .upsert({ 
-            id: userId,
-            is_premium: true 
-          });
+          .update({ is_premium: true })
+          .eq('id', userId)
+          .select();
 
         if (profileError) {
-          console.error(`[Webhook] Profile Update Error: ${profileError.message}`);
-          throw profileError;
+          console.error(`[Webhook] Profile Update Error for ${userId}:`, profileError.message);
+        } else {
+          console.log(`[Webhook] Profile updated successfully. Rows affected: ${profileUpdate?.length}`);
         }
         
-        console.log(`[Webhook] Profile updated successfully for ${userId}`);
-
         // 2. Log subscription details
         const started_at = new Date().toISOString();
         let expires_at = null;
@@ -66,6 +66,7 @@ serve(async (req) => {
           expires_at = d.toISOString();
         }
 
+        console.log(`[Webhook] Inserting subscription record for ${userId}...`);
         const { error: subError } = await supabase
           .from('subscriptions')
           .insert({
@@ -77,7 +78,13 @@ serve(async (req) => {
             expires_at
           });
 
-        if (subError) throw subError;
+        if (subError) {
+          console.error(`[Webhook] Subscription Insert Error for ${userId}:`, subError.message);
+        } else {
+          console.log(`[Webhook] Subscription record created successfully for ${userId}`);
+        }
+      } else {
+        console.warn('[Webhook] No client_reference_id or metadata.user_id found in session.');
       }
     }
 

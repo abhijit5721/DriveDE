@@ -288,10 +288,12 @@ export async function hydrateFromSupabase() {
     .from('profiles_secure')
     .select('*')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (profileError) {
-    console.warn('[DB-Sync] Profile not found or error:', profileError.message);
+    console.error('[DB-Sync] Profile query error:', profileError.message);
+  } else if (!profile) {
+    console.warn('[DB-Sync] No profile found for user. If this is a new user, the signup trigger should create one shortly.');
   } else {
     console.log('[DB-Sync] Profile found, is_premium:', profile.is_premium);
   }
