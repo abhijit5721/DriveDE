@@ -349,9 +349,8 @@ export default function App() {
     );
   }
 
-  // Show the Welcome landing page if the user hasn't visited yet,
-  // or if they're a guest who hasn't chosen a path.
-  if (!hasVisited || (authStatus !== 'signed_in' && !hasCompleteSelection)) {
+  // Show the Welcome landing page if the user hasn't visited yet.
+  if (!hasVisited) {
     return <Welcome />;
   }
 
@@ -359,12 +358,7 @@ export default function App() {
     return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
   }
 
-  // Signed-in user with no license type selected (e.g. after a progress reset).
-  // Show the license selector inline so they can pick a path without going to Welcome,
-  // but allow them to access Account settings to manage their profile.
-  if (authStatus === 'signed_in' && !hasCompleteSelection && activeTab !== 'account') {
-    return <LicenseSelector />;
-  }
+
 
   const isDetailPage = selectedLesson !== null || selectedLegalPage !== null || activeTab === 'review';
 
@@ -380,6 +374,11 @@ export default function App() {
           <Skeleton className="h-48 w-full" />
         </div>
       );
+    }
+
+    // Integrated Path Selector for signed-in users with no choice
+    if (authStatus === 'signed_in' && !hasCompleteSelection && activeTab !== 'account') {
+      return <LicenseSelector />;
     }
 
     if (selectedLesson) {

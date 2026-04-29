@@ -4,9 +4,10 @@
  */
 
 import React, { useMemo } from 'react';
-import { Car, Cog, Zap, CheckCircle, Info, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Car, Cog, Zap, CheckCircle, ArrowRight, BadgeCheck } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
+import { cn } from '../../utils/cn';
 
 export const LicenseSelector: React.FC = () => {
   const {
@@ -36,199 +37,184 @@ export const LicenseSelector: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4">
-      <div className="max-w-5xl w-full">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-              <Car className="w-10 h-10 text-blue-600" />
-            </div>
+    <div className="py-2">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+            <Car className="h-6 w-6" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{t.title}</h1>
-          <p className="text-blue-200 text-lg max-w-2xl mx-auto">{t.subtitle}</p>
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+              {t.pathTitle.split('.')[1]?.trim() || t.pathTitle}
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{t.subtitle}</p>
+          </div>
         </div>
 
-        <div className="grid gap-6">
-          <section className="rounded-3xl bg-white/10 backdrop-blur-sm p-5 md:p-6">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-white">{t.pathTitle}</h2>
-            </div>
+        {/* Progress indicator */}
+        <div className="flex items-center gap-2 mb-6">
+          <div className={cn(
+            'h-1.5 flex-1 rounded-full transition-colors duration-500',
+            learningPath ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-800'
+          )} />
+          <div className={cn(
+            'h-1.5 flex-1 rounded-full transition-colors duration-500',
+            transmissionType ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-800'
+          )} />
+        </div>
+      </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <button
-                onClick={() => {
-                  setLearningPath('standard');
-                  setTransmissionType(null);
-                }}
-                aria-label={t.standard.title}
-                aria-pressed={learningPath === 'standard'}
-                className={`relative rounded-2xl bg-white p-6 text-left transition-all duration-300 ${
-                  learningPath === 'standard' ? 'ring-4 ring-green-500 shadow-2xl' : 'shadow-lg hover:shadow-xl'
-                }`}
-              >
-                {learningPath === 'standard' && (
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Car className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{t.standard.title}</h3>
-                    <p className="text-sm text-gray-500">{t.standard.subtitle}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600">{t.standard.description}</p>
-                <div className="mt-4 space-y-2">
-                  {t.standard.features.map((feature: string) => (
-                    <div key={feature} className="flex items-start gap-2 text-sm text-gray-600">
-                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  setLearningPath('umschreibung');
-                  setTransmissionType(null);
-                }}
-                aria-label={t.conversion.title}
-                aria-pressed={learningPath === 'umschreibung'}
-                className={`relative rounded-2xl bg-white p-6 text-left transition-all duration-300 ${
-                  learningPath === 'umschreibung' ? 'ring-4 ring-green-500 shadow-2xl' : 'shadow-lg hover:shadow-xl'
-                }`}
-              >
-                {learningPath === 'umschreibung' && (
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <BadgeCheck className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{t.conversion.title}</h3>
-                    <p className="text-sm text-gray-500">{t.conversion.subtitle}</p>
-                  </div>
-                </div>
-                <p className="text-gray-600">{t.conversion.description}</p>
-                <div className="mt-4 space-y-2">
-                  {t.conversion.features.map((feature: string) => (
-                    <div key={feature} className="flex items-start gap-2 text-sm text-gray-600">
-                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-purple-600" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </button>
-            </div>
-          </section>
-
-          <section className="rounded-3xl bg-white p-5 md:p-6 shadow-xl">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-slate-900">{t.transmissionTitle}</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {learningPath === 'umschreibung' ? t.conversionNote : t.standardNote}
-              </p>
-              {!learningPath && (
-                <p className="mt-2 text-xs font-medium text-amber-600">
-                  {t.choosePathFirst}
-                </p>
+      <div className="grid gap-8">
+        {/* Step 1: Learning Path */}
+        <section>
+          <div className="grid gap-4 md:grid-cols-2">
+            <button
+              onClick={() => {
+                setLearningPath('standard');
+                setTransmissionType(null);
+              }}
+              className={cn(
+                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
+                learningPath === 'standard'
+                  ? 'border-blue-600 bg-blue-50/50 shadow-xl dark:bg-blue-900/10'
+                  : 'border-slate-200 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
               )}
-            </div>
-
-            <div className={`grid md:grid-cols-2 gap-4 ${!learningPath ? 'pointer-events-none opacity-50' : ''}`}>
-              <button
-                onClick={() => setTransmissionType('manual')}
-                aria-label={t.manual.title}
-                aria-pressed={transmissionType === 'manual'}
-                className={`relative rounded-2xl border-2 p-6 text-left transition-all duration-300 ${
-                  transmissionType === 'manual'
-                    ? 'border-orange-500 bg-orange-50 shadow-lg'
-                    : 'border-slate-200 hover:border-orange-300'
-                }`}
-              >
-                {transmissionType === 'manual' && (
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
-                    <Cog className="w-8 h-8 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{t.manual.title}</h3>
-                    <p className="text-sm text-gray-500">{t.manual.subtitle}</p>
-                  </div>
+            >
+              {learningPath === 'standard' && (
+                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg">
+                  <CheckCircle className="h-5 w-5" />
                 </div>
-                <p className="text-gray-600">{t.manual.description}</p>
-              </button>
+              )}
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 transition-colors group-hover:bg-blue-200 dark:bg-blue-900/30">
+                <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">{t.standard.title}</h3>
+              <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">{t.standard.description}</p>
+              
+              <div className="space-y-2">
+                {t.standard.features.map((feature: string) => (
+                  <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
+                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </button>
 
-              <button
-                onClick={() => setTransmissionType('automatic')}
-                aria-label={t.automatic.title}
-                aria-pressed={transmissionType === 'automatic'}
-                className={`relative rounded-2xl border-2 p-6 text-left transition-all duration-300 ${
-                  transmissionType === 'automatic'
-                    ? 'border-blue-500 bg-blue-50 shadow-lg'
-                    : 'border-slate-200 hover:border-blue-300'
-                }`}
-              >
-                {transmissionType === 'automatic' && (
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                )}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <Zap className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800">{t.automatic.title}</h3>
-                    <p className="text-sm text-gray-500">{t.automatic.subtitle}</p>
-                  </div>
+            <button
+              onClick={() => {
+                setLearningPath('umschreibung');
+                setTransmissionType(null);
+              }}
+              className={cn(
+                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
+                learningPath === 'umschreibung'
+                  ? 'border-purple-600 bg-purple-50/50 shadow-xl dark:bg-purple-900/10'
+                  : 'border-slate-200 bg-white hover:border-purple-300 dark:border-slate-800 dark:bg-slate-900'
+              )}
+            >
+              {learningPath === 'umschreibung' && (
+                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white shadow-lg">
+                  <CheckCircle className="h-5 w-5" />
                 </div>
-                <p className="text-gray-600">{t.automatic.description}</p>
-              </button>
-            </div>
-          </section>
-        </div>
+              )}
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 transition-colors group-hover:bg-purple-200 dark:bg-purple-900/30">
+                <BadgeCheck className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">{t.conversion.title}</h3>
+              <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">{t.conversion.description}</p>
+              
+              <div className="space-y-2">
+                {t.conversion.features.map((feature: string) => (
+                  <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
+                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-purple-500" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </button>
+          </div>
+        </section>
 
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 my-6">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-300 flex-shrink-0 mt-0.5" />
-            <p className="text-blue-100 text-sm">
+        {/* Step 2: Transmission */}
+        <section className={cn(
+          'transition-all duration-500',
+          !learningPath ? 'pointer-events-none opacity-40 grayscale' : 'opacity-100'
+        )}>
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              {t.transmissionTitle.split('.')[1]?.trim() || t.transmissionTitle}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {learningPath === 'umschreibung' ? t.conversionNote : t.standardNote}
             </p>
           </div>
-        </div>
 
-        <div className="flex flex-col items-center gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <button
+              onClick={() => setTransmissionType('manual')}
+              className={cn(
+                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
+                transmissionType === 'manual'
+                  ? 'border-orange-500 bg-orange-50/50 shadow-xl dark:bg-orange-900/10'
+                  : 'border-slate-200 bg-white hover:border-orange-300 dark:border-slate-800 dark:bg-slate-900'
+              )}
+            >
+              {transmissionType === 'manual' && (
+                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg">
+                  <CheckCircle className="h-5 w-5" />
+                </div>
+              )}
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 dark:bg-orange-900/30">
+                <Cog className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+              </div>
+              <h3 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t.manual.title}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t.manual.description}</p>
+            </button>
+
+            <button
+              onClick={() => setTransmissionType('automatic')}
+              className={cn(
+                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
+                transmissionType === 'automatic'
+                  ? 'border-blue-500 bg-blue-50/50 shadow-xl dark:bg-blue-900/10'
+                  : 'border-slate-200 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
+              )}
+            >
+              {transmissionType === 'automatic' && (
+                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg">
+                  <CheckCircle className="h-5 w-5" />
+                </div>
+              )}
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-900/30">
+                <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t.automatic.title}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t.automatic.description}</p>
+            </button>
+          </div>
+        </section>
+
+        <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <button
-            onClick={handleContinue}
-            disabled={!canContinue}
-            className={`inline-flex items-center gap-2 rounded-2xl px-6 py-4 font-bold transition-all ${
-              canContinue
-                ? 'bg-white text-blue-700 shadow-lg hover:scale-[1.02]'
-                : 'bg-white/20 text-white/60 cursor-not-allowed'
-            }`}
+            onClick={() => useAppStore.getState().setLanguage(language === 'de' ? 'en' : 'de')}
+            className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
           >
-            {t.continue}
-            <ArrowRight className="w-5 h-5" />
+            <span>{language === 'de' ? '🇬🇧 English' : '🇩🇪 Deutsch'}</span>
           </button>
 
           <button
-            onClick={() => useAppStore.getState().setLanguage(language === 'de' ? 'en' : 'de')}
-            className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+            onClick={handleContinue}
+            disabled={!canContinue}
+            className={cn(
+              'flex items-center gap-2 rounded-2xl px-8 py-4 text-lg font-black transition-all active:scale-95',
+              canContinue
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700'
+                : 'cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-800'
+            )}
           >
-            <span className="text-xl">{language === 'de' ? '🇬🇧' : '🇩🇪'}</span>
-            <span>{language === 'de' ? t.switchToEnglish : t.switchToGerman}</span>
+            {t.continue}
+            <ArrowRight className="h-5 w-5" />
           </button>
         </div>
       </div>

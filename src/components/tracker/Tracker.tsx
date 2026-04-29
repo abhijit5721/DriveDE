@@ -1155,6 +1155,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, t, isSimulationMode, logMistake]);
 
   const handleStartTimer = async () => {
+    // If not premium and not in simulation mode, show paywall
+    if (!isPremium && !isSimulationMode) {
+      if (onOpenPaywall) {
+        onOpenPaywall();
+      } else {
+        toast.error(t.common.proOnlyFeature || 'Pro only feature');
+      }
+      return;
+    }
+
     setShowSuggestions(false);
     setSuggestions([]);
     

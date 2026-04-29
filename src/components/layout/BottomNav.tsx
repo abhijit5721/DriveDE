@@ -36,8 +36,8 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
       aria-label={t.common.nav.mobileNav}
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/50 glass dark:border-slate-800/50"
     >
-      <div className="px-1 pt-1" style={{ paddingBottom: 'max(6px, env(safe-area-inset-bottom))' }}>
-        <div className="flex items-center justify-around" role="tablist">
+      <div className="px-0.5 pt-1" style={{ paddingBottom: 'max(6px, env(safe-area-inset-bottom))' }}>
+        <div className="flex items-center justify-between" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -46,34 +46,31 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               aria-label={tab.label}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex flex-1 min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 transition-all duration-300',
+                'flex flex-1 min-w-0 flex-col items-center gap-0.5 transition-all duration-300 py-1 px-0',
                 activeTab === tab.id
-                  ? 'text-blue-600 dark:text-blue-400 scale-105'
-                  : 'text-slate-500 dark:text-slate-500'
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-slate-400 dark:text-slate-500'
               )}
             >
               <div
                 className={cn(
-                  'relative flex items-center justify-center rounded-xl p-1.5 transition-all duration-300',
-                  activeTab === tab.id ? 'bg-blue-100/50 dark:bg-blue-900/30' : 'bg-transparent'
+                  'relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300',
+                  activeTab === tab.id ? 'bg-blue-100/50 dark:bg-blue-900/30 scale-110' : 'bg-transparent'
                 )}
               >
                 {tab.icon}
                 {tab.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                  <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white ring-2 ring-white dark:ring-slate-950">
                     {mistakesCount}
                   </span>
                 )}
               </div>
               <span className={cn(
-                'text-[8px] font-bold whitespace-nowrap overflow-hidden text-ellipsis w-full text-center transition-opacity duration-300',
-                activeTab === tab.id ? 'opacity-100' : 'opacity-70'
+                'text-[7px] font-black uppercase tracking-tighter whitespace-nowrap transition-all duration-300 px-0.5',
+                activeTab === tab.id ? 'opacity-100 h-auto translate-y-0' : 'opacity-0 h-0 translate-y-1'
               )}>
                 {tab.label}
               </span>
-              {activeTab === tab.id && (
-                <div className="h-1 w-1 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" />
-              )}
             </button>
           ))}
         </div>
