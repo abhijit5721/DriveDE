@@ -348,6 +348,17 @@ export default function App() {
     return <Welcome />;
   }
 
+  // Force path selection before showing the dashboard layout.
+  if (!hasCompleteSelection) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center">
+        <div className="w-full max-w-4xl">
+          <LicenseSelector />
+        </div>
+      </div>
+    );
+  }
+
   if (showExamSimulation) {
     return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
   }
@@ -368,11 +379,6 @@ export default function App() {
           <Skeleton className="h-48 w-full" />
         </div>
       );
-    }
-
-    // Integrated Path Selector for users with no choice
-    if (!hasCompleteSelection && activeTab !== 'account') {
-      return <LicenseSelector />;
     }
 
     if (selectedLesson) {

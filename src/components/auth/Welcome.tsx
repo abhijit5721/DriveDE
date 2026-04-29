@@ -260,8 +260,15 @@ export function Welcome() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
+                onClick={() => {
+                  const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
+                  useAppStore.setState({ 
+                    learningPath, 
+                    hasVisited: true
+                  });
+                }}
                 className={cn(
-                  'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden',
+                  'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden cursor-pointer',
                   'shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl'
                 )}
               >
@@ -291,7 +298,8 @@ export function Welcome() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
                         const license = learningPath === 'umschreibung' ? 'umschreibung-manual' : 'manual';
                         useAppStore.setState({ 
@@ -308,7 +316,8 @@ export function Welcome() {
                     </button>
 
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
                         const license = learningPath === 'umschreibung' ? 'umschreibung-automatic' : 'automatic';
                         useAppStore.setState({ 
