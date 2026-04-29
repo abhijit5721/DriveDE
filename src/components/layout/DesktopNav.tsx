@@ -46,7 +46,17 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-premium-blue text-white shadow-lg shadow-blue-500/20">
             <Crown className="h-6 w-6" />
           </div>
-          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
+              {isPremium && (
+                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow-lg shadow-orange-500/20">
+                  <Crown className="h-2.5 w-2.5" />
+                  PRO
+                </span>
+              )}
+            </div>
+          </div>
         </button>
       </div>
       

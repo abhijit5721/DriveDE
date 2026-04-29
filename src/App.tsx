@@ -119,7 +119,7 @@ export default function App() {
             return null;
           });
         if (remoteData) {
-          console.log('[App] State hydrated from Supabase');
+          console.log('[App] State hydrated from Supabase. isPremium:', remoteData.profile?.is_premium);
         }
         
         // Ensure profile exists in DB immediately upon login
@@ -138,18 +138,17 @@ export default function App() {
           }
         }
 
-        if (remoteData && useAppStore.getState().authStatus === 'signed_in') {
+        if (remoteData) {
             useAppStore.setState((state) => {
                 const combinedCompletedLessons = Array.from(new Set([
                     ...state.userProgress.completedLessons,
-                    ...remoteData.lessons.map(l => l.lesson_id)
+                    ...(remoteData.lessons?.map(l => l.lesson_id) || [])
                 ]));
                 
                 // Track existing sessions to avoid duplicates
                 const existingSessionIds = new Set(state.userProgress.drivingSessions.map(s => s.id));
 
-                // remoteData.sessions is already mapped to frontend format by hydrateFromSupabase
-                const remoteSessions = remoteData.sessions
+                const remoteSessions = (remoteData.sessions || [])
                     .filter(s => !existingSessionIds.has(s.id))
                     .map(s => ({
                         id: s.id,
@@ -177,8 +176,11 @@ export default function App() {
                     if (s.type === 'nacht') specialDrivingMinutes.nacht += duration;
                 });
 
+                // Robust premium check: true if remote is true, otherwise keep local if it was already true (though DB is truth)
+                const isPremium = remoteData.profile?.is_premium ?? state.isPremium;
+
                 return {
-                    isPremium: !!remoteData.profile?.is_premium,
+                    isPremium,
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,
                     transmissionType: remoteData.transmissionType || state.transmissionType,

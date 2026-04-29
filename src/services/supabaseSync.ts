@@ -275,12 +275,29 @@ export async function hydrateFromSupabase() {
   const userId = await getCurrentUserId();
   if (!userId) return null;
 
-  const [{ data: profile }, { data: lessons }, { data: sessions }, { data: quizAttempts }] = await Promise.all([
+  const [profileResult, lessonsResult, sessionsResult, quizAttemptsResult, subscriptionResult] = await Promise.all([
     supabase.from('profiles_secure').select('*').eq('id', userId).maybeSingle(),
     supabase.from('lesson_progress').select('*').eq('user_id', userId),
     supabase.from('driving_sessions').select('*').eq('user_id', userId),
     supabase.from('quiz_attempts').select('*').eq('user_id', userId),
+    supabase.from('subscriptions').select('status, expires_at').eq('user_id', userId).eq('status', 'active').maybeSingle()
   ]);
+
+  const profile = profileResult.data;
+  const lessons = lessonsResult.data;
+  const sessions = sessionsResult.data;
+  const quizAttempts = quizAttemptsResult.data;
+  const subscription = subscriptionResult.data;
+
+  // Derive premium status: either from profile flag or active subscription row
+  const hasActiveSubscription = subscription && (!subscription.expires_at || new Date(subscription.expires_at) > new Date());
+  const isPremium = !!(profile?.is_premium || hasActiveSubscription);
+
+  console.log('[DB-Sync] Hydration status:', { 
+    hasProfile: !!profile, 
+    isPremium, 
+    hasActiveSubscription: !!hasActiveSubscription 
+  });
 
   // Map DB values back to frontend types
   const dbLearningPath = profile?.learning_path; // 'standard' | 'conversion'
@@ -295,7 +312,7 @@ export async function hydrateFromSupabase() {
   }
 
   return {
-    profile,
+    profile: profile ? { ...profile, is_premium: isPremium } : (isPremium ? { is_premium: true } : null),
     licenseType,
     learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
     transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,

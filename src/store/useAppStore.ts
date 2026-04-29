@@ -229,9 +229,8 @@ export const useAppStore = create<AppState>()(
           authStatus: status,
           authDisplayName: displayName,
           authUserId: userId,
-          // On localhost keep premium for dev testing.
-          // In production, revoke premium on sign-out; on sign-in the DB
-          // hydration in App.tsx sets isPremium from the profile's is_premium flag.
+          // If we just signed in, we have definitely visited the app
+          hasVisited: status === 'signed_in' ? true : state.hasVisited,
           isPremium: isLocalhost()
             ? true
             : status === 'guest'
