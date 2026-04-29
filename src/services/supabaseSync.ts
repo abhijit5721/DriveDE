@@ -10,7 +10,7 @@
  * Most functions check for an active user session before attempting sync.
  */
 
-import type { AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
+import type { LicenseType, AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { get as getIDB, set as setIDB } from 'idb-keyval';
 
@@ -282,8 +282,23 @@ export async function hydrateFromSupabase() {
     supabase.from('quiz_attempts').select('*').eq('user_id', userId),
   ]);
 
+  // Map DB values back to frontend types
+  const dbLearningPath = profile?.learning_path; // 'standard' | 'conversion'
+  const dbTransmissionType = profile?.transmission_type; // 'manual' | 'automatic'
+
+  // Derive the licenseType from learning_path + transmission_type
+  let licenseType: LicenseType | null = null;
+  if (dbLearningPath === 'conversion') {
+    licenseType = dbTransmissionType === 'automatic' ? 'umschreibung-automatic' : 'umschreibung-manual';
+  } else if (dbLearningPath === 'standard') {
+    licenseType = dbTransmissionType === 'automatic' ? 'automatic' : 'manual';
+  }
+
   return {
     profile,
+    licenseType,
+    learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
+    transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,
     lessons: lessons ?? [],
     sessions: (sessions ?? []).map(s => ({
       id: s.external_id || s.id,

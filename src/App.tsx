@@ -179,6 +179,9 @@ export default function App() {
 
                 return {
                     isPremium: !!remoteData.profile?.is_premium,
+                    licenseType: remoteData.licenseType || state.licenseType,
+                    learningPath: remoteData.learningPath || state.learningPath,
+                    transmissionType: remoteData.transmissionType || state.transmissionType,
                     userProgress: {
                         ...state.userProgress,
                         completedLessons: combinedCompletedLessons,
@@ -196,18 +199,14 @@ export default function App() {
             });
         }
         } else {
-          // If we were previously signed in, and now we are not, clear the local state
-          // to prevent the next person (or guest) from seeing the previous user's data.
-          if (useAppStore.getState().authStatus === 'signed_in') {
-            logoutCleanup();
-          }
+          // If there is no session, just set auth state to guest.
+          // Do NOT call logoutCleanup() here, as this can fire spuriously during token refresh
+          // or initial Supabase load, which would incorrectly wipe out local state and send
+          // signed-in users back to the Welcome screen.
           setAuthState(null, 'guest', null, null);
         }
       } catch (error) {
         console.error('[App] Auth subscription error:', error);
-        if (useAppStore.getState().authStatus === 'signed_in') {
-          logoutCleanup();
-        }
         setAuthState(null, 'guest', null, null);
       } finally {
         setIsAuthLoading(false);
