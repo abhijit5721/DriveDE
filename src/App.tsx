@@ -41,6 +41,7 @@ import { Skeleton } from './components/common/Skeleton';
 import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
 import { PublicReport } from './components/maneuvers/PublicReport';
+import { PathSelectorModal } from './components/auth/PathSelectorModal';
 
 
 export default function App() {
@@ -49,15 +50,13 @@ export default function App() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showExamSimulation, setShowExamSimulation] = useState(false);
+  const [showPathSelector, setShowPathSelector] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
     darkMode,
     licenseType,
     isPremium,
-    setLicenseType,
-    setLearningPath,
-    setTransmissionType,
     authStatus,
     setAuthState,
     hasVisited,
@@ -309,12 +308,7 @@ export default function App() {
   };
 
   const handleChangePath = () => {
-    setSelectedLesson(null);
-    setActiveTab('home');
-    setLearningPath(null);
-    setTransmissionType(null);
-    setLicenseType(null);
-    setHasVisited(false);
+    setShowPathSelector(true);
   };
 
   const handleOpenAuth = () => {
@@ -376,8 +370,8 @@ export default function App() {
       );
     }
 
-    // Integrated Path Selector for signed-in users with no choice
-    if (authStatus === 'signed_in' && !hasCompleteSelection && activeTab !== 'account') {
+    // Integrated Path Selector for users with no choice
+    if (!hasCompleteSelection && activeTab !== 'account') {
       return <LicenseSelector />;
     }
 
@@ -466,7 +460,14 @@ export default function App() {
       <div className="flex h-full">
         <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} onSignOut={handleSignOut} />
         <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
-          {!isDetailPage && <Header onOpenAuth={handleOpenAuth} onSignOut={handleSignOut} onTabChange={handleNavigate} />}
+          {!isDetailPage && (
+            <Header 
+              onOpenAuth={handleOpenAuth} 
+              onSignOut={handleSignOut} 
+              onTabChange={handleNavigate} 
+              onChangePath={handleChangePath}
+            />
+          )}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
             <div className="mx-auto max-w-4xl">
               {renderContent()}
@@ -479,6 +480,7 @@ export default function App() {
       </div>
 
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+      {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
 
       {showPaywall && !isPremium && (
         <Paywall onClose={() => setShowPaywall(false)} />

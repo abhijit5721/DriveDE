@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, LogIn, LogOut } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, LogIn, LogOut, RefreshCcw } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
@@ -13,9 +13,10 @@ interface HeaderProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
   onTabChange?: (tab: any) => void;
+  onChangePath?: () => void;
 }
 
-export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
+export function Header({ onOpenAuth, onSignOut, onTabChange, onChangePath }: HeaderProps) {
   const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language].common;
 
@@ -58,23 +59,41 @@ export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
             <div className="flex items-center gap-2">
               <h1 className="truncate text-lg font-bold text-slate-900 dark:text-white">DriveDE</h1>
               {pathLabel && (
-                <span className="hidden flex-shrink-0 items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300 sm:inline-flex">
-                  {learningPath === 'umschreibung' ? <BadgeCheck className="h-3 w-3" /> : <Cog className="h-3 w-3" />}
+                <button
+                  onClick={onChangePath}
+                  className="hidden flex-shrink-0 items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors sm:inline-flex"
+                >
+                  {learningPath === 'umschreibung' ? <BadgeCheck className="h-3 w-3 text-purple-500" /> : <Cog className="h-3 w-3 text-blue-500" />}
                   {pathLabel}
-                </span>
+                </button>
               )}
               {transmissionLabel && (
-                <span className="hidden flex-shrink-0 items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300 md:inline-flex">
-                  {transmissionType === 'manual' && <Cog className="h-3 w-3" />}
-                  {transmissionType === 'automatic' && <Zap className="h-3 w-3" />}
+                <button
+                  onClick={onChangePath}
+                  className="hidden flex-shrink-0 items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors md:inline-flex"
+                >
+                  {transmissionType === 'manual' && <Cog className="h-3 w-3 text-orange-500" />}
+                  {transmissionType === 'automatic' && <Zap className="h-3 w-3 text-blue-500" />}
                   {transmissionLabel}
-                </span>
+                </button>
               )}
               {isPremium && (
                 <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
                 </span>
+              )}
+              {onChangePath && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onChangePath();
+                  }}
+                  className="flex h-5 w-5 items-center justify-center rounded-md bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 transition-colors"
+                  aria-label="Change Learning Path"
+                >
+                  <RefreshCcw className="h-3 w-3" />
+                </button>
               )}
             </div>
             <p className="truncate text-[10px] text-slate-500 dark:text-slate-400">

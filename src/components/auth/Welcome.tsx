@@ -6,8 +6,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   Car, BadgeCheck, Zap, Users, Shield, 
-  Star, Menu, X, ArrowRight, Play, CheckCircle2 
+  Star, Menu, X, ArrowRight, Play, CheckCircle2, Cog 
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
@@ -234,28 +235,97 @@ export function Welcome() {
             <p className="mt-4 text-slate-400">{t.common.startPersonalized}</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {[
-              { id: 'standard', title: t.licenseSelector.standard.title, desc: t.licenseSelector.standard.description, features: t.licenseSelector.standard.features, icon: Car, color: 'blue' },
-              { id: 'conversion', title: t.licenseSelector.conversion.title, desc: t.licenseSelector.conversion.description, features: t.licenseSelector.conversion.features, icon: BadgeCheck, color: 'purple' },
-            ].map((path) => (
-              <div key={path.id} className="group relative flex flex-col items-start rounded-3xl border border-slate-700/50 bg-slate-800/40 p-8 text-left transition-all hover:border-blue-500/50">
-                <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl mb-6', path.color === 'blue' ? 'bg-blue-500/10 text-blue-500' : 'bg-purple-500/10 text-purple-500')}>
-                  <path.icon className="h-8 w-8" />
+              { 
+                id: 'standard', 
+                title: t.licenseSelector.standard.title, 
+                desc: t.licenseSelector.standard.description, 
+                features: t.licenseSelector.standard.features, 
+                icon: Car, 
+                color: 'blue' 
+              },
+              { 
+                id: 'conversion', 
+                title: t.licenseSelector.conversion.title, 
+                desc: t.licenseSelector.conversion.description, 
+                features: t.licenseSelector.conversion.features, 
+                icon: BadgeCheck, 
+                color: 'purple' 
+              },
+            ].map((path, idx) => (
+              <motion.div 
+                key={path.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className={cn(
+                  'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden',
+                  'shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl'
+                )}
+              >
+                {/* Decorative Gradient Background */}
+                <div className={cn('absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl opacity-20 transition-all group-hover:opacity-30', 
+                  path.color === 'blue' ? 'bg-blue-500' : 'bg-purple-500'
+                )} />
+
+                <div className={cn('flex h-16 w-16 items-center justify-center rounded-2xl mb-8 shadow-2xl relative z-10', 
+                  path.color === 'blue' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                )}>
+                  <path.icon className="h-9 w-9" />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-3">{path.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-6">{path.desc}</p>
-                  <div className="space-y-3">
-                    {path.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                        <span>{feature}</span>
+
+                <div className="flex-1 w-full relative z-10">
+                  <h3 className="text-3xl font-black text-white mb-4 tracking-tight">{path.title}</h3>
+                  <p className="text-base text-slate-400 leading-relaxed mb-8">{path.desc}</p>
+                  
+                  <div className="space-y-4 mb-10">
+                    {path.features.slice(0, 3).map((feature: string, fIdx: number) => (
+                      <div key={fIdx} className="flex items-center gap-3 text-sm text-slate-300">
+                        <CheckCircle2 className={cn('h-4 w-4', path.color === 'blue' ? 'text-blue-400' : 'text-purple-400')} />
+                        {feature}
                       </div>
                     ))}
                   </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => {
+                        const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
+                        const license = learningPath === 'umschreibung' ? 'umschreibung-manual' : 'manual';
+                        useAppStore.setState({ 
+                          learningPath, 
+                          transmissionType: 'manual',
+                          licenseType: license as any,
+                          hasVisited: true
+                        });
+                      }}
+                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
+                    >
+                      <Cog className="h-6 w-6 text-orange-400 transition-transform group-hover/btn:rotate-12" />
+                      <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.manual}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
+                        const license = learningPath === 'umschreibung' ? 'umschreibung-automatic' : 'automatic';
+                        useAppStore.setState({ 
+                          learningPath, 
+                          transmissionType: 'automatic',
+                          licenseType: license as any,
+                          hasVisited: true
+                        });
+                      }}
+                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
+                    >
+                      <Zap className="h-6 w-6 text-blue-400 transition-transform group-hover/btn:rotate-12" />
+                      <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.automatic}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
