@@ -349,10 +349,9 @@ export default function App() {
     );
   }
 
-  // Signed-in users ALWAYS bypass the Welcome landing page.
-  // If they have no license selection yet, they'll see the LicenseSelector inline.
-  // Guests only see the dashboard after they've visited and chosen a path.
-  if (authStatus !== 'signed_in' && (!hasCompleteSelection || !hasVisited)) {
+  // Show the Welcome landing page if the user hasn't visited yet,
+  // or if they're a guest who hasn't chosen a path.
+  if (!hasVisited || (authStatus !== 'signed_in' && !hasCompleteSelection)) {
     return <Welcome />;
   }
 

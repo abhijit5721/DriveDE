@@ -39,6 +39,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
     resetProgress,
     enableDemoMode,
     isPremium,
+    setHasVisited,
   } = useAppStore();
   
   const [authMessage, setAuthMessage] = useState<string | null>(null);
@@ -296,7 +297,10 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
           </button>
 
           <button
-            onClick={() => useAppStore.getState().setHasVisited(false)}
+            onClick={() => {
+              console.log('[Account] Navigating to Landing Page...');
+              setHasVisited(false);
+            }}
             className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50"
           >
             <div className="flex items-center gap-3">
