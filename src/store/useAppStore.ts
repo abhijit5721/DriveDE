@@ -714,25 +714,13 @@ export const useAppStore = create<AppState>()(
       name: 'drivede-storage',
       storage: createJSONStorage(() => idbStorage),
       partialize: (state) => {
-        const isGuest = state.authStatus === 'guest';
-        
-        // Base settings that are useful to persist for everyone
-        const baseSettings = {
+        // Everyone (including guests) gets full persistence across sessions locally
+        return {
           language: state.language,
           darkMode: state.darkMode,
           authStatus: state.authStatus,
           hasVisited: state.hasVisited,
           activeTab: state.activeTab,
-        };
-
-        if (isGuest) {
-          // Guests get a fresh start on every reload (volatile progress)
-          return baseSettings;
-        }
-
-        // Signed-in users get full persistence across sessions
-        return {
-          ...baseSettings,
           licenseType: state.licenseType,
           learningPath: state.learningPath,
           transmissionType: state.transmissionType,
