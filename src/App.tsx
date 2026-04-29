@@ -34,6 +34,7 @@ import { LegalHub } from './components/legal/LegalHub';
 import { LegalPage } from './components/legal/LegalPage';
 import { AuthModal } from './components/auth/AuthModal';
 import { Account } from './components/auth/Account';
+import { LicenseSelector } from './components/auth/LicenseSelector';
 import { AccountSkeleton } from './components/auth/AccountSkeleton';
 import { BudgetEstimator } from './components/finance/BudgetEstimator';
 import { Skeleton } from './components/common/Skeleton';
@@ -335,14 +336,33 @@ export default function App() {
     licenseType === 'umschreibung-manual' ||
     licenseType === 'umschreibung-automatic';
 
-  // Always show Welcome (Landing Page) if no selection is made.
-  // Also show it if the user hasn't visited yet, unless they are already signed in with a selection.
-  if (!hasCompleteSelection || (!hasVisited && authStatus !== 'signed_in')) {
+  // While auth is resolving, don't flash Welcome to signed-in users.
+  if (isAuthLoading && authStatus !== 'guest') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
+          <p className="text-sm text-slate-400">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Signed-in users ALWAYS bypass the Welcome landing page.
+  // If they have no license selection yet, they'll see the LicenseSelector inline.
+  // Guests only see the dashboard after they've visited and chosen a path.
+  if (authStatus !== 'signed_in' && (!hasCompleteSelection || !hasVisited)) {
     return <Welcome />;
   }
 
   if (showExamSimulation) {
     return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
+  }
+
+  // Signed-in user with no license type selected (e.g. after a progress reset).
+  // Show the license selector inline so they can pick a path without going to Welcome.
+  if (authStatus === 'signed_in' && !hasCompleteSelection) {
+    return <LicenseSelector />;
   }
 
   const isDetailPage = selectedLesson !== null || selectedLegalPage !== null || activeTab === 'review';

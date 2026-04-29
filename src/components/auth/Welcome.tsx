@@ -23,12 +23,10 @@ export function Welcome() {
   
   const t = TRANSLATIONS[language];
 
-  // Strict check for returning user status: 
-  // Either signed in OR has actual progress (lessons or sessions)
-  const isReturningUser = (licenseType !== null) && (
-    (authStatus === 'signed_in') || 
-    (userProgress.completedLessons.length > 0 || userProgress.drivingSessions.length > 0)
-  );
+  // A signed-in user always sees "Back to Dashboard" (they'll hit LicenseSelector if no path chosen).
+  // A guest sees it only if they have previously chosen a path AND have some progress.
+  const isReturningUser = (authStatus === 'signed_in') ||
+    (licenseType !== null && (userProgress.completedLessons.length > 0 || userProgress.drivingSessions.length > 0));
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

@@ -182,11 +182,13 @@ export const useAppStore = create<AppState>()(
           const nextState = {
             ...state,
             licenseType: type,
+            hasVisited: true,
             ...derived,
           };
           void ensureProfileFromState(nextState as AppState);
           return {
             licenseType: type,
+            hasVisited: true,
             ...derived,
           };
         }),
