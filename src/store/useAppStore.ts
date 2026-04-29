@@ -559,16 +559,16 @@ export const useAppStore = create<AppState>()(
         // This is a DESTRUCTIVE reset (clears local AND cloud)
         // Usually triggered by the user via settings.
         resetAllDataFromCloud();
-        set({
+        set((state) => ({
           userProgress: initialProgress,
           licenseType: null,
           learningPath: null,
           transmissionType: null,
-          isPremium: isLocalhost(),
+          isPremium: state.isPremium || isLocalhost(),
           activeTab: 'home',
           hasVisited: false,
           activeSession: null,
-        });
+        }));
       },
 
       logoutCleanup: () => {

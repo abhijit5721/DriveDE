@@ -397,7 +397,6 @@ export async function resetAllDataFromCloud() {
   await Promise.allSettled([
     supabase.from('lesson_progress').delete().eq('user_id', userId),
     supabase.from('driving_sessions').delete().eq('user_id', userId),
-    supabase.from('quiz_attempts').delete().eq('user_id', userId),
-    supabase.from('profiles_secure').delete().eq('id', userId)
+    supabase.from('quiz_attempts').delete().eq('user_id', userId)
   ]);
 }
