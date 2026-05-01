@@ -385,7 +385,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     notes: '',
     instructorName: '',
     totalDistance: undefined,
-    locationSummary: ''
+    locationSummary: '',
+    isSimulation: false
   });
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -512,6 +513,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       instructorName: '',
       totalDistance: undefined,
       locationSummary: '',
+      isSimulation: false,
     });
   }, []);
 
@@ -1379,7 +1381,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       route: cumulativeRouteRef.current,
       locationSummary: locationSummary || undefined,
       mistakes: cumulativeMistakesRef.current,
-      isSimulation: isSimulationMode
+      isSimulation: activeSession?.isSimulation ?? isSimulationMode
     }));
     setShowAddForm(true);
     setShowManualLog(false);
@@ -1544,10 +1546,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 {t.tracker.simulationMode}
                </span>
                <button 
-                 onClick={() => setIsSimulationMode(!isSimulationMode)}
+                 onClick={() => !isTimerRunning && setIsSimulationMode(!isSimulationMode)}
+                 disabled={isTimerRunning}
                  className={cn(
                    'relative h-4 w-8 rounded-full transition-colors',
-                   isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700'
+                   isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700',
+                   isTimerRunning && 'opacity-50 cursor-not-allowed'
                  )}
                >
                  <div className={cn(
@@ -1979,7 +1983,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           <span className="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
                              {session.duration} min
                           </span>
-                          {session.route && session.route.length > 30 && (
+                          {session.isSimulation && (
                             <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
                               {t.tracker.simulated}
                             </span>
