@@ -1995,7 +1995,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             {formatDate(session.date, true)}
                           </div>
                           {session.instructorName && (
-                            <span className="flex items-center gap-0.5 truncate uppercase tracking-tighter opacity-80">
+                            <span className="flex items-center gap-0.5 whitespace-normal uppercase tracking-tighter opacity-80">
                               <div className="h-0.5 w-0.5 rounded-full bg-slate-300" />
                               {session.instructorName}
                             </span>
@@ -2169,7 +2169,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                           {mistake.type === 'school_zone_speeding' && <GraduationCap className="h-3.5 w-3.5 text-amber-600" />}
                                         </div>
                                         <div className="flex flex-col min-w-0">
-                                          <span className="truncate text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 leading-tight">
                                             {getMistakeLabel(mistake.type)}
                                           </span>
                                           {mistake.count && mistake.count > 1 && (

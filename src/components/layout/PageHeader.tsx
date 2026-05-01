@@ -19,7 +19,7 @@ export function PageHeader({ title, onBack }: PageHeaderProps) {
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
-      <h1 className="flex-1 truncate text-lg font-bold text-slate-900 dark:text-white">
+      <h1 className="flex-1 line-clamp-2 text-lg font-bold text-slate-900 dark:text-white leading-tight">
         {title}
       </h1>
     </header>

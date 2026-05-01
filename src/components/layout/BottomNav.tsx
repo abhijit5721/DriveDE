@@ -66,7 +66,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 )}
               </div>
               <span className={cn(
-                'text-[7px] font-black uppercase tracking-tighter whitespace-nowrap transition-all duration-300 px-0.5',
+                'text-[7px] font-black uppercase tracking-tighter transition-all duration-300 px-0.5 text-center leading-[1.1]',
                 activeTab === tab.id ? 'opacity-100 h-auto translate-y-0' : 'opacity-0 h-0 translate-y-1'
               )}>
                 {tab.label}

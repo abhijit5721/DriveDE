@@ -334,7 +334,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-lg font-black tracking-tight text-slate-900 dark:text-white truncate">
+                  <p className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                     {card.title}
                   </p>
                   <span className={cn(
@@ -461,7 +461,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   <Icon className="h-7 w-7" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-base font-black tracking-tight text-slate-900 dark:text-white truncate mb-2">
+                  <h4 className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white mb-1.5 leading-tight">
                     {chapterTitle}
                   </h4>
                   <div className="flex items-center gap-4">
