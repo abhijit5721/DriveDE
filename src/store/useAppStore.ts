@@ -609,7 +609,12 @@ export const useAppStore = create<AppState>()(
               type: 'ueberland' as const,
               notes: 'Demo: Perfect countryside drive.',
               instructorName: 'Demo Instructor',
-              route: [],
+              route: [
+                { lat: 52.5200, lng: 13.4050, timestamp: Date.now() - 3600000 },
+                { lat: 52.5210, lng: 13.4060, timestamp: Date.now() - 3300000 },
+                { lat: 52.5220, lng: 13.4070, timestamp: Date.now() - 3000000 },
+                { lat: 52.5230, lng: 13.4080, timestamp: Date.now() - 2700000 }
+              ],
               mistakes: [],
               totalDistance: 15.5,
             },
@@ -620,7 +625,10 @@ export const useAppStore = create<AppState>()(
               type: 'nacht' as const,
               notes: 'Demo: Night driving practice.',
               instructorName: 'Demo Instructor',
-              route: [],
+              route: [
+                { lat: 52.4200, lng: 13.3050, timestamp: Date.now() - 90000000 },
+                { lat: 52.4210, lng: 13.3060, timestamp: Date.now() - 89700000 }
+              ],
               mistakes: [],
               totalDistance: 8.2,
             },

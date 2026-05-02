@@ -401,14 +401,13 @@ export async function syncAllData(state: AppState) {
     syncTasks.push(Promise.resolve(supabase.from('lesson_progress').upsert(lessonData, { onConflict: 'user_id,lesson_id' })));
   }
 
-  // 3. Batch Sync Driving Sessions (Already optimized by external_id)
   if (state.userProgress.drivingSessions.length > 0) {
     const sessionData = state.userProgress.drivingSessions.map(s => ({
-      id: s.id,
+      external_id: s.id, 
       user_id: userId,
-      date: s.date,
-      duration: s.duration,
-      type: mapTrackerCategoryToDb(s.type),
+      session_date: s.date,
+      duration_minutes: s.duration,
+      category: mapTrackerCategoryToDb(s.type),
       notes: s.notes,
       instructor_name: s.instructorName,
       route: s.route,
@@ -417,7 +416,7 @@ export async function syncAllData(state: AppState) {
       location_summary: s.locationSummary,
       transmission_type: mapTransmissionToDb(state.transmissionType)
     }));
-    syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData)));
+    syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' })));
   }
 
   await Promise.allSettled(syncTasks);

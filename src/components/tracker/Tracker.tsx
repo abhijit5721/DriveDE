@@ -1256,8 +1256,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
         const point = mockPoints[currentStep];
         const newTrackPoint = { lat: point.lat, lng: point.lng, timestamp: Date.now() };
-        setGpsPoints(prev => [...prev, newTrackPoint]);
-        cumulativeRouteRef.current = [...cumulativeRouteRef.current, newTrackPoint];
+        
+        // Use logRoutePoint to ensure it's persisted in activeSession
+        logRoutePoint(newTrackPoint);
+        
         setCurrentSpeed(point.speed);
         setCurrentLimit(point.limit);
 
@@ -2096,7 +2098,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
                           {session.route && Array.isArray(session.route) && session.route.length > 0 && (
                             <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 shadow-inner bg-slate-50 dark:bg-slate-900/50">
-                              {isPremium ? (
+                              {(isPremium || session.isSimulation) ? (
                                 <RouteMap route={session.route} mistakes={Array.isArray(session.mistakes) ? session.mistakes : []} language={language} />
                               ) : (
                                 <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
