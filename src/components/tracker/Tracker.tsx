@@ -1504,7 +1504,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4"
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm p-4"
           >
             <div className="mb-4 flex items-center justify-between w-full">
               <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">
@@ -1573,7 +1573,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         </div>
 
         {isTimerRunning && gpsPoints.length > 0 && (
-          <div className="mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
+          <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
             <MapContainer 
               center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
               zoom={17} 
