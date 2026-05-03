@@ -249,10 +249,9 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
             rotate: state.rotation
           }}
           transition={{ 
-            type: 'spring',
-            damping: 20,
-            stiffness: 100,
-            mass: 0.5
+            type: 'tween',
+            ease: 'linear',
+            duration: 0.05
           }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
@@ -331,7 +330,7 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {/* User Car with smooth movement */}
         <motion.g
           animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+          transition={{ type: 'tween', ease: 'linear', duration: 0.05 }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
@@ -399,7 +398,7 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         
         <motion.g
           animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+          transition={{ type: 'tween', ease: 'linear', duration: 0.05 }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} reverseLights={state.reverse} isUser={true} scale={0.8} />
           <AnimatePresence>
@@ -458,7 +457,7 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
 
         <motion.g
           animate={{ x: state.x, y: state.y }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+          transition={{ type: 'tween', ease: 'linear', duration: 0.05 }}
         >
           <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
@@ -566,7 +565,7 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
 
         <motion.g
           animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+          transition={{ type: 'tween', ease: 'linear', duration: 0.05 }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
           <AnimatePresence>
@@ -646,7 +645,7 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         {/* User Car with smooth movement */}
         <motion.g
           animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+          transition={{ type: 'tween', ease: 'linear', duration: 0.05 }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
