@@ -133,6 +133,58 @@ function GreenArrowSign() {
   );
 }
 
+function StopSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <polygon points="32,8 48.9,15.1 56,32 48.9,48.9 32,56 15.1,48.9 8,32 15.1,15.1" fill="#d92d20" />
+      <polygon points="32,10 47.9,16.1 54,32 47.9,47.9 32,54 16.1,47.9 10,32 16.1,16.1" fill="none" stroke="#ffffff" strokeWidth="2" />
+      <text
+        x="32"
+        y="41"
+        textAnchor="middle"
+        fontSize="18"
+        fontWeight="800"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fill="#ffffff"
+      >
+        STOP
+      </text>
+    </svg>
+  );
+}
+
+function OneWaySign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="10" y="10" width="44" height="44" rx="4" fill="#0f5bd8" />
+      <path d="M20 32h24" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" />
+      <path d="M38 22l10 10-10 10" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
+function NoEntrySign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <circle cx="32" cy="32" r="24" fill="#d92d20" />
+      <rect x="16" y="28" width="32" height="8" fill="#ffffff" />
+    </svg>
+  );
+}
+
+function CyclistsAllowedSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="10" y="15" width="44" height="34" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
+      <g transform="translate(14, 20) scale(0.6)">
+        <path d="M12 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M52 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" fill="none" stroke="#111827" strokeWidth="4"/>
+        <path d="M12 22l10-12h20l10 12 M32 10v6 M24 16h16" fill="none" stroke="#111827" strokeWidth="3" strokeLinecap="round"/>
+      </g>
+      <text x="32" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#111827">frei</text>
+    </svg>
+  );
+}
+
 function VehicleCheckImage({ src, alt }: { src: string; alt: string }) {
   return (
     <img
@@ -181,6 +233,14 @@ function getSignGraphic(sign: TrafficSign) {
       return <BendingPrioritySign />;
     case 'sign-green-arrow':
       return <GreenArrowSign />;
+    case 'sign-stop':
+      return <StopSign />;
+    case 'sign-one-way':
+      return <OneWaySign />;
+    case 'sign-no-entry':
+      return <NoEntrySign />;
+    case 'sign-cyclists-allowed':
+      return <CyclistsAllowedSign />;
     case 'visual-dipstick':
       return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
     case 'visual-tyre':
@@ -197,6 +257,10 @@ function getSignGraphic(sign: TrafficSign) {
       if (sign.code === 'Zeichen 215') return <RoundaboutSign />;
       if (sign.code === 'Zeichen 350') return <PedestrianCrossingSign />;
       if (sign.code === 'Zeichen 306') return <PriorityRoadSign />;
+      if (sign.code === 'Zeichen 206') return <StopSign />;
+      if (sign.code === 'Zeichen 220') return <OneWaySign />;
+      if (sign.code === 'Zeichen 267') return <NoEntrySign />;
+      if (sign.code === 'Zusatzzeichen 1022-10') return <CyclistsAllowedSign />;
       return <FallbackSign code={sign.code} />;
   }
 }
