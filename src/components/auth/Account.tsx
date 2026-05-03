@@ -187,6 +187,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button
                     onClick={onOpenAuth}
+                    data-testid="account-signin-email"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
                   >
                     <LogIn className="h-4 w-4" />
@@ -195,6 +196,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
 
                   <button
                     onClick={onOpenAuth}
+                    data-testid="account-signup-btn"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
                   >
                     <ShieldCheck className="h-4 w-4" />

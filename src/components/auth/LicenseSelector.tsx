@@ -73,6 +73,7 @@ export const LicenseSelector: React.FC = () => {
                 setLearningPath('standard');
                 setTransmissionType(null);
               }}
+              data-testid="path-standard"
               className={cn(
                 'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
                 learningPath === 'standard'
@@ -106,6 +107,7 @@ export const LicenseSelector: React.FC = () => {
                 setLearningPath('umschreibung');
                 setTransmissionType(null);
               }}
+              data-testid="path-umschreibung"
               className={cn(
                 'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
                 learningPath === 'umschreibung'

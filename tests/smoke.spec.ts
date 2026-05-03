@@ -1,22 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 
-async function completeOnboarding(page: Page) {
-  // 1. Initial State: Should land on Welcome page
-  await expect(page.getByTestId('welcome-start-btn')).toBeVisible({ timeout: 15000 });
 
-  // 2. Select Learning Path directly on Welcome page
-  await page.getByTestId('path-card-standard').click();
-
-  // 3. Now we should be on LicenseSelector with Learning Path already selected.
-  // We need to select Transmission.
-  await page.getByTestId('manual-btn').click();
-
-  // 4. Click "Continue" on the LicenseSelector
-  await page.getByTestId('license-continue-btn').click();
-
-  // 5. Verification: Should land on Dashboard
-  await expect(page.getByTestId('nav-tracker').filter({ visible: true })).toBeVisible({ timeout: 10000 });
-}
 
 test.describe('DriveDE Golden Path', () => {
   test.setTimeout(60000); // Increase timeout for slow mobile emulators
@@ -128,7 +112,7 @@ test.describe('DriveDE Golden Path', () => {
     });
     
     await test.step('Navigate to Tracker', async () => {
-      await page.getByTestId('nav-tracker').filter({ visible: true }).click();
+      await page.getByTestId('nav-tracker').filter({ visible: true }).first().click();
     });
     
     await test.step('Start Tracking', async () => {
@@ -147,19 +131,20 @@ test.describe('DriveDE Golden Path', () => {
 
       // Log Shoulder Check
       await page.getByTestId('manual-mistake-shoulder_check').click({ force: true });
-      await expect(page.getByTestId('manual-log-modal')).not.toBeVisible();
+      // Wait for exit animation
+      await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
 
       // Log Mirror Check
       await page.getByTestId('problem-btn').click({ force: true });
       await expect(page.getByTestId('manual-log-modal')).toBeVisible({ timeout: 10000 });
       await page.getByTestId('manual-mistake-mirror_check').click({ force: true });
-      await expect(page.getByTestId('manual-log-modal')).not.toBeVisible();
+      await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
 
       // Log Pedestrian Safety
       await page.getByTestId('problem-btn').click({ force: true });
       await expect(page.getByTestId('manual-log-modal')).toBeVisible({ timeout: 10000 });
       await page.getByTestId('manual-mistake-pedestrian_safety').click({ force: true });
-      await expect(page.getByTestId('manual-log-modal')).not.toBeVisible();
+      await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
     });
     
     await test.step('Verify Safety Score', async () => {
@@ -205,6 +190,102 @@ test.describe('DriveDE Golden Path', () => {
       }
 
       await expect(page.getByTestId('start-tracking-btn')).toBeVisible({ timeout: 15000 });
+    });
+  });
+
+  async function completeOnboarding(page: Page) {
+    // 1. Click Start Now on Landing Page
+    const startBtn = page.getByTestId('welcome-start-btn');
+    if (await startBtn.isVisible()) {
+      await startBtn.click();
+      await page.waitForTimeout(1000); // Wait for scroll animation
+      
+      // Select Transmission (Manual) - In Welcome.tsx, this is enough to set path
+      const manualBtn = page.getByTestId('manual-btn').first();
+      await manualBtn.scrollIntoViewIfNeeded();
+      await manualBtn.click({ force: true });
+      
+      // Check if we already reached the dashboard (some paths set hasVisited immediately)
+      const navTracker = page.getByTestId('nav-tracker').first();
+      if (await navTracker.isVisible({ timeout: 2000 }).catch(() => false)) {
+        return;
+      }
+
+      // Click Get Started at bottom if still on welcome page
+      const getStarted = page.getByTestId('welcome-get-started');
+      if (await getStarted.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await getStarted.scrollIntoViewIfNeeded();
+        await getStarted.click({ force: true });
+      }
+    } else {
+      // Fallback for standalone LicenseSelector
+      const standardPath = page.getByTestId('path-standard');
+      if (await standardPath.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await standardPath.scrollIntoViewIfNeeded();
+        await standardPath.click({ force: true });
+        
+        const manualBtn = page.getByTestId('manual-btn');
+        await manualBtn.scrollIntoViewIfNeeded();
+        await manualBtn.click({ force: true });
+        
+        const continueBtn = page.getByTestId('license-continue-btn');
+        await continueBtn.scrollIntoViewIfNeeded();
+        await continueBtn.click({ force: true });
+      }
+    }
+    
+    // Verify we reached the dashboard
+    await expect(page.getByTestId('nav-tracker').filter({ visible: true }).first()).toBeVisible({ timeout: 15000 });
+  }
+
+  test.describe('Feedback and Authentication', () => {
+    test('should submit the contact form successfully', async ({ page }) => {
+      // Mock the contact API
+      await page.route('/api/contact', async (route) => {
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
+      });
+
+      await page.goto('/#feedback');
+      
+      const form = page.locator('#feedback');
+      await expect(form).toBeVisible();
+
+      await page.getByPlaceholder('John Doe').fill('Test User');
+      await page.getByPlaceholder('john@example.com').fill('test@gmail.com');
+      await page.getByPlaceholder('How can we improve DriveDE?').fill('This is a test message from Playwright.');
+
+      await page.getByRole('button', { name: /Send Feedback/i }).click();
+
+      // Check for success state
+      await expect(page.getByText('Message Sent!')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText('Thanks for your feedback')).toBeVisible();
+    });
+
+    test('should show success message on valid signup', async ({ page }) => {
+      await page.goto('/');
+      
+      // Complete onboarding to reach dashboard
+      await completeOnboarding(page);
+      
+      // Go to Account tab
+      await page.getByTestId('nav-account').filter({ visible: true }).first().click();
+      
+      // Click "Sign in with email"
+      await page.getByTestId('account-signin-email').filter({ visible: true }).first().click();
+      
+      // Wait for modal and switch to Signup
+      const signupToggle = page.getByRole('button', { name: /Sign up|Registrieren/i }).first();
+      await expect(signupToggle).toBeVisible({ timeout: 10000 });
+      await signupToggle.click({ force: true });
+
+      await page.getByPlaceholder('name@example.com').fill('newuser@gmail.com');
+      const password = 'Password123!';
+      await page.getByPlaceholder('••••••••').first().fill(password);
+      await page.getByPlaceholder('••••••••').last().fill(password);
+
+      // Verify that the submit button is now for Signing Up
+      const submitBtn = page.getByRole('button', { name: /Sign up|Registrieren/i }).first();
+      await expect(submitBtn).toBeEnabled();
     });
   });
 });

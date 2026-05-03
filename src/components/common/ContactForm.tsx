@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Mail, User, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { Send, Mail, User, MessageSquare, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
@@ -20,13 +20,23 @@ export function ContactForm({ className }: ContactFormProps) {
     e.preventDefault();
     setStatus('submitting');
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error('Failed to send');
+
       setStatus('success');
       setFormData({ name: '', email: '', subject: 'Feedback', message: '' });
-      // Reset status after a few seconds
       setTimeout(() => setStatus('idle'), 5000);
-    }, 1500);
+    } catch (error) {
+      console.error('Contact error:', error);
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -52,6 +62,26 @@ export function ContactForm({ className }: ContactFormProps) {
               </div>
               <h3 className='text-3xl font-black text-white mb-2'>Message Sent!</h3>
               <p className='text-slate-400'>Thanks for your feedback. We'll get back to you shortly.</p>
+            </motion.div>
+          ) : status === 'error' ? (
+            <motion.div 
+              key='error'
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className='flex flex-col items-center justify-center py-12 text-center'
+            >
+              <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-rose-500/20 text-rose-500'>
+                <AlertCircle className='h-12 w-12' />
+              </div>
+              <h3 className='text-3xl font-black text-white mb-2'>Something went wrong</h3>
+              <p className='text-slate-400'>We couldn't send your message. Please try again later.</p>
+              <button 
+                onClick={() => setStatus('idle')}
+                className='mt-6 text-sm font-bold text-blue-500 hover:underline'
+              >
+                Try again
+              </button>
             </motion.div>
           ) : (
             <motion.form 

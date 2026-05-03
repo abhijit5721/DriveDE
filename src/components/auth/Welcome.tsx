@@ -289,7 +289,7 @@ export function Welcome() {
                   'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden cursor-pointer',
                   'shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl'
                 )}
-                data-testid={`path-card-${path.id}`}
+                data-testid={path.id === 'conversion' ? 'path-umschreibung' : 'path-standard'}
               >
                 {/* Decorative Gradient Background */}
                 <div className={cn('absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl opacity-20 transition-all group-hover:opacity-30', 
@@ -360,7 +360,11 @@ export function Welcome() {
           </div>
 
           <div className="mt-16 text-center">
-            <button onClick={handleStart} className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-black text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105">
+            <button 
+              onClick={handleStart} 
+              data-testid="welcome-get-started"
+              className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-black text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105"
+            >
               {t.common.getStarted}
               <ArrowRight className="h-6 w-6" />
             </button>

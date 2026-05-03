@@ -12,7 +12,7 @@ import {
   Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
   Signal, Search, Undo2, Wind, RefreshCcw, CornerUpRight, 
   Gauge, ChevronRight, ChevronDown, GraduationCap, Lock, Info,
-  View, Ban, AlertCircle
+  View, Ban, AlertCircle, MoreHorizontal
 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
@@ -1549,114 +1549,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       </div>
 
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
-        {showManualLog && (
-          <div 
-            data-testid="manual-log-modal"
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-900 p-4"
-          >
-            <div className="mb-4 flex items-center justify-between w-full">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">
-                {t.tracker.manualLogTitle}
-              </h4>
-              <button onClick={() => setShowManualLog(false)} className="rounded-full bg-slate-800 p-1">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="grid w-full grid-cols-4 gap-2 overflow-y-auto max-h-[350px] p-1">
-              <button 
-                onClick={() => handleManualMistake('priority')} 
-                data-testid="manual-mistake-priority"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.priority}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('stop_sign')} 
-                data-testid="manual-mistake-stop_sign"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Square className="h-5 w-5 text-red-600" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.stopSign}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('right_before_left')} 
-                data-testid="manual-mistake-right_before_left"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <CornerUpRight className="h-5 w-5 text-amber-500" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.rightBeforeLeft}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('wrong_way')} 
-                data-testid="manual-mistake-wrong_way"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Ban className="h-5 w-5 text-red-700" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.wrongWay}</span>
-              </button>
-
-              <button 
-                onClick={() => handleManualMistake('shoulder_check')} 
-                data-testid="manual-mistake-shoulder_check"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Eye className="h-5 w-5 text-blue-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.shoulderCheck}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('mirror_check')} 
-                data-testid="manual-mistake-mirror_check"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                 <View className="h-5 w-5 text-slate-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.mirrorCheck}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('signal')} 
-                data-testid="manual-mistake-signal"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Signal className="h-5 w-5 text-amber-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.signal}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('pedestrian_safety')} 
-                data-testid="manual-mistake-pedestrian_safety"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                 <Footprints className="h-5 w-5 text-purple-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.pedestrianSafety}</span>
-              </button>
-
-              <button 
-                onClick={() => handleManualMistake('speeding')} 
-                data-testid="manual-mistake-speeding"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Gauge className="h-5 w-5 text-red-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.speeding}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('harsh_braking')} 
-                data-testid="manual-mistake-harsh_braking"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                 <AlertCircle className="h-5 w-5 text-orange-500" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.harshBraking}</span>
-              </button>
-              <button 
-                onClick={() => handleManualMistake('other')} 
-                data-testid="manual-mistake-other"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl bg-slate-800 p-2 text-[10px] font-bold transition-colors hover:bg-slate-700 aspect-square"
-              >
-                <Info className="h-5 w-5 text-slate-400" />
-                <span className="text-center leading-tight line-clamp-2">{t.tracker.mistakes.other}</span>
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-slate-300" />
@@ -2562,6 +2454,136 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </motion.div>
         </div>
       )}
+      {/* Manual Log Modal */}
+      <AnimatePresence>
+        {showManualLog && (
+          <motion.div 
+            data-testid="manual-log-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="flex w-full flex-col overflow-hidden rounded-2xl bg-slate-900 border border-white/10 sm:max-w-md shadow-2xl p-6"
+            >
+              <div className="mb-6 flex items-center justify-between w-full">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-400">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <h4 className="text-lg font-bold text-white">
+                    {t.tracker.manualLogTitle}
+                  </h4>
+                </div>
+                <button 
+                  onClick={() => setShowManualLog(false)} 
+                  className="rounded-full bg-white/5 p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-all"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="grid w-full grid-cols-3 gap-3 overflow-y-auto max-h-[60dvh] pr-1 custom-scrollbar">
+                <button 
+                  onClick={() => handleManualMistake('priority')} 
+                  data-testid="manual-mistake-priority"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <AlertTriangle className="h-6 w-6 text-red-500" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.priority}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('stop_sign')} 
+                  data-testid="manual-mistake-stop_sign"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <Square className="h-6 w-6 text-red-600" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.stopSign}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('right_before_left')} 
+                  data-testid="manual-mistake-right_before_left"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <CornerUpRight className="h-6 w-6 text-amber-500" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.rightBeforeLeft}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('wrong_way')} 
+                  data-testid="manual-mistake-wrong_way"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <Ban className="h-6 w-6 text-red-700" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.wrongWay}</span>
+                </button>
+
+                <button 
+                  onClick={() => handleManualMistake('shoulder_check')} 
+                  data-testid="manual-mistake-shoulder_check"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <Eye className="h-6 w-6 text-blue-400" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.shoulderCheck}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('mirror_check')} 
+                  data-testid="manual-mistake-mirror_check"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                   <View className="h-6 w-6 text-slate-400" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.mirrorCheck}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('signal')} 
+                  data-testid="manual-mistake-signal"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <Signal className="h-6 w-6 text-amber-400" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.signal}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('pedestrian_safety')} 
+                  data-testid="manual-mistake-pedestrian_safety"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                   <Footprints className="h-6 w-6 text-purple-400" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.pedestrianSafety}</span>
+                </button>
+
+                <button 
+                  onClick={() => handleManualMistake('speeding')} 
+                  data-testid="manual-mistake-speeding"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <Gauge className="h-6 w-6 text-red-400" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.speeding}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('harsh_braking')} 
+                  data-testid="manual-mistake-harsh_braking"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                   <AlertCircle className="h-6 w-6 text-orange-500" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.harshBraking}</span>
+                </button>
+                <button 
+                  onClick={() => handleManualMistake('other')} 
+                  data-testid="manual-mistake-other"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                >
+                  <MoreHorizontal className="h-6 w-6 text-slate-500" />
+                  <span className="text-center leading-tight">{t.tracker.mistakes.other}</span>
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
