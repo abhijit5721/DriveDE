@@ -6,12 +6,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   Car, BadgeCheck, Zap, Users, Shield, 
-  Star, Menu, X, ArrowRight, Play, CheckCircle2, Cog 
+  Menu, X, ArrowRight, Play, CheckCircle2, Cog 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
+import { ContactForm } from '../common/ContactForm';
 
 export function Welcome() {
   const { 
@@ -42,7 +43,7 @@ export function Welcome() {
   const navLinks = useMemo(() => [
     { name: t.common.home, href: '#' },
     { name: t.common.features, href: '#features' },
-    { name: t.common.successStories, href: '#success' },
+    { name: t.common.feedback ?? 'Feedback', href: '#feedback' },
     { name: t.common.about, href: '#about' },
   ], [t]);
 
@@ -210,20 +211,36 @@ export function Welcome() {
         </div>
       </section>
 
-      {/* Success Stories Section */}
-      <section id="success" className="relative z-10 bg-slate-800/30 px-6 py-24 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl text-center">
-          <h2 className="text-3xl font-black text-white mb-16">{t.welcome.success.title}</h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {t.welcome.success.stories.map((story, i) => (
-              <div key={i} className="rounded-2xl bg-slate-900 border border-slate-700/50 p-6 text-left">
-                <div className="mb-4 flex text-amber-500">
-                  {[1, 2, 3, 4, 5].map(s => <Star key={s} className="h-4 w-4 fill-current" />)}
-                </div>
-                <p className="mb-6 text-slate-300 italic">"{story.text}"</p>
-                <p className="text-sm font-bold text-white">{story.name}</p>
-              </div>
-            ))}
+      {/* Feedback & Support Section */}
+      <section id="feedback" className="relative z-10 bg-slate-800/30 px-6 py-24 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-black text-white sm:text-5xl">Your Experience Matters</h2>
+            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+              Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we're all ears.
+            </p>
+          </div>
+          
+          <ContactForm />
+
+          {/* Quick Stats / Trust Signals */}
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto opacity-50">
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">98%</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pass Rate</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">5k+</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Students</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">24/7</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Support</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-white">100%</div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Digital</div>
+            </div>
           </div>
         </div>
       </section>
