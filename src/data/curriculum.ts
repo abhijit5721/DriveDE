@@ -411,6 +411,16 @@ const signYield: TrafficSign = {
   category: 'priority',
 };
 
+const signStop: TrafficSign = {
+  id: 'sign-stop',
+  code: 'Zeichen 206',
+  titleDe: 'Halt! Vorfahrt gewähren',
+  titleEn: 'Stop',
+  descriptionDe: 'Haltpflicht! Das Fahrzeug muss an der Haltlinie (oder Sichtlinie) vollständig zum Stillstand kommen.',
+  descriptionEn: 'Mandatory stop! The vehicle must come to a complete standstill at the stop line (or line of sight).',
+  category: 'priority',
+};
+
 const signPedestrianCrossing: TrafficSign = {
   id: 'sign-crosswalk',
   code: 'Zeichen 350',
@@ -959,6 +969,15 @@ const cityLessons: Lesson[] = [
     ...getLessonStrings('city-11'),
     completed: false,
     isPremium: true,
+  },
+  {
+    id: 'city-12',
+    chapterId: 'chapter-3',
+    ...getLessonStrings('city-12'),
+    completed: false,
+    isPremium: true,
+    trafficSigns: [signStop, signYield],
+    quiz: cityQuiz,
   },
 ];
 

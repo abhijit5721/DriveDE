@@ -1303,6 +1303,18 @@ export const TRANSLATIONS = {
                 title: 'Baustellen & Engstellen',
                 description: 'Einspurige Verkehrsführung und Hindernisse (§ 6 StVO)',
               },
+              'city-12': {
+                title: 'Stoppschild & Vorfahrtzeichen',
+                description: 'Verhalten an Stoppschildern (§ 8 StVO) und Vorfahrtregelungen.',
+                guidedPoints: [
+                  { id: 'stop-gp1', title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen – auch wenn kein anderes Auto kommt.' },
+                  { id: 'stop-gp2', title: 'Die 21-22-23-Regel', content: 'Zählen Sie im Geiste "21, 22, 23", wenn Sie stehen. Das stellt sicher, dass der Prüfer den Stillstand als solchen erkennt.' },
+                  { id: 'stop-gp3', title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' }
+                ],
+                tips: [
+                  { id: 'stop-tip1', title: 'Haltlinie missachten = Durchgefallen', content: 'Das Überrollen der Haltlinie ohne Stopp führt in der Prüfung sofort zum Nichtbestehen.', type: 'warning' }
+                ]
+              },
               'special-1': {
                 title: 'Überlandfahrt (Landstraße)',
                 description: 'Höhere Geschwindigkeiten, Überholen und Alleen',
@@ -1383,6 +1395,9 @@ export const TRANSLATIONS = {
                 tips: [
                   { id: 'check-tip1', title: 'Mitbringen zur Prüfung', content: '✓ Personalausweis/Reisepass ✓ Ggf. Sehhilfe (Brille) ✓ Bescheinigung Theorieprüfung ✓ Ausbildungsnachweis', type: 'warning' },
                   { id: 'check-tip2', title: 'Prüfungsdauer', content: 'Die praktische Prüfung dauert ca. 45 Minuten. 3 Grundfahraufgaben werden geprüft (aus dem Katalog ausgewählt).', type: 'info' }
+                ],
+                guidedPoints: [
+                  { id: 'exam-gp-breath', title: 'Einatmen, Ausatmen', content: 'Nutzen Sie die Atemtechnik, um Prüfungsstress abzubauen. Ein ruhiger Körper sorgt für einen wachen Geist und bessere Verkehrsbeobachtung.' }
                 ]
               },
               'exam-1a': {
@@ -1482,7 +1497,9 @@ export const TRANSLATIONS = {
               { title: 'Einbahnstraße korrekt nutzen', content: 'Aus einer Einbahnstraße vor dem Linksabbiegen möglichst weit links einordnen. Beim Einbiegen in eine Einbahnstraße trotzdem die richtige Spur wählen und das Rechtsfahrgebot beachten.' },
               { title: 'Abknickende Vorfahrt vollständig verstehen', content: 'Folgen Sie der abknickenden Vorfahrt, blinken Sie in Richtung des Straßenverlaufs. Verlassen Sie die Vorfahrtstraße durch ein echtes Abbiegen, müssen Sie ebenfalls blinken. Zusätzlich müssen Fahrzeuge, die die Vorfahrtstraße verlassen, untereinander auf Vorfahrt und gegenseitige Behinderung achten.' },
               { title: 'Straßenbahn und Mehrspuren ernst nehmen', content: 'Straßenbahnen haben praktisch oft Vorrang und sollten nicht geschnitten werden. Bei mehrspurigen Linksabbiegern müssen Sie Ihre Spur exakt halten und Leitlinien sauber folgen.' },
-              { title: 'Prüfungsblick', content: 'Der Prüfer achtet darauf, dass Sie kurz vor dem Abbiegen noch einmal nach links-rechts-vorn prüfen und ruhig abbiegen.' }
+              { title: 'Prüfungsblick', content: 'Der Prüfer achtet darauf, dass Sie kurz vor dem Abbiegen noch einmal nach links-rechts-vorn prüfen und ruhig abbiegen.' },
+              { title: 'Positionierung an Mittelinseln', content: 'Wenn Sie über eine breite Straße mit Mittelinsel (bauliche Trennung) abbiegen, ordnen Sie sich auf der RECHTEN Seite der Lücke ein, um den Gegenverkehr nicht zu blockieren.' },
+              { title: 'Warten in der Kreuzungsmitte', content: 'Wenn Sie in der Kreuzungsmitte auf eine Lücke im Gegenverkehr warten: Beachten Sie auch Fahrzeuge, die von RECHTS kommen könnten, falls sich die Ampelphase ändert oder andere Vorrangregeln gelten.' }
             ],
             glossary: [
               { term: 'Schulterblick', note: 'In Deutschland in sehr vielen Prüfsituationen sichtbar gefordert.' },
@@ -3380,6 +3397,18 @@ export const TRANSLATIONS = {
                 title: 'Construction Sites & Bottlenecks',
                 description: 'Single-lane traffic and obstacles (§ 6 StVO)',
               },
+              'city-12': {
+                title: 'Stop Sign & Priority Signs',
+                description: 'Behavior at stop signs (§ 8 StVO) and priority regulations.',
+                guidedPoints: [
+                  { id: 'stop-gp1', title: 'The octagonal Stop sign', content: 'At a Stop sign, you must bring the vehicle to a complete standstill – even if no other car is coming.' },
+                  { id: 'stop-gp2', title: 'The 21-22-23 rule', content: 'Count "21, 22, 23" in your head when you have stopped. This ensures the examiner recognizes the standstill as such.' },
+                  { id: 'stop-gp3', title: 'Stop line vs. Line of sight', content: 'First stop at the stop line. If you can\'t see anything from there, you must creep forward to the line of sight and stop again if necessary.' }
+                ],
+                tips: [
+                  { id: 'stop-tip1', title: 'Ignoring the stop line = Fail', content: 'Rolling over the stop line without stopping leads to immediate failure in the exam.', type: 'warning' }
+                ]
+              },
               'special-1': {
                 title: 'Country Road Driving',
                 description: 'Higher speeds, overtaking, and tree-lined avenues',
@@ -3460,6 +3489,9 @@ export const TRANSLATIONS = {
                 tips: [
                   { id: 'check-tip1', title: 'Bring to the exam', content: '✓ Photo ID/Passport ✓ Glasses if needed ✓ Theory test certificate ✓ Training documentation', type: 'warning' },
                   { id: 'check-tip2', title: 'Exam duration', content: 'The practical exam lasts approx. 45 minutes. 3 basic maneuvers are tested (selected from the catalog).', type: 'info' }
+                ],
+                guidedPoints: [
+                  { id: 'exam-gp-breath', title: 'Breathe in, breathe out', content: 'Use this breathing technique to reduce exam stress. A calm body ensures a sharp mind and better traffic observation.' }
                 ]
               },
               'exam-1a': {
@@ -3559,7 +3591,9 @@ export const TRANSLATIONS = {
               { title: 'Use one-way streets correctly', content: 'Before turning left from a one-way street, position yourself as far left as possible. When turning into a one-way street, still choose the correct lane and keep to the right rule.' },
               { title: 'Fully understand bending priority roads', content: 'If you follow a bending priority road, signal in the direction of the road’s course. If you leave the priority road by an actual turn, you must also signal. In addition, vehicles leaving the priority road must pay attention to mutual priority and not obstruct one another.' },
               { title: 'Take trams and multi-lane turns seriously', content: 'In practice, trams must be treated with great caution and should never be cut off. In multi-lane left turns, keep your lane precisely and follow guide markings accurately.' },
-              { title: 'Exam-ready observation', content: 'The examiner watches whether you check left-right-forward again just before turning and complete the turn calmly.' }
+              { title: 'Exam-ready observation', content: 'The examiner watches whether you check left-right-forward again just before turning and complete the turn calmly.' },
+              { title: 'Traffic Island Positioning', content: 'When turning left across a wide road with a median or traffic island, position your car on the RIGHT side of the gap to avoid blocking oncoming traffic.' },
+              { title: 'Waiting in the intersection', content: 'When waiting in the middle of the intersection for a gap in oncoming traffic: also watch for vehicles coming from the RIGHT, in case the traffic light phase changes or other priority rules apply.' }
             ],
             glossary: [
               { term: 'Shoulder check', note: 'In Germany, this must be clearly visible in many exam situations.' },
