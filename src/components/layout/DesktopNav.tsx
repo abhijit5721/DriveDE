@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Home, BookOpen, Wrench, ClipboardList, User, Star, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
@@ -16,7 +16,7 @@ interface DesktopNavProps {
 }
 
 export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProps) {
-  const { language, setLanguage, darkMode, toggleDarkMode, isPremium, userProgress, authStatus } = useAppStore();
+  const { language, setLanguage, darkMode, toggleDarkMode, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language as 'de' | 'en'];
 
   const navItems = [
@@ -26,11 +26,8 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
     { id: 'achievements', label: t.common.nav.achievements, icon: Trophy },
     { id: 'tracker', label: t.common.nav.tracker, icon: ClipboardList },
     { id: 'finance', label: t.common.nav.finance, icon: Wallet },
-    { id: 'review', label: t.common.nav.review, icon: Star },
     { id: 'account', label: t.common.nav.account, icon: User },
   ] as const;
-
-  const mistakesCount = (userProgress.incorrectQuestions || []).length;
 
   return (
     <aside 
@@ -82,11 +79,6 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
               >
                 <div className="relative">
                   <item.icon className={`h-5 w-5 transition-colors duration-300 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} />
-                  {item.id === 'review' && mistakesCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
-                      {mistakesCount}
-                    </span>
-                  )}
                 </div>
                 <span className="flex-1">{item.label}</span>
                 {activeTab === item.id && (

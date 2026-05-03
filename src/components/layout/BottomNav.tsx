@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Home, BookOpen, ParkingSquare, Trophy, ClipboardList, UserRound, Star, Wallet } from 'lucide-react';
+import { Home, BookOpen, ParkingSquare, Trophy, ClipboardList, UserRound, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -15,16 +15,14 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
-  const { language, userProgress } = useAppStore();
+  const { language } = useAppStore();
   const t = TRANSLATIONS[language as 'de' | 'en'];
-  const mistakesCount = (userProgress.incorrectQuestions || []).length;
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: t.common.nav.home, icon: <Home className="h-5 w-5" /> },
     { id: 'curriculum', label: t.common.nav.curriculum, icon: <BookOpen className="h-5 w-5" /> },
     { id: 'maneuvers', label: t.common.nav.maneuvers, icon: <ParkingSquare className="h-5 w-5" /> },
     { id: 'achievements', label: t.common.nav.achievements, icon: <Trophy className="h-5 w-5" /> },
-    { id: 'review', label: t.common.nav.review, icon: <Star className="h-5 w-5" /> },
     { id: 'tracker', label: t.common.nav.tracker, icon: <ClipboardList className="h-5 w-5" /> },
     { id: 'finance', label: t.common.nav.finance, icon: <Wallet className="h-5 w-5" /> },
     { id: 'account', label: t.common.nav.account, icon: <UserRound className="h-5 w-5" /> },
@@ -60,11 +58,6 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
                 )}
               >
                 {tab.icon}
-                {tab.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white ring-2 ring-white dark:ring-slate-950">
-                    {mistakesCount}
-                  </span>
-                )}
               </div>
               <span className={cn(
                 'text-[7px] font-black uppercase tracking-tighter transition-all duration-300 px-0.5 text-center leading-[1.1]',

@@ -424,13 +424,12 @@ export default function App() {
         return <InstructorReview onBack={() => setActiveTab('home')} onOpenPaywall={() => setShowPaywall(true)} />;
       case 'account':
         return (
-          <Account
-            onOpenAuth={handleOpenAuth}
-            onSignOut={handleSignOut}
-            onChangePath={handleChangePath}
-            onOpenLegal={() => setActiveTab('legal')}
-            onOpenReview={() => setActiveTab('review')}
-          />
+            <Account
+              onOpenAuth={handleOpenAuth}
+              onSignOut={handleSignOut}
+              onChangePath={handleChangePath}
+              onOpenLegal={() => setActiveTab('legal')}
+            />
         );
       default:
         return (

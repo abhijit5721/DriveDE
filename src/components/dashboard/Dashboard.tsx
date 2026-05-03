@@ -91,6 +91,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           icon: <Zap className="h-5 w-5 text-blue-700 dark:text-blue-300" />,
         };
 
+  const mistakesCount = (userProgress.incorrectQuestions || []).length;
+
   return (
     <div className="space-y-8 pb-10 animate-scale-in">
       {/* Premium Hero Section: Exam Readiness & Path */}
@@ -325,12 +327,17 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           >
             <div className="flex items-start gap-5">
               <div className={cn(
-                'flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110',
+                'relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110',
                 card.color === 'blue' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
                 card.color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' :
                 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
               )}>
                 <card.icon className="h-7 w-7" />
+                {card.id === 'review' && mistakesCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white ring-2 ring-white dark:ring-slate-900 animate-bounce">
+                    {mistakesCount}
+                  </span>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1.5">

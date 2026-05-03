@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, ClipboardCheck, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -20,10 +20,9 @@ interface AccountProps {
   onSignOut: () => void;
   onChangePath: () => void;
   onOpenLegal: () => void;
-  onOpenReview: () => void;
 }
 
-export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOpenReview }: AccountProps) {
+export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: AccountProps) {
   const {
     language,
     darkMode,
@@ -370,20 +369,6 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal, onOp
           </div>
         </button>
 
-        <button
-          onClick={onOpenReview}
-          className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-left shadow-sm transition hover:shadow-md dark:border-blue-900/40 dark:bg-blue-900/10"
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
-              <ClipboardCheck className="h-6 w-6 text-blue-700 dark:text-blue-300" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{t.instructorReview}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{t.instructorReviewDesc}</p>
-            </div>
-          </div>
-        </button>
       </div>
 
       <AnimatePresence>
