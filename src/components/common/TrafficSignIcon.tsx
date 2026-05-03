@@ -133,6 +133,19 @@ function GreenArrowSign() {
   );
 }
 
+function GreenArrowSignal() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="22" y="10" width="20" height="44" rx="3" fill="#111827" />
+      <circle cx="32" cy="18" r="4" fill="#374151" />
+      <circle cx="32" cy="32" r="4" fill="#374151" />
+      <g transform="translate(32 46)">
+        <path d="M-4 0h8 M2 -4l4 4-4 4" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
 function StopSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
@@ -241,6 +254,8 @@ function getSignGraphic(sign: TrafficSign) {
       return <NoEntrySign />;
     case 'sign-cyclists-allowed':
       return <CyclistsAllowedSign />;
+    case 'sign-green-arrow-signal':
+      return <GreenArrowSignal />;
     case 'visual-dipstick':
       return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
     case 'visual-tyre':
@@ -261,6 +276,8 @@ function getSignGraphic(sign: TrafficSign) {
       if (sign.code === 'Zeichen 220') return <OneWaySign />;
       if (sign.code === 'Zeichen 267') return <NoEntrySign />;
       if (sign.code === 'Zusatzzeichen 1022-10') return <CyclistsAllowedSign />;
+      if (sign.code === 'Zeichen 720') return <GreenArrowSign />;
+      if (sign.code === 'Lichtzeichen') return <GreenArrowSignal />;
       return <FallbackSign code={sign.code} />;
   }
 }
