@@ -7,6 +7,7 @@ import { TrendingUp, Target, ChevronRight, Zap, Calendar, Wind, Star, Lock, Crow
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
+import { SimulatorRadar } from '../tracker/SimulatorRadar';
 
 interface DrivingInsightsProps {
   onDirectLessonSelect: (lessonId: string) => void;
@@ -112,6 +113,14 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
       barData[day] += (s.duration || 0);
     }
   });
+
+  // Calculate Radar Stats based on recent mistakes
+  const radarStats = {
+    vorfahrt: (mistakeCounts['priority'] || 0) === 0 && (mistakeCounts['right_before_left'] || 0) === 0,
+    roundabout: (mistakeCounts['roundabout_signal'] || 0) === 0,
+    mirrors: (mistakeCounts['shoulder_check'] || 0) === 0,
+    braking: (mistakeCounts['harsh_braking'] || 0) === 0
+  };
 
   return (
     <div className="space-y-4">
@@ -269,6 +278,60 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Premium Skills Radar Section */}
+      {isPremium && (
+        <div className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-xl transition-all hover:shadow-2xl dark:border-slate-700/50 dark:bg-slate-800/80 animate-fade-in-up">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1 space-y-4 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2.5 mb-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+                  <Zap className="h-5 w-5 fill-current" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
+                    {language === 'de' ? 'Live-Skill-Radar' : 'Live Skill Radar'}
+                  </h4>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                    {language === 'de' ? 'Echtzeit-Analyse' : 'Real-time Analysis'}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-400">
+                {language === 'de' 
+                  ? 'Deine Fahrdaten werden mit der DriveDE-KI abgeglichen. Der Radar zeigt deine Meisterschaft in kritischen Prüfungsbereichen.'
+                  : 'Your driving data is benchmarked against DriveDE AI. The radar visualizes your mastery in critical exam domains.'}
+              </p>
+              <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
+                {['Vorfahrt', 'Roundabout', 'Mirrors', 'Braking'].map((key) => {
+                   const mastered = radarStats[key.toLowerCase() as keyof typeof radarStats];
+                   return (
+                    <span 
+                      key={key}
+                      className={cn(
+                        'px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all',
+                        mastered 
+                          ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                          : 'bg-blue-500/5 border-blue-500/10 text-blue-500/70'
+                      )}
+                    >
+                      {key}
+                    </span>
+                   );
+                })}
+              </div>
+            </div>
+            
+            <div className="w-full max-w-[240px] flex justify-center py-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
+              <SimulatorRadar stats={radarStats} language={language as 'de' | 'en'} />
+            </div>
+          </div>
+          
+          {/* Decorative glass elements */}
+          <div className="absolute -right-16 -top-16 h-32 w-32 rounded-full bg-blue-500/5 blur-3xl" />
+          <div className="absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-indigo-500/5 blur-3xl" />
         </div>
       )}
     </div>

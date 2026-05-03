@@ -19,6 +19,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
+import { SimulatorRadar } from './SimulatorRadar';
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 
 interface PhotonFeature {
@@ -2100,25 +2101,72 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           </div>
 
                           <div className="mt-4 flex flex-wrap gap-2">
-                            <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
-                              <div className={cn(
-                                'h-2 w-2 rounded-full',
-                                ((session.mistakes?.length || 0) < 2) ? 'bg-green-500' : 
-                                ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500' : 'bg-red-500'
-                              )} />
-                              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                                {t.tracker.safetyBalance}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
-                              </span>
-                            </div>
-                            {(session.mistakes || []).some(m => m.type === 'idling') && (
-                              <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30">
-                                <Wind className="h-3.5 w-3.5 text-emerald-500" />
-                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                  {t.tracker.ecoFriendly}
+                              <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
+                                <div className={cn(
+                                  'h-2 w-2 rounded-full',
+                                  ((session.mistakes?.length || 0) < 2) ? 'bg-green-500' : 
+                                  ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500' : 'bg-red-500'
+                                )} />
+                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                  {t.tracker.safetyBalance}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
                                 </span>
                               </div>
+                              {isPremium && (
+                                <div className="flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30">
+                                  <Zap className="h-3.5 w-3.5 text-blue-500" />
+                                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">
+                                    AI Radar Active
+                                  </span>
+                                </div>
+                              )}
+                              {(session.mistakes || []).some(m => m.type === 'idling') && (
+                                <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30">
+                                  <Wind className="h-3.5 w-3.5 text-emerald-500" />
+                                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    {t.tracker.ecoFriendly}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Session Radar Integration */}
+                            {isPremium && (
+                              <div className="mt-4 flex flex-col sm:flex-row items-center gap-4 rounded-2xl bg-slate-50/50 p-4 border border-slate-100 dark:bg-slate-900/40 dark:border-slate-800">
+                                <div className="w-full max-w-[160px]">
+                                  <SimulatorRadar 
+                                    stats={{
+                                      vorfahrt: !(session.mistakes || []).some(m => m.type === 'priority' || m.type === 'right_before_left'),
+                                      roundabout: !(session.mistakes || []).some(m => m.type === 'roundabout_signal'),
+                                      mirrors: !(session.mistakes || []).some(m => m.type === 'shoulder_check'),
+                                      braking: !(session.mistakes || []).some(m => m.type === 'harsh_braking')
+                                    }} 
+                                    language={language as 'de' | 'en'} 
+                                  />
+                                </div>
+                                <div className="flex-1 space-y-1.5">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Skill Breakdown</p>
+                                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    This radar reflects your technical execution during this specific session.
+                                  </p>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {['Vorfahrt', 'Roundabout', 'Mirrors', 'Braking'].map(skill => {
+                                      const mastered = skill === 'Vorfahrt' ? !(session.mistakes || []).some(m => m.type === 'priority' || m.type === 'right_before_left') :
+                                                       skill === 'Roundabout' ? !(session.mistakes || []).some(m => m.type === 'roundabout_signal') :
+                                                       skill === 'Mirrors' ? !(session.mistakes || []).some(m => m.type === 'shoulder_check') :
+                                                       !(session.mistakes || []).some(m => m.type === 'harsh_braking');
+                                      return (
+                                        <span key={skill} className={cn(
+                                          'px-2 py-0.5 rounded text-[8px] font-bold border',
+                                          mastered ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' : 'bg-slate-200/50 border-slate-300 text-slate-400'
+                                        )}>
+                                          {skill}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
                             )}
-                          </div>
 
                           {session.notes && (
                             <div className="mt-4 rounded-2xl bg-slate-50/50 p-3 text-xs text-slate-600 border border-slate-100/50 dark:bg-slate-900/40 dark:text-slate-400 dark:border-slate-800">
