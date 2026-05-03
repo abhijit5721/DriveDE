@@ -87,24 +87,31 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
         <svg viewBox="0 0 400 225" className="w-full h-full">
           <GrassBackground />
           
-          <g style={{ transform: `translateX(${- (distance * 0.5 % 400)}px)` }}>
+          {/* Moving Trees */}
+          <motion.g 
+            animate={{ x: -(distance * 0.5 % 400) }}
+            transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
+          >
             {[0, 100, 200, 300, 400, 500].map(x => (
               <g key={x} transform={`translate(${x}, 60) scale(1.5)`}>
                 <SideViewTree />
               </g>
             ))}
-          </g>
+          </motion.g>
 
           {/* Road */}
           <rect y="140" width="400" height="85" fill="url(#roadTexture)" />
           <rect y="140" width="400" height="2" fill="#94a3b8" opacity="0.3" />
           
           {/* Lane Markings */}
-          <g style={{ transform: `translateX(${- (distance % 100)}px)` }}>
+          <motion.g 
+            animate={{ x: -(distance % 100) }}
+            transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
+          >
             {[0, 100, 200, 300, 400, 500].map(x => (
               <rect key={x} x={x} y="180" width="40" height="4" fill="white" opacity="0.2" />
             ))}
-          </g>
+          </motion.g>
 
           {/* User Car */}
           <g transform="translate(60, 125) scale(0.8)">

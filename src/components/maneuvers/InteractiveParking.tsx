@@ -105,8 +105,8 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            layout
            initial={false}
            animate={{
-             top: phase === 'final' ? 45 : phase === 'steering-out' ? 55 : phase === 'backing-in' ? 80 : 130,
-             left: phase === 'align' ? 260 : phase === 'steering-in' ? 260 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 140 : phase === 'final' ? 140 : 20,
+             x: phase === 'align' ? 260 : phase === 'steering-in' ? 260 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 140 : phase === 'final' ? 140 : 20,
+             y: phase === 'final' ? 45 : phase === 'steering-out' ? 55 : phase === 'backing-in' ? 80 : 130,
              rotate: phase === 'backing-in' ? 35 : phase === 'steering-out' ? 15 : 0
            }}
            transition={{ duration: 1.5, ease: 'easeInOut' }}

@@ -32,7 +32,9 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
     let interval: NodeJS.Timeout;
     if (isPlaying && steps.length > 0) {
       const currentDuration = steps[currentStep]?.duration || 2000;
-      const progressIncrement = 100 / (currentDuration / 50);
+      // We'll update every 100ms for better React performance
+      const progressIncrement = 100 / (currentDuration / 100);
+      
       interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
@@ -44,12 +46,12 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
               return 100;
             }
           }
-          return prev + progressIncrement;
+          return Math.min(100, prev + progressIncrement);
         });
-      }, 50);
+      }, 100);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, currentStep, steps]);
+  }, [isPlaying, currentStep, steps.length, steps]);
 
   const handleReset = () => {
     setCurrentStep(0);
@@ -251,7 +253,7 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
           transition={{ 
             type: 'tween',
             ease: 'linear',
-            duration: 0.05
+            duration: 0.1
           }}
         >
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
