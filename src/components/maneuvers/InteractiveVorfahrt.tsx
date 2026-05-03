@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
 import { TRANSLATIONS } from '../../data/translations';
 
+
 interface Car {
   id: string;
   color: string;
@@ -16,9 +17,6 @@ interface Car {
   order: number;
   label: string;
 }
-
-// SVG Transform Template to ensure unitless values for production stability
-const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
 
 export default function InteractiveVorfahrt({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
@@ -98,6 +96,7 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
 
       {/* SVG Intersections */}
       <div className="relative aspect-square w-full max-w-[300px] overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 mx-auto border-4 border-slate-300 dark:border-slate-700">
+        {/* Road Layout */}
         <svg viewBox="0 0 300 300" className="h-full w-full">
           {/* Main Roads */}
           <rect x="110" y="0" width="80" height="300" fill="#475569" />
@@ -115,9 +114,8 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
              return (
                <motion.g
                  key={car.id}
-                 initial={{ x: car.position.x, y: car.position.y, rotate: car.position.rotate }}
-                 animate={isCurrentAnimation || isMoved ? { x: car.target.x, y: car.target.y, rotate: car.position.rotate } : { x: car.position.x, y: car.position.y, rotate: car.position.rotate }}
-                 transformTemplate={svgTransformTemplate}
+                 initial={car.position}
+                 animate={isCurrentAnimation ? { ...car.target, opacity: 0 } : isMoved ? { ...car.target, opacity: 0 } : car.position}
                  transition={{ duration: 0.8, ease: 'easeInOut' }}
                  style={{ cursor: isMoved ? 'default' : 'pointer' }}
                  onClick={() => handleCarClick(car.id)}

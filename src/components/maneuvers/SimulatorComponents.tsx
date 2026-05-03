@@ -202,11 +202,13 @@ export const VisionCone: React.FC<{
   side: 'left' | 'right' | 'round';
   opacity?: number;
 }> = ({ side, opacity = 1 }) => {
+  const rotation = side === 'left' ? -60 : side === 'right' ? 60 : 0;
   return (
     <motion.g
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
+      transform={`rotate(${rotation})`}
     >
       {side === 'round' ? (
         <circle cx="0" cy="0" r="90" fill="url(#visionGradient)" opacity="0.4" />

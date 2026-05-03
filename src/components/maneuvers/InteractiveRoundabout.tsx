@@ -9,9 +9,6 @@ import { Check, RotateCcw, Play, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 
-// SVG Transform Template to ensure unitless values for production stability
-const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
-
 export default function InteractiveRoundabout({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const rt = t.maneuvers.interactive.roundabout;
@@ -83,40 +80,38 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
           <rect x="120" y="0" width="60" height="300" fill="#334155" />
           <rect x="0" y="120" width="300" height="60" fill="#334155" />
           <circle cx="150" cy="150" r="100" stroke="white" strokeWidth="2" strokeDasharray="10,10" fill="none" opacity="0.2" />
-          
           <g opacity="0.4">
             <path d="M 150 280 L 150 240 M 145 250 L 150 240 L 155 250" stroke="white" fill="none" strokeWidth="2" />
             <path d="M 240 150 L 280 150 M 270 145 L 280 150 L 270 155" stroke="white" fill="none" strokeWidth="2" />
           </g>
-
           <motion.g
+            initial={{ x: 150, y: 280, rotate: -90 }}
             animate={
               phase === 'entry' ? { x: 150, y: 280, rotate: -90 } :
               phase === 'inside' ? { rotate: [270, 360], x: 150, y: 150 } :
               phase === 'exit' ? { rotate: 360, x: [150, 340], y: 150 } :
               { x: 340, y: 150, rotate: 0 }
             }
-            transformTemplate={svgTransformTemplate}
             transition={{
               rotate: { duration: phase === 'inside' ? 2 : 0.5, ease: 'linear' },
               x: { duration: 0.8 },
               y: { duration: 0.8 }
             }}
+            className="origin-center"
+            style={{ originX: '150px', originY: '150px' }}
           >
-            <g transform="translate(-15, -10)">
-               <g transform={phase === 'entry' ? 'translate(0, 0)' : 'translate(100, 0)'}>
-                  <rect width="30" height="20" rx="4" fill="#ef4444" />
-                  <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-                  <rect x="22" y="14" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-                  {isBlinking && (
-                    <motion.circle 
-                      cx="25" cy="18" r="4" 
-                      fill="#f59e0b"
-                      animate={{ opacity: [1, 0, 1] }}
-                      transition={{ repeat: Infinity, duration: 0.5 }}
-                    />
-                  )}
-               </g>
+            <g transform={phase === 'entry' ? 'translate(110, -10)' : 'translate(100, -10)'}>
+              <rect width="30" height="20" rx="4" fill="#ef4444" />
+              <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+              <rect x="22" y="14" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+              {isBlinking && (
+                <motion.circle 
+                  cx="25" cy="18" r="4" 
+                  fill="#f59e0b"
+                  animate={{ opacity: [1, 0, 1] }}
+                  transition={{ repeat: Infinity, duration: 0.5 }}
+                />
+              )}
             </g>
           </motion.g>
         </svg>

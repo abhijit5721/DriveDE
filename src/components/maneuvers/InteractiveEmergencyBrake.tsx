@@ -11,9 +11,6 @@ import { TRANSLATIONS } from '../../data/translations';
 
 import { GlobalDefinitions, SideViewCar, SideViewTree, GrassBackground } from './SimulatorComponents';
 
-// SVG Transform Template to ensure unitless values for production stability
-const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
-
 export default function InteractiveEmergencyBrake({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const et = t.maneuvers.interactive.emergencyBrake;
@@ -61,7 +58,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
   };
 
   useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout;
     if (gameState === 'driving' || gameState === 'signal') {
       interval = setInterval(() => {
         setDistance(prev => prev + 5);
@@ -90,33 +87,24 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
         <svg viewBox="0 0 400 225" className="w-full h-full">
           <GrassBackground />
           
-          {/* Moving Trees */}
-          <motion.g 
-            animate={{ x: -(distance * 0.5 % 400) }}
-            transformTemplate={svgTransformTemplate}
-            transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
-          >
+          <g style={{ transform: `translateX(${- (distance * 0.5 % 400)}px)` }}>
             {[0, 100, 200, 300, 400, 500].map(x => (
               <g key={x} transform={`translate(${x}, 60) scale(1.5)`}>
                 <SideViewTree />
               </g>
             ))}
-          </motion.g>
+          </g>
 
           {/* Road */}
           <rect y="140" width="400" height="85" fill="url(#roadTexture)" />
           <rect y="140" width="400" height="2" fill="#94a3b8" opacity="0.3" />
           
           {/* Lane Markings */}
-          <motion.g 
-            animate={{ x: -(distance % 100) }}
-            transformTemplate={svgTransformTemplate}
-            transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
-          >
+          <g style={{ transform: `translateX(${- (distance % 100)}px)` }}>
             {[0, 100, 200, 300, 400, 500].map(x => (
               <rect key={x} x={x} y="180" width="40" height="4" fill="white" opacity="0.2" />
             ))}
-          </motion.g>
+          </g>
 
           {/* User Car */}
           <g transform="translate(60, 125) scale(0.8)">
@@ -198,6 +186,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
             </motion.div>
           )}
 
+          {/* Start Overlay for Idle state */}
           {gameState === 'idle' && (
             <div className="absolute inset-0 z-30 flex items-center justify-center backdrop-blur-md bg-slate-950/40 rounded-2xl">
               <button 

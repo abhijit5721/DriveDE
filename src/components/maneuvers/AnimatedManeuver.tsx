@@ -1,254 +1,38 @@
 /**
  * (c) 2026 DriveDE. All rights reserved.
  * This source code is proprietary and protected under international copyright law.
+ * 
+ * AnimatedManeuver.tsx
+ * 
+ * Interactive 3D-style animations for driving maneuvers (parking, three-point turns, etc).
+ * Uses Framer Motion for state interpolation and SVG for top-down rendering.
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, ChevronRight, ChevronLeft, HelpCircle } from 'lucide-react';
+import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground, Building } from './SimulatorComponents';
 import { MANEUVER_STEPS } from '../../data/maneuvers';
-import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground } from './SimulatorComponents';
+import { TRANSLATIONS } from '../../data/translations';
 
 interface AnimatedManeuverProps {
   type: 'parallel-parking' | 'reverse-parking' | 'three-point-turn' | 'emergency-brake' | 'roundabout' | 'highway-merge';
-  language?: 'de' | 'en';
+  language: 'de' | 'en';
 }
 
-// Helper to interpolate between two numbers
-const lerp = (start: number, end: number, t: number) => start + (end - start) * (t / 100);
-
-// SVG Transform Template to ensure unitless values for production stability
-const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
-
-/**
- * Parallel Parking Animation Logic
- */
-const ParallelParkingAnimation: React.FC<{ progress: number, step: number }> = ({ progress, step }) => {
-  const states = useMemo(() => [
-    { x: 40, y: 185, rotation: 0, indicator: 'none' as const },
-    { x: 40, y: 185, rotation: 0, indicator: 'none' as const },
-    { x: 40, y: 260, rotation: 0, indicator: 'right' as const },
-    { x: 40, y: 260, rotation: 0, indicator: 'right' as const },
-    { x: 80, y: 310, rotation: 45, indicator: 'right' as const },
-    { x: 80, y: 310, rotation: 45, indicator: 'right' as const },
-    { x: 110, y: 350, rotation: 0, indicator: 'none' as const },
-  ], []);
-
-  const state = useMemo(() => {
-    if (step >= states.length - 1) return states[states.length - 1];
-    const s1 = states[step];
-    const s2 = states[step + 1];
-    return {
-      x: lerp(s1.x, s2.x, progress),
-      y: lerp(s1.y, s2.y, progress),
-      rotation: lerp(s1.rotation, s2.rotation, progress),
-      indicator: s1.indicator
-    };
-  }, [step, progress, states]);
-
-  return (
-    <svg viewBox="0 0 400 400" className="w-full h-full rounded-2xl shadow-inner bg-slate-800">
-      <GlobalDefinitions />
-      <GrassBackground />
-      <rect x="0" y="100" width="400" height="300" fill="url(#roadTexture)" />
-      <rect x="0" y="380" width="400" height="20" fill="#4ade80" />
-      <g transform="translate(110, 200)"><TopDownCar color="#64748b" /></g>
-      <g transform="translate(110, 500)"><TopDownCar color="#64748b" /></g>
-      
-      <motion.g
-        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-        transformTemplate={svgTransformTemplate}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
-      >
-        <VisionCone side={state.indicator === 'right' ? 'right' : 'round'} opacity={0.3} />
-        <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
-      </motion.g>
-
-      <SteeringWheelOverlay rotation={state.rotation * 4} />
-    </svg>
-  );
-};
-
-/**
- * Reverse Parking Animation Logic
- */
-const ReverseParkingAnimation: React.FC<{ progress: number, step: number }> = ({ progress, step }) => {
-  const states = useMemo(() => [
-    { x: 200, y: 150, rotation: -90, indicator: 'right' as const },
-    { x: 200, y: 150, rotation: -90, indicator: 'right' as const },
-    { x: 200, y: 220, rotation: -90, indicator: 'right' as const },
-    { x: 250, y: 280, rotation: -45, indicator: 'right' as const },
-    { x: 320, y: 320, rotation: 0, indicator: 'right' as const },
-    { x: 320, y: 320, rotation: 0, indicator: 'none' as const },
-    { x: 320, y: 350, rotation: 0, indicator: 'none' as const },
-  ], []);
-
-  const state = useMemo(() => {
-    if (step >= states.length - 1) return states[states.length - 1];
-    const s1 = states[step];
-    const s2 = states[step + 1];
-    return {
-      x: lerp(s1.x, s2.x, progress),
-      y: lerp(s1.y, s2.y, progress),
-      rotation: lerp(s1.rotation, s2.rotation, progress),
-      indicator: s1.indicator
-    };
-  }, [step, progress, states]);
-
-  return (
-    <svg viewBox="0 0 400 400" className="w-full h-full rounded-2xl shadow-inner bg-slate-800">
-      <GlobalDefinitions />
-      <rect x="0" y="0" width="400" height="400" fill="url(#roadTexture)" />
-      <g stroke="#ffffff44" strokeWidth="2" strokeDasharray="5,5">
-        <line x1="280" y1="280" x2="400" y2="280" />
-        <line x1="280" y1="380" x2="400" y2="380" />
-      </g>
-      <motion.g
-        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-        transformTemplate={svgTransformTemplate}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
-      >
-        <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} reverseLights={step > 1} />
-      </motion.g>
-    </svg>
-  );
-};
-
-/**
- * Three Point Turn Animation Logic
- */
-const ThreePointTurnAnimation: React.FC<{ progress: number, step: number }> = ({ progress, step }) => {
-  const states = useMemo(() => [
-    { x: 300, y: 350, rotation: -90, indicator: 'none' as const },
-    { x: 300, y: 350, rotation: -90, indicator: 'left' as const },
-    { x: 100, y: 250, rotation: -160, indicator: 'left' as const },
-    { x: 100, y: 250, rotation: -160, indicator: 'right' as const },
-    { x: 250, y: 320, rotation: -45, indicator: 'right' as const },
-    { x: 250, y: 320, rotation: -45, indicator: 'left' as const },
-    { x: 100, y: 100, rotation: 90, indicator: 'none' as const },
-  ], []);
-
-  const state = useMemo(() => {
-    if (step >= states.length - 1) return states[states.length - 1];
-    const s1 = states[step];
-    const s2 = states[step + 1];
-    return {
-      x: lerp(s1.x, s2.x, progress),
-      y: lerp(s1.y, s2.y, progress),
-      rotation: lerp(s1.rotation, s2.rotation, progress),
-      indicator: s1.indicator
-    };
-  }, [step, progress, states]);
-
-  return (
-    <svg viewBox="0 0 400 400" className="w-full h-full rounded-2xl shadow-inner bg-slate-800">
-      <GlobalDefinitions />
-      <rect x="0" y="100" width="400" height="200" fill="url(#roadTexture)" />
-      <motion.g
-        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-        transformTemplate={svgTransformTemplate}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
-      >
-        <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} reverseLights={step === 4} />
-      </motion.g>
-    </svg>
-  );
-};
-
-/**
- * Emergency Brake Animation Logic
- */
-const EmergencyBrakeAnimation: React.FC<{ progress: number, step: number }> = ({ progress, step }) => {
-  const state = useMemo(() => {
-    if (step < 2) return { x: 50 + (step * 100) + (progress * 1), y: 200, brake: false };
-    if (step === 2) return { x: 250 + (progress * 0.2), y: 200, brake: true };
-    return { x: 270, y: 200, brake: false };
-  }, [step, progress]);
-
-  return (
-    <svg viewBox="0 0 400 400" className="w-full h-full rounded-2xl shadow-inner bg-slate-800">
-      <GlobalDefinitions />
-      <rect x="0" y="150" width="400" height="100" fill="url(#roadTexture)" />
-      <motion.g
-        animate={{ x: state.x, y: state.y }}
-        transformTemplate={svgTransformTemplate}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
-      >
-        <TopDownCar color="#3b82f6" brakeLights={state.brake} isUser={true} rotation={90} />
-      </motion.g>
-      {step === 1 && (
-        <motion.text
-          x="200" y="100"
-          textAnchor="middle"
-          fill="#ef4444"
-          className="text-3xl font-black italic"
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ repeat: Infinity, duration: 0.3 }}
-        >
-          GEFAHR! STOPP!
-        </motion.text>
-      )}
-    </svg>
-  );
-};
-
-/**
- * Roundabout Animation Logic
- */
-const RoundaboutAnimation: React.FC<{ progress: number, step: number }> = ({ progress, step }) => {
-  const state = useMemo(() => {
-    const center = { x: 200, y: 200 };
-    const radius = 80;
-    if (step === 0) return { x: 200, y: 350 - (progress * 0.5), rotation: 0, indicator: 'none' as const };
-    if (step === 1) return { x: 200, y: 300, rotation: 0, indicator: 'none' as const };
-    if (step === 2) return { x: 200 + (progress * 0.3), y: 300 - (progress * 0.2), rotation: 45, indicator: 'none' as const };
-    if (step === 3) {
-      const angle = (progress * 1.8) - 45;
-      const rad = (angle * Math.PI) / 180;
-      return {
-        x: center.x + Math.cos(rad) * radius,
-        y: center.y + Math.sin(rad) * radius,
-        rotation: angle + 90,
-        indicator: 'none' as const
-      };
-    }
-    if (step === 4) return { x: 120, y: 200, rotation: 180, indicator: 'right' as const };
-    return { x: 50, y: 200, rotation: 180, indicator: 'none' as const };
-  }, [step, progress]);
-
-  return (
-    <svg viewBox="0 0 400 400" className="w-full h-full rounded-2xl shadow-inner bg-slate-800">
-      <GlobalDefinitions />
-      <circle cx="200" cy="200" r="120" fill="url(#roadTexture)" />
-      <circle cx="200" cy="200" r="60" fill="#064e3b" stroke="#059669" strokeWidth="4" />
-      <rect x="180" y="320" width="40" height="80" fill="url(#roadTexture)" />
-      <rect x="0" y="180" width="80" height="40" fill="url(#roadTexture)" />
-      <motion.g
-        animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-        transformTemplate={svgTransformTemplate}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
-      >
-        <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
-      </motion.g>
-    </svg>
-  );
-};
-
-const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language = 'de' }) => {
+const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) => {
+  const t = TRANSLATIONS[language];
   const [currentStep, setCurrentStep] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
-  
-  const steps = MANEUVER_STEPS[type] || [];
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+
+  const steps = useMemo(() => MANEUVER_STEPS[type] || [], [type]);
 
   useEffect(() => {
-    let interval: any;
-    if (isPlaying) {
+    let interval: NodeJS.Timeout;
+    if (isPlaying && steps.length > 0) {
       const currentDuration = steps[currentStep]?.duration || 2000;
-      const progressIncrement = 100 / (currentDuration / 100);
-      
+      const progressIncrement = 100 / (currentDuration / 50);
       interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
@@ -262,7 +46,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language = 'd
           }
           return prev + progressIncrement;
         });
-      }, 100);
+      }, 50);
     }
     return () => clearInterval(interval);
   }, [isPlaying, currentStep, steps]);
@@ -273,82 +57,608 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language = 'd
     setIsPlaying(false);
   };
 
+  const handlePrevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      setProgress(0);
+    }
+  };
+
+  const handleNextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      setProgress(0);
+    }
+  };
+
   const renderAnimation = () => {
+    const props = { step: currentStep, progress, t };
     switch (type) {
-      case 'parallel-parking': return <ParallelParkingAnimation progress={progress} step={currentStep} />;
-      case 'reverse-parking': return <ReverseParkingAnimation progress={progress} step={currentStep} />;
-      case 'three-point-turn': return <ThreePointTurnAnimation progress={progress} step={currentStep} />;
-      case 'emergency-brake': return <EmergencyBrakeAnimation progress={progress} step={currentStep} />;
-      case 'roundabout': return <RoundaboutAnimation progress={progress} step={currentStep} />;
+      case 'parallel-parking': return <ParallelParkingAnimation {...props} />;
+      case 'reverse-parking': return <ReverseParkingAnimation {...props} />;
+      case 'three-point-turn': return <ThreePointTurnAnimation {...props} />;
+      case 'emergency-brake': return <EmergencyBrakeAnimation {...props} />;
+      case 'roundabout': return <RoundaboutAnimation {...props} />;
+      case 'highway-merge': return <HighwayMergeAnimation {...props} />;
       default: return null;
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-900/50 rounded-3xl overflow-hidden border border-white/10 shadow-2xl backdrop-blur-xl" ref={containerRef}>
-      <div className="px-6 py-4 flex items-center justify-between border-b border-white/5 bg-white/5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 border border-blue-400/20">
-            <span className="text-sm font-bold">{currentStep + 1}</span>
-          </div>
-          <div>
-            <h3 className="text-white font-bold text-sm tracking-wide uppercase">
-              {language === 'de' ? 'Aktueller Schritt' : 'Current Step'}
-            </h3>
-            <p className="text-slate-400 text-xs font-medium">
-              {currentStep + 1} / {steps.length}
-            </p>
-          </div>
+    <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]">
+      <GlobalDefinitions />
+      <div className="relative bg-slate-950 p-4 sm:p-8">
+        <div className="aspect-video rounded-[2rem] overflow-hidden flex items-center justify-center border border-white/5 shadow-inner bg-slate-900/50 relative group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.1),transparent_70%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] opacity-[0.03] pointer-events-none" />
+          {renderAnimation()}
         </div>
-        <button onClick={() => setShowHelp(!showHelp)} className="p-2 rounded-lg hover:bg-white/10 text-slate-400 transition-colors">
-          <HelpCircle size={18} />
+        
+        {/* Step Indicator Badge */}
+        <div className="absolute top-10 right-10 flex items-center gap-2 px-4 py-2 glass rounded-2xl border border-white/10 shadow-xl">
+          <span className="text-sky-400 font-black text-sm tracking-tighter uppercase">{t.maneuvers.step || 'STEP'}</span>
+          <div className="h-4 w-[1px] bg-white/20 mx-1" />
+          <span className="text-white font-black text-lg">
+            {currentStep + 1}<span className="text-white/40 text-sm ml-1">/ {steps.length}</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="px-10 py-8 bg-slate-950/40 border-t border-white/5 backdrop-blur-md">
+        <div className="text-white text-center font-black text-2xl tracking-tight leading-tight min-h-[4rem] flex items-center justify-center animate-fade-in">
+          {language === 'de' ? steps[currentStep]?.description : steps[currentStep]?.descriptionEn}
+        </div>
+        
+        {/* Premium Progress Bar */}
+        <div className="mt-8 relative h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
+          <motion.div 
+            animate={{ width: `${progress}%` }}
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-600 via-sky-400 to-sky-300 shadow-[0_0_20px_rgba(56,189,248,0.4)]"
+            transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-8 p-8 bg-slate-950 border-t border-white/5">
+        <button 
+          onClick={handleReset} 
+          className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 hover:border-sky-500/30 transition-all shadow-xl active:scale-90 group"
+          title={t.common.reset}
+        >
+          <RotateCcw size={24} className="group-hover:rotate-[-90deg] transition-transform duration-500" />
         </button>
-      </div>
-      <div className="relative flex-1 min-h-[300px] bg-slate-950/50 group overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div key={type} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }} className="w-full h-full p-4">
-            {renderAnimation()}
-          </motion.div>
-        </AnimatePresence>
-        <AnimatePresence>
-          {isPlaying && <InstructionPopup text={language === 'de' ? steps[currentStep].description : steps[currentStep].descriptionEn} />}
-        </AnimatePresence>
-        <AnimatePresence>
-          {showHelp && (
-            <motion.div initial={{ opacity: 0, backdropFilter: 'blur(0px)' }} animate={{ opacity: 1, backdropFilter: 'blur(8px)' }} exit={{ opacity: 0, backdropFilter: 'blur(0px)' }} className="absolute inset-0 bg-slate-900/60 z-50 p-8 flex flex-col items-center justify-center text-center">
-              <HelpCircle className="text-blue-400 mb-4" size={48} />
-              <h4 className="text-white font-bold text-xl mb-2">Simulations-Hilfe</h4>
-              <p className="text-slate-300 max-w-xs mb-6">Beobachte die Animation genau. Achte auf Blinker, Schulterblick und die Position des Fahrzeugs.</p>
-              <button onClick={() => setShowHelp(false)} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold transition-colors">Verstanden</button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      <div className="p-6 bg-white/5 border-t border-white/5 space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
-            <span>Progress</span>
-            <span>{Math.round(((currentStep + progress / 100) / steps.length) * 100)}%</span>
-          </div>
-          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-            <motion.div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500" initial={false} animate={{ width: `${((currentStep + progress / 100) / steps.length) * 100}%` }} transition={{ type: 'tween', ease: 'linear', duration: 0.1 }} />
-          </div>
-        </div>
-        <div className="flex items-center justify-center gap-4">
-          <button onClick={() => { if (currentStep > 0) { setCurrentStep(s => s - 1); setProgress(0); } }} disabled={currentStep === 0} className="p-3 rounded-2xl bg-white/5 text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90">
-            <ChevronLeft size={20} />
+
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={handlePrevStep} 
+            disabled={currentStep === 0} 
+            className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 shadow-xl disabled:opacity-20 active:scale-90 transition-all"
+          >
+            <ChevronLeft size={24} />
           </button>
-          <button onClick={() => setIsPlaying(!isPlaying)} className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:bg-blue-400 transition-all active:scale-95 group">
-            {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" className="ml-1" />}
+
+          <button 
+            onClick={() => setIsPlaying(!isPlaying)} 
+            className="h-20 w-20 rounded-[2rem] bg-sky-500 text-slate-950 hover:scale-105 hover:bg-sky-400 shadow-[0_0_40px_rgba(14,165,233,0.4)] transition-all active:scale-95 flex items-center justify-center relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} className="translate-x-1" fill="currentColor" />}
           </button>
-          <button onClick={() => { if (currentStep < steps.length - 1) { setCurrentStep(s => s + 1); setProgress(0); } }} disabled={currentStep === steps.length - 1} className="p-3 rounded-2xl bg-white/5 text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90">
-            <ChevronRight size={20} />
-          </button>
-          <button onClick={handleReset} className="p-3 rounded-2xl bg-white/5 text-white hover:bg-white/10 transition-all active:scale-90">
-            <RotateCcw size={20} />
+
+          <button 
+            onClick={handleNextStep} 
+            disabled={currentStep === steps.length - 1} 
+            className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 shadow-xl disabled:opacity-20 active:scale-90 transition-all"
+          >
+            <ChevronRight size={24} />
           </button>
         </div>
       </div>
+
+      {/* Step Navigation Rail */}
+      <div className="flex gap-4 p-8 overflow-x-auto bg-slate-950/80 no-scrollbar border-t border-white/5">
+        {steps.map((step, index) => (
+          <button
+            key={step.id}
+            onClick={() => { setCurrentStep(index); setProgress(0); setIsPlaying(false); }}
+            className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-black transition-all duration-300 border ${
+              index === currentStep 
+                ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-[0_0_25px_rgba(14,165,233,0.5)] scale-110' 
+                : 'glass-card text-slate-500 border-white/5 hover:border-white/20 hover:text-slate-300'
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface AnimationProps {
+  step: number;
+  progress: number;
+  t: any;
+}
+
+// Animation Components
+const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 30, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },       // 0: Start
+      { x: 150, y: 90, rotation: 0, wheel: 0, indicator: 'none' as const },      // 1: Driving
+      { x: 330, y: 90, rotation: 0, wheel: 0, indicator: 'right' as const },    // 2: Next to front car
+      { x: 330, y: 90, rotation: 0, wheel: 60, indicator: 'right' as const },    // 3: Turn wheel right
+      { x: 260, y: 135, rotation: -35, wheel: 60, indicator: 'right' as const },  // 4: Backing in
+      { x: 260, y: 135, rotation: -35, wheel: -60, indicator: 'right' as const }, // 5: Counter-steer
+      { x: 200, y: 185, rotation: 0, wheel: -60, indicator: 'right' as const },  // 6: Straightening
+      { x: 200, y: 185, rotation: 0, wheel: 0, indicator: 'none' as const },      // 7: Done
+      { x: 200, y: 185, rotation: 0, wheel: 0, indicator: 'none' as const },      // 8: Done
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+
+    const p = progress / 100;
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
+  };
+
+  const state = getInterpolatedState();
+  
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.steerAndReverse} />}
+        {step === 6 && <InstructionPopup text={t.maneuvers.interactive.simulator.counterSteer} />}
+      </AnimatePresence>
+      
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x={20} y={15} width={40} height={30} />
+        <Building x={340} y={15} width={40} height={30} />
+        {/* Road */}
+        <rect x="0" y="50" width="400" height="180" fill="url(#roadTexture)" />
+        {/* Curb */}
+        <rect x="0" y="210" width="400" height="40" fill="#94a3b8" />
+        <rect x="0" y="210" width="400" height="4" fill="#64748b" />
+
+        {/* Parked Cars */}
+        <g transform="translate(70, 185)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(330, 185)"><TopDownCar color="#94a3b8" /></g>
+
+        {/* Path Arrow */}
+        {step >= 3 && step <= 6 && (
+          <path d="M 295 90 Q 260 135 200 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
+        )}
+
+        {/* User Car with smooth movement */}
+        <motion.g
+          animate={{ 
+            x: state.x,
+            y: state.y,
+            rotate: state.rotation
+          }}
+          transition={{ 
+            type: 'spring',
+            damping: 20,
+            stiffness: 100,
+            mass: 0.5
+          }}
+        >
+          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
+          <AnimatePresence>
+            {step === 1 && (
+              <g transform="translate(0, -10)">
+                <VisionCone side="round" opacity={0.4} />
+              </g>
+            )}
+            {step === 4 && <VisionCone side="left" opacity={0.6} />}
+          </AnimatePresence>
+        </motion.g>
+        <SteeringWheelOverlay rotation={state.wheel} />
+      </svg>
+    </div>
+  );
+};
+
+const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 70, rotation: 0, wheel: 0, indicator: 'none' as const },
+      { x: 140, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
+      { x: 320, y: 70, rotation: 0, wheel: 0, indicator: 'right' as const },
+      { x: 280, y: 110, rotation: -45, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 160, rotation: -90, wheel: 60, indicator: 'right' as const },
+      { x: 220, y: 175, rotation: -90, wheel: 0, indicator: 'none' as const },
+      { x: 220, y: 175, rotation: -90, wheel: 0, indicator: 'none' as const },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
+  };
+
+  const state = getInterpolatedState();
+
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckRight} />}
+      </AnimatePresence>
+      
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Parking Lot Surface */}
+        <rect x="0" y="0" width="400" height="210" fill="url(#roadTexture)" />
+        <rect x="0" y="210" width="400" height="15" fill="#94a3b8" /> {/* Sidewalk */}
+        
+        {/* Environment - Buildings on Grass */}
+        <Building x={20} y={220} width={40} height={30} type="house" />
+        <Building x={340} y={220} width={40} height={30} type="store" />
+        
+        {/* Parking Slots (Bottom row) */}
+        {[60, 140, 220, 300, 380].map(x => (
+          <g key={x}>
+            <line x1={x - 40} y1={140} x2={x - 40} y2={210} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+            <line x1={x + 40} y1={140} x2={x + 40} y2={210} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4,4" opacity="0.3" />
+          </g>
+        ))}
+        
+        {/* Stationary Cars */}
+        <g transform="translate(140, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(300, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+
+        {/* User Car with smooth movement */}
+        <motion.g
+          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+        >
+          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
+          <AnimatePresence>
+            {step === 1 && <VisionCone side="round" opacity={0.4} />}
+            {step === 3 && <VisionCone side="right" opacity={0.6} />}
+          </AnimatePresence>
+        </motion.g>
+        <SteeringWheelOverlay rotation={state.wheel} />
+      </svg>
+    </div>
+  );
+};
+
+const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 215, y: 220, rotation: -90, wheel: 0, indicator: 'none' as const, reverse: false },      // 0: Start
+      { x: 230, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const, reverse: false },    // 1: Pull over
+      { x: 230, y: 200, rotation: -90, wheel: -90, indicator: 'left' as const, reverse: false },   // 2: Steer Left
+      { x: 175, y: 130, rotation: -135, wheel: -90, indicator: 'left' as const, reverse: false },  // 3: Forward to Left Curb
+      { x: 175, y: 130, rotation: -135, wheel: 90, indicator: 'right' as const, reverse: false },  // 4: Steer Right
+      { x: 230, y: 180, rotation: -225, wheel: 90, indicator: 'right' as const, reverse: true },   // 5: Reverse to Right Curb
+      { x: 230, y: 180, rotation: -225, wheel: -90, indicator: 'left' as const, reverse: false },  // 6: Steer Left
+      { x: 200, y: 240, rotation: -270, wheel: 0, indicator: 'none' as const, reverse: false },    // 7: Done
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      wheel: current.wheel + (next.wheel - current.wheel) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator,
+      reverse: p > 0.1 ? next.reverse : current.reverse
+    };
+  };
+
+  const state = getInterpolatedState();
+
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
+        {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.fullCheckAndSignalRight} />}
+        {step === 5 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
+      </AnimatePresence>
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Road with Texture */}
+        <rect x="145" y="0" width="110" height="250" fill="url(#roadTexture)" />
+        
+        {/* Environment Details */}
+        <Building x={50} y={30} width={60} height={40} type="house" />
+        <Building x={280} y={160} width={70} height={50} type="office" />
+        <Building x={290} y={40} width={50} height={40} type="store" />
+        {/* Center Line */}
+        <line x1="200" y1="0" x2="200" y2="250" stroke="#94a3b8" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
+        {/* Curbs */}
+        <rect x="143" y="0" width="2" height="250" fill="#94a3b8" />
+        <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
+        
+        <motion.g
+          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+        >
+          <TopDownCar color="#3b82f6" indicator={state.indicator} reverseLights={state.reverse} isUser={true} scale={0.8} />
+          <AnimatePresence>
+            {step === 1 && <VisionCone side="left" opacity={0.6} />}
+            {step === 3 && <VisionCone side="round" opacity={0.4} />}
+            {step === 5 && <VisionCone side="left" opacity={0.6} />}
+          </AnimatePresence>
+        </motion.g>
+        <SteeringWheelOverlay rotation={state.wheel} />
+      </svg>
+    </div>
+  );
+};
+
+const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 40, y: 145, speed: 30, brake: false },
+      { x: 120, y: 145, speed: 30, brake: false },
+      { x: 160, y: 145, speed: 10, brake: true },
+      { x: 180, y: 145, speed: 0, brake: true },
+      { x: 180, y: 145, speed: 0, brake: false },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      speed: current.speed + (next.speed - current.speed) * p,
+      brake: p > 0.1 ? next.brake : current.brake
+    };
+  };
+
+  const state = getInterpolatedState();
+
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.dangerEmergencyBrake} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkBeforeDrive} />}
+      </AnimatePresence>
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x={20} y={20} width={50} height={40} type="apartment" />
+        <Building x={80} y={15} width={40} height={30} type="house" />
+        <Building x={250} y={20} width={80} height={50} type="office" />
+        <Building x={300} y={180} width={60} height={40} type="store" />
+
+        <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
+        <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
+
+        <motion.g
+          animate={{ x: state.x, y: state.y }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+        >
+          <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
+          {step === 4 && <VisionCone side="round" opacity={0.5} />}
+        </motion.g>
+
+        {/* Speedometer */}
+        <g transform="translate(330, 200)">
+          <circle r="40" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+          <path d="M -30 0 A 30 30 0 1 1 30 0" fill="none" stroke="#1e293b" strokeWidth="4" />
+          <motion.line
+            animate={{ rotate: (state.speed / 50) * 180 - 90 }}
+            x1="0" y1="0" x2="0" y2="-25"
+            stroke="#38BDF8"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <text textAnchor="middle" y="25" fill="#38BDF8" className="text-xl font-black">{Math.round(state.speed)}</text>
+          <text textAnchor="middle" y="38" fill="#64748b" className="text-[8px] font-bold">KM/H</text>
+        </g>
+      </svg>
+    </div>
+  );
+};
+
+const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getCarState = () => {
+    const cx = 200;
+    const cy = 125;
+    const r = 65;
+    const p = progress / 100;
+
+    switch (step) {
+      case 0: return { x: 212, y: 220 - 25 * p, rotation: -90, indicator: 'none' as const };
+      case 1: return { x: 212, y: 195, rotation: -90, indicator: 'none' as const };
+      case 2: { // Enter
+        const startAngle = 90;
+        const endAngle = 45;
+        const angle = startAngle + (endAngle - startAngle) * p;
+        return { 
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
+          indicator: 'none' as const
+        };
+      }
+      case 3: { // Circulate
+        const startAngle = 45;
+        const endAngle = -180;
+        const angle = startAngle + (endAngle - startAngle) * p;
+        return {
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
+          indicator: 'none' as const
+        };
+      }
+      case 4: { // Signal
+        const angle = -180;
+        return {
+          x: cx + r * Math.cos(angle * Math.PI / 180),
+          y: cy + r * Math.sin(angle * Math.PI / 180),
+          rotation: angle - 90,
+          indicator: 'right' as const
+        };
+      }
+      case 5: { // Exit
+        const startX = 135;
+        const endX = -50;
+        return { x: startX + (endX - startX) * p, y: 125, rotation: -180, indicator: 'right' as const };
+      }
+      default: return { x: 212, y: 220, rotation: -90, indicator: 'none' as const };
+    }
+  };
+  const state = getCarState();
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.tracker.priorityCheck || t.maneuvers.interactive.simulator.checkSurroundings} />}
+        {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalRightAndShoulder} />}
+      </AnimatePresence>
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Environment */}
+        <Building x={20} y={20} width={60} height={40} type="store" />
+        <Building x={320} y={20} width={60} height={40} type="house" />
+        <Building x={20} y={190} width={60} height={40} type="office" />
+        <Building x={320} y={190} width={60} height={40} type="apartment" />
+
+        {/* Roundabout Structure */}
+        <circle cx="200" cy="125" r="95" fill="url(#roadTexture)" />
+        <circle cx="200" cy="125" r="45" fill="url(#grassPattern)" stroke="#cbd5e1" strokeWidth="4" />
+        
+        {/* Road Entries */}
+        <rect x="175" y="180" width="50" height="70" fill="url(#roadTexture)" />
+        <rect x="175" y="0" width="50" height="70" fill="url(#roadTexture)" />
+        <rect x="0" y="100" width="130" height="50" fill="url(#roadTexture)" />
+        <rect x="270" y="100" width="130" height="50" fill="url(#roadTexture)" />
+        
+        {/* Center Island Details */}
+        <circle cx="200" cy="125" r="20" fill="none" stroke="#166534" strokeWidth="1" />
+        
+        {/* Yield Lines */}
+        <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
+
+        <motion.g
+          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+        >
+          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
+          <AnimatePresence>
+            {step === 1 && <VisionCone side="left" opacity={0.6} />}
+            {step === 4 && <VisionCone side="right" opacity={0.6} />}
+          </AnimatePresence>
+        </motion.g>
+      </svg>
+    </div>
+  );
+};
+
+const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
+  const getInterpolatedState = () => {
+    const states = [
+      { x: 30, y: 210, rotation: -5, speed: 40, indicator: 'none' as const },
+      { x: 130, y: 195, rotation: -8, speed: 70, indicator: 'left' as const },
+      { x: 260, y: 160, rotation: -12, speed: 95, indicator: 'left' as const },
+      { x: 420, y: 115, rotation: 0, speed: 110, indicator: 'none' as const },
+    ];
+
+    const current = states[step] || states[0];
+    const next = states[step + 1] || current;
+    const p = progress / 100;
+
+    return {
+      x: current.x + (next.x - current.x) * p,
+      y: current.y + (next.y - current.y) * p,
+      rotation: current.rotation + (next.rotation - current.rotation) * p,
+      speed: current.speed + (next.speed - current.speed) * p,
+      indicator: p > 0.5 ? next.indicator : current.indicator
+    };
+  };
+
+  const state = getInterpolatedState();
+
+  return (
+    <div className="relative w-full h-full bg-slate-50 overflow-hidden">
+      <AnimatePresence>
+        {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalLeftAndAccelerate} />}
+        {step === 2 && <InstructionPopup text={t.maneuvers.interactive.simulator.mirrorAndShoulderLeft} />}
+      </AnimatePresence>
+      <svg viewBox="0 0 400 250" className="w-full h-full">
+        <GrassBackground />
+        
+        {/* Environment Details */}
+        <Building x={30} y={20} width={60} height={40} type="office" />
+        <Building x={100} y={10} width={50} height={30} type="house" />
+        <Building x={340} y={170} width={40} height={50} type="apartment" />
+        <Building x={270} y={180} width={50} height={40} type="store" />
+
+        {/* Main Highway */}
+        <rect x="0" y="40" width="400" height="100" fill="url(#roadTexture)" />
+        <line x1="0" y1="90" x2="400" y2="90" stroke="#fff" strokeWidth="2" strokeDasharray="15,15" opacity="0.3" />
+        
+        {/* Acceleration Lane (Ramp) */}
+        <path 
+          d="M 0 220 Q 150 210 400 120" 
+          fill="none" 
+          stroke="url(#roadTexture)" 
+          strokeWidth="45" 
+          strokeLinecap="round"
+        />
+        <path 
+          d="M 150 185 Q 250 170 400 120" 
+          fill="none" 
+          stroke="#fff" 
+          strokeWidth="2" 
+          strokeDasharray="8,8" 
+          opacity="0.6"
+        />
+
+        {/* Highway Traffic with varied colors */}
+        <g transform="translate(320, 65)"><TopDownCar color="#ef4444" scale={0.8} /></g>
+        <g transform="translate(100, 65)"><TopDownCar color="#10b981" scale={0.8} /></g>
+
+        {/* User Car with smooth movement */}
+        <motion.g
+          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
+        >
+          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
+          {step === 2 && <VisionCone side="left" opacity={0.6} />}
+        </motion.g>
+
+        {/* Speed Bar */}
+        <g transform="translate(20, 20)">
+          <rect width="100" height="10" rx="5" fill="#1e293b" opacity="0.2" />
+          <motion.rect animate={{ width: (state.speed / 120) * 100 }} height="10" rx="5" fill="#38BDF8" />
+          <text x="110" y="10" fill="#1e293b" className="text-[10px] font-black">{Math.round(state.speed)} KM/H</text>
+        </g>
+      </svg>
     </div>
   );
 };
