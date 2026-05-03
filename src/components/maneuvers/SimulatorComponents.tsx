@@ -74,23 +74,30 @@ export const GlobalDefinitions = () => (
         <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
       </radialGradient>
 
-      <filter id="carShadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feDropShadow dx="3" dy="3" stdDeviation="4" floodOpacity="0.4" />
+      <filter id="carShadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+        <feOffset dx="2" dy="2" result="offsetblur" />
+        <feComponentTransfer>
+          <feFuncA type="linear" slope="0.3" />
+        </feComponentTransfer>
+        <feMerge>
+          <feMergeNode />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
       </filter>
 
       <pattern id="grassPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect width="40" height="40" fill="#064e3b" />
-        <circle cx="20" cy="20" r="1" fill="#065f46" />
-        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#065f46" strokeWidth="1" fill="none" opacity="0.3" />
+        <rect width="40" height="40" fill="#15803d" />
+        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#166534" strokeWidth="1" fill="none" />
       </pattern>
 
       <pattern id="roadTexture" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-        <rect width="100" height="100" fill="#1e293b" />
-        <circle cx="50" cy="50" r="1" fill="#334155" opacity="0.1" />
+        <rect width="100" height="100" fill="#334155" />
+        <rect width="100" height="100" fill="url(#noise)" opacity="0.05" />
       </pattern>
 
       <filter id="buildingShadow">
-        <feDropShadow dx="4" dy="4" stdDeviation="6" floodOpacity="0.3" />
+        <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.2" />
       </filter>
     </defs>
   </svg>
@@ -105,57 +112,64 @@ export const TopDownCar: React.FC<{
   scale?: number;
   isUser?: boolean;
 }> = ({ color, indicator = 'none', brakeLights = false, reverseLights = false, rotation = 0, scale = 1, isUser = false }) => {
-  const bodyId = useMemo(() => `body-grad-${color.replace('#', '')}-${Math.random().toString(36).substr(2, 5)}`, [color]);
+  const bodyId = useMemo(() => `body-${color.replace('#', '')}-${Math.random().toString(36).substr(2, 9)}`, [color]);
   
   return (
-    <g transform={`scale(${scale}) rotate(${rotation})`} filter="url(#carShadow)">
+    <g transform={`scale(${scale}) rotate(${rotation})`}>
       <defs>
-        <linearGradient id={bodyId} x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={bodyId} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={color} />
-          <stop offset="45%" stopColor={color} />
-          <stop offset="55%" stopColor="white" stopOpacity="0.2" />
+          <stop offset="50%" stopColor={color} />
           <stop offset="100%" stopColor={color} />
         </linearGradient>
       </defs>
 
-      {/* Tires with detail */}
-      {[
-        { x: 18, y: -21 }, { x: 18, y: 15 },
-        { x: -30, y: -21 }, { x: -30, y: 15 }
-      ].map((pos, idx) => (
-        <rect key={idx} x={pos.x} y={pos.y} width="12" height="7" rx="2" fill="#020617" />
-      ))}
+      {/* Shadow */}
+      <rect x="-36" y="-16" width="72" height="38" rx="10" fill="black" opacity="0.2" transform="translate(2, 2)" />
 
-      {/* Main Body */}
-      <rect x="-35" y="-18" width="70" height="36" rx="10" fill={`url(#${bodyId})`} />
+      {/* Tires */}
+      <rect x="18" y="-21" width="12" height="6" rx="2" fill="#111827" />
+      <rect x="18" y="15" width="12" height="6" rx="2" fill="#111827" />
+      <rect x="-30" y="-21" width="12" height="6" rx="2" fill="#111827" />
+      <rect x="-30" y="15" width="12" height="6" rx="2" fill="#111827" />
+
+      {/* Main Body with Shading */}
+      <rect x="-35" y="-18" width="70" height="36" rx="9" fill={color} />
       
-      {/* Glossy Overlay */}
-      <rect x="-35" y="-18" width="70" height="18" rx="10" fill="white" opacity="0.15" />
-      <rect x="-32" y="-15" width="64" height="30" rx="8" stroke="white" strokeWidth="0.5" opacity="0.1" fill="none" />
+      {/* 3D Highlight Overlay */}
+      <rect x="-35" y="-18" width="70" height="18" rx="9" fill="white" opacity="0.1" />
+      <rect x="-35" y="0" width="70" height="18" rx="9" fill="black" opacity="0.1" />
 
-      {/* Windows with reflection */}
+      {/* Body Lines */}
+      <path d="M 12 -18 L 12 18" stroke="rgba(0,0,0,0.2)" strokeWidth="1" /> {/* Hood */}
+      <path d="M -20 -18 L -20 18" stroke="rgba(0,0,0,0.2)" strokeWidth="1" /> {/* Trunk */}
+
+      {/* Windows */}
+      <path d="M 8 -14 L 22 -11 L 22 11 L 8 14 Z" fill="#1e293b" /> {/* Front */}
+      <rect x="-26" y="-13" width="8" height="26" rx="2" fill="#1e293b" /> {/* Rear */}
+      <rect x="-16" y="-16.5" width="22" height="2.5" rx="1" fill="#1e293b" /> {/* Left */}
+      <rect x="-16" y="14" width="22" height="2.5" rx="1" fill="#1e293b" /> {/* Right */}
+
+      {/* Roof */}
+      <rect x="-18" y="-12" width="28" height="24" rx="4" fill="white" opacity="0.1" />
+      
+      {/* Lights */}
       <g>
-        <path d="M 10 -14 L 24 -11 L 24 11 L 10 14 Z" fill="#0f172a" />
-        <path d="M 11 -12 L 20 -10 L 20 10 L 11 12 Z" fill="white" opacity="0.05" />
-        <rect x="-26" y="-13" width="10" height="26" rx="2" fill="#0f172a" />
+        {/* Headlights (Front) */}
+        <rect x="31" y="-14" width="5" height="8" rx="2" fill="#f8fafc" />
+        <rect x="31" y="6" width="5" height="8" rx="2" fill="#f8fafc" />
+        {/* Light Beams */}
+        <path d="M 36 -14 L 60 -25 L 60 -3 L 36 -6 Z" fill="white" opacity="0.1" />
+        <path d="M 36 6 L 60 3 L 60 25 L 36 14 Z" fill="white" opacity="0.1" />
       </g>
 
-      {/* Headlights (Front) */}
-      <rect x="32" y="-15" width="4" height="9" rx="2" fill="#f8fafc" />
-      <rect x="32" y="6" width="4" height="9" rx="2" fill="#f8fafc" />
+      {/* Tail Lights (Rear) */}
+      <rect x="-36" y="-14" width="3" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
+      <rect x="-36" y="6" width="3" height="8" rx="1" fill={brakeLights ? '#ef4444' : '#991b1b'} />
       
-      {/* Active Light Beams */}
-      <g opacity="0.15">
-        <path d="M 36 -15 L 70 -35 L 70 5 L 36 -6 Z" fill="#f8fafc" />
-        <path d="M 36 6 L 70 -5 L 70 35 L 36 15 Z" fill="#f8fafc" />
-      </g>
-
-      {/* Tail Lights */}
-      <rect x="-36" y="-14" width="3" height="8" rx="1" fill={brakeLights ? '#ff0000' : '#7f1d1d'} className={brakeLights ? 'animate-pulse' : ''} />
-      <rect x="-36" y="6" width="3" height="8" rx="1" fill={brakeLights ? '#ff0000' : '#7f1d1d'} className={brakeLights ? 'animate-pulse' : ''} />
-      
+      {/* Reverse Lights */}
       {reverseLights && (
-        <g opacity="0.8">
+        <g>
           <rect x="-36" y="-5" width="3" height="4" rx="1" fill="white" />
           <rect x="-36" y="1" width="3" height="4" rx="1" fill="white" />
         </g>
@@ -164,34 +178,36 @@ export const TopDownCar: React.FC<{
       {/* Indicators */}
       <AnimatePresence>
         {(indicator === 'left' || indicator === 'hazard') && (
-          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.5, repeat: Infinity }}>
-            <circle cx="30" cy="-14" r="4" fill="#fbbf24" />
-            <circle cx="-32" cy="-14" r="4" fill="#fbbf24" />
-            <circle cx="30" cy="-14" r="10" fill="url(#indicatorGlow)" />
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="28" cy="-14" r="3.5" fill="#fbbf24" />
+            <circle cx="-32" cy="-14" r="3.5" fill="#fbbf24" />
+            <circle cx="28" cy="-14" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-32" cy="-14" r="8" fill="url(#indicatorGlow)" />
           </motion.g>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {(indicator === 'right' || indicator === 'hazard') && (
-          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.5, repeat: Infinity }}>
-            <circle cx="30" cy="14" r="4" fill="#fbbf24" />
-            <circle cx="-32" cy="14" r="4" fill="#fbbf24" />
-            <circle cx="30" cy="14" r="10" fill="url(#indicatorGlow)" />
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="28" cy="14" r="3.5" fill="#fbbf24" />
+            <circle cx="-32" cy="14" r="3.5" fill="#fbbf24" />
+            <circle cx="28" cy="14" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-32" cy="14" r="8" fill="url(#indicatorGlow)" />
           </motion.g>
         )}
       </AnimatePresence>
 
-      {/* User Focus Ring */}
+      {/* Selection Ring */}
       {isUser && (
         <motion.circle
-          cx="0" cy="0" r="50"
+          cx="0" cy="0" r="48"
           fill="none"
           stroke="#38BDF8"
-          strokeWidth="1.5"
-          strokeDasharray="5,5"
-          animate={{ rotate: 360, scale: [1, 1.05, 1] }}
-          transition={{ rotate: { duration: 10, repeat: Infinity, ease: 'linear' }, scale: { duration: 2, repeat: Infinity } }}
-          opacity="0.4"
+          strokeWidth="2"
+          strokeDasharray="4,4"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+          opacity="0.3"
         />
       )}
     </g>
@@ -205,18 +221,18 @@ export const VisionCone: React.FC<{
   const rotation = side === 'left' ? -60 : side === 'right' ? 60 : 0;
   return (
     <motion.g
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
+      exit={{ opacity: 0, scale: 0.5 }}
       transform={`rotate(${rotation})`}
     >
       {side === 'round' ? (
-        <circle cx="0" cy="0" r="90" fill="url(#visionGradient)" opacity="0.4" />
+        <circle cx="0" cy="0" r="80" fill="url(#visionGradient)" opacity="0.6" />
       ) : (
         <path
-          d="M 0 0 L 110 -45 A 110 110 0 0 1 110 45 Z"
+          d="M 0 0 L 100 -40 A 100 100 0 0 1 100 40 Z"
           fill="url(#visionGradient)"
-          opacity="0.6"
+          opacity="0.8"
           transform={`translate(0, ${side === 'left' ? -20 : 20}) rotate(${side === 'left' ? -90 : 90})`}
         />
       )}
@@ -226,28 +242,25 @@ export const VisionCone: React.FC<{
 
 export const SteeringWheelOverlay: React.FC<{ rotation: number }> = ({ rotation }) => (
   <g transform="translate(360, 45)">
-    <circle r="25" className="fill-slate-900/80 backdrop-blur-sm" />
-    <motion.g animate={{ rotate: rotation }} transition={{ type: 'spring', damping: 12, stiffness: 80 }}>
-      <circle r="20" fill="none" stroke="#475569" strokeWidth="4" />
-      <rect x="-2" y="-20" width="4" height="12" rx="1" fill="#38BDF8" className="shadow-lg shadow-sky-500/50" />
+    <circle r="22" fill="#1e293b" />
+    <motion.g animate={{ rotate: rotation }} transition={{ type: 'spring', damping: 15 }}>
+      <circle r="20" fill="none" stroke="#64748b" strokeWidth="4" />
+      <rect x="-2" y="-20" width="4" height="12" rx="1" fill="#38BDF8" />
       <rect x="-2" y="-2" width="4" height="4" rx="1" fill="#fff" />
-      <path d="M -18 0 L 18 0 M 0 0 L 0 18" stroke="#475569" strokeWidth="2.5" />
+      <line x1="-18" y1="0" x2="18" y2="0" stroke="#64748b" strokeWidth="2" />
     </motion.g>
   </g>
 );
 
 export const InstructionPopup: React.FC<{ text: string }> = ({ text }) => (
   <motion.div
-    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+    initial={{ opacity: 0, y: 20, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-    transition={{ type: 'spring', damping: 20 }}
-    className="absolute top-8 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-3xl border border-white/20 z-50 flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+    exit={{ opacity: 0, y: -20, scale: 0.9 }}
+    className="absolute top-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur shadow-2xl rounded-2xl px-6 py-3 border border-slate-200 z-50 flex items-center gap-3 whitespace-nowrap"
   >
-    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-400/30">
-      <div className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping" />
-    </div>
-    <span className="text-white font-black text-lg tracking-tight">{text}</span>
+    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+    <span className="text-slate-800 font-bold text-lg">{text}</span>
   </motion.div>
 );
 
@@ -255,7 +268,7 @@ export const SideViewCar: React.FC<{ color: string; brakeLights?: boolean }> = (
   <g filter="url(#carShadow)">
     {/* Body */}
     <path d="M 0 40 L 10 20 L 40 20 L 50 35 L 120 35 L 130 55 L 0 55 Z" fill={color} />
-    <path d="M 10 20 L 40 20 L 50 35 L 10 35 Z" fill="#cbd5e1" opacity="0.6" />
+    <path d="M 10 20 L 40 20 L 50 35 L 10 35 Z" fill="#cbd5e1" opacity="0.6" /> {/* Windows */}
     
     {/* Wheels */}
     <circle cx="25" cy="55" r="10" fill="#1e293b" stroke="#334155" strokeWidth="2" />
@@ -265,14 +278,16 @@ export const SideViewCar: React.FC<{ color: string; brakeLights?: boolean }> = (
     <rect x="125" y="40" width="5" height="8" fill="#fef3c7" rx="1" />
     
     {/* Brake Light */}
-    <rect x="0" y="40" width="5" height="8" fill={brakeLights ? '#ef4444' : '#7f1d1d'} rx="1" />
+    {brakeLights && (
+      <rect x="0" y="40" width="5" height="8" fill="#ef4444" rx="1" className="animate-pulse" />
+    )}
   </g>
 );
 
 export const SideViewTree: React.FC = () => (
   <g>
-    <rect x="8" y="30" width="4" height="20" fill="#451a03" />
-    <circle cx="10" cy="20" r="15" fill="#065f46" />
-    <circle cx="15" cy="15" r="10" fill="#064e3b" />
+    <rect x="8" y="30" width="4" height="20" fill="#78350f" />
+    <circle cx="10" cy="20" r="15" fill="#15803d" />
+    <circle cx="15" cy="15" r="10" fill="#166534" />
   </g>
 );

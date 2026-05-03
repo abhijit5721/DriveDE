@@ -22,6 +22,7 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
   const t = TRANSLATIONS[language];
   
   // Define axes (4 points)
+  // Top: Braking, Right: Vorfahrt, Bottom: Mirrors, Left: Roundabout
   const points = [
     { label: t.tracker.radar.reaction, value: stats.braking ? 100 : 20, icon: Zap },
     { label: t.tracker.radar.priority, value: stats.vorfahrt ? 100 : 20, icon: ShieldCheck },
@@ -59,29 +60,15 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative h-[200px] w-full max-w-[240px] group">
+      <div className="relative h-[200px] w-full max-w-[240px]">
         {/* SVG Components */}
         <svg height="200" width="100%" className="overflow-visible">
-          <defs>
-            <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {/* Glowing Center */}
-          <circle cx={center} cy={center} r={radius} fill="url(#radar-glow)" />
-          
           {/* Grid Background */}
           {[100, 60, 20].map((v) => (
             <path
               key={v}
               d={gridPath(v)}
-              className="fill-none stroke-blue-500/20 dark:stroke-white/10"
+              className="fill-none stroke-blue-500/10 dark:stroke-white/10"
               strokeWidth="1"
             />
           ))}
@@ -96,9 +83,8 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
                 y1={center}
                 x2={x}
                 y2={y}
-                className="stroke-blue-500/20 dark:stroke-white/10"
+                className="stroke-blue-500/10 dark:stroke-white/10"
                 strokeWidth="1"
-                strokeDasharray="2 2"
               />
             );
           })}
@@ -107,64 +93,39 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
           <motion.path
             initial={{ d: gridPath(20), opacity: 0 }}
             animate={{ d: pathContent, opacity: 1 }}
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fill-blue-500/20 stroke-blue-400 dark:fill-blue-500/30 dark:stroke-blue-400"
-            strokeWidth="2.5"
-            style={{ filter: 'drop-shadow(0 0 12px rgba(59, 130, 246, 0.5))' }}
+            transition={{ duration: 1, ease: 'circOut' }}
+            className="fill-blue-400/20 stroke-blue-400 dark:fill-blue-500/30 dark:stroke-blue-400"
+            strokeWidth="3"
+            style={{ filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))' }}
           />
-
-          {/* Radar Sweep Animation */}
-          <motion.g
-            animate={{ rotate: 360 }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-            style={{ originX: `${center}px`, originY: `${center}px` }}
-          >
-            <line 
-              x1={center} y1={center} x2={center} y2={center - radius} 
-              className="stroke-blue-400/50" strokeWidth="2"
-            />
-            <path 
-              d={`M ${center} ${center} L ${center} ${center - radius} A ${radius} ${radius} 0 0 1 ${center + radius * 0.5} ${center - radius * 0.8} Z`}
-              fill="url(#sweep-gradient)"
-              opacity="0.5"
-            />
-          </motion.g>
 
           {/* Data Points */}
           {points.map((p, i) => {
             const { x, y } = getCoordinates(i, p.value);
             return (
-              <motion.g key={i}>
-                {p.value === 100 && (
-                  <motion.circle
-                    cx={x} cy={y} r="8"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="fill-emerald-400/20"
-                  />
+              <motion.circle
+                key={i}
+                cx={x}
+                cy={y}
+                r="4"
+                className={cn(
+                  'stroke-white dark:stroke-slate-900 transition-colors',
+                  p.value === 100 ? 'fill-emerald-400' : 'fill-blue-400'
                 )}
-                <motion.circle
-                  cx={x} cy={y} r="4"
-                  className={cn(
-                    'stroke-white dark:stroke-slate-900 shadow-xl',
-                    p.value === 100 ? 'fill-emerald-400' : 'fill-blue-500'
-                  )}
-                  strokeWidth="2"
-                />
-              </motion.g>
+                strokeWidth="2"
+              />
             );
           })}
         </svg>
 
         {/* Labels & Icons Overlay */}
         {points.map((p, i) => {
-          const { x, y } = getCoordinates(i, 118);
+          const { x, y } = getCoordinates(i, 115);
           const Icon = p.icon;
           return (
             <div
               key={i}
-              className="absolute flex flex-col items-center gap-1 transition-transform group-hover:scale-110"
+              className="absolute flex flex-col items-center gap-0.5"
               style={{
                 left: `${(x / size) * 100}%`,
                 top: `${(y / size) * 100}%`,
@@ -172,17 +133,14 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
               }}
             >
               <div className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-2xl shadow-xl border transition-all duration-500',
+                'flex h-6 w-6 items-center justify-center rounded-lg shadow-sm border',
                 p.value === 100 
-                  ? 'bg-emerald-500 border-emerald-400 text-white shadow-emerald-500/20' 
-                  : 'glass-card border-white/20 text-blue-400 dark:text-blue-300'
+                  ? 'bg-emerald-500 border-emerald-400 text-white' 
+                  : 'bg-white/10 border-white/20 text-blue-200'
               )}>
-                <Icon className={cn('h-4 w-4', p.value === 100 && 'animate-pulse')} />
+                <Icon className="h-3.5 w-3.5" />
               </div>
-              <span className={cn(
-                'text-[9px] font-black uppercase tracking-widest leading-none',
-                p.value === 100 ? 'text-emerald-400' : 'text-slate-500 dark:text-slate-400'
-              )}>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-white/70">
                 {p.label}
               </span>
             </div>
@@ -190,16 +148,16 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
         })}
       </div>
       
-      <div className="mt-6 flex gap-6 animate-fade-in-up">
-        <div className="flex items-center gap-2">
-          <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+      <div className="mt-4 flex gap-4">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="text-[10px] font-bold text-white/60">
             {t.tracker.radar.mastered}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2.5 w-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2 w-2 rounded-full bg-blue-400" />
+          <span className="text-[10px] font-bold text-white/60">
             {t.tracker.radar.practice}
           </span>
         </div>

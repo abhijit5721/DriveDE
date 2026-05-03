@@ -85,87 +85,53 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
   };
 
   return (
-    <div className="glass-card rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]">
+    <div className="bg-[#030712] rounded-3xl overflow-hidden border border-[#1e293b] shadow-2xl">
       <GlobalDefinitions />
-      <div className="relative bg-slate-950 p-4 sm:p-8">
-        <div className="aspect-video rounded-[2rem] overflow-hidden flex items-center justify-center border border-white/5 shadow-inner bg-slate-900/50 relative group">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.1),transparent_70%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] opacity-[0.03] pointer-events-none" />
+      <div className="relative bg-[#020617] p-6">
+        <div className="aspect-video rounded-2xl overflow-hidden flex items-center justify-center border border-[#1e293b] shadow-[0_20px_60px_rgba(0,0,0,0.6)] bg-[#030712] relative group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.05),transparent_60%)] pointer-events-none" />
           {renderAnimation()}
         </div>
-        
-        {/* Step Indicator Badge */}
-        <div className="absolute top-10 right-10 flex items-center gap-2 px-4 py-2 glass rounded-2xl border border-white/10 shadow-xl">
-          <span className="text-sky-400 font-black text-sm tracking-tighter uppercase">{t.maneuvers.step || 'STEP'}</span>
-          <div className="h-4 w-[1px] bg-white/20 mx-1" />
-          <span className="text-white font-black text-lg">
-            {currentStep + 1}<span className="text-white/40 text-sm ml-1">/ {steps.length}</span>
-          </span>
+        <div className="absolute top-10 right-10 bg-[#38BDF8] text-[#030712] px-4 py-1.5 rounded-full text-sm font-black shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+          {currentStep + 1} <span className="opacity-50 mx-1">/</span> {steps.length}
         </div>
       </div>
 
-      <div className="px-10 py-8 bg-slate-950/40 border-t border-white/5 backdrop-blur-md">
-        <div className="text-white text-center font-black text-2xl tracking-tight leading-tight min-h-[4rem] flex items-center justify-center animate-fade-in">
+      <div className="px-8 py-6 bg-[#030712] border-t border-[#1e293b]">
+        <div className="text-slate-100 text-center font-bold text-xl min-h-[3.5rem] flex items-center justify-center">
           {language === 'de' ? steps[currentStep]?.description : steps[currentStep]?.descriptionEn}
         </div>
-        
-        {/* Premium Progress Bar */}
-        <div className="mt-8 relative h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
+        <div className="mt-6 h-2 bg-[#1e293b] rounded-full overflow-hidden">
           <motion.div 
             animate={{ width: `${progress}%` }}
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-600 via-sky-400 to-sky-300 shadow-[0_0_20px_rgba(56,189,248,0.4)]"
-            transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
+            className="h-full bg-[#38BDF8] shadow-[0_0_15px_rgba(56,189,248,0.6)]"
+            transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-8 p-8 bg-slate-950 border-t border-white/5">
-        <button 
-          onClick={handleReset} 
-          className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 hover:border-sky-500/30 transition-all shadow-xl active:scale-90 group"
-          title={t.common.reset}
-        >
-          <RotateCcw size={24} className="group-hover:rotate-[-90deg] transition-transform duration-500" />
+      <div className="flex items-center justify-center gap-6 p-6 bg-[#020617] border-t border-[#1e293b]">
+        <button onClick={handleReset} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] hover:border-[#38BDF8]/50 transition-all shadow-lg active:scale-95 group">
+          <RotateCcw size={22} className="group-hover:rotate-[-45deg] transition-transform" />
         </button>
-
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={handlePrevStep} 
-            disabled={currentStep === 0} 
-            className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 shadow-xl disabled:opacity-20 active:scale-90 transition-all"
-          >
-            <ChevronLeft size={24} />
-          </button>
-
-          <button 
-            onClick={() => setIsPlaying(!isPlaying)} 
-            className="h-20 w-20 rounded-[2rem] bg-sky-500 text-slate-950 hover:scale-105 hover:bg-sky-400 shadow-[0_0_40px_rgba(14,165,233,0.4)] transition-all active:scale-95 flex items-center justify-center relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} className="translate-x-1" fill="currentColor" />}
-          </button>
-
-          <button 
-            onClick={handleNextStep} 
-            disabled={currentStep === steps.length - 1} 
-            className="p-4 rounded-2xl glass-card border-white/5 text-slate-400 hover:text-sky-400 shadow-xl disabled:opacity-20 active:scale-90 transition-all"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
+        <button onClick={handlePrevStep} disabled={currentStep === 0} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] shadow-lg disabled:opacity-20 active:scale-95">
+          <ChevronLeft size={22} />
+        </button>
+        <button onClick={() => setIsPlaying(!isPlaying)} className="p-5 rounded-3xl bg-[#38BDF8] text-[#030712] hover:scale-105 shadow-[0_0_25px_rgba(56,189,248,0.3)] transition-all active:scale-95">
+          {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} className="translate-x-0.5" fill="currentColor" />}
+        </button>
+        <button onClick={handleNextStep} disabled={currentStep === steps.length - 1} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] shadow-lg disabled:opacity-20 active:scale-95">
+          <ChevronRight size={22} />
+        </button>
       </div>
 
-      {/* Step Navigation Rail */}
-      <div className="flex gap-4 p-8 overflow-x-auto bg-slate-950/80 no-scrollbar border-t border-white/5">
+      <div className="flex gap-3 p-6 overflow-x-auto bg-[#030712] no-scrollbar">
         {steps.map((step, index) => (
           <button
             key={step.id}
             onClick={() => { setCurrentStep(index); setProgress(0); setIsPlaying(false); }}
-            className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-black transition-all duration-300 border ${
-              index === currentStep 
-                ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-[0_0_25px_rgba(14,165,233,0.5)] scale-110' 
-                : 'glass-card text-slate-500 border-white/5 hover:border-white/20 hover:text-slate-300'
+            className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
+              index === currentStep ? 'bg-[#38BDF8] text-[#030712] shadow-[0_0_20px_rgba(56,189,248,0.4)] scale-110' : 'bg-[#0f172a] text-slate-500 border border-[#1e293b]'
             }`}
           >
             {index + 1}
@@ -241,20 +207,8 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
           <path d="M 295 90 Q 260 135 200 185" fill="none" stroke="#38BDF8" strokeWidth="3" strokeDasharray="8,8" opacity="0.4" />
         )}
 
-        {/* User Car with smooth movement */}
-        <motion.g
-          animate={{ 
-            x: state.x,
-            y: state.y,
-            rotate: state.rotation
-          }}
-          transition={{ 
-            type: 'spring',
-            damping: 20,
-            stiffness: 100,
-            mass: 0.5
-          }}
-        >
+        {/* User Car */}
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && (
@@ -264,7 +218,7 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
             )}
             {step === 4 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -328,17 +282,14 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <g transform="translate(140, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
         <g transform="translate(300, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
 
-        {/* User Car with smooth movement */}
-        <motion.g
-          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
-        >
+        {/* User Car */}
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="round" opacity={0.4} />}
             {step === 3 && <VisionCone side="right" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -397,17 +348,14 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="143" y="0" width="2" height="250" fill="#94a3b8" />
         <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
         
-        <motion.g
-          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
-        >
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} reverseLights={state.reverse} isUser={true} scale={0.8} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 3 && <VisionCone side="round" opacity={0.4} />}
             {step === 5 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -456,13 +404,10 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
 
-        <motion.g
-          animate={{ x: state.x, y: state.y }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
-        >
+        <g transform={`translate(${state.x}, ${state.y})`}>
           <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
-        </motion.g>
+        </g>
 
         {/* Speedometer */}
         <g transform="translate(330, 200)">
@@ -564,16 +509,13 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         {/* Yield Lines */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
 
-        <motion.g
-          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
-        >
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 4 && <VisionCone side="right" opacity={0.6} />}
           </AnimatePresence>
-        </motion.g>
+        </g>
       </svg>
     </div>
   );
@@ -643,14 +585,11 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         <g transform="translate(320, 65)"><TopDownCar color="#ef4444" scale={0.8} /></g>
         <g transform="translate(100, 65)"><TopDownCar color="#10b981" scale={0.8} /></g>
 
-        {/* User Car with smooth movement */}
-        <motion.g
-          animate={{ x: state.x, y: state.y, rotate: state.rotation }}
-          transition={{ type: 'spring', damping: 20, stiffness: 100, mass: 0.5 }}
-        >
+        {/* User Car */}
+        <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
-        </motion.g>
+        </g>
 
         {/* Speed Bar */}
         <g transform="translate(20, 20)">
