@@ -113,31 +113,14 @@ export default function App() {
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
           setAuthState(user.email || null, 'signed_in', displayName, user.id);
           
+          // Fetch remote data to hydrate the UI quickly
           const remoteData = await hydrateFromSupabase().catch(err => {
             console.error('[App] Hydration failed:', err);
             return null;
           });
-        if (remoteData) {
-          console.log('[App] State hydrated from Supabase. isPremium:', remoteData.profile?.is_premium);
-        }
-        
-        // Ensure profile exists in DB immediately upon login
-        const currentState = useAppStore.getState();
-        await ensureProfileFromState(currentState);
-        
-        if (isNewUser) {
-          console.log('[App] New user detected, migrating local progress to cloud...');
-          // First sign-in: sync local session progress to cloud
-          const localProgress = useAppStore.getState().userProgress;
-          for (const lessonId of localProgress.completedLessons) {
-            await syncCompletedLesson(lessonId);
-          }
-          for (const drivingSession of localProgress.drivingSessions) {
-            await syncDrivingSession(drivingSession, useAppStore.getState().transmissionType);
-          }
-        }
 
-        if (remoteData) {
+          if (remoteData) {
+            console.log('[App] State hydrated from Supabase. isPremium:', remoteData.profile?.is_premium);
             useAppStore.setState((state) => {
                 const combinedCompletedLessons = Array.from(new Set([
                     ...state.userProgress.completedLessons,
@@ -198,18 +181,40 @@ export default function App() {
                     }
                 };
             });
-        }
+          }
+
+          // Unblock the UI immediately after critical hydration
+          setIsAuthLoading(false);
+
+          // Run background tasks non-blockingly
+          (async () => {
+            try {
+              const currentState = useAppStore.getState();
+              await ensureProfileFromState(currentState);
+              
+              if (isNewUser) {
+                console.log('[App] New user detected, migrating local progress to cloud in background...');
+                const localProgress = currentState.userProgress;
+                // Run syncs concurrently instead of serially
+                const lessonSyncs = localProgress.completedLessons.map(lessonId => syncCompletedLesson(lessonId));
+                const sessionSyncs = localProgress.drivingSessions.map(session => syncDrivingSession(session, currentState.transmissionType));
+                
+                await Promise.all([...lessonSyncs, ...sessionSyncs]);
+                console.log('[App] Background migration complete.');
+              }
+            } catch (bgError) {
+              console.error('[App] Background sync error:', bgError);
+            }
+          })();
+
         } else {
           // If there is no session, just set auth state to guest.
-          // Do NOT call logoutCleanup() here, as this can fire spuriously during token refresh
-          // or initial Supabase load, which would incorrectly wipe out local state and send
-          // signed-in users back to the Welcome screen.
           setAuthState(null, 'guest', null, null);
+          setIsAuthLoading(false);
         }
       } catch (error) {
         console.error('[App] Auth subscription error:', error);
         setAuthState(null, 'guest', null, null);
-      } finally {
         setIsAuthLoading(false);
       }
     });
