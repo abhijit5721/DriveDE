@@ -11,7 +11,7 @@
  * 3. Conditional rendering based on license selection (Welcome/LicenseSelector vs Dashboard).
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
@@ -21,22 +21,24 @@ import { Header } from './components/layout/Header';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopNav } from './components/layout/DesktopNav';
 import { Dashboard } from './components/dashboard/Dashboard';
-import { Curriculum } from './components/curriculum/Curriculum';
-import { Maneuvers } from './components/maneuvers/Maneuvers';
-import { Tracker } from './components/tracker/Tracker';
-import { Achievements } from './components/curriculum/Achievements';
-import { ExamSimulation } from './components/maneuvers/ExamSimulation';
-import { LessonDetail } from './components/curriculum/LessonDetail';
 import { Welcome } from './components/auth/Welcome';
 import { Paywall } from './components/finance/Paywall';
-import { InstructorReview } from './components/maneuvers/InstructorReview';
-import { LegalHub } from './components/legal/LegalHub';
-import { LegalPage } from './components/legal/LegalPage';
 import { AuthModal } from './components/auth/AuthModal';
-import { Account } from './components/auth/Account';
 import { LicenseSelector } from './components/auth/LicenseSelector';
 import { AccountSkeleton } from './components/auth/AccountSkeleton';
-import { BudgetEstimator } from './components/finance/BudgetEstimator';
+
+// Lazy loaded routes
+const Curriculum = lazy(() => import('./components/curriculum/Curriculum').then(m => ({ default: m.Curriculum })));
+const Maneuvers = lazy(() => import('./components/maneuvers/Maneuvers').then(m => ({ default: m.Maneuvers })));
+const Tracker = lazy(() => import('./components/tracker/Tracker').then(m => ({ default: m.Tracker })));
+const Achievements = lazy(() => import('./components/curriculum/Achievements').then(m => ({ default: m.Achievements })));
+const ExamSimulation = lazy(() => import('./components/maneuvers/ExamSimulation').then(m => ({ default: m.ExamSimulation })));
+const LessonDetail = lazy(() => import('./components/curriculum/LessonDetail').then(m => ({ default: m.LessonDetail })));
+const InstructorReview = lazy(() => import('./components/maneuvers/InstructorReview').then(m => ({ default: m.InstructorReview })));
+const LegalHub = lazy(() => import('./components/legal/LegalHub').then(m => ({ default: m.LegalHub })));
+const LegalPage = lazy(() => import('./components/legal/LegalPage').then(m => ({ default: m.LegalPage })));
+const Account = lazy(() => import('./components/auth/Account').then(m => ({ default: m.Account })));
+const BudgetEstimator = lazy(() => import('./components/finance/BudgetEstimator').then(m => ({ default: m.BudgetEstimator })));
 import { Skeleton } from './components/common/Skeleton';
 import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
@@ -480,7 +482,15 @@ export default function App() {
           )}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
             <div className="mx-auto max-w-4xl">
-              {renderContent()}
+              <Suspense fallback={
+                <div className="space-y-4 w-full h-full animate-pulse">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-48 w-full" />
+                  <Skeleton className="h-48 w-full" />
+                </div>
+              }>
+                {renderContent()}
+              </Suspense>
             </div>
           </main>
         </div>
