@@ -17,6 +17,9 @@ interface Car {
   label: string;
 }
 
+// SVG Transform Template to ensure unitless values for production stability
+const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
+
 export default function InteractiveVorfahrt({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
@@ -112,8 +115,9 @@ export default function InteractiveVorfahrt({ onComplete, language }: { onComple
              return (
                <motion.g
                  key={car.id}
-                 initial={car.position}
-                 animate={isCurrentAnimation || isMoved ? { x: car.target.x, y: car.target.y, opacity: 1 } : { x: car.position.x, y: car.position.y, opacity: 1 }}
+                 initial={{ x: car.position.x, y: car.position.y, rotate: car.position.rotate }}
+                 animate={isCurrentAnimation || isMoved ? { x: car.target.x, y: car.target.y, rotate: car.position.rotate } : { x: car.position.x, y: car.position.y, rotate: car.position.rotate }}
+                 transformTemplate={svgTransformTemplate}
                  transition={{ duration: 0.8, ease: 'easeInOut' }}
                  style={{ cursor: isMoved ? 'default' : 'pointer' }}
                  onClick={() => handleCarClick(car.id)}

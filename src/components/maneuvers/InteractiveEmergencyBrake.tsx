@@ -11,6 +11,9 @@ import { TRANSLATIONS } from '../../data/translations';
 
 import { GlobalDefinitions, SideViewCar, SideViewTree, GrassBackground } from './SimulatorComponents';
 
+// SVG Transform Template to ensure unitless values for production stability
+const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
+
 export default function InteractiveEmergencyBrake({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const et = t.maneuvers.interactive.emergencyBrake;
@@ -58,7 +61,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: any;
     if (gameState === 'driving' || gameState === 'signal') {
       interval = setInterval(() => {
         setDistance(prev => prev + 5);
@@ -90,6 +93,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
           {/* Moving Trees */}
           <motion.g 
             animate={{ x: -(distance * 0.5 % 400) }}
+            transformTemplate={svgTransformTemplate}
             transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
           >
             {[0, 100, 200, 300, 400, 500].map(x => (
@@ -106,6 +110,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
           {/* Lane Markings */}
           <motion.g 
             animate={{ x: -(distance % 100) }}
+            transformTemplate={svgTransformTemplate}
             transition={{ type: 'tween', ease: 'linear', duration: 0.03 }}
           >
             {[0, 100, 200, 300, 400, 500].map(x => (
@@ -193,7 +198,6 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
             </motion.div>
           )}
 
-          {/* Start Overlay for Idle state */}
           {gameState === 'idle' && (
             <div className="absolute inset-0 z-30 flex items-center justify-center backdrop-blur-md bg-slate-950/40 rounded-2xl">
               <button 

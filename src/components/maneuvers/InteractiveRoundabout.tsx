@@ -9,6 +9,9 @@ import { Check, RotateCcw, Play, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 
+// SVG Transform Template to ensure unitless values for production stability
+const svgTransformTemplate = ({ x, y, rotate }: any) => `translate(${x}, ${y}) rotate(${rotate})`;
+
 export default function InteractiveRoundabout({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const rt = t.maneuvers.interactive.roundabout;
@@ -86,7 +89,6 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
             <path d="M 240 150 L 280 150 M 270 145 L 280 150 L 270 155" stroke="white" fill="none" strokeWidth="2" />
           </g>
 
-          {/* User Car with robust orbital movement */}
           <motion.g
             animate={
               phase === 'entry' ? { x: 150, y: 280, rotate: -90 } :
@@ -94,19 +96,14 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
               phase === 'exit' ? { rotate: 360, x: [150, 340], y: 150 } :
               { x: 340, y: 150, rotate: 0 }
             }
+            transformTemplate={svgTransformTemplate}
             transition={{
               rotate: { duration: phase === 'inside' ? 2 : 0.5, ease: 'linear' },
               x: { duration: 0.8 },
               y: { duration: 0.8 }
             }}
-            style={{ originX: 0, originY: 0 }} // Center relative to its position? No, we need it relative to center of roundabout
           >
-            {/* The car itself, offset so it orbits when the parent g rotates at 150,150 */}
             <g transform="translate(-15, -10)">
-               {/* 
-                  When parent is at 150,150 and rotates, we need the car to be at radius 100.
-                  So we translate the inner group by 100 on X.
-               */}
                <g transform={phase === 'entry' ? 'translate(0, 0)' : 'translate(100, 0)'}>
                   <rect width="30" height="20" rx="4" fill="#ef4444" />
                   <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" />
