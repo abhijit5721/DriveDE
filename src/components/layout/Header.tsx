@@ -3,37 +3,20 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, Cog, Zap, BadgeCheck, LogIn, LogOut, RefreshCcw } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, LogIn, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '../../utils/license';
 import { TRANSLATIONS } from '../../data/translations';
 
 interface HeaderProps {
   onOpenAuth?: () => void;
   onSignOut?: () => void;
   onTabChange?: (tab: any) => void;
-  onChangePath?: () => void;
 }
 
-export function Header({ onOpenAuth, onSignOut, onTabChange, onChangePath }: HeaderProps) {
-  const { language, darkMode, setLanguage, toggleDarkMode, licenseType, isPremium, authStatus } = useAppStore();
+export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
+  const { language, darkMode, setLanguage, toggleDarkMode, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language].common;
-
-  const learningPath = getLearningPathFromLicenseType(licenseType);
-  const transmissionType = getTransmissionFromLicenseType(licenseType);
-
-  const pathLabel =
-    learningPath === 'umschreibung'
-      ? t.paths.umschreibung
-      : t.paths.fahrschule;
-
-  const transmissionLabel =
-    transmissionType === 'manual'
-      ? t.transmissions.manual
-      : transmissionType === 'automatic'
-        ? t.transmissions.automatic
-        : null;
 
   return (
     <header className="sticky top-0 z-40 glass pt-safe border-b border-white/10 dark:border-white/5 lg:hidden">

@@ -477,7 +477,6 @@ export default function App() {
               onOpenAuth={handleOpenAuth} 
               onSignOut={handleSignOut} 
               onTabChange={handleNavigate} 
-              onChangePath={handleChangePath}
             />
           )}
           <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
