@@ -489,7 +489,12 @@ export default function App() {
                   <Skeleton className="h-48 w-full" />
                 </div>
               }>
-                {renderContent()}
+                <div 
+                  key={`${activeTab}-${selectedLesson?.id || 'none'}-${selectedLegalPage || 'none'}`}
+                  className="animate-scale-in"
+                >
+                  {renderContent()}
+                </div>
               </Suspense>
             </div>
           </main>

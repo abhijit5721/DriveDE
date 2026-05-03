@@ -32,10 +32,10 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
     <nav 
       role="navigation"
       aria-label={t.common.nav.mobileNav}
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/50 glass dark:border-slate-800/50"
+      className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10 dark:border-white/5 pb-safe"
     >
-      <div className="px-0.5 pt-1" style={{ paddingBottom: 'max(6px, env(safe-area-inset-bottom))' }}>
-        <div className="flex items-center justify-between" role="tablist">
+      <div className="px-1 pt-2 pb-1">
+        <div className="flex items-center justify-around" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -45,23 +45,30 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               data-testid={tab.id === 'tracker' ? 'nav-tracker' : tab.id === 'account' ? 'nav-account' : undefined}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex flex-1 min-w-0 flex-col items-center gap-0.5 transition-all duration-300 py-1 px-0',
+                'group relative flex flex-1 flex-col items-center gap-1 transition-all duration-300 py-1 active:scale-90',
                 activeTab === tab.id
                   ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-slate-400 dark:text-slate-500'
+                  : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
               )}
             >
               <div
                 className={cn(
-                  'relative flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300',
-                  activeTab === tab.id ? 'bg-blue-100/50 dark:bg-blue-900/30 scale-110' : 'bg-transparent'
+                  'relative flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-500 ease-spring',
+                  activeTab === tab.id 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-110 -translate-y-1' 
+                    : 'bg-white/5 dark:bg-slate-800/40'
                 )}
               >
-                {tab.icon}
+                <div className={cn(
+                  'transition-transform duration-300',
+                  activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'
+                )}>
+                  {tab.icon}
+                </div>
               </div>
               <span className={cn(
-                'text-[7px] font-black uppercase tracking-tighter transition-all duration-300 px-0.5 text-center leading-[1.1]',
-                activeTab === tab.id ? 'opacity-100 h-auto translate-y-0' : 'opacity-0 h-0 translate-y-1'
+                'text-[8px] font-black uppercase tracking-widest transition-all duration-300 leading-none',
+                activeTab === tab.id ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-75'
               )}>
                 {tab.label}
               </span>
