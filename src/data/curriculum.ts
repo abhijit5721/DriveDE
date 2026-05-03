@@ -390,6 +390,9 @@ const rightBeforeLeftGuidedPoints: GuidedPoint[] = getGuidedPoints('rightBeforeL
 const laneChangeGuidedPoints: GuidedPoint[] = getGuidedPoints('laneChange', 'lane-gp');
 
 
+// Traffic Sign Definitions
+// These objects are used throughout the curriculum lessons.
+// IDs should match the cases in TrafficSignIcon.tsx for custom SVG rendering.
 const signRoundabout: TrafficSign = {
   id: 'sign-roundabout',
   code: 'Zeichen 215',

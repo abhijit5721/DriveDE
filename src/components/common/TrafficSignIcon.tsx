@@ -133,6 +133,72 @@ function GreenArrowSign() {
   );
 }
 
+/**
+ * Zeichen 206: Stopp! Vorfahrt gewähren.
+ * Classic octagonal shape with red background and white border.
+ */
+function StopSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <path 
+        d="M22 10h20l12 12v20L42 54H22L10 42V22L22 10z" 
+        fill="#ef4444" 
+        stroke="#ffffff" 
+        strokeWidth="2.5" 
+      />
+      <text x="32" y="38" textAnchor="middle" fontSize="12" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+    </svg>
+  );
+}
+
+/**
+ * Zeichen 220: Einbahnstraße (One-Way Street).
+ * Blue square with a white horizontal arrow pointing in the direction of travel.
+ */
+function OneWaySign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="10" y="10" width="44" height="44" rx="4" fill="#3b82f6" />
+      <path d="M16 32h32" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" />
+      <path d="M40 20l12 12-12 12" fill="none" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
+  );
+}
+
+/**
+ * Zeichen 267: Verbot der Einfahrt (No Entry).
+ * Red circle with a white horizontal bar.
+ */
+function NoEntrySign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <circle cx="32" cy="32" r="26" fill="#ef4444" />
+      <rect x="14" y="27" width="36" height="10" fill="#ffffff" />
+    </svg>
+  );
+}
+
+/**
+ * Zusatzzeichen 1022-10: Radfahrer frei (Cyclists allowed).
+ * Supplementary sign indicating cyclists may travel against the one-way direction.
+ */
+function CyclistsAllowedSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="4" y="10" width="56" height="44" rx="4" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
+      <g transform="translate(32 26) scale(0.7) translate(-32 -32)">
+        <path d="M12 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M52 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" fill="none" stroke="#111827" strokeWidth="4"/>
+        <path d="M12 22l10-12h20l10 12 M32 10v6 M24 16h16" fill="none" stroke="#111827" strokeWidth="3" strokeLinecap="round"/>
+      </g>
+      <text x="32" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#111827">frei</text>
+    </svg>
+  );
+}
+
+/**
+ * Lichtzeichen: Grüner Pfeil (Green Arrow Signal).
+ * Traffic light variant where the green light is an arrow shape.
+ */
 function GreenArrowSignal() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
@@ -142,58 +208,6 @@ function GreenArrowSignal() {
       <g transform="translate(32 46)">
         <path d="M-4 0h8 M2 -4l4 4-4 4" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       </g>
-    </svg>
-  );
-}
-
-function StopSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <polygon points="32,8 48.9,15.1 56,32 48.9,48.9 32,56 15.1,48.9 8,32 15.1,15.1" fill="#d92d20" />
-      <polygon points="32,10 47.9,16.1 54,32 47.9,47.9 32,54 16.1,47.9 10,32 16.1,16.1" fill="none" stroke="#ffffff" strokeWidth="2" />
-      <text
-        x="32"
-        y="41"
-        textAnchor="middle"
-        fontSize="18"
-        fontWeight="800"
-        fontFamily="Arial, Helvetica, sans-serif"
-        fill="#ffffff"
-      >
-        STOP
-      </text>
-    </svg>
-  );
-}
-
-function OneWaySign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#0f5bd8" />
-      <path d="M20 32h24" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" />
-      <path d="M38 22l10 10-10 10" stroke="#ffffff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
-function NoEntrySign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <circle cx="32" cy="32" r="24" fill="#d92d20" />
-      <rect x="16" y="28" width="32" height="8" fill="#ffffff" />
-    </svg>
-  );
-}
-
-function CyclistsAllowedSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="15" width="44" height="34" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-      <g transform="translate(14, 20) scale(0.6)">
-        <path d="M12 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M52 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" fill="none" stroke="#111827" strokeWidth="4"/>
-        <path d="M12 22l10-12h20l10 12 M32 10v6 M24 16h16" fill="none" stroke="#111827" strokeWidth="3" strokeLinecap="round"/>
-      </g>
-      <text x="32" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#111827">frei</text>
     </svg>
   );
 }
@@ -228,6 +242,11 @@ function FallbackSign({ code }: { code?: string }) {
   );
 }
 
+/**
+ * Maps a TrafficSign object to its visual representation.
+ * Prioritizes matching by ID (defined in curriculum.ts), 
+ * falls back to StVO code matching for robustness.
+ */
 function getSignGraphic(sign: TrafficSign) {
   switch (sign.id) {
     case 'sign-yield':

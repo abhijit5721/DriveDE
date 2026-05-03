@@ -44,6 +44,16 @@ This document provides a detailed overview of the core components in the DriveDE
 
 ---
 
+## Shared Utility Components
+
+### `TrafficSignIcon`
+- **Location**: `src/components/common/TrafficSignIcon.tsx`
+- **Responsibility**: Centralized component for rendering official German traffic signs (StVO) as vector SVG graphics. 
+- **Mapping**: Matches sign data from `curriculum.ts` by internal ID or StVO code to ensure visual consistency across lessons, scenarios, and quizzes.
+- **Key Graphics**: Stop, One-Way, No Entry, Roundabout, Yield, Priority Road, etc.
+
+---
+
 ## Financial & Production Readiness
 
 ### `BudgetEstimator`
