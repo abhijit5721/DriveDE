@@ -507,7 +507,11 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       {/* Footer Status: Cloud Sync */}
       <div className="mt-16 flex flex-col items-center gap-6 animate-fade-in-up" style={{ animationDelay: '900ms' }}>
         <button
-          onClick={() => onOpenAuth?.()}
+          onClick={() => {
+            if (authStatus !== 'signed_in') {
+              onOpenAuth?.();
+            }
+          }}
           aria-label={t.dashboard.accountSettings}
           className={cn(
             'flex items-center gap-3 rounded-full px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] transition-all border shadow-sm hover:scale-105 active:scale-95',
