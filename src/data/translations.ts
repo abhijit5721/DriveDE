@@ -3383,13 +3383,17 @@ export const TRANSLATIONS = {
               'special-1': {
                 title: 'Country Road Driving',
                 description: 'Higher speeds, overtaking, and tree-lined avenues',
+                scenarioSectionTitle: 'Country Road Scenarios',
+                scenarioSectionSubtitle: 'Mastering hazards and specifics outside built-up areas',
                 tips: [
                   { id: 'country-tip1', title: 'Observe No Passing Zones', content: 'Solid line = Absolutely no overtaking!', type: 'warning' }
                 ]
               },
               'special-2': {
-                title: 'Motorway (Entering/Exiting)',
-                description: 'Acceleration lanes and lane changes at high speed',
+                title: 'Motorway (Highway Driving)',
+                description: 'Merging, exiting, lane changes at high speeds, and emergency corridors',
+                scenarioSectionTitle: 'Motorway Scenarios',
+                scenarioSectionSubtitle: 'Safely handling high speeds',
                 tips: [
                   { id: 'highway-tip1', title: 'Use Acceleration Lane', content: 'Accelerate on the ramp and watch the flowing traffic.', type: 'info' }
                 ]
@@ -3400,13 +3404,43 @@ export const TRANSLATIONS = {
                 glossary: [
                   { id: 'motorway-ret', term: 'Emergency corridor', note: 'In stop-and-go traffic: the far-left lane moves left, all others move right.' },
                   { id: 'motorway-acc', term: 'Acceleration lane', note: 'Use it to match the speed of flowing traffic – not to brake too early.' }
+                ],
+                guidedPoints: [
+                  { id: 'motorway-gp1', title: 'Create emergency corridor immediately', content: 'As soon as traffic slows down, form the corridor – don\'t wait until sirens are audible.' },
+                  { id: 'motorway-gp2', title: 'Do not brake unnecessarily at the end of the acceleration lane', content: 'Accelerate actively on the ramp, look for a gap, and merge decisively. Braking at the end is a common exam mistake.' }
+                ],
+                tips: [
+                  { id: 'motorway-tip1', title: 'Left creates space, so does right', content: 'The emergency corridor is always formed between the far-left lane and all other lanes to the right.', type: 'info' }
                 ]
               },
               'special-3': {
                 title: 'Night Driving (Lighting)',
                 description: 'Lighting features, visibility ranges, and wildlife hazards in the dark',
-                scenarioSectionTitle: 'Night Driving Scenarios',
-                scenarioSectionSubtitle: 'Handling darkness and poor visibility',
+                scenarioSectionTitle: 'Night Scenarios',
+                scenarioSectionSubtitle: 'Challenges in the dark and poor visibility',
+                scenarios: [
+                  {
+                    id: 'night-pedestrian',
+                    title: 'Poorly Visible Pedestrian',
+                    situation: 'In town, a pedestrian in dark clothing appears near a parked car.',
+                    steps: [
+                      { id: 1, title: 'Adjust speed', description: 'Slow down early because your visibility is limited.', icon: 'Circle' },
+                      { id: 2, title: 'Scan roadside', description: 'Actively look for movement at the edge of the road, especially at bus stops and parked cars.', icon: 'Eye', critical: true },
+                      { id: 3, title: 'Stay ready to brake', description: 'Maintain enough reserve to stop safely if a pedestrian suddenly crosses.', icon: 'AlertTriangle', critical: true }
+                    ]
+                  }
+                ],
+                tips: [
+                  { id: 'night-tip1', title: 'Use high beams correctly', content: 'Use high beams only outside built-up areas and when there is no oncoming traffic!', type: 'warning' }
+                ]
+              },
+              'special-4': {
+                title: 'Hazard Perception & Defensive Driving',
+                description: 'Recognize hazards early: children, delivery vans, weather, restricted visibility, and typical surprises on German roads.',
+                guidedPoints: [
+                  { id: 'haz-gp1', title: 'Read clues, not just rules', content: 'A ball in the road, an ice cream truck, an open delivery van door, or a cyclist looking over their shoulder are warning signs of the next hazard.' },
+                  { id: 'haz-gp2', title: 'Adjust speed proactively', content: 'Defensive driving means reducing the risk early rather than reacting harshly later.' }
+                ]
               },
               'exam-1': {
                 title: 'Exam Readiness & Checklist',
