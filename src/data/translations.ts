@@ -1270,7 +1270,8 @@ export const TRANSLATIONS = {
                 description: 'Rechtliche Grundlagen und Beschilderung (§ 12 StVO)',
                 guidedPoints: [
                   { id: 'stoppark-gp1', title: '3-Minuten-Regel kennen', content: 'Wer länger als drei Minuten hält oder das Fahrzeug verlässt, parkt im rechtlichen Sinn.' },
-                  { id: 'stoppark-gp2', title: 'Zeichen und Bordsteinbereiche lesen', content: 'Absolutes Halteverbot, eingeschränktes Halteverbot, Bushaltestellen, Kreuzungsnähe und Einfahrten sauber unterscheiden.' }
+                  { id: 'stoppark-gp2', title: 'Zeichen und Bordsteinbereiche lesen', content: 'Absolutes Halteverbot, eingeschränktes Halteverbot, Bushaltestellen, Kreuzungsnähe und Einfahrten sauber unterscheiden.' },
+                  { id: 'stoppark-gp3', title: 'Parken in Einbahnstraßen', content: 'In Einbahnstraßen dürfen Sie ausnahmsweise auch auf der LINKEN Seite parken, sofern keine Verbotsschilder dagegen sprechen.' }
                 ],
                 tips: [
                   { id: 'stoppark-tip1', title: 'Prüferfrage-Klassiker', content: 'Prüfer fragen gern unterwegs: "Dürften Sie hier halten oder parken?" Antworten Sie ruhig mit Regel plus Begründung.', type: 'info' }
@@ -1313,6 +1314,19 @@ export const TRANSLATIONS = {
                 ],
                 tips: [
                   { id: 'stop-tip1', title: 'Haltlinie missachten = Durchgefallen', content: 'Das Überrollen der Haltlinie ohne Stopp führt in der Prüfung sofort zum Nichtbestehen.', type: 'warning' }
+                ]
+              },
+              'city-13': {
+                title: 'Einbahnstraße: Regeln & Schilder',
+                description: 'Beschilderung (§ 41), Einordnen (§ 9) und Parken (§ 12) in der Einbahnstraße.',
+                guidedPoints: [
+                  { id: 'ow-gp1', title: 'Schilder erkennen', content: 'Achten Sie auf das blaue quadratische Schild mit weißem Pfeil (Zeichen 220). Am anderen Ende steht das "Einfahrt verboten" (Zeichen 267).' },
+                  { id: 'ow-gp2', title: 'Linksabbiegen = Links einordnen', content: 'Wollen Sie aus einer Einbahnstraße links abbiegen, müssen Sie sich so weit wie möglich LINKS einordnen.' },
+                  { id: 'ow-gp3', title: 'Parken auf beiden Seiten', content: 'In Einbahnstraßen darf sowohl rechts als auch links geparkt werden, sofern Platz bleibt und keine Schilder es verbieten.' },
+                  { id: 'ow-gp4', title: 'Radfahrer-Ausnahme', content: 'Achten Sie auf das Zusatzschild "Radfahrer frei". Hier dürfen Radfahrer entgegen der Fahrtrichtung kommen!' }
+                ],
+                tips: [
+                  { id: 'ow-tip1', title: 'Falle beim Linksabbiegen', content: 'Wer sich beim Linksabbiegen aus einer Einbahnstraße nicht links einordnet, fällt in der Prüfung sofort durch!', type: 'warning' }
                 ]
               },
               'special-1': {
@@ -1524,6 +1538,18 @@ export const TRANSLATIONS = {
               greenArrowSignal: {
                 title: 'Grüner Pfeil als Lichtsignal',
                 description: 'Leuchtender Pfeil in der Ampelanlage. Kein zusätzlicher Halt nötig; er gibt die Fahrtrichtung geschützt frei.'
+              },
+              oneWay: {
+                title: 'Einbahnstraße',
+                description: 'Blaues quadratisches Schild mit weißem Pfeil (Zeichen 220). Schreibt die Fahrtrichtung vor.'
+              },
+              noEntry: {
+                title: 'Verbot der Einfahrt',
+                description: 'Roter Kreis mit weißem Balken (Zeichen 267). Keine Einfahrt aus dieser Richtung erlaubt.'
+              },
+              cyclistsAllowed: {
+                title: 'Radfahrer frei',
+                description: 'Zusatzschild, das Radfahrern das Befahren der Einbahnstraße entgegen der Fahrtrichtung erlaubt.'
               }
             },
             guidedPoints: {
@@ -3364,7 +3390,8 @@ export const TRANSLATIONS = {
                 description: 'Legal basis and signage (§ 12 StVO)',
                 guidedPoints: [
                   { id: 'stoppark-gp1', title: 'Know the 3-minute rule', content: 'If you stop for more than three minutes or leave the vehicle, it legally counts as parking.' },
-                  { id: 'stoppark-gp2', title: 'Read the signs and curb zones', content: 'Distinguish clearly between no stopping, restricted stopping, bus stops, areas near intersections, and driveways.' }
+                  { id: 'stoppark-gp2', title: 'Read the signs and curb zones', content: 'Distinguish clearly between no stopping, restricted stopping, bus stops, areas near intersections, and driveways.' },
+                  { id: 'stoppark-gp3', title: 'Parking in One-Way Streets', content: 'In one-way streets, you are exceptionally allowed to park on the LEFT side, provided no prohibition signs state otherwise.' }
                 ],
                 tips: [
                   { id: 'stoppark-tip1', title: 'Classic examiner question', content: 'Examiners often ask during the drive: “Would you be allowed to stop or park here?” Answer calmly with the rule and the reason.', type: 'info' }
@@ -3407,6 +3434,19 @@ export const TRANSLATIONS = {
                 ],
                 tips: [
                   { id: 'stop-tip1', title: 'Ignoring the stop line = Fail', content: 'Rolling over the stop line without stopping leads to immediate failure in the exam.', type: 'warning' }
+                ]
+              },
+              'city-13': {
+                title: 'One-Way Street: Rules & Signs',
+                description: 'Signage (§ 41), positioning (§ 9), and parking (§ 12) in one-way streets.',
+                guidedPoints: [
+                  { id: 'ow-gp1', title: 'Recognize the signs', content: 'Look for the blue square sign with a white arrow (Sign 220). At the other end is the "No Entry" sign (Sign 267).' },
+                  { id: 'ow-gp2', title: 'Turn left = Position left', content: 'If you want to turn left out of a one-way street, you must position yourself as far LEFT as possible.' },
+                  { id: 'ow-gp3', title: 'Parking on both sides', content: 'In one-way streets, you may park on both the right and left sides, provided space remains and no signs prohibit it.' },
+                  { id: 'ow-gp4', title: 'Cyclist exception', content: 'Watch for the supplementary sign "Radfahrer frei". Here, cyclists may come from the opposite direction!' }
+                ],
+                tips: [
+                  { id: 'ow-tip1', title: 'Left turn trap', content: 'If you do not position yourself on the left when turning left out of a one-way street, you will fail the exam immediately!', type: 'warning' }
                 ]
               },
               'special-1': {
@@ -3616,6 +3656,18 @@ export const TRANSLATIONS = {
               greenArrowSignal: {
                 title: 'Green Arrow Light Signal',
                 description: 'Glowing arrow in the traffic light system. No additional stop required; it indicates protected movement in the specified direction.'
+              },
+              oneWay: {
+                title: 'One-Way Street',
+                description: 'Blue square sign with white arrow (Sign 220). Prescribes the direction of travel.'
+              },
+              noEntry: {
+                title: 'No Entry',
+                description: 'Red circle with white horizontal bar (Sign 267). No entry allowed from this direction.'
+              },
+              cyclistsAllowed: {
+                title: 'Cyclists allowed',
+                description: 'Supplementary sign allowing cyclists to travel against the direction of traffic.'
               }
             },
             guidedPoints: {

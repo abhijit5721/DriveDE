@@ -101,7 +101,7 @@ export interface TrafficSign {
   titleEn: string;
   descriptionDe: string;
   descriptionEn: string;
-  category?: 'priority' | 'warning' | 'mandatory' | 'pedestrian' | 'parking' | 'motorway' | 'traffic-light' | 'vehicle-check';
+  category?: 'priority' | 'warning' | 'mandatory' | 'prohibitory' | 'information' | 'pedestrian' | 'parking' | 'motorway' | 'traffic-light' | 'vehicle-check';
 }
 
 export interface GlossaryTerm {

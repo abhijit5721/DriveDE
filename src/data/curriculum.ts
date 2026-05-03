@@ -443,6 +443,36 @@ const signPriorityRoadBending: TrafficSign = {
   category: 'priority',
 };
 
+const signOneWay: TrafficSign = {
+  id: 'sign-one-way',
+  code: 'Zeichen 220',
+  titleDe: 'Einbahnstraße',
+  titleEn: 'One-Way Street',
+  descriptionDe: 'Schreibt die Fahrtrichtung vor. Parken ist links und rechts erlaubt.',
+  descriptionEn: 'Prescribes the direction of travel. Parking is allowed on both left and right.',
+  category: 'mandatory',
+};
+
+const signNoEntry: TrafficSign = {
+  id: 'sign-no-entry',
+  code: 'Zeichen 267',
+  titleDe: 'Verbot der Einfahrt',
+  titleEn: 'No Entry',
+  descriptionDe: 'Einfahrt in diese Straße ist aus dieser Richtung verboten.',
+  descriptionEn: 'Entry into this street is prohibited from this direction.',
+  category: 'prohibitory',
+};
+
+const signCyclistsAllowed: TrafficSign = {
+  id: 'sign-cyclists-allowed',
+  code: 'Zusatzzeichen 1022-10',
+  titleDe: 'Radfahrer frei',
+  titleEn: 'Cyclists allowed',
+  descriptionDe: 'Radfahrer dürfen die Einbahnstraße in beide Richtungen befahren.',
+  descriptionEn: 'Cyclists are allowed to travel in both directions in the one-way street.',
+  category: 'information',
+};
+
 const signMotorway: TrafficSign = {
   id: 'sign-motorway',
   code: 'Zeichen 330.1',
@@ -977,6 +1007,15 @@ const cityLessons: Lesson[] = [
     completed: false,
     isPremium: true,
     trafficSigns: [signStop, signYield],
+    quiz: cityQuiz,
+  },
+  {
+    id: 'city-13',
+    chapterId: 'chapter-3',
+    ...getLessonStrings('city-13'),
+    completed: false,
+    isPremium: true,
+    trafficSigns: [signOneWay, signNoEntry, signCyclistsAllowed],
     quiz: cityQuiz,
   },
 ];
