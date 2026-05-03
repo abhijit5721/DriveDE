@@ -32,6 +32,7 @@ vi.mock('../../store/useAppStore', () => {
     resumeActiveSession: vi.fn(),
     updateActiveSession: vi.fn(),
     stopActiveSession: vi.fn(),
+    isHydrated: true,
   };
   return {
     useAppStore: vi.fn((selector) => selector ? selector(mockState) : mockState),
@@ -118,7 +119,7 @@ describe('Tracker Component', () => {
     render(<Tracker />);
 
     // Click Start Live to trigger watchPosition
-    const startBtn = screen.getByRole('button', { name: /Start Live/i });
+    const startBtn = await screen.findByRole('button', { name: /Start Live/i });
     fireEvent.click(startBtn);
     
     // Verify that the error toast is called

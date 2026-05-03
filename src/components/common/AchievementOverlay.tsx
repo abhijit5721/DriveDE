@@ -77,6 +77,7 @@ export const AchievementOverlay: React.FC = () => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: -20 }}
             transition={{ type: 'spring', damping: 15, stiffness: 200 }}
+            data-testid="achievement-overlay"
             className="relative w-full max-w-sm rounded-[2.5rem] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-white/10 p-8 text-center shadow-2xl pointer-events-auto overflow-hidden"
           >
             {/* Background Glow */}
@@ -122,6 +123,7 @@ export const AchievementOverlay: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleClose}
+              data-testid="achievement-close-btn"
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-blue-600/30 transition hover:shadow-blue-600/40"
             >
               Awesome!

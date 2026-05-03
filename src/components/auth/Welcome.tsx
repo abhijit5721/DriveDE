@@ -167,6 +167,7 @@ export function Welcome() {
           <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <button 
               onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
+              data-testid="welcome-start-btn"
               className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-700 active:scale-95"
             >
               {isReturningUser ? t.common.backToDashboard : t.common.getStartedFree}
@@ -271,6 +272,7 @@ export function Welcome() {
                   'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden cursor-pointer',
                   'shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl'
                 )}
+                data-testid={`path-card-${path.id}`}
               >
                 {/* Decorative Gradient Background */}
                 <div className={cn('absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl opacity-20 transition-all group-hover:opacity-30', 
@@ -309,6 +311,7 @@ export function Welcome() {
                           hasVisited: true
                         });
                       }}
+                      data-testid="manual-btn"
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
                     >
                       <Cog className="h-6 w-6 text-orange-400 transition-transform group-hover/btn:rotate-12" />
@@ -327,6 +330,7 @@ export function Welcome() {
                           hasVisited: true
                         });
                       }}
+                      data-testid="automatic-btn"
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
                     >
                       <Zap className="h-6 w-6 text-blue-400 transition-transform group-hover/btn:rotate-12" />

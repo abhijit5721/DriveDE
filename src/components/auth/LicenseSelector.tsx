@@ -153,6 +153,7 @@ export const LicenseSelector: React.FC = () => {
           <div className="grid gap-4 md:grid-cols-2">
             <button
               onClick={() => setTransmissionType('manual')}
+              data-testid="manual-btn"
               className={cn(
                 'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
                 transmissionType === 'manual'
@@ -174,6 +175,7 @@ export const LicenseSelector: React.FC = () => {
 
             <button
               onClick={() => setTransmissionType('automatic')}
+              data-testid="automatic-btn"
               className={cn(
                 'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
                 transmissionType === 'automatic'
@@ -206,6 +208,7 @@ export const LicenseSelector: React.FC = () => {
           <button
             onClick={handleContinue}
             disabled={!canContinue}
+            data-testid="license-continue-btn"
             className={cn(
               'flex items-center gap-2 rounded-2xl px-8 py-4 text-lg font-black transition-all active:scale-95',
               canContinue

@@ -38,11 +38,14 @@ export function Header({ onOpenAuth, onSignOut, onTabChange, onChangePath }: Hea
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/95 lg:hidden">
       <div className="mx-auto flex max-w-lg items-center justify-between gap-4 px-4 py-3">
-        <button 
-          onClick={() => onTabChange?.('home')}
-          className="flex min-w-0 items-center gap-2 text-left focus:outline-none active:scale-95 transition-transform"
-          aria-label="Go to Home"
+        <div 
+          className="flex min-w-0 items-center gap-2 text-left"
         >
+          <button
+            onClick={() => onTabChange?.('home')}
+            className="flex items-center gap-2 focus:outline-none active:scale-95 transition-transform"
+            aria-label="Go to Home"
+          >
           <div className={cn(
             'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-lg transition-all',
             isPremium 
@@ -100,7 +103,8 @@ export function Header({ onOpenAuth, onSignOut, onTabChange, onChangePath }: Hea
               {t.appSubtitle}
             </p>
           </div>
-        </button>
+          </button>
+        </div>
 
         <div className="flex flex-shrink-0 items-center gap-1">
           <button

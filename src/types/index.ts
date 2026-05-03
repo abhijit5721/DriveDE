@@ -143,7 +143,18 @@ export interface GPSPoint {
 }
 
 export interface DrivingMistake {
-  type: 'speeding' | 'harsh_braking' | 'rapid_acceleration' | 'signal' | 'priority' | 'stop_sign' | 'shoulder_check' | 'wrong_way' | 'illegal_turn' | 'idling' | 'roundabout_signal' | 'curve_speeding' | 'aggressive_cornering' | 'right_before_left' | 'school_zone_speeding' | 'other';
+  type: 'speeding' | 'harsh_braking' | 'rapid_acceleration' | 'signal' | 'priority' | 'stop_sign'  | 'shoulder_check'
+  | 'mirror_check'
+  | 'wrong_way'
+  | 'illegal_turn'
+  | 'idling'
+  | 'roundabout_signal'
+  | 'curve_speeding'
+  | 'aggressive_cornering'
+  | 'right_before_left'
+  | 'school_zone_speeding'
+  | 'pedestrian_safety'
+  | 'other';
   speed?: number;
   limit?: number;
   timestamp: number;
@@ -255,6 +266,10 @@ export interface AppState {
   resumeActiveSession: () => void;
   updateActiveSession: (updates: Partial<ActiveSession>) => void;
   stopActiveSession: () => void;
+  
+  // Hydration state
+  isHydrated: boolean;
+  setHydrated: (val: boolean) => void;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';

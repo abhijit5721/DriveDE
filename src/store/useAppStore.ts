@@ -149,7 +149,10 @@ export const useAppStore = create<AppState>()(
       activeSession: null,
       hasVisited: false,
       activeTab: 'home',
+      isHydrated: false,
       recentAchievements: [],
+
+      setHydrated: (val) => set({ isHydrated: val }),
 
       setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -729,13 +732,13 @@ export const useAppStore = create<AppState>()(
           activeSession: state.activeSession,
         };
       },
-      onRehydrateStorage: () => (_, error) => {
+      onRehydrateStorage: () => (state, error) => {
         if (error) {
           console.error('[Store] Hydration failed (possible corruption):', error);
-          // In a real app, we might trigger a state reset or alert the user here.
         } else {
           console.log('[Store] Hydration successful.');
         }
+        state?.setHydrated(true);
       },
     }
   )

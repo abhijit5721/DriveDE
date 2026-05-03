@@ -19,6 +19,7 @@
   --color-premium-blue-end: #1e40af;
   --color-premium-indigo-start: #6366f1;
   --color-premium-indigo-end: #4338ca;
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
 * {
