@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
     const data = await resend.emails.send({
       from: 'DriveDE Feedback <system@drivede.app>',
       to: ['your-personal-email@example.com'], // The user should replace this or we can use an env var
-      reply_to: email,
+      replyTo: email,
       subject: `New Feedback: ${subject || 'General Inquiry'}`,
       html: `
         <div style="font-family: sans-serif; color: #1e293b; max-width: 600px;">
