@@ -475,7 +475,6 @@ export default function App() {
         <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
           {!isDetailPage && (
             <Header 
-              onOpenAuth={handleOpenAuth} 
               onSignOut={handleSignOut} 
               onTabChange={handleNavigate} 
             />

@@ -3,18 +3,17 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, LogIn, LogOut } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 
 interface HeaderProps {
-  onOpenAuth?: () => void;
   onSignOut?: () => void;
   onTabChange?: (tab: any) => void;
 }
 
-export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
+export function Header({ onSignOut, onTabChange }: HeaderProps) {
   const { language, darkMode, setLanguage, toggleDarkMode, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language].common;
 
