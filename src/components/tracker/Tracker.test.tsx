@@ -130,6 +130,7 @@ describe('Tracker Component', () => {
   });
 
   it('should display error toast when GPS permission is denied', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     // Mock geolocation error (code 1 = PERMISSION_DENIED)
     const mockError = { code: 1, message: 'User denied Geolocation' };
     
@@ -154,6 +155,8 @@ describe('Tracker Component', () => {
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Location access denied'));
     }, { timeout: 5000 });
+
+    consoleSpy.mockRestore();
   });
 
   it('should show safety warning modal before starting live tracking', async () => {
