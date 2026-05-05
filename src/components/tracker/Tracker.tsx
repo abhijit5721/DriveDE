@@ -168,6 +168,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
     if (type === 'aggressive_cornering') color = '#e11d48'; // rose
     if (type === 'right_before_left') color = '#4f46e5'; // indigo
     if (type === 'school_zone_speeding') color = '#d97706'; // amber
+    if (type === 'speeding') color = '#dc2626'; // strong red
     
     return L.divIcon({
       className: 'custom-div-icon',
@@ -1032,7 +1033,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           });
         }, 10000);
 
-        if ('geolocation' in navigator && isPremium) {
+        const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+        const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
+        const canTrackLive = isPremium || hasTrial;
+
+        if ('geolocation' in navigator && canTrackLive) {
           watchRef.current = navigator.geolocation.watchPosition(
             (position) => {
               const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
@@ -1087,7 +1092,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
 
       const handleMotion = (event: DeviceMotionEvent) => {
-        if (!isPremium || isSimulationMode) return;
+        const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+        const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
+        const canDetectMotion = isPremium || hasTrial;
+        
+        if (!canDetectMotion || isSimulationMode) return;
         
         const acc = event.acceleration;
         if (!acc) return;
@@ -1241,7 +1250,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return;
     }
 
-    if (!isPremium && !isSimulationMode) {
+    const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+    const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
+    const canStartLive = isPremium || hasTrial;
+
+    if (!canStartLive && !isSimulationMode) {
       if (onOpenPaywall) {
         onOpenPaywall();
       } else {
@@ -2010,11 +2023,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             <p className="text-sm font-black text-slate-900 dark:text-white">
                               {session.duration} <span className="text-[10px] font-bold text-slate-400">min</span>
                             </p>
-                            {session.totalDistance !== undefined && (
-                              <p className="text-[10px] font-bold text-slate-500">
-                                {session.totalDistance.toFixed(1)} km
-                              </p>
-                            )}
+                            <div className="flex items-center justify-end gap-2">
+                              {session.mistakes && session.mistakes.length > 0 && (
+                                <div className="flex h-4 items-center gap-1 rounded bg-red-50 px-1 dark:bg-red-900/20">
+                                  <AlertTriangle className="h-2.5 w-2.5 text-red-500" />
+                                  <span className="text-[8px] font-black text-red-600 dark:text-red-400">
+                                    {session.mistakes.length}
+                                  </span>
+                                </div>
+                              )}
+                              {session.totalDistance !== undefined && (
+                                <p className="text-[10px] font-bold text-slate-500">
+                                  {session.totalDistance.toFixed(1)} km
+                                </p>
+                              )}
+                            </div>
                           </div>
                           {expandedSessionId === session.id ? <ChevronDown className="h-5 w-5 text-slate-400" /> : <ChevronRight className="h-5 w-5 text-slate-400" />}
                         </div>
@@ -2059,33 +2082,62 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                             </div>
                           </div>
 
-                          {/* Route Map */}
+                          {/* Route Map (Premium Gated) */}
                           {session.route && session.route.length >= 2 && (
-                            <RouteMap 
-                              route={session.route} 
-                              mistakes={session.mistakes} 
-                              language={language} 
-                            />
+                            isPremium ? (
+                              <RouteMap 
+                                route={session.route} 
+                                mistakes={session.mistakes} 
+                                language={language} 
+                              />
+                            ) : (
+                              <div className="relative overflow-hidden rounded-xl bg-slate-100 p-8 text-center dark:bg-slate-800/50">
+                                <div className="absolute inset-0 bg-slate-200/10 backdrop-blur-[1px]" />
+                                <div className="relative z-10 flex flex-col items-center">
+                                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                                    <MapPin className="h-6 w-6" />
+                                  </div>
+                                  <p className="mb-4 text-xs font-medium text-slate-600 dark:text-slate-400 max-w-[200px] mx-auto">
+                                    {t.tracker.routeMapUpgradeNote}
+                                  </p>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
+                                    className="rounded-full bg-blue-600 px-4 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-blue-600/20 active:scale-95"
+                                  >
+                                    {t.tracker.unlockPro}
+                                  </button>
+                                </div>
+                              </div>
+                            )
                           )}
 
-                          {/* Mistakes List */}
+                          {/* Mistakes List (Premium Gated) */}
                           {session.mistakes && session.mistakes.length > 0 && (
                             <div className="mt-4">
-                              <h5 className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
-                              </h5>
-                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                {(() => {
-                                  const groups: Record<string, { type: string, count: number, latest: number }> = {};
-                                  session.mistakes.forEach(m => {
-                                    if (!groups[m.type]) {
-                                      groups[m.type] = { type: m.type, count: 0, latest: m.timestamp };
-                                    }
-                                    groups[m.type].count++;
-                                    if (m.timestamp > groups[m.type].latest) {
-                                      groups[m.type].latest = m.timestamp;
-                                    }
-                                  });
+                              <div className="mb-3 flex items-center justify-between">
+                                <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                  {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
+                                </h5>
+                                {!isPremium && (
+                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                                    PRO Analysis
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {isPremium ? (
+                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                  {(() => {
+                                    const groups: Record<string, { type: string, count: number, latest: number }> = {};
+                                    session.mistakes.forEach(m => {
+                                      if (!groups[m.type]) {
+                                        groups[m.type] = { type: m.type, count: 0, latest: m.timestamp };
+                                      }
+                                      groups[m.type].count++;
+                                      if (m.timestamp > groups[m.type].latest) {
+                                        groups[m.type].latest = m.timestamp;
+                                      }
+                                    });
                                   
                                   return Object.values(groups)
                                     .sort((a, b) => b.latest - a.latest)
@@ -2116,8 +2168,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                         )}
                                       </div>
                                     ));
-                                })()}
-                              </div>
+                                  })()}
+                                </div>
+                              ) : (
+                                <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center dark:border-slate-700">
+                                  <p className="mb-2 text-[10px] font-medium text-slate-500 italic">
+                                    {t.tracker.faultAnalysisUpgradeNote}
+                                  </p>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
+                                    className="text-[10px] font-bold text-blue-600 hover:underline dark:text-blue-400"
+                                  >
+                                    {t.tracker.seeDetails}
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           )}
 

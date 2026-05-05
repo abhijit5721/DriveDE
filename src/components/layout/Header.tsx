@@ -64,17 +64,14 @@ export function Header({ onOpenAuth, onSignOut, onTabChange }: HeaderProps) {
             <Globe className="h-5 w-5" />
           </button>
 
-          <button
-            onClick={authStatus === 'signed_in' ? onSignOut : onOpenAuth}
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-2xl transition-all hover:scale-110 active:scale-95 border border-white/20 dark:border-white/5 shadow-sm',
-              authStatus === 'signed_in'
-                ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 hover:bg-emerald-500/20'
-                : 'bg-white/10 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 hover:bg-white/20 dark:hover:bg-slate-700'
-            )}
-          >
-            {authStatus === 'signed_in' ? <LogOut className="h-5 w-5" /> : <LogIn className="h-5 w-5" />}
-          </button>
+          {authStatus === 'signed_in' && (
+            <button
+              onClick={onSignOut}
+              className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all hover:scale-110 active:scale-95 border border-white/20 dark:border-white/5 shadow-sm"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          )}
 
           <button
             onClick={toggleDarkMode}
