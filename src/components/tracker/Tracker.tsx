@@ -306,8 +306,27 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
 
   const getMistakeLabel = useCallback((type: string) => {
-    return t.tracker.mistakes[type as keyof typeof t.tracker.mistakes] || type;
+    const camelType = type.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+    return (t.tracker.mistakes as any)[camelType] || 
+           (t.tracker.mistakes as any)[type] || 
+           type;
   }, [t]);
+
+  const getMistakeIconComponent = (type: string) => {
+    switch (type) {
+      case 'priority': return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
+      case 'stop_sign': return <Square className="h-3.5 w-3.5 text-red-600" />;
+      case 'right_before_left': return <CornerUpRight className="h-3.5 w-3.5 text-amber-500" />;
+      case 'wrong_way': return <Ban className="h-3.5 w-3.5 text-red-700" />;
+      case 'shoulder_check': return <Eye className="h-3.5 w-3.5 text-blue-400" />;
+      case 'mirror_check': return <View className="h-3.5 w-3.5 text-slate-400" />;
+      case 'signal': return <Signal className="h-3.5 w-3.5 text-amber-400" />;
+      case 'pedestrian_safety': return <Footprints className="h-3.5 w-3.5 text-purple-400" />;
+      case 'speeding': return <Gauge className="h-3.5 w-3.5 text-red-400" />;
+      case 'harsh_braking': return <AlertCircle className="h-3.5 w-3.5 text-orange-500" />;
+      default: return <MoreHorizontal className="h-3.5 w-3.5 text-slate-500" />;
+    }
+  };
 
   const getTypeIcon = (type: DrivingSession['type']) => {
     switch (type) {
@@ -1808,6 +1827,48 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </div>
               </div>
             </div>
+            
+            {/* Live Mistakes List */}
+            {currentMistakes.length > 0 && (
+              <div className="mt-6 w-full animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="flex items-center justify-between mb-3 px-1">
+                   <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                     {t.tracker.mistakeLog}
+                   </h5>
+                   <span className="text-[10px] font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full border border-red-400/20">
+                     {currentMistakes.length} {t.tracker.mistakesCount}
+                   </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const groups: Record<string, { type: string, count: number }> = {};
+                    currentMistakes.forEach(m => {
+                      if (!groups[m.type]) {
+                        groups[m.type] = { type: m.type, count: 0 };
+                      }
+                      groups[m.type].count++;
+                    });
+                    
+                    return Object.values(groups).map((group, idx) => (
+                      <div 
+                        key={idx} 
+                        className="group flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 pl-2 pr-3 py-1.5 text-[10px] font-bold text-white shadow-sm transition-all hover:bg-white/10"
+                      >
+                        <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
+                          {getMistakeIconComponent(group.type)}
+                        </div>
+                        <span>{getMistakeLabel(group.type)}</span>
+                        {group.count > 1 && (
+                          <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500/20 px-1 text-[9px] font-black text-red-400">
+                            ×{group.count}
+                          </span>
+                        )}
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </div>
+            )}
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               {isTimerRunning ? (
@@ -2010,23 +2071,52 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Mistakes List */}
                           {session.mistakes && session.mistakes.length > 0 && (
                             <div className="mt-4">
-                              <h5 className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                              <h5 className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                 {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
                               </h5>
-                              <div className="space-y-2">
-                                {session.mistakes.map((mistake, idx) => (
-                                  <div key={idx} className="flex items-center justify-between rounded-lg bg-white p-2 text-xs shadow-sm dark:bg-slate-800">
-                                    <div className="flex items-center gap-2">
-                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                                      <span className="font-bold text-slate-700 dark:text-slate-300">
-                                        {getMistakeLabel(mistake.type)}
-                                      </span>
-                                    </div>
-                                    <span className="text-[10px] font-medium text-slate-400">
-                                      {new Date(mistake.timestamp).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                  </div>
-                                ))}
+                              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                {(() => {
+                                  const groups: Record<string, { type: string, count: number, latest: number }> = {};
+                                  session.mistakes.forEach(m => {
+                                    if (!groups[m.type]) {
+                                      groups[m.type] = { type: m.type, count: 0, latest: m.timestamp };
+                                    }
+                                    groups[m.type].count++;
+                                    if (m.timestamp > groups[m.type].latest) {
+                                      groups[m.type].latest = m.timestamp;
+                                    }
+                                  });
+                                  
+                                  return Object.values(groups)
+                                    .sort((a, b) => b.latest - a.latest)
+                                    .map((group, idx) => (
+                                      <div 
+                                        key={idx} 
+                                        className="flex items-center justify-between rounded-xl bg-white p-2.5 text-xs shadow-sm ring-1 ring-slate-100 transition-all hover:ring-slate-200 dark:bg-slate-800 dark:ring-slate-700/50 dark:hover:ring-slate-700"
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                                            {getMistakeIconComponent(group.type)}
+                                          </div>
+                                          <div className="flex flex-col">
+                                            <span className="font-bold text-slate-700 dark:text-slate-200">
+                                              {getMistakeLabel(group.type)}
+                                            </span>
+                                            <span className="text-[9px] font-medium text-slate-400">
+                                              Latest: {new Date(group.latest).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        {group.count > 1 && (
+                                          <div className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-red-50 px-2 dark:bg-red-900/20">
+                                            <span className="text-[10px] font-black text-red-600 dark:text-red-400">
+                                              ×{group.count}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ));
+                                })()}
                               </div>
                             </div>
                           )}
