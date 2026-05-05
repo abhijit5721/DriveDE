@@ -159,6 +159,7 @@ export interface DrivingMistake {
   limit?: number;
   timestamp: number;
   location?: { lat: number; lng: number };
+  status?: 'pending' | 'confirmed' | 'rejected';
 }
 
 export interface DrivingSession {
@@ -203,6 +204,7 @@ export interface UserProgress {
   currentStreak: number;
   lastActivityDate: string | null;
   incorrectQuestions: string[];
+  hasAcceptedPrivacy: boolean;
   hourlyRate45: number;
   fixedCosts: {
     registration: number;
@@ -254,6 +256,7 @@ export interface AppState {
   logoutCleanup: () => void;
   clearDrivingHistory: () => void;
   enableDemoMode: () => void;
+  setAcceptedPrivacy: (val: boolean) => void;
   
   // Achievement Animation State
   recentAchievements: string[];
@@ -272,6 +275,6 @@ export interface AppState {
   setHydrated: (val: boolean) => void;
 }
 
-export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
+export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'history' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
 
 export type LegalPageType = 'privacy' | 'terms' | 'gdpr' | 'impressum' | 'disclaimer';

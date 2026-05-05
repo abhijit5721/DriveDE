@@ -246,6 +246,12 @@ export const TRANSLATIONS = {
       rateUpdated: 'Stundensatz aktualisiert!',
       gpsDenied: 'Standortzugriff verweigert. Bitte aktiviere GPS in den Einstellungen.',
       gpsError: 'GPS-Fehler. Bitte überprüfe deine Verbindung.',
+      privacyConsentRequired: 'Bitte überprüfe und akzeptiere zuerst die Datenschutz- und KI-Richtlinie.',
+      tabTracker: 'Tracker',
+      tabHistory: 'Verlauf',
+      historyTitle: 'Fahrtenverlauf',
+      cost: 'Kosten',
+      mistakesCount: 'Fehler',
       rapidAccelAlert: 'Starke Beschleunigung erkannt!',
       aggressiveCorneringAlert: '🏎️ Fliehkraft: Aggressives Kurvenfahren!',
       harshBrakingAlert: 'Starkes Bremsen erkannt!',
@@ -601,7 +607,7 @@ export const TRANSLATIONS = {
           noSubstitute: 'Die App ersetzt keine Fahrschule, keinen Fahrlehrer, keine amtliche Rechtsberatung und keine offiziellen Informationen von Behörden, TÜV oder DEKRA. Maßgeblich sind stets die geltenden Gesetze, Verordnungen und die konkrete Anweisung des Fahrlehrers oder Prüfers.',
           useOfContent: 'Die Inhalte dürfen ausschließlich für den persönlichen, nicht übertragbaren Lerngebrauch genutzt werden. Eine gewerbliche Weitergabe, systematische Vervielfältigung oder Weiterveröffentlichung ist ohne schriftliche Zustimmung unzulässig.',
           availability: 'Die App kann fortlaufend angepasst, verbessert oder in einzelnen Funktionen eingeschränkt werden. Es besteht kein Anspruch auf dauerhafte Verfügbarkeit einzelner Inhalte oder Funktionen.',
-          limitation: 'Für leichte Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten. Für Schäden aus unsachgemäßer Anwendung der Inhalte im realen Straßenverkehr übernehmen wir keine Haftung, soweit gesetzlich zulässig.'
+          limitation: 'Für leichte Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten. KI-basierte Fehlererkennungen sind rein informativ und dienen als Lernhilfe; sie müssen zwingend durch eine qualifizierte Person (Fahrlehrer) validiert werden. Für Schäden aus unsachgemäßer Anwendung der Inhalte im realen Straßenverkehr übernehmen wir keine Haftung.'
         },
         gdpr: {
           yourRights: [
@@ -617,7 +623,7 @@ export const TRANSLATIONS = {
           complaint: 'Du hast das Recht, dich bei einer Datenschutzaufsichtsbehörde zu beschweren, wenn du der Ansicht bist, dass die Verarbeitung deiner Daten gegen die DSGVO verstößt.'
         },
         disclaimer: {
-          safety: 'Die App dient ausschließlich der Lernunterstützung. Inhalte dürfen niemals während des aktiven Führens eines Fahrzeugs verwendet oder gelesen werden. Nutze die App nur vor oder nach der Fahrt oder als Beifahrer.',
+          safety: 'WICHTIGER SICHERHEITSHINWEIS (§ 23 StVO): Die App dient ausschließlich der Lernunterstützung. Die Nutzung elektronischer Geräte während der Fahrt ist in Deutschland streng reglementiert. Die App darf nur verwendet werden, wenn das Fahrzeug steht (Motor aus) oder das Gerät in einer fest installierten Halterung (Dashboard Mount) befestigt ist und die Interaktion ausschließlich per Sprachsteuerung oder kurzem Blick erfolgt. Eine manuelle Bedienung während der Fahrt ist streng untersagt.',
           noGuarantee: 'DriveDE gibt keine Garantie für das Bestehen einer praktischen Prüfung. Prüfungsanforderungen können regional, fahrzeugbezogen oder prüferabhängig variieren. Inhalte werden sorgfältig erstellt, können jedoch trotz Prüfung Fehler oder Vereinfachungen enthalten.',
           sources: 'Im Zweifel gelten immer die aktuelle Straßenverkehrs-Ordnung (StVO), Fahrlehrer-Anweisungen, offizielle Prüfkriterien sowie die konkrete Verkehrslage vor Ort.'
         }
@@ -2363,6 +2369,12 @@ export const TRANSLATIONS = {
       rateUpdated: 'Rate updated!',
       gpsDenied: 'Location access denied. Please enable GPS in settings.',
       gpsError: 'GPS error. Please check your connection.',
+      privacyConsentRequired: 'Please review and accept the Privacy & AI policy first.',
+      tabTracker: 'Tracker',
+      tabHistory: 'History',
+      historyTitle: 'Driving History',
+      cost: 'Cost',
+      mistakesCount: 'Mistakes',
       rapidAccelAlert: 'Rapid acceleration detected!',
       aggressiveCorneringAlert: '🏎️ High G-Force: Aggressive Cornering!',
       harshBrakingAlert: 'Harsh braking detected!',

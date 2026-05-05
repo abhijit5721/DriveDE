@@ -58,6 +58,7 @@ const initialProgress: UserProgress = {
   lastActivityDate: null,
   incorrectQuestions: [],
   hourlyRate45: 60,
+  hasAcceptedPrivacy: false,
   fixedCosts: {
     registration: 350,
     theoryExam: 25,
@@ -159,6 +160,14 @@ export const useAppStore = create<AppState>()(
       setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
 
       clearRecentAchievements: () => set({ recentAchievements: [] }),
+
+      setAcceptedPrivacy: (val: boolean) =>
+        set((state) => ({
+          userProgress: {
+            ...state.userProgress,
+            hasAcceptedPrivacy: val,
+          },
+        })),
 
       popAchievement: () => set((state) => ({ 
         recentAchievements: state.recentAchievements.slice(1) 

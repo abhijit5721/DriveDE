@@ -9,23 +9,35 @@ import { Tracker } from './Tracker';
 import toast from 'react-hot-toast';
 
 // Mock Dependencies
+const { sharedState } = vi.hoisted(() => ({
+  sharedState: {
+    currentActiveTab: 'tracker',
+    currentAcceptedPrivacy: true,
+    currentIsPremium: true
+  }
+}));
+
 vi.mock('../../store/useAppStore', () => {
   const mockState = {
     language: 'en',
     licenseType: 'manual',
-    isPremium: true,
+    isPremium: sharedState.currentIsPremium,
     userProgress: { 
       drivingSessions: [],
       hourlyRate45: 60,
       fixedCosts: {},
-      specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 }
+      specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 },
+      hasAcceptedPrivacy: sharedState.currentAcceptedPrivacy
     },
     addDrivingSession: vi.fn(),
     updateDrivingSession: vi.fn(),
     removeDrivingSession: vi.fn(),
     clearDrivingHistory: vi.fn(),
     setHourlyRate45: vi.fn(),
-    activeTab: 'tracker',
+    activeTab: sharedState.currentActiveTab,
+    setActiveTab: vi.fn((tab) => { sharedState.currentActiveTab = tab; }),
+    setAcceptedPrivacy: vi.fn((val) => { sharedState.currentAcceptedPrivacy = val; }),
+    setHydrated: vi.fn(),
     activeSession: null,
     startActiveSession: vi.fn(),
     pauseActiveSession: vi.fn(),
@@ -35,7 +47,13 @@ vi.mock('../../store/useAppStore', () => {
     isHydrated: true,
   };
   return {
-    useAppStore: vi.fn((selector) => selector ? selector(mockState) : mockState),
+    useAppStore: vi.fn((selector) => {
+      // Refresh the values in mockState to reflect latest sharedState
+      mockState.activeTab = sharedState.currentActiveTab;
+      mockState.userProgress.hasAcceptedPrivacy = sharedState.currentAcceptedPrivacy;
+      mockState.isPremium = sharedState.currentIsPremium;
+      return selector ? selector(mockState) : mockState;
+    }),
   };
 });
 
@@ -43,7 +61,8 @@ vi.mock('../../store/useAppStore', () => {
 vi.mock('react-hot-toast', () => {
   const mockToast = Object.assign(vi.fn(), {
     success: vi.fn(),
-    error: vi.fn()
+    error: vi.fn(),
+    info: vi.fn(),
   });
   return {
     default: mockToast,
@@ -97,6 +116,9 @@ Object.defineProperty(globalThis.URL, 'createObjectURL', { value: vi.fn(), confi
 describe('Tracker Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    sharedState.currentActiveTab = 'tracker';
+    sharedState.currentAcceptedPrivacy = true;
+    sharedState.currentIsPremium = true;
     
     // Mock geolocation
     const mockGeolocation = {
@@ -118,13 +140,69 @@ describe('Tracker Component', () => {
 
     render(<Tracker />);
 
-    // Click Start Live to trigger watchPosition
+    // Click Start Live to trigger safety modal
     const startBtn = await screen.findByRole('button', { name: /Start Live/i });
     fireEvent.click(startBtn);
+
+    // Handle Safety Modal
+    const checkbox = await screen.findByRole('checkbox');
+    fireEvent.click(checkbox);
+    const confirmBtn = screen.getByTestId('confirm-mount-btn');
+    fireEvent.click(confirmBtn);
     
     // Verify that the error toast is called
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Location access denied'));
-    }, { timeout: 2000 });
+    }, { timeout: 5000 });
+  });
+
+  it('should show safety warning modal before starting live tracking', async () => {
+    render(<Tracker />);
+    
+    // Click Start Live
+    const startBtn = await screen.findByRole('button', { name: /Start Live/i });
+    fireEvent.click(startBtn);
+    
+    // Verify safety modal is visible
+    expect(screen.getByText(/Safety Protocol/i)).toBeInTheDocument();
+    expect(screen.getByText(/StVO § 23 Compliance/i)).toBeInTheDocument();
+    
+    // Verify "Start Tracking" button in modal is disabled until mounted
+    const confirmBtn = screen.getByTestId('confirm-mount-btn');
+    expect(confirmBtn).toBeDisabled();
+    
+    // Click mounting checkbox
+    const checkbox = screen.getByRole('checkbox');
+    fireEvent.click(checkbox);
+    
+    // Now button should be enabled
+    expect(confirmBtn).toBeEnabled();
+  });
+
+  it('should show GDPR portability and erasure options in history', async () => {
+    render(<Tracker />);
+    
+    // Ensure we are in history tab
+    const historyTab = screen.getByTestId('tab-history');
+    fireEvent.click(historyTab);
+    
+    // Check for GDPR buttons
+    expect(await screen.findByTestId('export-history-btn')).toBeInTheDocument();
+    expect(await screen.findByTestId('purge-data-btn')).toBeInTheDocument();
+  });
+
+  it('should trigger JSON export when export button is clicked', async () => {
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    
+    render(<Tracker />);
+    
+    const historyTab = screen.getByTestId('tab-history');
+    fireEvent.click(historyTab);
+    
+    const exportBtn = await screen.findByTestId('export-history-btn');
+    fireEvent.click(exportBtn);
+
+    expect(clickSpy).toHaveBeenCalled();
+    clickSpy.mockRestore();
   });
 });

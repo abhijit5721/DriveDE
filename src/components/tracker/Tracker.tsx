@@ -8,18 +8,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
 import toast from 'react-hot-toast';
 import { 
-  Plus, Trash2, Clock, Calendar, Car, MapPin, Route, X, Play, 
+  Trash2, Clock, Car, MapPin, X, Play, 
   Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
-  Signal, Search, Undo2, Wind, RefreshCcw, CornerUpRight, 
-  Gauge, ChevronRight, ChevronDown, GraduationCap, Lock, Info,
-  View, Ban, AlertCircle, MoreHorizontal
+  Signal, Search, Wind, RefreshCcw, CornerUpRight, 
+  Gauge, ChevronRight, ChevronDown, Info,
+  View, Ban, AlertCircle, MoreHorizontal, ShieldCheck, Database,
+  ShieldAlert, Check
 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
-import { SimulatorRadar } from './SimulatorRadar';
+
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 
 interface PhotonFeature {
@@ -44,9 +45,7 @@ interface WakeLockSentinel extends EventTarget {
 }
 
 
-interface DeviceMotionEventStatic {
-  requestPermission?: () => Promise<'granted' | 'denied'>;
-}
+
 
 // Leaflet imports for Map rendering
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
@@ -280,16 +279,17 @@ interface TrackerProps {
 }
 
 export function Tracker({ onOpenPaywall }: TrackerProps) {
-  const { 
-    language, licenseType, userProgress, addDrivingSession, 
-    updateDrivingSession, removeDrivingSession, clearDrivingHistory, 
+  const {
+    language, userProgress, addDrivingSession, 
+    updateDrivingSession, removeDrivingSession, clearDrivingHistory,
     setHourlyRate45, isPremium,
     activeSession, startActiveSession, pauseActiveSession, 
     resumeActiveSession, updateActiveSession, stopActiveSession,
-    isHydrated: storeHydrated
+    activeTab, setActiveTab,
+    isHydrated: storeHydrated, setAcceptedPrivacy
   } = useAppStore();
 
-  const [isHydrated, setHydrated] = useState(false);
+  const [isHydrated, setHydrated] = useState(storeHydrated);
 
   useEffect(() => {
     if (storeHydrated) {
@@ -303,18 +303,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const t = TRANSLATIONS[language as 'de' | 'en'];
   
-  const isUmschreibung = licenseType === 'umschreibung';
 
-  const normalMinutes = userProgress.drivingSessions
-    .filter(s => s.type === 'normal')
-    .reduce((sum, s) => sum + s.duration, 0);
-
-  const totalSpending = userProgress.drivingSessions
-    .reduce((sum, s) => {
-      const duration = Number(s.duration) || 0;
-      const rate = Number(userProgress.hourlyRate45) || 0;
-      return sum + (duration / 45) * rate;
-    }, 0);
 
   const getMistakeLabel = useCallback((type: string) => {
     return t.tracker.mistakes[type as keyof typeof t.tracker.mistakes] || type;
@@ -373,7 +362,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       case 'nacht': return 'text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400';
       case 'autobahn': return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-400';
       case 'ueberland': return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
-      default: return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
+      default: return 'text-blue-600 bg-blue-50 dark:blue-900/20 dark:text-blue-400';
     }
   };
 
@@ -403,17 +392,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [activeStopSign, setActiveStopSign] = useState<{lat: number, lng: number, id: string} | null>(null);
   const [showMistakeSuccess, setShowMistakeSuccess] = useState(false);
   const [hasStoppedAtSign, setHasStoppedAtSign] = useState(false);
-  const lastWrongWayLogRef = useRef<number>(0);
-  const lastIllegalTurnLogRef = useRef<number>(0);
+  const [showPrivacyInfo, setShowPrivacyInfo] = useState(false);
+  const lastRvlCheckRef = useRef(0);
+  const lastSchoolCheckRef = useRef(0);
+  const lastWrongWayLogRef = useRef(0);
+  const lastIllegalTurnLogRef = useRef(0);
+  const lastMotionLogRef = useRef(0);
+  const motionBufferRef = useRef<{ x: number, y: number, z: number, total: number }[]>([]);
+  const BUFFER_SIZE = 5;
   const stationaryStartRef = useRef<number | null>(null);
   const lastIdlingLogRef = useRef<number>(0);
-  const lastRvlCheckRef = useRef<number>(0);
-  // --- PERSISTENT REFS ---
-  // Used to maintain data across simulation loops or component re-renders
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
   const cumulativeRouteRef = useRef<GPSPoint[]>([]);
-  const lastMotionLogRef = useRef<number>(0);
-  const lastSchoolCheckRef = useRef<number>(0);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | null>(null);
@@ -429,9 +419,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const [showSafetyWarning, setShowSafetyWarning] = useState(false);
+  const [isDeviceMounted, setIsDeviceMounted] = useState(false);
+  const [isMountConfirmed, setIsMountConfirmed] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
-  // Release wake lock on unmount
   useEffect(() => {
     return () => {
       if (wakeLockRef.current) {
@@ -440,11 +432,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     };
   }, []);
 
-
   const requestWakeLock = async () => {
     if ('wakeLock' in navigator) {
       try {
-        wakeLockRef.current = await (navigator as unknown as { wakeLock: { request: (type: string) => Promise<WakeLockSentinel> } }).wakeLock.request('screen');
+        wakeLockRef.current = await (navigator as any).wakeLock.request('screen');
       } catch (err) {
         console.warn('[Tracker] Wake Lock error:', err);
       }
@@ -462,7 +453,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
   
-  // Spatial Worker Instance
   const spatialWorker = useMemo(() => {
     if (typeof window !== 'undefined') {
       return new Worker(new URL('../../workers/spatial.worker.ts', import.meta.url));
@@ -473,19 +463,36 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [spatialCache, setSpatialCache] = useState<SpatialCacheData | null>(null);
   const lastCacheUpdateRef = useRef<number>(0);
 
-  /**
-   * Centralized logging helper for driving mistakes.
-   * Updates both UI state and persistent ref.
-   */
   const logMistake = useCallback((mistake: DrivingMistake) => {
-    cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistake];
-    setCurrentMistakes(prev => [...prev, mistake]);
+    const mistakeWithStatus: DrivingMistake = { ...mistake, status: 'pending' };
+    cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeWithStatus];
+    setCurrentMistakes(prev => [...prev, mistakeWithStatus]);
     updateActiveSession({ mistakes: cumulativeMistakesRef.current });
   }, [updateActiveSession]);
 
-  /**
-   * Centralized logging helper for GPS points.
-   */
+  const handleClearHistory = () => {
+    if (window.confirm(t.tracker.deleteConfirm || 'Are you sure you want to PERMANENTLY delete all driving history? (Art. 17 GDPR - Right to Erasure)')) {
+      clearDrivingHistory();
+      toast.success('All data has been purged successfully.');
+    }
+  };
+
+  const handleExportData = () => {
+    const dataStr = JSON.stringify(userProgress.drivingSessions, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `drivede_export_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement);
+    linkElement.click();
+    document.body.removeChild(linkElement);
+    
+    toast.success('History exported successfully (Art. 20 GDPR)');
+  };
+
   const logRoutePoint = useCallback((point: GPSPoint) => {
     cumulativeRouteRef.current = [...(cumulativeRouteRef.current || []), point];
     setGpsPoints(prev => [...prev, point]);
@@ -523,8 +530,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     });
   }, []);
 
-  // --- HYDRATION / RECOVERY ---
-  // Only run this once when the component mounts and we have an active session in the store
   const isInitialMount = useRef(true);
   useEffect(() => {
     if (isInitialMount.current && activeSession && !isTimerRunning) {
@@ -548,14 +553,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [activeSession, isTimerRunning]);
 
-  // Sync distance to global state
   useEffect(() => {
     if (isTimerRunning && Math.abs(currentDistance - (activeSession?.currentDistance || 0)) > 0.1) {
       updateActiveSession({ currentDistance });
     }
   }, [currentDistance, isTimerRunning, activeSession, updateActiveSession]);
 
-  // Resync timer on visibility change (when user unlocks phone)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && isTimerRunning && activeSession?.startTime) {
@@ -563,7 +566,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const elapsedSinceStart = Math.floor((now - activeSession.startTime - activeSession.pausedDuration) / 1000);
         setElapsedTime(Math.max(0, elapsedSinceStart));
         
-        // Re-request wake lock if we lost it
         if (!activeSession.isPaused) {
           requestWakeLock();
         }
@@ -601,11 +603,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [removeDrivingSession, t.tracker]);
 
-  // --- AUTOCOMPLETE: SEARCH SUGGESTIONS ---
-  // Fetches address suggestions as the user types a destination
   useEffect(() => {
     const fetchSuggestions = async () => {
-      // Delay search until 3+ characters are typed
       if (targetDestination.length < 3) {
         setSuggestions([]);
         setShowSuggestions(false);
@@ -614,7 +613,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       try {
         const langCode = language === 'de' ? 'de' : 'en';
-        // Add geographical bias (prioritize results near user)
         const biasLat = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
         const biasLon = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lng : 13.405;
         
@@ -631,11 +629,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
     };
 
-    const timer = setTimeout(fetchSuggestions, 300); // Debounce to save API calls
+    const timer = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(timer);
   }, [targetDestination, language, gpsPoints]);
 
-  // Click outside listener to close suggestions
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
@@ -651,12 +648,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       className: 'car-marker-icon',
       html: `
         <div style="transform: rotate(${rotation}deg); transition: transform 0.5s ease; width: 34px; height: 18px; background: #3b82f6; border: 2px solid white; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
-          <!-- Body Detail -->
           <div style="position: absolute; right: 6px; width: 10px; height: 12px; background: #1e293b; border-radius: 1px; opacity: 0.8;"></div>
-          <!-- Headlights -->
           <div style="position: absolute; right: -3px; top: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
           <div style="position: absolute; right: -3px; bottom: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
-          <!-- Brake Lights -->
           <div style="position: absolute; left: -2px; top: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
           <div style="position: absolute; left: -2px; bottom: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
         </div>
@@ -666,9 +660,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     });
   };
 
-  /**
-   * Renders a custom 🏁 finish flag marker.
-   */
   const getFlagMarkerIcon = () => {
     return L.divIcon({
       className: 'flag-marker-icon',
@@ -704,7 +695,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
 
     try {
-      const query = `[out:json];node(around:25,${lat},${lng})["highway"="stop"];out;`;
+      const query = `[out:json];node(around:40,${lat},${lng})["highway"="stop"];out;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
       const data = await response.json();
       
@@ -725,7 +716,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [activeStopSign, t, spatialCache, spatialWorker]);
 
-  // Handle worker responses for findNearest
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if (e.data.type === 'findNearest' && e.data.result) {
@@ -749,7 +739,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     return () => spatialWorker?.removeEventListener('message', onMessage);
   }, [spatialWorker, activeStopSign, t]);
 
-  // Update spatial cache on movement
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
     const lastPoint = gpsPoints[gpsPoints.length - 1];
@@ -765,7 +754,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     if (currentSpeed < 10) return;
 
     if (spatialCache) {
-      // Find the nearest way in the cache that is oneway or a residential street
       const nearestWay = findNearestFeature(lat, lng, spatialCache, (f) => f.type === 'way' && (f.tags?.oneway === 'yes' || !!f.tags?.highway), 0.03);
       if (nearestWay && nearestWay.geometry) {
         spatialWorker?.postMessage({
@@ -790,7 +778,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const nodes = way.geometry as { lat: number; lon: number }[];
       if (!nodes || nodes.length < 2) return;
 
-      // Delegate the math to the worker
       spatialWorker?.postMessage({
         type: 'wrongWayCheck',
         data: { travelBearing, roadNodes: nodes }
@@ -823,10 +810,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     try {
       const query = `[out:json];way(around:15,${lat},${lng})[~"^(access|motor_vehicle|footway)$"~"^(no|private|pedestrian)$"];out tags;`;
-      const response = await fetch(
-        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
-        { signal: AbortSignal.timeout(5000) }
-      );
+      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(5000) });
       const data = await response.json();
 
       if (data.elements && data.elements.length > 0) {
@@ -857,7 +841,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     if (currentSpeed < 10) return;
 
     try {
-      const query = `[out:json];way(around:15,${lat},${lng})["highway"~"residential|living_street"]->.w;node(w.w)(around:10,${lat},${lng})->.n;way(bn.n)["highway"~"residential|living_street"]->.i;(.i; - .w;);out count;`;
+      const query = `[out:json];way(around:30,${lat},${lng})["highway"~"residential|living_street"]->.w;node(w.w)(around:15,${lat},${lng})->.n;way(bn.n)["highway"~"residential|living_street"]->.i;(.i; - .w;);out count;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
       const data = await response.json();
       
@@ -912,12 +896,44 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const fetchSpeedLimit = useCallback(async (lat: number, lng: number) => {
     try {
-      const query = `[out:json];way(around:30,${lat},${lng})[maxspeed];out tags;`;
+      const query = `[out:json];way(around:50,${lat},${lng})[highway];out tags;`;
       const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
       const data = await response.json();
       
       if (data.elements && data.elements.length > 0) {
-        const limit = parseInt(data.elements[0].tags.maxspeed);
+        const tags = data.elements[0].tags;
+        let limit = parseInt(tags.maxspeed);
+
+        if (isNaN(limit)) {
+          if (tags['maxspeed:type'] === 'DE:urban' || tags.highway === 'residential') {
+            limit = 50;
+          } else if (tags['maxspeed:type'] === 'DE:living_street' || tags.highway === 'living_street') {
+            limit = 7;
+          } else if (tags.highway === 'motorway') {
+            limit = 130;
+          }
+        }
+
+        if (tags['maxspeed:conditional']) {
+          const cond = tags['maxspeed:conditional'];
+          const match = cond.match(/^(\d+)\s*@\s*\(([^)]+)\)$/);
+          if (match) {
+            const condLimit = parseInt(match[1]);
+            const timeRange = match[2];
+            const now = new Date();
+            const hour = now.getHours();
+            
+            if (timeRange.includes('-')) {
+              const [start, end] = timeRange.split('-').map((timePart: string) => parseInt(timePart.split(':')[0]));
+              const isNight = start > end 
+                ? (hour >= start || hour < end)
+                : (hour >= start && hour < end);
+              
+              if (isNight) limit = condLimit;
+            }
+          }
+        }
+
         if (!isNaN(limit)) {
           setCurrentLimit(limit);
           return limit;
@@ -1000,7 +1016,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         if ('geolocation' in navigator && isPremium) {
           watchRef.current = navigator.geolocation.watchPosition(
             (position) => {
-              const { latitude: lat, longitude: lng, speed } = position.coords;
+              const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
+              
+              if (accuracy && accuracy > 20) {
+                console.warn(`[Tracker] Skipping low accuracy point: ${accuracy}m`);
+                return;
+              }
+
               const newPoint = { lat, lng, timestamp: Date.now() };
               
               setGpsPoints(prev => {
@@ -1056,12 +1078,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const z = acc.z || 0;
         const totalAcc = Math.sqrt(x*x + y*y + z*z);
 
-        if ((totalAcc > 4.0 || Math.abs(x) > 3.0) && Date.now() - lastMotionLogRef.current > 10000) {
+        motionBufferRef.current.push({ x, y, z, total: totalAcc });
+        if (motionBufferRef.current.length > BUFFER_SIZE) {
+          motionBufferRef.current.shift();
+        }
+
+        if (motionBufferRef.current.length < BUFFER_SIZE) return;
+
+        const avg = motionBufferRef.current.reduce((acc, curr) => ({
+          x: acc.x + curr.x,
+          y: acc.y + curr.y,
+          z: acc.z + curr.z,
+          total: acc.total + curr.total
+        }), { x: 0, y: 0, z: 0, total: 0 });
+
+        // Compliance Art. 5(1)(c) DSGVO: On-device data minimization.
+        // We only process high-frequency raw data in a local buffer for event detection.
+        // Raw sensor streams are never persisted or transmitted.
+        const avgX = avg.x / BUFFER_SIZE;
+        const avgY = avg.y / BUFFER_SIZE;
+        const avgTotal = avg.total / BUFFER_SIZE;
+
+        if ((avgTotal > 6.0 || Math.abs(avgX) > 4.5) && Date.now() - lastMotionLogRef.current > 10000) {
           lastMotionLogRef.current = Date.now();
           
           navigator.geolocation.getCurrentPosition((pos) => {
-            const isCornering = Math.abs(x) > 3.0 && Math.abs(x) > Math.abs(y);
-            const isBraking = !isCornering && y < -3.0;
+            const isCornering = Math.abs(avgX) > 4.5 && Math.abs(avgX) > Math.abs(avgY);
+            const isBraking = !isCornering && avgY < -4.5;
             
             let type: DrivingMistake['type'] = 'rapid_acceleration';
             if (isCornering) {
@@ -1172,14 +1215,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, t, isSimulationMode, logMistake]);
 
-  const handleStartTimer = async () => {
-    // If not premium and not in simulation mode, show paywall
+  const handleStartTimer = async (skipMountCheck = false) => {
+    if (!userProgress.hasAcceptedPrivacy) {
+      setShowPrivacyInfo(true);
+      toast(t.tracker.privacyConsentRequired || 'Please review and accept the Privacy & AI policy first.', { icon: 'ℹ️' });
+      return;
+    }
+
     if (!isPremium && !isSimulationMode) {
       if (onOpenPaywall) {
         onOpenPaywall();
       } else {
         toast.error(t.common.proOnlyFeature || 'Pro only feature');
       }
+      return;
+    }
+
+    if (!isDeviceMounted && !skipMountCheck) {
+      setShowSafetyWarning(true);
       return;
     }
 
@@ -1201,7 +1254,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setCurrentDistance(0);
     setElapsedTime(0);
     
-    // Global session start
     startActiveSession(
       newSession.type || 'normal', 
       isSimulationMode, 
@@ -1215,7 +1267,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     stationaryStartRef.current = null;
     lastIdlingLogRef.current = 0;
 
-    const MotionEvent = DeviceMotionEvent as unknown as DeviceMotionEventStatic;
+    const MotionEvent = DeviceMotionEvent as unknown as any;
     if (typeof MotionEvent.requestPermission === 'function') {
       try {
         const permissionState = await MotionEvent.requestPermission();
@@ -1281,7 +1333,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const point = mockPoints[currentStep];
         const newTrackPoint = { lat: point.lat, lng: point.lng, timestamp: Date.now() };
         
-        // Use logRoutePoint to ensure it's persisted in activeSession
         logRoutePoint(newTrackPoint);
         
         setCurrentSpeed(point.speed);
@@ -1366,7 +1417,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
     
-    // Set basic data first and show the modal immediately
     setNewSession(prev => ({
       ...prev,
       duration: durationInMinutes,
@@ -1383,7 +1433,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     releaseWakeLock();
     toast.success(t.tracker.readyToSave);
 
-    // BACKGROUND GEOCODING - Don't await this to keep UI responsive
     if (gpsPoints.length > 0) {
       try {
         const startPoint = gpsPoints[0];
@@ -1436,7 +1485,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       
       logMistake(mistakeObj);
       
-      // UX Feedback
       setShowMistakeSuccess(true);
       setTimeout(() => setShowMistakeSuccess(false), 2000);
       
@@ -1472,883 +1520,711 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {t.tracker.subtitle}
           </p>
         </div>
-        <div className="flex gap-2">
+
+        {/* Tab Switcher */}
+        <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl w-fit">
           <button
-            onClick={() => {
-              if (!isPremium) {
-                onOpenPaywall?.();
-              } else {
-                if (window.confirm(t.tracker.confirmSimulate)) {
-                  addDrivingSession({
-                    date: new Date().toISOString().split('T')[0],
-                    duration: 45,
-                    type: 'normal',
-                    notes: 'Simulated Drive with Leaflet Maps & Mixed Mistakes',
-                    instructorName: 'AI Safety Auditor',
-                    totalDistance: 1.2,
-                    route: [],
-                    locationSummary: 'Berlin, Mitte',
-                    mistakes: [],
-                    isSimulation: true
-                  });
-                  toast.success('Advanced Simulation Added!');
-                }
-              }
-            }}
-            className="flex h-10 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:border-blue-900/30 dark:bg-blue-900/20"
+            onClick={() => setActiveTab('tracker')}
+            data-testid="tab-tracker"
+            className={cn(
+              'px-6 py-2 text-sm font-bold rounded-xl transition-all',
+              activeTab === 'tracker'
+                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+            )}
           >
-            {!isPremium && <Lock className="h-3 w-3" />}
-            {t.tracker.simulateButton}
+            {t.tracker.tabTracker || 'Tracker'}
           </button>
           <button
-            onClick={() => setShowAddForm(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-600 dark:shadow-blue-900/30"
+            onClick={() => setActiveTab('history')}
+            data-testid="tab-history"
+            className={cn(
+              'px-6 py-2 text-sm font-bold rounded-xl transition-all',
+              activeTab === 'history'
+                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
+            )}
           >
-            <Plus className="h-5 w-5" />
+            {t.tracker.tabHistory || 'History'}
           </button>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-700/50 dark:bg-slate-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400">
-              <span className="text-xl font-bold">€</span>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {t.tracker.drivingSchoolRate}
-              </p>
-              {isEditingRate ? (
-                <div className="mt-1 flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={tempRate}
-                    onChange={(e) => setTempRate(e.target.value)}
-                    autoFocus
-                    className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-                  />
-                  <span className="text-sm font-bold text-slate-400">/ 45 min</span>
-                  <button 
-                    onClick={handleSaveRate}
-                    className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-bold text-white hover:bg-blue-600"
-                  >
-                    {t.common.ok}
-                  </button>
+      {activeTab === 'tracker' && (
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-700/50 dark:bg-slate-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                  <span className="text-xl font-bold">€</span>
                 </div>
-              ) : (
-                <button 
-                  onClick={() => setIsEditingRate(true)}
-                  className="mt-0.5 text-lg font-black text-slate-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
-                >
-                  €{userProgress.hourlyRate45.toFixed(2)} <span className="text-xs font-bold text-slate-400">/ 45 min</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-slate-300" />
-            <h3 className="font-semibold">{t.tracker.liveTimerTitle}</h3>
-          </div>
-          <div className="flex items-center gap-3">
-             <div className="flex items-center gap-2 mr-2">
-               <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
-                {t.tracker.simulationMode}
-               </span>
-               <button 
-                 onClick={() => !isTimerRunning && setIsSimulationMode(!isSimulationMode)}
-                 disabled={isTimerRunning}
-                 data-testid="sim-toggle"
-                 className={cn(
-                   'relative h-4 w-8 rounded-full transition-colors',
-                   isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700',
-                   isTimerRunning && 'opacity-50 cursor-not-allowed'
-                 )}
-               >
-                 <div className={cn(
-                   'absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all',
-                   isSimulationMode ? 'left-4.5' : 'left-0.5'
-                 )} />
-               </button>
-             </div>
-             {isTimerRunning && (
-               <button 
-                 onClick={() => setShowManualLog(true)}
-                 data-testid="problem-btn"
-                 className={cn(
-                   'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-widest border transition-all',
-                   showMistakeSuccess 
-                     ? 'bg-green-500/20 text-green-400 border-green-500/30' 
-                     : 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30'
-                 )}
-               >
-                 {showMistakeSuccess ? (
-                   <>
-                     <RefreshCcw className="h-3 w-3 animate-spin-slow" />
-                     {t.common.saved || 'SAVED'}
-                   </>
-                 ) : (
-                   <>
-                     <AlertTriangle className="h-3 w-3" />
-                     {t.common.problem}
-                   </>
-                 )}
-               </button>
-             )}
-          </div>
-        </div>
-
-        {isTimerRunning && gpsPoints.length > 0 && (
-          <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
-            <MapContainer 
-              center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
-              zoom={17} 
-              zoomControl={false}
-              attributionControl={false}
-              preferCanvas={true}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={4} opacity={0.8} />
-              
-              {destinationCoords && (
-                <Marker position={[destinationCoords.lat, destinationCoords.lng]} icon={getFlagMarkerIcon()}>
-                  <Popup>{t.tracker.yourDestination}</Popup>
-                </Marker>
-              )}
-
-              <Marker 
-                position={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
-                icon={getCarMarkerIcon(gpsPoints.length > 1 
-                  ? (calculateBearing(
-                      gpsPoints[gpsPoints.length-2].lat, gpsPoints[gpsPoints.length-2].lng,
-                      gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng
-                    ) - 90)
-                  : -90
-                )}
-              />
-              <MapBoundsSimple points={gpsPoints} />
-            </MapContainer>
-          </div>
-        )}
-
-        {/* Destination Search Input */}
-        {!isTimerRunning && (
-          <div className="mt-4 px-1">
-            <div className="relative group">
-              <input
-                type="text"
-                placeholder={t.tracker.destinationPlaceholder}
-                value={targetDestination}
-                onChange={(e) => setTargetDestination(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
-                className="w-full rounded-xl bg-white/5 border border-white/10 pl-10 pr-28 py-2.5 text-sm text-white placeholder:text-slate-400/60 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all placeholder:text-[10px] sm:placeholder:text-sm"
-              />
-              <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
-              <button 
-                onClick={handleSearchDestination}
-                disabled={isSearchingDestination}
-                className="absolute right-2 top-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-[10px] font-bold text-white hover:bg-indigo-500 transition-all border border-indigo-400/20 shadow-lg shadow-indigo-500/20"
-              >
-                {isSearchingDestination ? '...' : t.common.search}
-              </button>
-
-              {/* Autocomplete Suggestions Dropdown */}
-              <AnimatePresence>
-                {showSuggestions && suggestions.length > 0 && (
-                  <motion.div
-                    ref={suggestionsRef}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-white/20 bg-slate-900/90 backdrop-blur-md shadow-2xl"
-                  >
-                    {suggestions.map((feature, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          const name = feature.properties.name;
-                          const city = feature.properties.city || feature.properties.state || '';
-                          const country = feature.properties.country || '';
-                          const label = `${name}${city ? ', ' + city : ''}${country ? ', ' + country : ''}`;
-                          
-                          setTargetDestination(label);
-                          setDestinationCoords({
-                            lat: feature.geometry.coordinates[1],
-                            lng: feature.geometry.coordinates[0]
-                          });
-                          setShowSuggestions(false);
-                          setSuggestions([]);
-                        }}
-                        className="flex w-full flex-col px-4 py-3 text-left transition-colors hover:bg-white/10 border-b border-white/5 last:border-0"
-                      >
-                        <span className="text-sm font-bold text-white">
-                          {feature.properties.name}
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          {[
-                            feature.properties.city,
-                            feature.properties.state,
-                            feature.properties.country
-                          ].filter(Boolean).join(', ')}
-                        </span>
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        )}
-
-        <div className="my-4 flex flex-col items-center">
-          <div className="text-5xl font-bold tracking-tighter">
-            {formatTime(elapsedTime)}
-          </div>
-          {isTimerRunning && (
-            <div className="mt-2 w-full max-w-[200px]">
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
-                <span>{t.tracker.safetyScore}</span>
-                <span data-testid="safety-score-value">{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
-                <motion.div 
-                  className={cn(
-                    'h-full rounded-full transition-all duration-1000',
-                    currentMistakes.length < 2 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
-                    currentMistakes.length < 5 ? 'bg-yellow-500' : 'bg-red-500'
-                  )}
-                  initial={{ width: '100%' }}
-                  animate={{ width: `${Math.max(0, 100 - (currentMistakes.length * 10))}%` }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
-          <div className="text-center">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {t.tracker.distance}
-            </p>
-            <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
-          </div>
-          <div className="text-center border-l border-white/10">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {t.tracker.speed}
-            </p>
-            <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
-          </div>
-          <div className="text-center border-l border-white/10">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-              {t.tracker.limit}
-            </p>
-            <div className={cn(
-              'text-lg font-bold flex items-center justify-center gap-1',
-              currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
-            )}>
-              {currentLimit || '--'}
-              {currentLimit && (
-                <div className="h-4 w-4 rounded-full border-2 border-red-500 bg-white flex items-center justify-center">
-                  <span className="text-[8px] font-black text-slate-900">{currentLimit}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {!isPremium && isTimerRunning && (
-          <p className="mt-2 text-[10px] text-slate-400 italic text-center">
-            {t.tracker.liveTrackingActive}
-          </p>
-        )}
-        {/* Primary Control Actions (Integrated) */}
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          {isTimerRunning ? (
-            <button
-              onClick={handlePauseTimer}
-              data-testid="pause-tracking-btn"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
-            >
-              <Pause className="h-4 w-4" />
-              {t.common.pause}
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                if (activeSession && activeSession.isPaused) {
-                  handleResumeTimer();
-                } else {
-                  const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-                  if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
-                    onOpenPaywall?.();
-                  } else {
-                    handleStartTimer();
-                  }
-                }
-              }}
-              data-testid={(activeSession && activeSession.isPaused) ? 'resume-tracking-btn' : 'start-tracking-btn'}
-              className={cn(
-                'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
-                (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
-                  ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
-                  : (activeSession && activeSession.isPaused) ? 'bg-indigo-500/90 hover:bg-indigo-600 shadow-indigo-500/20' : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
-              )}
-            >
-              {(activeSession && activeSession.isPaused) ? (
-                <>
-                  <Play className="h-4 w-4" />
-                  {t.common.resume}
-                </>
-              ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
-                <>
-                  <Crown className="h-4 w-4" />
-                  {t.tracker.trackingPro}
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4" />
-                  {t.tracker.startLive}
-                </>
-              ))}
-            </button>
-          )}
-          <button
-            onClick={handleStopTimer}
-            disabled={elapsedTime === 0 && !isTimerRunning}
-            data-testid="stop-tracking-btn"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
-          >
-            <Square className="h-4 w-4" />
-            {t.common.stopAndSave}
-          </button>
-        </div>
-      </div>
-
-      {/* Progress Cards */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t.common.total}</span>
-          </div>
-          <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
-            {Math.floor(userProgress.totalDrivingMinutes / 60)}h {userProgress.totalDrivingMinutes % 60}m
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-            <Car className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t.tracker.regularDrive}</span>
-          </div>
-          <p className="mt-2 text-lg font-black text-slate-900 dark:text-white">
-            {Math.floor(normalMinutes / 45)}
-          </p>
-        </div>
-
-        <div className="rounded-xl bg-blue-500 p-3 shadow-lg shadow-blue-500/20 dark:bg-blue-600">
-          <div className="flex items-center gap-1.5 text-blue-100">
-            <span className="text-[10px] font-bold uppercase tracking-tight">{t.common.cost}</span>
-          </div>
-          <p className="mt-2 text-lg font-black text-white italic">
-            €{totalSpending.toFixed(0)}
-          </p>
-        </div>
-      </div>
-
-      {/* Special Drives Requirements */}
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-        {isUmschreibung ? (
-          <>
-            <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {t.tracker.conversionOverview}
-            </h3>
-            <div className="rounded-xl border border-purple-200 bg-purple-50 p-4 dark:border-purple-900/40 dark:bg-purple-900/10">
-              <p className="text-sm font-medium text-purple-900 dark:text-purple-200">
-                {t.tracker.noMandatorySpecialDrives}
-              </p>
-              <p className="mt-1 text-xs text-purple-700 dark:text-purple-300">
-                {t.tracker.conversionNote}
-              </p>
-            </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {[
-                { type: 'ueberland' as const, icon: '🛣️' },
-                { type: 'autobahn' as const, icon: '🛤️' },
-                { type: 'nacht' as const, icon: '🌙' },
-              ].map((item) => {
-                const minutes = userProgress.specialDrivingMinutes[item.type];
-                return (
-                  <div key={item.type} className="rounded-xl bg-slate-50 p-3 text-center dark:bg-slate-700/40">
-                    <div className="mb-1 text-lg">{item.icon}</div>
-                    <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{getTypeLabel(item.type)}</p>
-                    <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">{Math.floor(minutes / 45)}×45</p>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          <>
-            <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {t.tracker.requiredSpecialDrives}
-            </h3>
-            
-            <div className="space-y-4">
-              {[
-                { type: 'ueberland' as const, required: 5, icon: '🛣️' },
-                { type: 'autobahn' as const, required: 4, icon: '🛤️' },
-                { type: 'nacht' as const, required: 3, icon: '🌙' },
-              ].map((item) => {
-                const minutes = userProgress.specialDrivingMinutes[item.type];
-                const completed = Math.floor(minutes / 45);
-                const progress = Math.min(100, (completed / item.required) * 100);
-
-                return (
-                  <div key={item.type}>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <span>{item.icon}</span>
-                        <span className="text-slate-700 dark:text-slate-300">
-                          {getTypeLabel(item.type)}
-                        </span>
-                      </div>
-                      <span className={cn(
-                        'text-xs font-medium',
-                        completed >= item.required 
-                          ? 'text-green-600 dark:text-green-400'
-                          : 'text-slate-500'
-                      )}>
-                        {completed}/{item.required} × 45 min
-                      </span>
-                    </div>
-                    <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                      <motion.div
-                        className={cn(
-                          'h-full rounded-full',
-                          progress >= 100 ? 'bg-green-500' : 'bg-blue-500'
-                        )}
-                        initial={{ width: '0%' }}
-                        whileInView={{ width: `${progress}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    {t.tracker.drivingSchoolRate}
+                  </p>
+                  {isEditingRate ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <input
+                        type="number"
+                        value={tempRate}
+                        onChange={(e) => setTempRate(e.target.value)}
+                        autoFocus
+                        className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                       />
+                      <span className="text-sm font-bold text-slate-400">/ 45 min</span>
+                      <button 
+                        onClick={handleSaveRate}
+                        className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-bold text-white hover:bg-blue-600"
+                      >
+                        {t.common.ok}
+                      </button>
                     </div>
-                  </div>
-                );
-              })}
+                  ) : (
+                    <button 
+                      onClick={() => setIsEditingRate(true)}
+                      className="mt-0.5 text-lg font-black text-slate-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
+                    >
+                      €{userProgress.hourlyRate45.toFixed(2)} <span className="text-xs font-bold text-slate-400">/ 45 min</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5 text-slate-300" />
+                <h3 className="font-semibold">{t.tracker.liveTimerTitle}</h3>
+              </div>
+              <div className="flex items-center gap-3">
+                 <div className="flex items-center gap-2 mr-2">
+                   <button
+                     onClick={() => setShowPrivacyInfo(true)}
+                     className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700/50 text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
+                     title="Privacy & AI Transparency"
+                   >
+                     <ShieldCheck className="h-3.5 w-3.5" />
+                   </button>
+                   <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                    {t.tracker.simulationMode}
+                   </span>
+                   <button 
+                     onClick={() => !isTimerRunning && setIsSimulationMode(!isSimulationMode)}
+                     disabled={isTimerRunning}
+                     data-testid="sim-toggle"
+                     className={cn(
+                       'relative h-4 w-8 rounded-full transition-colors',
+                       isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700',
+                       isTimerRunning && 'opacity-50 cursor-not-allowed'
+                     )}
+                   >
+                     <div className={cn(
+                       'absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all',
+                       isSimulationMode ? 'left-4.5' : 'left-0.5'
+                     )} />
+                   </button>
+                 </div>
+                 {isTimerRunning && (
+                   <button 
+                     onClick={() => setShowManualLog(true)}
+                     data-testid="problem-btn"
+                     className={cn(
+                       'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-widest border transition-all',
+                       showMistakeSuccess 
+                         ? 'bg-green-500/20 text-green-400 border-green-500/30' 
+                         : 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30'
+                     )}
+                   >
+                     {showMistakeSuccess ? (
+                       <>
+                         <RefreshCcw className="h-3 w-3 animate-spin-slow" />
+                         {t.common.saved || 'SAVED'}
+                       </>
+                     ) : (
+                       <>
+                         <AlertTriangle className="h-3 w-3" />
+                         {t.common.problem}
+                       </>
+                     )}
+                   </button>
+                 )}
+              </div>
             </div>
 
-            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-              {t.tracker.specialDrivesNote}
-            </p>
-          </>
-        )}
-      </div>
-
-      {/* Session List */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-4 px-1">
-          <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
-            {t.tracker.title}
-          </h3>
-          <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-            {userProgress.drivingSessions.length} {t.tracker.entries}
-          </span>
-        </div>
-
-        {userProgress.drivingSessions.length === 0 ? (
-          <EmptyState
-            icon={<Car className="h-10 w-10 text-slate-400 dark:text-slate-500" />}
-            title={t.tracker.noSessionsTitle}
-            message={t.tracker.noSessionsMessage}
-            action={
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-5 py-2 text-sm font-bold text-white transition-all hover:bg-blue-600 hover:shadow-lg active:scale-95"
-              >
-                <Plus className="h-4 w-4" />
-                {t.tracker.logFirstSession}
-              </button>
-            }
-          />
-        ) : (
-          <div className="space-y-3">
-            {userProgress.drivingSessions
-              .slice()
-              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-              .map((session) => {
-                const isExpanded = expandedSessionId === session.id;
-                return (
-                <div
-                  key={session.id}
-                  className={cn(
-                    'overflow-hidden rounded-2xl border transition-all duration-300',
-                    isExpanded 
-                      ? 'border-blue-200 bg-blue-50/10 shadow-lg dark:border-blue-900/50 dark:bg-blue-900/10' 
-                      : 'border-slate-100 bg-white shadow-sm hover:border-blue-100 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800'
-                  )}
+            {isTimerRunning && gpsPoints.length > 0 && (
+              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
+                <MapContainer 
+                  center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
+                  zoom={17} 
+                  zoomControl={false}
+                  attributionControl={false}
+                  preferCanvas={true}
+                  style={{ height: '100%', width: '100%' }}
                 >
-                  {/* Collapsible Header */}
-                  <div 
-                    className="flex cursor-pointer items-center justify-between p-4"
-                    onClick={() => setExpandedSessionId(isExpanded ? null : session.id)}
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={4} opacity={0.8} />
+                  
+                  {destinationCoords && (
+                    <Marker position={[destinationCoords.lat, destinationCoords.lng]} icon={getFlagMarkerIcon()}>
+                      <Popup>{t.tracker.yourDestination}</Popup>
+                    </Marker>
+                  )}
+
+                  <Marker 
+                    position={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
+                    icon={getCarMarkerIcon(gpsPoints.length > 1 
+                      ? (calculateBearing(
+                          gpsPoints[gpsPoints.length-2].lat, gpsPoints[gpsPoints.length-2].lng,
+                          gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng
+                        ) - 90)
+                      : -90
+                    )}
+                  />
+                  <MapBoundsSimple points={gpsPoints} />
+                </MapContainer>
+              </div>
+            )}
+
+            {!isTimerRunning && (
+              <div className="mt-4 px-1">
+                <div className="relative group">
+                  <input
+                    type="text"
+                    placeholder={t.tracker.destinationPlaceholder}
+                    value={targetDestination}
+                    onChange={(e) => setTargetDestination(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
+                    className="w-full rounded-xl bg-white/5 border border-white/10 pl-10 pr-28 py-2.5 text-sm text-white placeholder:text-slate-400/60 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all placeholder:text-[10px] sm:placeholder:text-sm"
+                  />
+                  <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+                  <button 
+                    onClick={handleSearchDestination}
+                    disabled={isSearchingDestination}
+                    className="absolute right-2 top-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-[10px] font-bold text-white hover:bg-indigo-500 transition-all border border-indigo-400/20 shadow-lg shadow-indigo-500/20"
                   >
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className={cn(
-                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
-                        getTypeColor(session.type),
-                        isExpanded ? 'scale-110 shadow-md' : ''
-                      )}>
-                        {getTypeIcon(session.type)}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="truncate text-sm font-bold text-slate-900 dark:text-white">
-                            {getTypeLabel(session.type)}
-                          </span>
-                          <span className="shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
-                             {session.duration} min
-                          </span>
-                          {session.isSimulation && (
-                            <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
-                              {t.tracker.simulated}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
-                          <div className="flex items-center gap-0.5 whitespace-nowrap">
-                            <Calendar className="h-2.5 w-2.5" />
-                            {formatDate(session.date, true)}
-                          </div>
-                          {session.instructorName && (
-                            <span className="flex items-center gap-0.5 whitespace-normal uppercase tracking-tighter opacity-80">
-                              <div className="h-0.5 w-0.5 rounded-full bg-slate-300" />
-                              {session.instructorName}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      {userProgress.hourlyRate45 > 0 && !isExpanded && (
-                        <span className="hidden sm:block text-xs font-black text-green-600 dark:text-green-500">
-                          €{(( (Number(session.duration) || 0) / 45) * (Number(userProgress.hourlyRate45) || 0)).toFixed(2)}
-                        </span>
-                      )}
-                      {!isExpanded && session.route && (Array.isArray(session.route) ? session.route.length > 0 : false) && (
-                        <div className={cn(
-                          'flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900',
-                          'group-hover/header:bg-blue-50 group-hover/header:text-blue-500'
-                        )}>
-                          <MapPin className="h-3.5 w-3.5" />
-                        </div>
-                      )}
-                      <motion.div
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-50 text-slate-400 dark:bg-slate-900"
-                      >
-                        <ChevronDown className="h-4 w-4" />
-                      </motion.div>
-                      {!isExpanded && (
-                        <div className={cn(
-                          'h-2 w-2 rounded-full',
-                          ((session.mistakes?.length || 0) < 2) ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 
-                          ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.3)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]'
-                        )} />
-                      )}
-                    </div>
+                    {isSearchingDestination ? '...' : t.common.search}
+                  </button>
 
-                  </div>
-
-                  {/* Collapsible Content */}
                   <AnimatePresence>
-                    {isExpanded && (
+                    {showSuggestions && suggestions.length > 0 && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-white/20 bg-slate-900/90 backdrop-blur-md shadow-2xl"
                       >
-                        <div className="border-t border-slate-100/50 p-4 pt-4 dark:border-slate-700/50">
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
-                            {session.totalDistance && (
-                              <div className="flex items-center gap-1 font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">
-                                <Route className="h-3.5 w-3.5" />
-                                {session.totalDistance} km
-                              </div>
-                            )}
-                            {session.locationSummary && (
-                              <div className="flex items-center gap-1 opacity-80">
-                                <MapPin className="h-3.5 w-3.5" />
-                                {session.locationSummary}
-                              </div>
-                            )}
-                            {userProgress.hourlyRate45 > 0 && (
-                              <div className="ml-auto font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg">
-                                €{(( (Number(session.duration) || 0) / 45) * (Number(userProgress.hourlyRate45) || 0)).toFixed(2)}
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="mt-4 flex flex-wrap gap-2">
-                              <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 shadow-sm border border-slate-100 dark:border-slate-700 dark:bg-slate-800">
-                                <div className={cn(
-                                  'h-2 w-2 rounded-full',
-                                  ((session.mistakes?.length || 0) < 2) ? 'bg-green-500' : 
-                                  ((session.mistakes?.length || 0) < 5) ? 'bg-yellow-500' : 'bg-red-500'
-                                )} />
-                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                                  {t.tracker.safetyBalance}: {Math.max(0, 100 - ((session.mistakes || []).length * 8))}%
-                                </span>
-                              </div>
-                              {isPremium && (
-                                <div className="flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30">
-                                  <Zap className="h-3.5 w-3.5 text-blue-500" />
-                                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">
-                                    AI Radar Active
-                                  </span>
-                                </div>
-                              )}
-                              {(session.mistakes || []).some(m => m.type === 'idling') && (
-                                <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30">
-                                  <Wind className="h-3.5 w-3.5 text-emerald-500" />
-                                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                                    {t.tracker.ecoFriendly}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Session Radar Integration */}
-                            {isPremium && (
-                              <div className="mt-4 flex flex-col sm:flex-row items-center gap-4 rounded-2xl bg-slate-50/50 p-4 border border-slate-100 dark:bg-slate-900/40 dark:border-slate-800">
-                                <div className="w-full max-w-[160px]">
-                                  <SimulatorRadar 
-                                    stats={{
-                                      vorfahrt: !(session.mistakes || []).some(m => m.type === 'priority' || m.type === 'right_before_left'),
-                                      roundabout: !(session.mistakes || []).some(m => m.type === 'roundabout_signal'),
-                                      mirrors: !(session.mistakes || []).some(m => m.type === 'shoulder_check'),
-                                      braking: !(session.mistakes || []).some(m => m.type === 'harsh_braking')
-                                    }} 
-                                    language={language as 'de' | 'en'} 
-                                  />
-                                </div>
-                                <div className="flex-1 space-y-1.5">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Skill Breakdown</p>
-                                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 leading-relaxed">
-                                    This radar reflects your technical execution during this specific session.
-                                  </p>
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    {['Vorfahrt', 'Roundabout', 'Mirrors', 'Braking'].map(skill => {
-                                      const mastered = skill === 'Vorfahrt' ? !(session.mistakes || []).some(m => m.type === 'priority' || m.type === 'right_before_left') :
-                                                       skill === 'Roundabout' ? !(session.mistakes || []).some(m => m.type === 'roundabout_signal') :
-                                                       skill === 'Mirrors' ? !(session.mistakes || []).some(m => m.type === 'shoulder_check') :
-                                                       !(session.mistakes || []).some(m => m.type === 'harsh_braking');
-                                      return (
-                                        <span key={skill} className={cn(
-                                          'px-2 py-0.5 rounded text-[8px] font-bold border',
-                                          mastered ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600' : 'bg-slate-200/50 border-slate-300 text-slate-400'
-                                        )}>
-                                          {skill}
-                                        </span>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
-                          {session.notes && (
-                            <div className="mt-4 rounded-2xl bg-slate-50/50 p-3 text-xs text-slate-600 border border-slate-100/50 dark:bg-slate-900/40 dark:text-slate-400 dark:border-slate-800">
-                              <p className="font-bold uppercase tracking-widest text-[8px] text-slate-400 mb-2">{t.tracker.notesLabel}</p>
-                              {session.notes}
-                            </div>
-                          )}
-
-                          {session.route && Array.isArray(session.route) && session.route.length > 0 && (
-                            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 shadow-inner bg-slate-50 dark:bg-slate-900/50">
-                              {(isPremium || session.isSimulation) ? (
-                                <RouteMap route={session.route} mistakes={Array.isArray(session.mistakes) ? session.mistakes : []} language={language} />
-                              ) : (
-                                <div className="flex flex-col items-center justify-center gap-3 p-12 text-center">
-                                  <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900/30">
-                                    <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white">
-                                      {t.tracker.routeMapAvailable}
-                                    </p>
-                                    <p className="max-w-[200px] text-[10px] text-slate-500">
-                                      {t.tracker.routeMapUpgradeNote}
-                                    </p>
-                                  </div>
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
-                                    className="flex items-center gap-2 rounded-full bg-blue-500 px-4 py-1.5 text-[10px] font-bold text-white shadow-md transition-transform hover:scale-105 active:scale-95"
-                                  >
-                                    <Crown className="h-3 w-3 text-amber-300" />
-                                    {t.tracker.unlockPro}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {session.mistakes && Array.isArray(session.mistakes) && session.mistakes.length > 0 ? (
-                            <div className="mt-4 rounded-2xl border border-red-100 bg-red-50/20 p-4 dark:border-red-900/30 dark:bg-red-900/10">
-                              <div className="mb-4 flex items-center justify-between">
-                                <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-600 dark:text-red-400">
-                                  <AlertTriangle className="h-4 w-4" />
-                                  {t.tracker.faultAnalysis}
-                                </div>
-                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400">
-                                  {session.mistakes.filter(m => m && m.type).length}
-                                </span>
-                              </div>
-                              {isPremium ? (
-                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                                  {session.mistakes.reduce((acc, mistake) => {
-                                    if (!mistake || !mistake.type) return acc;
-                                    const existing = acc.find(m => m.type === mistake.type);
-                                    if (existing) {
-                                      existing.count = (existing.count || 1) + 1;
-                                      if (mistake.speed && (!existing.speed || mistake.speed > existing.speed)) {
-                                        existing.speed = mistake.speed; 
-                                      }
-                                    } else {
-                                      acc.push({ ...mistake, count: 1 });
-                                    }
-                                    return acc;
-                                  }, [] as (DrivingMistake & { count?: number })[]).map((mistake, idx) => (
-                                    <div key={idx} className="flex items-center justify-between rounded-xl bg-white p-2.5 shadow-sm border border-slate-100/50 dark:bg-slate-800 dark:border-slate-700/50">
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                                          {mistake.type === 'speeding' && <Zap className="h-3.5 w-3.5 text-red-500" />}
-                                          {mistake.type === 'harsh_braking' && <AlertCircle className="h-3.5 w-3.5 text-orange-500" />}
-                                          {mistake.type === 'rapid_acceleration' && <Zap className="h-3.5 w-3.5 text-blue-500" />}
-                                          {mistake.type === 'shoulder_check' && <Eye className="h-3.5 w-3.5 text-indigo-500" />}
-                                          {mistake.type === 'signal' && <Signal className="h-3.5 w-3.5 text-amber-500" />}
-                                          {mistake.type === 'priority' && <AlertTriangle className="h-3.5 w-3.5 text-yellow-500" />}
-                                          {mistake.type === 'stop_sign' && <Square className="h-3.5 w-3.5 text-red-600" />}
-                                          {mistake.type === 'wrong_way' && <Route className="h-3.5 w-3.5 text-fuchsia-600" />}
-                                          {mistake.type === 'illegal_turn' && <Undo2 className="h-3.5 w-3.5 text-fuchsia-500" />}
-                                          {mistake.type === 'idling' && <Wind className="h-3.5 w-3.5 text-emerald-500" />}
-                                          {mistake.type === 'roundabout_signal' && <RefreshCcw className="h-3.5 w-3.5 text-blue-600" />}
-                                          {mistake.type === 'curve_speeding' && <CornerUpRight className="h-3.5 w-3.5 text-orange-600" />}
-                                          {mistake.type === 'aggressive_cornering' && <Gauge className="h-3.5 w-3.5 text-rose-500" />}
-                                          {mistake.type === 'right_before_left' && <ChevronRight className="h-3.5 w-3.5 text-blue-500" />}
-                                          {mistake.type === 'school_zone_speeding' && <GraduationCap className="h-3.5 w-3.5 text-amber-600" />}
-                                          {mistake.type === 'mirror_check' && <View className="h-3.5 w-3.5 text-slate-500" />}
-                                          {mistake.type === 'pedestrian_safety' && <Footprints className="h-3.5 w-3.5 text-purple-500" />}
-                                        </div>
-                                        <div className="flex flex-col min-w-0">
-                                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 leading-tight">
-                                            {getMistakeLabel(mistake.type)}
-                                          </span>
-                                          {mistake.count && mistake.count > 1 && (
-                                            <span className="text-[9px] font-black text-rose-500">
-                                              {mistake.count}x {t.tracker.occurrences}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                      {mistake.speed && (
-                                        <div className="flex flex-col items-end">
-                                          <span className="text-[10px] font-black text-red-600">
-                                            {mistake.speed}
-                                          </span>
-                                          <span className="text-[8px] font-bold opacity-50">km/h</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="flex items-center justify-between gap-4 p-2">
-                                  <p className="text-[10px] text-slate-600 dark:text-slate-400">
-                                    {t.tracker.faultAnalysisUpgradeNote}
-                                  </p>
-                                  <button
-                                    onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
-                                    className="flex shrink-0 items-center gap-2 rounded-lg bg-red-100 px-3 py-1.5 text-[9px] font-black text-red-600 dark:bg-red-900/40 dark:text-red-400"
-                                  >
-                                    <Lock className="h-3 w-3" />
-                                    {t.tracker.seeDetails}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-green-50/50 p-4 border border-green-100 dark:bg-green-900/10 dark:border-green-900/20">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
-                                <Plus className="h-4 w-4 rotate-45" />
-                              </div>
-                              <div className="flex flex-col">
-                                <p className="text-xs font-bold text-green-700 dark:text-green-500">
-                                  {t.tracker.noCriticalMistakes}
-                                </p>
-                                <p className="text-[10px] text-green-600/80">
-                                  {t.tracker.safeDriveMessage}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Detail Footer Actions */}
-                          <div className="mt-6 flex items-center justify-end gap-2 border-t border-slate-100/50 pt-4 dark:border-slate-800">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleEditOpen(session); }}
-                              className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-600 transition-all hover:bg-blue-50 hover:text-blue-600 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-blue-900/30"
-                            >
-                              <Pencil className="h-3.5 w-3.5" />
-                              {t.tracker.editSession}
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleRemoveSession(session.id); }}
-                              className="flex items-center gap-2 rounded-xl bg-slate-50 px-4 py-2 text-[10px] font-bold text-slate-400 transition-all hover:bg-red-50 hover:text-red-500 dark:bg-slate-900 dark:text-slate-500 dark:hover:bg-red-900/30"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                              {t.tracker.deleteSession}
-                            </button>
-                          </div>
-                        </div>
+                        {suggestions.map((feature, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              const name = feature.properties.name;
+                              const city = feature.properties.city || feature.properties.state || '';
+                              const country = feature.properties.country || '';
+                              const label = `${name}${city ? ', ' + city : ''}${country ? ', ' + country : ''}`;
+                              
+                              setTargetDestination(label);
+                              setDestinationCoords({
+                                lat: feature.geometry.coordinates[1],
+                                lng: feature.geometry.coordinates[0]
+                              });
+                              setShowSuggestions(false);
+                              setSuggestions([]);
+                            }}
+                            className="flex w-full flex-col px-4 py-3 text-left transition-colors hover:bg-white/10 border-b border-white/5 last:border-0"
+                          >
+                            <span className="text-sm font-bold text-white">
+                              {feature.properties.name}
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              {[
+                                feature.properties.city,
+                                feature.properties.state,
+                                feature.properties.country
+                              ].filter(Boolean).join(', ')}
+                            </span>
+                          </button>
+                        ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-                );
-              })}
-          </div>
-        )}
-      </div>
+              </div>
+            )}
 
+            <div className="my-4 flex flex-col items-center">
+              <div className="text-5xl font-bold tracking-tighter">
+                {formatTime(elapsedTime)}
+              </div>
+              {isTimerRunning && (
+                <div className="mt-2 w-full max-w-[200px]">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
+                    <span>{t.tracker.safetyScore}</span>
+                    <span data-testid="safety-score-value">{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
+                    <motion.div 
+                      className={cn(
+                        'h-full rounded-full transition-all duration-1000',
+                        currentMistakes.length < 2 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
+                        currentMistakes.length < 5 ? 'bg-yellow-500' : 'bg-red-500'
+                      )}
+                      initial={{ width: '100%' }}
+                      animate={{ width: `${Math.max(0, 100 - (currentMistakes.length * 10))}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
 
-          {userProgress.drivingSessions.length > 0 && (
-            <div className="mt-8 flex justify-center border-t border-slate-100 pt-6 dark:border-slate-800">
+            <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
+              <div className="text-center">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {t.tracker.distance}
+                </p>
+                <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
+              </div>
+              <div className="text-center border-l border-white/10">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {t.tracker.speed}
+                </p>
+                <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
+              </div>
+              <div className="text-center border-l border-white/10">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {t.tracker.limit}
+                </p>
+                <div className={cn(
+                  'text-lg font-bold flex items-center justify-center gap-1',
+                  currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
+                )}>
+                  {currentLimit || '--'}
+                  {currentLimit && (
+                    <div className="h-4 w-4 rounded-full border-2 border-red-500 bg-white flex items-center justify-center">
+                      <span className="text-[8px] font-black text-slate-900">{currentLimit}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              {isTimerRunning ? (
+                <button
+                  onClick={handlePauseTimer}
+                  data-testid="pause-tracking-btn"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
+                >
+                  <Pause className="h-4 w-4" />
+                  {t.common.pause}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (activeSession && activeSession.isPaused) {
+                      handleResumeTimer();
+                    } else {
+                      const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+                      if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
+                        onOpenPaywall?.();
+                      } else {
+                        handleStartTimer();
+                      }
+                    }
+                  }}
+                  data-testid={(activeSession && activeSession.isPaused) ? 'resume-tracking-btn' : 'start-tracking-btn'}
+                  className={cn(
+                    'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
+                    (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
+                      ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
+                      : (activeSession && activeSession.isPaused) ? 'bg-indigo-500/90 hover:bg-indigo-600 shadow-indigo-500/20' : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
+                  )}
+                >
+                  {(activeSession && activeSession.isPaused) ? (
+                    <>
+                      <Play className="h-4 w-4" />
+                      {t.common.resume}
+                    </>
+                  ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
+                    <>
+                      <Crown className="h-4 w-4" />
+                      {t.tracker.trackingPro}
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4" />
+                      {t.tracker.startLive}
+                    </>
+                  ))}
+                </button>
+              )}
               <button
-                onClick={() => {
-                  if (window.confirm(t.tracker.confirmClearHistory)) {
-                    clearDrivingHistory();
-                  }
-                }}
-                className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50/50 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-red-600 transition-all hover:bg-red-50 dark:border-red-900/30 dark:bg-red-900/10 dark:hover:bg-red-900/20"
+                onClick={handleStopTimer}
+                disabled={elapsedTime === 0 && !isTimerRunning}
+                data-testid="stop-tracking-btn"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
               >
-                <Trash2 className="h-4 w-4" />
-                {t.tracker.clearHistory}
+                <Square className="h-4 w-4" />
+                {t.common.stopAndSave}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'history' && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="flex items-center justify-between mb-4 px-1">
+            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
+              {t.tracker.historyTitle || 'History'}
+            </h3>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportData}
+                data-testid="export-history-btn"
+                className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+              >
+                <Database className="h-3 w-3" />
+                Export JSON
+              </button>
+              <button
+                onClick={handleClearHistory}
+                data-testid="purge-data-btn"
+                className="flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
+              >
+                <Trash2 className="h-3 w-3" />
+                Purge All
+              </button>
+            </div>
+          </div>
+          {userProgress.drivingSessions.length === 0 ? (
+            <EmptyState
+              icon={<Car className="h-8 w-8 text-slate-400" />}
+              title={t.tracker.noSessionsTitle || 'No sessions yet'}
+              message={t.tracker.noSessionsMessage || 'Start your first live driving session to track your progress.'}
+            />
+          ) : (
+            <div className="space-y-4">
+              {[...userProgress.drivingSessions]
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((session) => (
+                  <motion.div
+                    key={session.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+                  >
+                    <div 
+                      className="cursor-pointer p-4"
+                      onClick={() => setExpandedSessionId(expandedSessionId === session.id ? null : session.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={cn(
+                            'flex h-12 w-12 items-center justify-center rounded-xl',
+                            getTypeColor(session.type)
+                          )}>
+                            {getTypeIcon(session.type)}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-bold text-slate-900 dark:text-white">
+                                {getTypeLabel(session.type)}
+                              </h4>
+                              {session.isSimulation && (
+                                <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
+                                  SIM
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              {formatDate(session.date, true)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right mr-2">
+                            <p className="text-sm font-black text-slate-900 dark:text-white">
+                              {session.duration} <span className="text-[10px] font-bold text-slate-400">min</span>
+                            </p>
+                            {session.totalDistance !== undefined && (
+                              <p className="text-[10px] font-bold text-slate-500">
+                                {session.totalDistance.toFixed(1)} km
+                              </p>
+                            )}
+                          </div>
+                          {expandedSessionId === session.id ? <ChevronDown className="h-5 w-5 text-slate-400" /> : <ChevronRight className="h-5 w-5 text-slate-400" />}
+                        </div>
+                      </div>
+
+                      {session.locationSummary && (
+                        <div className="mt-3 flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
+                          <MapPin className="h-3 w-3" />
+                          {session.locationSummary}
+                        </div>
+                      )}
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedSessionId === session.id && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-slate-50 bg-slate-50/30 p-4 dark:border-slate-800/50 dark:bg-slate-900/30"
+                        >
+                          {/* Stats Grid */}
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
+                              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                                {t.tracker.cost || 'Cost'}
+                              </p>
+                              <p className="text-lg font-black text-slate-900 dark:text-white">
+                                €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
+                              </p>
+                            </div>
+                            <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
+                              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                                {t.tracker.mistakesCount || 'Mistakes'}
+                              </p>
+                              <p className={cn(
+                                'text-lg font-black',
+                                (session.mistakes?.length || 0) === 0 ? 'text-green-500' : 'text-red-500'
+                              )}>
+                                {session.mistakes?.length || 0}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Route Map */}
+                          {session.route && session.route.length >= 2 && (
+                            <RouteMap 
+                              route={session.route} 
+                              mistakes={session.mistakes} 
+                              language={language} 
+                            />
+                          )}
+
+                          {/* Mistakes List */}
+                          {session.mistakes && session.mistakes.length > 0 && (
+                            <div className="mt-4">
+                              <h5 className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
+                              </h5>
+                              <div className="space-y-2">
+                                {session.mistakes.map((mistake, idx) => (
+                                  <div key={idx} className="flex items-center justify-between rounded-lg bg-white p-2 text-xs shadow-sm dark:bg-slate-800">
+                                    <div className="flex items-center gap-2">
+                                      <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                                      <span className="font-bold text-slate-700 dark:text-slate-300">
+                                        {getMistakeLabel(mistake.type)}
+                                      </span>
+                                    </div>
+                                    <span className="text-[10px] font-medium text-slate-400">
+                                      {new Date(mistake.timestamp).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Notes */}
+                          {session.notes && (
+                            <div className="mt-4">
+                              <h5 className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                {((t.tracker as any).notes as string) || 'Notes'}
+                              </h5>
+                              <p className="text-xs text-slate-600 dark:text-slate-400 italic">
+                                "{session.notes}"
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Actions */}
+                          <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button
+                              onClick={() => handleRemoveSession(session.id)}
+                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleEditOpen(session)}
+                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+            </div>
           )}
-      
+        </div>
+      )}
+
+      {/* Safety Warning Modal (§ 23 StVO Compliance) */}
+      <AnimatePresence>
+        {showSafetyWarning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            data-testid="safety-warning-modal"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
+            >
+              <div className="mb-6 flex justify-center">
+                <div className="rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
+                  <ShieldAlert className="h-10 w-10 text-amber-600 dark:text-amber-400" />
+                </div>
+              </div>
+              
+              <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">
+                Safety Protocol: StVO § 23 Compliance
+              </h3>
+              
+              <p className="mb-6 text-center text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                In Germany, using a mobile phone while driving is prohibited unless it is secured in a mount. 
+                Confirm your device is properly mounted before starting the tracking session.
+              </p>
+
+              <div className="mb-8 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
+                <label className="flex cursor-pointer items-start gap-3">
+                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+                    <input
+                      type="checkbox"
+                      data-testid="mount-confirmation-checkbox"
+                      className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-slate-300 bg-white transition-all checked:border-blue-500 checked:bg-blue-500 dark:border-slate-600 dark:bg-slate-800"
+                      checked={isMountConfirmed}
+                      onChange={(e) => setIsMountConfirmed(e.target.checked)}
+                    />
+                    <Check className="pointer-events-none absolute h-4 w-4 scale-0 text-white transition-transform peer-checked:scale-100" />
+                  </div>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    I confirm that my smartphone is secured in a suitable vehicle mount and I will not operate it while driving.
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    if (isMountConfirmed) {
+                      setIsDeviceMounted(true);
+                      setShowSafetyWarning(false);
+                      handleStartTimer(true);
+                    }
+                  }}
+                  disabled={!isMountConfirmed}
+                  data-testid="confirm-mount-btn"
+                  className={cn(
+                    'w-full rounded-2xl py-4 font-black text-white shadow-lg transition-all active:scale-95',
+                    isMountConfirmed 
+                      ? 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900' 
+                      : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
+                  )}
+                >
+                  Confirm & Start
+                </button>
+                <button
+                  onClick={() => setShowSafetyWarning(false)}
+                  className="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPrivacyInfo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
+            >
+              <div className="mb-6 flex justify-center">
+                <div className="rounded-full bg-blue-100 p-4 dark:bg-blue-900/30">
+                  <ShieldCheck className="h-10 w-10 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              
+              <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">
+                Privacy & AI Policy
+              </h3>
+              
+              <div className="mb-6 max-h-[300px] overflow-y-auto pr-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                <p className="mb-4">
+                  To provide real-time driving analysis, DriveDE processes your GPS and motion sensor data locally on your device and via secure AI services.
+                </p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><strong>Local Processing:</strong> All route tracking and speed analysis happens on-device.</li>
+                  <li><strong>AI Analysis:</strong> Specific driving events (mistakes) may be analyzed using anonymized telemetry.</li>
+                  <li><strong>GDPR Compliance:</strong> You have the right to export or delete your data at any time via the History tab.</li>
+                </ul>
+                <p className="mt-4 font-bold text-slate-900 dark:text-slate-100">
+                  By continuing, you agree to our use of location data and AI processing for driving education purposes.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    setAcceptedPrivacy(true);
+                    setShowPrivacyInfo(false);
+                  }}
+                  data-testid="accept-privacy-btn"
+                  className="w-full rounded-2xl bg-blue-600 py-4 font-black text-white shadow-lg hover:bg-blue-500 transition-all active:scale-95"
+                >
+                  I Agree & Accept
+                </button>
+                <button
+                  onClick={() => setShowPrivacyInfo(false)}
+                  className="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                >
+                  Go Back
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isPremium && !isSimulationMode && isTimerRunning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"
+          >
+            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
+              Safe Driving Mode Active
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Add Session Modal */}
       {showAddForm && (
         <div 

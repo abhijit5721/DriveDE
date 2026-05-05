@@ -54,6 +54,24 @@ test.describe('DriveDE Golden Path', () => {
       const startBtn = page.getByTestId('start-tracking-btn');
       await expect(startBtn).toBeVisible({ timeout: 10000 });
       await startBtn.click({ force: true });
+      
+      // Handle Safety Warning Modal
+      // Handle Privacy Modal if it appears
+      const privacyBtn = page.getByTestId('accept-privacy-btn');
+      if (await privacyBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await privacyBtn.click();
+        await expect(privacyBtn).toBeHidden({ timeout: 5000 });
+        await page.waitForTimeout(500); // Wait for modal exit animation
+        // After accepting privacy, we need to click start again
+        await page.getByTestId('start-tracking-btn').click({ force: true });
+      }
+
+      await expect(page.getByTestId('safety-warning-modal')).toBeVisible({ timeout: 5000 });
+      await page.getByTestId('mount-confirmation-checkbox').click();
+      await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
+      await page.getByTestId('confirm-mount-btn').click({ force: true });
+      await expect(page.getByTestId('safety-warning-modal')).toBeHidden({ timeout: 5000 });
+
       await expect(page.getByTestId('pause-tracking-btn')).toBeVisible({ timeout: 10000 });
     });
 
@@ -70,12 +88,12 @@ test.describe('DriveDE Golden Path', () => {
       
       // Retry click until modal is visible
       await expect(async () => {
-        await stopBtn.click({ force: true });
+        await stopBtn.click();
         await page.waitForTimeout(2000);
         await expect(page.getByTestId('add-session-modal')).toBeVisible({ timeout: 3000 });
       }).toPass({ timeout: 20000 });
       
-      await page.getByTestId('close-add-session-btn').click({ force: true });
+      await page.getByTestId('close-add-session-btn').click();
       await expect(page.getByTestId('add-session-modal')).toBeHidden({ timeout: 15000 });
 
       await expect(page.getByTestId('start-tracking-btn')).toBeVisible({ timeout: 15000 });
@@ -118,6 +136,24 @@ test.describe('DriveDE Golden Path', () => {
     await test.step('Start Tracking', async () => {
       await page.getByTestId('sim-toggle').click({ force: true });
       await page.getByTestId('start-tracking-btn').click({ force: true });
+      
+      // Handle Safety Warning Modal
+      // Handle Privacy Modal if it appears
+      const privacyBtn = page.getByTestId('accept-privacy-btn');
+      if (await privacyBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await privacyBtn.click();
+        await expect(privacyBtn).toBeHidden({ timeout: 5000 });
+        await page.waitForTimeout(500); // Wait for modal exit animation
+        // After accepting privacy, we need to click start again
+        await page.getByTestId('start-tracking-btn').click({ force: true });
+      }
+
+      await expect(page.getByTestId('safety-warning-modal')).toBeVisible({ timeout: 5000 });
+      await page.getByTestId('mount-confirmation-checkbox').click();
+      await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
+      await page.getByTestId('confirm-mount-btn').click({ force: true });
+      await expect(page.getByTestId('safety-warning-modal')).toBeHidden({ timeout: 5000 });
+
       await expect(page.getByTestId('pause-tracking-btn')).toBeVisible();
     });
     
@@ -126,24 +162,24 @@ test.describe('DriveDE Golden Path', () => {
       await expect(page.getByTestId('problem-btn')).toBeVisible({ timeout: 10000 });
 
       // Open modal
-      await page.getByTestId('problem-btn').click({ force: true });
+      await page.getByTestId('problem-btn').click();
       await expect(page.getByTestId('manual-log-modal')).toBeVisible({ timeout: 10000 });
 
       // Log Shoulder Check
-      await page.getByTestId('manual-mistake-shoulder_check').click({ force: true });
+      await page.getByTestId('manual-mistake-shoulder_check').click();
       // Wait for exit animation
       await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
 
       // Log Mirror Check
-      await page.getByTestId('problem-btn').click({ force: true });
+      await page.getByTestId('problem-btn').click();
       await expect(page.getByTestId('manual-log-modal')).toBeVisible({ timeout: 10000 });
-      await page.getByTestId('manual-mistake-mirror_check').click({ force: true });
+      await page.getByTestId('manual-mistake-mirror_check').click();
       await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
 
       // Log Pedestrian Safety
-      await page.getByTestId('problem-btn').click({ force: true });
+      await page.getByTestId('problem-btn').click();
       await expect(page.getByTestId('manual-log-modal')).toBeVisible({ timeout: 10000 });
-      await page.getByTestId('manual-mistake-pedestrian_safety').click({ force: true });
+      await page.getByTestId('manual-mistake-pedestrian_safety').click();
       await expect(page.getByTestId('manual-log-modal')).toBeHidden({ timeout: 10000 });
     });
     

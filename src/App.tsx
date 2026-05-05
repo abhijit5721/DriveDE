@@ -422,6 +422,7 @@ export default function App() {
       case 'maneuvers':
         return <Maneuvers onLessonSelect={handleLessonSelect} onOpenPaywall={() => setShowPaywall(true)} />;
       case 'tracker':
+      case 'history':
         return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
       case 'achievements':
         return <Achievements />;
