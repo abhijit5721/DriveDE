@@ -17,7 +17,7 @@ interface DrivingInsightsProps {
 export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: DrivingInsightsProps) {
   const { language, userProgress, transmissionType, isPremium } = useAppStore();
   const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
-    .filter(s => s.instructorName !== 'AI Safety Auditor' && !s.isSimulation);
+    .filter(s => s.instructorName !== 'Safety Auditor' && !s.isSimulation);
 
   const t = TRANSLATIONS[language].instructor.drivingInsights;
 
@@ -130,7 +130,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
         </h3>
         <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
           <Star className="h-3 w-3 fill-current" />
-          AI Coach
+          Smart Coach
         </div>
       </div>
 
@@ -195,7 +195,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
           </div>
         </div>
 
-        {/* AI Focus Areas Card */}
+        {/* Smart Focus Areas Card */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <div className="flex items-center gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
@@ -301,8 +301,8 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </div>
               <p className="text-sm font-medium leading-relaxed text-slate-600 dark:text-slate-400">
                 {language === 'de' 
-                  ? 'Deine Fahrdaten werden mit der DriveDE-KI abgeglichen. Der Radar zeigt deine Meisterschaft in kritischen Prüfungsbereichen.'
-                  : 'Your driving data is benchmarked against DriveDE AI. The radar visualizes your mastery in critical exam domains.'}
+                  ? 'Deine Fahrdaten werden mit der DriveDE-Analyse abgeglichen. Der Radar zeigt deine Meisterschaft in kritischen Prüfungsbereichen.'
+                  : 'Your driving data is benchmarked against DriveDE Analysis. The radar visualizes your mastery in critical exam domains.'}
               </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
                 {['Vorfahrt', 'Roundabout', 'Mirrors', 'Braking'].map((key) => {

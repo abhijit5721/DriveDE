@@ -160,6 +160,7 @@ export interface DrivingMistake {
   timestamp: number;
   location?: { lat: number; lng: number };
   status?: 'pending' | 'confirmed' | 'rejected';
+  source?: 'auto' | 'manual';
 }
 
 export interface DrivingSession {

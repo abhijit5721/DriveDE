@@ -437,6 +437,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [targetDestination, setTargetDestination] = useState('');
   const [destinationCoords, setDestinationCoords] = useState<{ lat: number, lng: number } | null>(null);
   const [isSearchingDestination, setIsSearchingDestination] = useState(false);
+  const [faultSourceFilter, setFaultSourceFilter] = useState<'all' | 'auto' | 'manual'>('all');
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
 
@@ -501,11 +502,43 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const lastCacheUpdateRef = useRef<number>(0);
 
   const logMistake = useCallback((mistake: DrivingMistake) => {
-    const mistakeWithStatus: DrivingMistake = { ...mistake, status: 'pending' };
+    const mistakeWithStatus: DrivingMistake = { 
+      ...mistake, 
+      status: 'pending',
+      source: mistake.source || 'auto' 
+    };
     cumulativeMistakesRef.current = [...cumulativeMistakesRef.current, mistakeWithStatus];
     setCurrentMistakes(prev => [...prev, mistakeWithStatus]);
     updateActiveSession({ mistakes: cumulativeMistakesRef.current });
   }, [updateActiveSession]);
+
+  const handleManualMistake = (type: DrivingMistake['type']) => {
+    setShowManualLog(false);
+    if (!isTimerRunning) return;
+    
+    try {
+      const lastPoint = cumulativeRouteRef.current[cumulativeRouteRef.current.length - 1];
+      const loc = lastPoint ? { lat: lastPoint.lat, lng: lastPoint.lng } : { lat: 0, lng: 0 };
+      
+      const mistakeObj: DrivingMistake = {
+        type,
+        timestamp: Date.now(),
+        location: loc,
+        speed: currentSpeed,
+        limit: currentLimit || undefined,
+        source: 'manual'
+      };
+      
+      logMistake(mistakeObj);
+      
+      setShowMistakeSuccess(true);
+      setTimeout(() => setShowMistakeSuccess(false), 2000);
+      
+      toast.success(t.tracker.mistakeAddedManually, { position: 'bottom-center', icon: '📝' });
+    } catch (error) {
+      console.error('[Tracker] Manual mistake log failed:', error);
+    }
+  };
 
   const handleClearHistory = () => {
     if (window.confirm(t.tracker.deleteConfirm || 'Are you sure you want to PERMANENTLY delete all driving history? (Art. 17 GDPR - Right to Erasure)')) {
@@ -1263,7 +1296,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const handleStartTimer = async (skipMountCheck = false) => {
     if (!userProgress.hasAcceptedPrivacy) {
       setShowPrivacyInfo(true);
-      toast(t.tracker.privacyConsentRequired || 'Please review and accept the Privacy & AI policy first.', { icon: 'ℹ️' });
+      toast(t.tracker.privacyConsentRequired || 'Please review and accept the Privacy & Data policy first.', { icon: 'ℹ️' });
       return;
     }
 
@@ -1516,32 +1549,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   };
 
 
-  const handleManualMistake = (type: DrivingMistake['type']) => {
-    setShowManualLog(false);
-    if (!isTimerRunning) return;
-    
-    try {
-      const lastPoint = cumulativeRouteRef.current[cumulativeRouteRef.current.length - 1];
-      const loc = lastPoint ? { lat: lastPoint.lat, lng: lastPoint.lng } : { lat: 0, lng: 0 };
-      
-      const mistakeObj: DrivingMistake = {
-        type,
-        timestamp: Date.now(),
-        location: loc,
-        speed: currentSpeed,
-        limit: currentLimit || undefined
-      };
-      
-      logMistake(mistakeObj);
-      
-      setShowMistakeSuccess(true);
-      setTimeout(() => setShowMistakeSuccess(false), 2000);
-      
-      toast.success(t.tracker.mistakeAddedManually, { position: 'bottom-center', icon: '📝' });
-    } catch (error) {
-      console.error('[Tracker] Manual mistake log failed:', error);
-    }
-  };
+
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -1652,7 +1660,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                    <button
                      onClick={() => setShowPrivacyInfo(true)}
                      className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700/50 text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
-                     title="Privacy & AI Transparency"
+                     title="Privacy & Data Transparency"
                    >
                      <ShieldCheck className="h-3.5 w-3.5" />
                    </button>
@@ -2028,6 +2036,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </button>
             </div>
           </div>
+          
+          <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide px-1">
+            {[
+              { id: 'all', label: language === 'de' ? 'Alle Fehler' : 'All Faults', icon: <AlertTriangle className="h-3 w-3" /> },
+              { id: 'auto', label: language === 'de' ? 'Auto-Detektiert' : 'Auto-Detected', icon: <Zap className="h-3 w-3" /> },
+              { id: 'manual', label: language === 'de' ? 'Manuell' : 'Manual Entry', icon: <Pencil className="h-3 w-3" /> }
+            ].map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setFaultSourceFilter(filter.id as any)}
+                className={cn(
+                  'flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold transition-all',
+                  faultSourceFilter === filter.id 
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+                    : 'bg-white text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700/50'
+                )}
+              >
+                {filter.icon}
+                {filter.label}
+              </button>
+            ))}
+          </div>
 
           {syncError && (
             <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
@@ -2201,17 +2231,24 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               {isPremium ? (
                                 <div className="grid grid-cols-1 gap-2">
                                   {(() => {
-                                    const pendingMistakes = session.mistakes.filter(m => !m.status || m.status === 'pending');
-                                    const confirmedMistakes = session.mistakes.filter(m => m.status === 'confirmed');
+                                    const filteredMistakes = session.mistakes.filter(m => 
+                                      faultSourceFilter === 'all' || 
+                                      (m.source === faultSourceFilter) || 
+                                      (faultSourceFilter === 'auto' && !m.source)
+                                    );
+                                    const pendingMistakes = filteredMistakes.filter(m => !m.status || m.status === 'pending');
+                                    const confirmedMistakes = filteredMistakes.filter(m => m.status === 'confirmed');
                                     
-                                    const groups: Record<string, { type: string, count: number, latest: number }> = {};
+                                    const groups: Record<string, { type: string, source: 'auto' | 'manual', count: number, latest: number }> = {};
                                     confirmedMistakes.forEach(m => {
-                                      if (!groups[m.type]) {
-                                        groups[m.type] = { type: m.type, count: 0, latest: m.timestamp };
+                                      const source = m.source || 'auto';
+                                      const key = `${m.type}-${source}`;
+                                      if (!groups[key]) {
+                                        groups[key] = { type: m.type, source, count: 0, latest: m.timestamp };
                                       }
-                                      groups[m.type].count++;
-                                      if (m.timestamp > groups[m.type].latest) {
-                                        groups[m.type].latest = m.timestamp;
+                                      groups[key].count++;
+                                      if (m.timestamp > groups[key].latest) {
+                                        groups[key].latest = m.timestamp;
                                       }
                                     });
 
@@ -2233,7 +2270,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                       {getMistakeIconComponent(m.type)}
                                                     </div>
                                                     <div className="flex flex-col">
-                                                      <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
+                                                      <div className="flex items-center gap-2">
+                                                        <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
+                                                        <span className={cn(
+                                                          'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest',
+                                                          (m.source === 'manual') 
+                                                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
+                                                            : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                        )}>
+                                                          {m.source === 'manual' ? 'Manual' : 'Auto'}
+                                                        </span>
+                                                      </div>
                                                       <span className="text-[8px] font-medium text-slate-400">
                                                         {new Date(m.timestamp).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                       </span>
@@ -2281,9 +2328,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                         {getMistakeIconComponent(group.type)}
                                                       </div>
                                                       <div className="flex flex-col">
-                                                        <span className="font-bold text-slate-700 dark:text-slate-200">
-                                                          {getMistakeLabel(group.type)}
-                                                        </span>
+                                                        <div className="flex items-center gap-2">
+                                                          <span className="font-bold text-slate-700 dark:text-slate-200">
+                                                            {getMistakeLabel(group.type)}
+                                                          </span>
+                                                          <span className={cn(
+                                                            'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest',
+                                                            (group.source === 'manual') 
+                                                              ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
+                                                              : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                          )}>
+                                                            {group.source === 'manual' ? 'Manual' : 'Auto'}
+                                                          </span>
+                                                        </div>
                                                         <span className="text-[9px] font-medium text-slate-400">
                                                           {group.count > 1 ? `${group.count}x · ` : ''} 
                                                           {new Date(group.latest).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -2461,20 +2518,20 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
               
               <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">
-                Privacy & AI Policy
+                Privacy & Data Policy
               </h3>
               
               <div className="mb-6 max-h-[300px] overflow-y-auto pr-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                 <p className="mb-4">
-                  To provide real-time driving analysis, DriveDE processes your GPS and motion sensor data locally on your device and via secure AI services.
+                  To provide real-time driving analysis, DriveDE processes your GPS and motion sensor data locally on your device and via secure cloud services.
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
                   <li><strong>Local Processing:</strong> All route tracking and speed analysis happens on-device.</li>
-                  <li><strong>AI Analysis:</strong> Specific driving events (mistakes) may be analyzed using anonymized telemetry.</li>
+                  <li><strong>Automated Analysis:</strong> Specific driving events (mistakes) may be analyzed using anonymized telemetry.</li>
                   <li><strong>GDPR Compliance:</strong> You have the right to export or delete your data at any time via the History tab.</li>
                 </ul>
                 <p className="mt-4 font-bold text-slate-900 dark:text-slate-100">
-                  By continuing, you agree to our use of location data and AI processing for driving education purposes.
+                  By continuing, you agree to our use of location data and automated processing for driving education purposes.
                 </p>
               </div>
 

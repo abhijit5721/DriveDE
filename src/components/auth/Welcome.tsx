@@ -379,7 +379,7 @@ export function Welcome() {
             <Car className="h-5 w-5 text-white" />
             <span className="text-lg font-black tracking-tighter text-white">DriveDE</span>
           </div>
-          <p className="text-[10px] text-slate-600">© 2026 DriveDE AI. {t.common.allRightsReserved}</p>
+          <p className="text-[10px] text-slate-600">© 2026 DriveDE. {t.common.allRightsReserved}</p>
         </div>
       </footer>
 

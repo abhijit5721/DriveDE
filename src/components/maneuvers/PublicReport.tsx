@@ -6,9 +6,9 @@
 /**
  * PublicReport.tsx
  * 
- * A high-performance, AI-driven instructor briefing dashboard.
+ * A high-performance, automated instructor briefing dashboard.
  * Designed for "Practical Exam Readiness" tracking with specialized logic for:
- * 1. AI Instructor Briefing: Logical synthesis of student progress and tactical advice.
+ * 1. Smart Instructor Briefing: Logical synthesis of student progress and tactical advice.
  * 2. Practical Readiness Model: Multi-weighted score based on Sonderfahrten and fault frequency.
  * 3. Driving Performance Trends: Statistical comparison of recent vs. historical fault rates.
  * 4. Lesson Mode: A high-contrast, condensed UI optimized for active in-car coaching.
@@ -220,13 +220,17 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   };
 
   // 2. Skill Weaknesses (Aggregated Faults)
-  const faultMap = new Map<string, number>();
+  const faultMap = new Map<string, { count: number, manual: number, auto: number }>();
   data.sessions.forEach(s => {
     s.mistakes?.forEach(m => {
       // ONLY use confirmed mistakes for the public report to ensure data accuracy
       if (m && typeof m === 'object' && m.status === 'confirmed') {
         const faultType = m.type;
-        faultMap.set(faultType, (faultMap.get(faultType) || 0) + 1);
+        const stats = faultMap.get(faultType) || { count: 0, manual: 0, auto: 0 };
+        stats.count++;
+        if (m.source === 'manual') stats.manual++;
+        else stats.auto++;
+        faultMap.set(faultType, stats);
       }
     });
   });
@@ -236,12 +240,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   };
 
   const sortedFaults = Array.from(faultMap.entries())
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => b[1].count - a[1].count)
     .slice(0, 3);
 
-  // --- AI Briefing Engine ---
+  // --- Smart Briefing Engine ---
   /**
-   * AI INSTRUCTOR BRIEFING ENGINE
+   * SMART INSTRUCTOR BRIEFING ENGINE
    * 
    * This logic synthesizes three main data points into a readable summary:
    * 1. Readiness Score (Progress)
@@ -269,8 +273,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     }
 
     if (sortedFaults.length > 0) {
-      const mainFault = formatFaultName(sortedFaults[0][0]);
-      briefing += `Tactically, the next session should prioritize ${mainFault} to eliminate recurring errors observed in recent tracking data.`;
+      const [type, stats] = sortedFaults[0];
+      const mainFault = formatFaultName(type);
+      briefing += `Tactically, the next session should prioritize ${mainFault} to eliminate recurring errors. `;
+      if (stats.manual > 0) {
+        briefing += 'Some instances were manually flagged, showing student awareness of this issue.';
+      }
     }
 
     return briefing;
@@ -368,7 +376,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
       <div className="p-6 space-y-6 max-w-2xl mx-auto">
         {lessonMode ? (
           <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-            {/* Condensed AI Briefing */}
+            {/* Condensed Smart Briefing */}
             <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl">
               <div className="flex items-center gap-2 mb-3 opacity-80">
                 <Sparkles className="h-4 w-4" />
@@ -377,6 +385,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <p className="text-lg font-bold leading-tight">
                 {generateBriefing().split('.')[0]}. Focus on {formatFaultName(sortedFaults[0]?.[0] || 'precision')}.
               </p>
+              {sortedFaults[0]?.[1].manual > 0 && (
+                <p className="mt-2 text-xs font-medium opacity-80 flex items-center gap-1.5">
+                  <div className="h-1 w-1 rounded-full bg-white animate-pulse" />
+                  Contains manual student logs
+                </p>
+              )}
             </div>
 
             {/* Quick Fault Priority */}
@@ -384,8 +398,13 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2">Top Training Priorities</div>
               {sortedFaults.map(([fault, count], i) => (
                 <div key={i} className="rounded-2xl bg-slate-900 border-2 border-orange-500/20 p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-500/20">
-                    {count}
+                  <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-500/20 relative">
+                    {count.count}
+                    {count.manual > 0 && (
+                      <div className="absolute -top-1 -right-1 h-4 w-4 bg-white rounded-full flex items-center justify-center text-[8px] text-orange-600 border border-orange-200">
+                        M
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h4 className="text-sm font-black text-white uppercase tracking-tight">{formatFaultName(fault)}</h4>
@@ -433,7 +452,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
         ) : (
           <>
-            {/* AI Instructor Briefing */}
+            {/* Instructor Briefing */}
         <div className="rounded-3xl bg-slate-900 border border-blue-500/20 p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Sparkles className="h-24 w-24 text-blue-400" />
@@ -443,7 +462,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <div className="p-1.5 rounded-lg bg-blue-500/20">
                 <Sparkles className="h-4 w-4 text-blue-400" />
               </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">AI Instructor Briefing</h3>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Instructor Briefing</h3>
             </div>
             <p className="text-sm text-slate-300 leading-relaxed font-medium italic">
               "{generateBriefing()}"
@@ -551,8 +570,13 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 <div key={i} className="rounded-xl border bg-white/5 border-white/5 p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-sm">
-                        {count}
+                      <div className="h-8 w-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-sm relative">
+                        {count.count}
+                        {count.manual > 0 && (
+                          <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-slate-800 rounded-full flex items-center justify-center text-[7px] text-slate-400 border border-white/10" title="Manual entries">
+                            M
+                          </div>
+                        )}
                       </div>
                       <span className="text-sm text-slate-200 font-bold uppercase tracking-tight">{formatFaultName(fault)}</span>
                     </div>
@@ -574,11 +598,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
         )}
 
-        {/* AI Insight Section */}
+        {/* Insight Section */}
         <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
           <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
             <Zap className="h-4 w-4 text-amber-500" />
-            AI Training Insights
+            Training Insights
           </h3>
           <div className="space-y-4">
             {data.sessions.length > 0 ? (
@@ -694,6 +718,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                             <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                               <div className="w-1 h-1 rounded-full bg-red-500" />
                               <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
+                              <span className={cn(
+                                'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest ml-1',
+                                (m.source === 'manual') 
+                                  ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                  : 'bg-blue-500/10 text-blue-400'
+                              )}>
+                                {m.source === 'manual' ? 'Manual' : 'Auto'}
+                              </span>
                               {m.timestamp && (
                                 <span className="text-slate-500 text-[10px] ml-auto">
                                   {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

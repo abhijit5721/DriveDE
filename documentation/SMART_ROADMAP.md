@@ -1,14 +1,14 @@
-# DriveDE AI & Growth Roadmap (2026+)
+# DriveDE Smart & Growth Roadmap (2026+)
 
-This document outlines the strategic vision for evolving the DriveDE "Freemium" model and refining the AI Coaching engine as the user base grows.
+This document outlines the strategic vision for evolving the DriveDE "Freemium" model and refining the Automated Coaching engine as the user base grows.
 
 ## Phase 1: Premium Feature Gating (COMPLETED April 2026)
 Successfully implemented fundamental feature gating to differentiate "Learner" (Free) and "Pro" tiers.
-- **Gated Features**: GPS Tracking, AI Focus Areas, Financial Projections, PDF Exports, and Animated Guides.
+- **Gated Features**: GPS Tracking, Smart Focus Areas, Financial Projections, PDF Exports, and Animated Guides.
 - **Social Proof**: Integrated live-user tracking, success rates, and institutional trust badges (TÜV/DEKRA).
 
-## Phase 2: AI Coaching Refinement (Dataset Growth)
-As the anonymized dataset of drives grows, the AI engine should be transitioned from rule-based feedback to data-driven insights.
+## Phase 2: Smart Coaching Refinement (Dataset Growth)
+As the anonymized dataset of drives grows, the analysis engine should be transitioned from rule-based feedback to data-driven insights.
 
 ### 1. Exam-Ready Prediction Model
 - **Goal**: Correlate app scores with real-world exam results.
@@ -37,4 +37,4 @@ As the anonymized dataset of drives grows, the AI engine should be transitioned 
 - **TÜV/DEKRA Pre-Check**: Digital sign-off for self-prepared students (Umschreibung).
 
 ---
-*Document created by DriveDE AI Assistant - April 21, 2026*
+*Document updated for Smart Branding - May 6, 2026*

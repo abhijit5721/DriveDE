@@ -231,7 +231,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         ))}
       </div>
       
-      {/* AI Driving Insights & Weekly Stats */}
+      {/* Driving Insights & Weekly Stats */}
       <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
         <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
       </div>

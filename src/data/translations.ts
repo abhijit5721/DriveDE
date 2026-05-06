@@ -99,7 +99,7 @@ export const TRANSLATIONS = {
         badge: 'Von Experten empfohlen 2026',
         titlePrefix: 'Der schnellste Weg zum',
         titleHighlight: 'deutschen Führerschein',
-        subtitle: 'Prüfungsreife mit KI-Coaching, interaktiven Manövern und digitalem Fahrtenbuch.',
+        subtitle: 'Prüfungsreife mit smartem Coaching, interaktiven Manövern und digitalem Fahrtenbuch.',
         happyStudents: 'Zufriedene Schüler',
         passRate: 'Bestehensquote',
         firstAttempt: 'Erster Versuch',
@@ -108,7 +108,7 @@ export const TRANSLATIONS = {
         title: 'Intelligente Funktionen',
         subtitle: 'Alles was du brauchst um deine Prüfung im ersten Anlauf zu bestehen.',
         aiCoaching: {
-          title: 'KI Coaching',
+          title: 'Smart Coaching',
           desc: 'Erhalte Echtzeit-Feedback zu deinem Fahrstil und erkenne Fehler bevor sie teuer werden.',
         },
         maneuverReplay: {
@@ -123,14 +123,14 @@ export const TRANSLATIONS = {
       success: {
         title: 'Schüler-Feedback',
         stories: [
-          { name: 'Lukas S.', role: 'Frisch bestanden', text: 'Dank der KI-Analyse wusste ich genau, worauf ich bei der Prüfung achten muss. 10/10!' },
+          { name: 'Lukas S.', role: 'Frisch bestanden', text: 'Dank der smarten Analyse wusste ich genau, worauf ich bei der Prüfung achten muss. 10/10!' },
           { name: 'Sarah M.', role: 'Umschreibung', text: 'Die Umschreibung war so einfach. Das digitale Fahrtenbuch hat mir extrem viel Zeit gespart.' },
           { name: 'Marc K.', role: 'Theorie & Praxis', text: 'Beste App auf dem Markt. Die Manöver-Simulationen sind Gold wert!' },
         ]
       },
       about: {
         title: 'Über DriveDE',
-        text: 'Unsere Mission ist es, die Fahrausbildung in Deutschland zu digitalisieren. Wir kombinieren modernste KI-Technologie mit jahrzehntelanger Expertise, um dich sicherer und schneller in den Straßenverkehr zu bringen.',
+        text: 'Unsere Mission ist es, die Fahrausbildung in Deutschland zu digitalisieren. Wir kombinieren modernste Technologie mit jahrzehntelanger Expertise, um dich sicherer und schneller in den Straßenverkehr zu bringen.',
         tags: ['Engineering in Berlin', 'Expertendaten', 'Datenschutz zuerst'],
       },
       paths: {
@@ -254,7 +254,7 @@ export const TRANSLATIONS = {
       rateUpdated: 'Stundensatz aktualisiert!',
       gpsDenied: 'Standortzugriff verweigert. Bitte aktiviere GPS in den Einstellungen.',
       gpsError: 'GPS-Fehler. Bitte überprüfe deine Verbindung.',
-      privacyConsentRequired: 'Bitte überprüfe und akzeptiere zuerst die Datenschutz- und KI-Richtlinie.',
+      privacyConsentRequired: 'Bitte überprüfe und akzeptiere zuerst die Datenschutz-Richtlinie.',
       tabTracker: 'Tracker',
       tabHistory: 'Verlauf',
       historyTitle: 'Fahrtenverlauf',
@@ -617,7 +617,7 @@ export const TRANSLATIONS = {
           noSubstitute: 'Die App ersetzt keine Fahrschule, keinen Fahrlehrer, keine amtliche Rechtsberatung und keine offiziellen Informationen von Behörden, TÜV oder DEKRA. Maßgeblich sind stets die geltenden Gesetze, Verordnungen und die konkrete Anweisung des Fahrlehrers oder Prüfers.',
           useOfContent: 'Die Inhalte dürfen ausschließlich für den persönlichen, nicht übertragbaren Lerngebrauch genutzt werden. Eine gewerbliche Weitergabe, systematische Vervielfältigung oder Weiterveröffentlichung ist ohne schriftliche Zustimmung unzulässig.',
           availability: 'Die App kann fortlaufend angepasst, verbessert oder in einzelnen Funktionen eingeschränkt werden. Es besteht kein Anspruch auf dauerhafte Verfügbarkeit einzelner Inhalte oder Funktionen.',
-          limitation: 'Für leichte Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten. KI-basierte Fehlererkennungen sind rein informativ und dienen als Lernhilfe; sie müssen zwingend durch eine qualifizierte Person (Fahrlehrer) validiert werden. Für Schäden aus unsachgemäßer Anwendung der Inhalte im realen Straßenverkehr übernehmen wir keine Haftung.'
+          limitation: 'Für leichte Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten. Automatisierte Fehlererkennungen sind rein informativ und dienen als Lernhilfe; sie müssen zwingend durch eine qualifizierte Person (Fahrlehrer) validiert werden. Für Schäden aus unsachgemäßer Anwendung der Inhalte im realen Straßenverkehr übernehmen wir keine Haftung.'
         },
         gdpr: {
           yourRights: [
@@ -930,7 +930,7 @@ export const TRANSLATIONS = {
             subtitle: 'Deine Abkürzung zum Führerschein',
             features: [
               'GPS Live-Tracking & Fehler-Analyse',
-              'AI Fahr-Coach & Individuelle Tipps',
+              'Smarter Fahr-Coach & Individuelle Tipps',
               'Alle Video-Lektionen & 3D-Szenarien',
               'Exklusives PDF Fahrlehrer-Review',
               'Priorisierter Cloud-Sync & Support'
@@ -969,7 +969,7 @@ export const TRANSLATIONS = {
             basedOnHistory: 'Basierend auf deinen Fahrern',
             reviewLesson: 'Lektion wiederholen',
             noRecurringFaults: 'Perfekt! Keine Fehler-Häufung.',
-            aiAnalysisPro: 'Die KI-Fehleranalyse ist für Pro-Mitglieder verfügbar.',
+            aiAnalysisPro: 'Die detaillierte Fehleranalyse ist für Pro-Mitglieder verfügbar.',
             unlockPro: 'PRO FREISCHALTEN',
             ecoCoachTitle: 'Eco-Coach Insight',
             ecoCoachIdling: 'Du hast in dieser Woche {count}x den Motor unnötig laufen lassen. Das kostet ca. 1.2L Kraftstoff pro Stunde und ist ein Prüfungsfehler.',
@@ -2231,7 +2231,7 @@ export const TRANSLATIONS = {
         badge: 'Recommended by Experts 2026',
         titlePrefix: 'The fastest way to your',
         titleHighlight: 'German Driving License',
-        subtitle: 'Test readiness with AI Coaching, interactive maneuvers, and a smart digital driving log.',
+        subtitle: 'Test readiness with smart coaching, interactive maneuvers, and a digital driving log.',
         happyStudents: 'Happy Students',
         passRate: 'Pass Rate',
         firstAttempt: 'First Attempt',
@@ -2240,7 +2240,7 @@ export const TRANSLATIONS = {
         title: 'Smart Features',
         subtitle: 'Everything you need to pass your exam on the first attempt.',
         aiCoaching: {
-          title: 'AI Coaching',
+          title: 'Smart Coaching',
           desc: 'Get real-time feedback on your driving style and spot mistakes before they become costly.',
         },
         maneuverReplay: {
@@ -2255,14 +2255,14 @@ export const TRANSLATIONS = {
       success: {
         title: 'Student Success',
         stories: [
-          { name: 'Lukas S.', role: 'Just Passed', text: 'Thanks to the AI analysis, I knew exactly what to look out for during the exam. 10/10!' },
+          { name: 'Lukas S.', role: 'Just Passed', text: 'Thanks to the smart analysis, I knew exactly what to look out for during the exam. 10/10!' },
           { name: 'Sarah M.', role: 'Conversion', text: 'The conversion path was so easy. The digital logbook saved me so much time.' },
           { name: 'Marc K.', role: 'Theory & Practical', text: 'Best app on the market. The maneuver simulations are worth their weight in gold!' },
         ]
       },
       about: {
         title: 'About DriveDE',
-        text: 'Our mission is to digitize driver education in Germany. We combine cutting-edge AI technology with decades of expertise to get you on the road safer and faster.',
+        text: 'Our mission is to digitize driver education in Germany. We combine cutting-edge technology with decades of expertise to get you on the road safer and faster.',
         tags: ['Engineering in Berlin', 'Expert Data', 'Privacy First'],
       },
       paths: {
@@ -2387,7 +2387,7 @@ export const TRANSLATIONS = {
       rateUpdated: 'Rate updated!',
       gpsDenied: 'Location access denied. Please enable GPS in settings.',
       gpsError: 'GPS error. Please check your connection.',
-      privacyConsentRequired: 'Please review and accept the Privacy & AI policy first.',
+      privacyConsentRequired: 'Please review and accept the Privacy & Data policy first.',
       tabTracker: 'Tracker',
       tabHistory: 'History',
       historyTitle: 'Driving History',
@@ -3063,7 +3063,7 @@ export const TRANSLATIONS = {
             subtitle: 'Your shortcut to the license',
             features: [
               'GPS Live Tracking & Fault Analysis',
-              'AI Driving Coach & Custom Tips',
+              'Smart Driving Coach & Custom Tips',
               'All Video Lessons & 3D Scenarios',
               'Exclusive PDF Instructor Review',
               'Priority Cloud Sync & Support'
@@ -3102,7 +3102,7 @@ export const TRANSLATIONS = {
             basedOnHistory: 'Based on your driving history',
             reviewLesson: 'Review Lesson',
             noRecurringFaults: 'Perfect! No recurring faults.',
-            aiAnalysisPro: 'AI mistake analysis is available for Pro members.',
+            aiAnalysisPro: 'Detailed mistake analysis is available for Pro members.',
             unlockPro: 'UNLOCK PRO',
             ecoCoachTitle: 'Eco-Coach Insight',
             ecoCoachIdling: 'You left the engine idling {count}x this week. This wastes ~1.2L of fuel per hour and is recorded as an environmental fault in the exam.',
