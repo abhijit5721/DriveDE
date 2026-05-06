@@ -389,7 +389,7 @@ export default function App() {
         );
       case 'tracker':
       case 'history': // 'history' is a sub-tab inside Tracker — render Tracker, which handles it internally
-        return <Tracker />;
+        return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
       case 'achievements':
         return <Achievements />;
       case 'finance':
