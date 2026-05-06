@@ -12,7 +12,7 @@
 
 import type { LicenseType, AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import { get as getIDB, set as setIDB } from 'idb-keyval';
+import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 
 // --- SYNC QUEUE TYPES ---
 
@@ -473,9 +473,33 @@ export async function resetAllDataFromCloud() {
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  await Promise.allSettled([
+  console.log('[GDPR] Initiating full account erasure for user:', userId);
+
+  // 1. Delete all associated data in parallel
+  const results = await Promise.allSettled([
     supabase.from('lesson_progress').delete().eq('user_id', userId),
     supabase.from('driving_sessions').delete().eq('user_id', userId),
-    supabase.from('quiz_attempts').delete().eq('user_id', userId)
+    supabase.from('quiz_attempts').delete().eq('user_id', userId),
+    supabase.from('profiles_secure').delete().eq('id', userId),
+    supabase.from('subscriptions').delete().eq('user_id', userId)
   ]);
+
+  const someFailed = results.some(r => r.status === 'rejected');
+  if (someFailed) {
+    console.error('[GDPR] Some data erasure tasks failed.');
+    throw new Error('Partial data erasure. Please contact support to ensure complete removal.');
+  }
+
+  console.log('[GDPR] Account data successfully erased from Supabase.');
+  
+  // 2. Local Purge
+  try {
+    await delIDB('drivede-storage');
+    await delIDB('drivede-sync-queue');
+    localStorage.clear();
+    console.log('[GDPR] Local storage and IndexedDB cleared.');
+  } catch (err) {
+    console.error('[GDPR] Local purge failed:', err);
+    // We don't throw here as the cloud deletion (the critical part) succeeded.
+  }
 }

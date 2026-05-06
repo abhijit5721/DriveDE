@@ -2139,6 +2139,28 @@ export const TRANSLATIONS = {
               }
             ],
     },
+    cookieConsent: {
+      title: 'Cookie-Einstellungen',
+      description: 'Wir nutzen Cookies, um dein Erlebnis zu verbessern und unseren Traffic zu analysieren. Du kannst deine Präferenzen unten anpassen.',
+      acceptAll: 'Alle akzeptieren',
+      rejectNonEssential: 'Nur Notwendige',
+      customize: 'Anpassen',
+      save: 'Präferenzen speichern',
+      back: 'Zurück',
+      essential: {
+        title: 'Notwendige Cookies',
+        desc: 'Erforderlich für Grundfunktionen wie Login, Sicherheit und lokales Speichern deines Fortschritts.'
+      },
+      analytics: {
+        title: 'Analyse & Performance',
+        desc: 'Helfen uns zu verstehen, wie DriveDE genutzt wird, um das Lernerlebnis stetig zu verbessern.'
+      },
+      marketing: {
+        title: 'Personalisierung',
+        desc: 'Werden genutzt, um dir relevante Fahrtipps und lokalisierte Inhalte passend zu deiner Region anzuzeigen.'
+      },
+      alwaysOn: 'Immer aktiv'
+    },
   },
   en: {
     common: {
@@ -4283,6 +4305,28 @@ export const TRANSLATIONS = {
                 ]
               }
             ],
+    },
+    cookieConsent: {
+      title: 'Cookie Settings',
+      description: 'We use cookies to improve your experience and analyze our traffic. You can customize your preferences below.',
+      acceptAll: 'Accept All',
+      rejectNonEssential: 'Necessary Only',
+      customize: 'Customize',
+      save: 'Save Preferences',
+      back: 'Back',
+      essential: {
+        title: 'Essential Cookies',
+        desc: 'Required for basic functions like login, security, and local progress storage.'
+      },
+      analytics: {
+        title: 'Analytics & Performance',
+        desc: 'Help us understand how users interact with DriveDE to improve the learning experience.'
+      },
+      marketing: {
+        title: 'Personalization',
+        desc: 'Used to show relevant driving tips and localized content based on your region.'
+      },
+      alwaysOn: 'Always On'
     },
   },
 };

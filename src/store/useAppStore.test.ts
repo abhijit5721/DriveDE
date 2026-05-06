@@ -39,6 +39,24 @@ describe('useAppStore', () => {
     expect(state.userProgress.hourlyRate45).toBe(60);
   });
 
+  it('should initialize with default cookie settings', () => {
+    const state = useAppStore.getState();
+    expect(state.cookieSettings.essential).toBe(true);
+    expect(state.cookieSettings.analytics).toBe(false);
+    expect(state.cookieSettings.marketing).toBe(false);
+    expect(state.cookieSettings.hasSet).toBe(false);
+  });
+
+  it('should update cookie settings', () => {
+    const { setCookieSettings } = useAppStore.getState();
+    setCookieSettings({ analytics: true, hasSet: true });
+    
+    const state = useAppStore.getState();
+    expect(state.cookieSettings.analytics).toBe(true);
+    expect(state.cookieSettings.hasSet).toBe(true);
+    expect(state.cookieSettings.essential).toBe(true);
+  });
+
   it('should update active tab', () => {
     const { setActiveTab } = useAppStore.getState();
     setActiveTab('tracker');

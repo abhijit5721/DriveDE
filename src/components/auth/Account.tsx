@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -18,11 +18,12 @@ import { TRANSLATIONS } from '../../data/translations';
 interface AccountProps {
   onOpenAuth: () => void;
   onSignOut: () => void;
+  onDeleteAccount: () => Promise<boolean>;
   onChangePath: () => void;
   onOpenLegal: () => void;
 }
 
-export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: AccountProps) {
+export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, onOpenLegal }: AccountProps) {
   const {
     language,
     darkMode,
@@ -39,6 +40,7 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
     enableDemoMode,
     isPremium,
     setHasVisited,
+    licenseType,
     isPublicReportEnabled,
     setPublicReportEnabled,
   } = useAppStore();
@@ -47,6 +49,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
 
   const t = TRANSLATIONS[language].account;
@@ -101,6 +105,48 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
     } else {
       setAuthError(t.errors.userNotFound);
     }
+  };
+
+  const handleFullErasure = async () => {
+    setDeleteLoading(true);
+    try {
+      const success = await onDeleteAccount();
+      if (success) {
+        setShowDeleteModal(false);
+      } else {
+        setAuthError(language === 'de' ? 'Löschen fehlgeschlagen.' : 'Deletion failed.');
+      }
+    } catch (error) {
+      setAuthError(language === 'de' ? 'Ein Fehler ist aufgetreten.' : 'An error occurred.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleExportData = () => {
+    const data = {
+      profile: {
+        email: authEmail,
+        displayName: authDisplayName,
+        userId: authUserId,
+        licenseType,
+        learningPath,
+        transmissionType,
+        isPremium
+      },
+      progress: userProgress,
+      exportDate: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `drivede-data-export-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const pathLabel =
@@ -365,6 +411,26 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
           </button>
 
           <button
+            onClick={handleExportData}
+            className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                <Download className="h-5 w-5 text-slate-700 dark:text-slate-200" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                  {language === 'de' ? 'Meine Daten exportieren' : 'Export My Data'}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {language === 'de' ? 'Laden Sie eine Kopie Ihrer Daten herunter (JSON)' : 'Download a copy of your data (JSON)'}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400" />
+          </button>
+
+          <button
             onClick={resetProgress}
             className="flex w-full items-center justify-between rounded-xl border border-rose-200 px-4 py-3 text-left transition hover:bg-rose-50 dark:border-rose-900/40 dark:hover:bg-rose-900/10"
           >
@@ -378,6 +444,27 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
               </div>
             </div>
           </button>
+          
+          {authStatus === 'signed_in' && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="flex w-full items-center justify-between rounded-xl border border-rose-200 px-4 py-3 text-left transition hover:bg-rose-50 dark:border-rose-900/40 dark:hover:bg-rose-900/10"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-900/30">
+                  <Shield className="h-5 w-5 text-rose-600 dark:text-rose-300" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {language === 'de' ? 'Account & Daten löschen' : 'Delete Account & Data'}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {language === 'de' ? 'Unwiderrufliche Löschung gemäß DSGVO Art. 17' : 'Irrevocable erasure as per GDPR Art. 17'}
+                  </p>
+                </div>
+              </div>
+            </button>
+          )}
 
           <div className="pt-2">
             <div className="mb-2 px-1">
@@ -488,6 +575,59 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
                   className="w-full py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-bold transition"
                 >
                   {t.shareModal.copyLink}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDeleteModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300 mx-auto mb-4">
+                <AlertCircle className="h-8 w-8" />
+              </div>
+              <h3 className="text-center text-xl font-bold text-slate-900 dark:text-white mb-2">
+                {language === 'de' ? 'Daten unwiderruflich löschen?' : 'Delete data permanently?'}
+              </h3>
+              <p className="text-center text-sm text-slate-600 dark:text-slate-400 mb-6">
+                {language === 'de' 
+                  ? 'Alle Ihre Fahrstunden, Statistiken und Profileinstellungen werden sofort und dauerhaft von unseren Servern gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.' 
+                  : 'All your driving sessions, statistics, and profile settings will be immediately and permanently deleted from our servers. This action cannot be undone.'}
+              </p>
+              
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleFullErasure}
+                  disabled={deleteLoading}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-600 py-3 font-bold text-white shadow-lg shadow-rose-600/20 transition hover:bg-rose-700 disabled:opacity-50"
+                >
+                  {deleteLoading ? (
+                    <RefreshCcw className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <RotateCcw className="h-5 w-5" />
+                      {language === 'de' ? 'Jetzt alles löschen' : 'Delete everything now'}
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleteLoading}
+                  className="w-full py-3 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                >
+                  {language === 'de' ? 'Abbrechen' : 'Cancel'}
                 </button>
               </div>
             </motion.div>

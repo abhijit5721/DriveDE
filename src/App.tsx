@@ -25,7 +25,7 @@ import { Welcome } from './components/auth/Welcome';
 import { Paywall } from './components/finance/Paywall';
 import { AuthModal } from './components/auth/AuthModal';
 import { LicenseSelector } from './components/auth/LicenseSelector';
-import { AccountSkeleton } from './components/auth/AccountSkeleton';
+
 
 // Lazy loaded routes
 const Curriculum = lazy(() => import('./components/curriculum/Curriculum').then(m => ({ default: m.Curriculum })));
@@ -44,6 +44,8 @@ import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
 import { PublicReport } from './components/maneuvers/PublicReport';
 import { PathSelectorModal } from './components/auth/PathSelectorModal';
+import { CookieConsent } from './components/legal/CookieConsent';
+import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 
 
 export default function App() {
@@ -66,6 +68,10 @@ export default function App() {
     logoutCleanup,
     activeTab,
     setActiveTab,
+    userProgress,
+    setAcceptedPrivacy,
+    learningPath,
+    transmissionType,
   } = useAppStore();
   
   const [reportUserId, setReportUserId] = useState<string | null>(() => {
@@ -329,139 +335,174 @@ export default function App() {
     setHasVisited(false);
   };
 
-  if (reportUserId) {
-    return <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />;
-  }
+  const handleDeleteAccount = async () => {
+    try {
+      const { resetAllDataFromCloud } = await import('./services/supabaseSync');
+      await resetAllDataFromCloud();
+      await signOut();
+      logoutCleanup();
+      setHasVisited(false);
+      return true;
+    } catch (error) {
+      console.error('[GDPR] Account deletion failed:', error);
+      return false;
+    }
+  };
 
-  const hasCompleteSelection =
-    licenseType === 'manual' ||
-    licenseType === 'automatic' ||
-    licenseType === 'umschreibung-manual' ||
-    licenseType === 'umschreibung-automatic';
-
-  // While auth is resolving, don't flash Welcome to signed-in users.
-  if (isAuthLoading && authStatus !== 'guest') {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-900">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
-          <p className="text-sm text-slate-400">Loading your profile...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show the Welcome landing page if the user hasn't visited yet.
-  if (!hasVisited) {
-    return <Welcome />;
-  }
-
-  // Force path selection before showing the dashboard layout.
-  if (!hasCompleteSelection) {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center">
-        <div className="w-full max-w-4xl">
-          <LicenseSelector />
-        </div>
-      </div>
-    );
-  }
-
-  if (showExamSimulation) {
-    return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
-  }
-
-
-
-  const isDetailPage = selectedLesson !== null || selectedLegalPage !== null || activeTab === 'review';
+  const hasCompleteSelection = !!licenseType && !!learningPath && !!transmissionType;
+  const isDetailPage = selectedLesson !== null || selectedLegalPage !== null;
 
   const renderContent = () => {
-    if (isAuthLoading) {
-      if (activeTab === 'account') {
-        return <AccountSkeleton />;
-      }
+    if (selectedLesson) {
       return (
-        <div className="space-y-4">
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-48 w-full" />
-          <Skeleton className="h-48 w-full" />
-        </div>
+        <LessonDetail 
+          lesson={selectedLesson} 
+          onBack={handleLessonBack} 
+        />
       );
     }
 
-    if (selectedLesson) {
-      return <LessonDetail lesson={selectedLesson} onBack={handleLessonBack} />;
-    }
-
-    if (activeTab === 'legal') {
-      if (selectedLegalPage) {
-        return <LegalPage page={selectedLegalPage} onBack={handleBackToLegalHub} />;
-      }
-      return <LegalHub onOpenPage={handleOpenLegalPage} />;
+    if (activeTab === 'legal' && selectedLegalPage) {
+      return <LegalPage page={selectedLegalPage} onBack={handleBackToLegalHub} />;
     }
 
     switch (activeTab) {
       case 'home':
         return (
-          <Dashboard
+          <Dashboard 
             onNavigate={handleNavigate}
             onChangePath={handleChangePath}
             onOpenPaywall={() => setShowPaywall(true)}
-            onOpenAuth={handleOpenAuth}
-            onStartSimulation={() => {
-              if (isPremium) {
-                setShowExamSimulation(true);
-              } else {
-                setShowPaywall(true);
-              }
-            }}
+            onStartSimulation={() => setShowExamSimulation(true)}
             onDirectLessonSelect={handleDirectLessonSelect}
+            onOpenAuth={handleOpenAuth}
           />
         );
       case 'curriculum':
         return <Curriculum onLessonSelect={handleLessonSelect} />;
       case 'maneuvers':
-        return <Maneuvers onLessonSelect={handleLessonSelect} onOpenPaywall={() => setShowPaywall(true)} />;
+        return (
+          <Maneuvers 
+            onLessonSelect={handleLessonSelect}
+            onOpenPaywall={() => setShowPaywall(true)}
+          />
+        );
       case 'tracker':
-      case 'history':
-        return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
+        return <Tracker />;
       case 'achievements':
         return <Achievements />;
       case 'finance':
         return <BudgetEstimator onOpenPaywall={() => setShowPaywall(true)} />;
-      case 'review':
-        return <InstructorReview onBack={() => setActiveTab('home')} onOpenPaywall={() => setShowPaywall(true)} />;
+      case 'legal':
+        return <LegalHub onOpenPage={handleOpenLegalPage} />;
       case 'account':
         return (
-            <Account
-              onOpenAuth={handleOpenAuth}
-              onSignOut={handleSignOut}
-              onChangePath={handleChangePath}
-              onOpenLegal={() => setActiveTab('legal')}
-            />
-        );
-      default:
-        return (
-          <Dashboard
-            onNavigate={handleNavigate}
+          <Account 
+            onOpenAuth={handleOpenAuth} 
+            onSignOut={handleSignOut}
+            onDeleteAccount={handleDeleteAccount}
             onChangePath={handleChangePath}
-            onOpenPaywall={() => setShowPaywall(true)}
-            onOpenAuth={handleOpenAuth}
-            onStartSimulation={() => {
-              if (isPremium) {
-                setShowExamSimulation(true);
-              } else {
-                setShowPaywall(true);
-              }
-            }}
-            onDirectLessonSelect={handleDirectLessonSelect}
+            onOpenLegal={() => handleOpenLegalPage('privacy')}
           />
         );
+      case 'review':
+        return <InstructorReview onBack={() => setActiveTab('maneuvers')} />;
+      default:
+        return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} />;
     }
   };
 
+
+  const renderAppContent = () => {
+    if (reportUserId) {
+      return <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />;
+    }
+
+    if (isAuthLoading && authStatus !== 'guest') {
+      return (
+        <div className="flex h-screen items-center justify-center bg-slate-900">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
+            <p className="text-sm text-slate-400">Loading your profile...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!hasVisited) {
+      return <Welcome />;
+    }
+
+    if (!hasCompleteSelection) {
+      return (
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center">
+          <div className="w-full max-w-4xl">
+            <LicenseSelector />
+          </div>
+        </div>
+      );
+    }
+
+    if (showExamSimulation) {
+      return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
+    }
+
+    return (
+      <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900">
+        <div className="flex h-full">
+          <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} onSignOut={handleSignOut} />
+          <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
+            {!isDetailPage && (
+              <Header 
+                onSignOut={handleSignOut} 
+                onTabChange={handleNavigate} 
+              />
+            )}
+            <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
+              <div className="mx-auto max-w-4xl">
+                <Suspense fallback={
+                  <div className="space-y-4 w-full h-full animate-pulse">
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                  </div>
+                }>
+                  <div 
+                    key={`${activeTab}-${selectedLesson?.id || 'none'}-${selectedLegalPage || 'none'}`}
+                    className="animate-scale-in"
+                  >
+                    {renderContent()}
+                  </div>
+                </Suspense>
+              </div>
+            </main>
+          </div>
+        </div>
+        <div className="lg:hidden">
+          <BottomNav activeTab={activeTab} onTabChange={handleNavigate} />
+        </div>
+
+        {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+        {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
+
+        {showPaywall && !isPremium && (
+          <Paywall onClose={() => setShowPaywall(false)} />
+        )}
+
+        <PrivacyConsentModal 
+          isOpen={!userProgress.hasAcceptedPrivacy && hasVisited && authStatus !== 'guest'} 
+          onAccept={() => setAcceptedPrivacy(true)}
+          onOpenPrivacyPolicy={() => {
+            setActiveTab('legal');
+            setSelectedLegalPage('privacy');
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900">
+    <>
       <Toaster
         position="bottom-center"
         toastOptions={{
@@ -471,47 +512,11 @@ export default function App() {
           },
         }}
       />
-      <div className="flex h-full">
-        <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} onSignOut={handleSignOut} />
-        <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
-          {!isDetailPage && (
-            <Header 
-              onSignOut={handleSignOut} 
-              onTabChange={handleNavigate} 
-            />
-          )}
-          <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 pb-32 lg:pb-6">
-            <div className="mx-auto max-w-4xl">
-              <Suspense fallback={
-                <div className="space-y-4 w-full h-full animate-pulse">
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-48 w-full" />
-                  <Skeleton className="h-48 w-full" />
-                </div>
-              }>
-                <div 
-                  key={`${activeTab}-${selectedLesson?.id || 'none'}-${selectedLegalPage || 'none'}`}
-                  className="animate-scale-in"
-                >
-                  {renderContent()}
-                </div>
-              </Suspense>
-            </div>
-          </main>
-        </div>
-      </div>
-      <div className="lg:hidden">
-        <BottomNav activeTab={activeTab} onTabChange={handleNavigate} />
-      </div>
+      
+      {renderAppContent()}
 
-      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
-      {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
-
-      {showPaywall && !isPremium && (
-        <Paywall onClose={() => setShowPaywall(false)} />
-      )}
-
+      <CookieConsent />
       <AchievementOverlay />
-    </div>
+    </>
   );
 }

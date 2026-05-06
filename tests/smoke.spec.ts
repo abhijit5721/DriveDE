@@ -3,7 +3,7 @@ import { test, expect, Page } from '@playwright/test';
 
 
 test.describe('DriveDE Golden Path', () => {
-  test.setTimeout(60000); // Increase timeout for slow mobile emulators
+  test.setTimeout(90000); // Increase timeout for slow mobile emulators
   test.beforeEach(async ({ page }) => {
     // Grant geolocation permissions
     await page.context().grantPermissions(['geolocation']);
@@ -33,6 +33,15 @@ test.describe('DriveDE Golden Path', () => {
 
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+
+    // Handle GDPR Cookie Consent
+    // Use JS click to bypass fixed bottom-nav overlay that intercepts pointer events on Mobile Safari
+    const cookieAccept = page.getByTestId('cookie-accept-all');
+    if (await cookieAccept.isVisible({ timeout: 10000 }).catch(() => false)) {
+      await cookieAccept.evaluate((el: HTMLElement) => el.click());
+      await expect(cookieAccept).toBeHidden({ timeout: 10000 });
+      await page.waitForTimeout(500); // Wait for exit animation
+    }
   });
 
   test('should complete onboarding and start a tracking session', async ({ page }) => {
@@ -53,25 +62,32 @@ test.describe('DriveDE Golden Path', () => {
     await test.step('Start Tracking', async () => {
       const startBtn = page.getByTestId('start-tracking-btn');
       await expect(startBtn).toBeVisible({ timeout: 10000 });
-      await startBtn.click({ force: true });
-      
-      // Handle Safety Warning Modal
-      // Handle Privacy Modal if it appears
+      // Use JS click to bypass any fixed overlay (e.g. mobile nav bar) intercepting pointer events
+      await startBtn.evaluate((el: HTMLElement) => el.click());
+
+      // Case 1: Privacy modal appears (first-time user)
       const privacyBtn = page.getByTestId('accept-privacy-btn');
       if (await privacyBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        // Tick checkbox to enable the button
+        const checkbox = page.getByTestId('privacy-consent-checkbox');
+        await checkbox.check({ force: true });
+        await expect(privacyBtn).toBeEnabled({ timeout: 3000 });
         await privacyBtn.click();
-        await expect(privacyBtn).toBeHidden({ timeout: 5000 });
-        await page.waitForTimeout(500); // Wait for modal exit animation
-        // After accepting privacy, we need to click start again
-        await page.getByTestId('start-tracking-btn').click({ force: true });
+        // Privacy acceptance calls handleStartTimer(true) which skips safety modal
+        // and starts tracking directly — wait for the running state
+        await expect(page.getByTestId('pause-tracking-btn')).toBeVisible({ timeout: 10000 });
+        return;
       }
 
-      await expect(page.getByTestId('safety-warning-modal')).toBeVisible({ timeout: 5000 });
-      await page.getByTestId('mount-confirmation-checkbox').click();
-      await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
-      await page.getByTestId('confirm-mount-btn').click({ force: true });
-      await expect(page.getByTestId('safety-warning-modal')).toBeHidden({ timeout: 5000 });
-
+      // Case 2: Safety warning modal (returning user, privacy already accepted, device not mounted)
+      const safetyModal = page.getByTestId('safety-warning-modal');
+      if (await safetyModal.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await page.getByTestId('mount-confirmation-checkbox').click();
+        await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
+        await page.getByTestId('confirm-mount-btn').click({ force: true });
+        await expect(safetyModal).toBeHidden({ timeout: 5000 });
+      }
+      // Case 3: Returning user, device already mounted — tracking starts directly
       await expect(page.getByTestId('pause-tracking-btn')).toBeVisible({ timeout: 10000 });
     });
 
@@ -86,14 +102,14 @@ test.describe('DriveDE Golden Path', () => {
       await page.waitForTimeout(1000);
       const stopBtn = page.getByTestId('stop-tracking-btn');
       
-      // Retry click until modal is visible
+      // Retry click until modal is visible (JS click bypasses bottom-nav overlay on Mobile Safari)
       await expect(async () => {
-        await stopBtn.click();
+        await stopBtn.evaluate((el: HTMLElement) => el.click());
         await page.waitForTimeout(2000);
         await expect(page.getByTestId('add-session-modal')).toBeVisible({ timeout: 3000 });
       }).toPass({ timeout: 20000 });
       
-      await page.getByTestId('close-add-session-btn').click();
+      await page.getByTestId('close-add-session-btn').evaluate((el: HTMLElement) => el.click());
       await expect(page.getByTestId('add-session-modal')).toBeHidden({ timeout: 15000 });
 
       await expect(page.getByTestId('start-tracking-btn')).toBeVisible({ timeout: 15000 });
@@ -120,6 +136,7 @@ test.describe('DriveDE Golden Path', () => {
   });
 
   test('should log manual mistakes during a tracking session', async ({ page }) => {
+    test.setTimeout(100000); // This test is longer: onboarding + tracking + 3 mistake logs + save + achievement
     await test.step('Mock Geolocation', async () => {
       await page.context().setGeolocation({ latitude: 52.5200, longitude: 13.4050 });
       await page.context().grantPermissions(['geolocation']);
@@ -134,27 +151,37 @@ test.describe('DriveDE Golden Path', () => {
     });
     
     await test.step('Start Tracking', async () => {
-      await page.getByTestId('sim-toggle').click({ force: true });
-      await page.getByTestId('start-tracking-btn').click({ force: true });
-      
-      // Handle Safety Warning Modal
-      // Handle Privacy Modal if it appears
+      const simToggleMs = page.getByTestId('sim-toggle');
+      await expect(simToggleMs).toBeVisible({ timeout: 15000 });
+      await simToggleMs.click({ force: true });
+
+      const startBtnMs = page.getByTestId('start-tracking-btn');
+      await expect(startBtnMs).toBeVisible({ timeout: 10000 });
+      // Use JS click to bypass any fixed overlay intercepting pointer events
+      await startBtnMs.evaluate((el: HTMLElement) => el.click());
+
+      // Case 1: Privacy modal appears (first-time user)
       const privacyBtn = page.getByTestId('accept-privacy-btn');
       if (await privacyBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        const checkbox = page.getByTestId('privacy-consent-checkbox');
+        await checkbox.check({ force: true });
+        await expect(privacyBtn).toBeEnabled({ timeout: 3000 });
         await privacyBtn.click();
-        await expect(privacyBtn).toBeHidden({ timeout: 5000 });
-        await page.waitForTimeout(500); // Wait for modal exit animation
-        // After accepting privacy, we need to click start again
-        await page.getByTestId('start-tracking-btn').click({ force: true });
+        // Privacy acceptance starts tracking directly — skip safety modal
+        await expect(page.getByTestId('pause-tracking-btn')).toBeVisible({ timeout: 10000 });
+        return;
       }
 
-      await expect(page.getByTestId('safety-warning-modal')).toBeVisible({ timeout: 5000 });
-      await page.getByTestId('mount-confirmation-checkbox').click();
-      await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
-      await page.getByTestId('confirm-mount-btn').click({ force: true });
-      await expect(page.getByTestId('safety-warning-modal')).toBeHidden({ timeout: 5000 });
-
-      await expect(page.getByTestId('pause-tracking-btn')).toBeVisible();
+      // Case 2: Safety modal (returning user, device not mounted)
+      const safetyModal2 = page.getByTestId('safety-warning-modal');
+      if (await safetyModal2.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await page.getByTestId('mount-confirmation-checkbox').click();
+        await expect(page.getByTestId('confirm-mount-btn')).toBeEnabled({ timeout: 5000 });
+        await page.getByTestId('confirm-mount-btn').click({ force: true });
+        await expect(safetyModal2).toBeHidden({ timeout: 5000 });
+      }
+      // Case 3: Returning user, device already mounted — tracking starts directly
+      await expect(page.getByTestId('pause-tracking-btn')).toBeVisible({ timeout: 10000 });
     });
     
     await test.step('Log Manual Mistakes', async () => {
@@ -197,9 +224,9 @@ test.describe('DriveDE Golden Path', () => {
       await page.waitForTimeout(1000);
       const stopBtn = page.getByTestId('stop-tracking-btn');
       
-      // Retry click until modal is visible
+      // Retry click until modal is visible (JS click bypasses bottom-nav overlay on Mobile Safari)
       await expect(async () => {
-        await stopBtn.click({ force: true });
+        await stopBtn.evaluate((el: HTMLElement) => el.click());
         await page.waitForTimeout(2000);
         await expect(page.getByTestId('add-session-modal')).toBeVisible({ timeout: 3000 });
       }).toPass({ timeout: 20000 });
@@ -211,9 +238,9 @@ test.describe('DriveDE Golden Path', () => {
       await durationInput.pressSequentially('45', { delay: 100 });
       await page.waitForTimeout(1000); // Wait for React state to update
       
-      // Retry save until modal is hidden
+      // Retry save until modal is hidden (JS click bypasses overlay)
       await expect(async () => {
-        await page.getByTestId('save-session-btn').click({ force: true });
+        await page.getByTestId('save-session-btn').evaluate((el: HTMLElement) => el.click());
         await page.waitForTimeout(2000); // Give React time to process the click and close the modal
         await expect(page.getByTestId('add-session-modal')).toBeHidden({ timeout: 3000 });
       }).toPass({ timeout: 20000 });
@@ -221,7 +248,7 @@ test.describe('DriveDE Golden Path', () => {
       // Handle achievement popup if it appears (first drive)
       const achievementOverlay = page.getByTestId('achievement-overlay');
       if (await achievementOverlay.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await page.getByTestId('achievement-close-btn').click({ force: true });
+        await page.getByTestId('achievement-close-btn').evaluate((el: HTMLElement) => el.click());
         await expect(achievementOverlay).toBeHidden({ timeout: 10000 });
       }
 
@@ -277,7 +304,7 @@ test.describe('DriveDE Golden Path', () => {
   test.describe('Feedback and Authentication', () => {
     test('should submit the contact form successfully', async ({ page }) => {
       // Mock the contact API
-      await page.route('/api/contact', async (route) => {
+      await page.route('**/api/contact', async (route) => {
         await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
       });
 

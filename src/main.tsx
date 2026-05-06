@@ -9,6 +9,10 @@ import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 
+import { analyticsService } from './services/AnalyticsService';
+
+analyticsService.init();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>

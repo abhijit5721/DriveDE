@@ -415,6 +415,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [showMistakeSuccess, setShowMistakeSuccess] = useState(false);
   const [hasStoppedAtSign, setHasStoppedAtSign] = useState(false);
   const [showPrivacyInfo, setShowPrivacyInfo] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const lastRvlCheckRef = useRef(0);
   const lastSchoolCheckRef = useRef(0);
   const lastWrongWayLogRef = useRef(0);
@@ -1293,8 +1294,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, t, isSimulationMode, logMistake]);
 
-  const handleStartTimer = async (skipMountCheck = false) => {
-    if (!userProgress.hasAcceptedPrivacy) {
+  const handleStartTimer = async (skipMountCheck = false, skipPrivacyCheck = false) => {
+    if (!skipPrivacyCheck && !userProgress.hasAcceptedPrivacy) {
       setShowPrivacyInfo(true);
       toast(t.tracker.privacyConsentRequired || 'Please review and accept the Privacy & Data policy first.', { icon: 'ℹ️' });
       return;
@@ -2528,21 +2529,48 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <ul className="list-disc pl-5 space-y-2">
                   <li><strong>Local Processing:</strong> All route tracking and speed analysis happens on-device.</li>
                   <li><strong>Automated Analysis:</strong> Specific driving events (mistakes) may be analyzed using anonymized telemetry.</li>
-                  <li><strong>GDPR Compliance:</strong> You have the right to export or delete your data at any time via the History tab.</li>
+                  <li><strong>GDPR Compliance:</strong> You have the right to export or delete your data at any time via the Account tab.</li>
                 </ul>
                 <p className="mt-4 font-bold text-slate-900 dark:text-slate-100">
-                  By continuing, you agree to our use of location data and automated processing for driving education purposes.
+                  Legal Basis: Art. 6 (1) (b) GDPR - Performance of contract.
                 </p>
+              </div>
+
+              <div className="mb-6 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
+                <label className="flex cursor-pointer items-start gap-3">
+                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+                    <input
+                      type="checkbox"
+                      data-testid="privacy-consent-checkbox"
+                      className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-slate-300 bg-white transition-all checked:border-blue-500 checked:bg-blue-500 dark:border-slate-600 dark:bg-slate-800"
+                      checked={privacyConsent}
+                      onChange={(e) => setPrivacyConsent(e.target.checked)}
+                    />
+                    <Check className="pointer-events-none absolute h-4 w-4 scale-0 text-white transition-transform peer-checked:scale-100" />
+                  </div>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    I have read the Privacy Policy and I agree to the processing of my location and sensor data for driving analysis.
+                  </span>
+                </label>
               </div>
 
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => {
-                    setAcceptedPrivacy(true);
-                    setShowPrivacyInfo(false);
+                    if (privacyConsent) {
+                      setAcceptedPrivacy(true);
+                      setShowPrivacyInfo(false);
+                      handleStartTimer(true, true);
+                    }
                   }}
+                  disabled={!privacyConsent}
                   data-testid="accept-privacy-btn"
-                  className="w-full rounded-2xl bg-blue-600 py-4 font-black text-white shadow-lg hover:bg-blue-500 transition-all active:scale-95"
+                  className={cn(
+                    'w-full rounded-2xl py-4 font-black text-white shadow-lg transition-all active:scale-95',
+                    privacyConsent 
+                      ? 'bg-blue-600 hover:bg-blue-500' 
+                      : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
+                  )}
                 >
                   I Agree & Accept
                 </button>

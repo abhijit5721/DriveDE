@@ -278,6 +278,17 @@ export interface AppState {
   setHydrated: (val: boolean) => void;
   isPublicReportEnabled: boolean;
   setPublicReportEnabled: (enabled: boolean) => void;
+  
+  // Cookie Consent
+  cookieSettings: CookieSettings;
+  setCookieSettings: (settings: Partial<CookieSettings>) => void;
+}
+
+export interface CookieSettings {
+  essential: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  hasSet: boolean;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'history' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';

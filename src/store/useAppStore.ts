@@ -13,7 +13,7 @@
  */
 
 import { create } from 'zustand';
-import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage, subscribeWithSelector } from 'zustand/middleware';
 import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
@@ -135,7 +135,8 @@ const isYesterday = (date1: Date, date2: Date) => {
 };
 
 export const useAppStore = create<AppState>()(
-  persist(
+  subscribeWithSelector(
+    persist(
     (set) => ({
       language: 'de',
       darkMode: false,
@@ -154,6 +155,12 @@ export const useAppStore = create<AppState>()(
       activeTab: 'home',
       isHydrated: false,
       recentAchievements: [],
+      cookieSettings: {
+        essential: true,
+        analytics: false,
+        marketing: false,
+        hasSet: false
+      },
 
       setHydrated: (val) => set({ isHydrated: val }),
 
@@ -170,6 +177,10 @@ export const useAppStore = create<AppState>()(
             hasAcceptedPrivacy: val,
           },
         })),
+
+      setCookieSettings: (settings) => set((state) => ({
+        cookieSettings: { ...state.cookieSettings, ...settings, essential: true }
+      })),
 
       popAchievement: () => set((state) => ({ 
         recentAchievements: state.recentAchievements.slice(1) 
@@ -781,6 +792,7 @@ export const useAppStore = create<AppState>()(
           userProgress: state.userProgress,
           activeSession: state.activeSession,
           isPublicReportEnabled: state.isPublicReportEnabled,
+          cookieSettings: state.cookieSettings,
         };
       },
       onRehydrateStorage: () => (state, error) => {
@@ -793,4 +805,5 @@ export const useAppStore = create<AppState>()(
       },
     }
   )
+)
 );
