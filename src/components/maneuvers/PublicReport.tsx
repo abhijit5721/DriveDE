@@ -53,6 +53,7 @@ interface Profile {
   display_name: string | null;
   learning_path: string | null;
   transmission_type: 'manual' | 'automatic' | null;
+  is_public_report_enabled?: boolean;
   [key: string]: unknown;
 }
 
@@ -121,6 +122,35 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
           This profile could not be found. The link may have expired or is incorrect.
         </p>
+        <button 
+          onClick={onBack}
+          className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl font-bold transition-all"
+        >
+          Return to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // Handle case where sharing is disabled by the student
+  if (data.profile.is_public_report_enabled === false) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-20 w-20 rounded-3xl bg-amber-500/10 flex items-center justify-center mb-6">
+          <ShieldAlert className="h-10 w-10 text-amber-500" />
+        </div>
+        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Sharing Disabled</h1>
+        <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
+          The student <span className="text-amber-400 font-bold">{data.profile.display_name || 'this user'}</span> has disabled public report sharing in their privacy settings.
+        </p>
+        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 mb-8 text-left max-w-sm">
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+            <Info className="h-3 w-3" /> Information
+          </p>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Instructors can only view data when the student explicitly enables <strong>"Report Visibility"</strong> in their account settings.
+          </p>
+        </div>
         <button 
           onClick={onBack}
           className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl font-bold transition-all"

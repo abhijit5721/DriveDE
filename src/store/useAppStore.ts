@@ -139,6 +139,7 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       language: 'de',
       darkMode: false,
+      isPublicReportEnabled: true,
       licenseType: null,
       learningPath: null,
       transmissionType: null,
@@ -756,6 +757,8 @@ export const useAppStore = create<AppState>()(
         }),
 
       stopActiveSession: () => set({ activeSession: null }),
+
+      setPublicReportEnabled: (enabled) => set({ isPublicReportEnabled: enabled }),
     }),
     {
       name: 'drivede-storage',
@@ -777,6 +780,7 @@ export const useAppStore = create<AppState>()(
           authUserId: state.authUserId,
           userProgress: state.userProgress,
           activeSession: state.activeSession,
+          isPublicReportEnabled: state.isPublicReportEnabled,
         };
       },
       onRehydrateStorage: () => (state, error) => {

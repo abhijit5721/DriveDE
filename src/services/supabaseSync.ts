@@ -174,6 +174,7 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
         incorrect_questions: state.userProgress.incorrectQuestions || [],
         hourly_rate_45: state.userProgress.hourlyRate45,
         fixed_costs: state.userProgress.fixedCosts,
+        is_public_report_enabled: state.isPublicReportEnabled,
       });
 
       if (error) {
@@ -380,6 +381,7 @@ export async function hydrateFromSupabase() {
       firstAid: 40,
       visionTest: 7,
     },
+    isPublicReportEnabled: profile?.is_public_report_enabled ?? true,
   };
 }
 

@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -39,6 +39,8 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
     enableDemoMode,
     isPremium,
     setHasVisited,
+    isPublicReportEnabled,
+    setPublicReportEnabled,
   } = useAppStore();
   
   const [authMessage, setAuthMessage] = useState<string | null>(null);
@@ -294,6 +296,40 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
               {language.toUpperCase()}
             </span>
           </button>
+          
+          {authStatus === 'signed_in' && (
+            <button
+              onClick={async () => {
+                const newValue = !isPublicReportEnabled;
+                setPublicReportEnabled(newValue);
+                // Force sync to update RLS via profile
+                setAuthLoading(true);
+                try {
+                  await syncAllData(useAppStore.getState());
+                } catch (e) {
+                  console.error('Failed to sync visibility update', e);
+                } finally {
+                  setAuthLoading(false);
+                }
+              }}
+              className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/50"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                  <Shield className={cn('h-5 w-5', isPublicReportEnabled ? 'text-blue-500' : 'text-slate-400')} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.publicReportToggle}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {t.publicReportToggleDesc}
+                  </p>
+                </div>
+              </div>
+              <span className={cn('rounded-full px-3 py-1 text-xs font-semibold', isPublicReportEnabled ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200')}>
+                {isPublicReportEnabled ? t.on : t.off}
+              </span>
+            </button>
+          )}
 
           <button
             onClick={onChangePath}

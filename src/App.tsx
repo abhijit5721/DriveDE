@@ -165,6 +165,7 @@ export default function App() {
 
                 return {
                     isPremium,
+                    isPublicReportEnabled: remoteData.isPublicReportEnabled,
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,
                     transmissionType: remoteData.transmissionType || state.transmissionType,

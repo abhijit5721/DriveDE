@@ -275,6 +275,8 @@ export interface AppState {
   // Hydration state
   isHydrated: boolean;
   setHydrated: (val: boolean) => void;
+  isPublicReportEnabled: boolean;
+  setPublicReportEnabled: (enabled: boolean) => void;
 }
 
 export type TabType = 'home' | 'curriculum' | 'maneuvers' | 'tracker' | 'history' | 'achievements' | 'review' | 'legal' | 'account' | 'finance';
