@@ -388,6 +388,7 @@ export default function App() {
           />
         );
       case 'tracker':
+      case 'history': // 'history' is a sub-tab inside Tracker — render Tracker, which handles it internally
         return <Tracker />;
       case 'achievements':
         return <Achievements />;

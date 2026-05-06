@@ -67,21 +67,21 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
             <li key={item.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
               <button
                 role="tab"
-                aria-selected={activeTab === item.id}
+                aria-selected={activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')}
                 aria-label={item.label}
                 data-testid={item.id === 'tracker' ? 'nav-tracker' : item.id === 'account' ? 'nav-account' : undefined}
                 onClick={() => onTabChange(item.id)}
                 className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-300 group
-                  ${activeTab === item.id
+                  ${(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history'))
                     ? 'bg-premium-blue text-white shadow-lg shadow-blue-500/25 scale-[1.02]'
                     : 'text-slate-600 hover:bg-white/50 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:translate-x-1'
                   }`}
               >
                 <div className="relative">
-                  <item.icon className={`h-5 w-5 transition-colors duration-300 ${activeTab === item.id ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} />
+                  <item.icon className={`h-5 w-5 transition-colors duration-300 ${(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')) ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} />
                 </div>
                 <span className="flex-1">{item.label}</span>
-                {activeTab === item.id && (
+                {(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')) && (
                   <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                 )}
               </button>

@@ -40,13 +40,13 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             <button
               key={tab.id}
               role="tab"
-              aria-selected={activeTab === tab.id}
+              aria-selected={activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history')}
               aria-label={tab.label}
               data-testid={tab.id === 'tracker' ? 'nav-tracker' : tab.id === 'account' ? 'nav-account' : undefined}
               onClick={() => onTabChange(tab.id)}
               className={cn(
                 'group relative flex flex-1 flex-col items-center gap-1 transition-all duration-300 py-1 active:scale-90',
-                activeTab === tab.id
+                activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history')
                   ? 'text-blue-600 dark:text-blue-400'
                   : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
               )}
@@ -54,21 +54,21 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               <div
                 className={cn(
                   'relative flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-500 ease-spring',
-                  activeTab === tab.id 
+                  (activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history'))
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-110 -translate-y-1' 
                     : 'bg-white/5 dark:bg-slate-800/40'
                 )}
               >
                 <div className={cn(
                   'transition-transform duration-300',
-                  activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'
+                  (activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history')) ? 'scale-110' : 'group-hover:scale-110'
                 )}>
                   {tab.icon}
                 </div>
               </div>
               <span className={cn(
                 'text-[8px] font-black uppercase tracking-widest transition-all duration-300 leading-none',
-                activeTab === tab.id ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-75'
+                (activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history')) ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-75'
               )}>
                 {tab.label}
               </span>
