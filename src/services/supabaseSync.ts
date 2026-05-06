@@ -244,8 +244,17 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     onConflict: 'user_id,external_id'
   });
 
-  if (error && !isRetry) {
-    await addToQueue('session', { session, transmissionType });
+  if (error) {
+    console.error('[DB-Sync] FAILED to sync driving session:', error.message);
+    if (!isRetry) await addToQueue('session', { session, transmissionType });
+    // Update local store with error status
+    const { useAppStore } = await import('../store/useAppStore');
+    useAppStore.getState().updateDrivingSession(session.id, { syncStatus: 'error' });
+  } else {
+    console.log('[DB-Sync] Driving session sync successful:', session.id);
+    // Update local store with synced status
+    const { useAppStore } = await import('../store/useAppStore');
+    useAppStore.getState().updateDrivingSession(session.id, { syncStatus: 'synced' });
   }
 }
 
@@ -419,8 +428,14 @@ export async function syncAllData(state: AppState) {
     syncTasks.push(Promise.resolve(supabase.from('driving_sessions').upsert(sessionData, { onConflict: 'user_id,external_id' })));
   }
 
-  await Promise.allSettled(syncTasks);
-  console.log('[DB-Sync] All data synchronized with cloud.');
+  const results = await Promise.allSettled(syncTasks);
+  const someFailed = results.some(r => r.status === 'rejected');
+  
+  if (!someFailed) {
+    console.log('[DB-Sync] All data synchronized with cloud.');
+  } else {
+    console.warn('[DB-Sync] Some data failed to synchronize.');
+  }
 }
 
 export async function deleteDrivingSessionFromCloud(sessionId: string) {

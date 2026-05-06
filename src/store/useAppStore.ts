@@ -23,6 +23,7 @@ import type {
   LearningPathType,
   TransmissionType,
   UserProgress,
+  DrivingSession
 } from '../types';
 import {
   ensureProfileFromState,
@@ -318,9 +319,10 @@ export const useAppStore = create<AppState>()(
 
       addDrivingSession: (session) =>
         set((state) => {
-          const newSession = {
+          const newSession: DrivingSession = {
             ...session,
             id: `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            syncStatus: 'local',
           };
 
           const nextProgress = {
@@ -397,8 +399,12 @@ export const useAppStore = create<AppState>()(
             userProgress: nextProgress,
           };
 
-          void syncDrivingSession(updatedSession, state.transmissionType);
-          void ensureProfileFromState(nextState as AppState);
+          // Only sync to cloud if we're not just updating the sync status
+          const hasDataUpdates = Object.keys(updates).some(key => key !== 'syncStatus');
+          if (hasDataUpdates) {
+            void syncDrivingSession(updatedSession, state.transmissionType);
+            void ensureProfileFromState(nextState as AppState);
+          }
 
           return { userProgress: nextProgress };
         }),
@@ -436,6 +442,38 @@ export const useAppStore = create<AppState>()(
           };
 
           void deleteDrivingSessionFromCloud(sessionId);
+          void ensureProfileFromState(nextState as AppState);
+
+          return { userProgress: nextProgress };
+        }),
+
+      updateMistakeStatus: (sessionId, mistakeTimestamp, status) =>
+        set((state) => {
+          const sessionIndex = state.userProgress.drivingSessions.findIndex((s) => s.id === sessionId);
+          if (sessionIndex === -1) return state;
+
+          const session = state.userProgress.drivingSessions[sessionIndex];
+          if (!session.mistakes) return state;
+
+          const newMistakes = session.mistakes.map((m) =>
+            m.timestamp === mistakeTimestamp ? { ...m, status } : m
+          );
+
+          const updatedSession = { ...session, mistakes: newMistakes, syncStatus: 'local' as const };
+          const newSessions = [...state.userProgress.drivingSessions];
+          newSessions[sessionIndex] = updatedSession;
+
+          const nextProgress = {
+            ...state.userProgress,
+            drivingSessions: newSessions,
+          };
+
+          const nextState = {
+            ...state,
+            userProgress: nextProgress,
+          };
+
+          void syncDrivingSession(updatedSession, state.transmissionType);
           void ensureProfileFromState(nextState as AppState);
 
           return { userProgress: nextProgress };

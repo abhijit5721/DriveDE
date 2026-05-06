@@ -113,15 +113,48 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   if (!data || !data.profile) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-center">
-        <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Report Not Found</h1>
-        <p className="text-slate-400 mb-8">This link may be expired or the user ID is invalid.</p>
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-20 w-20 rounded-3xl bg-red-500/10 flex items-center justify-center mb-6">
+          <AlertCircle className="h-10 w-10 text-red-500" />
+        </div>
+        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Report Not Available</h1>
+        <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
+          This profile could not be found. The link may have expired or is incorrect.
+        </p>
         <button 
           onClick={onBack}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold"
+          className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-2xl font-bold transition-all"
         >
-          Return to App
+          Return to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // Handle case where profile exists but no sessions are synced yet
+  if (data.sessions.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-20 w-20 rounded-3xl bg-blue-500/10 flex items-center justify-center mb-6">
+          <Sparkles className="h-10 w-10 text-blue-500" />
+        </div>
+        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Waiting for Data...</h1>
+        <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
+          The profile for <span className="text-blue-400 font-bold">{data.profile.display_name || 'this student'}</span> is active, but no driving sessions have been published yet.
+        </p>
+        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 mb-8 text-left max-w-sm">
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+            <Info className="h-3 w-3" /> Student Tip
+          </p>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Ensure the student has clicked <strong>"Share"</strong> and has a stable connection to sync their local driving log to the cloud.
+          </p>
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all active:scale-95"
+        >
+          Check for Updates
         </button>
       </div>
     );
@@ -160,9 +193,11 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   const faultMap = new Map<string, number>();
   data.sessions.forEach(s => {
     s.mistakes?.forEach(m => {
-      // mistakes is DrivingMistake[] so we use m.type
-      const faultType = typeof m === 'string' ? m : m.type;
-      faultMap.set(faultType, (faultMap.get(faultType) || 0) + 1);
+      // ONLY use confirmed mistakes for the public report to ensure data accuracy
+      if (m && typeof m === 'object' && m.status === 'confirmed') {
+        const faultType = m.type;
+        faultMap.set(faultType, (faultMap.get(faultType) || 0) + 1);
+      }
     });
   });
   
@@ -230,7 +265,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     
     const avgMistakes = (sessions: DrivingSession[]) => {
       if (sessions.length === 0) return 0;
-      return sessions.reduce((acc, s) => acc + (s.mistakes?.length || 0), 0) / sessions.length;
+      return sessions.reduce((acc, s) => acc + (s.mistakes?.filter(m => m.status === 'confirmed').length || 0), 0) / sessions.length;
     };
 
     const recentAvg = avgMistakes(recent);
@@ -530,7 +565,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 
                 {/* Find most common mistake */}
                 {(() => {
-                  const allMistakes = data.sessions.flatMap(s => s.mistakes);
+                  const allMistakes = data.sessions.flatMap(s => s.mistakes?.filter(m => m.status === 'confirmed') || []);
                   const counts: Record<string, number> = {};
                   allMistakes.forEach(m => {
                     if (m && m.type) {
@@ -604,37 +639,49 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                         {session.duration} min
                       </div>
                   </div>
-                  {(session.mistakes?.length || 0) > 0 && (
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
-                      <AlertCircle className="h-3 w-3" />
-                      {session.mistakes?.length || 0}
-                    </div>
-                  )}
+                  {(() => {
+                    const confirmedCount = session.mistakes?.filter(m => m.status === 'confirmed').length || 0;
+                    return confirmedCount > 0 && (
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
+                        <AlertCircle className="h-3 w-3" />
+                        {confirmedCount}
+                      </div>
+                    );
+                  })()}
                 </div>
 
-                {/* Expanded Fault Details */}
-                {expandedSession === session.id && (session.mistakes?.length || 0) > 0 && (
-                  <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Fault Details</p>
-                    {session.mistakes?.map((m, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
-                        <div className="w-1 h-1 rounded-full bg-red-500" />
-                        <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
-                        {m.timestamp && (
-                          <span className="text-slate-500 text-[10px] ml-auto">
-                            {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                    {session.notes && (
-                      <div className="mt-3 pt-3 border-t border-white/5">
-                        <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Notes</p>
-                        <p className="text-xs text-slate-400 italic">{session.notes}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                {(() => {
+                  const confirmedMistakes = session.mistakes?.filter(m => m.status === 'confirmed') || [];
+                  const hasContent = confirmedMistakes.length > 0 || session.notes;
+                  if (expandedSession !== session.id || !hasContent) return null;
+
+                  return (
+                    <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
+                      {confirmedMistakes.length > 0 && (
+                        <>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Verified Fault Details</p>
+                          {confirmedMistakes.map((m, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
+                              <div className="w-1 h-1 rounded-full bg-red-500" />
+                              <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
+                              {m.timestamp && (
+                                <span className="text-slate-500 text-[10px] ml-auto">
+                                  {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      {session.notes && (
+                        <div className={cn('pt-3 border-white/5', confirmedMistakes.length > 0 && 'mt-3 border-t')}>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Notes</p>
+                          <p className="text-xs text-slate-400 italic">{session.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>

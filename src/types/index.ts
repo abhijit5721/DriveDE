@@ -174,6 +174,7 @@ export interface DrivingSession {
   locationSummary?: string; // e.g. "Berlin, Mitte"
   mistakes?: DrivingMistake[];
   isSimulation?: boolean;
+  syncStatus?: 'local' | 'synced' | 'error';
 }
 
 export interface ActiveSession {
@@ -246,6 +247,7 @@ export interface AppState {
   addDrivingSession: (session: Omit<DrivingSession, 'id'>) => void;
   updateDrivingSession: (sessionId: string, session: Partial<DrivingSession>) => void;
   removeDrivingSession: (sessionId: string) => void;
+  updateMistakeStatus: (sessionId: string, mistakeTimestamp: number, status: DrivingMistake['status']) => void;
   setQuizScore: (quizId: string, score: number) => void;
   addMistake: (questionId: string) => void;
   removeMistake: (questionId: string) => void;

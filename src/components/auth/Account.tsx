@@ -155,10 +155,23 @@ export function Account({ onOpenAuth, onSignOut, onChangePath, onOpenLegal }: Ac
               </button>
 
               <button
-                disabled
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white/50 cursor-not-allowed"
+                onClick={async () => {
+                  setAuthLoading(true);
+                  try {
+                    await syncAllData(useAppStore.getState());
+                    setAuthMessage(t.syncSuccess);
+                    setTimeout(() => setAuthMessage(null), 3000);
+                  } catch (e) {
+                    setAuthError('Sync failed. Please try again.');
+                  } finally {
+                    setAuthLoading(false);
+                  }
+                }}
+                disabled={authLoading}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15 disabled:opacity-50"
               >
-                {t.manageAccount}
+                <RefreshCcw className={cn('h-4 w-4', authLoading && 'animate-spin')} />
+                {authLoading ? '...' : t.syncNow}
               </button>
 
               <button

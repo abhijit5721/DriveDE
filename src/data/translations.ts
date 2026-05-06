@@ -48,6 +48,8 @@ export const TRANSLATIONS = {
       close: 'Schließen',
       next: 'Weiter',
       continue: 'Weiter',
+      approve: 'Bestätigen',
+      reject: 'Ignorieren',
       appSubtitle: 'Fahrschule App',
       paths: {
         umschreibung: 'Umschreibung',
@@ -144,6 +146,8 @@ export const TRANSLATIONS = {
       guestDesc: 'Du kannst die App ohne Konto nutzen oder dich anmelden, um später Cloud-Synchronisierung zu aktivieren.',
       signOut: 'Abmelden',
       manageAccount: 'Konto verwalten',
+      syncNow: 'Jetzt synchronisieren',
+      syncSuccess: 'Synchronisierung erfolgreich!',
       shareWithInstructor: 'Report mit Fahrlehrer teilen',
       openingGoogle: 'Google wird geöffnet …',
       continueWithGoogle: 'Mit Google fortfahren',
@@ -222,6 +226,8 @@ export const TRANSLATIONS = {
     tracker: {
       title: 'Fahrtenbuch',
       subtitle: 'Dokumentiere deine Fahrstunden',
+      published: 'Veröffentlicht',
+      pendingSync: 'Wird synchronisiert...',
       liveRouteTrace: 'Streckenverlauf (Echtzeit)',
       startPoint: 'Startpunkt',
       endPoint: 'Endpunkt',
@@ -2172,6 +2178,8 @@ export const TRANSLATIONS = {
       close: 'Close',
       next: 'Next',
       continue: 'Continue',
+      approve: 'Confirm',
+      reject: 'Ignore',
       appSubtitle: 'Driving School App',
       paths: {
         umschreibung: 'Conversion',
@@ -2269,6 +2277,8 @@ export const TRANSLATIONS = {
       guestDesc: 'You can use the app without an account, or sign in to enable cloud sync later.',
       signOut: 'Sign out',
       manageAccount: 'Manage account',
+      syncNow: 'Sync Now',
+      syncSuccess: 'Sync successful!',
       shareWithInstructor: 'Share report with instructor',
       openingGoogle: 'Opening Google …',
       continueWithGoogle: 'Continue with Google',
@@ -2347,6 +2357,8 @@ export const TRANSLATIONS = {
     tracker: {
       title: 'Driving Log',
       subtitle: 'Track your driving lessons',
+      published: 'Published',
+      pendingSync: 'Syncing...',
       liveRouteTrace: 'Live Route Trace',
       startPoint: 'Start Point',
       endPoint: 'End Point',

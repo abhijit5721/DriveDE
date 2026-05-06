@@ -13,7 +13,7 @@ import {
   Signal, Search, Wind, RefreshCcw, CornerUpRight, 
   Gauge, ChevronRight, ChevronDown, Info,
   View, Ban, AlertCircle, MoreHorizontal, ShieldCheck, Database,
-  ShieldAlert, Check
+  ShieldAlert, Check, Cloud, CheckCircle2
 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
@@ -22,6 +22,7 @@ import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
 
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
+import { syncAllData } from '../../services/supabaseSync';
 
 interface PhotonFeature {
   properties: {
@@ -287,7 +288,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     activeSession, startActiveSession, pauseActiveSession, 
     resumeActiveSession, updateActiveSession, stopActiveSession,
     activeTab, setActiveTab,
-    isHydrated: storeHydrated, setAcceptedPrivacy
+    isHydrated: storeHydrated, setAcceptedPrivacy,
+    authStatus, updateMistakeStatus
   } = useAppStore();
 
   const [isHydrated, setHydrated] = useState(storeHydrated);
@@ -435,6 +437,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [targetDestination, setTargetDestination] = useState('');
   const [destinationCoords, setDestinationCoords] = useState<{ lat: number, lng: number } | null>(null);
   const [isSearchingDestination, setIsSearchingDestination] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -443,6 +447,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [isDeviceMounted, setIsDeviceMounted] = useState(false);
   const [isMountConfirmed, setIsMountConfirmed] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (authStatus === 'signed_in') {
+        syncAllData(useAppStore.getState()).catch(console.error);
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      handleBeforeUnload(); // Also sync on unmount
+    };
+  }, [authStatus]);
 
   useEffect(() => {
     return () => {
@@ -1954,6 +1971,45 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               {t.tracker.historyTitle || 'History'}
             </h3>
             <div className="flex items-center gap-2">
+              {userProgress.drivingSessions.some(s => s.mistakes?.some(m => !m.status || m.status === 'pending')) && (
+                <button
+                  onClick={() => {
+                    userProgress.drivingSessions.forEach(s => {
+                      s.mistakes?.forEach(m => {
+                        if (!m.status || m.status === 'pending') {
+                          updateMistakeStatus(s.id, m.timestamp, 'confirmed');
+                        }
+                      });
+                    });
+                  }}
+                  className="flex items-center gap-1.5 rounded-lg bg-blue-50 px-2 py-1 text-[9px] font-black uppercase tracking-tight text-blue-600 transition hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"
+                >
+                  <CheckCircle2 className="h-3 w-3" />
+                  {language === 'de' ? 'ALLE OK' : 'ALL OK'}
+                </button>
+              )}
+
+              {authStatus === 'signed_in' && (
+                <button 
+                  onClick={async () => {
+                    setSyncing(true);
+                    setSyncError(null);
+                    try {
+                      await syncAllData(useAppStore.getState());
+                    } catch (e) {
+                      setSyncError(language === 'de' ? 'Sync fehlgeschlagen' : 'Sync failed');
+                    } finally {
+                      setSyncing(false);
+                    }
+                  }}
+                  disabled={syncing}
+                  className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-1 text-[9px] font-bold text-slate-600 transition hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                >
+                  <RefreshCcw className={cn('h-3 w-3', syncing && 'animate-spin')} />
+                  {syncing ? '...' : 'Sync'}
+                </button>
+              )}
+
               <button
                 onClick={handleExportData}
                 data-testid="export-history-btn"
@@ -1972,6 +2028,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </button>
             </div>
           </div>
+
+          {syncError && (
+            <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
+              <AlertCircle className="h-3 w-3" />
+              {syncError}
+            </div>
+          )}
           {userProgress.drivingSessions.length === 0 ? (
             <EmptyState
               icon={<Car className="h-8 w-8 text-slate-400" />}
@@ -2007,6 +2070,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               <h4 className="font-bold text-slate-900 dark:text-white">
                                 {getTypeLabel(session.type)}
                               </h4>
+                              {session.syncStatus === 'synced' ? (
+                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
+                                  <Cloud className="h-2 w-2" />
+                                  {t.tracker.published || 'Published'}
+                                </span>
+                              ) : (
+                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
+                                  {t.tracker.pendingSync || 'Syncing...'}
+                                </span>
+                              )}
                               {session.isSimulation && (
                                 <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
                                   SIM
@@ -2126,10 +2199,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               </div>
                               
                               {isPremium ? (
-                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                <div className="grid grid-cols-1 gap-2">
                                   {(() => {
+                                    const pendingMistakes = session.mistakes.filter(m => !m.status || m.status === 'pending');
+                                    const confirmedMistakes = session.mistakes.filter(m => m.status === 'confirmed');
+                                    
                                     const groups: Record<string, { type: string, count: number, latest: number }> = {};
-                                    session.mistakes.forEach(m => {
+                                    confirmedMistakes.forEach(m => {
                                       if (!groups[m.type]) {
                                         groups[m.type] = { type: m.type, count: 0, latest: m.timestamp };
                                       }
@@ -2138,36 +2214,96 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                         groups[m.type].latest = m.timestamp;
                                       }
                                     });
-                                  
-                                  return Object.values(groups)
-                                    .sort((a, b) => b.latest - a.latest)
-                                    .map((group, idx) => (
-                                      <div 
-                                        key={idx} 
-                                        className="flex items-center justify-between rounded-xl bg-white p-2.5 text-xs shadow-sm ring-1 ring-slate-100 transition-all hover:ring-slate-200 dark:bg-slate-800 dark:ring-slate-700/50 dark:hover:ring-slate-700"
-                                      >
-                                        <div className="flex items-center gap-3">
-                                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900/50">
-                                            {getMistakeIconComponent(group.type)}
+
+                                    return (
+                                      <div className="space-y-4">
+                                        {pendingMistakes.length > 0 && (
+                                          <div className="space-y-2">
+                                            <div className="flex items-center gap-2">
+                                              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+                                              <span className="text-[9px] font-black uppercase tracking-tighter text-amber-600 dark:text-amber-400">
+                                                {language === 'de' ? 'ÜBERPRÜFUNG ERFORDERLICH' : 'NEEDS REVIEW'}
+                                              </span>
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-2">
+                                              {pendingMistakes.map((m, idx) => (
+                                                <div key={`pending-${idx}`} className="flex items-center justify-between rounded-xl bg-amber-50/50 p-2 text-xs shadow-sm ring-1 ring-amber-100 dark:bg-amber-900/10 dark:ring-amber-900/20">
+                                                  <div className="flex items-center gap-3">
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-slate-800">
+                                                      {getMistakeIconComponent(m.type)}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                      <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
+                                                      <span className="text-[8px] font-medium text-slate-400">
+                                                        {new Date(m.timestamp).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                      </span>
+                                                    </div>
+                                                  </div>
+                                                  <div className="flex items-center gap-1">
+                                                    <button 
+                                                      onClick={(e) => { e.stopPropagation(); updateMistakeStatus(session.id, m.timestamp, 'rejected'); }}
+                                                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-400 shadow-sm transition hover:bg-red-50 hover:text-red-500 dark:bg-slate-800 dark:hover:bg-red-900/20"
+                                                      title={t.common.reject}
+                                                    >
+                                                      <X className="h-4 w-4" />
+                                                    </button>
+                                                    <button 
+                                                      onClick={(e) => { e.stopPropagation(); updateMistakeStatus(session.id, m.timestamp, 'confirmed'); }}
+                                                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95"
+                                                      title={t.common.approve}
+                                                    >
+                                                      <Check className="h-4 w-4" />
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              ))}
+                                            </div>
                                           </div>
-                                          <div className="flex flex-col">
-                                            <span className="font-bold text-slate-700 dark:text-slate-200">
-                                              {getMistakeLabel(group.type)}
-                                            </span>
-                                            <span className="text-[9px] font-medium text-slate-400">
-                                              Latest: {new Date(group.latest).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                          </div>
-                                        </div>
-                                        {group.count > 1 && (
-                                          <div className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-red-50 px-2 dark:bg-red-900/20">
-                                            <span className="text-[10px] font-black text-red-600 dark:text-red-400">
-                                              ×{group.count}
-                                            </span>
+                                        )}
+
+                                        {Object.keys(groups).length > 0 && (
+                                          <div className="space-y-2">
+                                            {pendingMistakes.length > 0 && (
+                                              <span className="text-[9px] font-black uppercase tracking-tighter text-slate-400">
+                                                {language === 'de' ? 'BESTÄTIGTES PROTOKOLL' : 'VERIFIED LOG'}
+                                              </span>
+                                            )}
+                                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                              {Object.values(groups)
+                                                .sort((a, b) => b.latest - a.latest)
+                                                .map((group, idx) => (
+                                                  <div 
+                                                    key={`verified-${idx}`} 
+                                                    className="flex items-center justify-between rounded-xl bg-white p-2.5 text-xs shadow-sm ring-1 ring-slate-100 transition-all hover:ring-slate-200 dark:bg-slate-800 dark:ring-slate-700/50 dark:hover:ring-slate-700"
+                                                  >
+                                                    <div className="flex items-center gap-3">
+                                                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                                                        {getMistakeIconComponent(group.type)}
+                                                      </div>
+                                                      <div className="flex flex-col">
+                                                        <span className="font-bold text-slate-700 dark:text-slate-200">
+                                                          {getMistakeLabel(group.type)}
+                                                        </span>
+                                                        <span className="text-[9px] font-medium text-slate-400">
+                                                          {group.count > 1 ? `${group.count}x · ` : ''} 
+                                                          {new Date(group.latest).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                    {group.count > 1 && (
+                                                      <div className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-50 px-2 dark:bg-slate-900/50">
+                                                        <span className="text-[10px] font-black text-slate-400">
+                                                          ×{group.count}
+                                                        </span>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                ))}
+                                            </div>
                                           </div>
                                         )}
                                       </div>
-                                    ));
+                                    );
                                   })()}
                                 </div>
                               ) : (
