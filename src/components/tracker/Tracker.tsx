@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
 import toast from 'react-hot-toast';
@@ -21,6 +22,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
+import { NavigationHUD } from './NavigationHUD';
 
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 import { syncAllData } from '../../services/supabaseSync';
@@ -288,11 +290,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setHourlyRate45, isPremium,
     activeSession, startActiveSession, pauseActiveSession, 
     resumeActiveSession, updateActiveSession, stopActiveSession,
-    activeTab, setActiveTab,
-    isHydrated: storeHydrated, setAcceptedPrivacy,
-    authStatus, updateMistakeStatus
+    setAcceptedPrivacy,
+    authStatus, updateMistakeStatus, isHydrated: storeHydrated
   } = useAppStore();
 
+  const [isInitializing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'tracker' | 'history'>('tracker');
+  const [currentLocation, setCurrentLocation] = useState<GPSPoint | null>(null);
+  
+  // ── Session Data ──────────────────────────────────────────
   const [isHydrated, setHydrated] = useState(storeHydrated);
 
   useEffect(() => {
@@ -307,6 +313,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const t = TRANSLATIONS[language as 'de' | 'en'];
   
+  // Navigation HUD Mock State
+  const [nextInstruction, setNextInstruction] = useState<string>('Head North');
+  const [distanceToNextTurn, setDistanceToNextTurn] = useState<string>('200 m');
+  const [nextRoadName, setNextRoadName] = useState<string>('Alexanderplatz');
+  const [currentRoadName, setCurrentRoadName] = useState<string>('Karl-Liebknecht-Str.');
+  const [eta, setEta] = useState<string>('12:45');
 
 
   const getMistakeLabel = useCallback((type: string) => {
@@ -723,18 +735,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const getCarMarkerIcon = (rotation: number) => {
     return L.divIcon({
-      className: 'car-marker-icon',
+      className: 'navigation-arrow-icon',
       html: `
-        <div style="transform: rotate(${rotation}deg); transition: transform 0.5s ease; width: 34px; height: 18px; background: #3b82f6; border: 2px solid white; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; position: relative; overflow: visible;">
-          <div style="position: absolute; right: 6px; width: 10px; height: 12px; background: #1e293b; border-radius: 1px; opacity: 0.8;"></div>
-          <div style="position: absolute; right: -3px; top: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
-          <div style="position: absolute; right: -3px; bottom: 1px; width: 5px; height: 4px; background: #fef08a; border-radius: 1px; box-shadow: 0 0 5px #fef08a;"></div>
-          <div style="position: absolute; left: -2px; top: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
-          <div style="position: absolute; left: -2px; bottom: 2px; width: 4px; height: 4px; background: #ef4444; border-radius: 1px;"></div>
+        <div style="transform: rotate(${rotation}deg); transition: transform 0.5s ease; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 8px rgba(59,130,246,0.6));">
+          <svg viewBox="0 0 24 24" width="38" height="38" fill="#3b82f6" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L3 21l9-3 9 3-9-19z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
         </div>
       `,
-      iconSize: [34, 18],
-      iconAnchor: [17, 9]
+      iconSize: [44, 44],
+      iconAnchor: [22, 22]
     });
   };
 
@@ -1301,203 +1311,252 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   }, [gpsPoints, currentSpeed, currentLimit, activeStopSign, hasStoppedAtSign, isTimerRunning, t, isSimulationMode, logMistake]);
 
-  const handleStartTimer = async (skipMountCheck = false, skipPrivacyCheck = false) => {
-    if (!skipPrivacyCheck && !userProgress.hasAcceptedPrivacy) {
-      setShowPrivacyInfo(true);
-      toast(t.tracker.privacyConsentRequired || 'Please review and accept the Privacy & Data policy first.', { icon: 'ℹ️' });
-      return;
-    }
-
-    const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-    const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
-    const canStartLive = isPremium || hasTrial;
-
-    if (!canStartLive && !isSimulationMode) {
-      if (onOpenPaywall) {
-        onOpenPaywall();
-      } else {
-        toast.error(t.common.proOnlyFeature || 'Pro only feature');
+  const handleStartTimer = async (skipPrivacy = false, skipSafety = false) => {
+    console.log('DEBUG: handleStartTimer called', { skipPrivacy, skipSafety, hasAcceptedPrivacy: userProgress.hasAcceptedPrivacy });
+    try {
+      if (!userProgress.hasAcceptedPrivacy && !skipPrivacy) {
+        setShowPrivacyInfo(true);
+        return;
       }
-      return;
-    }
 
-    if (!isDeviceMounted && !skipMountCheck) {
-      setShowSafetyWarning(true);
-      return;
-    }
+      const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
+      const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
+      const canStartLive = isPremium || hasTrial;
 
-    setIsTimerRunning(true);
-    toast(
-      isSimulationMode 
-        ? t.tracker.simulationStarted 
-        : t.tracker.sensorsStarted, 
-      { icon: isSimulationMode ? '🎮' : '🚀' }
-    );
-
-    setShowSuggestions(false);
-    setSuggestions([]);
-    
-    setGpsPoints([]);
-    setCurrentMistakes([]);
-    cumulativeMistakesRef.current = [];
-    cumulativeRouteRef.current = [];
-    setCurrentDistance(0);
-    setElapsedTime(0);
-    
-    startActiveSession(
-      newSession.type || 'normal', 
-      isSimulationMode, 
-      targetDestination, 
-      destinationCoords
-    );
-
-    requestWakeLock();
-    lastWrongWayLogRef.current = 0;
-    lastIllegalTurnLogRef.current = 0;
-    stationaryStartRef.current = null;
-    lastIdlingLogRef.current = 0;
-
-    const MotionEvent = DeviceMotionEvent as unknown as any;
-    if (typeof MotionEvent.requestPermission === 'function') {
-      try {
-        const permissionState = await MotionEvent.requestPermission();
-        if (permissionState !== 'granted') {
-          toast.error(t.tracker.motionSensorDenied);
+      if (!canStartLive && !isSimulationMode) {
+        if (onOpenPaywall) {
+          onOpenPaywall();
+        } else {
+          toast.error(t.common.proOnlyFeature || 'Pro only feature');
         }
-      } catch (e) {
-        console.error('Motion permission error', e);
+        return;
       }
-    }
 
-    if (isSimulationMode) {
-      const mockPoints = [
-        { lat: 52.5200, lng: 13.4050, speed: 20, limit: 50 },
-        { lat: 52.5205, lng: 13.4055, speed: 15, limit: 50 },
-        { lat: 52.5210, lng: 13.4060, speed: 25, limit: 50 },
-        { lat: 52.5220, lng: 13.4075, speed: 40, limit: 50 },
-        { lat: 52.5230, lng: 13.4090, speed: 55, limit: 50 },
-        { lat: 52.5225, lng: 13.4150, speed: 15, limit: 30 },
-        { lat: 52.5220, lng: 13.4155, speed: 20, limit: 30 },
-        { lat: 52.5215, lng: 13.4150, speed: 20, limit: 30 },
-        { lat: 52.5212, lng: 13.4140, speed: 25, limit: 30 },
-        { lat: 52.5210, lng: 13.4130, speed: 35, limit: 50 },
-        { lat: 52.5205, lng: 13.4120, speed: 50, limit: 50 },
-        { lat: 52.5200, lng: 13.4110, speed: 50, limit: 50 },
-        { lat: 52.5190, lng: 13.4100, speed: 30, limit: 50 },
-        { lat: 52.5180, lng: 13.4090, speed: 40, limit: 50 },
-        { lat: 52.5175, lng: 13.4080, speed: 45, limit: 50 },
-        { lat: 52.5170, lng: 13.4070, speed: 45, limit: 50 },
-        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
-        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
-        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
-        { lat: 52.5233, lng: 13.4095, speed: 0, limit: 50 },
-        { lat: 52.5240, lng: 13.4110, speed: 35, limit: 30 },
-        { lat: 52.5242, lng: 13.4115, speed: 32, limit: 30 },
-        { lat: 52.5245, lng: 13.4120, speed: 32, limit: 30 },
-        { lat: 52.5248, lng: 13.4125, speed: 35, limit: 30 },
-        { lat: 52.5255, lng: 13.4135, speed: 45, limit: 50 },
-        { lat: 52.5258, lng: 13.4140, speed: 42, limit: 50 },
-        { lat: 52.5262, lng: 13.4150, speed: 40, limit: 50 },
-        { lat: 52.5265, lng: 13.4160, speed: 50, limit: 50 },
-        { lat: 52.5240, lng: 13.4120, speed: 30, limit: 30 },
-        { lat: 52.5235, lng: 13.4135, speed: 15, limit: 30 },
-        { lat: 52.5230, lng: 13.4145, speed: 10, limit: 30 },
-        { lat: 52.5228, lng: 13.4148, speed:  5, limit: 30 },
-      ];
+      if (!isDeviceMounted && !skipSafety) {
+        setShowSafetyWarning(true);
+        return;
+      }
 
-      simulationStepRef.current = 0;
-      simulationIntervalRef.current = setInterval(() => {
-        const currentStep = simulationStepRef.current;
-        
-        if (currentStep >= mockPoints.length) {
-          simulationStepRef.current = 0;
-          setGpsPoints([]);
-          setActiveStopSign(null);
-          setHasStoppedAtSign(false);
-          lastIllegalTurnLogRef.current = 0;
-          lastWrongWayLogRef.current = 0;
-          toast(t.tracker.simulationLooping, { icon: '🔄' });
-          return;
+      setIsTimerRunning(true);
+      toast(
+        isSimulationMode 
+          ? t.tracker.simulationStarted 
+          : t.tracker.sensorsStarted, 
+        { icon: isSimulationMode ? '🎮' : '🚀' }
+      );
+
+      setShowSuggestions(false);
+      setSuggestions([]);
+      
+      setGpsPoints([]);
+      setCurrentMistakes([]);
+      cumulativeMistakesRef.current = [];
+      cumulativeRouteRef.current = [];
+      setCurrentDistance(0);
+      setElapsedTime(0);
+      
+      startActiveSession(
+        newSession.type || 'normal', 
+        isSimulationMode, 
+        targetDestination, 
+        destinationCoords
+      );
+
+      requestWakeLock();
+      lastWrongWayLogRef.current = 0;
+      lastIllegalTurnLogRef.current = 0;
+      stationaryStartRef.current = null;
+      lastIdlingLogRef.current = 0;
+
+      const MotionEvent = DeviceMotionEvent as unknown as any;
+      if (typeof MotionEvent.requestPermission === 'function') {
+        try {
+          const permissionState = await MotionEvent.requestPermission();
+          if (permissionState !== 'granted') {
+            toast.error(t.tracker.motionSensorDenied);
+          }
+        } catch (e) {
+          console.error('Motion permission error', e);
         }
+      }
 
-        const point = mockPoints[currentStep];
-        const newTrackPoint = { lat: point.lat, lng: point.lng, timestamp: Date.now() };
-        
-        logRoutePoint(newTrackPoint);
-        
-        setCurrentSpeed(point.speed);
-        setCurrentLimit(point.limit);
+      if (isSimulationMode) {
+        const mockPoints = [
+          // Starting at Lustgarten, following Karl-Liebknecht-Str.
+          { lat: 52.5190, lng: 13.4040, speed: 0, limit: 50 },
+          { lat: 52.5192, lng: 13.4045, speed: 15, limit: 50 },
+          { lat: 52.5195, lng: 13.4052, speed: 30, limit: 50 },
+          { lat: 52.5198, lng: 13.4060, speed: 45, limit: 50 },
+          { lat: 52.5202, lng: 13.4070, speed: 50, limit: 50 },
+          { lat: 52.5205, lng: 13.4080, speed: 48, limit: 50 },
+          { lat: 52.5208, lng: 13.4090, speed: 42, limit: 50 },
+          { lat: 52.5211, lng: 13.4100, speed: 35, limit: 50 },
+          
+          // Approaching Alexanderplatz (Stop Sign simulation)
+          { lat: 52.5213, lng: 13.4108, speed: 20, limit: 50 },
+          { lat: 52.5215, lng: 13.4115, speed: 5, limit: 50 },
+          { lat: 52.5215, lng: 13.4115, speed: 0, limit: 50 }, // Full stop
+          { lat: 52.5215, lng: 13.4115, speed: 0, limit: 50 },
+          
+          // Continuing towards Mollstr.
+          { lat: 52.5218, lng: 13.4125, speed: 25, limit: 50 },
+          { lat: 52.5222, lng: 13.4135, speed: 40, limit: 50 },
+          { lat: 52.5225, lng: 13.4145, speed: 45, limit: 50 },
+          
+          // Turning right onto Mollstr. (Simulated turn)
+          { lat: 52.5228, lng: 13.4155, speed: 30, limit: 50 },
+          { lat: 52.5232, lng: 13.4165, speed: 20, limit: 30 }, // Turning
+          { lat: 52.5230, lng: 13.4175, speed: 35, limit: 50 },
+          
+          // Error simulation: Speeding in 30 zone
+          { lat: 52.5228, lng: 13.4185, speed: 45, limit: 30 },
+          { lat: 52.5226, lng: 13.4195, speed: 42, limit: 30 },
+          
+          // Returning to normal
+          { lat: 52.5224, lng: 13.4205, speed: 30, limit: 30 },
+          { lat: 52.5222, lng: 13.4215, speed: 25, limit: 30 },
+          { lat: 52.5220, lng: 13.4225, speed: 20, limit: 30 },
+          { lat: 52.5218, lng: 13.4235, speed: 10, limit: 30 },
+          { lat: 52.5216, lng: 13.4245, speed: 0, limit: 30 },
+        ];
 
-        if (currentStep === 0) {
-          setActiveStopSign({ lat: 52.52005, lng: 13.40505, id: 'mock-stop-1' });
-          toast(t.tracker.stopSignAhead, { id: 'mock-stop-toast' });
-        }
+        simulationStepRef.current = 0;
+        simulationIntervalRef.current = setInterval(() => {
+          const currentStep = simulationStepRef.current;
+          
+          if (currentStep >= mockPoints.length) {
+            simulationStepRef.current = 0;
+            setGpsPoints([]);
+            setActiveStopSign(null);
+            setHasStoppedAtSign(false);
+            lastIllegalTurnLogRef.current = 0;
+            lastWrongWayLogRef.current = 0;
+            toast(t.tracker.simulationLooping, { icon: '🔄' });
+            return;
+          }
 
-        if (currentStep === 28) {
-          toast.dismiss();
-          toast.error(t.tracker.wrongWayAlert, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'wrong_way', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          const point = mockPoints[currentStep];
+          const newTrackPoint = { lat: point.lat, lng: point.lng, timestamp: Date.now() };
+          
+          logRoutePoint(newTrackPoint);
+          
+          setCurrentSpeed(point.speed);
+          setCurrentLimit(point.limit);
 
-        if (currentStep === 30) {
-          toast.error(`${t.tracker.illegalTurn} (${t.tracker.pedestrianZone})`, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'illegal_turn', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          if (currentStep === 0) {
+            setActiveStopSign({ lat: 52.52005, lng: 13.40505, id: 'mock-stop-1' });
+            toast(t.tracker.stopSignAhead, { id: 'mock-stop-toast' });
+          }
 
-        if (currentStep === 8) {
-          toast.error(t.tracker.mistakes.roundaboutSignal, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'roundabout_signal', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
-        
-        if (currentStep === 11) {
-          toast.error(t.tracker.mistakes.curveSpeeding, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'curve_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
-        
-        if (currentStep === 14) {
-          toast.error(t.tracker.mistakes.aggressiveCornering, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'aggressive_cornering', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          if (currentStep === 28) {
+            toast.dismiss();
+            toast.error(t.tracker.wrongWayAlert, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'wrong_way', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
 
-        if (currentStep === 22) {
-          toast.error(t.tracker.mistakes.rightBeforeLeft, { position: 'bottom-center', duration: 8000 });
-          logMistake({ type: 'right_before_left', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          if (currentStep === 30) {
+            toast.error(`${t.tracker.illegalTurn} (${t.tracker.pedestrianZone})`, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'illegal_turn', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
 
-        if (currentStep === 25) {
-          toast.error(t.tracker.schoolZoneCaution, { position: 'bottom-center', duration: 8000, icon: '🏫' });
-          logMistake({ type: 'school_zone_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          if (currentStep === 8) {
+            toast.error(t.tracker.mistakes.roundaboutSignal, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'roundabout_signal', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
+          
+          if (currentStep === 11) {
+            toast.error(t.tracker.mistakes.curveSpeeding, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'curve_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
+          
+          if (currentStep === 14) {
+            toast.error(t.tracker.mistakes.aggressiveCornering, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'aggressive_cornering', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
 
-        if (currentStep === 19) {
-          toast.error(t.tracker.ecoStopEngine, { position: 'bottom-center', duration: 8000, icon: '🌱' });
-          logMistake({ type: 'idling', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
-        }
+          if (currentStep === 22) {
+            toast.error(t.tracker.mistakes.rightBeforeLeft, { position: 'bottom-center', duration: 8000 });
+            logMistake({ type: 'right_before_left', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
 
-        if (currentStep > 0) {
-          const prev = mockPoints[currentStep - 1];
-          const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
-          setCurrentDistance(d => d + (dist * 100));
-        }
+          if (currentStep === 25) {
+            toast.error(t.tracker.schoolZoneCaution, { position: 'bottom-center', duration: 8000, icon: '🏫' });
+            logMistake({ type: 'school_zone_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
 
-        simulationStepRef.current += 1;
-      }, 1500);
+          if (currentStep === 19) {
+            toast.error(t.tracker.ecoStopEngine, { position: 'bottom-center', duration: 8000, icon: '🌱' });
+            logMistake({ type: 'idling', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
+          }
+
+          if (currentStep > 0) {
+            const prev = mockPoints[currentStep - 1];
+            const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
+            setCurrentDistance(d => d + (dist * 100));
+          }
+
+          // Mock Navigation Updates
+          if (currentStep < 5) {
+            setNextInstruction('Head North');
+            setDistanceToNextTurn(`${(500 - currentStep * 100)} m`);
+            setNextRoadName('Karl-Liebknecht-Str.');
+            setCurrentRoadName('Start Point');
+            setEta('12:45');
+          } else if (currentStep < 15) {
+            setNextInstruction('Turn Right');
+            setDistanceToNextTurn(`${(1000 - (currentStep - 5) * 100)} m`);
+            setNextRoadName('Alexanderplatz');
+            setCurrentRoadName('Karl-Liebknecht-Str.');
+            setEta('12:48');
+          } else {
+            setNextInstruction('Continue Straight');
+            setDistanceToNextTurn('2.4 km');
+            setNextRoadName('B1');
+            setCurrentRoadName('Alexanderplatz');
+            setEta('12:55');
+          }
+
+          simulationStepRef.current += 1;
+        }, 1500);
+      }
+    } catch (e) {
+        console.error(e);
     }
   };
+
+  // Voice Guidance Simulation
+  useEffect(() => {
+    if (isTimerRunning && nextInstruction) {
+      toast.custom((t) => (
+        <div className={cn(
+          'flex items-center gap-3 rounded-2xl bg-slate-900/90 px-6 py-4 text-white shadow-2xl backdrop-blur-xl border border-white/10 transition-all',
+          t.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+        )}>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 shadow-lg shadow-blue-500/40">
+            <Wind className="h-5 w-5 animate-pulse" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Voice Guidance</p>
+            <p className="text-sm font-bold">{nextInstruction}</p>
+          </div>
+        </div>
+      ), { duration: 3000, position: 'top-center' });
+    }
+  }, [nextInstruction, isTimerRunning]);
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
     pauseActiveSession();
     releaseWakeLock();
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
-    toast(t.tracker.timerPaused, { icon: '⏸️' });
+    // toast(t.tracker.timerPaused, { icon: '⏸️' });
   };
 
   const handleResumeTimer = () => {
     setIsTimerRunning(true);
     resumeActiveSession();
     requestWakeLock();
-    toast(t.tracker.timerResumed, { icon: '▶️' });
+    // toast(t.tracker.timerResumed, { icon: '▶️' });
   };
 
   const handleStopTimer = async () => {
@@ -1566,6 +1625,34 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     return `${h}:${m}:${s}`;
   };
 
+
+
+  // ── Initial Location ──────────────────────────────────────
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude: lat, longitude: lng } = position.coords;
+          setCurrentLocation({ lat, lng, timestamp: Date.now() });
+        },
+        (error) => console.warn('[Tracker] Initial position error:', error),
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+      );
+    }
+  }, []);
+
+  // ── Main Tracking Loop ─────────────────────────────────────
+  const hudMistakeGroups = (() => {
+    const groups: Record<string, { type: string; count: number; label: string }> = {};
+    currentMistakes.forEach(m => {
+      if (!groups[m.type]) groups[m.type] = { type: m.type, count: 0, label: getMistakeLabel(m.type) };
+      groups[m.type].count++;
+    });
+    return Object.values(groups);
+  })();
+  const hudSafetyScore = Math.max(0, 100 - cumulativeMistakesRef.current.length * 10);
+  const hudIsPaused = !!(activeSession && activeSession.isPaused);
+
   if (!isHydrated) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -1614,6 +1701,44 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </button>
         </div>
       </div>
+
+      {/* ═══ Google-Maps-style HUD overlay while tracking is active ═══ */}
+      {isTimerRunning && createPortal(
+        <AnimatePresence>
+          <NavigationHUD
+            gpsPoints={gpsPoints}
+            currentSpeed={currentSpeed}
+            currentLimit={currentLimit}
+            elapsedTime={elapsedTime}
+            currentDistance={currentDistance}
+            safetyScore={hudSafetyScore}
+            mistakeGroups={hudMistakeGroups}
+            isPaused={hudIsPaused}
+            destinationCoords={destinationCoords}
+            destinationLabel={targetDestination || undefined}
+            onPause={handlePauseTimer}
+            onResume={handleResumeTimer}
+            onStop={handleStopTimer}
+            onLogProblem={() => setShowManualLog(true)}
+            showMistakeSuccess={showMistakeSuccess}
+            nextInstruction={nextInstruction}
+            distanceToNextTurn={distanceToNextTurn}
+            nextRoadName={nextRoadName}
+            currentRoadName={currentRoadName}
+            eta={eta}
+            t={{
+              pause:           t.common.pause,
+              resume:          t.common.resume || 'Resume',
+              stop:            t.common.stop   || 'Stop',
+              problem:         t.common.problem,
+              saved:           t.common.saved  || 'Saved',
+              safetyScore:     t.tracker.safetyScore,
+              yourDestination: t.tracker.yourDestination,
+            }}
+          />
+        </AnimatePresence>,
+        document.body
+      )}
 
       {activeTab === 'tracker' && (
         <div className="space-y-6">
@@ -1694,7 +1819,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                  {isTimerRunning && (
                    <button 
                      onClick={() => setShowManualLog(true)}
-                     data-testid="problem-btn"
                      className={cn(
                        'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-widest border transition-all',
                        showMistakeSuccess 
@@ -1718,7 +1842,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
             </div>
 
-            {isTimerRunning && gpsPoints.length > 0 && (
+            {/* Map Preview / Live Map */}
+            {(isTimerRunning && gpsPoints.length > 0) ? (
               <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
                 <MapContainer 
                   center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
@@ -1728,8 +1853,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   preferCanvas={true}
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#3b82f6" weight={4} opacity={0.8} />
+                  <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                  <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#00A0E9" weight={6} opacity={0.9} />
                   
                   {destinationCoords && (
                     <Marker position={[destinationCoords.lat, destinationCoords.lng]} icon={getFlagMarkerIcon()}>
@@ -1743,14 +1868,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       ? (calculateBearing(
                           gpsPoints[gpsPoints.length-2].lat, gpsPoints[gpsPoints.length-2].lng,
                           gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng
-                        ) - 90)
-                      : -90
+                        ))
+                      : 0
                     )}
                   />
                   <MapBoundsSimple points={gpsPoints} />
                 </MapContainer>
               </div>
-            )}
+            ) : (!isTimerRunning && currentLocation && (
+              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner group">
+                <MapContainer 
+                  center={[currentLocation.lat, currentLocation.lng]} 
+                  zoom={15} 
+                  zoomControl={false}
+                  attributionControl={false}
+                  dragging={false}
+                  scrollWheelZoom={false}
+                  style={{ height: '100%', width: '100%' }}
+                >
+                  <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                  <Marker position={[currentLocation.lat, currentLocation.lng]} icon={getCarMarkerIcon(0)} />
+                </MapContainer>
+                <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">Live Preview Active</span>
+                </div>
+              </div>
+            ))}
 
             {!isTimerRunning && (
               <div className="mt-4 px-1">
@@ -1826,7 +1970,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <div className="mt-2 w-full max-w-[200px]">
                   <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
                     <span>{t.tracker.safetyScore}</span>
-                    <span data-testid="safety-score-value">{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
+                    <span>{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
                   </div>
                   <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                     <motion.div 
@@ -1843,36 +1987,38 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               )}
             </div>
 
-            <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
-              <div className="text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {t.tracker.distance}
-                </p>
-                <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
-              </div>
-              <div className="text-center border-l border-white/10">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {t.tracker.speed}
-                </p>
-                <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
-              </div>
-              <div className="text-center border-l border-white/10">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  {t.tracker.limit}
-                </p>
-                <div className={cn(
-                  'text-lg font-bold flex items-center justify-center gap-1',
-                  currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
-                )}>
-                  {currentLimit || '--'}
-                  {currentLimit && (
-                    <div className="h-4 w-4 rounded-full border-2 border-red-500 bg-white flex items-center justify-center">
-                      <span className="text-[8px] font-black text-slate-900">{currentLimit}</span>
-                    </div>
-                  )}
+            {!isTimerRunning && (
+              <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
+                <div className="text-center">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    {t.tracker.distance}
+                  </p>
+                  <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
+                </div>
+                <div className="text-center border-l border-white/10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    {t.tracker.speed}
+                  </p>
+                  <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
+                </div>
+                <div className="text-center border-l border-white/10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    {t.tracker.limit}
+                  </p>
+                  <div className={cn(
+                    'text-lg font-bold flex items-center justify-center gap-1',
+                    currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
+                  )}>
+                    {currentLimit || '--'}
+                    {currentLimit && (
+                      <div className="h-4 w-4 rounded-full border-2 border-red-500 bg-white flex items-center justify-center">
+                        <div className="h-2 w-2 rounded-full bg-slate-900" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             
             {/* Live Mistakes List */}
             {currentMistakes.length > 0 && (
@@ -1920,7 +2066,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               {isTimerRunning ? (
                 <button
                   onClick={handlePauseTimer}
-                  data-testid="pause-tracking-btn"
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
                 >
                   <Pause className="h-4 w-4" />
@@ -1953,6 +2098,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       <Play className="h-4 w-4" />
                       {t.common.resume}
                     </>
+                  ) : isInitializing ? (
+                    <>
+                      <RefreshCcw className="h-4 w-4 animate-spin" />
+                      Launching...
+                    </>
                   ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
                     <>
                       <Crown className="h-4 w-4" />
@@ -1969,7 +2119,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleStopTimer}
                 disabled={elapsedTime === 0 && !isTimerRunning}
-                data-testid="stop-tracking-btn"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
               >
                 <Square className="h-4 w-4" />
@@ -2425,19 +2574,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       )}
 
       {/* Safety Warning Modal (§ 23 StVO Compliance) */}
-      <AnimatePresence>
-        {showSafetyWarning && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            data-testid="safety-warning-modal"
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
-          >
+      {showSafetyWarning && createPortal(
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
             >
               <div className="mb-6 flex justify-center">
@@ -2457,16 +2598,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
               <div className="mb-8 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
                 <label className="flex cursor-pointer items-start gap-3">
-                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
-                    <input
-                      type="checkbox"
-                      data-testid="mount-confirmation-checkbox"
-                      className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-slate-300 bg-white transition-all checked:border-blue-500 checked:bg-blue-500 dark:border-slate-600 dark:bg-slate-800"
-                      checked={isMountConfirmed}
-                      onChange={(e) => setIsMountConfirmed(e.target.checked)}
-                    />
-                    <Check className="pointer-events-none absolute h-4 w-4 scale-0 text-white transition-transform peer-checked:scale-100" />
-                  </div>
+                  <input
+                    type="checkbox"
+                    data-testid="mount-confirmation-checkbox"
+                    className="h-6 w-6 cursor-pointer rounded border-slate-300 dark:border-slate-600"
+                    checked={isMountConfirmed}
+                    onChange={(e) => setIsMountConfirmed(e.target.checked)}
+                  />
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                     I confirm that my smartphone is secured in a suitable vehicle mount and I will not operate it while driving.
                   </span>
@@ -2479,7 +2617,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     if (isMountConfirmed) {
                       setIsDeviceMounted(true);
                       setShowSafetyWarning(false);
-                      handleStartTimer(true);
+                      handleStartTimer(true, true);
                     }
                   }}
                   disabled={!isMountConfirmed}
@@ -2501,97 +2639,59 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </button>
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>,
+          document.body
+      )}
 
-      <AnimatePresence>
-        {showPrivacyInfo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
-            >
-              <div className="mb-6 flex justify-center">
-                <div className="rounded-full bg-blue-100 p-4 dark:bg-blue-900/30">
-                  <ShieldCheck className="h-10 w-10 text-blue-600 dark:text-blue-400" />
-                </div>
+      {/* Privacy & Data Information Modal */}
+      {showPrivacyInfo && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-md">
+          <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900">
+            <div className="mb-6 flex justify-center">
+              <div className="rounded-full bg-blue-100 p-4 dark:bg-blue-900/30">
+                <ShieldCheck className="h-10 w-10 text-blue-600 dark:text-blue-400" />
               </div>
-              
-              <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">
-                Privacy & Data Policy
-              </h3>
-              
-              <div className="mb-6 max-h-[300px] overflow-y-auto pr-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                <p className="mb-4">
-                  To provide real-time driving analysis, DriveDE processes your GPS and motion sensor data locally on your device and via secure cloud services.
-                </p>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li><strong>Local Processing:</strong> All route tracking and speed analysis happens on-device.</li>
-                  <li><strong>Automated Analysis:</strong> Specific driving events (mistakes) may be analyzed using anonymized telemetry.</li>
-                  <li><strong>GDPR Compliance:</strong> You have the right to export or delete your data at any time via the Account tab.</li>
-                </ul>
-                <p className="mt-4 font-bold text-slate-900 dark:text-slate-100">
-                  Legal Basis: Art. 6 (1) (b) GDPR - Performance of contract.
-                </p>
-              </div>
-
-              <div className="mb-6 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/50">
-                <label className="flex cursor-pointer items-start gap-3">
-                  <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
-                    <input
-                      type="checkbox"
-                      data-testid="privacy-consent-checkbox"
-                      className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-slate-300 bg-white transition-all checked:border-blue-500 checked:bg-blue-500 dark:border-slate-600 dark:bg-slate-800"
-                      checked={privacyConsent}
-                      onChange={(e) => setPrivacyConsent(e.target.checked)}
-                    />
-                    <Check className="pointer-events-none absolute h-4 w-4 scale-0 text-white transition-transform peer-checked:scale-100" />
-                  </div>
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    I have read the Privacy Policy and I agree to the processing of my location and sensor data for driving analysis.
-                  </span>
-                </label>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    if (privacyConsent) {
-                      setAcceptedPrivacy(true);
-                      setShowPrivacyInfo(false);
-                      handleStartTimer(true, true);
-                    }
-                  }}
-                  disabled={!privacyConsent}
-                  data-testid="accept-privacy-btn"
-                  className={cn(
-                    'w-full rounded-2xl py-4 font-black text-white shadow-lg transition-all active:scale-95',
-                    privacyConsent 
-                      ? 'bg-blue-600 hover:bg-blue-500' 
-                      : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
-                  )}
-                >
-                  I Agree & Accept
-                </button>
-                <button
-                  onClick={() => setShowPrivacyInfo(false)}
-                  className="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
-                >
-                  Go Back
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+            <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">Privacy & Data Policy</h3>
+            <div className="mb-6 max-h-[200px] overflow-y-auto text-sm text-slate-600 dark:text-slate-400">
+              <p>To provide real-time driving analysis, we process your GPS and motion sensor data.</p>
+            </div>
+            <div className="mb-6 flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="privacy-check"
+                data-testid="privacy-consent-checkbox"
+                checked={privacyConsent}
+                onChange={(e) => setPrivacyConsent(e.target.checked)}
+                className="h-6 w-6 shrink-0"
+              />
+              <label htmlFor="privacy-check" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                I agree to the processing of my location and sensor data.
+              </label>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  if (privacyConsent) {
+                    setAcceptedPrivacy(true);
+                    setShowPrivacyInfo(false);
+                    handleStartTimer(true, true);
+                  }
+                }}
+                disabled={!privacyConsent}
+                data-testid="accept-privacy-btn"
+                className={cn(
+                  'w-full rounded-2xl py-4 font-black text-white transition-all',
+                  privacyConsent ? 'bg-blue-600' : 'bg-slate-300'
+                )}
+              >
+                I Agree & Accept
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <AnimatePresence>
         {isPremium && !isSimulationMode && isTimerRunning && (
@@ -2762,16 +2862,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         </div>
       )}
       {/* Manual Log Modal */}
-      <AnimatePresence>
-        {showManualLog && (
-          <motion.div 
-            data-testid="manual-log-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
-          >
+      {createPortal(
+        <AnimatePresence>
+          {showManualLog && (
+            <motion.div 
+              key="manual-log-modal"
+              data-testid="manual-log-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[20000] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+            >
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -2890,7 +2992,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
     </div>
   );
 }
