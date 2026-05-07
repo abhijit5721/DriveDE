@@ -424,6 +424,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   });
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [showNavigationHUD, setShowNavigationHUD] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDistance, setCurrentDistance] = useState(0);
   const [gpsPoints, setGpsPoints] = useState<NonNullable<DrivingSession['route']>>([]);
@@ -1344,6 +1345,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           : t.tracker.sensorsStarted, 
         { icon: isSimulationMode ? '🎮' : '🚀' }
       );
+      
+      setShowNavigationHUD(true);
 
       setShowSuggestions(false);
       setSuggestions([]);
@@ -1561,6 +1564,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const handleStopTimer = async () => {
     setIsTimerRunning(false);
+    setShowNavigationHUD(false);
     setShowSuggestions(false);
     setSuggestions([]);
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
@@ -1703,7 +1707,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       </div>
 
       {/* ═══ Google-Maps-style HUD overlay while tracking is active ═══ */}
-      {isTimerRunning && createPortal(
+      {isTimerRunning && showNavigationHUD && createPortal(
         <AnimatePresence>
           <NavigationHUD
             gpsPoints={gpsPoints}
@@ -1720,6 +1724,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             onResume={handleResumeTimer}
             onStop={handleStopTimer}
             onLogProblem={() => setShowManualLog(true)}
+            onExit={() => setShowNavigationHUD(false)}
             showMistakeSuccess={showMistakeSuccess}
             nextInstruction={nextInstruction}
             distanceToNextTurn={distanceToNextTurn}
@@ -1874,6 +1879,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   />
                   <MapBoundsSimple points={gpsPoints} />
                 </MapContainer>
+
+                {!showNavigationHUD && (
+                  <button 
+                    onClick={() => setShowNavigationHUD(true)}
+                    className="absolute bottom-4 right-4 z-[400] flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-xl hover:bg-indigo-500 active:scale-95 transition-all animate-in fade-in slide-in-from-right-4"
+                  >
+                    <Navigation className="h-3.5 w-3.5" />
+                    Resume Navigation
+                  </button>
+                )}
               </div>
             ) : (!isTimerRunning && currentLocation && (
               <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner group">

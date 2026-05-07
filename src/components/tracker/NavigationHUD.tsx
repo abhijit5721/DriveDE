@@ -13,7 +13,7 @@ import {
   AlertTriangle, Pause, Navigation,
   Play,
   CornerUpLeft, CornerUpRight, MoveUp, 
-  X, MoreVertical, Navigation2
+  X, MoreVertical, Navigation2, Square
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -43,6 +43,7 @@ export interface NavigationHUDProps {
   onResume: () => void;
   onStop: () => void;
   onLogProblem: () => void;
+  onExit: () => void;
   showMistakeSuccess: boolean;
   // New props for Google Maps style
   nextInstruction?: string;
@@ -152,7 +153,7 @@ function SpeedSign({ limit, speeding }: { limit: number; speeding: boolean }) {
 export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   gpsPoints, currentSpeed, currentLimit, elapsedTime, currentDistance,
   safetyScore, mistakeGroups, isPaused, destinationCoords, destinationLabel,
-  onPause, onResume, onStop, onLogProblem, showMistakeSuccess, t,
+  onPause, onResume, onStop, onLogProblem, onExit, showMistakeSuccess, t,
   nextInstruction = 'Take the exit toward Pacific Blvd East',
   distanceToNextTurn = '20 m',
   nextRoadName = 'Cambie St',
@@ -356,9 +357,10 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         {/* Stats Section */}
         <div className="flex items-center justify-between pb-6">
           <button 
-            onClick={onStop}
-            data-testid="stop-tracking-btn"
-            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm"
+            onClick={onExit}
+            data-testid="minimize-navigation-btn"
+            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm active:scale-95 transition-transform"
+            title="Exit Navigation"
           >
             <X className="h-6 w-6" />
           </button>
@@ -451,7 +453,24 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
              )}
            >
              {isPaused ? <Play className="h-4 w-4 fill-white" /> : <Pause className="h-4 w-4 fill-slate-600" />}
-             {isPaused ? 'Resume' : 'Pause Session'}
+             {isPaused ? 'Resume' : 'Pause'}
+           </button>
+
+           <button 
+             onClick={onStop}
+             data-testid="stop-tracking-btn"
+             className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-bold text-red-600 transition-all shadow-md active:scale-95"
+           >
+             <Square className="h-4 w-4 fill-red-600" />
+             Stop & Save
+           </button>
+
+           <button 
+             onClick={onLogProblem}
+             className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 shadow-md active:scale-95"
+             title="Log Problem"
+           >
+             <AlertTriangle className="h-5 w-5" />
            </button>
         </div>
       </motion.div>
