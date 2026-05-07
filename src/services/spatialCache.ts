@@ -81,11 +81,14 @@ export async function updateSpatialCache(lat: number, lng: number): Promise<Spat
         );
         out geom;`;
       
-      const response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, {
+      const response = await fetch(endpoint, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json'
         },
-        signal: AbortSignal.timeout(10000)
+        body: `data=${encodeURIComponent(query)}`,
+        signal: AbortSignal.timeout(12000)
       });
 
       if (!response.ok) {
