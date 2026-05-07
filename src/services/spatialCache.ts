@@ -62,60 +62,48 @@ export async function updateSpatialCache(lat: number, lng: number): Promise<Spat
 
   console.log(`[SpatialCache] Refreshing cache for center: ${lat}, ${lng}...`);
 
-  const endpoints = [
-    'https://overpass-api.de/api/interpreter',
-    'https://lz4.overpass-api.de/api/interpreter',
-    'https://z.overpass-api.de/api/interpreter',
-    'https://overpass.osm.ch/api/interpreter',
-    'https://overpass.kumi.systems/api/interpreter'
-  ];
+  try {
+    // Query for stop signs and one-way streets in a 1km radius
+    const query = `[out:json][timeout:25];
+      (
+        node(around:${CACHE_RADIUS},${lat},${lng})["highway"="stop"];
+        way(around:${CACHE_RADIUS},${lat},${lng})["oneway"="yes"];
+        way(around:${CACHE_RADIUS},${lat},${lng})["highway"~"residential|living_street"];
+        node(around:${CACHE_RADIUS},${lat},${lng})["amenity"~"school|kindergarten"];
+      );
+      out geom;`;
+    
+    // Call our server-side proxy to bypass CORS and User-Agent blocking
+    const response = await fetch('/api/overpass', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: query }),
+      signal: AbortSignal.timeout(20000)
+    });
 
-  for (const endpoint of endpoints) {
-    try {
-      // Query for stop signs and one-way streets in a 1km radius
-      const query = `[out:json][timeout:25];
-        (
-          node(around:${CACHE_RADIUS},${lat},${lng})["highway"="stop"];
-          way(around:${CACHE_RADIUS},${lat},${lng})["oneway"="yes"];
-          way(around:${CACHE_RADIUS},${lat},${lng})["highway"~"residential|living_street"];
-          node(around:${CACHE_RADIUS},${lat},${lng})["amenity"~"school|kindergarten"];
-        );
-        out geom;`;
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json'
-        },
-        body: `data=${encodeURIComponent(query)}`,
-        signal: AbortSignal.timeout(12000)
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data && data.elements) {
-        const newCache: SpatialCacheData = {
-          center: { lat, lng },
-          radius: CACHE_RADIUS,
-          timestamp: Date.now(),
-          features: data.elements
-        };
-        await setIDB(CACHE_KEY, newCache);
-        console.log(`[SpatialCache] Cache updated via ${endpoint} with ${newCache.features.length} features.`);
-        return newCache;
-      }
-    } catch (error) {
-      console.warn(`[SpatialCache] Failed to refresh cache via ${endpoint}:`, error);
-      // Continue to next endpoint
+    if (!response.ok) {
+      throw new Error(`Proxy error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+
+    if (data && data.elements) {
+      const newCache: SpatialCacheData = {
+        center: { lat, lng },
+        radius: CACHE_RADIUS,
+        timestamp: Date.now(),
+        features: data.elements
+      };
+      await setIDB(CACHE_KEY, newCache);
+      console.log(`[SpatialCache] Cache updated via proxy with ${newCache.features.length} features.`);
+      return newCache;
+    }
+  } catch (error) {
+    console.warn('[SpatialCache] Failed to refresh cache via proxy:', error);
   }
 
-  console.error('[SpatialCache] All Overpass endpoints failed.');
   return currentCache;
 }
 
