@@ -62,37 +62,56 @@ export async function updateSpatialCache(lat: number, lng: number): Promise<Spat
 
   console.log(`[SpatialCache] Refreshing cache for center: ${lat}, ${lng}...`);
 
-  try {
-    // Query for stop signs and one-way streets in a 1km radius
-    const query = `[out:json];
-      (
-        node(around:${CACHE_RADIUS},${lat},${lng})["highway"="stop"];
-        way(around:${CACHE_RADIUS},${lat},${lng})["oneway"="yes"];
-        way(around:${CACHE_RADIUS},${lat},${lng})["highway"~"residential|living_street"];
-        node(around:${CACHE_RADIUS},${lat},${lng})["amenity"~"school|kindergarten"];
-      );
-      out geom;`;
-    
-    const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, {
-      signal: AbortSignal.timeout(15000)
-    });
-    const data = await response.json();
+  const endpoints = [
+    'https://overpass-api.de/api/interpreter',
+    'https://lz4.overpass-api.de/api/interpreter',
+    'https://z.overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter'
+  ];
 
-    if (data.elements) {
-      const newCache: SpatialCacheData = {
-        center: { lat, lng },
-        radius: CACHE_RADIUS,
-        timestamp: Date.now(),
-        features: data.elements
-      };
-      await setIDB(CACHE_KEY, newCache);
-      console.log(`[SpatialCache] Cache updated with ${newCache.features.length} features.`);
-      return newCache;
+  for (const endpoint of endpoints) {
+    try {
+      // Query for stop signs and one-way streets in a 1km radius
+      const query = `[out:json][timeout:25];
+        (
+          node(around:${CACHE_RADIUS},${lat},${lng})["highway"="stop"];
+          way(around:${CACHE_RADIUS},${lat},${lng})["oneway"="yes"];
+          way(around:${CACHE_RADIUS},${lat},${lng})["highway"~"residential|living_street"];
+          node(around:${CACHE_RADIUS},${lat},${lng})["amenity"~"school|kindergarten"];
+        );
+        out geom;`;
+      
+      const response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, {
+        headers: {
+          'Accept': 'application/json'
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data && data.elements) {
+        const newCache: SpatialCacheData = {
+          center: { lat, lng },
+          radius: CACHE_RADIUS,
+          timestamp: Date.now(),
+          features: data.elements
+        };
+        await setIDB(CACHE_KEY, newCache);
+        console.log(`[SpatialCache] Cache updated via ${endpoint} with ${newCache.features.length} features.`);
+        return newCache;
+      }
+    } catch (error) {
+      console.warn(`[SpatialCache] Failed to refresh cache via ${endpoint}:`, error);
+      // Continue to next endpoint
     }
-  } catch (error) {
-    console.warn('[SpatialCache] Failed to refresh cache:', error);
   }
 
+  console.error('[SpatialCache] All Overpass endpoints failed.');
   return currentCache;
 }
 
