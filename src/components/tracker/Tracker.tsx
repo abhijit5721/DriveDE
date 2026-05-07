@@ -13,7 +13,8 @@ import {
   Signal, Search, Wind, RefreshCcw, CornerUpRight, 
   Gauge, ChevronRight, ChevronDown, Info,
   View, Ban, AlertCircle, MoreHorizontal, ShieldCheck, Database,
-  ShieldAlert, Check, Cloud, CheckCircle2
+  ShieldAlert, Check, Cloud, CheckCircle2,
+  Navigation, TrendingDown, Repeat2, Flame, GraduationCap, RotateCcw
 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
@@ -317,17 +318,23 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const getMistakeIconComponent = (type: string) => {
     switch (type) {
-      case 'priority': return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
-      case 'stop_sign': return <Square className="h-3.5 w-3.5 text-red-600" />;
-      case 'right_before_left': return <CornerUpRight className="h-3.5 w-3.5 text-amber-500" />;
-      case 'wrong_way': return <Ban className="h-3.5 w-3.5 text-red-700" />;
-      case 'shoulder_check': return <Eye className="h-3.5 w-3.5 text-blue-400" />;
-      case 'mirror_check': return <View className="h-3.5 w-3.5 text-slate-400" />;
-      case 'signal': return <Signal className="h-3.5 w-3.5 text-amber-400" />;
-      case 'pedestrian_safety': return <Footprints className="h-3.5 w-3.5 text-purple-400" />;
-      case 'speeding': return <Gauge className="h-3.5 w-3.5 text-red-400" />;
-      case 'harsh_braking': return <AlertCircle className="h-3.5 w-3.5 text-orange-500" />;
-      default: return <MoreHorizontal className="h-3.5 w-3.5 text-slate-500" />;
+      case 'priority':            return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
+      case 'stop_sign':           return <Square className="h-3.5 w-3.5 text-red-600" />;
+      case 'right_before_left':   return <CornerUpRight className="h-3.5 w-3.5 text-amber-500" />;
+      case 'wrong_way':           return <Ban className="h-3.5 w-3.5 text-red-700" />;
+      case 'shoulder_check':      return <Eye className="h-3.5 w-3.5 text-blue-400" />;
+      case 'mirror_check':        return <View className="h-3.5 w-3.5 text-slate-400" />;
+      case 'signal':              return <Signal className="h-3.5 w-3.5 text-amber-400" />;
+      case 'pedestrian_safety':   return <Footprints className="h-3.5 w-3.5 text-purple-400" />;
+      case 'speeding':            return <Gauge className="h-3.5 w-3.5 text-red-400" />;
+      case 'harsh_braking':       return <TrendingDown className="h-3.5 w-3.5 text-orange-500" />;
+      case 'roundabout_signal':   return <RotateCcw className="h-3.5 w-3.5 text-blue-400" />;
+      case 'curve_speeding':      return <Navigation className="h-3.5 w-3.5 text-yellow-500" />;
+      case 'aggressive_cornering':return <Repeat2 className="h-3.5 w-3.5 text-pink-500" />;
+      case 'idling':              return <Flame className="h-3.5 w-3.5 text-green-500" />;
+      case 'illegal_turn':        return <Ban className="h-3.5 w-3.5 text-red-500" />;
+      case 'school_zone_speeding':return <GraduationCap className="h-3.5 w-3.5 text-indigo-400" />;
+      default:                    return <MoreHorizontal className="h-3.5 w-3.5 text-slate-500" />;
     }
   };
 
