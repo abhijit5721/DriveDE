@@ -1639,8 +1639,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           const { latitude: lat, longitude: lng } = position.coords;
           setCurrentLocation({ lat, lng, timestamp: Date.now() });
         },
-        (error) => console.warn('[Tracker] Initial position error:', error),
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+        (error) => {
+          console.warn('[Tracker] Initial position error:', error);
+          // Fallback to Berlin if GPS fails initially
+          setCurrentLocation({ lat: 52.52, lng: 13.405, timestamp: Date.now() });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     }
   }, []);
