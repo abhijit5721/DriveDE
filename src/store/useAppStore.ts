@@ -14,6 +14,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage, subscribeWithSelector } from 'zustand/middleware';
+import { Capacitor } from '@capacitor/core';
 import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 import { checkAndUnlockAchievements } from '../utils/achievements';
 import type {
@@ -144,7 +145,7 @@ export const useAppStore = create<AppState>()(
       licenseType: null,
       learningPath: null,
       transmissionType: null,
-      isPremium: isLocalhost(),
+      isPremium: isLocalhost() && !Capacitor.isNativePlatform(),
       authEmail: null,
       authDisplayName: null,
       authUserId: null,
@@ -247,7 +248,7 @@ export const useAppStore = create<AppState>()(
           authUserId: userId,
           // If we just signed in, we have definitely visited the app
           hasVisited: status === 'signed_in' ? true : state.hasVisited,
-          isPremium: isLocalhost()
+          isPremium: (isLocalhost() && !Capacitor.isNativePlatform())
             ? true
             : status === 'guest'
               ? false

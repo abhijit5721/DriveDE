@@ -14,6 +14,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
@@ -99,13 +100,28 @@ export default function App() {
         import('./services/supabaseSync').then(m => m.processSyncQueue());
       }
     };
-    
+
+    // Deep Link Listener for Native Platforms (OAuth redirects)
+    let urlListener: any;
+    if (Capacitor.isNativePlatform()) {
+      urlListener = CapacitorApp.addListener('appUrlOpen', (data) => {
+        console.log('[DeepLink] App opened with URL:', data.url);
+        // Supabase handles the URL fragment automatically if passed to the client
+        // We just need to ensure the app is in the right state
+        const url = new URL(data.url);
+        if (url.hash || url.search) {
+          setIsAuthLoading(true);
+        }
+      });
+    }
+
     window.addEventListener('online', handleOnline);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (urlListener) urlListener.remove();
     };
   }, []);
 

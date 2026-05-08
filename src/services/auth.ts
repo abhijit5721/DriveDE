@@ -30,10 +30,19 @@ export async function signInWithProvider(provider: Provider): Promise<void> {
     throw new Error('Supabase is not configured yet.');
   }
 
+  // Detect if we are running in a native mobile environment
+  const isNative = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '') &&
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // Use the custom app scheme for native redirects
+  const redirectUrl = isNative ? 'de.drivede.app://' : window.location.origin;
+
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: redirectUrl,
+      skipBrowserRedirect: false,
     },
   });
 
