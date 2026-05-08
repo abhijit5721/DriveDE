@@ -1161,7 +1161,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
           const handleError = (error: any) => {
             console.error('[Tracker] Geolocation error:', error);
-            toast.error(t.tracker.gpsError || 'GPS Connection lost');
+            if (error?.code === 1) {
+              toast.error(t.tracker.gpsDenied || 'Location access denied');
+            } else {
+              toast.error(t.tracker.gpsError || 'GPS Connection lost');
+            }
           };
 
           if (Capacitor.isNativePlatform()) {
