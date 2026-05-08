@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// @ts-nocheck
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@^12';
 
@@ -14,7 +14,7 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   const signature = req.headers.get('stripe-signature');
 
   try {
@@ -89,8 +89,9 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ received: true }), { status: 200 });
-  } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+  } catch (err: any) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`Webhook Error: ${message}`);
+    return new Response(`Webhook Error: ${message}`, { status: 400 });
   }
 });

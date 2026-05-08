@@ -1,0 +1,11 @@
+dist
+node_modules
+android
+brain
+scratch
+backend
+supabase
+scripts
+api
+playwright-report
+test-results

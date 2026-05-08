@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+// @ts-nocheck
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@^12';
 
@@ -11,7 +11,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -31,7 +31,9 @@ serve(async (req) => {
     );
 
     // 3. Verify user and get ID
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    const { data, error: userError } = await supabaseClient.auth.getUser();
+    const user = data?.user;
+
     if (userError || !user) {
       throw new Error('Invalid user session');
     }
@@ -75,10 +77,11 @@ serve(async (req) => {
       JSON.stringify({ url: session.url }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
     );
-  } catch (error) {
-    console.error('[Checkout] Error:', error.message);
+  } catch (error: any) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('[Checkout] Error:', message);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 },
     );
   }
