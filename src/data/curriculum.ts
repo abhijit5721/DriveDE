@@ -1055,7 +1055,6 @@ const specialLessons: Lesson[] = [
     ...getLessonStrings('special-3'),
     completed: false,
     isPremium: true,
-    isInteractive: true,
     guidedPoints: nightDrivingGuidedPoints,
     scenarios: [getScenario('night-pedestrian')],
     quiz: cityQuiz,
