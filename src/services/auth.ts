@@ -51,7 +51,7 @@ export async function signInWithProvider(provider: Provider): Promise<void> {
       try {
         await GoogleAuth.initialize({
           clientId: WEB_CLIENT_ID,
-          scopes: 'profile,email',
+          scopes: ['profile', 'email'],
           grantOfflineAccess: true,
         });
       } catch (initErr) {
@@ -67,7 +67,7 @@ export async function signInWithProvider(provider: Provider): Promise<void> {
       }
 
       toast.loading('Connecting to Supabase...', { id: 'auth-loading' });
-      const { data, error } = await supabase.auth.signInWithIdToken({
+      const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: googleUser.authentication.idToken,
       });

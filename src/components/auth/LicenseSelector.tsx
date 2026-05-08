@@ -4,7 +4,7 @@
 
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Car, Cog, Zap, CheckCircle, ArrowRight, BadgeCheck, Shield, Globe } from 'lucide-react';
+import { Car, Cog, Zap, CheckCircle, ArrowRight, Shield, Globe } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { cn } from '../../utils/cn';
@@ -20,7 +20,6 @@ export const LicenseSelector: React.FC = () => {
   } = useAppStore();
 
   const t = TRANSLATIONS[language].licenseSelector;
-  const common = TRANSLATIONS[language].common;
 
   const canContinue = useMemo(() => {
     return Boolean(learningPath && transmissionType);
