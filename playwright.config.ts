@@ -22,12 +22,12 @@ export default defineConfig({
   /* Configure projects for major browsers and mobile viewports */
   projects: [
     {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      name: 'Mobile Android (Pixel 7)',
+      use: { ...devices['Pixel 7'] },
     },
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: 'Mobile iOS (iPhone 14)',
+      use: { ...devices['iPhone 14'] },
     },
     {
       name: 'Desktop Chrome',

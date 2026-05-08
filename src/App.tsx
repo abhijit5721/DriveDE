@@ -13,6 +13,7 @@
 
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { Capacitor } from '@capacitor/core';
 import { useAppStore } from './store/useAppStore';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
@@ -21,10 +22,10 @@ import { Header } from './components/layout/Header';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopNav } from './components/layout/DesktopNav';
 import { Dashboard } from './components/dashboard/Dashboard';
-import { Welcome } from './components/auth/Welcome';
-import { Paywall } from './components/finance/Paywall';
-import { AuthModal } from './components/auth/AuthModal';
-import { LicenseSelector } from './components/auth/LicenseSelector';
+const Welcome = lazy(() => import('./components/auth/Welcome').then(m => ({ default: m.Welcome })));
+const LicenseSelector = lazy(() => import('./components/auth/LicenseSelector').then(m => ({ default: m.LicenseSelector })));
+const AuthModal = lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
+import { MobileSplash } from './components/common/MobileSplash';
 
 
 // Lazy loaded routes
@@ -252,23 +253,73 @@ export default function App() {
       triggerHydration();
     }
 
-    // 2. Mobile Check (Capacitor Deep Links)
-    const initDeepLinks = async () => {
+    // 2. Mobile Check (Capacitor Deep Links & Back Button)
+    const initMobileFeatures = async () => {
       try {
         const { App } = await import('@capacitor/app');
+        const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
+        
+        // Let Capgo know the app is healthy (critical for auto-rollbacks)
+        CapacitorUpdater.notifyAppReady();
+        
+        // Deep Links
         App.addListener('appUrlOpen', (data: { url: string }) => {
           console.log('[App] Deep link received:', data.url);
-          // Example: drivede://checkout/success?session_id=...
           if (data.url.includes('checkout/success')) {
             triggerHydration();
           }
         });
+
+        // Hardware Back Button
+        App.addListener('backButton', ({ canGoBack }) => {
+          console.log('[App] Hardware back button pressed');
+          
+          // 1. Priority: Close Modals
+          if (showAuthModal) {
+            setShowAuthModal(false);
+            return;
+          }
+          if (showPaywall) {
+            setShowPaywall(false);
+            return;
+          }
+          if (showPathSelector) {
+            setShowPathSelector(false);
+            return;
+          }
+
+          // 2. Secondary: Detail Views
+          if (selectedLesson) {
+            setSelectedLesson(null);
+            return;
+          }
+          if (selectedLegalPage) {
+            setSelectedLegalPage(null);
+            return;
+          }
+          if (showExamSimulation) {
+            setShowExamSimulation(false);
+            return;
+          }
+
+          // 3. Navigation: Back to Dashboard if on another tab
+          if (activeTab !== 'home') {
+            setActiveTab('home');
+            return;
+          }
+
+          // 4. Default: Let the OS handle it (minimize/exit)
+          if (!canGoBack) {
+            App.exitApp();
+          }
+        });
+
       } catch {
-        console.log('[App] Capacitor App plugin not found, skipping deep link listener.');
+        console.log('[App] Capacitor App plugin not found, skipping mobile-only features.');
       }
     };
-    initDeepLinks();
-  }, []);
+    initMobileFeatures();
+  }, [showAuthModal, showPaywall, showPathSelector, selectedLesson, selectedLegalPage, showExamSimulation, activeTab, setActiveTab]);
 
   useEffect(() => {
     if (darkMode) {
@@ -420,27 +471,33 @@ export default function App() {
     }
 
     if (isAuthLoading && authStatus !== 'guest') {
-      return (
-        <div className="flex h-screen items-center justify-center bg-slate-900">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
-            <p className="text-sm text-slate-400">Loading your profile...</p>
-          </div>
-        </div>
-      );
+      return <MobileSplash />;
     }
 
-    if (!hasVisited) {
-      return <Welcome />;
+    // Native bypass: Mobile users never see the landing page
+    const isNative = Capacitor.isNativePlatform() || (typeof window !== 'undefined' && ((window as any).Capacitor?.isNativePlatform?.() || (window as any).isNativePlatform === true));
+    
+    if (!hasVisited && !isNative) {
+      return (
+        <Suspense fallback={<div className="h-screen bg-slate-900" />}>
+          <Welcome />
+        </Suspense>
+      );
     }
 
     if (!hasCompleteSelection) {
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center">
-          <div className="w-full max-w-4xl">
-            <LicenseSelector />
+        <Suspense fallback={
+          <div className="flex h-screen items-center justify-center bg-slate-950">
+            <div className="h-12 w-12 animate-pulse rounded-2xl bg-blue-600/20" />
           </div>
-        </div>
+        }>
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 flex flex-col items-center justify-center">
+            <div className="w-full max-w-4xl">
+              <LicenseSelector />
+            </div>
+          </div>
+        </Suspense>
       );
     }
 
@@ -449,7 +506,7 @@ export default function App() {
     }
 
     return (
-      <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen overflow-x-hidden bg-slate-50 dark:bg-slate-900 capacitor-app">
         <div className="flex h-full">
           <DesktopNav activeTab={activeTab} onTabChange={handleNavigate} onSignOut={handleSignOut} />
           <div className="flex flex-1 flex-col overflow-y-auto overscroll-contain" style={{ height: '100dvh', WebkitOverflowScrolling: 'touch' }}>
@@ -516,7 +573,7 @@ export default function App() {
       
       {renderAppContent()}
 
-      <CookieConsent />
+      {!Capacitor.isNativePlatform() && <CookieConsent />}
       <AchievementOverlay />
     </>
   );

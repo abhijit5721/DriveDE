@@ -23,6 +23,8 @@ import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
 import { NavigationHUD } from './NavigationHUD';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 import { syncAllData } from '../../services/supabaseSync';
@@ -449,7 +451,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const cumulativeRouteRef = useRef<GPSPoint[]>([]);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const watchRef = useRef<number | null>(null);
+  const watchRef = useRef<number | string | null>(null);
   const limitCheckRef = useRef<NodeJS.Timeout | null>(null);
   const simulationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const simulationStepRef = useRef<number>(0);
@@ -1107,57 +1109,81 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
         const canTrackLive = isPremium || hasTrial;
 
-        if ('geolocation' in navigator && canTrackLive) {
-          watchRef.current = navigator.geolocation.watchPosition(
-            (position) => {
-              const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
-              
-              if (accuracy && accuracy > 20) {
-                console.warn(`[Tracker] Skipping low accuracy point: ${accuracy}m`);
-                return;
-              }
+        if (canTrackLive) {
+          const handlePosition = (position: any) => {
+            if (!position) return;
+            const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
+            
+            // Compliance/Quality: Filter out inaccurate points
+            // On high-end Androids, accuracy < 5 is common. 20 is a safe upper bound.
+            if (accuracy && accuracy > 20) {
+              return;
+            }
 
-              const newPoint = { lat, lng, timestamp: Date.now() };
-              
-              setGpsPoints(prev => {
-                const lastPoint = prev[prev.length - 1];
-                let currentKmh = 0;
+            const newPoint = { lat, lng, timestamp: Date.now() };
+            
+            setGpsPoints(prev => {
+              const lastPoint = prev[prev.length - 1];
+              let currentKmh = 0;
 
-                if (speed !== null) {
-                  currentKmh = Math.round(speed * 3.6);
-                } else if (lastPoint) {
-                  const distKm = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                  const timeHours = (newPoint.timestamp - lastPoint.timestamp) / 3600000;
-                  if (timeHours > 0) {
-                    currentKmh = Math.round(distKm / timeHours);
+              // USE HARDWARE SPEED IF AVAILABLE (Much more accurate for driving)
+              if (speed !== null && speed !== undefined && speed >= 0) {
+                currentKmh = Math.round(speed * 3.6);
+              } else if (lastPoint) {
+                // Fallback to manual calc only if hardware speed is missing
+                const distKm = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
+                const timeHours = (newPoint.timestamp - lastPoint.timestamp) / 3600000;
+                if (timeHours > 0) {
+                  const calculatedSpeed = distKm / timeHours;
+                  // Filter out impossible spikes (e.g. GPS jumps)
+                  if (calculatedSpeed < 250) { 
+                    currentKmh = Math.round(calculatedSpeed);
                   }
                 }
-
-                setCurrentSpeed(currentKmh);
-
-                if (lastPoint) {
-                  const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                  if (dist > 0.005) {
-                    setCurrentDistance(d => d + dist);
-                    logRoutePoint(newPoint);
-                    return [...prev, newPoint];
-                  }
-                  return prev;
-                }
-                logRoutePoint(newPoint);
-                return [newPoint];
-              });
-            },
-            (error) => {
-              console.error('[Tracker] GPS Error:', error);
-              if (error.code === 1) {
-                toast.error(t.tracker.gpsDenied);
-              } else {
-                toast.error(t.tracker.gpsError);
               }
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-          );
+
+              setCurrentSpeed(currentKmh);
+
+              if (lastPoint) {
+                const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
+                // Minimize battery usage/data noise by only logging if moved > 3 meters
+                if (dist > 0.003) {
+                  setCurrentDistance(d => d + dist);
+                  logRoutePoint(newPoint);
+                  return [...prev, newPoint];
+                }
+                return prev;
+              }
+              logRoutePoint(newPoint);
+              return [newPoint];
+            });
+          };
+
+          const handleError = (error: any) => {
+            console.error('[Tracker] Geolocation error:', error);
+            toast.error(t.tracker.gpsError || 'GPS Connection lost');
+          };
+
+          if (Capacitor.isNativePlatform()) {
+            Geolocation.requestPermissions().then(permission => {
+              if (permission.location === 'granted') {
+                Geolocation.watchPosition({
+                  enableHighAccuracy: true,
+                  timeout: 10000
+                }, (pos) => {
+                  handlePosition(pos);
+                }).then(id => {
+                  watchRef.current = id;
+                });
+              }
+            });
+          } else if ('geolocation' in navigator) {
+            watchRef.current = navigator.geolocation.watchPosition(
+              handlePosition,
+              handleError,
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          }
         }
       }
 
@@ -1226,12 +1252,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return () => {
         window.removeEventListener('devicemotion', handleMotion as EventListener);
         if (timerRef.current) clearInterval(timerRef.current);
-        if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+        const currentWatch = watchRef.current;
+        if (currentWatch !== null) {
+          if (Capacitor.isNativePlatform()) {
+            Geolocation.clearWatch({ id: currentWatch as string });
+          } else if (typeof currentWatch === 'number') {
+            navigator.geolocation.clearWatch(currentWatch);
+          }
+          watchRef.current = null;
+        }
         if (limitCheckRef.current) clearInterval(limitCheckRef.current);
       };
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
-      if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+      const currentWatch = watchRef.current;
+      if (currentWatch !== null) {
+        if (Capacitor.isNativePlatform()) {
+          Geolocation.clearWatch({ id: currentWatch as string });
+        } else if (typeof currentWatch === 'number') {
+          navigator.geolocation.clearWatch(currentWatch);
+        }
+        watchRef.current = null;
+      }
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
   }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, t, logRoutePoint, logMistake, currentSpeed]);
@@ -1595,7 +1637,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         Promise.all([
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${startPoint.lat}&lon=${startPoint.lng}&format=json`).then(r => r.json()),
           fetch(`https://nominatim.openstreetmap.org/reverse?lat=${endPoint.lat}&lon=${endPoint.lng}&format=json`).then(r => r.json())
-        ]).then(([startRes, endRes]) => {
+        ]).then(([startRes, endRes]: [any, any]) => {
           const getShortLoc = (data: any) => data.address?.suburb || data.address?.town || data.address?.city || data.address?.village || '';
           const startLoc = getShortLoc(startRes);
           const endLoc = getShortLoc(endRes);

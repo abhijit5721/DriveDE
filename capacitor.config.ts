@@ -21,6 +21,10 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'LIGHT',
       backgroundColor: '#1e40af'
+    },
+    CapacitorUpdater: {
+      autoUpdate: true,
+      statsUrl: 'https://api.capgo.app/'
     }
   }
 };

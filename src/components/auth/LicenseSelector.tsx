@@ -1,10 +1,10 @@
 /**
  * (c) 2026 DriveDE. All rights reserved.
- * This source code is proprietary and protected under international copyright law.
  */
 
 import React, { useMemo } from 'react';
-import { Car, Cog, Zap, CheckCircle, ArrowRight, BadgeCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Car, Cog, Zap, CheckCircle, ArrowRight, BadgeCheck, Shield, Globe } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { cn } from '../../utils/cn';
@@ -20,6 +20,7 @@ export const LicenseSelector: React.FC = () => {
   } = useAppStore();
 
   const t = TRANSLATIONS[language].licenseSelector;
+  const common = TRANSLATIONS[language].common;
 
   const canContinue = useMemo(() => {
     return Boolean(learningPath && transmissionType);
@@ -27,202 +28,193 @@ export const LicenseSelector: React.FC = () => {
 
   const handleContinue = () => {
     if (!learningPath || !transmissionType) return;
-
     if (learningPath === 'umschreibung') {
       setLicenseType(transmissionType === 'manual' ? 'umschreibung-manual' : 'umschreibung-automatic');
       return;
     }
-
     setLicenseType(transmissionType);
   };
 
   return (
-    <div className="py-2">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
-            <Car className="h-6 w-6" />
-          </div>
+    <div className="flex min-h-[80vh] flex-col justify-between px-2 pb-10 pt-4">
+      <div className="space-y-10">
+        {/* Header Section */}
+        <header className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl shadow-blue-500/20"
+          >
+            <Shield className="h-7 w-7" />
+          </motion.div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               {t.pathTitle.split('.')[1]?.trim() || t.pathTitle}
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{t.subtitle}</p>
-          </div>
-        </div>
-
-        {/* Progress indicator */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className={cn(
-            'h-1.5 flex-1 rounded-full transition-colors duration-500',
-            learningPath ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-800'
-          )} />
-          <div className={cn(
-            'h-1.5 flex-1 rounded-full transition-colors duration-500',
-            transmissionType ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-800'
-          )} />
-        </div>
-      </div>
-
-      <div className="grid gap-8">
-        {/* Step 1: Learning Path */}
-        <section>
-          <div className="grid gap-4 md:grid-cols-2">
-            <button
-              onClick={() => {
-                setLearningPath('standard');
-                setTransmissionType(null);
-              }}
-              data-testid="path-standard"
-              className={cn(
-                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
-                learningPath === 'standard'
-                  ? 'border-blue-600 bg-blue-50/50 shadow-xl dark:bg-blue-900/10'
-                  : 'border-slate-200 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
-              )}
-            >
-              {learningPath === 'standard' && (
-                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg">
-                  <CheckCircle className="h-5 w-5" />
-                </div>
-              )}
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 transition-colors group-hover:bg-blue-200 dark:bg-blue-900/30">
-                <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h3 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">{t.standard.title}</h3>
-              <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">{t.standard.description}</p>
-              
-              <div className="space-y-2">
-                {t.standard.features.map((feature: string) => (
-                  <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </button>
-
-            <button
-              onClick={() => {
-                setLearningPath('umschreibung');
-                setTransmissionType(null);
-              }}
-              data-testid="path-umschreibung"
-              className={cn(
-                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
-                learningPath === 'umschreibung'
-                  ? 'border-purple-600 bg-purple-50/50 shadow-xl dark:bg-purple-900/10'
-                  : 'border-slate-200 bg-white hover:border-purple-300 dark:border-slate-800 dark:bg-slate-900'
-              )}
-            >
-              {learningPath === 'umschreibung' && (
-                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-white shadow-lg">
-                  <CheckCircle className="h-5 w-5" />
-                </div>
-              )}
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100 transition-colors group-hover:bg-purple-200 dark:bg-purple-900/30">
-                <BadgeCheck className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h3 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">{t.conversion.title}</h3>
-              <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">{t.conversion.description}</p>
-              
-              <div className="space-y-2">
-                {t.conversion.features.map((feature: string) => (
-                  <div key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-                    <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-purple-500" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </button>
-          </div>
-        </section>
-
-        {/* Step 2: Transmission */}
-        <section className={cn(
-          'transition-all duration-500',
-          !learningPath ? 'pointer-events-none opacity-40 grayscale' : 'opacity-100'
-        )}>
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {t.transmissionTitle.split('.')[1]?.trim() || t.transmissionTitle}
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {learningPath === 'umschreibung' ? t.conversionNote : t.standardNote}
+            <p className="mt-1 text-slate-500 dark:text-slate-400">
+              {t.subtitle}
             </p>
           </div>
+        </header>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <button
-              onClick={() => setTransmissionType('manual')}
-              data-testid="manual-btn"
+        {/* Step 1: Learning Path Cards */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[
+            {
+              id: 'standard',
+              title: t.standard.title,
+              desc: t.standard.description,
+              icon: Car,
+              features: t.standard.features,
+              color: 'blue'
+            },
+            {
+              id: 'umschreibung',
+              title: t.conversion.title,
+              desc: t.conversion.description,
+              icon: Globe,
+              features: t.conversion.features,
+              color: 'purple'
+            }
+          ].map((path, idx) => (
+            <motion.button
+              key={path.id}
+              data-testid={`path-${path.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              onClick={() => {
+                setLearningPath(path.id as any);
+                setTransmissionType(null);
+              }}
               className={cn(
-                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
-                transmissionType === 'manual'
-                  ? 'border-orange-500 bg-orange-50/50 shadow-xl dark:bg-orange-900/10'
-                  : 'border-slate-200 bg-white hover:border-orange-300 dark:border-slate-800 dark:bg-slate-900'
+                'group relative flex flex-col overflow-hidden rounded-[2.5rem] border-2 p-8 text-left transition-all duration-500',
+                learningPath === path.id
+                  ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-900/10'
+                  : 'border-slate-100 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
               )}
             >
-              {transmissionType === 'manual' && (
-                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg">
-                  <CheckCircle className="h-5 w-5" />
+              <div className="flex items-start justify-between">
+                <div className={cn(
+                  'flex h-14 w-14 items-center justify-center rounded-2xl transition-colors',
+                  learningPath === path.id ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'
+                )}>
+                  <path.icon className="h-8 w-8" />
                 </div>
-              )}
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 dark:bg-orange-900/30">
-                <Cog className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                {learningPath === path.id && (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                  </motion.div>
+                )}
               </div>
-              <h3 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t.manual.title}</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t.manual.description}</p>
-            </button>
 
-            <button
-              onClick={() => setTransmissionType('automatic')}
-              data-testid="automatic-btn"
-              className={cn(
-                'group relative rounded-3xl border-2 p-6 text-left transition-all duration-300',
-                transmissionType === 'automatic'
-                  ? 'border-blue-500 bg-blue-50/50 shadow-xl dark:bg-blue-900/10'
-                  : 'border-slate-200 bg-white hover:border-blue-300 dark:border-slate-800 dark:bg-slate-900'
-              )}
-            >
-              {transmissionType === 'automatic' && (
-                <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg">
-                  <CheckCircle className="h-5 w-5" />
-                </div>
-              )}
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-900/30">
-                <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <div className="mt-6">
+                <h3 className="text-xl font-black text-slate-900 dark:text-white">{path.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{path.desc}</p>
               </div>
-              <h3 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t.automatic.title}</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t.automatic.description}</p>
-            </button>
-          </div>
-        </section>
 
-        <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <button
-            onClick={() => useAppStore.getState().setLanguage(language === 'de' ? 'en' : 'de')}
-            className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
-          >
-            <span>{language === 'de' ? '🇬🇧 English' : '🇩🇪 Deutsch'}</span>
-          </button>
-
-          <button
-            onClick={handleContinue}
-            disabled={!canContinue}
-            data-testid="license-continue-btn"
-            className={cn(
-              'flex items-center gap-2 rounded-2xl px-8 py-4 text-lg font-black transition-all active:scale-95',
-              canContinue
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700'
-                : 'cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-800'
-            )}
-          >
-            {t.continue}
-            <ArrowRight className="h-5 w-5" />
-          </button>
+              <AnimatePresence>
+                {learningPath === path.id && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="mt-6 space-y-2 overflow-hidden"
+                  >
+                    {path.features.slice(0, 2).map((f: string) => (
+                      <div key={f} className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        {f}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          ))}
         </div>
+
+        {/* Step 2: Transmission Type Selection */}
+        <AnimatePresence>
+          {learningPath && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div>
+                <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                  {t.transmissionTitle.split('.')[1]?.trim() || t.transmissionTitle}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  {learningPath === 'umschreibung' ? t.conversionNote : t.standardNote}
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  { id: 'manual', title: t.manual.title, icon: Cog, color: 'orange' },
+                  { id: 'automatic', title: t.automatic.title, icon: Zap, color: 'blue' }
+                ].map((type) => (
+                  <button
+                    key={type.id}
+                    data-testid={`${type.id}-btn`}
+                    onClick={() => setTransmissionType(type.id as any)}
+                    className={cn(
+                      'flex items-center gap-4 rounded-[1.75rem] border-2 p-5 transition-all duration-300',
+                      transmissionType === type.id
+                        ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-900/10'
+                        : 'border-slate-100 bg-white hover:border-blue-200 dark:border-slate-800 dark:bg-slate-900'
+                    )}
+                  >
+                    <div className={cn(
+                      'flex h-12 w-12 items-center justify-center rounded-xl',
+                      transmissionType === type.id ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'
+                    )}>
+                      <type.icon className="h-6 w-6" />
+                    </div>
+                    <span className={cn(
+                      'font-bold',
+                      transmissionType === type.id ? 'text-slate-900 dark:text-white' : 'text-slate-500'
+                    )}>
+                      {type.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
       </div>
+
+      {/* Footer Navigation */}
+      <footer className="mt-12 flex items-center justify-between gap-6">
+        <button
+          onClick={() => useAppStore.getState().setLanguage(language === 'de' ? 'en' : 'de')}
+          className="rounded-2xl bg-slate-100 px-6 py-4 text-sm font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-200 active:scale-95 dark:bg-slate-800 dark:text-slate-400"
+        >
+          {language === 'de' ? 'EN' : 'DE'}
+        </button>
+
+        <button
+          onClick={handleContinue}
+          data-testid="license-continue-btn"
+          disabled={!canContinue}
+          className={cn(
+            'flex flex-1 items-center justify-center gap-3 rounded-[1.75rem] py-5 text-lg font-black transition-all active:scale-95',
+            canContinue
+              ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02]'
+              : 'cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-800'
+          )}
+        >
+          {t.continue}
+          <ArrowRight className="h-6 w-6" />
+        </button>
+      </footer>
     </div>
   );
 };
