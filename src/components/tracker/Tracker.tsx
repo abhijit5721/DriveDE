@@ -464,6 +464,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [lastSelectedDestination, setLastSelectedDestination] = useState('');
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const [showSafetyWarning, setShowSafetyWarning] = useState(false);
   const [isDeviceMounted, setIsDeviceMounted] = useState(false);
@@ -696,7 +697,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (targetDestination.length < 3) {
+      if (targetDestination.length < 3 || targetDestination === lastSelectedDestination) {
         setSuggestions([]);
         setShowSuggestions(false);
         return;
@@ -722,7 +723,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     const timer = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(timer);
-  }, [targetDestination, language, gpsPoints]);
+  }, [targetDestination, language, gpsPoints, lastSelectedDestination]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1953,6 +1954,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               const label = `${name}${city ? ', ' + city : ''}${country ? ', ' + country : ''}`;
                               
                               setTargetDestination(label);
+                              setLastSelectedDestination(label);
                               setDestinationCoords({
                                 lat: feature.geometry.coordinates[1],
                                 lng: feature.geometry.coordinates[0]
