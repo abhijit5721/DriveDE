@@ -80,6 +80,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
 
     try {
       await signInWithProvider('google');
+      // On native, the redirect starts an external process.
+      // Reset loading after 2s so the UI isn't stuck if they come back.
+      setTimeout(() => setLoading(false), 2000);
     } catch (err) {
       const message = err instanceof Error ? err.message : copy.genericError;
       setError(message || copy.genericError);

@@ -25,6 +25,11 @@ const config: CapacitorConfig = {
     CapacitorUpdater: {
       autoUpdate: true,
       statsUrl: 'https://api.capgo.app/'
+    },
+    GoogleAuth: {
+      scopes: ['profile', 'email'],
+      serverClientId: '712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com',
+      forceCodeForRefreshToken: true
     }
   }
 };

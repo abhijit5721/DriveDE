@@ -19,7 +19,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [selectedTier, setSelectedTier] = useState<Tier>('90-days');
   const [isLoading, setIsLoading] = useState(false);
 
-  const t = TRANSLATIONS[language].instructor.paywall;
+  const t = TRANSLATIONS[language]?.instructor?.paywall || TRANSLATIONS['de'].instructor.paywall;
 
   const tierIcons = {
     '30-days': Clock,

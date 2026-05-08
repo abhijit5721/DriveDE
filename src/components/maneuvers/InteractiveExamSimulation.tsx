@@ -8,11 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, AlertTriangle, CheckCircle2, Volume2, VolumeX, ArrowRight, Car } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
 
 export default function InteractiveExamSimulation({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
-  const t = TRANSLATIONS[language];
-  const xt = t.exam;
-  const scenarios = xt.scenarios;
+  const t = TRANSLATIONS[language] || TRANSLATIONS['de'];
+  const xt = t.exam || TRANSLATIONS['de'].exam;
+  const scenarios = xt?.scenarios || [];
+  
+  console.log('[InteractiveExamSimulation] Component mounted. Scenarios count:', scenarios.length);
   
   const [gameState, setGameState] = useState<'intro' | 'active' | 'finished'>('intro');
   const [scenarioIndex, setScenarioIndex] = useState(0);
@@ -37,16 +40,32 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
     };
   }, [gameState, timeLeft]);
 
-  const speak = (text: string) => {
-    if (isMuted) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language === 'de' ? 'de-DE' : 'en-US';
-    window.speechSynthesis.speak(utterance);
+  // Native TTS support
+  const speak = async (text: string) => {
+    if (isMuted || !text) return;
+    
+    try {
+      console.log('[InteractiveExamSimulation] Speaking natively:', text);
+      await TextToSpeech.stop();
+      await TextToSpeech.speak({
+        text,
+        lang: language === 'de' ? 'de-DE' : 'en-US',
+        rate: 0.95,
+        pitch: 1.0,
+        volume: 1.0,
+        category: 'ambient',
+      });
+    } catch (err) {
+      console.error('[InteractiveExamSimulation] Native speak failed:', err);
+    }
   };
 
   const handleStart = () => {
+    console.log('[InteractiveExamSimulation] Starting simulation');
     setGameState('active');
-    speak(currentScenario.situation);
+    if (currentScenario) {
+      speak(currentScenario.situation);
+    }
   };
 
   const handleOptionSelect = (option: any) => {
@@ -169,9 +188,9 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
               </div>
               <p className="text-xl font-bold text-white leading-tight">{feedback}</p>
             </motion.div>
-          ) : (
+          ) : currentScenario ? (
             <motion.div 
-              key={currentScenario.id}
+              key={currentScenario.id || scenarioIndex}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
@@ -212,7 +231,7 @@ export default function InteractiveExamSimulation({ onComplete, language }: { on
                 ))}
               </div>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 

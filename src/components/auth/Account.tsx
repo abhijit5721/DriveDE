@@ -61,6 +61,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
   const drivingMinutes = userProgress.totalDrivingMinutes % 60;
 
   const handleGoogleSignIn = async () => {
+    console.log('[Account] handleGoogleSignIn triggered');
     setAuthMessage(null);
     setAuthError(null);
 

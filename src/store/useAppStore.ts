@@ -38,9 +38,12 @@ import {
 
 /**
  * Helper: returns true when running on localhost (for dev testing).
+ * Excludes native platforms to avoid false positives on Android/iOS.
  */
 const isLocalhost = () =>
-  typeof window !== 'undefined' && window.location.hostname === 'localhost';
+  typeof window !== 'undefined' && 
+  window.location.hostname === 'localhost' && 
+  !Capacitor.isNativePlatform();
 
 /**
  * Default initial state for a new user progress tracker.
@@ -145,7 +148,14 @@ export const useAppStore = create<AppState>()(
       licenseType: null,
       learningPath: null,
       transmissionType: null,
-      isPremium: isLocalhost() && !Capacitor.isNativePlatform(),
+      isPremium: (() => {
+        const isNative = Capacitor.isNativePlatform();
+        const isLocal = isLocalhost();
+        console.log(`[Store Init] Native: ${isNative}, Localhost: ${isLocal}`);
+        // NEVER auto-grant Pro on actual mobile hardware
+        if (isNative) return false;
+        return isLocal;
+      })(),
       authEmail: null,
       authDisplayName: null,
       authUserId: null,
@@ -248,11 +258,9 @@ export const useAppStore = create<AppState>()(
           authUserId: userId,
           // If we just signed in, we have definitely visited the app
           hasVisited: status === 'signed_in' ? true : state.hasVisited,
-          isPremium: (isLocalhost() && !Capacitor.isNativePlatform())
-            ? true
-            : status === 'guest'
-              ? false
-              : state.isPremium,
+          isPremium: Capacitor.isNativePlatform()
+            ? (status === 'signed_in' ? state.isPremium : false)
+            : (isLocalhost() ? true : state.isPremium),
         })),
 
       unlockAchievement: (id) =>
@@ -776,7 +784,6 @@ export const useAppStore = create<AppState>()(
       name: 'drivede-storage',
       storage: createJSONStorage(() => idbStorage),
       partialize: (state) => {
-        // Everyone (including guests) gets full persistence across sessions locally
         return {
           language: state.language,
           darkMode: state.darkMode,
@@ -799,8 +806,6 @@ export const useAppStore = create<AppState>()(
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           console.error('[Store] Hydration failed (possible corruption):', error);
-        } else {
-          console.log('[Store] Hydration successful.');
         }
         state?.setHydrated(true);
       },

@@ -12,10 +12,11 @@
  */
 
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { useAppStore } from './store/useAppStore';
+import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
@@ -34,13 +35,14 @@ const Curriculum = lazy(() => import('./components/curriculum/Curriculum').then(
 const Maneuvers = lazy(() => import('./components/maneuvers/Maneuvers').then(m => ({ default: m.Maneuvers })));
 const Tracker = lazy(() => import('./components/tracker/Tracker').then(m => ({ default: m.Tracker })));
 const Achievements = lazy(() => import('./components/curriculum/Achievements').then(m => ({ default: m.Achievements })));
-const ExamSimulation = lazy(() => import('./components/maneuvers/ExamSimulation').then(m => ({ default: m.ExamSimulation })));
+const ExamSimulation = lazy(() => import('./components/maneuvers/ExamSimulation'));
 const LessonDetail = lazy(() => import('./components/curriculum/LessonDetail').then(m => ({ default: m.LessonDetail })));
 const InstructorReview = lazy(() => import('./components/maneuvers/InstructorReview').then(m => ({ default: m.InstructorReview })));
 const LegalHub = lazy(() => import('./components/legal/LegalHub').then(m => ({ default: m.LegalHub })));
 const LegalPage = lazy(() => import('./components/legal/LegalPage').then(m => ({ default: m.LegalPage })));
 const Account = lazy(() => import('./components/auth/Account').then(m => ({ default: m.Account })));
 const BudgetEstimator = lazy(() => import('./components/finance/BudgetEstimator').then(m => ({ default: m.BudgetEstimator })));
+const Paywall = lazy(() => import('./components/finance/Paywall').then(m => ({ default: m.Paywall })));
 import { Skeleton } from './components/common/Skeleton';
 import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
@@ -103,16 +105,79 @@ export default function App() {
 
     // Deep Link Listener for Native Platforms (OAuth redirects)
     let urlListener: any;
+    console.log('[App] Setting up DeepLink listener. Native:', Capacitor.isNativePlatform());
+    
     if (Capacitor.isNativePlatform()) {
-      urlListener = CapacitorApp.addListener('appUrlOpen', (data) => {
-        console.log('[DeepLink] App opened with URL:', data.url);
-        // Supabase handles the URL fragment automatically if passed to the client
-        // We just need to ensure the app is in the right state
-        const url = new URL(data.url);
-        if (url.hash || url.search) {
-          setIsAuthLoading(true);
+      // Handle app already open
+      urlListener = CapacitorApp.addListener('appUrlOpen', async (data) => {
+        handleDeepLink(data.url);
+      });
+
+      // Handle app being launched from scratch via URL
+      CapacitorApp.getLaunchUrl().then((launchUrl) => {
+        if (launchUrl?.url) {
+          console.log('[DeepLink] Initial launch URL detected:', launchUrl.url);
+          handleDeepLink(launchUrl.url);
         }
       });
+    }
+
+    async function handleDeepLink(urlStr: string) {
+      console.log('[DeepLink] Received URL:', urlStr);
+      
+      if (urlStr.includes('access_token=') || urlStr.includes('error=')) {
+        console.log('[DeepLink] OAuth relevant URL detected. Starting session recovery...');
+        setIsAuthLoading(true);
+        
+        try {
+          // Normalize the URL for parsing (replace fragment with query if needed)
+          const normalizedUrlStr = urlStr.includes('#') ? urlStr.replace('#', '?') : urlStr;
+          const url = new URL(normalizedUrlStr);
+          
+          // Try to extract from both search params and manually from hash fragment
+          const hashPart = urlStr.split('#')[1] || '';
+          const hashParams = new URLSearchParams(hashPart);
+          
+          const accessToken = hashParams.get('access_token') || url.searchParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token') || url.searchParams.get('refresh_token');
+          const error = hashParams.get('error') || url.searchParams.get('error');
+          const errorDescription = hashParams.get('error_description') || url.searchParams.get('error_description');
+
+          console.log('[DeepLink] Extracted params:', { 
+            hasAccessToken: !!accessToken, 
+            hasRefreshToken: !!refreshToken, 
+            error: error || 'none' 
+          });
+
+          if (error) {
+            console.error('[DeepLink] OAuth error from provider:', error, errorDescription);
+            toast.error(`Login error: ${errorDescription || error}`);
+          } else if (accessToken && refreshToken && supabase) {
+            console.log('[DeepLink] Tokens found. Setting Supabase session...');
+            const { data, error: sessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            
+            if (sessionError) {
+              console.error('[DeepLink] Supabase setSession failed:', sessionError.message);
+              toast.error('Failed to restore session');
+            } else {
+              console.log('[DeepLink] Session restored successfully for user:', data.user?.email);
+              toast.success('Successfully logged in!');
+              setShowAuthModal(false);
+            }
+          } else {
+            console.warn('[DeepLink] No usable tokens found in URL fragment or query');
+          }
+        } catch (err) {
+          console.error('[DeepLink] URL processing failed unexpectedly:', err);
+        } finally {
+          setIsAuthLoading(false);
+        }
+      } else {
+        console.log('[DeepLink] Non-auth URL ignored.');
+      }
     }
 
     window.addEventListener('online', handleOnline);
@@ -137,6 +202,7 @@ export default function App() {
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
           setAuthState(user.email || null, 'signed_in', displayName, user.id);
+          setShowAuthModal(false); // Close modal on success
           
           // Fetch remote data to hydrate the UI quickly
           const remoteData = await hydrateFromSupabase().catch(err => {
@@ -422,15 +488,21 @@ export default function App() {
   const renderContent = () => {
     if (selectedLesson) {
       return (
-        <LessonDetail 
-          lesson={selectedLesson} 
-          onBack={handleLessonBack} 
-        />
+        <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+          <LessonDetail 
+            lesson={selectedLesson} 
+            onBack={handleLessonBack} 
+          />
+        </Suspense>
       );
     }
 
     if (activeTab === 'legal' && selectedLegalPage) {
-      return <LegalPage page={selectedLegalPage} onBack={handleBackToLegalHub} />;
+      return (
+        <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+          <LegalPage page={selectedLegalPage} onBack={handleBackToLegalHub} />
+        </Suspense>
+      );
     }
 
     switch (activeTab) {
@@ -446,35 +518,63 @@ export default function App() {
           />
         );
       case 'curriculum':
-        return <Curriculum onLessonSelect={handleLessonSelect} />;
+        return (
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <Curriculum onLessonSelect={handleLessonSelect} />
+          </Suspense>
+        );
       case 'maneuvers':
         return (
-          <Maneuvers 
-            onLessonSelect={handleLessonSelect}
-            onOpenPaywall={() => setShowPaywall(true)}
-          />
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <Maneuvers 
+              onLessonSelect={handleLessonSelect}
+              onOpenPaywall={() => setShowPaywall(true)}
+            />
+          </Suspense>
         );
       case 'tracker':
       case 'history': // 'history' is a sub-tab inside Tracker — render Tracker, which handles it internally
-        return <Tracker onOpenPaywall={() => setShowPaywall(true)} />;
+        return (
+          <Suspense fallback={<div className="h-full w-full flex items-center justify-center p-8"><Skeleton className="h-full w-full rounded-2xl" /></div>}>
+            <Tracker onOpenPaywall={() => setShowPaywall(true)} />
+          </Suspense>
+        );
       case 'achievements':
-        return <Achievements />;
+        return (
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <Achievements />
+          </Suspense>
+        );
       case 'finance':
-        return <BudgetEstimator onOpenPaywall={() => setShowPaywall(true)} />;
+        return (
+          <Suspense fallback={<div className="h-full w-full flex items-center justify-center p-8"><Skeleton className="h-full w-full rounded-2xl" /></div>}>
+            <BudgetEstimator onOpenPaywall={() => setShowPaywall(true)} />
+          </Suspense>
+        );
       case 'legal':
-        return <LegalHub onOpenPage={handleOpenLegalPage} />;
+        return (
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <LegalHub onOpenPage={handleOpenLegalPage} />
+          </Suspense>
+        );
       case 'account':
         return (
-          <Account 
-            onOpenAuth={handleOpenAuth} 
-            onSignOut={handleSignOut}
-            onDeleteAccount={handleDeleteAccount}
-            onChangePath={handleChangePath}
-            onOpenLegal={() => handleOpenLegalPage('privacy')}
-          />
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <Account 
+              onOpenAuth={handleOpenAuth} 
+              onSignOut={handleSignOut}
+              onDeleteAccount={handleDeleteAccount}
+              onChangePath={handleChangePath}
+              onOpenLegal={() => handleOpenLegalPage('privacy')}
+            />
+          </Suspense>
         );
       case 'review':
-        return <InstructorReview onBack={() => setActiveTab('maneuvers')} />;
+        return (
+          <Suspense fallback={<div className="p-8"><Skeleton className="h-64 w-full rounded-2xl" /></div>}>
+            <InstructorReview onBack={() => setActiveTab('maneuvers')} />
+          </Suspense>
+        );
       default:
         return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} />;
     }
@@ -518,7 +618,11 @@ export default function App() {
     }
 
     if (showExamSimulation) {
-      return <ExamSimulation onBack={() => setShowExamSimulation(false)} />;
+      return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Loading...</div>}>
+          <ExamSimulation onBack={() => setShowExamSimulation(false)} />
+        </Suspense>
+      );
     }
 
     return (
@@ -556,11 +660,17 @@ export default function App() {
           <BottomNav activeTab={activeTab} onTabChange={handleNavigate} />
         </div>
 
-        {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+        {showAuthModal && (
+          <Suspense fallback={null}>
+            <AuthModal onClose={() => setShowAuthModal(false)} />
+          </Suspense>
+        )}
         {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
 
         {showPaywall && !isPremium && (
-          <Paywall onClose={() => setShowPaywall(false)} />
+          <Suspense fallback={null}>
+            <Paywall onClose={() => setShowPaywall(false)} />
+          </Suspense>
         )}
 
         <PrivacyConsentModal 

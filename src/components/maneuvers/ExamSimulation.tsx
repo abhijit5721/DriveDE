@@ -3,45 +3,58 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Square, Volume2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { examCommands } from '../../data/examCommands';
+import { TextToSpeech } from '@capacitor-community/text-to-speech';
 
 interface ExamSimulationProps {
   onBack: () => void;
 }
 
-export function ExamSimulation({ onBack }: ExamSimulationProps) {
+console.log('[ExamSimulation] File loaded');
+
+export default function ExamSimulation({ onBack }: ExamSimulationProps) {
   const [isSimulating, setIsSimulating] = useState(false);
   const [currentCommandIndex, setCurrentCommandIndex] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const currentCommand = examCommands[currentCommandIndex];
 
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(currentCommand);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.9;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utteranceRef.current = utterance;
-
+    console.log('[ExamSimulation] Component mounted. currentCommand:', currentCommand);
     return () => {
-      synth.cancel();
+      TextToSpeech.stop();
     };
   }, [currentCommand]);
 
-  const speakCommand = () => {
-    if (utteranceRef.current) {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utteranceRef.current);
+  const speakCommand = async () => {
+    if (!currentCommand) return;
+    
+    try {
+      console.log('[ExamSimulation] Speaking command natively:', currentCommand);
+      setIsSpeaking(true);
+      
+      await TextToSpeech.stop();
+      await TextToSpeech.speak({
+        text: currentCommand,
+        lang: 'de-DE',
+        rate: 0.9,
+        pitch: 1.0,
+        volume: 1.0,
+        category: 'ambient',
+      });
+      
+      setIsSpeaking(false);
+    } catch (err) {
+      console.error('[ExamSimulation] Native Speak failed:', err);
+      setIsSpeaking(false);
     }
   };
 
   const startSimulation = () => {
+    console.log('[ExamSimulation] Starting simulation');
     setCurrentCommandIndex(0);
     setIsSimulating(true);
     // Speak the first command automatically
@@ -50,7 +63,9 @@ export function ExamSimulation({ onBack }: ExamSimulationProps) {
 
   const stopSimulation = () => {
     setIsSimulating(false);
-    window.speechSynthesis.cancel();
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
   };
 
   const nextCommand = () => {
