@@ -4,14 +4,17 @@
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
   Check,
   AlertTriangle,
+  AlertCircle,
   Info,
   CheckCircle,
+  BookOpen,
   Eye,
   RotateCcw,
   RotateCw,
@@ -84,29 +87,27 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
   const animationType = getAnimationType(lesson.id);
 
-  const getStepIcon = (iconName: string) => {
-    const iconClass = 'h-8 w-8';
+  const getStepIcon = (iconName: string, className = 'h-8 w-8') => {
     switch (iconName) {
-      case 'Search': return <Search className={iconClass} />;
-      case 'ArrowRight': return <ArrowRight className={iconClass} />;
-      case 'ArrowLeft': return <ArrowLeft className={iconClass} />;
-      case 'ArrowUp': return <ArrowUp className={iconClass} />;
-      case 'Eye': return <Eye className={iconClass} />;
-      case 'RotateCcw': return <RotateCcw className={iconClass} />;
-      case 'RotateCw': return <RotateCw className={iconClass} />;
-      case 'AlignCenter': return <AlignCenter className={iconClass} />;
-      case 'CheckCircle': return <CheckCircle className={iconClass} />;
-      case 'Target': return <Target className={iconClass} />;
-      case 'CornerDownRight': return <CornerDownRight className={iconClass} />;
-      case 'AlertTriangle': return <AlertTriangle className={iconClass} />;
-      case 'Circle': return <Circle className={iconClass} />;
-      case 'Grip': return <Lock className={iconClass} />;
-      case 'Activity': return <Activity className={iconClass} />;
-      case 'Lock': return <Lock className={iconClass} />;
-      case 'Square': return <Square className={iconClass} />;
-      case 'Gauge': return <Gauge className={iconClass} />;
-      case 'Info': return <Info className={iconClass} />;
-      default: return <Circle className={iconClass} />;
+      case 'Search': return <Search className={className} />;
+      case 'ArrowRight': return <ArrowRight className={className} />;
+      case 'ArrowLeft': return <ArrowLeft className={className} />;
+      case 'ArrowUp': return <ArrowUp className={className} />;
+      case 'Eye': return <Eye className={className} />;
+      case 'RotateCcw': return <RotateCcw className={className} />;
+      case 'RotateCw': return <RotateCw className={className} />;
+      case 'AlignCenter': return <AlignCenter className={className} />;
+      case 'CheckCircle': return <CheckCircle className={className} />;
+      case 'Target': return <Target className={className} />;
+      case 'CornerDownRight': return <CornerDownRight className={className} />;
+      case 'AlertTriangle': return <AlertTriangle className={className} />;
+      case 'Circle': return <Circle className={className} />;
+      case 'Grip': return <Lock className={className} />;
+      case 'Activity': return <Activity className={className} />;
+      case 'Lock': return <Lock className={className} />;
+      case 'Square': return <Square className={className} />;
+      case 'Gauge': return <Gauge className={className} />;
+      default: return <Circle className={className} />;
     }
   };
 
@@ -813,70 +814,72 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
       {/* Guided Scenarios */}
       {lesson.scenarios && lesson.scenarios.length > 0 && (
-        <div className="mt-4 space-y-4">
+        <div className="mt-8 space-y-6">
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
+            <h4 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
+              <Target className="h-5 w-5 text-indigo-500" />
               {isDE
                 ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
                 : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
             </h4>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {isDE
                 ? (lesson.scenarioSectionSubtitleDe || t.curriculum.scenarioSub)
                 : (lesson.scenarioSectionSubtitleEn || t.curriculum.scenarioSub)}
             </p>
-            {!lesson.scenarioSectionTitleDe && !lesson.scenarioSectionTitleEn && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[11px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                  {t.curriculum.trafficLights}
-                </span>
-                <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-[11px] font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                  {t.curriculum.laneShape}
-                </span>
-                <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                  {t.curriculum.specialRules}
-                </span>
-              </div>
-            )}
           </div>
 
           {lesson.scenarios.map((scenario) => (
-            <div key={scenario.id} className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-800">
-              <div className="mb-3 flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-                  <Target className="h-5 w-5" />
-                </div>
-                <div>
-                  <h5 className="font-semibold text-slate-900 dark:text-white">
-                    {isDE ? scenario.titleDe : scenario.titleEn}
-                  </h5>
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    {isDE ? scenario.situationDe : scenario.situationEn}
-                  </p>
+            <motion.div 
+              key={scenario.id} 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/50"
+            >
+              <div className="border-b border-slate-100 bg-slate-50/50 p-5 dark:border-slate-700 dark:bg-slate-800/80">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                    <BookOpen className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h5 className="text-lg font-bold leading-tight text-slate-900 dark:text-white">
+                      {isDE ? scenario.titleDe : scenario.titleEn}
+                    </h5>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                      {isDE ? scenario.situationDe : scenario.situationEn}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="relative space-y-4 p-5">
+                {/* Vertical connection line */}
+                <div className="absolute bottom-8 left-[2.35rem] top-8 w-0.5 bg-slate-100 dark:bg-slate-700" />
+                
                 {scenario.steps.map((step, idx) => (
-                  <div key={`${scenario.id}-${step.id}`} className="flex gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-900/40">
+                  <div key={`${scenario.id}-${step.id}`} className="group relative flex gap-4">
                     <div className={cn(
-                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white',
-                      step.critical ? 'bg-red-500' : 'bg-indigo-500'
+                      'relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm transition-all group-hover:scale-110',
+                      step.critical 
+                        ? 'bg-red-500 text-white shadow-red-500/20' 
+                        : 'bg-indigo-600 text-white shadow-indigo-500/20'
                     )}>
-                      {idx + 1}
+                      {step.icon ? getStepIcon(step.icon, 'h-5 w-5') : (idx + 1)}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-slate-900 dark:text-white">
+                    
+                    <div className="flex-1 pb-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-bold text-slate-900 dark:text-white">
                           {language === 'de' ? step.titleDe : step.titleEn}
                         </p>
                         {step.critical && (
-                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                            <AlertTriangle className="h-3 w-3" />
                             {t.curriculum.scenarioStep}
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                      <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                         {isDE ? step.descriptionDe : step.descriptionEn}
                       </p>
                     </div>
@@ -885,28 +888,31 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
 
               {scenario.mistakes && scenario.mistakes.length > 0 && (
-                <div className="mt-4 rounded-xl bg-amber-50 p-4 dark:bg-amber-900/20">
-                  <div className="mb-2 flex items-center gap-2 text-amber-800 dark:text-amber-300">
-                    <AlertTriangle className="h-4 w-4" />
-                    <p className="text-sm font-semibold">
+                <div className="m-5 mt-0 overflow-hidden rounded-2xl border border-amber-100 bg-amber-50/50 dark:border-amber-900/30 dark:bg-amber-900/10">
+                  <div className="flex items-center gap-2 bg-amber-100/50 px-4 py-2 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                    <AlertCircle className="h-4 w-4" />
+                    <p className="text-xs font-bold uppercase tracking-wider">
                       {t.curriculum.commonMistakes}
                     </p>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3 p-4">
                     {scenario.mistakes.map((mistake) => (
-                      <div key={mistake.id}>
-                        <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
-                          {isDE ? mistake.titleDe : mistake.titleEn}
-                        </p>
-                        <p className="text-sm text-amber-800 dark:text-amber-300">
-                          {isDE ? mistake.contentDe : mistake.contentEn}
-                        </p>
+                      <div key={mistake.id} className="flex gap-3">
+                        <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                        <div>
+                          <p className="text-sm font-bold leading-tight text-amber-900 dark:text-amber-200">
+                            {isDE ? mistake.titleDe : mistake.titleEn}
+                          </p>
+                          <p className="mt-1 text-sm leading-relaxed text-amber-800/80 dark:text-amber-300/70">
+                            {isDE ? mistake.contentDe : mistake.contentEn}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
