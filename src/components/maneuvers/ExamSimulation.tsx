@@ -29,16 +29,17 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
     };
   }, [currentCommand]);
 
-  const speakCommand = async () => {
-    if (!currentCommand) return;
+  const speakCommand = async (text?: string) => {
+    const textToSpeak = text || currentCommand;
+    if (!textToSpeak) return;
     
     try {
-      console.log('[ExamSimulation] Speaking command natively:', currentCommand);
+      console.log('[ExamSimulation] Speaking command:', textToSpeak);
       setIsSpeaking(true);
       
       await TextToSpeech.stop();
       await TextToSpeech.speak({
-        text: currentCommand,
+        text: textToSpeak,
         lang: 'de-DE',
         rate: 0.9,
         pitch: 1.0,
@@ -58,20 +59,19 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
     setCurrentCommandIndex(0);
     setIsSimulating(true);
     // Speak the first command automatically
-    setTimeout(speakCommand, 500);
+    setTimeout(() => speakCommand(examCommands[0]), 500);
   };
 
   const stopSimulation = () => {
     setIsSimulating(false);
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    TextToSpeech.stop();
   };
 
   const nextCommand = () => {
     const nextIndex = (currentCommandIndex + 1) % examCommands.length;
     setCurrentCommandIndex(nextIndex);
-    setTimeout(speakCommand, 500);
+    // Pass the next command explicitly to avoid stale closure issues
+    setTimeout(() => speakCommand(examCommands[nextIndex]), 500);
   };
 
   return (
@@ -94,7 +94,7 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
           {currentCommand}
         </motion.div>
         
-        <button onClick={speakCommand} disabled={isSpeaking} className="mt-8 rounded-full bg-white/10 p-4 disabled:opacity-50">
+        <button onClick={() => speakCommand()} disabled={isSpeaking} className="mt-8 rounded-full bg-white/10 p-4 disabled:opacity-50">
           <Volume2 className="h-8 w-8" />
         </button>
       </main>
