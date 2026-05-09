@@ -86,16 +86,23 @@ vi.mock('react-leaflet', () => ({
 // Mock framer-motion
 vi.mock('framer-motion', async () => {
   const actual = await vi.importActual('framer-motion');
+  const mockComponent = ({ children, whileInView, viewport, transition, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  
   return {
     ...actual as any,
     motion: {
-      div: ({ children, whileInView, viewport, transition, ...props }: any) => <div {...props}>{children}</div>,
-      span: ({ children, whileInView, viewport, transition, ...props }: any) => <span {...props}>{children}</span>,
-      button: ({ children, whileInView, viewport, transition, ...props }: any) => <button {...props}>{children}</button>,
-      aside: ({ children, whileInView, viewport, transition, ...props }: any) => <aside {...props}>{children}</aside>,
-      h1: ({ children, whileInView, viewport, transition, ...props }: any) => <h1 {...props}>{children}</h1>,
-      h2: ({ children, whileInView, viewport, transition, ...props }: any) => <h2 {...props}>{children}</h2>,
-      p: ({ children, whileInView, viewport, transition, ...props }: any) => <p {...props}>{children}</p>,
+      div: mockComponent,
+      span: mockComponent,
+      button: mockComponent,
+      aside: mockComponent,
+      h1: mockComponent,
+      h2: mockComponent,
+      p: mockComponent,
+      circle: ({ children, ...props }: any) => <circle {...props}>{children}</circle>,
+      path: ({ children, ...props }: any) => <path {...props}>{children}</path>,
+      svg: ({ children, ...props }: any) => <svg {...props}>{children}</svg>,
     },
     AnimatePresence: ({ children }: any) => <>{children}</>,
   };

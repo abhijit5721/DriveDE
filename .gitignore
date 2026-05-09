@@ -35,10 +35,8 @@ test-results/
 .env.test.local
 .env.production.local
 
-# Capacitor
+# Capacitor (keeping config but ignoring builds)
 /www/
-/android/
-/ios/
 /build/
 /dist/
 /node_modules/
