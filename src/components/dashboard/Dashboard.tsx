@@ -13,6 +13,7 @@ import type { TabType } from '../../types';
 import { ExamReadinessGauge } from './ExamReadinessGauge';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
+import packageJson from '../../../package.json';
 
 interface DashboardProps {
   onNavigate: (tab: TabType) => void;
@@ -535,7 +536,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </button>
         <div className="text-center">
           <p className="text-[10px] font-black tracking-[0.3em] text-slate-300 dark:text-slate-600 uppercase">
-            DriveDE v1.2.0 • {t.dashboard.precisionPrep}
+            DriveDE v{packageJson.version} • {t.dashboard.precisionPrep}
           </p>
         </div>
       </div>
