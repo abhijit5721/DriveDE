@@ -131,21 +131,66 @@ function MapFollower({ point, isStarting }: { point: [number, number], isStartin
   return null;
 }
 
-/* ── Speed-limit sign (German Straßenschild style) ──────────────── */
-function SpeedSign({ limit, speeding }: { limit: number; speeding: boolean }) {
+/* ── Speedometer Gauge ────────────────────────────────────────── */
+function SpeedometerGauge({ speed, limit, isSpeeding }: { speed: number; limit: number | null; isSpeeding: boolean }) {
+  const percentage = limit ? Math.min((speed / (limit * 1.2)) * 100, 100) : (speed / 120) * 100;
+  const strokeColor = isSpeeding ? '#ef4444' : (limit && speed > limit - 10) ? '#f59e0b' : '#10b981';
+  
   return (
-    <motion.div
-      initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.5, opacity: 0 }}
-      className={cn(
-        'flex h-14 w-14 select-none flex-col items-center justify-center rounded-full border-[5px] bg-white shadow-2xl',
-        speeding ? 'border-red-600 animate-pulse' : 'border-red-600'
+    <div className="relative flex items-center justify-center h-32 w-32">
+      <svg className="h-full w-full -rotate-90 transform">
+        <circle
+          cx="64" cy="64" r="58"
+          stroke="currentColor" strokeWidth="8" fill="transparent"
+          className="text-slate-200 dark:text-slate-800"
+        />
+        <motion.circle
+          cx="64" cy="64" r="58"
+          stroke={strokeColor} strokeWidth="8" fill="transparent"
+          strokeDasharray="364.4"
+          initial={{ strokeDashoffset: 364.4 }}
+          animate={{ strokeDashoffset: 364.4 - (364.4 * percentage) / 100 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 60 }}
+          strokeLinecap="round"
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center">
+        <span className={cn('text-4xl font-black tracking-tighter', isSpeeding ? 'text-red-500' : 'text-slate-900')}>
+          {speed}
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">km/h</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Speed-limit sign (German Straßenschild style) ──────────────── */
+function SpeedSign({ limit, speeding, currentSpeed }: { limit: number; speeding: boolean; currentSpeed: number }) {
+  const delta = currentSpeed - limit;
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.5, opacity: 0 }}
+        className={cn(
+          'flex h-16 w-16 select-none flex-col items-center justify-center rounded-full border-[6px] bg-white shadow-2xl',
+          speeding ? 'border-red-600 ring-4 ring-red-600/20' : 'border-red-600'
+        )}
+      >
+        <span className={cn('text-[24px] font-black leading-none', speeding ? 'text-red-600' : 'text-slate-900')}>
+          {limit}
+        </span>
+      </motion.div>
+      {speeding && (
+        <motion.div
+          initial={{ y: -5, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="rounded-md bg-red-600 px-2 py-0.5 shadow-lg"
+        >
+          <span className="text-[10px] font-black text-white">+{delta} km/h</span>
+        </motion.div>
       )}
-    >
-      <span className={cn('text-[20px] font-bold leading-none', speeding ? 'text-red-600' : 'text-slate-900')}>
-        {limit}
-      </span>
-    </motion.div>
+    </div>
   );
 }
 
@@ -312,7 +357,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         <div className="absolute left-6 top-64 z-[110]">
           <AnimatePresence>
             {currentLimit != null && (
-              <SpeedSign key="sign" limit={currentLimit} speeding={isSpeeding} />
+              <SpeedSign key="sign" limit={currentLimit} speeding={isSpeeding} currentSpeed={currentSpeed} />
             )}
           </AnimatePresence>
         </div>
@@ -398,12 +443,9 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         </div>
 
         {/* Driving Stats Row (Compact) */}
-        <div className="mt-8 flex items-center justify-around rounded-2xl bg-slate-50 py-4">
+        <div className="mt-8 flex items-center justify-around rounded-3xl bg-slate-50 py-6 border border-slate-100">
            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Speed</span>
-              <span className={cn('text-xl font-bold', isSpeeding ? 'text-red-500' : 'text-slate-900')}>
-                {currentSpeed} <span className="text-xs font-bold text-slate-400">km/h</span>
-              </span>
+              <SpeedometerGauge speed={currentSpeed} limit={currentLimit} isSpeeding={isSpeeding} />
            </div>
            <div className="h-8 w-px bg-slate-200" />
             <div className="flex flex-col items-center">

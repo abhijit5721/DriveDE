@@ -449,6 +449,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const lastIdlingLogRef = useRef<number>(0);
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
   const cumulativeRouteRef = useRef<GPSPoint[]>([]);
+  const speedBufferRef = useRef<number[]>([]);
+  const MAX_SPEED_BUFFER = 5;
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | string | null>(null);
@@ -1115,8 +1117,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
             
             // Compliance/Quality: Filter out inaccurate points
-            // On high-end Androids, accuracy < 5 is common. 20 is a safe upper bound.
-            if (accuracy && accuracy > 20) {
+            // On high-end Androids, accuracy < 5 is common. 30 is a reasonable upper bound for driving.
+            if (accuracy && accuracy > 30) {
+              console.warn('[Tracker] Ignoring inaccurate GPS point:', accuracy);
               return;
             }
 
@@ -1126,6 +1129,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               const lastPoint = prev[prev.length - 1];
               let currentKmh = 0;
 
+              // 1. DETERMINE RAW SPEED
               // USE HARDWARE SPEED IF AVAILABLE (Much more accurate for driving)
               if (speed !== null && speed !== undefined && speed >= 0) {
                 currentKmh = Math.round(speed * 3.6);
@@ -1142,13 +1146,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 }
               }
 
-              setCurrentSpeed(currentKmh);
+              // 2. SPEED SMOOTHING (Moving Average)
+              // This prevents "flickering" speed readings
+              speedBufferRef.current.push(currentKmh);
+              if (speedBufferRef.current.length > MAX_SPEED_BUFFER) {
+                speedBufferRef.current.shift();
+              }
+              
+              const smoothedSpeed = Math.round(
+                speedBufferRef.current.reduce((a, b) => a + b, 0) / speedBufferRef.current.length
+              );
+
+              // 3. ZERO-MOTION CHECK
+              // If we moved less than 1.5 meters, assume speed is 0 to avoid "drifting"
+              const distSinceLast = lastPoint ? calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng) : 0;
+              const finalSpeed = distSinceLast < 0.0015 ? 0 : smoothedSpeed;
+
+              setCurrentSpeed(finalSpeed);
 
               if (lastPoint) {
-                const dist = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                // Minimize battery usage/data noise by only logging if moved > 3 meters
-                if (dist > 0.003) {
-                  setCurrentDistance(d => d + dist);
+                // Minimize battery usage/data noise by only logging if moved > 3.5 meters
+                if (distSinceLast > 0.0035) {
+                  setCurrentDistance(d => d + distSinceLast);
                   logRoutePoint(newPoint);
                   return [...prev, newPoint];
                 }
@@ -1308,25 +1327,39 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
     }
 
-    if (currentLimit && currentSpeed > currentLimit + 5) {
-      setCurrentMistakes(prev => {
-        const lastMistake = prev[prev.length - 1];
-        if (!lastMistake || (Date.now() - lastMistake.timestamp > 30000) || lastMistake.type !== 'speeding') {
-          toast.error(t.tracker.speedingAlert(currentLimit!), { position: 'bottom-center' });
+    // 4. SMART SPEEDING DETECTION
+    if (currentLimit && currentSpeed > currentLimit) {
+      // Thresholds: Strict in sensitive areas, lenient on open roads
+      const isSensitiveZone = currentLimit <= 30; // 30 zones, school zones, living streets
+      const tolerance = isSensitiveZone ? 3 : Math.max(5, Math.round(currentLimit * 0.1)); 
+      
+      if (currentSpeed > currentLimit + tolerance) {
+        setCurrentMistakes(prev => {
+          const lastMistake = prev[prev.length - 1];
+          // Grace period: Don't log the same mistake twice within 45 seconds to avoid spamming
+          const timeSinceLast = lastMistake ? Date.now() - lastMistake.timestamp : Infinity;
           
-          const mistakeObj: DrivingMistake = {
-            type: 'speeding',
-            speed: currentSpeed,
-            limit: currentLimit,
-            timestamp: Date.now(),
-            location: { lat: lastPoint.lat, lng: lastPoint.lng }
-          };
-          
-          logMistake(mistakeObj);
-          return [...prev, mistakeObj];
-        }
-        return prev;
-      });
+          if (!lastMistake || lastMistake.type !== 'speeding' || timeSinceLast > 45000) {
+            toast.error(t.tracker.speedingAlert(currentLimit!), { 
+              position: 'bottom-center',
+              icon: '⚠️',
+              id: 'speeding-alert' // unique ID to prevent overlapping toasts
+            });
+            
+            const mistakeObj: DrivingMistake = {
+              type: 'speeding',
+              speed: currentSpeed,
+              limit: currentLimit,
+              timestamp: Date.now(),
+              location: { lat: lastPoint.lat, lng: lastPoint.lng }
+            };
+            
+            logMistake(mistakeObj);
+            return [...prev, mistakeObj];
+          }
+          return prev;
+        });
+      }
     }
 
     const IDLING_THRESHOLD = isSimulationMode ? 15000 : 60000;
