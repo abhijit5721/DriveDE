@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DriveDE</string>
+    <string name="title_activity_main">DriveDE</string>
+    <string name="package_name">de.drivede.app</string>
+    <string name="custom_url_scheme">de.drivede.app</string>
+    <string name="server_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
+    <string name="google_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
+</resources>

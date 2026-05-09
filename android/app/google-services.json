@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "712119605930",
+    "project_id": "drivede-492717",
+    "storage_bucket": "drivede-492717.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712119605930:android:fb80ec653e206e8d0d4ed3",
+        "android_client_info": {
+          "package_name": "de.drivede.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712119605930-1nfv6j2f7csoq9pr7s5leo62nabtlnot.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.drivede.app",
+            "certificate_hash": "4437a7bc4bdb135a0448788e844b32355f70721d"
+          }
+        },
+        {
+          "client_id": "712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMb-_Og_c-69Az7xrGawndkU0FSpczCcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
