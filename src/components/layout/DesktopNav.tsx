@@ -49,9 +49,9 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
               {isPremium && (
-                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow-lg shadow-orange-500/20">
+                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-lg shadow-orange-500/20">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
                 </span>
@@ -93,7 +93,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
       <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
         <div className="flex flex-col gap-3">
           {isPremium && (
-            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
+            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
               <Crown className="h-4 w-4" />
               DriveDE Pro Member
             </div>

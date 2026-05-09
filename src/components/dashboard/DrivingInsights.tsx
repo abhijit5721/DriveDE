@@ -188,7 +188,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
           )}
           <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-tighter text-slate-400">
             {dayNames.map((name, i) => (
-              <span key={i} className={cn(i === todayIndex && 'text-indigo-600 dark:text-indigo-400 font-black')}>
+              <span key={i} className={cn(i === todayIndex && 'text-indigo-600 dark:text-indigo-400 font-bold')}>
                 {name}
               </span>
             ))}
@@ -246,7 +246,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                 </p>
                 <button 
                   onClick={onOpenPaywall}
-                  className="mt-3 text-[10px] font-black text-indigo-600 underline"
+                  className="mt-3 text-[10px] font-bold text-indigo-600 underline"
                 >
                   {t.unlockPro}
                 </button>
@@ -291,7 +291,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                   <Zap className="h-5 w-5 fill-current" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
+                  <h4 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                     {language === 'de' ? 'Live-Skill-Radar' : 'Live Skill Radar'}
                   </h4>
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
@@ -311,7 +311,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                     <span 
                       key={key}
                       className={cn(
-                        'px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all',
+                        'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all',
                         mastered 
                           ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           : 'bg-blue-500/5 border-blue-500/10 text-blue-500/70'

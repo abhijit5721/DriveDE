@@ -41,7 +41,7 @@ export const MobileSplash: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-black tracking-tighter text-white"
+            className="text-4xl font-bold tracking-tighter text-white"
           >
             Drive<span className="text-blue-500">DE</span>
           </motion.h1>

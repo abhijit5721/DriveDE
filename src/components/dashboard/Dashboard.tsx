@@ -105,7 +105,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex flex-col gap-1.5">
-                <span className="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-3 py-1 text-[10px] font-black uppercase tracking-[0.15em] border border-white/10">
+                <span className="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10">
                   {pathConfig.title}
                 </span>
                 <p className="text-sm font-medium text-blue-100/90">
@@ -142,7 +142,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   <Crown className="h-6 w-6" />
                 </div>
                 <div className="text-left">
-                  <p className="text-base font-black tracking-tight">DriveDE Pro</p>
+                  <p className="text-base font-bold tracking-tight">DriveDE Pro</p>
                   <p className="text-xs font-medium text-orange-50">
                     {t.dashboard.unlockPro}
                   </p>
@@ -170,7 +170,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               )}
             </div>
             <div>
-              <p className="text-lg font-black tracking-tight">{t.dashboard.examSimulation}</p>
+              <p className="text-lg font-bold tracking-tight">{t.dashboard.examSimulation}</p>
               <p className="text-sm text-slate-400 font-medium">
                 {t.dashboard.simulationDesc}
               </p>
@@ -220,10 +220,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 <stat.icon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1">
                   {stat.label}
                 </p>
-                <p className="text-xl font-black text-slate-900 dark:text-white tabular-nums">
+                <p className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
                   {stat.value}
                 </p>
               </div>
@@ -250,16 +250,16 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
+                <h3 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                   {t.dashboard.conversionQuickstart}
                 </h3>
                 <div className="flex items-center gap-2">
                   {!isPremium && (
-                    <span className="inline-flex rounded-lg bg-amber-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/30">
+                    <span className="inline-flex rounded-lg bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-amber-500/30">
                       Pro
                     </span>
                   )}
-                  <span className="inline-flex rounded-lg bg-purple-100 dark:bg-purple-900/50 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  <span className="inline-flex rounded-lg bg-purple-100 dark:bg-purple-900/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 border border-purple-500/20">
                     {t.dashboard.germanyFocus}
                   </span>
                 </div>
@@ -335,18 +335,18 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               )}>
                 <card.icon className="h-7 w-7" />
                 {card.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-black text-white ring-2 ring-white dark:ring-slate-900 animate-bounce">
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-bounce">
                     {mistakesCount}
                   </span>
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                  <p className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
                     {card.title}
                   </p>
                   <span className={cn(
-                    'rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-wider border',
+                    'rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border',
                     card.color === 'blue' ? 'bg-blue-50/50 text-blue-600 border-blue-500/20' :
                     card.color === 'amber' ? 'bg-amber-50/50 text-amber-600 border-amber-500/20' :
                     'bg-indigo-50/50 text-indigo-600 border-indigo-500/20'
@@ -368,10 +368,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
       <div className="rounded-3xl glass p-8 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
         <div className="mb-6">
-          <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+          <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}
           </h3>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500 mt-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500 mt-1">
             {isUmschreibung ? t.dashboard.focusThemes : t.dashboard.mandatoryHours}
           </p>
         </div>
@@ -388,7 +388,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 dark:bg-slate-800/50 text-xl shadow-sm">
                     {item.icon}
                   </div>
-                  <p className="text-sm font-black text-slate-800 dark:text-slate-200 leading-tight">{item.title}</p>
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{item.title}</p>
                 </div>
                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">{item.text}</p>
               </div>
@@ -407,9 +407,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                     <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">
                       <item.icon className="h-4 w-4" />
                     </div>
-                    <span className="font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">{item.label}</span>
+                    <span className="font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">{item.label}</span>
                   </div>
-                  <span className="font-mono font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
+                  <span className="font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
                     {Math.floor(userProgress.specialDrivingMinutes[item.key as keyof typeof userProgress.specialDrivingMinutes] / 45)}/{item.required.split('×')[0]} {t.dashboard.hoursSuffix}
                   </span>
                 </div>
@@ -432,12 +432,12 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
       <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
         <div className="flex items-center justify-between">
-          <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">
+          <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">
             {t.dashboard.continueLearning}
           </h3>
           <button
             onClick={() => onNavigate('curriculum')}
-            className="group flex items-center gap-1.5 text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors"
+            className="group flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors"
           >
             {t.dashboard.viewAll}
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -469,14 +469,14 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   <Icon className="h-7 w-7" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white mb-1.5 leading-tight">
+                  <h4 className="text-sm sm:text-base font-bold tracking-tight text-slate-900 dark:text-white mb-1.5 leading-tight">
                     {chapterTitle}
                   </h4>
                   <div className="flex items-center gap-4">
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900 shadow-inner">
                       <div className="h-full rounded-full bg-premium-blue transition-all duration-1000" style={{ width: `${chapterProgress}%` }} />
                     </div>
-                    <span className="text-xs font-black font-mono text-blue-600 dark:text-blue-400 min-w-[3ch]">{chapterProgress}%</span>
+                    <span className="text-xs font-bold font-mono text-blue-600 dark:text-blue-400 min-w-[3ch]">{chapterProgress}%</span>
                   </div>
                 </div>
                 <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-900 group-hover:bg-blue-500/10 transition-colors">
@@ -495,7 +495,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <Target className="h-8 w-8 text-white" />
           </div>
           <div>
-            <h4 className="text-xl font-black tracking-tight mb-2">
+            <h4 className="text-xl font-bold tracking-tight mb-2">
               {t.dashboard.proTip}
             </h4>
             <p className="text-sm font-medium leading-relaxed text-indigo-100/90">
@@ -515,7 +515,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           }}
           aria-label={t.dashboard.accountSettings}
           className={cn(
-            'flex items-center gap-3 rounded-full px-6 py-3 text-[11px] font-black uppercase tracking-[0.2em] transition-all border shadow-sm hover:scale-105 active:scale-95',
+            'flex items-center gap-3 rounded-full px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border shadow-sm hover:scale-105 active:scale-95',
             authStatus === 'signed_in' 
               ? 'bg-emerald-50/50 text-emerald-700 border-emerald-500/20 dark:bg-emerald-900/10 dark:text-emerald-400' 
               : 'bg-white/50 text-slate-500 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800'
@@ -535,8 +535,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           )}
         </button>
         <div className="text-center">
-          <p className="text-[10px] font-black tracking-[0.3em] text-slate-300 dark:text-slate-600 uppercase">
-            DriveDE v{packageJson.version} • {t.dashboard.precisionPrep}
+          <p className="text-[10px] font-bold tracking-[0.3em] text-slate-300 dark:text-slate-600 uppercase">
+            DriveDE v{packageJson.version} • OTA Verified
           </p>
         </div>
       </div>

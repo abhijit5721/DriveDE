@@ -50,6 +50,7 @@ import { PublicReport } from './components/maneuvers/PublicReport';
 import { PathSelectorModal } from './components/auth/PathSelectorModal';
 import { CookieConsent } from './components/legal/CookieConsent';
 import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
+import { TRANSLATIONS } from './data/translations';
 
 
 export default function App() {
@@ -62,20 +63,21 @@ export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
+    language,
     darkMode,
+    userProgress,
+    hasVisited,
     licenseType,
+    learningPath,
+    transmissionType,
+    setAcceptedPrivacy,
     isPremium,
     authStatus,
     setAuthState,
-    hasVisited,
     setHasVisited,
     logoutCleanup,
     activeTab,
     setActiveTab,
-    userProgress,
-    setAcceptedPrivacy,
-    learningPath,
-    transmissionType,
   } = useAppStore();
   
   const [reportUserId, setReportUserId] = useState<string | null>(() => {
@@ -97,11 +99,31 @@ export default function App() {
     };
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        console.log('[App] App backgrounded, triggering emergency sync...');
+      if (document.visibilityState === 'visible') {
+        console.log('[Visibility] App became visible, processing sync...');
         import('./services/supabaseSync').then(m => m.processSyncQueue());
       }
     };
+
+    window.addEventListener('online', handleOnline);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // dedicated OTA update check
+    if (Capacitor.isNativePlatform()) {
+      const runUpdateCheck = async () => {
+        try {
+          const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
+          
+          // Silent background sync for production
+          await CapacitorUpdater.sync();
+        } catch (e) {
+          // Silent fail in production
+        }
+      };
+      
+      // Delay to ensure UI and storage are ready
+      setTimeout(runUpdateCheck, 5000);
+    }
 
     // Deep Link Listener for Native Platforms (OAuth redirects)
     let urlListener: any;
@@ -343,6 +365,21 @@ export default function App() {
         
         // Let Capgo know the app is healthy (critical for auto-rollbacks)
         CapacitorUpdater.notifyAppReady();
+
+        // Update listeners for visual feedback
+        CapacitorUpdater.addListener('downloadProgress', (data) => {
+          const lang = useAppStore.getState().language || 'de';
+          const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS].common.updates;
+          toast.loading(`${t.downloading} (${data.percent}%)`, { id: 'capgo-update' });
+        });
+
+        CapacitorUpdater.addListener('updateApplied', () => {
+          const lang = useAppStore.getState().language || 'de';
+          const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS].common.updates;
+          toast.success(t.ready, { id: 'capgo-update', duration: 10000 });
+        });
+
+
         
         // Deep Links
         App.addListener('appUrlOpen', (data: { url: string }) => {

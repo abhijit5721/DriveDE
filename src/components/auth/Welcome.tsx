@@ -86,7 +86,7 @@ export function Welcome() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
               <Car className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-black tracking-tighter text-white">
+            <span className="text-xl font-bold tracking-tighter text-white">
               Drive<span className="text-blue-500">DE</span>
             </span>
           </button>
@@ -121,8 +121,8 @@ export function Welcome() {
 
             {/* Language Switcher Desktop */}
             <div className="flex items-center gap-1 ml-2 border-l border-slate-700/50 pl-4">
-              <button onClick={() => setLanguage('de')} className={cn('px-2 py-1 text-[10px] font-black rounded-lg transition-all', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
-              <button onClick={() => setLanguage('en')} className={cn('px-2 py-1 text-[10px] font-black rounded-lg transition-all', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
+              <button onClick={() => setLanguage('de')} className={cn('px-2 py-1 text-[10px] font-bold rounded-lg transition-all', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
+              <button onClick={() => setLanguage('en')} className={cn('px-2 py-1 text-[10px] font-bold rounded-lg transition-all', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
             </div>
           </div>
 
@@ -154,7 +154,7 @@ export function Welcome() {
             {t.welcome.hero.badge}
           </div>
 
-          <h1 className="mt-8 text-5xl font-black tracking-tight text-white sm:text-7xl">
+          <h1 className="mt-8 text-5xl font-bold tracking-tight text-white sm:text-7xl">
             {t.welcome.hero.titlePrefix}
             <span className="block mt-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
               {t.welcome.hero.titleHighlight}
@@ -189,7 +189,7 @@ export function Welcome() {
       <section id="features" className="relative z-10 bg-slate-900 px-6 py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-black text-white sm:text-5xl">{t.welcome.features.title}</h2>
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">{t.welcome.features.title}</h2>
             <p className="mt-4 text-slate-400 max-w-2xl mx-auto">{t.welcome.features.subtitle}</p>
           </div>
 
@@ -215,7 +215,7 @@ export function Welcome() {
       <section id="feedback" className="relative z-10 bg-slate-800/30 px-6 py-24 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-white sm:text-5xl">Your Experience Matters</h2>
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">Your Experience Matters</h2>
             <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
               Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we're all ears.
             </p>
@@ -226,19 +226,19 @@ export function Welcome() {
           {/* Quick Stats / Trust Signals */}
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto opacity-50">
             <div className="text-center">
-              <div className="text-2xl font-black text-white">98%</div>
+              <div className="text-2xl font-bold text-white">98%</div>
               <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pass Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-black text-white">5k+</div>
+              <div className="text-2xl font-bold text-white">5k+</div>
               <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Students</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-black text-white">24/7</div>
+              <div className="text-2xl font-bold text-white">24/7</div>
               <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Support</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-black text-white">100%</div>
+              <div className="text-2xl font-bold text-white">100%</div>
               <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Digital</div>
             </div>
           </div>
@@ -249,7 +249,7 @@ export function Welcome() {
       <section id="paths" className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-white sm:text-4xl">{t.common.selectGoal}</h2>
+            <h2 className="text-3xl font-bold text-white sm:text-4xl">{t.common.selectGoal}</h2>
             <p className="mt-4 text-slate-400">{t.common.startPersonalized}</p>
           </div>
 
@@ -303,7 +303,7 @@ export function Welcome() {
                 </div>
 
                 <div className="flex-1 w-full relative z-10">
-                  <h3 className="text-3xl font-black text-white mb-4 tracking-tight">{path.title}</h3>
+                  <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">{path.title}</h3>
                   <p className="text-base text-slate-400 leading-relaxed mb-8">{path.desc}</p>
                   
                   <div className="space-y-4 mb-10">
@@ -332,7 +332,7 @@ export function Welcome() {
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
                     >
                       <Cog className="h-6 w-6 text-orange-400 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.manual}</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.manual}</span>
                     </button>
 
                     <button
@@ -351,7 +351,7 @@ export function Welcome() {
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
                     >
                       <Zap className="h-6 w-6 text-blue-400 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-black uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.automatic}</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.automatic}</span>
                     </button>
                   </div>
                 </div>
@@ -363,7 +363,7 @@ export function Welcome() {
             <button 
               onClick={handleStart} 
               data-testid="welcome-get-started"
-              className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-black text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105"
+              className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-bold text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105"
             >
               {t.common.getStarted}
               <ArrowRight className="h-6 w-6" />
@@ -377,7 +377,7 @@ export function Welcome() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
           <div className="flex items-center gap-2 grayscale opacity-50">
             <Car className="h-5 w-5 text-white" />
-            <span className="text-lg font-black tracking-tighter text-white">DriveDE</span>
+            <span className="text-lg font-bold tracking-tighter text-white">DriveDE</span>
           </div>
           <p className="text-[10px] text-slate-600">© 2026 DriveDE. {t.common.allRightsReserved}</p>
         </div>

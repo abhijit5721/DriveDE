@@ -60,7 +60,7 @@ export function ContactForm({ className }: ContactFormProps) {
               <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500'>
                 <CheckCircle2 className='h-12 w-12' />
               </div>
-              <h3 className='text-3xl font-black text-white mb-2'>Message Sent!</h3>
+              <h3 className='text-3xl font-bold text-white mb-2'>Message Sent!</h3>
               <p className='text-slate-400'>Thanks for your feedback. We'll get back to you shortly.</p>
             </motion.div>
           ) : status === 'error' ? (
@@ -74,7 +74,7 @@ export function ContactForm({ className }: ContactFormProps) {
               <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-rose-500/20 text-rose-500'>
                 <AlertCircle className='h-12 w-12' />
               </div>
-              <h3 className='text-3xl font-black text-white mb-2'>Something went wrong</h3>
+              <h3 className='text-3xl font-bold text-white mb-2'>Something went wrong</h3>
               <p className='text-slate-400'>We couldn't send your message. Please try again later.</p>
               <button 
                 onClick={() => setStatus('idle')}
@@ -94,7 +94,7 @@ export function ContactForm({ className }: ContactFormProps) {
             >
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div className='space-y-2'>
-                  <label className='text-xs font-black uppercase tracking-widest text-slate-400 ml-1'>Name</label>
+                  <label className='text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'>Name</label>
                   <div className='relative group'>
                     <User className='absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-blue-500' />
                     <input 
@@ -108,7 +108,7 @@ export function ContactForm({ className }: ContactFormProps) {
                   </div>
                 </div>
                 <div className='space-y-2'>
-                  <label className='text-xs font-black uppercase tracking-widest text-slate-400 ml-1'>Email</label>
+                  <label className='text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'>Email</label>
                   <div className='relative group'>
                     <Mail className='absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-blue-500' />
                     <input 
@@ -124,7 +124,7 @@ export function ContactForm({ className }: ContactFormProps) {
               </div>
 
               <div className='space-y-2'>
-                <label className='text-xs font-black uppercase tracking-widest text-slate-400 ml-1'>Message</label>
+                <label className='text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'>Message</label>
                 <div className='relative group'>
                   <MessageSquare className='absolute left-4 top-6 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-blue-500' />
                   <textarea 
@@ -142,7 +142,7 @@ export function ContactForm({ className }: ContactFormProps) {
                 type='submit'
                 disabled={status === 'submitting'}
                 className={cn(
-                  'w-full flex items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-lg font-black text-white shadow-2xl transition-all active:scale-[0.98]',
+                  'w-full flex items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-lg font-bold text-white shadow-2xl transition-all active:scale-[0.98]',
                   status === 'submitting' ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 hover:shadow-blue-500/20'
                 )}
               >

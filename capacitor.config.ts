@@ -24,7 +24,8 @@ const config: CapacitorConfig = {
     },
     CapacitorUpdater: {
       autoUpdate: true,
-      statsUrl: 'https://api.capgo.app/'
+      statsUrl: 'https://api.capgo.app/',
+      channel: 'dev'
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],

@@ -92,7 +92,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.05),transparent_60%)] pointer-events-none" />
           {renderAnimation()}
         </div>
-        <div className="absolute top-10 right-10 bg-[#38BDF8] text-[#030712] px-4 py-1.5 rounded-full text-sm font-black shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+        <div className="absolute top-10 right-10 bg-[#38BDF8] text-[#030712] px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(56,189,248,0.4)]">
           {currentStep + 1} <span className="opacity-50 mx-1">/</span> {steps.length}
         </div>
       </div>
@@ -130,7 +130,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
           <button
             key={step.id}
             onClick={() => { setCurrentStep(index); setProgress(0); setIsPlaying(false); }}
-            className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
+            className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all ${
               index === currentStep ? 'bg-[#38BDF8] text-[#030712] shadow-[0_0_20px_rgba(56,189,248,0.4)] scale-110' : 'bg-[#0f172a] text-slate-500 border border-[#1e293b]'
             }`}
           >
@@ -420,7 +420,7 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
             strokeWidth="3"
             strokeLinecap="round"
           />
-          <text textAnchor="middle" y="25" fill="#38BDF8" className="text-xl font-black">{Math.round(state.speed)}</text>
+          <text textAnchor="middle" y="25" fill="#38BDF8" className="text-xl font-bold">{Math.round(state.speed)}</text>
           <text textAnchor="middle" y="38" fill="#64748b" className="text-[8px] font-bold">KM/H</text>
         </g>
       </svg>
@@ -595,7 +595,7 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         <g transform="translate(20, 20)">
           <rect width="100" height="10" rx="5" fill="#1e293b" opacity="0.2" />
           <motion.rect animate={{ width: (state.speed / 120) * 100 }} height="10" rx="5" fill="#38BDF8" />
-          <text x="110" y="10" fill="#1e293b" className="text-[10px] font-black">{Math.round(state.speed)} KM/H</text>
+          <text x="110" y="10" fill="#1e293b" className="text-[10px] font-bold">{Math.round(state.speed)} KM/H</text>
         </g>
       </svg>
     </div>

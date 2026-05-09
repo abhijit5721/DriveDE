@@ -48,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
                 <AlertTriangle className="h-10 w-10" />
               </div>
-              <h1 className="text-2xl font-black">Something went wrong</h1>
+              <h1 className="text-2xl font-bold">Something went wrong</h1>
               <p className="mt-2 text-red-100 opacity-90">We encountered an unexpected error.</p>
             </div>
             

@@ -64,7 +64,7 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
 
       {/* Center Label */}
       <div className="absolute top-[35%] flex flex-col items-center">
-        <span className="text-4xl font-black tracking-tighter text-white">
+        <span className="text-4xl font-bold tracking-tighter text-white">
           {progress}%
         </span>
         {label && (

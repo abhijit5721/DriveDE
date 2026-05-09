@@ -47,7 +47,7 @@ export const LicenseSelector: React.FC = () => {
             <Shield className="h-7 w-7" />
           </motion.div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               {t.pathTitle.split('.')[1]?.trim() || t.pathTitle}
             </h1>
             <p className="mt-1 text-slate-500 dark:text-slate-400">
@@ -112,7 +112,7 @@ export const LicenseSelector: React.FC = () => {
               </div>
 
               <div className="mt-6">
-                <h3 className="text-xl font-black text-slate-900 dark:text-white">{path.title}</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{path.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{path.desc}</p>
               </div>
 
@@ -146,7 +146,7 @@ export const LicenseSelector: React.FC = () => {
               className="space-y-6"
             >
               <div>
-                <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                   {t.transmissionTitle.split('.')[1]?.trim() || t.transmissionTitle}
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
@@ -194,7 +194,7 @@ export const LicenseSelector: React.FC = () => {
       <footer className="mt-12 flex items-center justify-between gap-6">
         <button
           onClick={() => useAppStore.getState().setLanguage(language === 'de' ? 'en' : 'de')}
-          className="rounded-2xl bg-slate-100 px-6 py-4 text-sm font-black uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-200 active:scale-95 dark:bg-slate-800 dark:text-slate-400"
+          className="rounded-2xl bg-slate-100 px-6 py-4 text-sm font-bold uppercase tracking-widest text-slate-600 transition-all hover:bg-slate-200 active:scale-95 dark:bg-slate-800 dark:text-slate-400"
         >
           {language === 'de' ? 'EN' : 'DE'}
         </button>
@@ -204,7 +204,7 @@ export const LicenseSelector: React.FC = () => {
           data-testid="license-continue-btn"
           disabled={!canContinue}
           className={cn(
-            'flex flex-1 items-center justify-center gap-3 rounded-[1.75rem] py-5 text-lg font-black transition-all active:scale-95',
+            'flex flex-1 items-center justify-center gap-3 rounded-[1.75rem] py-5 text-lg font-bold transition-all active:scale-95',
             canContinue
               ? 'bg-blue-600 text-white shadow-2xl shadow-blue-600/30 hover:bg-blue-700 hover:scale-[1.02]'
               : 'cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-800'

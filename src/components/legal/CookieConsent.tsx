@@ -94,7 +94,7 @@ export function CookieConsent() {
                     <button
                       onClick={handleAcceptAll}
                       data-testid="cookie-accept-all"
-                      className="px-8 py-3 text-sm font-black text-white transition rounded-xl bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 active:scale-95"
+                      className="px-8 py-3 text-sm font-bold text-white transition rounded-xl bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 active:scale-95"
                     >
                       {t.acceptAll}
                     </button>
@@ -130,7 +130,7 @@ export function CookieConsent() {
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-white">{t.essential.title}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">{t.alwaysOn}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">{t.alwaysOn}</span>
                       </div>
                       <p className="text-xs text-slate-400 leading-relaxed">{t.essential.desc}</p>
                     </div>
@@ -209,7 +209,7 @@ export function CookieConsent() {
                   <button
                     onClick={handleSavePreferences}
                     data-testid="cookie-save-preferences"
-                    className="flex-[2] px-8 py-4 text-sm font-black text-white transition rounded-2xl bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 active:scale-95"
+                    className="flex-[2] px-8 py-4 text-sm font-bold text-white transition rounded-2xl bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 active:scale-95"
                   >
                     {t.save}
                   </button>

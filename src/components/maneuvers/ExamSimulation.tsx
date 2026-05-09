@@ -29,8 +29,8 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
     };
   }, [currentCommand]);
 
-  const speakCommand = async (text?: string) => {
-    const textToSpeak = text || currentCommand;
+  const speakCommand = async (command?: any) => {
+    const textToSpeak = typeof command === 'string' ? command : (command?.de || currentCommand.de);
     if (!textToSpeak) return;
     
     try {
@@ -89,9 +89,14 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl font-bold"
+          className="flex flex-col gap-4"
         >
-          {currentCommand}
+          <div className="text-3xl font-bold leading-tight">
+            {currentCommand.de}
+          </div>
+          <div className="text-xl italic text-slate-400">
+            {currentCommand.en}
+          </div>
         </motion.div>
         
         <button onClick={() => speakCommand()} disabled={isSpeaking} className="mt-8 rounded-full bg-white/10 p-4 disabled:opacity-50">

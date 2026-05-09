@@ -118,7 +118,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         <div className="h-20 w-20 rounded-3xl bg-red-500/10 flex items-center justify-center mb-6">
           <AlertCircle className="h-10 w-10 text-red-500" />
         </div>
-        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Report Not Available</h1>
+        <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Report Not Available</h1>
         <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
           This profile could not be found. The link may have expired or is incorrect.
         </p>
@@ -139,7 +139,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         <div className="h-20 w-20 rounded-3xl bg-amber-500/10 flex items-center justify-center mb-6">
           <ShieldAlert className="h-10 w-10 text-amber-500" />
         </div>
-        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Sharing Disabled</h1>
+        <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Sharing Disabled</h1>
         <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
           The student <span className="text-amber-400 font-bold">{data.profile.display_name || 'this user'}</span> has disabled public report sharing in their privacy settings.
         </p>
@@ -168,7 +168,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         <div className="h-20 w-20 rounded-3xl bg-blue-500/10 flex items-center justify-center mb-6">
           <Sparkles className="h-10 w-10 text-blue-500" />
         </div>
-        <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Waiting for Data...</h1>
+        <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Waiting for Data...</h1>
         <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
           The profile for <span className="text-blue-400 font-bold">{data.profile.display_name || 'this student'}</span> is active, but no driving sessions have been published yet.
         </p>
@@ -360,7 +360,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             data-testid="lesson-mode-toggle"
             onClick={() => setLessonMode(!lessonMode)}
             className={cn(
-              'flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border',
+              'flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border',
               lessonMode 
                 ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
                 : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
@@ -395,10 +395,10 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
             {/* Quick Fault Priority */}
             <div className="grid grid-cols-1 gap-4">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-2">Top Training Priorities</div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">Top Training Priorities</div>
               {sortedFaults.map(([fault, count], i) => (
                 <div key={i} className="rounded-2xl bg-slate-900 border-2 border-orange-500/20 p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-orange-500/20 relative">
+                  <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-orange-500/20 relative">
                     {count.count}
                     {count.manual > 0 && (
                       <div className="absolute -top-1 -right-1 h-4 w-4 bg-white rounded-full flex items-center justify-center text-[8px] text-orange-600 border border-orange-200">
@@ -407,7 +407,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     )}
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-white uppercase tracking-tight">{formatFaultName(fault)}</h4>
+                    <h4 className="text-sm font-bold text-white uppercase tracking-tight">{formatFaultName(fault)}</h4>
                     <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">{faultAdvice[fault]}</p>
                   </div>
                 </div>
@@ -417,7 +417,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {/* Critical Legal Hours - Only for Standard path */}
             {learningPath === 'standard' && (
               <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
                 <div className="grid grid-cols-3 gap-3">
                   {Object.entries(sonderfahrten).map(([key, stats]) => {
                     const progress = (stats.current / stats.target) * 100;
@@ -425,7 +425,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                       <div key={key} className="space-y-2">
                         <div className="flex justify-between items-end">
                           <span className="text-[9px] font-bold text-slate-400 uppercase">{key}</span>
-                          <span className="text-[10px] font-black text-white">{stats.current}/{stats.target}</span>
+                          <span className="text-[10px] font-bold text-white">{stats.current}/{stats.target}</span>
                         </div>
                         <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                           <div 
@@ -479,7 +479,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                 <Activity className="h-6 w-6 text-blue-200" />
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-6xl font-black">{readiness}%</span>
+                <span className="text-6xl font-bold">{readiness}%</span>
                 <span className="text-sm text-blue-100 font-medium opacity-80">Score</span>
               </div>
               <div className="mt-6 h-3 w-full rounded-full bg-blue-900/30 overflow-hidden">
@@ -499,7 +499,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {trend ? (
               <div className="space-y-2">
                 <div className={cn(
-                  'flex items-center gap-2 text-2xl font-black',
+                  'flex items-center gap-2 text-2xl font-bold',
                   trend.type === 'improving' ? 'text-emerald-500' : trend.type === 'regressing' ? 'text-rose-500' : 'text-slate-400'
                 )}>
                   {trend.type === 'improving' ? <TrendingUp className="h-6 w-6" /> : trend.type === 'regressing' ? <TrendingDown className="h-6 w-6" /> : <Minus className="h-6 w-6" />}
@@ -696,7 +696,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                   {(() => {
                     const confirmedCount = session.mistakes?.filter(m => m.status === 'confirmed').length || 0;
                     return confirmedCount > 0 && (
-                      <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-black uppercase">
+                      <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-bold uppercase">
                         <AlertCircle className="h-3 w-3" />
                         {confirmedCount}
                       </div>
@@ -719,7 +719,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                               <div className="w-1 h-1 rounded-full bg-red-500" />
                               <span className="font-medium capitalize">{m.type?.replace(/_/g, ' ') || 'General Mistake'}</span>
                               <span className={cn(
-                                'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest ml-1',
+                                'rounded px-1 py-0.5 text-[7px] font-bold uppercase tracking-widest ml-1',
                                 (m.source === 'manual') 
                                   ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
                                   : 'bg-blue-500/10 text-blue-400'

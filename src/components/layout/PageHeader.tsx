@@ -20,7 +20,7 @@ export function PageHeader({ title, onBack }: PageHeaderProps) {
         >
           <ChevronLeft className="h-6 w-6 transition-transform group-hover:-translate-x-0.5" />
         </button>
-        <h1 className="flex-1 line-clamp-1 text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none animate-fade-in-up">
+        <h1 className="flex-1 line-clamp-1 text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none animate-fade-in-up">
           {title}
         </h1>
       </div>

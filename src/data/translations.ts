@@ -79,6 +79,12 @@ export const TRANSLATIONS = {
         signOut: 'Abmelden',
         lightMode: 'Heller Modus',
         darkMode: 'Dunkler Modus'
+      },
+      updates: {
+        checking: 'Überprüfe auf Updates...',
+        downloading: 'Update wird heruntergeladen...',
+        ready: 'Update bereit! Bitte starte die App neu.',
+        applied: 'Anwendung aktualisiert auf Version',
       }
     },
     quiz: {
@@ -2234,6 +2240,12 @@ export const TRANSLATIONS = {
         signOut: 'Sign Out',
         lightMode: 'Light Mode',
         darkMode: 'Dark Mode'
+      },
+      updates: {
+        checking: 'Checking for updates...',
+        downloading: 'Downloading update...',
+        ready: 'Update ready! Please restart the app.',
+        applied: 'Application updated to version',
       }
     },
     quiz: {

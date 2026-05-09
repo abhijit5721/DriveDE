@@ -142,7 +142,7 @@ function SpeedSign({ limit, speeding }: { limit: number; speeding: boolean }) {
         speeding ? 'border-red-600 animate-pulse' : 'border-red-600'
       )}
     >
-      <span className={cn('text-[20px] font-black leading-none', speeding ? 'text-red-600' : 'text-slate-900')}>
+      <span className={cn('text-[20px] font-bold leading-none', speeding ? 'text-red-600' : 'text-slate-900')}>
         {limit}
       </span>
     </motion.div>
@@ -220,11 +220,11 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         <div className="flex items-start px-6">
           <div className="mr-5 flex flex-col items-center">
             {getInstructionIcon(nextInstruction || '')}
-            <span className="mt-1 text-lg font-black text-white">{distanceToNextTurn}</span>
+            <span className="mt-1 text-lg font-bold text-white">{distanceToNextTurn}</span>
           </div>
           <div className="flex-1 pt-1">
             <span className="text-xs font-bold uppercase tracking-widest text-white/70">Next Road</span>
-            <h1 className="text-2xl font-black leading-tight text-white">{nextRoadName}</h1>
+            <h1 className="text-2xl font-bold leading-tight text-white">{nextRoadName}</h1>
           </div>
         </div>
         
@@ -304,7 +304,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         <div className="absolute bottom-4 left-1/2 z-[110] -translate-x-1/2">
           <div className="flex items-center gap-2 rounded-full bg-[#3b82f6] px-4 py-1.5 shadow-xl">
              <Navigation2 className="h-3 w-3 fill-white text-white" />
-             <span className="text-[11px] font-black uppercase tracking-tight text-white">{currentRoadName}</span>
+             <span className="text-[11px] font-bold uppercase tracking-tight text-white">{currentRoadName}</span>
           </div>
         </div>
 
@@ -366,7 +366,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           </button>
 
           <div className="flex flex-col items-center">
-            <span className="text-3xl font-black text-[#00897B]">2 min</span>
+            <span className="text-3xl font-bold text-[#00897B]">2 min</span>
             <div className="flex items-center gap-2 text-slate-500">
               <span className="text-sm font-bold">{(currentDistance/1000).toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></span>
               <span className="text-slate-300">•</span>
@@ -385,7 +385,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             {getInstructionIcon(nextInstruction || '', 'h-7 w-7 text-[#00897B]')}
           </div>
           <div className="flex-1">
-            <p className="text-lg font-black leading-tight text-slate-900">
+            <p className="text-lg font-bold leading-tight text-slate-900">
               {nextInstruction}
             </p>
             <p className="mt-1 text-sm font-bold text-slate-400">
@@ -401,7 +401,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         <div className="mt-8 flex items-center justify-around rounded-2xl bg-slate-50 py-4">
            <div className="flex flex-col items-center">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Speed</span>
-              <span className={cn('text-xl font-black', isSpeeding ? 'text-red-500' : 'text-slate-900')}>
+              <span className={cn('text-xl font-bold', isSpeeding ? 'text-red-500' : 'text-slate-900')}>
                 {currentSpeed} <span className="text-xs font-bold text-slate-400">km/h</span>
               </span>
            </div>
@@ -410,7 +410,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Score</span>
               <span 
                 data-testid="safety-score-value"
-                className={cn('text-xl font-black', scoreColor)}
+                className={cn('text-xl font-bold', scoreColor)}
               >
                 {safetyScore}%
               </span>
@@ -418,7 +418,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
            <div className="h-8 w-px bg-slate-200" />
            <div className="flex flex-col items-center">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</span>
-              <span className="text-xl font-black text-slate-900">
+              <span className="text-xl font-bold text-slate-900">
                 {formatTime(elapsedTime)}
               </span>
            </div>
@@ -491,10 +491,10 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               exit={{ scale: 1.5, opacity: 0 }}
               className="flex flex-col items-center"
             >
-              <div className="text-[160px] font-black italic leading-none text-white tracking-tighter">
+              <div className="text-[160px] font-bold italic leading-none text-white tracking-tighter">
                 {startingPhase === 'finding' ? '...' : startingPhase.toUpperCase()}
               </div>
-              <p className="mt-4 text-2xl font-black uppercase tracking-[0.4em] text-[#00897B]">
+              <p className="mt-4 text-2xl font-bold uppercase tracking-[0.4em] text-[#00897B]">
                 {startingPhase === 'finding' ? 'Locating' : 'Ready'}
               </p>
             </motion.div>

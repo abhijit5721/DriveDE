@@ -40,9 +40,9 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="truncate text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
+                <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
                 {isPremium && (
-                  <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow-sm">
+                  <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                     <Crown className="h-2.5 w-2.5" />
                     PRO
                   </span>

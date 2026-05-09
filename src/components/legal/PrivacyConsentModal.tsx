@@ -50,7 +50,7 @@ export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: P
                 </div>
               </div>
               
-              <h3 className="mb-3 text-center text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+              <h3 className="mb-3 text-center text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Privacy Matters
               </h3>
               
@@ -112,7 +112,7 @@ export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: P
                   data-testid="accept-privacy-btn"
                   disabled={!hasChecked}
                   className={cn(
-                    'w-full rounded-2xl py-4 text-sm font-black text-white shadow-xl transition-all active:scale-95',
+                    'w-full rounded-2xl py-4 text-sm font-bold text-white shadow-xl transition-all active:scale-95',
                     hasChecked 
                       ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/25' 
                       : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'

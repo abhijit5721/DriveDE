@@ -1586,7 +1586,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <Wind className="h-5 w-5 animate-pulse" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Voice Guidance</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Voice Guidance</p>
             <p className="text-sm font-bold">{nextInstruction}</p>
           </div>
         </div>
@@ -1828,7 +1828,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   ) : (
                     <button 
                       onClick={() => setIsEditingRate(true)}
-                      className="mt-0.5 text-lg font-black text-slate-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
+                      className="mt-0.5 text-lg font-bold text-slate-900 hover:text-blue-500 dark:text-white dark:hover:text-blue-400"
                     >
                       €{userProgress.hourlyRate45.toFixed(2)} <span className="text-xs font-bold text-slate-400">/ 45 min</span>
                     </button>
@@ -1876,7 +1876,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                    <button 
                      onClick={() => setShowManualLog(true)}
                      className={cn(
-                       'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-black uppercase tracking-widest border transition-all',
+                       'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-bold uppercase tracking-widest border transition-all',
                        showMistakeSuccess 
                          ? 'bg-green-500/20 text-green-400 border-green-500/30' 
                          : 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30'
@@ -2035,7 +2035,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
               {isTimerRunning && (
                 <div className="mt-2 w-full max-w-[200px]">
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-black text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-1">
                     <span>{t.tracker.safetyScore}</span>
                     <span>{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
                   </div>
@@ -2091,7 +2091,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {currentMistakes.length > 0 && (
               <div className="mt-6 w-full animate-in fade-in slide-in-from-top-2 duration-500">
                 <div className="flex items-center justify-between mb-3 px-1">
-                   <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                   <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                      {t.tracker.mistakeLog}
                    </h5>
                    <span className="text-[10px] font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full border border-red-400/20">
@@ -2118,7 +2118,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         </div>
                         <span>{getMistakeLabel(group.type)}</span>
                         {group.count > 1 && (
-                          <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500/20 px-1 text-[9px] font-black text-red-400">
+                          <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500/20 px-1 text-[9px] font-bold text-red-400">
                             ×{group.count}
                           </span>
                         )}
@@ -2199,7 +2199,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       {activeTab === 'history' && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">
               {t.tracker.historyTitle || 'History'}
             </h3>
             <div className="flex items-center gap-2">
@@ -2214,7 +2214,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       });
                     });
                   }}
-                  className="flex items-center gap-1.5 rounded-lg bg-blue-50 px-2 py-1 text-[9px] font-black uppercase tracking-tight text-blue-600 transition hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"
+                  className="flex items-center gap-1.5 rounded-lg bg-blue-50 px-2 py-1 text-[9px] font-bold uppercase tracking-tight text-blue-600 transition hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"
                 >
                   <CheckCircle2 className="h-3 w-3" />
                   {language === 'de' ? 'ALLE OK' : 'ALL OK'}
@@ -2325,17 +2325,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {getTypeLabel(session.type)}
                               </h4>
                               {session.syncStatus === 'synced' ? (
-                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
+                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
                                   <Cloud className="h-2 w-2" />
                                   {t.tracker.published || 'Published'}
                                 </span>
                               ) : (
-                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
+                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
                                   {t.tracker.pendingSync || 'Syncing...'}
                                 </span>
                               )}
                               {session.isSimulation && (
-                                <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
+                                <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
                                   SIM
                                 </span>
                               )}
@@ -2347,14 +2347,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right mr-2">
-                            <p className="text-sm font-black text-slate-900 dark:text-white">
+                            <p className="text-sm font-bold text-slate-900 dark:text-white">
                               {session.duration} <span className="text-[10px] font-bold text-slate-400">min</span>
                             </p>
                             <div className="flex items-center justify-end gap-2">
                               {session.mistakes && session.mistakes.length > 0 && (
                                 <div className="flex h-4 items-center gap-1 rounded bg-red-50 px-1 dark:bg-red-900/20">
                                   <AlertTriangle className="h-2.5 w-2.5 text-red-500" />
-                                  <span className="text-[8px] font-black text-red-600 dark:text-red-400">
+                                  <span className="text-[8px] font-bold text-red-600 dark:text-red-400">
                                     {session.mistakes.length}
                                   </span>
                                 </div>
@@ -2392,7 +2392,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                                 {t.tracker.cost || 'Cost'}
                               </p>
-                              <p className="text-lg font-black text-slate-900 dark:text-white">
+                              <p className="text-lg font-bold text-slate-900 dark:text-white">
                                 €{((session.duration / 45) * userProgress.hourlyRate45).toFixed(2)}
                               </p>
                             </div>
@@ -2401,7 +2401,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {t.tracker.mistakesCount || 'Mistakes'}
                               </p>
                               <p className={cn(
-                                'text-lg font-black',
+                                'text-lg font-bold',
                                 (session.mistakes?.length || 0) === 0 ? 'text-green-500' : 'text-red-500'
                               )}>
                                 {session.mistakes?.length || 0}
@@ -2442,11 +2442,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {session.mistakes && session.mistakes.length > 0 && (
                             <div className="mt-4">
                               <div className="mb-3 flex items-center justify-between">
-                                <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                                   {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
                                 </h5>
                                 {!isPremium && (
-                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
                                     PRO Analysis
                                   </span>
                                 )}
@@ -2482,7 +2482,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                           <div className="space-y-2">
                                             <div className="flex items-center gap-2">
                                               <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-                                              <span className="text-[9px] font-black uppercase tracking-tighter text-amber-600 dark:text-amber-400">
+                                              <span className="text-[9px] font-bold uppercase tracking-tighter text-amber-600 dark:text-amber-400">
                                                 {language === 'de' ? 'ÜBERPRÜFUNG ERFORDERLICH' : 'NEEDS REVIEW'}
                                               </span>
                                             </div>
@@ -2497,7 +2497,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                       <div className="flex items-center gap-2">
                                                         <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
                                                         <span className={cn(
-                                                          'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest',
+                                                          'rounded px-1 py-0.5 text-[7px] font-bold uppercase tracking-widest',
                                                           (m.source === 'manual') 
                                                             ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
                                                             : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
@@ -2535,7 +2535,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                         {Object.keys(groups).length > 0 && (
                                           <div className="space-y-2">
                                             {pendingMistakes.length > 0 && (
-                                              <span className="text-[9px] font-black uppercase tracking-tighter text-slate-400">
+                                              <span className="text-[9px] font-bold uppercase tracking-tighter text-slate-400">
                                                 {language === 'de' ? 'BESTÄTIGTES PROTOKOLL' : 'VERIFIED LOG'}
                                               </span>
                                             )}
@@ -2557,7 +2557,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                             {getMistakeLabel(group.type)}
                                                           </span>
                                                           <span className={cn(
-                                                            'rounded px-1 py-0.5 text-[7px] font-black uppercase tracking-widest',
+                                                            'rounded px-1 py-0.5 text-[7px] font-bold uppercase tracking-widest',
                                                             (group.source === 'manual') 
                                                               ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
                                                               : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
@@ -2573,7 +2573,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                     </div>
                                                     {group.count > 1 && (
                                                       <div className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-50 px-2 dark:bg-slate-900/50">
-                                                        <span className="text-[10px] font-black text-slate-400">
+                                                        <span className="text-[10px] font-bold text-slate-400">
                                                           ×{group.count}
                                                         </span>
                                                       </div>
@@ -2606,7 +2606,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Notes */}
                           {session.notes && (
                             <div className="mt-4">
-                              <h5 className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                              <h5 className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                                 {((t.tracker as any).notes as string) || 'Notes'}
                               </h5>
                               <p className="text-xs text-slate-600 dark:text-slate-400 italic">
@@ -2654,7 +2654,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </div>
               </div>
               
-              <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">
+              <h3 className="mb-2 text-center text-2xl font-bold text-slate-900 dark:text-white">
                 Safety Protocol: StVO § 23 Compliance
               </h3>
               
@@ -2690,7 +2690,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   disabled={!isMountConfirmed}
                   data-testid="confirm-mount-btn"
                   className={cn(
-                    'w-full rounded-2xl py-4 font-black text-white shadow-lg transition-all active:scale-95',
+                    'w-full rounded-2xl py-4 font-bold text-white shadow-lg transition-all active:scale-95',
                     isMountConfirmed 
                       ? 'bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900' 
                       : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
@@ -2719,7 +2719,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <ShieldCheck className="h-10 w-10 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
-            <h3 className="mb-2 text-center text-2xl font-black text-slate-900 dark:text-white">Privacy & Data Policy</h3>
+            <h3 className="mb-2 text-center text-2xl font-bold text-slate-900 dark:text-white">Privacy & Data Policy</h3>
             <div className="mb-6 max-h-[200px] overflow-y-auto text-sm text-slate-600 dark:text-slate-400">
               <p>To provide real-time driving analysis, we process your GPS and motion sensor data.</p>
             </div>
@@ -2748,7 +2748,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 disabled={!privacyConsent}
                 data-testid="accept-privacy-btn"
                 className={cn(
-                  'w-full rounded-2xl py-4 font-black text-white transition-all',
+                  'w-full rounded-2xl py-4 font-bold text-white transition-all',
                   privacyConsent ? 'bg-blue-600' : 'bg-slate-300'
                 )}
               >
@@ -2768,7 +2768,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"
           >
-            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
+            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
               Safe Driving Mode Active
             </div>
           </motion.div>
