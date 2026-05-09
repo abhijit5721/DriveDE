@@ -63,7 +63,6 @@ export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
-    language,
     darkMode,
     userProgress,
     hasVisited,
@@ -115,7 +114,7 @@ export default function App() {
           const { CapacitorUpdater } = await import('@capgo/capacitor-updater');
           
           // Silent background sync for production
-          await CapacitorUpdater.sync();
+          await (CapacitorUpdater as any).sync();
         } catch (e) {
           // Silent fail in production
         }
@@ -367,13 +366,13 @@ export default function App() {
         CapacitorUpdater.notifyAppReady();
 
         // Update listeners for visual feedback
-        CapacitorUpdater.addListener('downloadProgress', (data) => {
+        (CapacitorUpdater as any).addListener('downloadProgress', (data: any) => {
           const lang = useAppStore.getState().language || 'de';
           const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS].common.updates;
           toast.loading(`${t.downloading} (${data.percent}%)`, { id: 'capgo-update' });
         });
 
-        CapacitorUpdater.addListener('updateApplied', () => {
+        (CapacitorUpdater as any).addListener('updateApplied', () => {
           const lang = useAppStore.getState().language || 'de';
           const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS].common.updates;
           toast.success(t.ready, { id: 'capgo-update', duration: 10000 });
