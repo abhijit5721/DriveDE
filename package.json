@@ -1,7 +1,7 @@
 {
   "name": "react-vite-tailwind",
   "private": true,
-  "version": "0.0.59",
+  "version": "0.0.60",
   "type": "module",
   "scripts": {
     "dev": "node node_modules/vite/bin/vite.js",
