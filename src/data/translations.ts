@@ -1602,7 +1602,8 @@ export const TRANSLATIONS = {
                 { title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen – auch wenn kein anderes Auto kommt.' },
                 { title: 'Die 21-22-23-Regel', content: 'Zählen Sie im Geiste "21, 22, 23", wenn Sie stehen. Das stellt sicher, dass der Prüfer den Stillstand als solchen erkennt.' },
                 { title: 'Abknickende Vorfahrt verstehen', content: 'Folgen Sie der dicken Linie, müssen Sie blinken. Fahren Sie geradeaus (verlassen die Vorfahrt), dürfen Sie nicht blinken. Achten Sie auf Vorrang gegenüber anderen Abbiegern.' },
-                { title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' }
+                { title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' },
+                { title: 'Warten an der Nebenstraße', content: 'Wenn Sie von der dünnen Linie in die abknickende Vorfahrt einfahren, müssen Sie allen auf der Hauptstraße (dicke Linie) Vorrang gewähren.' }
               ],
               rightTurn: [
                 { title: 'Früh rechts einordnen', content: 'Ordnen Sie sich rechtzeitig möglichst weit rechts ein, ohne Radfahrstreifen zu blockieren.' },
@@ -1886,6 +1887,16 @@ export const TRANSLATIONS = {
                   { title: 'Verkehr auf der Vorfahrtstraße erkennen', description: 'Fahrzeuge, die der Hauptstraße nach links folgen, bleiben bevorrechtigt.', icon: 'Shield' },
                   { title: 'Nicht falsch links blinken', description: 'Wenn Sie die Vorfahrtstraße verlassen, dürfen Sie nicht so tun, als würden Sie ihr nach links folgen.', icon: 'AlertTriangle', critical: true },
                   { title: 'Bevorrechtigte Fahrzeuge durchlassen', description: 'Warten Sie, wenn nötig, auf Fahrzeuge, die der Hauptstraße links folgen.', icon: 'CheckCircle' }
+                ]
+              },
+              {
+                id: 'bending-priority-entry',
+                title: 'Einfahren in abknickende Vorfahrt',
+                situation: 'Sie kommen aus einer untergeordneten Straße (Vorfahrt gewähren oder Stopp) an eine abknickende Vorfahrtstraße.',
+                steps: [
+                  { title: 'Beide Richtungen der Hauptstraße prüfen', description: 'Sie müssen sowohl Fahrzeugen folgen, die der Vorfahrtstraße folgen, als auch denen, die sie verlassen.', icon: 'Eye', critical: true },
+                  { title: 'Blinker setzen je nach Ziel', description: 'Blinken Sie links oder rechts, je nachdem in welche Richtung Sie die Kreuzung verlassen wollen.', icon: 'ArrowLeft' },
+                  { title: 'Lücke abwarten', description: 'Erst fahren, wenn eine ausreichend große Lücke in beiden Richtungen der Hauptstraße vorhanden ist.', icon: 'Shield', critical: true }
                 ]
               },
               {
@@ -4046,6 +4057,16 @@ export const TRANSLATIONS = {
                   { title: 'Recognise traffic on the priority road', description: 'Vehicles following the main road to the left remain prioritised.', icon: 'Shield' },
                   { title: 'Do not signal left incorrectly', description: 'When leaving the priority road, do not act as if you are following it to the left.', icon: 'AlertTriangle', critical: true },
                   { title: 'Yield to prioritised vehicles', description: 'Wait, if necessary, for vehicles following the main road to the left.', icon: 'CheckCircle' }
+                ]
+              },
+              {
+                id: 'bending-priority-entry',
+                title: 'Entering a Bending Priority Road',
+                situation: 'You are coming from a subordinate road (Yield or Stop) to a bending priority road.',
+                steps: [
+                  { title: 'Check both directions of the main road', description: 'You must yield to vehicles following the priority road as well as those leaving it.', icon: 'Eye', critical: true },
+                  { title: 'Signal according to destination', description: 'Signal left or right depending on which direction you want to leave the intersection.', icon: 'ArrowLeft' },
+                  { title: 'Wait for a gap', description: 'Only drive when there is a sufficiently large gap in both directions of the main road.', icon: 'Shield', critical: true }
                 ]
               },
               {

@@ -1139,7 +1139,8 @@ const cityLessons: Lesson[] = [
     scenarios: [
       getScenario('rvl-hidden-right'),
       getScenario('left-turn-bending-priority-follow'),
-      getScenario('left-turn-bending-priority-leave')
+      getScenario('left-turn-bending-priority-leave'),
+      getScenario('bending-priority-entry'),
     ],
     trafficSigns: [signStop, signYield, signPriorityRoadBending],
     quiz: priorityQuiz,
