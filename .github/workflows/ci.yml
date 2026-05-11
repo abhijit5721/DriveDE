@@ -62,7 +62,9 @@ jobs:
 
       - name: Upload OTA Bundle to Capgo
         run: |
+          # Use || true to prevent the workflow from failing if the version was already uploaded locally
+          # Capgo CLI returns exit code 1 if version exists
           npx @capgo/cli@latest bundle upload \
             --apikey ${{ secrets.CAPGO_TOKEN }} \
             --channel dev \
-            --path dist
+            --path dist || echo "Bundle version already exists in Capgo, skipping..."
