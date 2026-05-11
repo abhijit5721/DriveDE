@@ -111,14 +111,18 @@ function RoundaboutSign() {
 function BendingPrioritySign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      {/* Priority Diamond */}
       <g transform="translate(32 20) rotate(45) translate(-32 -20)">
         <rect x="18" y="6" width="28" height="28" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
         <rect x="22" y="10" width="20" height="20" fill="#f5c542" stroke="#111827" strokeWidth="1.5" />
       </g>
-      <rect x="18" y="36" width="28" height="16" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-      <path d="M25 47V39h8v4h6" stroke="#111827" strokeWidth="4" strokeLinecap="square" fill="none" />
-      <path d="M39 39h-4" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M25 43h-5" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Supplementary Sign Box */}
+      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
+      {/* Thick Priority Line (Bottom to Left) */}
+      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      {/* Thin Side Street Lines */}
+      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
     </svg>
   );
 }
@@ -136,14 +140,18 @@ function GreenArrowSign() {
 function YieldBendingSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <g transform="translate(0, -6)">
-        <polygon points="32,8 50,40 14,40" fill="#d92d20" />
-        <polygon points="32,15 44,36 20,36" fill="#ffffff" />
+      {/* Yield Triangle */}
+      <g transform="translate(32 20) translate(-32 -20)">
+        <polygon points="32,4 54,34 10,34" fill="#d92d20" />
+        <polygon points="32,12 46,31 18,31" fill="#ffffff" />
       </g>
-      <rect x="18" y="36" width="28" height="16" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-      <path d="M25 47V39h8v4h6" stroke="#111827" strokeWidth="4" strokeLinecap="square" fill="none" />
-      <path d="M39 39h-4" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M25 43h-5" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Supplementary Sign Box */}
+      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
+      {/* Thick Priority Line */}
+      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      {/* Thin Side Street Lines */}
+      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
     </svg>
   );
 }
@@ -151,19 +159,23 @@ function YieldBendingSign() {
 function StopBendingSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <g transform="translate(0, -6) scale(0.8) translate(8, 6)">
+      {/* Stop Octagon */}
+      <g transform="translate(32 18) scale(0.65) translate(-32 -18)">
         <path 
-          d="M22 10h20l12 12v20L42 54H22L10 42V22L22 10z" 
+          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
           fill="#ef4444" 
           stroke="#ffffff" 
-          strokeWidth="2.5" 
+          strokeWidth="3" 
         />
-        <text x="32" y="38" textAnchor="middle" fontSize="12" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+        <text x="32" y="29" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
       </g>
-      <rect x="18" y="36" width="28" height="16" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-      <path d="M25 47V39h8v4h6" stroke="#111827" strokeWidth="4" strokeLinecap="square" fill="none" />
-      <path d="M39 39h-4" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M25 43h-5" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Supplementary Sign Box */}
+      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
+      {/* Thick Priority Line */}
+      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      {/* Thin Side Street Lines */}
+      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
     </svg>
   );
 }
@@ -176,12 +188,21 @@ function StopSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
       <path 
-        d="M22 10h20l12 12v20L42 54H22L10 42V22L22 10z" 
+        d="M22 6h20l14 14v24L42 58H22L8 44V20L22 6z" 
         fill="#ef4444" 
         stroke="#ffffff" 
-        strokeWidth="2.5" 
+        strokeWidth="3" 
       />
-      <text x="32" y="38" textAnchor="middle" fontSize="12" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+      <text x="32" y="38" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+    </svg>
+  );
+}
+
+function YieldSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <polygon points="32,6 58,48 6,48" fill="#d92d20" />
+      <polygon points="32,16 48,43 16,43" fill="#ffffff" />
     </svg>
   );
 }
@@ -196,6 +217,17 @@ function OneWaySign() {
       <rect x="10" y="10" width="44" height="44" rx="4" fill="#3b82f6" />
       <path d="M16 32h32" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" />
       <path d="M40 20l12 12-12 12" fill="none" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
+  );
+}
+
+function PriorityRoadSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <g transform="translate(32 32) rotate(45) translate(-32 -32)">
+        <rect x="14" y="14" width="36" height="36" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
+        <rect x="20" y="20" width="24" height="24" fill="#f5c542" stroke="#111827" strokeWidth="1.5" />
+      </g>
     </svg>
   );
 }
