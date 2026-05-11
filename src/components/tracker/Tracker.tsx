@@ -427,6 +427,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showNavigationHUD, setShowNavigationHUD] = useState(false);
+  const [gpsSignalQuality, setGpsSignalQuality] = useState<'excellent' | 'good' | 'poor'>('excellent');
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDistance, setCurrentDistance] = useState(0);
   const [gpsPoints, setGpsPoints] = useState<NonNullable<DrivingSession['route']>>([]);
@@ -1116,12 +1117,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             if (!position) return;
             const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
             
-            // Compliance/Quality: Filter out inaccurate points
-            // On high-end Androids, accuracy < 5 is common. 30 is a reasonable upper bound for driving.
-            if (accuracy && accuracy > 30) {
-              console.warn('[Tracker] Ignoring inaccurate GPS point:', accuracy);
+            // Compliance/Quality: Filter out extreme noise
+            // In trains/dense cities, accuracy can drop. 65m is a safer "useful" limit.
+            if (accuracy && accuracy > 65) {
+              setGpsSignalQuality('poor');
+              console.warn('[Tracker] GPS accuracy poor:', accuracy);
               return;
             }
+            
+            setGpsSignalQuality(accuracy && accuracy < 15 ? 'excellent' : 'good');
 
             const newPoint = { lat, lng, timestamp: Date.now() };
             
@@ -1158,9 +1162,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               );
 
               // 3. ZERO-MOTION CHECK
-              // If we moved less than 1.5 meters, assume speed is 0 to avoid "drifting"
+              // If we moved less than 1.0 meters, assume speed is 0 to avoid "drifting" while stopped
               const distSinceLast = lastPoint ? calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng) : 0;
-              const finalSpeed = distSinceLast < 0.0015 ? 0 : smoothedSpeed;
+              const finalSpeed = distSinceLast < 0.0010 ? 0 : smoothedSpeed;
 
               setCurrentSpeed(finalSpeed);
 
@@ -1815,6 +1819,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             nextRoadName={nextRoadName}
             currentRoadName={currentRoadName}
             eta={eta}
+            signalQuality={gpsSignalQuality}
             t={{
               pause:           t.common.pause,
               resume:          t.common.resume || 'Resume',

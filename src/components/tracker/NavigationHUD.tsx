@@ -51,6 +51,7 @@ export interface NavigationHUDProps {
   nextRoadName?: string;
   currentRoadName?: string;
   eta?: string;
+  signalQuality?: 'excellent' | 'good' | 'poor';
   t: {
     pause: string;
     resume: string;
@@ -198,12 +199,14 @@ function SpeedSign({ limit, speeding, currentSpeed }: { limit: number; speeding:
 export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   gpsPoints, currentSpeed, currentLimit, elapsedTime, currentDistance,
   safetyScore, mistakeGroups, isPaused, destinationCoords, destinationLabel,
-  onPause, onResume, onStop, onLogProblem, onExit, showMistakeSuccess, t,
+  onPause, onResume, onStop, onLogProblem, onExit, showMistakeSuccess,
   nextInstruction = 'Take the exit toward Pacific Blvd East',
   distanceToNextTurn = '20 m',
   nextRoadName = 'Cambie St',
   currentRoadName = 'W 2nd Ave',
-  eta = '22:43'
+  eta = '22:43',
+  signalQuality = 'good',
+  t
 }) => {
   const [isStartingSplash, setIsStartingSplash] = React.useState(true);
   const [startingPhase, setStartingPhase] = React.useState<'finding' | '3' | '2' | '1' | 'go'>('finding');
@@ -350,6 +353,17 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           <div className="flex items-center gap-2 rounded-full bg-[#3b82f6] px-4 py-1.5 shadow-xl">
              <Navigation2 className="h-3 w-3 fill-white text-white" />
              <span className="text-[11px] font-bold uppercase tracking-tight text-white">{currentRoadName}</span>
+          </div>
+
+          {/* Signal Indicator */}
+          <div className={cn(
+            "flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg transition-colors",
+            signalQuality === 'excellent' ? "bg-emerald-500/90 text-white" :
+            signalQuality === 'good' ? "bg-amber-500/90 text-white" :
+            "bg-red-500/90 text-white animate-pulse"
+          )}>
+            <Signal className="h-3 w-3" />
+            {signalQuality}
           </div>
         </div>
 
