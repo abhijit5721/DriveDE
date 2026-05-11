@@ -704,14 +704,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     const fetchSuggestions = async () => {
       if (targetDestination.length < 3 || targetDestination === lastSelectedDestination) {
         setSuggestions([]);
-        setShowSuggestions(false);
-        return;
-      }
-
-      try {
+        const hasRoute = gpsPoints.length > 0;
         const langCode = language === 'de' ? 'de' : 'en';
-        const biasLat = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
-        const biasLon = gpsPoints.length > 0 ? gpsPoints[gpsPoints.length - 1].lng : 13.405;
+        const biasLat = hasRoute ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
+        const biasLon = hasRoute ? gpsPoints[gpsPoints.length - 1].lng : 13.405;
         
         const response = await fetch(
           `https://photon.komoot.io/api?q=${encodeURIComponent(targetDestination)}&limit=5&lang=${langCode}&lat=${biasLat}&lon=${biasLon}`
@@ -1303,7 +1299,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, t, logRoutePoint, logMistake, currentSpeed]);
+  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, t, logRoutePoint, logMistake, currentSpeed, userProgress.drivingSessions, TRIAL_LIMIT]);
 
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;

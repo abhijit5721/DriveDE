@@ -235,7 +235,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
     hasRoute
       ? [gpsPoints[gpsPoints.length - 1].lat, gpsPoints[gpsPoints.length - 1].lng]
       : [52.52, 13.405],
-  [gpsPoints.length, hasRoute]);
+  [gpsPoints, hasRoute]);
 
   const bearing = useMemo(() =>
     gpsPoints.length > 1
@@ -244,7 +244,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           gpsPoints[gpsPoints.length - 1].lat, gpsPoints[gpsPoints.length - 1].lng,
         )
       : 0,
-  [gpsPoints.length]);
+  [gpsPoints]);
 
   const carIcon = useMemo(() => makeCarIcon(bearing), [bearing]);
 
