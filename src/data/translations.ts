@@ -1598,6 +1598,12 @@ export const TRANSLATIONS = {
                 { title: 'Vorrang für Fußgänger', content: 'Schon erkennbar querungsbereite Fußgänger haben Vorrang – nicht erst, wenn sie mitten auf dem Streifen stehen.' },
                 { title: 'Radfahrer und verdeckte Personen beachten', content: 'Besondere Vorsicht bei Kindern, E-Scootern, parkenden Autos und Bushaltestellen nahe am Zebrastreifen.' }
               ],
+              priority: [
+                { title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen – auch wenn kein anderes Auto kommt.' },
+                { title: 'Die 21-22-23-Regel', content: 'Zählen Sie im Geiste "21, 22, 23", wenn Sie stehen. Das stellt sicher, dass der Prüfer den Stillstand als solchen erkennt.' },
+                { title: 'Abknickende Vorfahrt verstehen', content: 'Folgen Sie der dicken Linie, müssen Sie blinken. Fahren Sie geradeaus (verlassen die Vorfahrt), dürfen Sie nicht blinken. Achten Sie auf Vorrang gegenüber anderen Abbiegern.' },
+                { title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' }
+              ],
               rightTurn: [
                 { title: 'Früh rechts einordnen', content: 'Ordnen Sie sich rechtzeitig möglichst weit rechts ein, ohne Radfahrstreifen zu blockieren.' },
                 { title: 'Blick auf Fußgänger und Radfahrer', content: 'Vor dem Einlenken müssen querende Fußgänger und parallel fahrende Radfahrer kontrolliert werden.' },
@@ -3761,6 +3767,12 @@ export const TRANSLATIONS = {
                 { title: 'Recognize early and prepare to brake', content: 'Reduce speed in good time before a zebra crossing and actively scan both sides.' },
                 { title: 'Pedestrians have priority', content: 'Clearly intending pedestrians have priority, not only once they are already in the middle.' },
                 { title: 'Watch cyclists and hidden people', content: 'Take extra care with children, e-scooters, parked cars, and bus stops near the crossing.' }
+              ],
+              priority: [
+                { title: 'The Octagonal Stop Sign', content: 'At a stop sign, you must come to a complete standstill – even if no other car is coming.' },
+                { title: 'The 21-22-23 Rule', content: 'Count "21, 22, 23" in your head when stopped. This ensures the examiner recognizes the standstill as such.' },
+                { title: 'Understand Bending Priority', content: 'If you follow the thick line, you must signal. If you go straight (leaving the priority road), you must not signal. Watch for priority over other turners.' },
+                { title: 'Stop Line vs. Sight Line', content: 'First stop at the stop line. If you cannot see from there, creep forward to the line of sight and stop again if necessary.' }
               ],
               rightTurn: [
                 { title: 'Position early for the right turn', content: 'Move into the correct right-turn position early, without blocking cycle lanes.' },

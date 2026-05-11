@@ -708,6 +708,32 @@ const priorityQuiz: QuizQuestion[] = [
     correctOptionId: 'b',
     explanationDe: 'Ohne Haltlinie gilt die Sichtlinie als Haltepunkt, um den Querverkehr optimal einsehen zu können.',
     explanationEn: 'Without a stop line, the line of sight is the stopping point to optimally see cross traffic.',
+  },
+  {
+    id: 'quiz-bending-follow',
+    questionDe: 'Sie folgen einer abknickenden Vorfahrtstraße. Müssen Sie blinken?',
+    questionEn: 'You are following a bending priority road. Do you have to signal?',
+    options: [
+      { id: 'a', textDe: 'Nein, da ich auf der Vorfahrtstraße bleibe', textEn: 'No, because I am staying on the priority road' },
+      { id: 'b', textDe: 'Ja, da ich die Fahrtrichtung ändere', textEn: 'Yes, because I am changing direction' },
+      { id: 'c', textDe: 'Nur wenn andere Fahrzeuge in der Nähe sind', textEn: 'Only if other vehicles are nearby' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Auch wenn Sie auf der Vorfahrtstraße bleiben, ändern Sie Ihre Fahrtrichtung und müssen dies rechtzeitig anzeigen.',
+    explanationEn: 'Even if you stay on the priority road, you are changing your direction of travel and must indicate this in time.',
+  },
+  {
+    id: 'quiz-bending-leave',
+    questionDe: 'Die Vorfahrtstraße knickt nach links ab. Sie wollen geradeaus weiterfahren. Wie verhalten Sie sich?',
+    questionEn: 'The priority road bends to the left. You want to continue straight. how do you behave?',
+    options: [
+      { id: 'a', textDe: 'Ich blinke links, um dem virtuellen Verlauf zu folgen', textEn: 'I signal left to follow the virtual course' },
+      { id: 'b', textDe: 'Ich blinke nicht, da ich geradeaus fahre', textEn: 'I do not signal because I am going straight' },
+      { id: 'c', textDe: 'Ich blinke rechts, um das Verlassen anzuzeigen', textEn: 'I signal right to indicate leaving' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Beim Geradeausfahren (Verlassen der abknickenden Vorfahrt ohne Richtungsänderung) wird nicht geblinkt.',
+    explanationEn: 'When driving straight (leaving the bending priority road without changing direction), you do not signal.',
   }
 ];
 
@@ -1108,7 +1134,14 @@ const cityLessons: Lesson[] = [
     ...getLessonStrings('city-12'),
     completed: false,
     isPremium: true,
-    trafficSigns: [signStop, signYield],
+    isInteractive: true,
+    guidedPoints: getGuidedPoints('priority', 'prio-gp'),
+    scenarios: [
+      getScenario('rvl-hidden-right'),
+      getScenario('left-turn-bending-priority-follow'),
+      getScenario('left-turn-bending-priority-leave')
+    ],
+    trafficSigns: [signStop, signYield, signPriorityRoadBending],
     quiz: priorityQuiz,
   },
   {
