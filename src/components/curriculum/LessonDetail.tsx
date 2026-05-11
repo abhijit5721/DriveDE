@@ -978,13 +978,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       {/* Complete Button for lessons without steps */}
       {(!lesson.steps || lesson.steps.length === 0) && !isCompleted && (
         <button
-          onClick={() => {
-            completeLesson(lesson.id);
-            onBack();
-          }}
+          onClick={handleFinish}
           className="mt-6 w-full rounded-xl bg-gradient-to-r from-green-500 to-green-600 py-3 font-semibold text-white transition-all hover:from-green-600 hover:to-green-700"
         >
-          {t.curriculum.markAsLearned}
+          {lesson.quiz && lesson.quiz.length > 0 
+            ? t.curriculum.goToQuiz 
+            : t.curriculum.markAsLearned}
         </button>
       )}
     </div>
