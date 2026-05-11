@@ -62,9 +62,16 @@ jobs:
 
       - name: Upload OTA Bundle to Capgo
         run: |
-          # Use || true to prevent the workflow from failing if the version was already uploaded locally
-          # Capgo CLI returns exit code 1 if version exists
-          npx @capgo/cli@latest bundle upload \
-            --apikey ${{ secrets.CAPGO_TOKEN }} \
-            --channel dev \
-            --path dist || echo "Bundle version already exists in Capgo, skipping..."
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Checking if version $VERSION already exists in Capgo..."
+          
+          # List bundles and check if the current version is already there
+          if npx @capgo/cli@latest bundle list de.drivede.app --apikey ${{ secrets.CAPGO_TOKEN }} | grep -q "$VERSION"; then
+            echo "✅ Version $VERSION already exists in Capgo. Skipping upload to avoid conflict."
+          else
+            echo "🚀 Version $VERSION not found. Starting upload..."
+            npx @capgo/cli@latest bundle upload \
+              --apikey ${{ secrets.CAPGO_TOKEN }} \
+              --channel dev \
+              --path dist
+          fi
