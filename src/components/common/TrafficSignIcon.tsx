@@ -24,14 +24,6 @@ function SignFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-function YieldSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <polygon points="32,8 56,52 8,52" fill="#d92d20" />
-      <polygon points="32,16 48.5,46 15.5,46" fill="#ffffff" />
-    </svg>
-  );
-}
 
 function ParkingSign() {
   return (
@@ -73,16 +65,6 @@ function MotorwaySign() {
   );
 }
 
-function PriorityRoadSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <g transform="translate(32 32) rotate(45) translate(-32 -32)">
-        <rect x="14" y="14" width="36" height="36" fill="#ffffff" stroke="#111827" strokeWidth="3" />
-        <rect x="20" y="20" width="24" height="24" fill="#f5c542" stroke="#111827" strokeWidth="2" />
-      </g>
-    </svg>
-  );
-}
 
 function PedestrianCrossingSign() {
   return (
@@ -140,10 +122,10 @@ function GreenArrowSign() {
 function YieldBendingSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Yield Triangle */}
-      <g transform="translate(32 20) translate(-32 -20)">
-        <polygon points="32,4 54,34 10,34" fill="#d92d20" />
-        <polygon points="32,12 46,31 18,31" fill="#ffffff" />
+      {/* Yield Triangle (Inverted) */}
+      <g transform="translate(32 18) translate(-32 -18)">
+        <polygon points="10,2 54,2 32,32" fill="#d92d20" />
+        <polygon points="18,5 46,5 32,27" fill="#ffffff" />
       </g>
       {/* Supplementary Sign Box */}
       <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
@@ -201,8 +183,8 @@ function StopSign() {
 function YieldSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <polygon points="32,6 58,48 6,48" fill="#d92d20" />
-      <polygon points="32,16 48,43 16,43" fill="#ffffff" />
+      <polygon points="6,10 58,10 32,54" fill="#d92d20" />
+      <polygon points="16,15 48,15 32,43" fill="#ffffff" />
     </svg>
   );
 }
