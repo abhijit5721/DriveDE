@@ -1137,10 +1137,11 @@ const cityLessons: Lesson[] = [
     isInteractive: true,
     guidedPoints: getGuidedPoints('priority', 'prio-gp'),
     scenarios: [
-      getScenario('rvl-hidden-right'),
       getScenario('left-turn-bending-priority-follow'),
       getScenario('left-turn-bending-priority-leave'),
       getScenario('bending-priority-entry'),
+      getScenario('bending-priority-right-turn'),
+      getScenario('rvl-hidden-right')
     ],
     trafficSigns: [signStop, signYield, signPriorityRoadBending],
     quiz: priorityQuiz,

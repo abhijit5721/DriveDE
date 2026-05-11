@@ -1900,6 +1900,16 @@ export const TRANSLATIONS = {
                 ]
               },
               {
+                id: 'bending-priority-right-turn',
+                title: 'Rechts abbiegen aus abknickender Vorfahrt',
+                situation: 'Die Hauptstraße knickt links ab, Sie wollen aber nach rechts abbiegen.',
+                steps: [
+                  { title: 'Rechts blinken', description: 'Da Sie die Fahrtrichtung nach rechts ändern, müssen Sie den rechten Blinker setzen.', icon: 'ArrowRight', critical: true },
+                  { title: 'Vorrang beachten', description: 'Sie verlassen die Vorfahrtstraße. Achten Sie auf Fahrzeuge, die der Vorfahrtstraße nach links folgen.', icon: 'AlertTriangle' },
+                  { title: 'Schulterblick rechts', description: 'Achten Sie auf Radfahrer oder Fußgänger, die parallel zu Ihnen unterwegs sein könnten.', icon: 'Eye', critical: true }
+                ]
+              },
+              {
                 id: 'left-turn-tram',
                 title: 'Linksabbiegen an Straßenbahngleisen',
                 situation: 'Sie wollen links über Straßenbahngleise abbiegen und eine Straßenbahn nähert sich.',
@@ -4067,6 +4077,16 @@ export const TRANSLATIONS = {
                   { title: 'Check both directions of the main road', description: 'You must yield to vehicles following the priority road as well as those leaving it.', icon: 'Eye', critical: true },
                   { title: 'Signal according to destination', description: 'Signal left or right depending on which direction you want to leave the intersection.', icon: 'ArrowLeft' },
                   { title: 'Wait for a gap', description: 'Only drive when there is a sufficiently large gap in both directions of the main road.', icon: 'Shield', critical: true }
+                ]
+              },
+              {
+                id: 'bending-priority-right-turn',
+                title: 'Turning Right from a Bending Priority Road',
+                situation: 'The main road bends left, but you want to turn right.',
+                steps: [
+                  { title: 'Signal right', description: 'Since you are changing direction to the right, you must use the right signal.', icon: 'ArrowRight', critical: true },
+                  { title: 'Observe priority', description: 'You are leaving the priority road. Watch for vehicles following the priority road to the left.', icon: 'AlertTriangle' },
+                  { title: 'Shoulder view right', description: 'Watch for cyclists or pedestrians who may be traveling parallel to you.', icon: 'Eye', critical: true }
                 ]
               },
               {
