@@ -157,7 +157,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
     }
   };
 
-  const isVorfahrtLesson = lesson.id === 'city-1';
+  const isVorfahrtLesson = lesson.isInteractive && (lesson.id === 'city-1' || lesson.id === 'city-2' || lesson.id === 'city-12');
   const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
   const isRoundaboutLesson = lesson.id === 'city-3';
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
@@ -289,7 +289,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
           
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveVorfahrt onComplete={() => setIsSimulatorComplete(true)} language={language} />
+            <InteractiveVorfahrt 
+              onComplete={() => setIsSimulatorComplete(true)} 
+              language={language} 
+              scenario={lesson.simulatorScenario}
+            />
             
             {isSimulatorComplete && (
               <div className="mx-4 mb-4">

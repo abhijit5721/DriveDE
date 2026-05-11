@@ -713,14 +713,25 @@ export const TRANSLATIONS = {
         priority: {
           title: 'Mini-Simulator: Wer darf zuerst?',
           instructions: 'Klicke auf die Fahrzeuge in der richtigen Reihenfolge.',
-          error: (label: string) => `Falsch! Beachte die "Rechts vor Links" Regel. Das ${label} hat Vorrang.`,
+          error: (label: string) => `Falsch! Das ${label} hat Vorrang.`,
           successTitle: 'Super!',
           successMessage: 'Du hast die Vorfahrtsregel korrekt angewendet.',
           continue: 'Lektion fortsetzen',
           didYouKnow: 'Wusstest du?',
-          fact: 'In Deutschland gilt an Kreuzungen ohne Schilder immer "Rechts vor Links". Wer von rechts kommt, darf zuerst fahren.',
-          blueCar: 'Blaues Auto (von Rechts)',
-          redCar: 'Rotes Auto (von Unten)',
+          facts: {
+            rvl: 'In Deutschland gilt an Kreuzungen ohne Schilder immer "Rechts vor Links". Wer von rechts kommt, darf zuerst fahren.',
+            bending: 'Auf der abknickenden Vorfahrtstraße hat derjenige Vorrang, der dem Verlauf der dicken Linie folgt.',
+            stop: 'Am STOP-Schild musst du immer komplett anhalten (3 Sekunden) und allen anderen Vorrang gewähren.',
+            yield: 'Vorfahrt gewähren: Du musst anderen Fahrzeugen den Vorrang lassen, aber nicht zwingend anhalten, wenn alles frei ist.'
+          },
+          labels: {
+            blueCar: 'Blaues Auto',
+            redCar: 'Rotes Auto',
+            yellowCar: 'Gelbes Auto',
+            greenCar: 'Grünes Auto',
+            whiteCar: 'Weißes Auto',
+            you: 'Du (Silbernes Auto)'
+          }
         },
         techCheck: {
           title: 'Fahrzeugtechnik-Check',
@@ -2902,14 +2913,25 @@ export const TRANSLATIONS = {
         priority: {
           title: 'Mini-Simulator: Who goes first?',
           instructions: 'Click on the vehicles in the correct order.',
-          error: (label: string) => `Incorrect! Remember "Right before Left". The ${label} has priority.`,
+          error: (label: string) => `Incorrect! The ${label} has priority.`,
           successTitle: 'Excellent!',
           successMessage: 'You applied the right-of-way rule correctly.',
           continue: 'Continue Lesson',
           didYouKnow: 'Did you know?',
-          fact: 'In Germany, at intersections without signs, "Right before Left" always applies. Whoever comes from the right has priority.',
-          blueCar: 'Blue Car (from Right)',
-          redCar: 'Red Car (from Bottom)',
+          facts: {
+            rvl: 'In Germany, at intersections without signs, "Right before Left" always applies. Whoever comes from the right has priority.',
+            bending: 'On a bending priority road, the vehicle following the thick line has priority.',
+            stop: 'At a STOP sign, you must always come to a complete standstill (3 seconds) and yield to all other traffic.',
+            yield: 'Give way / Yield: You must yield to other vehicles but do not necessarily have to stop if the road is clear.'
+          },
+          labels: {
+            blueCar: 'Blue Car',
+            redCar: 'Red Car',
+            yellowCar: 'Yellow Car',
+            greenCar: 'Green Car',
+            whiteCar: 'White Car',
+            you: 'You (Silver Car)'
+          }
         },
         techCheck: {
           title: 'Vehicle Tech Check',

@@ -27,6 +27,27 @@ export interface Chapter {
   progress: number;
 }
 
+export interface SimulatorScenario {
+  id: string;
+  cars: Array<{
+    id: string;
+    color: 'blue' | 'red' | 'yellow' | 'green' | 'white' | 'silver';
+    positionKey: 'top' | 'right' | 'bottom' | 'left';
+    order: number;
+    labelKey: string;
+    turn?: 'left' | 'right' | 'straight';
+  }>;
+  factKey: 'rvl' | 'bending' | 'stop' | 'yield';
+  signs?: Array<{
+    type: 'priority' | 'yield' | 'stop' | 'bending-priority';
+    position: 'top' | 'right' | 'bottom' | 'left';
+    rotation?: number;
+  }>;
+  bendingConfig?: {
+    path: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  };
+}
+
 export interface Lesson {
   id: string;
   chapterId: string;
@@ -54,6 +75,7 @@ export interface Lesson {
   automaticOnly?: boolean;
   isPremium?: boolean;
   isInteractive?: boolean;
+  simulatorScenario?: SimulatorScenario;
 }
 
 export interface ManeuverStep {

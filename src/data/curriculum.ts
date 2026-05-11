@@ -1023,6 +1023,14 @@ const cityLessons: Lesson[] = [
     completed: false,
     isPremium: false,
     isInteractive: true,
+    simulatorScenario: {
+      id: 'rvl-default',
+      factKey: 'rvl',
+      cars: [
+        { id: 'blue-car', color: 'blue', positionKey: 'right', order: 0, labelKey: 'blueCar' },
+        { id: 'red-car', color: 'red', positionKey: 'bottom', order: 1, labelKey: 'redCar' },
+      ]
+    },
     guidedPoints: rightBeforeLeftGuidedPoints,
     scenarios: [
       getScenario('rvl-hidden-right'),
@@ -1035,10 +1043,24 @@ const cityLessons: Lesson[] = [
     ...getLessonStrings('city-2'),
     completed: false,
     isPremium: false,
+    isInteractive: true,
+    simulatorScenario: {
+      id: 'bending-priority',
+      factKey: 'bending',
+      bendingConfig: { path: 'bottom-right' },
+      signs: [
+        { type: 'bending-priority', position: 'bottom' },
+        { type: 'yield', position: 'left' }
+      ],
+      cars: [
+        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
+        { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
+      ]
+    },
     guidedPoints: leftTurnGuidedPoints,
     scenarios: leftTurnScenarios,
     trafficSigns: [signPriorityRoadBending, signGreenArrow, signGreenArrowSignal],
-    quiz: cityQuiz,
+    quiz: priorityQuiz,
   },
   {
     id: 'city-3',
@@ -1155,6 +1177,19 @@ const cityLessons: Lesson[] = [
     completed: false,
     isPremium: true,
     isInteractive: true,
+    simulatorScenario: {
+      id: 'stop-bending',
+      factKey: 'stop',
+      bendingConfig: { path: 'bottom-right' },
+      signs: [
+        { type: 'bending-priority', position: 'bottom' },
+        { type: 'stop', position: 'left' }
+      ],
+      cars: [
+        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
+        { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
+      ]
+    },
     guidedPoints: getGuidedPoints('priority', 'prio-gp'),
     scenarios: [
       getScenario('left-turn-bending-priority-follow'),

@@ -312,6 +312,8 @@ function getSignGraphic(sign: TrafficSign) {
       return <PedestrianCrossingSign />;
     case 'sign-bending-priority':
       return <BendingPrioritySign />;
+    case 'sign-priority-road':
+      return <PriorityRoadSign />;
     case 'sign-green-arrow':
       return <GreenArrowSign />;
     case 'sign-stop':
