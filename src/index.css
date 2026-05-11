@@ -56,8 +56,6 @@ body {
     radial-gradient(at 100% 100%, hsla(221, 83%, 53%, 0.03) 0px, transparent 50%),
     radial-gradient(at 0% 100%, hsla(262, 83%, 53%, 0.03) 0px, transparent 50%);
   overscroll-behavior-y: contain;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
@@ -122,7 +120,7 @@ body {
 }
 
 .bg-premium-dark {
-  background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 100%);
+  background: radial-gradient(circle at 0% 0%, #1e293b 0%, #0f172a 100%);
 }
 
 /* Input styles for date picker consistency */
@@ -261,14 +259,11 @@ textarea:focus-visible {
 @media print {
   html,
   body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
     background: white !important;
     color: black !important;
     overflow: visible !important;
-  }
-
-  body {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
   }
 
   header,
