@@ -660,7 +660,10 @@ const cityQuiz: QuizQuestion[] = [
     correctOptionId: 'b',
     explanationDe: 'Rechts vor Links (§ 8 StVO) gilt immer dann, wenn keine andere Regelung (Schilder, Ampeln, Polizei) vorhanden ist.',
     explanationEn: 'Right before Left (§ 8 StVO) always applies when no other regulation (signs, lights, police) is present.',
-  },
+  }
+];
+
+const roundaboutQuiz: QuizQuestion[] = [
   {
     id: 'quiz-roundabout',
     questionDe: 'Wann müssen Sie im Kreisverkehr (Zeichen 215) blinken?',
@@ -673,6 +676,102 @@ const cityQuiz: QuizQuestion[] = [
     correctOptionId: 'b',
     explanationDe: 'In Deutschland wird beim Einfahren in den Kreisel NICHT geblinkt. Erst beim Verlassen ist das Blinken nach rechts Pflicht.',
     explanationEn: 'In Germany, you do NOT signal when entering the roundabout. Signaling right is mandatory only when exiting.',
+  }
+];
+
+const pedestrianQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-zebra',
+    questionDe: 'Wie verhalten Sie sich an einem Zebrastreifen?',
+    questionEn: 'How should you behave at a zebra crossing?',
+    options: [
+      { id: 'a', textDe: 'Zügig weiterfahren, wenn niemand auf der Straße ist', textEn: 'Drive on quickly if no one is on the road' },
+      { id: 'b', textDe: 'Mit mäßiger Geschwindigkeit heranfahren und bremsbereit sein', textEn: 'Approach at moderate speed and be ready to brake' },
+      { id: 'c', textDe: 'Hupen, um Fußgänger zu warnen', textEn: 'Honk to warn pedestrians' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Sie müssen Fußgängern das Überqueren ermöglichen und dürfen sie nicht gefährden oder behindern.',
+    explanationEn: 'You must allow pedestrians to cross and must not endanger or hinder them.',
+  }
+];
+
+const priorityQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-stop-line',
+    questionDe: 'Wo müssen Sie bei einem Stop-Schild anhalten, wenn keine Haltlinie vorhanden ist?',
+    questionEn: 'Where must you stop at a stop sign if there is no stop line?',
+    options: [
+      { id: 'a', textDe: 'Direkt am Schild', textEn: 'Directly at the sign' },
+      { id: 'b', textDe: 'An der Sichtlinie (Schnittpunkt der Fahrbahnen)', textEn: 'At the line of sight (intersection of the lanes)' },
+      { id: 'c', textDe: 'Gar nicht, wenn frei ist', textEn: 'Not at all if it\'s clear' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Ohne Haltlinie gilt die Sichtlinie als Haltepunkt, um den Querverkehr optimal einsehen zu können.',
+    explanationEn: 'Without a stop line, the line of sight is the stopping point to optimally see cross traffic.',
+  }
+];
+
+const highwayQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-hwy-merge',
+    questionDe: 'Wie fädeln Sie korrekt auf die Autobahn ein?',
+    questionEn: 'How do you correctly merge onto the motorway?',
+    options: [
+      { id: 'a', textDe: 'Am Ende des Beschleunigungsstreifens anhalten', textEn: 'Stop at the end of the acceleration lane' },
+      { id: 'b', textDe: 'Auf dem Beschleunigungsstreifen deutlich beschleunigen und Lücke nutzen', textEn: 'Accelerate significantly on the acceleration lane and use a gap' },
+      { id: 'c', textDe: 'Sofort nach links ziehen', textEn: 'Pull left immediately' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Der Beschleunigungsstreifen dient dazu, die Geschwindigkeit des fließenden Verkehrs zu erreichen.',
+    explanationEn: 'The acceleration lane is used to match the speed of the flowing traffic.',
+  }
+];
+
+const countryRoadQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-wildlife',
+    questionDe: 'Was tun Sie, wenn nachts Wild am Straßenrand steht?',
+    questionEn: 'What do you do if there is wildlife by the roadside at night?',
+    options: [
+      { id: 'a', textDe: 'Fernlicht einschalten', textEn: 'Turn on high beams' },
+      { id: 'b', textDe: 'Abblenden, hupen und bremsbereit sein', textEn: 'Dip headlights, honk, and be ready to brake' },
+      { id: 'c', textDe: 'Vollgas geben, um vorbei zu kommen', textEn: 'Go full throttle to get past' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Fernlicht blendet das Tier und lässt es verharren. Hupen verscheucht es meist.',
+    explanationEn: 'High beams dazzle the animal and cause it to freeze. Honking usually scares it away.',
+  }
+];
+
+const specialRulesQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-oneway',
+    questionDe: 'Wo ordnen Sie sich zum Linksabbiegen in einer Einbahnstraße ein?',
+    questionEn: 'Where do you position yourself to turn left in a one-way street?',
+    options: [
+      { id: 'a', textDe: 'In der Mitte der Fahrbahn', textEn: 'In the middle of the lane' },
+      { id: 'b', textDe: 'Möglichst weit links', textEn: 'As far left as possible' },
+      { id: 'c', textDe: 'Immer rechts', textEn: 'Always on the right' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'In Einbahnstraßen muss man sich zum Linksabbiegen ganz links einordnen.',
+    explanationEn: 'In one-way streets, you must position yourself completely to the left to turn left.',
+  }
+];
+
+const examPrepQuiz: QuizQuestion[] = [
+  {
+    id: 'quiz-exam-fail',
+    questionDe: 'Was führt in der Prüfung sofort zum Nichtbestehen?',
+    questionEn: 'What leads to immediate failure in the exam?',
+    options: [
+      { id: 'a', textDe: 'Einmaliges Abwürgen des Motors', textEn: 'Stalling the engine once' },
+      { id: 'b', textDe: 'Gefährdung anderer oder Missachten einer roten Ampel', textEn: 'Endangering others or ignoring a red light' },
+      { id: 'c', textDe: 'Zu langsames Fahren', textEn: 'Driving too slowly' },
+    ],
+    correctOptionId: 'b',
+    explanationDe: 'Sicherheitsrelevante Verstöße führen zum sofortigen Ende der Prüfungsfahrt.',
+    explanationEn: 'Safety-relevant violations lead to the immediate end of the exam drive.',
   }
 ];
 
@@ -905,7 +1004,7 @@ const cityLessons: Lesson[] = [
     guidedPoints: roundaboutGuidedPoints,
     scenarios: roundaboutScenarios,
     trafficSigns: [signRoundabout, signYield],
-    quiz: cityQuiz,
+    quiz: roundaboutQuiz,
   },
   {
     id: 'city-4',
@@ -916,7 +1015,7 @@ const cityLessons: Lesson[] = [
     guidedPoints: zebraGuidedPoints,
     scenarios: zebraScenarios,
     trafficSigns: [signPedestrianCrossing],
-    quiz: cityQuiz,
+    quiz: pedestrianQuiz,
   },
   {
     id: 'city-5',
@@ -1010,7 +1109,7 @@ const cityLessons: Lesson[] = [
     completed: false,
     isPremium: true,
     trafficSigns: [signStop, signYield],
-    quiz: cityQuiz,
+    quiz: priorityQuiz,
   },
   {
     id: 'city-13',
@@ -1019,7 +1118,7 @@ const cityLessons: Lesson[] = [
     completed: false,
     isPremium: true,
     trafficSigns: [signOneWay, signNoEntry, signCyclistsAllowed],
-    quiz: cityQuiz,
+    quiz: specialRulesQuiz,
   },
 ];
 
@@ -1029,7 +1128,7 @@ const specialLessons: Lesson[] = [
     chapterId: 'chapter-4',
     ...getLessonStrings('special-1'),
     scenarios: countryRoadScenarios,
-    quiz: cityQuiz,
+    quiz: countryRoadQuiz,
   },
   {
     id: 'special-2',
@@ -1039,7 +1138,7 @@ const specialLessons: Lesson[] = [
     isPremium: true,
     trafficSigns: [signMotorway],
     scenarios: highwayMergeScenarios,
-    quiz: cityQuiz,
+    quiz: highwayQuiz,
   },
   {
     id: 'special-2a',
@@ -1047,7 +1146,7 @@ const specialLessons: Lesson[] = [
     ...getLessonStrings('special-2a'),
     completed: false,
     isPremium: true,
-    quiz: cityQuiz,
+    quiz: highwayQuiz,
   },
   {
     id: 'special-3',
@@ -1057,7 +1156,7 @@ const specialLessons: Lesson[] = [
     isPremium: true,
     guidedPoints: nightDrivingGuidedPoints,
     scenarios: [getScenario('night-pedestrian')],
-    quiz: cityQuiz,
+    quiz: countryRoadQuiz,
   },
   {
     id: 'special-4',
@@ -1065,7 +1164,7 @@ const specialLessons: Lesson[] = [
     ...getLessonStrings('special-4'),
     completed: false,
     isPremium: true,
-    quiz: cityQuiz,
+    quiz: countryRoadQuiz,
   },
 ];
 
@@ -1076,7 +1175,7 @@ const examLessons: Lesson[] = [
     ...getLessonStrings('exam-1'),
     completed: false,
     isPremium: true,
-    quiz: basicsQuiz,
+    quiz: examPrepQuiz,
   },
   {
     id: 'exam-1a',
@@ -1092,7 +1191,7 @@ const examLessons: Lesson[] = [
     ...getLessonStrings('exam-2'),
     completed: false,
     isPremium: true,
-    quiz: basicsQuiz,
+    quiz: examPrepQuiz,
   },
   {
     id: 'exam-2a',
@@ -1100,7 +1199,7 @@ const examLessons: Lesson[] = [
     ...getLessonStrings('exam-2a'),
     completed: false,
     isPremium: true,
-    quiz: cityQuiz,
+    quiz: examPrepQuiz,
   },
   {
     id: 'exam-3',
@@ -1108,7 +1207,7 @@ const examLessons: Lesson[] = [
     ...getLessonStrings('exam-3'),
     completed: false,
     isPremium: true,
-    quiz: basicsQuiz,
+    quiz: examPrepQuiz,
   },
   {
     id: 'exam-sim',
