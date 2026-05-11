@@ -13,7 +13,7 @@ import {
   AlertTriangle, Pause, Navigation,
   Play,
   CornerUpLeft, CornerUpRight, MoveUp, 
-  X, MoreVertical, Navigation2, Square
+  X, MoreVertical, Navigation2, Square, Signal
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
