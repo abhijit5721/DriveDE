@@ -127,11 +127,17 @@ body {
 
 /* Input styles for date picker consistency */
 input[type="date"] {
-  @apply appearance-none;
+  appearance: none;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  @apply cursor-pointer opacity-50 hover:opacity-100 transition-opacity;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* Safe area padding for mobile devices with notches */
@@ -156,12 +162,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   user-select: none;
 }
 
-/* Smooth transitions for dark mode */
-html.dark {
-  color-scheme: dark;
-}
-
-/* Smooth transitions for dark mode */
+/* Dark mode color scheme */
 html.dark {
   color-scheme: dark;
 }
@@ -175,7 +176,8 @@ button:active:not(:disabled) {
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  @apply outline-none ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900;
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 /* Animation for progress bars */
