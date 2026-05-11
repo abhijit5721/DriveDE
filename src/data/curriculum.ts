@@ -446,6 +446,26 @@ const signPriorityRoadBending: TrafficSign = {
   category: 'priority',
 };
 
+const signYieldBending: TrafficSign = {
+  id: 'sign-yield-bending',
+  code: 'Zeichen 205 + 1002',
+  titleDe: 'Vorfahrt gewähren (abknickend)',
+  titleEn: 'Yield (Bending Priority)',
+  descriptionDe: 'Sie befinden sich auf der untergeordneten Straße und müssen allen Fahrzeugen auf der Vorfahrtstraße Vorrang gewähren.',
+  descriptionEn: 'You are on the subordinate road and must yield to all vehicles on the priority road.',
+  category: 'priority',
+};
+
+const signStopBending: TrafficSign = {
+  id: 'sign-stop-bending',
+  code: 'Zeichen 206 + 1002',
+  titleDe: 'Halt! Vorfahrt gewähren (abknickend)',
+  titleEn: 'Stop (Bending Priority)',
+  descriptionDe: 'Haltpflicht an der Nebenstraße! Stoppen Sie an der Linie und gewähren Sie der Hauptstraße Vorrang.',
+  descriptionEn: 'Mandatory stop at the side street! Stop at the line and yield to the main road.',
+  category: 'priority',
+};
+
 const signOneWay: TrafficSign = {
   id: 'sign-one-way',
   code: 'Zeichen 220',
@@ -1143,7 +1163,7 @@ const cityLessons: Lesson[] = [
       getScenario('bending-priority-right-turn'),
       getScenario('rvl-hidden-right')
     ],
-    trafficSigns: [signStop, signYield, signPriorityRoadBending],
+    trafficSigns: [signStop, signYield, signPriorityRoadBending, signStopBending, signYieldBending],
     quiz: priorityQuiz,
   },
   {

@@ -133,6 +133,41 @@ function GreenArrowSign() {
   );
 }
 
+function YieldBendingSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <g transform="translate(0, -6)">
+        <polygon points="32,8 50,40 14,40" fill="#d92d20" />
+        <polygon points="32,15 44,36 20,36" fill="#ffffff" />
+      </g>
+      <rect x="18" y="36" width="28" height="16" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
+      <path d="M25 47V39h8v4h6" stroke="#111827" strokeWidth="4" strokeLinecap="square" fill="none" />
+      <path d="M39 39h-4" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M25 43h-5" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function StopBendingSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <g transform="translate(0, -6) scale(0.8) translate(8, 6)">
+        <path 
+          d="M22 10h20l12 12v20L42 54H22L10 42V22L22 10z" 
+          fill="#ef4444" 
+          stroke="#ffffff" 
+          strokeWidth="2.5" 
+        />
+        <text x="32" y="38" textAnchor="middle" fontSize="12" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+      </g>
+      <rect x="18" y="36" width="28" height="16" rx="2" fill="#ffffff" stroke="#111827" strokeWidth="2" />
+      <path d="M25 47V39h8v4h6" stroke="#111827" strokeWidth="4" strokeLinecap="square" fill="none" />
+      <path d="M39 39h-4" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M25 43h-5" stroke="#9ca3af" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /**
  * Zeichen 206: Stopp! Vorfahrt gewähren.
  * Classic octagonal shape with red background and white border.
@@ -275,6 +310,10 @@ function getSignGraphic(sign: TrafficSign) {
       return <CyclistsAllowedSign />;
     case 'sign-green-arrow-signal':
       return <GreenArrowSignal />;
+    case 'sign-yield-bending':
+      return <YieldBendingSign />;
+    case 'sign-stop-bending':
+      return <StopBendingSign />;
     case 'visual-dipstick':
       return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
     case 'visual-tyre':
