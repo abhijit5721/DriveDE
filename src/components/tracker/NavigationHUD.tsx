@@ -357,10 +357,10 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
 
           {/* Signal Indicator */}
           <div className={cn(
-            "flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg transition-colors",
-            signalQuality === 'excellent' ? "bg-emerald-500/90 text-white" :
-            signalQuality === 'good' ? "bg-amber-500/90 text-white" :
-            "bg-red-500/90 text-white animate-pulse"
+            'flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg transition-colors',
+            signalQuality === 'excellent' ? 'bg-emerald-500/90 text-white' :
+            signalQuality === 'good' ? 'bg-amber-500/90 text-white' :
+            'bg-red-500/90 text-white animate-pulse'
           )}>
             <Signal className="h-3 w-3" />
             {signalQuality}
