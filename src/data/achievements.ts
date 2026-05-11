@@ -41,8 +41,10 @@ export const achievements: Achievement[] = [
     description: 'Complete all maneuver lessons.',
     icon: '🅿️',
     criteria: (progress) => {
-      const maneuverIds = ['maneuver-1', 'maneuver-2', 'maneuver-3', 'maneuver-4'];
-      return maneuverIds.every(id => progress.completedLessons.includes(id));
+      const coreManeuvers = ['maneuver-1', 'maneuver-2', 'maneuver-3'];
+      const hasEmergencyBrake = progress.completedLessons.includes('maneuver-4') || 
+                                progress.completedLessons.includes('maneuver-4a');
+      return coreManeuvers.every(id => progress.completedLessons.includes(id)) && hasEmergencyBrake;
     },
   },
   {

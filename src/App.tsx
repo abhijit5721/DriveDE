@@ -18,6 +18,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { useAppStore } from './store/useAppStore';
 import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
+import { checkAndUnlockAchievements } from './utils/achievements';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { chapters } from './data/curriculum';
 import { Header } from './components/layout/Header';
@@ -273,25 +274,46 @@ export default function App() {
                 // Robust premium check: true if remote is true, otherwise keep local if it was already true (though DB is truth)
                 const isPremium = remoteData.profile?.is_premium ?? state.isPremium;
 
+                const finalUserProgress = {
+                    ...state.userProgress,
+                    completedLessons: combinedCompletedLessons,
+                    drivingSessions: combinedSessions,
+                    unlockedAchievements: Array.from(new Set([
+                        ...(state.userProgress.unlockedAchievements || []),
+                        ...(remoteData.unlockedAchievements || [])
+                    ])),
+                    incorrectQuestions: Array.from(new Set([
+                        ...(state.userProgress.incorrectQuestions || []),
+                        ...(remoteData.incorrectQuestions || [])
+                    ])),
+                    totalDrivingMinutes,
+                    specialDrivingMinutes,
+                    hourlyRate45: remoteData.hourlyRate45,
+                    fixedCosts: remoteData.fixedCosts
+                };
+
+                // SILENTLY unlock achievements that are already met but not marked as unlocked
+                // This prevents them from "popping" at the wrong time (e.g. when marking a lesson)
+                const tempState = { 
+                    ...state, 
+                    isPremium, 
+                    userProgress: finalUserProgress 
+                } as any;
+                const silentAchievements = checkAndUnlockAchievements(tempState);
+                if (silentAchievements.length > 0) {
+                    finalUserProgress.unlockedAchievements = Array.from(new Set([
+                        ...finalUserProgress.unlockedAchievements,
+                        ...silentAchievements
+                    ]));
+                }
+
                 return {
                     isPremium,
                     isPublicReportEnabled: remoteData.isPublicReportEnabled,
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,
                     transmissionType: remoteData.transmissionType || state.transmissionType,
-                    userProgress: {
-                        ...state.userProgress,
-                        completedLessons: combinedCompletedLessons,
-                        drivingSessions: combinedSessions,
-                        incorrectQuestions: Array.from(new Set([
-                            ...(state.userProgress.incorrectQuestions || []),
-                            ...(remoteData.incorrectQuestions || [])
-                        ])),
-                        totalDrivingMinutes,
-                        specialDrivingMinutes,
-                        hourlyRate45: remoteData.hourlyRate45,
-                        fixedCosts: remoteData.fixedCosts
-                    }
+                    userProgress: finalUserProgress
                 };
             });
           }

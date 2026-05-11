@@ -172,6 +172,7 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
         language: state.language,
         theme: state.darkMode ? 'dark' : 'light',
         incorrect_questions: state.userProgress.incorrectQuestions || [],
+        unlocked_achievements: state.userProgress.unlockedAchievements || [],
         hourly_rate_45: state.userProgress.hourlyRate45,
         fixed_costs: state.userProgress.fixedCosts,
         is_public_report_enabled: state.isPublicReportEnabled,
@@ -372,6 +373,7 @@ export async function hydrateFromSupabase() {
     })),
     quizAttempts: quizAttempts ?? [],
     incorrectQuestions: profile?.incorrect_questions ?? [],
+    unlockedAchievements: profile?.unlocked_achievements ?? [],
     hourlyRate45: Number(profile?.hourly_rate_45) || 60,
     fixedCosts: profile?.fixed_costs ?? {
       registration: 350,
