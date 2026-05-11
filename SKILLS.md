@@ -2,11 +2,14 @@
 
 This document tracks mandatory procedures and recurring tasks that must be performed for the DriveDE project.
 
-## 🚀 Deployment & Build Workflow
-- **Version Bumping**: Always increment the `version` in `package.json` before any major logic change or fix intended for the mobile app.
-- **Build**: Run `npm run build` (or `npx vite build`) to ensure the production assets are valid and lint-free.
-- **OTA Push**: After building, run `npx capgo bundle upload de.drivede.app` to deploy the bundle to the Capgo cloud.
-- **Sync Command**: Use `npm run push-app` to combine build and push in one step.
+## 🚀 Deployment & Build Workflow (Recommended: CI/CD)
+- **Standard Workflow**:
+    1. Increment `version` in `package.json`.
+    2. Commit and push to `main` branch.
+    3. GitHub Actions will automatically run linting, tests, and push the OTA bundle to Capgo.
+- **Manual Local Push** (Only if CI is down):
+    - Run `npm run push-app` (build + upload).
+    - Note: The CI will gracefully skip if you've already pushed the version locally.
 
 ## 🛠️ State & Logic Integrity
 - **Achievement Sync**: When adding new achievements, ensure they are:
