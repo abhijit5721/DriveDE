@@ -1,6 +1,6 @@
 
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+
 
 :root {
   --glass-bg: rgba(255, 255, 255, 0.7);
@@ -48,7 +48,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+  background-color: #f8fafc; /* bg-slate-50 */
+  color: #0f172a; /* text-slate-900 */
+}
+
+.dark body {
+  background-color: #020617; /* bg-slate-950 */
+  color: #f1f5f9; /* text-slate-100 */
+}
+
+body {
   background-attachment: fixed;
   background-image: 
     radial-gradient(at 0% 0%, hsla(221, 83%, 53%, 0.03) 0px, transparent 50%),
