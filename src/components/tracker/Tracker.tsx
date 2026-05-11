@@ -704,6 +704,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     const fetchSuggestions = async () => {
       if (targetDestination.length < 3 || targetDestination === lastSelectedDestination) {
         setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      try {
         const hasRoute = gpsPoints.length > 0;
         const langCode = language === 'de' ? 'de' : 'en';
         const biasLat = hasRoute ? gpsPoints[gpsPoints.length - 1].lat : 52.52;
