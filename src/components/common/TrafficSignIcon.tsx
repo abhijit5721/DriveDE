@@ -266,6 +266,20 @@ function CyclistsAllowedSign() {
 }
 
 /**
+ * Zeichen 720: Grünpfeil (Green Arrow Sign).
+ * Metal sign next to a red light allowing right turn after stopping.
+ */
+function GreenArrowSign() {
+  return (
+    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      <rect x="10" y="10" width="44" height="44" rx="4" fill="#111827" />
+      <path d="M16 32h32" stroke="#10b981" strokeWidth="8" strokeLinecap="square" />
+      <path d="M40 20l12 12-12 12" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
+    </svg>
+  );
+}
+
+/**
  * Lichtzeichen: Grüner Pfeil (Green Arrow Signal).
  * Traffic light variant where the green light is an arrow shape.
  */

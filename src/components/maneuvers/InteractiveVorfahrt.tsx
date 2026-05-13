@@ -19,9 +19,10 @@ interface Car {
 }
 
 interface Sign {
-  type: 'priority' | 'yield' | 'stop' | 'bending-priority';
+  type: 'priority' | 'yield' | 'stop' | 'bending-priority' | 'yield-bending' | 'stop-bending';
   position: 'top' | 'right' | 'bottom' | 'left';
   rotation?: number;
+  variant?: string;
 }
 
 interface Scenario {
