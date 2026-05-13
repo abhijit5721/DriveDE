@@ -23,39 +23,39 @@ const CAR_COLORS: Record<string, string> = {
 
 const CAR_PATHS: Record<string, Record<string, string>> = {
   bottom: {
-    straight: 'M 150 300 L 150 0',
-    left: 'M 150 300 Q 150 150 0 150',
-    right: 'M 150 300 Q 150 150 300 150',
+    straight: 'M 170 300 L 170 0',
+    left: 'M 170 300 Q 170 130 0 130',
+    right: 'M 170 300 Q 170 170 300 170',
   },
   top: {
-    straight: 'M 150 0 L 150 300',
-    left: 'M 150 0 Q 150 150 300 150',
-    right: 'M 150 0 Q 150 150 0 150',
+    straight: 'M 130 0 L 130 300',
+    left: 'M 130 0 Q 130 170 300 170',
+    right: 'M 130 0 Q 130 130 0 130',
   },
   left: {
-    straight: 'M 0 150 L 300 150',
-    left: 'M 0 150 Q 150 150 150 300',
-    right: 'M 0 150 Q 150 150 150 0',
+    straight: 'M 0 170 L 300 170',
+    left: 'M 0 170 Q 130 170 130 300',
+    right: 'M 0 170 Q 170 170 170 0',
   },
   right: {
-    straight: 'M 300 150 L 0 150',
-    left: 'M 300 150 Q 150 150 150 0',
-    right: 'M 300 150 Q 150 150 150 300',
+    straight: 'M 300 130 L 0 130',
+    left: 'M 300 130 Q 170 130 170 0',
+    right: 'M 300 130 Q 130 130 130 300',
   },
 };
 
 const POSITION_MAP: Record<string, { x: number; y: number; rotate: number; targetX: number; targetY: number }> = {
-  right: { x: 260, y: 150, rotate: 0, targetX: 40, targetY: 150 },
-  bottom: { x: 150, y: 260, rotate: -90, targetX: 150, targetY: 40 },
-  left: { x: 40, y: 150, rotate: 180, targetX: 260, targetY: 150 },
-  top: { x: 150, y: 40, rotate: 90, targetX: 150, targetY: 260 },
+  bottom: { x: 170, y: 260, rotate: 0, targetX: 170, targetY: 40 },
+  top: { x: 130, y: 40, rotate: 180, targetX: 130, targetY: 260 },
+  left: { x: 40, y: 170, rotate: 90, targetX: 260, targetY: 170 },
+  right: { x: 260, y: 130, rotate: 270, targetX: 40, targetY: 130 },
 };
 
 const SIGN_POSITION_MAP: Record<string, { x: number; y: number }> = {
-  right: { x: 210, y: 80 },
-  bottom: { x: 210, y: 210 },
-  left: { x: 80, y: 210 },
-  top: { x: 80, y: 80 },
+  bottom: { x: 205, y: 205 },
+  top: { x: 95, y: 95 },
+  left: { x: 95, y: 205 },
+  right: { x: 205, y: 95 },
 };
 export default function InteractiveVorfahrt({ 
   onComplete, 
@@ -207,31 +207,37 @@ export default function InteractiveVorfahrt({
           <rect x="0" y="0" width="300" height="300" fill="currentColor" className="text-emerald-100 dark:text-emerald-900/20" />
           
           {/* Roads */}
+          {/* Roads */}
           <rect x="110" y="0" width="80" height="300" fill="#334155" />
           <rect x="0" y="110" width="300" height="80" fill="#334155" />
           
-          {/* Bending Priority Road Visualization */}
+          {/* Intersection Box */}
+          <rect x="110" y="110" width="80" height="80" fill="none" stroke="white" strokeWidth="1.5" opacity="0.4" />
+
+          {/* Bending Priority Road Visualization (Lane-aware) */}
           {scenario.bendingConfig && (
             <motion.path
               d={scenario.bendingConfig.path === 'bottom-right' 
-                ? 'M 150 300 Q 150 150 300 150' 
+                ? 'M 170 300 Q 170 170 300 170' 
                 : scenario.bendingConfig.path === 'bottom-left'
-                ? 'M 150 300 Q 150 150 0 150'
+                ? 'M 170 300 Q 170 130 0 130'
                 : scenario.bendingConfig.path === 'top-right'
-                ? 'M 150 0 Q 150 150 300 150'
-                : 'M 150 0 Q 150 150 0 150'
+                ? 'M 130 0 Q 130 170 300 170'
+                : 'M 130 0 Q 130 130 0 130'
               }
               fill="none"
               stroke="#fbbf24"
-              strokeWidth="12"
+              strokeWidth="10"
+              strokeLinecap="round"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
+              animate={{ opacity: 0.5 }}
             />
           )}
 
           {/* Lane Markings */}
-          <line x1="150" y1="0" x2="150" y2="300" stroke="white" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
-          <line x1="0" y1="150" x2="300" y2="150" stroke="white" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
+          {/* Lane Markings (Through Intersection) */}
+          <line x1="150" y1="0" x2="150" y2="300" stroke="white" strokeWidth="1.5" strokeDasharray="8,8" opacity="0.25" />
+          <line x1="0" y1="150" x2="300" y2="150" stroke="white" strokeWidth="1.5" strokeDasharray="8,8" opacity="0.25" />
 
           {/* Stop Lines / Yield Lines */}
           <line x1="110" y1="110" x2="190" y2="110" stroke="white" strokeWidth="3" opacity="0.8" />
@@ -239,22 +245,22 @@ export default function InteractiveVorfahrt({
           <line x1="110" y1="110" x2="110" y2="190" stroke="white" strokeWidth="3" opacity="0.8" />
           <line x1="190" y1="110" x2="190" y2="190" stroke="white" strokeWidth="3" opacity="0.8" />
 
-          {/* Priority Groups Visualization */}
+          {/* Priority Groups Visualization (Lane-aware) */}
           {showExplanation && (
-            <g opacity="0.3">
+            <g opacity="0.25">
               {scenario.bendingConfig && (
                 <path
                   d={scenario.bendingConfig.path === 'bottom-right' 
-                    ? 'M 150 300 Q 150 150 300 150' 
+                    ? 'M 170 300 Q 170 170 300 170' 
                     : scenario.bendingConfig.path === 'bottom-left'
-                    ? 'M 150 300 Q 150 150 0 150'
+                    ? 'M 170 300 Q 170 130 0 130'
                     : scenario.bendingConfig.path === 'top-right'
-                    ? 'M 150 0 Q 150 150 300 150'
-                    : 'M 150 0 Q 150 150 0 150'
+                    ? 'M 130 0 Q 130 170 300 170'
+                    : 'M 130 0 Q 130 130 0 130'
                   }
                   fill="none"
                   stroke="#22c55e"
-                  strokeWidth="60"
+                  strokeWidth="50"
                   strokeLinecap="round"
                 />
               )}
