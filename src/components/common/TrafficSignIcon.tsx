@@ -90,7 +90,51 @@ function RoundaboutSign() {
   );
 }
 
-function BendingPrioritySign() {
+function BendingSubSign({ variant }: { variant?: string }) {
+  // Default to bottom-left if no variant
+  const layout = variant || 'bottom-left';
+  
+  return (
+    <g>
+      {/* Supplementary Sign Box */}
+      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
+      
+      {/* Intersection Lines */}
+      {/* All layouts usually show a cross, we just change which one is thick */}
+      
+      {/* Vertical */}
+      <line x1="32" y1="34" x2="32" y2="56" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" />
+      {/* Horizontal */}
+      <line x1="16" y1="45" x2="48" y2="45" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" />
+
+      {/* Thick Priority Lines */}
+      {layout === 'bottom-left' && (
+        <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {layout === 'bottom-right' && (
+        <path d="M32 56V45H48" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {layout === 'left-top' && (
+        <path d="M16 45H32V34" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {layout === 'right-top' && (
+        <path d="M48 45H32V34" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {/* Secondary road perspective: Priority is on the 'other' path */}
+      {layout === 'priority-top-left' && (
+        <path d="M32 34V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {layout === 'priority-top-right' && (
+        <path d="M32 34V45H48" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+      {layout === 'priority-left-right' && (
+        <path d="M16 45H48" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
+      )}
+    </g>
+  );
+}
+
+function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
       {/* Priority Diamond */}
@@ -98,69 +142,43 @@ function BendingPrioritySign() {
         <rect x="18" y="6" width="28" height="28" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
         <rect x="22" y="10" width="20" height="20" fill="#f5c542" stroke="#111827" strokeWidth="1.5" />
       </g>
-      {/* Supplementary Sign Box */}
-      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
-      {/* Thick Priority Line (Bottom to Left) */}
-      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
-      {/* Thin Side Street Lines */}
-      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
-      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <BendingSubSign variant={variant} />
     </svg>
   );
 }
 
-function GreenArrowSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="6" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
-      <path d="M20 32h16" stroke="#16a34a" strokeWidth="6" strokeLinecap="round" />
-      <path d="M32 20l12 12-12 12" stroke="#16a34a" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
-function YieldBendingSign() {
+function YieldBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
       {/* Yield Triangle (Inverted) */}
-      <g transform="translate(32 18) translate(-32 -18)">
+      <g transform="translate(32 18) scale(0.6) translate(-32 -18)">
         <polygon points="10,2 54,2 32,32" fill="#d92d20" />
         <polygon points="18,5 46,5 32,27" fill="#ffffff" />
       </g>
-      {/* Supplementary Sign Box */}
-      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
-      {/* Thick Priority Line */}
-      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
-      {/* Thin Side Street Lines */}
-      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
-      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <BendingSubSign variant={variant} />
     </svg>
   );
 }
 
-function StopBendingSign() {
+function StopBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Stop Octagon */}
-      <g transform="translate(32 18) scale(0.65) translate(-32 -18)">
+      {/* Stop Octagon (Small at top) */}
+      <g transform="translate(32 18) scale(0.55) translate(-32 -18)">
         <path 
           d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
-          fill="#ef4444" 
+          fill="#d92d20" 
           stroke="#ffffff" 
           strokeWidth="3" 
         />
         <text x="32" y="29" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
       </g>
-      {/* Supplementary Sign Box */}
-      <rect x="16" y="34" width="32" height="22" rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
-      {/* Thick Priority Line */}
-      <path d="M32 56V45H16" stroke="#111827" strokeWidth="5" strokeLinecap="square" fill="none" />
-      {/* Thin Side Street Lines */}
-      <path d="M32 45V34" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
-      <path d="M32 45H48" stroke="#111827" strokeWidth="1.5" strokeLinecap="square" fill="none" />
+      <BendingSubSign variant={variant} />
     </svg>
   );
 }
+
+
 
 /**
  * Zeichen 206: Stopp! Vorfahrt gewähren.
@@ -169,13 +187,16 @@ function StopBendingSign() {
 function StopSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <path 
-        d="M22 6h20l14 14v24L42 58H22L8 44V20L22 6z" 
-        fill="#ef4444" 
-        stroke="#ffffff" 
-        strokeWidth="3" 
-      />
-      <text x="32" y="38" textAnchor="middle" fontSize="15" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+      {/* Stop Octagon */}
+      <g transform="translate(32 32) scale(0.9) translate(-32 -32)">
+        <path 
+          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
+          fill="#d92d20" 
+          stroke="#ffffff" 
+          strokeWidth="3" 
+        />
+        <text x="32" y="29" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+      </g>
     </svg>
   );
 }
@@ -311,7 +332,7 @@ function getSignGraphic(sign: TrafficSign) {
     case 'sign-crosswalk':
       return <PedestrianCrossingSign />;
     case 'sign-bending-priority':
-      return <BendingPrioritySign />;
+      return <BendingPrioritySign variant={sign.variant} />;
     case 'sign-priority-road':
       return <PriorityRoadSign />;
     case 'sign-green-arrow':
@@ -327,9 +348,9 @@ function getSignGraphic(sign: TrafficSign) {
     case 'sign-green-arrow-signal':
       return <GreenArrowSignal />;
     case 'sign-yield-bending':
-      return <YieldBendingSign />;
+      return <YieldBendingSign variant={sign.variant} />;
     case 'sign-stop-bending':
-      return <StopBendingSign />;
+      return <StopBendingSign variant={sign.variant} />;
     case 'visual-dipstick':
       return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
     case 'visual-tyre':

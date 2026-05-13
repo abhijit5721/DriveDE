@@ -42,6 +42,7 @@ export interface SimulatorScenario {
     type: 'priority' | 'yield' | 'stop' | 'bending-priority';
     position: 'top' | 'right' | 'bottom' | 'left';
     rotation?: number;
+    variant?: string;
   }>;
   bendingConfig?: {
     path: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -124,6 +125,7 @@ export interface TrafficSign {
   descriptionDe: string;
   descriptionEn: string;
   category?: 'priority' | 'warning' | 'mandatory' | 'prohibitory' | 'information' | 'pedestrian' | 'parking' | 'motorway' | 'traffic-light' | 'vehicle-check';
+  variant?: string;
 }
 
 export interface GlossaryTerm {

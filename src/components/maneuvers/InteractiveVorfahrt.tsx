@@ -190,7 +190,7 @@ export default function InteractiveVorfahrt({
               <g key={`sign-${idx}`} transform={`translate(${SIGN_POSITION_MAP[sign.position].x}, ${SIGN_POSITION_MAP[sign.position].y}) scale(0.6)`}>
                 <foreignObject x="-25" y="-25" width="50" height="50">
                   <div className="flex items-center justify-center">
-                    <TrafficSignIcon sign={{ id: signId, titleDe: '', titleEn: '', descriptionDe: '', descriptionEn: '' }} />
+                    <TrafficSignIcon sign={{ id: signId, titleDe: '', titleEn: '', descriptionDe: '', descriptionEn: '', variant: sign.variant } as any} />
                   </div>
                 </foreignObject>
               </g>
