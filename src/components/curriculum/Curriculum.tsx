@@ -351,9 +351,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               // If previous chapter is all premium and user is not premium, allow skipping to keep progression alive
               const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
               
-              // Chapters unlock when at least one lesson in the previous chapter is done.
-              // In dev mode all chapters are always unlocked for testing.
-              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium) || import.meta.env.DEV;
+              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium);
 
               return (
                 <motion.div key={chapter.id} variants={itemVariants}>
@@ -427,12 +425,15 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                     <div className="ml-14 mt-2 space-y-2">
                       {chapter.lessons.map((lesson, lessonIndex) => {
                         const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
-                        
-                        // All lessons within an unlocked chapter are always accessible —
-                        // we only gate content behind premium, not sequential completion.
-                        // This prevents users from getting stuck if they want to revisit or skip ahead.
-                        const isLessonUnlocked = true;
-                        const isLockedForFreeUser = (lesson.isPremium && !isPremium) && !import.meta.env.DEV;
+                        const previousLesson = lessonIndex > 0 ? chapter.lessons[lessonIndex - 1] : null;
+                        const isPreviousCompleted = !previousLesson || userProgress.completedLessons.includes(previousLesson.id);
+
+                        // If the previous lesson was premium and current user is not premium,
+                        // we allow them to skip that dependency so they aren't blocked from the rest of the chapter.
+                        const canSkipPrevious = previousLesson?.isPremium && !isPremium;
+
+                        const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted || canSkipPrevious;
+                        const isLockedForFreeUser = (lesson.isPremium && !isPremium);
 
                         return (
                           <motion.button
