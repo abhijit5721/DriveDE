@@ -78,7 +78,7 @@ export default function InteractiveVorfahrt({
     ...POSITION_MAP[car.positionKey],
     label: (t.maneuvers.interactive.priority.labels as any)[car.labelKey] || car.labelKey,
     colorValue: CAR_COLORS[car.color]
-  })), [scenario.cars, t.maneuvers.interactive.priority.labels, language]);
+  })), [scenario.cars, t.maneuvers.interactive.priority.labels]);
 
   const handleCarClick = (carId: string) => {
     if (isSuccess || animatingCar) return;
@@ -133,10 +133,10 @@ export default function InteractiveVorfahrt({
                   onClick={() => switchScenario(idx)}
                   data-testid={`scenario-switch-${idx}`}
                   className={cn(
-                    "h-6 w-6 rounded-md text-[10px] font-bold transition-all",
+                    'h-6 w-6 rounded-md text-[10px] font-bold transition-all',
                     currentScenarioIndex === idx
-                      ? "bg-blue-500 text-white shadow-sm"
-                      : "text-slate-500 hover:bg-slate-300 dark:text-slate-400 dark:hover:bg-slate-700"
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'text-slate-500 hover:bg-slate-300 dark:text-slate-400 dark:hover:bg-slate-700'
                   )}
                 >
                   {idx + 1}
