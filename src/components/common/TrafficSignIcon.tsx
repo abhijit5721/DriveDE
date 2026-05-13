@@ -103,39 +103,27 @@ function BendingSubSign({ variant }: { variant?: string }) {
   
   return (
     <g>
-      {/* Supplementary Sign Box - Rectangular with border */}
-      <rect x="12" y="34" width="40" height="28" rx="1" fill="#ffffff" stroke="#111827" strokeWidth="1.5" />
+      {/* Supplementary Sign Box - Square and professional */}
+      <rect x="17" y="32" width="30" height="30" rx="1" fill="#ffffff" stroke="#111827" strokeWidth="1" />
       
-      {/* Background for visibility */}
-      <rect x="13" y="35" width="38" height="26" fill="#ffffff" />
+      {/* Secondary Roads (Thin, split lines for realism) */}
+      <g stroke="#111827" strokeWidth="1.5" strokeLinecap="butt">
+        <line x1="32" y1="35" x2="32" y2="43" opacity="0.6" /> {/* Top */}
+        <line x1="32" y1="51" x2="32" y2="59" opacity="0.6" /> {/* Bottom */}
+        <line x1="20" y1="47" x2="28" y2="47" opacity="0.6" /> {/* Left */}
+        <line x1="36" y1="47" x2="44" y2="47" opacity="0.6" /> {/* Right */}
+      </g>
 
-      {/* Basic Grid (Secondary Roads) */}
-      <line x1="32" y1="38" x2="32" y2="58" stroke="#111827" strokeWidth="1.2" />
-      <line x1="16" y1="48" x2="48" y2="48" stroke="#111827" strokeWidth="1.2" />
-
-      {/* Thick Priority Path (Matches official German signs) */}
-      {layout === 'bottom-left' && (
-        <path d="M32 58 Q32 48 16 48" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {layout === 'bottom-right' && (
-        <path d="M32 58 Q32 48 48 48" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {layout === 'left-top' && (
-        <path d="M16 48 Q32 48 32 38" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {layout === 'right-top' && (
-        <path d="M48 48 Q32 48 32 38" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {/* Secondary road perspective: Priority is on the 'other' path */}
-      {layout === 'priority-top-left' && (
-        <path d="M32 38 Q32 48 16 48" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {layout === 'priority-top-right' && (
-        <path d="M32 38 Q32 48 48 48" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
-      {layout === 'priority-left-right' && (
-        <path d="M16 48 L48 48" stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none" />
-      )}
+      {/* Thick Priority Path (StVO compliant curve) */}
+      <g stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none">
+        {layout === 'bottom-left' && <path d="M32 59 Q32 47 20 47" />}
+        {layout === 'bottom-right' && <path d="M32 59 Q32 47 44 47" />}
+        {layout === 'left-top' && <path d="M20 47 Q32 47 32 35" />}
+        {layout === 'right-top' && <path d="M44 47 Q32 47 32 35" />}
+        {layout === 'priority-top-left' && <path d="M32 35 Q32 47 20 47" />}
+        {layout === 'priority-top-right' && <path d="M32 35 Q32 47 44 47" />}
+        {layout === 'priority-left-right' && <path d="M20 47 L44 47" />}
+      </g>
     </g>
   );
 }
@@ -143,10 +131,13 @@ function BendingSubSign({ variant }: { variant?: string }) {
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Priority Diamond (Raised slightly for stacking) */}
-      <g transform="translate(32 18) rotate(45) translate(-32 -18)">
-        <rect x="18" y="4" width="28" height="28" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-        <rect x="21" y="7" width="22" height="22" fill="#facc15" stroke="#111827" strokeWidth="1" />
+      {/* Sign Post */}
+      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
+      
+      {/* Priority Diamond */}
+      <g transform="translate(32 17) rotate(45) translate(-32 -17)">
+        <rect x="19" y="4" width="26" height="26" fill="#ffffff" stroke="#111827" strokeWidth="1" />
+        <rect x="22" y="7" width="20" height="20" fill="#ffff00" stroke="#111827" strokeWidth="0.5" />
       </g>
       <BendingSubSign variant={variant} />
     </svg>
@@ -156,10 +147,13 @@ function BendingPrioritySign({ variant }: { variant?: string }) {
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Yield Triangle (Inverted) */}
-      <g transform="translate(32 16) scale(0.6) translate(-32 -16)">
-        <polygon points="10,2 54,2 32,32" fill="#d92d20" />
-        <polygon points="18,5 46,5 32,27" fill="#ffffff" />
+      {/* Sign Post */}
+      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
+      
+      {/* Yield Triangle */}
+      <g transform="translate(32 16) scale(0.65) translate(-32 -16)">
+        <polygon points="10,2 54,2 32,36" fill="#d92d20" />
+        <polygon points="19,6 45,6 32,28" fill="#ffffff" />
       </g>
       <BendingSubSign variant={variant} />
     </svg>
@@ -169,15 +163,18 @@ function YieldBendingSign({ variant }: { variant?: string }) {
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Stop Octagon (Small at top) */}
-      <g transform="translate(32 16) scale(0.55) translate(-32 -16)">
+      {/* Sign Post */}
+      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
+      
+      {/* Stop Octagon */}
+      <g transform="translate(32 16) scale(0.6) translate(-32 -16)">
         <path 
           d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
           fill="#d92d20" 
           stroke="#ffffff" 
           strokeWidth="3" 
         />
-        <text x="32" y="29" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+        <text x="32" y="30" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
       </g>
       <BendingSubSign variant={variant} />
     </svg>
