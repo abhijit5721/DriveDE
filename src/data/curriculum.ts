@@ -1175,7 +1175,7 @@ const cityLessons: Lesson[] = [
     chapterId: 'chapter-3',
     ...getLessonStrings('city-12'),
     completed: false,
-    isPremium: true,
+    isPremium: false,
     isInteractive: true,
     simulatorScenario: {
       id: 'stop-standard',
@@ -1204,7 +1204,7 @@ const cityLessons: Lesson[] = [
     chapterId: 'chapter-3',
     ...getLessonStrings('city-12a'),
     completed: false,
-    isPremium: true,
+    isPremium: false,
     isInteractive: true,
     simulatorScenario: {
       id: 'bending-left',
@@ -1227,7 +1227,7 @@ const cityLessons: Lesson[] = [
     chapterId: 'chapter-3',
     ...getLessonStrings('city-12b'),
     completed: false,
-    isPremium: true,
+    isPremium: false,
     isInteractive: true,
     simulatorScenario: {
       id: 'bending-right',
@@ -1250,7 +1250,7 @@ const cityLessons: Lesson[] = [
     chapterId: 'chapter-3',
     ...getLessonStrings('city-12c'),
     completed: false,
-    isPremium: true,
+    isPremium: false,
     isInteractive: true,
     simulatorScenario: {
       id: 'bending-side-entry',
@@ -1273,7 +1273,7 @@ const cityLessons: Lesson[] = [
     chapterId: 'chapter-3',
     ...getLessonStrings('city-12d'),
     completed: false,
-    isPremium: true,
+    isPremium: false,
     isInteractive: true,
     simulatorScenario: {
       id: 'bending-straight-leave',
