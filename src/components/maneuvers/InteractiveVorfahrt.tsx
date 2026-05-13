@@ -21,6 +21,29 @@ const CAR_COLORS: Record<string, string> = {
   silver: '#94a3b8',
 };
 
+const CAR_PATHS: Record<string, Record<string, string>> = {
+  bottom: {
+    straight: 'M 150 300 L 150 0',
+    left: 'M 150 300 Q 150 150 0 150',
+    right: 'M 150 300 Q 150 150 300 150',
+  },
+  top: {
+    straight: 'M 150 0 L 150 300',
+    left: 'M 150 0 Q 150 150 300 150',
+    right: 'M 150 0 Q 150 150 0 150',
+  },
+  left: {
+    straight: 'M 0 150 L 300 150',
+    left: 'M 0 150 Q 150 150 150 300',
+    right: 'M 0 150 Q 150 150 150 0',
+  },
+  right: {
+    straight: 'M 300 150 L 0 150',
+    left: 'M 300 150 Q 150 150 150 0',
+    right: 'M 300 150 Q 150 150 150 300',
+  },
+};
+
 const POSITION_MAP: Record<string, { x: number; y: number; rotate: number; targetX: number; targetY: number }> = {
   right: { x: 260, y: 150, rotate: 0, targetX: 40, targetY: 150 },
   bottom: { x: 150, y: 260, rotate: -90, targetX: 150, targetY: 40 },
@@ -72,6 +95,8 @@ export default function InteractiveVorfahrt({
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [animatingCar, setAnimatingCar] = useState<string | null>(null);
+  const [hoveredCar, setHoveredCar] = useState<string | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
 
   const translatedCars = useMemo(() => scenario.cars.map(car => ({
     ...car,
@@ -108,12 +133,14 @@ export default function InteractiveVorfahrt({
     setError(null);
     setIsSuccess(false);
     setAnimatingCar(null);
+    setShowExplanation(false);
   };
 
   const switchScenario = (index: number) => {
     setCurrentScenarioIndex(index);
     reset();
   };
+
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/50 shadow-inner">
@@ -155,9 +182,23 @@ export default function InteractiveVorfahrt({
         </div>
       </div>
 
-      <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-        {t.maneuvers.interactive.priority.instructions}
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+          {t.maneuvers.interactive.priority.instructions}
+        </p>
+        <button
+          onClick={() => setShowExplanation(!showExplanation)}
+          className={cn(
+            'flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-all border',
+            showExplanation 
+              ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+              : 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
+          )}
+        >
+          <Info className="h-3.5 w-3.5" />
+          {showExplanation ? 'Hide Rules' : 'Show Rules'}
+        </button>
+      </div>
 
       {/* Simulator Viewport */}
       <div className="relative aspect-square w-full max-w-[320px] overflow-hidden rounded-2xl bg-emerald-900/10 dark:bg-emerald-900/5 mx-auto border-4 border-slate-200 dark:border-slate-800 shadow-xl">
@@ -198,15 +239,76 @@ export default function InteractiveVorfahrt({
           <line x1="110" y1="110" x2="110" y2="190" stroke="white" strokeWidth="3" opacity="0.8" />
           <line x1="190" y1="110" x2="190" y2="190" stroke="white" strokeWidth="3" opacity="0.8" />
 
+          {/* Priority Groups Visualization */}
+          {showExplanation && (
+            <g opacity="0.3">
+              {scenario.bendingConfig && (
+                <path
+                  d={scenario.bendingConfig.path === 'bottom-right' 
+                    ? 'M 150 300 Q 150 150 300 150' 
+                    : scenario.bendingConfig.path === 'bottom-left'
+                    ? 'M 150 300 Q 150 150 0 150'
+                    : scenario.bendingConfig.path === 'top-right'
+                    ? 'M 150 0 Q 150 150 300 150'
+                    : 'M 150 0 Q 150 150 0 150'
+                  }
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="60"
+                  strokeLinecap="round"
+                />
+              )}
+            </g>
+          )}
+
+          {/* Car Paths (on Hover or Selection) */}
+          {translatedCars.map(car => {
+            const isHovered = hoveredCar === car.id;
+            const isSelected = selectedOrder.includes(car.id);
+            const path = CAR_PATHS[car.positionKey]?.[car.turn || 'straight'];
+            
+            if (!path) return null;
+            
+            return (
+              <motion.path
+                key={`path-${car.id}`}
+                d={path}
+                fill="none"
+                stroke={car.colorValue}
+                strokeWidth="4"
+                strokeDasharray="8,4"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ 
+                  pathLength: isHovered || (isSelected && animatingCar === car.id) ? 1 : 0, 
+                  opacity: isHovered || (isSelected && animatingCar === car.id) ? 0.8 : 0 
+                }}
+                transition={{ duration: 0.5 }}
+              />
+            );
+          })}
+
           {/* Traffic Signs */}
           {scenario.signs?.map((sign: any, idx: number) => {
             const signId = sign.type === 'priority' ? 'sign-priority-road' : `sign-${sign.type}`;
             const pos = SIGN_POSITION_MAP[sign.position as string];
             return (
-              <g key={`sign-${idx}`} transform={`translate(${pos.x}, ${pos.y}) scale(0.6)`}>
-                <foreignObject x="-25" y="-25" width="50" height="50">
-                  <div className="flex items-center justify-center">
-                    <TrafficSignIcon sign={{ id: signId, titleDe: '', titleEn: '', descriptionDe: '', descriptionEn: '', variant: sign.variant } as any} />
+              <g key={`sign-${idx}`} transform={`translate(${pos.x}, ${pos.y})`}>
+                {showExplanation && (
+                   <circle r="35" fill={sign.type === 'priority' || sign.type === 'bending-priority' ? '#22c55e' : '#94a3b8'} opacity="0.2" />
+                )}
+                <foreignObject x="-30" y="-30" width="60" height="60">
+                  <div className="flex h-full w-full items-center justify-center">
+                    <TrafficSignIcon 
+                      noFrame 
+                      sign={{ 
+                        id: signId, 
+                        titleDe: '', 
+                        titleEn: '', 
+                        descriptionDe: '', 
+                        descriptionEn: '', 
+                        variant: sign.variant 
+                      } as any} 
+                    />
                   </div>
                 </foreignObject>
               </g>
@@ -230,12 +332,23 @@ export default function InteractiveVorfahrt({
                  transition={{ duration: 0.8, ease: 'easeInOut' }}
                  style={{ cursor: isMoved ? 'default' : 'pointer' }}
                  onClick={() => handleCarClick(car.id)}
+                 onMouseEnter={() => setHoveredCar(car.id)}
+                 onMouseLeave={() => setHoveredCar(null)}
                >
+                 {/* Priority Indicator in Explanation Mode */}
+                 {showExplanation && (
+                   <motion.g initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                     <circle cx='0' cy='0' r='18' fill='white' stroke={car.order === selectedOrder.length ? '#3b82f6' : '#94a3b8'} strokeWidth='2' opacity='0.9' />
+                     <text x='0' y='5' textAnchor='middle' fontSize='14' fontWeight='900' fill={car.order === selectedOrder.length ? '#3b82f6' : '#94a3b8'}>
+                       {car.order + 1}
+                     </text>
+                   </motion.g>
+                 )}
                  {/* Car Shadow */}
-                 <rect x="-14" y="-22" width="28" height="44" rx="6" fill="black" opacity="0.2" transform="translate(2, 2)" />
+                 <rect x='-14' y='-22' width='28' height='44' rx='6' fill='black' opacity='0.2' transform='translate(2, 2)' />
                  
                  {/* Car Body */}
-                 <rect x="-12" y="-20" width="24" height="40" rx="4" fill={car.colorValue} className="shadow-lg" />
+                 <rect x='-12' y='-20' width='24' height='40' rx='4' fill={car.colorValue} className='shadow-lg' />
                  
                  {/* Roof Detail */}
                  <rect x="-9" y="-12" width="18" height="20" rx="2" fill="white" opacity="0.15" />

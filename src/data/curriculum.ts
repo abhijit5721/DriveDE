@@ -1191,7 +1191,7 @@ const cityLessons: Lesson[] = [
     },
     simulatorScenarios: [
       {
-        id: 'bending-left',
+        id: 'bending-follow',
         factKey: 'bending',
         bendingConfig: { path: 'bottom-left' },
         signs: [
@@ -1199,47 +1199,62 @@ const cityLessons: Lesson[] = [
           { type: 'yield', position: 'right', variant: 'priority-top-left' }
         ],
         cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-          { id: 'red-car', color: 'red', positionKey: 'right', order: 1, labelKey: 'redCar' },
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar', turn: 'left' },
+          { id: 'red-car', color: 'red', positionKey: 'right', order: 1, labelKey: 'redCar', turn: 'straight' },
         ]
       },
       {
-        id: 'bending-right',
+        id: 'bending-leave',
         factKey: 'bending',
         bendingConfig: { path: 'bottom-right' },
         signs: [
           { type: 'bending-priority', position: 'bottom', variant: 'bottom-right' },
-          { type: 'stop', position: 'left', variant: 'priority-top-right' }
+          { type: 'bending-priority', position: 'right', variant: 'bottom-left' }
         ],
         cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-          { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'straight' },
+          { id: 'red-car', color: 'red', positionKey: 'right', order: 0, labelKey: 'redCar', turn: 'left' },
         ]
       },
       {
-        id: 'bending-side-entry',
-        factKey: 'bending',
-        bendingConfig: { path: 'top-left' },
-        signs: [
-          { type: 'yield-bending', position: 'bottom', variant: 'priority-top-left' },
-          { type: 'bending-priority', position: 'top', variant: 'bottom-right' }
-        ],
-        cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar' },
-          { id: 'red-car', color: 'red', positionKey: 'top', order: 0, labelKey: 'redCar' },
-        ]
-      },
-      {
-        id: 'bending-straight-leave',
+        id: 'bending-tie-priority',
         factKey: 'bending',
         bendingConfig: { path: 'bottom-left' },
         signs: [
           { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
-          { type: 'yield', position: 'top', variant: 'priority-top-left' }
+          { type: 'bending-priority', position: 'left', variant: 'bottom-right' }
         ],
         cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-          { id: 'red-car', color: 'red', positionKey: 'top', order: 1, labelKey: 'redCar' },
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'left' },
+          { id: 'red-car', color: 'red', positionKey: 'left', order: 0, labelKey: 'redCar', turn: 'right' },
+        ]
+      },
+      {
+        id: 'bending-tie-secondary',
+        factKey: 'bending',
+        bendingConfig: { path: 'top-left' },
+        signs: [
+          { type: 'yield-bending', position: 'bottom', variant: 'priority-top-left' },
+          { type: 'yield-bending', position: 'right', variant: 'priority-top-right' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'straight' },
+          { id: 'red-car', color: 'red', positionKey: 'right', order: 0, labelKey: 'redCar', turn: 'straight' },
+        ]
+      },
+      {
+        id: 'bending-complex',
+        factKey: 'bending',
+        bendingConfig: { path: 'bottom-left' },
+        signs: [
+          { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
+          { type: 'bending-priority', position: 'left', variant: 'bottom-right' },
+          { type: 'yield', position: 'right', variant: 'priority-top-left' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'straight' },
+          { id: 'red-car', color: 'red', positionKey: 'left', order: 0, labelKey: 'redCar', turn: 'right' },
+          { id: 'yellow-car', color: 'yellow', positionKey: 'right', order: 2, labelKey: 'yellowCar', turn: 'left' },
         ]
       }
     ],
