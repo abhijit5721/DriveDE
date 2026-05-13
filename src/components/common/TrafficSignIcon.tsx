@@ -36,18 +36,16 @@ function SignFrame({ children, noFrame }: { children: React.ReactNode; noFrame?:
 function ParkingSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#0f5bd8" />
+      {/* Blue plate with white border */}
+      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1a56db" />
+      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#ffffff" strokeWidth="2" />
       <text
-        x="32"
-        y="43"
+        x="32" y="44"
         textAnchor="middle"
-        fontSize="34"
-        fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif"
+        fontSize="36" fontWeight="800"
+        fontFamily="Arial Black, Arial, sans-serif"
         fill="#ffffff"
-      >
-        P
-      </text>
+      >P</text>
     </svg>
   );
 }
@@ -55,9 +53,10 @@ function ParkingSign() {
 function NoStoppingSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <circle cx="32" cy="32" r="24" fill="#0f5bd8" stroke="#d92d20" strokeWidth="8" />
-      <line x1="18" y1="18" x2="46" y2="46" stroke="#d92d20" strokeWidth="6" strokeLinecap="round" />
-      <line x1="46" y1="18" x2="18" y2="46" stroke="#d92d20" strokeWidth="6" strokeLinecap="round" />
+      {/* Zeichen 283 — circular blue with red cross-out */}
+      <circle cx="32" cy="32" r="27" fill="#1a56db" />
+      <circle cx="32" cy="32" r="27" fill="none" stroke="#d92d20" strokeWidth="7" />
+      <line x1="19" y1="19" x2="45" y2="45" stroke="#d92d20" strokeWidth="6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -65,10 +64,14 @@ function NoStoppingSign() {
 function MotorwaySign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#0f5bd8" />
-      <path d="M28 48V18L21 28v20" fill="#ffffff" />
-      <path d="M36 48V18l7 10v20" fill="#ffffff" />
-      <rect x="30" y="16" width="4" height="10" rx="2" fill="#ffffff" />
+      {/* Blue plate with white border */}
+      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1a56db" />
+      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#ffffff" strokeWidth="2" />
+      {/* Motorway "A" road symbol */}
+      <path d="M27 46V20L20 30v16" fill="#ffffff" />
+      <path d="M37 46V20l7 10v16" fill="#ffffff" />
+      <rect x="29" y="17" width="6" height="8" rx="2" fill="#ffffff" />
+      <rect x="22" y="35" width="20" height="3" rx="1" fill="#ffffff" />
     </svg>
   );
 }
@@ -265,27 +268,26 @@ function StopBendingSign({ variant }: { variant?: string }) {
 function StopSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Stop Octagon */}
-      <g transform="translate(32 32) scale(0.95) translate(-32 -32)">
-        <path 
-          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
-          fill="#d92d20" 
-          stroke="#ffffff" 
-          strokeWidth="2.5" 
-        />
-        <text 
-          x="32" 
-          y="31" 
-          textAnchor="middle" 
-          fontSize="15" 
-          fontWeight="900" 
-          fill="#ffffff" 
-          fontFamily="Arial Black, Arial, sans-serif"
-          letterSpacing="-0.5"
-        >
-          STOP
-        </text>
-      </g>
+      {/* Zeichen 206 — Red octagon, white outer border, white inner ring */}
+      <path
+        d="M21 3h22l15 15v22L43 55H21L6 40V18L21 3z"
+        fill="#d92d20"
+      />
+      <path
+        d="M21 3h22l15 15v22L43 55H21L6 40V18L21 3z"
+        fill="none" stroke="#ffffff" strokeWidth="3"
+      />
+      <path
+        d="M23 9h18l10 10v18L41 47H23L13 37V19L23 9z"
+        fill="none" stroke="#ffffff" strokeWidth="1.5"
+      />
+      <text
+        x="32" y="32"
+        textAnchor="middle" dominantBaseline="central"
+        fontSize="14" fontWeight="900"
+        fill="#ffffff" fontFamily="Arial Black, Arial, sans-serif"
+        letterSpacing="0.5"
+      >STOP</text>
     </svg>
   );
 }
@@ -293,8 +295,11 @@ function StopSign() {
 function YieldSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <polygon points="4,8 60,8 32,56" fill="#d92d20" stroke="#d92d20" strokeWidth="2" />
-      <polygon points="16,14 48,14 32,42" fill="#ffffff" />
+      {/* Zeichen 205 — Inverted red triangle with white inner ring */}
+      <polygon points="32,5 61,57 3,57" fill="#d92d20" />
+      <polygon points="32,5 61,57 3,57" fill="none" stroke="#ffffff" strokeWidth="3" />
+      <polygon points="32,16 52,51 12,51" fill="#ffffff" />
+      <polygon points="32,16 52,51 12,51" fill="none" stroke="#d92d20" strokeWidth="1" />
     </svg>
   );
 }
@@ -306,9 +311,11 @@ function YieldSign() {
 function OneWaySign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#3b82f6" />
-      <path d="M16 32h32" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" />
-      <path d="M40 20l12 12-12 12" fill="none" stroke="#ffffff" strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
+      {/* Zeichen 220 — Blue plate, white arrow */}
+      <rect x="4" y="18" width="56" height="28" rx="4" fill="#1a56db" />
+      <rect x="7" y="21" width="50" height="22" rx="2" fill="none" stroke="#ffffff" strokeWidth="1.5" />
+      <path d="M12 32h28" stroke="#ffffff" strokeWidth="7" strokeLinecap="round" />
+      <path d="M34 23l14 9-14 9" fill="#ffffff" />
     </svg>
   );
 }
@@ -316,9 +323,11 @@ function OneWaySign() {
 function PriorityRoadSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
+      {/* Zeichen 306 — Yellow diamond with white border and black outline */}
       <g transform="translate(32 32) rotate(45) translate(-32 -32)">
-        <rect x="12" y="12" width="40" height="40" fill="#ffffff" stroke="#111827" strokeWidth="2" />
-        <rect x="18" y="18" width="28" height="28" fill="#facc15" stroke="#111827" strokeWidth="1" />
+        <rect x="9" y="9" width="46" height="46" fill="#111827" rx="2" />
+        <rect x="11" y="11" width="42" height="42" fill="#ffffff" rx="1" />
+        <rect x="15" y="15" width="34" height="34" fill="#f9c802" rx="1" />
       </g>
     </svg>
   );
@@ -331,8 +340,11 @@ function PriorityRoadSign() {
 function NoEntrySign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <circle cx="32" cy="32" r="26" fill="#ef4444" />
-      <rect x="14" y="27" width="36" height="10" fill="#ffffff" />
+      {/* Zeichen 267 — Red circle, white border ring, white horizontal bar */}
+      <circle cx="32" cy="32" r="28" fill="#d92d20" />
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#ffffff" strokeWidth="3" />
+      <circle cx="32" cy="32" r="23" fill="none" stroke="#ffffff" strokeWidth="1" />
+      <rect x="12" y="27" width="40" height="10" rx="1" fill="#ffffff" />
     </svg>
   );
 }
@@ -361,9 +373,11 @@ function CyclistsAllowedSign() {
 function GreenArrowSign() {
   return (
     <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#111827" />
-      <path d="M16 32h32" stroke="#10b981" strokeWidth="8" strokeLinecap="square" />
-      <path d="M40 20l12 12-12 12" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="square" strokeLinejoin="miter" />
+      {/* Zeichen 720 — Dark metal plate, green arrow */}
+      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1f2937" />
+      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#374151" strokeWidth="1.5" />
+      <path d="M14 32h26" stroke="#22c55e" strokeWidth="7" strokeLinecap="round" />
+      <path d="M34 20l16 12-16 12" fill="#22c55e" />
     </svg>
   );
 }
