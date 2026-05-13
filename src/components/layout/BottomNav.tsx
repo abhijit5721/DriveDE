@@ -42,7 +42,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               role="tab"
               aria-selected={activeTab === tab.id || (tab.id === 'tracker' && activeTab === 'history')}
               aria-label={tab.label}
-              data-testid={tab.id === 'tracker' ? 'nav-tracker' : tab.id === 'account' ? 'nav-account' : undefined}
+              data-testid={`nav-${tab.id}`}
               onClick={() => onTabChange(tab.id)}
               className={cn(
                 'group relative flex flex-1 flex-col items-center gap-1 transition-all duration-300 py-1 active:scale-90',

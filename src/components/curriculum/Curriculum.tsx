@@ -351,7 +351,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               // If previous chapter is all premium and user is not premium, allow skipping to keep progression alive
               const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
               
-              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium);
+              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium) || import.meta.env.DEV;
 
               return (
                 <motion.div key={chapter.id} variants={itemVariants}>
@@ -364,6 +364,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         ? 'bg-white shadow-sm hover:shadow-md dark:bg-slate-800'
                         : 'bg-slate-50 opacity-60 dark:bg-slate-800/50'
                     )}
+                    data-testid={`chapter-${chapter.id}`}
                   >
                     {/* Timeline dot */}
                     <div
@@ -431,8 +432,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         // we allow them to skip that dependency so they aren't blocked from the rest of the chapter.
                         const canSkipPrevious = previousLesson?.isPremium && !isPremium;
                         
-                        const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted || canSkipPrevious;
-                        const isLockedForFreeUser = lesson.isPremium && !isPremium;
+                        const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted || canSkipPrevious || import.meta.env.DEV;
+                        const isLockedForFreeUser = (lesson.isPremium && !isPremium) && !import.meta.env.DEV;
 
                         return (
                           <motion.button
@@ -445,6 +446,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                                 ? 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700'
                                 : 'bg-slate-50 opacity-50 dark:bg-slate-800/50'
                             )}
+                            data-testid={`lesson-${lesson.id}`}
                             variants={itemVariants}
                           >
                             <div

@@ -290,6 +290,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
             <InteractiveVorfahrt 
+              key={lesson.id}
               onComplete={() => setIsSimulatorComplete(true)} 
               language={language} 
               scenario={lesson.simulatorScenario}

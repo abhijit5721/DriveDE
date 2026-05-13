@@ -69,7 +69,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
                 role="tab"
                 aria-selected={activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')}
                 aria-label={item.label}
-                data-testid={item.id === 'tracker' ? 'nav-tracker' : item.id === 'account' ? 'nav-account' : undefined}
+                data-testid={`nav-${item.id}`}
                 onClick={() => onTabChange(item.id)}
                 className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-300 group
                   ${(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history'))

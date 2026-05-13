@@ -131,6 +131,7 @@ export default function InteractiveVorfahrt({
                 <button
                   key={idx}
                   onClick={() => switchScenario(idx)}
+                  data-testid={`scenario-switch-${idx}`}
                   className={cn(
                     "h-6 w-6 rounded-md text-[10px] font-bold transition-all",
                     currentScenarioIndex === idx
@@ -145,6 +146,7 @@ export default function InteractiveVorfahrt({
           )}
           <button 
             onClick={reset}
+            data-testid="simulator-reset-btn"
             className="rounded-full p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             title="Reset"
           >
@@ -159,7 +161,7 @@ export default function InteractiveVorfahrt({
 
       {/* Simulator Viewport */}
       <div className="relative aspect-square w-full max-w-[320px] overflow-hidden rounded-2xl bg-emerald-900/10 dark:bg-emerald-900/5 mx-auto border-4 border-slate-200 dark:border-slate-800 shadow-xl">
-        <svg viewBox="0 0 300 300" className="h-full w-full">
+        <svg data-testid="simulator-svg" viewBox="0 0 300 300" className="h-full w-full">
           {/* Grass/Background */}
           <rect x="0" y="0" width="300" height="300" fill="currentColor" className="text-emerald-100 dark:text-emerald-900/20" />
           
@@ -219,7 +221,8 @@ export default function InteractiveVorfahrt({
              return (
                <motion.g
                  key={car.id}
-                 initial={{ x: car.x, y: car.y, rotate: car.rotate }}
+                 data-testid={`car-${car.id}`}
+                 initial={{ x: car.x, y: car.y, rotate: car.rotate, opacity: 1 }}
                  animate={isCurrentAnimation || isMoved 
                    ? { x: car.targetX, y: car.targetY, opacity: 0 } 
                    : { x: car.x, y: car.y, rotate: car.rotate, opacity: 1 }
@@ -254,13 +257,11 @@ export default function InteractiveVorfahrt({
                       stroke="white" 
                       strokeWidth="2" 
                       fill="none"
+                      style={{ pointerEvents: 'none' }}
                       animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     />
                  )}
-
-                 {/* Click Target (Larger) */}
-                 <circle cx="0" cy="0" r="35" fill="transparent" />
                </motion.g>
              );
           })}
@@ -303,6 +304,7 @@ export default function InteractiveVorfahrt({
               </p>
               <button 
                 onClick={onComplete}
+                data-testid="simulator-continue-btn"
                 className="group relative flex items-center gap-2 rounded-xl bg-white px-8 py-3 text-lg font-black text-blue-600 shadow-xl transition-all hover:scale-105 active:scale-95"
               >
                 {t.maneuvers.interactive.priority.continue}
