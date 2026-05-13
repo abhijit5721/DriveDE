@@ -1,6 +1,10 @@
 /**
  * (c) 2026 DriveDE. All rights reserved.
  * This source code is proprietary and protected under international copyright law.
+ *
+ * TrafficSignIcon.tsx
+ * Renders authentic German StVO traffic signs as SVG.
+ * Each sign matches the official visual specification as seen on real German roads.
  */
 
 import type { TrafficSign } from '../../types';
@@ -26,374 +30,344 @@ function SignFrame({ children, noFrame }: { children: React.ReactNode; noFrame?:
     );
   }
   return (
-    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white p-2 shadow-md ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700 sm:h-24 sm:w-24">
+    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700 sm:h-24 sm:w-24">
       {children}
     </div>
   );
 }
 
-
-function ParkingSign() {
+// ─── Zeichen 205 – Vorfahrt gewähren (Yield) ─────────────────────────────────
+// Inverted red triangle, white fill inside, red outer frame, white border stripe
+function YieldSign() {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Blue plate with white border */}
-      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1a56db" />
-      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#ffffff" strokeWidth="2" />
-      <text
-        x="32" y="44"
-        textAnchor="middle"
-        fontSize="36" fontWeight="800"
-        fontFamily="Arial Black, Arial, sans-serif"
-        fill="#ffffff"
-      >P</text>
+    <svg viewBox="0 0 100 90" className={svgClass} aria-hidden="true">
+      {/* Red outer triangle */}
+      <polygon points="50,4 97,86 3,86" fill="#CC0000" />
+      {/* White border stripe (inner) */}
+      <polygon points="50,14 89,80 11,80" fill="white" />
+      {/* Red inner triangle */}
+      <polygon points="50,22 83,76 17,76" fill="#CC0000" />
+      {/* White center fill */}
+      <polygon points="50,30 77,72 23,72" fill="white" />
     </svg>
   );
 }
 
-function NoStoppingSign() {
+// ─── Zeichen 206 – Halt! Vorfahrt gewähren (Stop) ────────────────────────────
+// Red octagon, white border, white STOP text
+function StopSign() {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 283 — circular blue with red cross-out */}
-      <circle cx="32" cy="32" r="27" fill="#1a56db" />
-      <circle cx="32" cy="32" r="27" fill="none" stroke="#d92d20" strokeWidth="7" />
-      <line x1="19" y1="19" x2="45" y2="45" stroke="#d92d20" strokeWidth="6" strokeLinecap="round" />
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      {/* White background octagon (border) */}
+      <polygon points="32,4 68,4 96,32 96,68 68,96 32,96 4,68 4,32" fill="white" />
+      {/* Red octagon fill */}
+      <polygon points="34,8 66,8 92,34 92,66 66,92 34,92 8,66 8,34" fill="#CC0000" />
+      {/* Thin white inner ring */}
+      <polygon points="36,13 64,13 87,36 87,64 64,87 36,87 13,64 13,36"
+        fill="none" stroke="white" strokeWidth="2" />
+      {/* STOP text */}
+      <text x="50" y="58" textAnchor="middle" dominantBaseline="middle"
+        fontSize="22" fontWeight="900" fill="white"
+        fontFamily="'Arial Black', Arial, Helvetica, sans-serif" letterSpacing="1">
+        STOP
+      </text>
     </svg>
   );
 }
 
-function MotorwaySign() {
+// ─── Zeichen 306 – Vorfahrtstraße (Priority Road) ────────────────────────────
+// Yellow diamond with black+white border
+function PriorityRoadSign() {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Blue plate with white border */}
-      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1a56db" />
-      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#ffffff" strokeWidth="2" />
-      {/* Motorway "A" road symbol */}
-      <path d="M27 46V20L20 30v16" fill="#ffffff" />
-      <path d="M37 46V20l7 10v16" fill="#ffffff" />
-      <rect x="29" y="17" width="6" height="8" rx="2" fill="#ffffff" />
-      <rect x="22" y="35" width="20" height="3" rx="1" fill="#ffffff" />
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      {/* Black outer diamond */}
+      <rect x="10" y="10" width="80" height="80" rx="3"
+        transform="rotate(45 50 50)" fill="#1a1a1a" />
+      {/* White ring */}
+      <rect x="14" y="14" width="72" height="72" rx="2"
+        transform="rotate(45 50 50)" fill="white" />
+      {/* Yellow inner diamond */}
+      <rect x="18" y="18" width="64" height="64" rx="2"
+        transform="rotate(45 50 50)" fill="#F5A800" />
     </svg>
   );
 }
 
-
-function PedestrianCrossingSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="4" fill="#0f5bd8" />
-      <polygon points="32,18 46,44 18,44" fill="#ffffff" />
-      <circle cx="32" cy="27" r="3.2" fill="#111827" />
-      <path d="M32 30l-3 5m3-5l4 4m-4 0l-5 6m5-6l6 6m-12 2h14" stroke="#111827" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
+// ─── Zeichen 215 – Kreisverkehr (Roundabout) ─────────────────────────────────
+// Blue circle, three white curved arrows going counter-clockwise
 function RoundaboutSign() {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <circle cx="32" cy="32" r="24" fill="#0f5bd8" />
-      <g transform="translate(32 32)">
-        <path d="M0 -16c5 1 9 4 12 8l-4 1 7 5 2-9-4 1c-4-6-9-9-16-10l3 4z" fill="#ffffff" />
-        <path d="M14 8c-3 4-7 7-13 8l2-4-9 3 7 6 1-4c7-1 13-4 18-10l-6 1z" fill="#ffffff" />
-        <path d="M-14 8c-2-4-2-9 1-15l3 3-1-10-9 4 4 2c-3 6-3 13 1 19l1-6z" fill="#ffffff" />
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      {/* Blue circle with white border */}
+      <circle cx="50" cy="50" r="46" fill="white" />
+      <circle cx="50" cy="50" r="44" fill="#003399" />
+      {/* Three CCW arrows */}
+      <g fill="white">
+        {/* Top arrow pointing left */}
+        <path d="M50,20 A24,24 0 0,0 26,44 L22,44 L30,36 L38,44 L34,44 A16,16 0 0,1 50,28 Z" />
+        {/* Right arrow pointing down */}
+        <path d="M80,50 A24,24 0 0,0 56,74 L56,78 L64,70 L56,62 L56,66 A16,16 0 0,1 72,50 Z" />
+        {/* Bottom-left arrow pointing up-right */}
+        <path d="M20,56 A24,24 0 0,0 44,74 L40,78 L50,74 L44,64 L44,68 A16,16 0 0,1 28,50 Z" />
       </g>
+      {/* Center white circle */}
+      <circle cx="50" cy="50" r="12" fill="#003399" />
+      <circle cx="50" cy="50" r="9" fill="white" opacity="0.3" />
     </svg>
   );
 }
 
-/**
- * Zusatzzeichen (supplementary sign) showing which road has priority at the bending junction.
- * Rendered as a white square with a + cross, thick line = priority road.
- * Matches the official German StVO Zusatzzeichen 1000-series exactly.
- */
+// ─── Zeichen 350 – Fußgängerüberweg (Pedestrian Crossing / Zebra) ────────────
+// Blue square sign, white walking figure + zebra stripes
+function PedestrianCrossingSign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      {/* Blue square with white border */}
+      <rect x="4" y="4" width="92" height="92" rx="5" fill="white" />
+      <rect x="6" y="6" width="88" height="88" rx="4" fill="#003399" />
+      {/* Zebra stripes at bottom */}
+      {[0,1,2,3].map(i => (
+        <rect key={i} x={22 + i * 14} y="72" width="8" height="16" rx="1" fill="white" />
+      ))}
+      {/* Walking figure */}
+      {/* Head */}
+      <circle cx="45" cy="24" r="7" fill="white" />
+      {/* Body */}
+      <line x1="45" y1="31" x2="45" y2="52" stroke="white" strokeWidth="5" strokeLinecap="round" />
+      {/* Left arm */}
+      <line x1="45" y1="38" x2="32" y2="46" stroke="white" strokeWidth="4" strokeLinecap="round" />
+      {/* Right arm */}
+      <line x1="45" y1="38" x2="58" y2="36" stroke="white" strokeWidth="4" strokeLinecap="round" />
+      {/* Left leg */}
+      <line x1="45" y1="52" x2="36" y2="68" stroke="white" strokeWidth="4" strokeLinecap="round" />
+      {/* Right leg */}
+      <line x1="45" y1="52" x2="56" y2="68" stroke="white" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ─── Zeichen 220 – Einbahnstraße (One-Way Street) ────────────────────────────
+// Blue rectangle, bold white arrow pointing right
+function OneWaySign() {
+  return (
+    <svg viewBox="0 0 120 60" className={svgClass} aria-hidden="true">
+      <rect x="2" y="2" width="116" height="56" rx="5" fill="white" />
+      <rect x="4" y="4" width="112" height="52" rx="4" fill="#003399" />
+      {/* Bold white arrow */}
+      <path d="M16,30 L78,30" stroke="white" strokeWidth="14" strokeLinecap="round" />
+      <polygon points="74,14 106,30 74,46" fill="white" />
+    </svg>
+  );
+}
+
+// ─── Zeichen 267 – Verbot der Einfahrt (No Entry) ────────────────────────────
+// Red circle, white horizontal bar
+function NoEntrySign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      {/* White border ring */}
+      <circle cx="50" cy="50" r="47" fill="white" />
+      {/* Red circle */}
+      <circle cx="50" cy="50" r="45" fill="#CC0000" />
+      {/* White horizontal bar */}
+      <rect x="14" y="38" width="72" height="24" rx="3" fill="white" />
+    </svg>
+  );
+}
+
+// ─── Zeichen 283 – Absolutes Halteverbot (No Stopping) ───────────────────────
+// Blue circle, red diagonal cross-out band
+function NoStoppingSign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      <circle cx="50" cy="50" r="47" fill="white" />
+      <circle cx="50" cy="50" r="45" fill="#003399" />
+      {/* Red band diagonal */}
+      <line x1="18" y1="18" x2="82" y2="82" stroke="#CC0000" strokeWidth="16" strokeLinecap="round" />
+      {/* Red border ring */}
+      <circle cx="50" cy="50" r="45" fill="none" stroke="#CC0000" strokeWidth="10" />
+    </svg>
+  );
+}
+
+// ─── Zeichen 314 – Parken (Parking) ──────────────────────────────────────────
+// Blue square, white "P"
+function ParkingSign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      <rect x="4" y="4" width="92" height="92" rx="6" fill="white" />
+      <rect x="6" y="6" width="88" height="88" rx="5" fill="#003399" />
+      <text x="50" y="72" textAnchor="middle" fontSize="72" fontWeight="900"
+        fill="white" fontFamily="'Arial Black', Arial, Helvetica, sans-serif">
+        P
+      </text>
+    </svg>
+  );
+}
+
+// ─── Zeichen 330.1 – Autobahn (Motorway) ─────────────────────────────────────
+// Blue rectangle, white highway "A" symbol (two roads merging)
+function MotorwaySign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      <rect x="4" y="4" width="92" height="92" rx="6" fill="white" />
+      <rect x="6" y="6" width="88" height="88" rx="5" fill="#003399" />
+      {/* Two road shapes */}
+      <path d="M30,82 L40,20 L50,38 L60,20 L70,82" fill="none" stroke="white" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round" />
+      {/* Cross bar */}
+      <line x1="35" y1="56" x2="65" y2="56" stroke="white" strokeWidth="7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ─── Zeichen 720 – Grünpfeil (Green Arrow sign) ───────────────────────────────
+// Dark rectangular sign, green arrow pointing right
+function GreenArrowSign() {
+  return (
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      <rect x="4" y="4" width="92" height="92" rx="6" fill="#1a1a1a" />
+      <rect x="7" y="7" width="86" height="86" rx="4" fill="none" stroke="#333" strokeWidth="2" />
+      {/* Green arrow */}
+      <path d="M16,50 L64,50" stroke="#00CC44" strokeWidth="12" strokeLinecap="round" />
+      <polygon points="58,32 86,50 58,68" fill="#00CC44" />
+    </svg>
+  );
+}
+
+// ─── Traffic Light with green arrow signal ────────────────────────────────────
+function GreenArrowSignal() {
+  return (
+    <svg viewBox="0 0 60 120" className={svgClass} aria-hidden="true">
+      {/* Traffic light housing */}
+      <rect x="10" y="4" width="40" height="88" rx="8" fill="#1a1a1a" />
+      {/* Red light (off) */}
+      <circle cx="30" cy="24" r="13" fill="#4a0000" />
+      <circle cx="30" cy="24" r="10" fill="#330000" />
+      {/* Amber light (off) */}
+      <circle cx="30" cy="50" r="13" fill="#3a2d00" />
+      <circle cx="30" cy="50" r="10" fill="#2a2000" />
+      {/* Green arrow light (on) */}
+      <circle cx="30" cy="76" r="13" fill="#003300" />
+      <circle cx="30" cy="76" r="10" fill="#00aa00" />
+      <path d="M22,76 L34,76" stroke="white" strokeWidth="3.5" strokeLinecap="round" />
+      <polygon points="32,70 40,76 32,82" fill="white" />
+      {/* Mount post */}
+      <rect x="27" y="92" width="6" height="24" rx="3" fill="#555" />
+    </svg>
+  );
+}
+
+// ─── Zusatzzeichen 1022-10 – Radfahrer frei ──────────────────────────────────
+// White rectangle with black border, bicycle pictogram + "frei"
+function CyclistsAllowedSign() {
+  return (
+    <svg viewBox="0 0 120 60" className={svgClass} aria-hidden="true">
+      <rect x="2" y="2" width="116" height="56" rx="4" fill="white" stroke="#1a1a1a" strokeWidth="3" />
+      {/* Bicycle wheels */}
+      <circle cx="38" cy="36" r="12" fill="none" stroke="#1a1a1a" strokeWidth="3" />
+      <circle cx="66" cy="36" r="12" fill="none" stroke="#1a1a1a" strokeWidth="3" />
+      {/* Frame */}
+      <path d="M38,36 L52,20 L66,36 M52,20 L52,36 M38,36 L52,28" fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+      {/* Handlebars */}
+      <path d="M62,20 L70,20 M66,20 L66,26" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Seat */}
+      <path d="M48,20 L56,20" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+      {/* "frei" text */}
+      <text x="93" y="38" textAnchor="middle" fontSize="16" fontWeight="700"
+        fill="#1a1a1a" fontFamily="Arial, sans-serif">frei</text>
+    </svg>
+  );
+}
+
+// ─── Bending Priority Zusatzzeichen ──────────────────────────────────────────
+// White square, thin grey roads, THICK black line = priority road path
 function BendingSubSign({ variant }: { variant?: string }) {
   const layout = variant || 'bottom-left';
-
-  // The sub-sign sits at x=34..62, y=28..56 (a 28×28 square)
-  const sx = 35; // sub-sign left
-  const sy = 28; // sub-sign top
-  const sw = 28; // sub-sign width/height (square)
-  const cx = sx + sw / 2; // center x = 49
-  const cy = sy + sw / 2; // center y = 42
-
-  // Thin grey cross lines (all 4 arms of intersection)
-  const tw = 1.2; // thin road stroke
-
-  // Bold priority road stroke width
-  const bw = 4.5;
+  const cx = 50; const cy = 50;
+  const bw = 7;   // priority road stroke width
+  const tw = 2;   // thin road stroke width
 
   return (
     <g>
-      {/* Sub-sign white rectangle with black border */}
-      <rect x={sx} y={sy} width={sw} height={sw} rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.2" />
-
-      {/* Thin lines: all 4 roads of the intersection (grey) */}
-      <line x1={cx} y1={sy + 2} x2={cx} y2={cy - 2} stroke="#555" strokeWidth={tw} />
-      <line x1={cx} y1={cy + 2} x2={cx} y2={sy + sw - 2} stroke="#555" strokeWidth={tw} />
-      <line x1={sx + 2} y1={cy} x2={cx - 2} y2={cy} stroke="#555" strokeWidth={tw} />
-      <line x1={cx + 2} y1={cy} x2={sx + sw - 2} y2={cy} stroke="#555" strokeWidth={tw} />
-
-      {/* Bold black line: the priority road path */}
-      {/* bottom-left: comes from bottom, bends left */}
-      {layout === 'bottom-left' && (
-        <path d={`M ${cx} ${sy + sw - 2} Q ${cx} ${cy} ${sx + 2} ${cy}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* bottom-right: comes from bottom, bends right */}
-      {layout === 'bottom-right' && (
-        <path d={`M ${cx} ${sy + sw - 2} Q ${cx} ${cy} ${sx + sw - 2} ${cy}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* top-left: comes from top, bends left */}
-      {layout === 'top-left' && (
-        <path d={`M ${cx} ${sy + 2} Q ${cx} ${cy} ${sx + 2} ${cy}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* top-right: comes from top, bends right */}
-      {layout === 'top-right' && (
-        <path d={`M ${cx} ${sy + 2} Q ${cx} ${cy} ${sx + sw - 2} ${cy}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* left-top: comes from left, bends up */}
-      {layout === 'left-top' && (
-        <path d={`M ${sx + 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + 2}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* left-bottom: comes from left, bends down */}
-      {layout === 'left-bottom' && (
-        <path d={`M ${sx + 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + sw - 2}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* right-top: comes from right, bends up */}
-      {layout === 'right-top' && (
-        <path d={`M ${sx + sw - 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + 2}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* right-bottom: comes from right, bends down */}
-      {layout === 'right-bottom' && (
-        <path d={`M ${sx + sw - 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + sw - 2}`}
-          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
-      )}
-      {/* straight left-right */}
-      {layout === 'priority-left-right' && (
-        <line x1={sx + 2} y1={cy} x2={sx + sw - 2} y2={cy}
-          stroke="#111827" strokeWidth={bw} strokeLinecap="round" />
-      )}
-      {/* straight top-bottom */}
-      {layout === 'priority-top-bottom' && (
-        <line x1={cx} y1={sy + 2} x2={cx} y2={sy + sw - 2}
-          stroke="#111827" strokeWidth={bw} strokeLinecap="round" />
-      )}
+      {/* White rect with black border */}
+      <rect x="1" y="1" width="98" height="98" rx="3" fill="white" stroke="#1a1a1a" strokeWidth="3" />
+      {/* Thin roads (all four arms) */}
+      <line x1={cx} y1="6" x2={cx} y2={cy - 4} stroke="#888" strokeWidth={tw} />
+      <line x1={cx} y1={cy + 4} x2={cx} y2="94" stroke="#888" strokeWidth={tw} />
+      <line x1="6" y1={cy} x2={cx - 4} y2={cy} stroke="#888" strokeWidth={tw} />
+      <line x1={cx + 4} y1={cy} x2="94" y2={cy} stroke="#888" strokeWidth={tw} />
+      {/* Thick priority road path */}
+      {layout === 'bottom-left' && <path d={`M${cx} 94 Q${cx} ${cy} 6 ${cy}`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'bottom-right' && <path d={`M${cx} 94 Q${cx} ${cy} 94 ${cy}`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'top-left' && <path d={`M${cx} 6 Q${cx} ${cy} 6 ${cy}`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'top-right' && <path d={`M${cx} 6 Q${cx} ${cy} 94 ${cy}`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'left-top' && <path d={`M6 ${cy} Q${cx} ${cy} ${cx} 6`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'left-bottom' && <path d={`M6 ${cy} Q${cx} ${cy} ${cx} 94`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'right-top' && <path d={`M94 ${cy} Q${cx} ${cy} ${cx} 6`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'right-bottom' && <path d={`M94 ${cy} Q${cx} ${cy} ${cx} 94`} fill="none" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />}
+      {layout === 'priority-left-right' && <line x1="6" y1={cy} x2="94" y2={cy} stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" />}
+      {layout === 'priority-top-bottom' && <line x1={cx} y1="6" x2={cx} y2="94" stroke="#1a1a1a" strokeWidth={bw} strokeLinecap="round" />}
     </g>
   );
 }
 
-/**
- * Priority road sign (yellow diamond) stacked above the Zusatzzeichen.
- * Layout: post | [diamond on left] [sub-sign on right] — matching reference image.
- */
+// ─── Zeichen 306 + Zusatzzeichen — Bending Priority Road ─────────────────────
+// Yellow diamond (top sign) + Zusatzzeichen (bottom sign) on a post
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
+    <svg viewBox="0 0 100 200" className={svgClass} aria-hidden="true">
       {/* Vertical post */}
-      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
-
-      {/* Yellow priority diamond — centered left portion (x=2..30) */}
-      <g transform="translate(16 18) rotate(45) translate(-16 -18)">
-        <rect x="4" y="6" width="24" height="24" fill="#ffffff" stroke="#111827" strokeWidth="1.2" />
-        <rect x="7" y="9" width="18" height="18" fill="#f9c802" />
+      <rect x="47" y="0" width="6" height="200" rx="3" fill="#888" />
+      {/* Priority Road diamond — top sign (40×40, centered at x=50 y=45) */}
+      <g transform="translate(50,45) rotate(45)">
+        <rect x="-22" y="-22" width="44" height="44" rx="2" fill="#1a1a1a" />
+        <rect x="-20" y="-20" width="40" height="40" rx="2" fill="white" />
+        <rect x="-16" y="-16" width="32" height="32" rx="1" fill="#F5A800" />
       </g>
-
-      {/* Zusatzzeichen sub-sign */}
-      <BendingSubSign variant={variant} />
+      {/* Zusatzzeichen — bottom sign (80×80, centered at x=50 y=145) */}
+      <g transform="translate(10,105)">
+        <BendingSubSign variant={variant} />
+      </g>
     </svg>
   );
 }
 
-/**
- * Yield sign (inverted red triangle) with Zusatzzeichen below.
- */
+// ─── Zeichen 205 + Zusatzzeichen — Bending Yield ─────────────────────────────
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Vertical post */}
-      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
-
-      {/* Yield triangle — centered in left portion */}
-      <g transform="translate(16 16) scale(0.55) translate(-32 -16)">
-        <polygon points="8,4 56,4 32,40" fill="#d92d20" />
-        <polygon points="16,8 48,8 32,34" fill="#ffffff" />
+    <svg viewBox="0 0 100 200" className={svgClass} aria-hidden="true">
+      <rect x="47" y="0" width="6" height="200" rx="3" fill="#888" />
+      {/* Yield triangle — top (scaled to fit ~50px wide at y=10..60) */}
+      <polygon points="50,10 85,60 15,60" fill="#CC0000" />
+      <polygon points="50,16 81,56 19,56" fill="white" />
+      <polygon points="50,22 77,52 23,52" fill="#CC0000" />
+      <polygon points="50,28 73,48 27,48" fill="white" />
+      {/* Zusatzzeichen */}
+      <g transform="translate(10,105)">
+        <BendingSubSign variant={variant} />
       </g>
-
-      {/* Zusatzzeichen sub-sign */}
-      <BendingSubSign variant={variant} />
     </svg>
   );
 }
 
-/**
- * Stop sign (red octagon) with Zusatzzeichen below.
- */
+// ─── Zeichen 206 + Zusatzzeichen — Bending Stop ──────────────────────────────
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Vertical post */}
-      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
-
-      {/* Stop octagon — centered in left portion */}
-      <g transform="translate(16 16) scale(0.52) translate(-32 -16)">
-        <path
-          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z"
-          fill="#d92d20"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-        />
-        <text x="32" y="30" textAnchor="middle" fontSize="13" fontWeight="900"
-          fill="#ffffff" fontFamily="Arial Black, Arial, sans-serif" letterSpacing="-0.5">
+    <svg viewBox="0 0 100 200" className={svgClass} aria-hidden="true">
+      <rect x="47" y="0" width="6" height="200" rx="3" fill="#888" />
+      {/* Stop octagon — top (~50px, centered at 50,40) */}
+      <g transform="translate(50,40) scale(0.44)">
+        <polygon points="32,4 68,4 96,32 96,68 68,96 32,96 4,68 4,32" fill="white" />
+        <polygon points="34,8 66,8 92,34 92,66 66,92 34,92 8,66 8,34" fill="#CC0000" />
+        <text x="50" y="58" textAnchor="middle" dominantBaseline="middle"
+          fontSize="22" fontWeight="900" fill="white"
+          fontFamily="'Arial Black', Arial, Helvetica, sans-serif" letterSpacing="1">
           STOP
         </text>
       </g>
-
-      {/* Zusatzzeichen sub-sign */}
-      <BendingSubSign variant={variant} />
-    </svg>
-  );
-}
-
-
-/**
- * Zeichen 206: Stopp! Vorfahrt gewähren.
- * Classic octagonal shape with red background and white border.
- */
-function StopSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 206 — Red octagon, white outer border, white inner ring */}
-      <path
-        d="M21 3h22l15 15v22L43 55H21L6 40V18L21 3z"
-        fill="#d92d20"
-      />
-      <path
-        d="M21 3h22l15 15v22L43 55H21L6 40V18L21 3z"
-        fill="none" stroke="#ffffff" strokeWidth="3"
-      />
-      <path
-        d="M23 9h18l10 10v18L41 47H23L13 37V19L23 9z"
-        fill="none" stroke="#ffffff" strokeWidth="1.5"
-      />
-      <text
-        x="32" y="32"
-        textAnchor="middle" dominantBaseline="central"
-        fontSize="14" fontWeight="900"
-        fill="#ffffff" fontFamily="Arial Black, Arial, sans-serif"
-        letterSpacing="0.5"
-      >STOP</text>
-    </svg>
-  );
-}
-
-function YieldSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 205 — Inverted red triangle with white inner ring */}
-      <polygon points="32,5 61,57 3,57" fill="#d92d20" />
-      <polygon points="32,5 61,57 3,57" fill="none" stroke="#ffffff" strokeWidth="3" />
-      <polygon points="32,16 52,51 12,51" fill="#ffffff" />
-      <polygon points="32,16 52,51 12,51" fill="none" stroke="#d92d20" strokeWidth="1" />
-    </svg>
-  );
-}
-
-/**
- * Zeichen 220: Einbahnstraße (One-Way Street).
- * Blue square with a white horizontal arrow pointing in the direction of travel.
- */
-function OneWaySign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 220 — Blue plate, white arrow */}
-      <rect x="4" y="18" width="56" height="28" rx="4" fill="#1a56db" />
-      <rect x="7" y="21" width="50" height="22" rx="2" fill="none" stroke="#ffffff" strokeWidth="1.5" />
-      <path d="M12 32h28" stroke="#ffffff" strokeWidth="7" strokeLinecap="round" />
-      <path d="M34 23l14 9-14 9" fill="#ffffff" />
-    </svg>
-  );
-}
-
-function PriorityRoadSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 306 — Yellow diamond with white border and black outline */}
-      <g transform="translate(32 32) rotate(45) translate(-32 -32)">
-        <rect x="9" y="9" width="46" height="46" fill="#111827" rx="2" />
-        <rect x="11" y="11" width="42" height="42" fill="#ffffff" rx="1" />
-        <rect x="15" y="15" width="34" height="34" fill="#f9c802" rx="1" />
-      </g>
-    </svg>
-  );
-}
-
-/**
- * Zeichen 267: Verbot der Einfahrt (No Entry).
- * Red circle with a white horizontal bar.
- */
-function NoEntrySign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 267 — Red circle, white border ring, white horizontal bar */}
-      <circle cx="32" cy="32" r="28" fill="#d92d20" />
-      <circle cx="32" cy="32" r="28" fill="none" stroke="#ffffff" strokeWidth="3" />
-      <circle cx="32" cy="32" r="23" fill="none" stroke="#ffffff" strokeWidth="1" />
-      <rect x="12" y="27" width="40" height="10" rx="1" fill="#ffffff" />
-    </svg>
-  );
-}
-
-/**
- * Zusatzzeichen 1022-10: Radfahrer frei (Cyclists allowed).
- * Supplementary sign indicating cyclists may travel against the one-way direction.
- */
-function CyclistsAllowedSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="4" y="10" width="56" height="44" rx="4" fill="#ffffff" stroke="#111827" strokeWidth="2.5" />
-      <g transform="translate(32 26) scale(0.7) translate(-32 -32)">
-        <path d="M12 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M52 28a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" fill="none" stroke="#111827" strokeWidth="4"/>
-        <path d="M12 22l10-12h20l10 12 M32 10v6 M24 16h16" fill="none" stroke="#111827" strokeWidth="3" strokeLinecap="round"/>
-      </g>
-      <text x="32" y="44" textAnchor="middle" fontSize="10" fontWeight="700" fill="#111827">frei</text>
-    </svg>
-  );
-}
-
-/**
- * Zeichen 720: Grünpfeil (Green Arrow Sign).
- * Metal sign next to a red light allowing right turn after stopping.
- */
-function GreenArrowSign() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      {/* Zeichen 720 — Dark metal plate, green arrow */}
-      <rect x="6" y="6" width="52" height="52" rx="5" fill="#1f2937" />
-      <rect x="9" y="9" width="46" height="46" rx="3" fill="none" stroke="#374151" strokeWidth="1.5" />
-      <path d="M14 32h26" stroke="#22c55e" strokeWidth="7" strokeLinecap="round" />
-      <path d="M34 20l16 12-16 12" fill="#22c55e" />
-    </svg>
-  );
-}
-
-/**
- * Lichtzeichen: Grüner Pfeil (Green Arrow Signal).
- * Traffic light variant where the green light is an arrow shape.
- */
-function GreenArrowSignal() {
-  return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="22" y="10" width="20" height="44" rx="3" fill="#111827" />
-      <circle cx="32" cy="18" r="4" fill="#374151" />
-      <circle cx="32" cy="32" r="4" fill="#374151" />
-      <g transform="translate(32 46)">
-        <path d="M-4 0h8 M2 -4l4 4-4 4" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      {/* Zusatzzeichen */}
+      <g transform="translate(10,105)">
+        <BendingSubSign variant={variant} />
       </g>
     </svg>
   );
@@ -412,84 +386,52 @@ function VehicleCheckImage({ src, alt }: { src: string; alt: string }) {
 
 function FallbackSign({ code }: { code?: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true">
-      <rect x="10" y="10" width="44" height="44" rx="12" fill="#e2e8f0" />
-      <text
-        x="32"
-        y="36"
-        textAnchor="middle"
-        fontSize="12"
-        fontWeight="700"
-        fontFamily="Arial, Helvetica, sans-serif"
-        fill="#334155"
-      >
+    <svg viewBox="0 0 100 100" className={svgClass} aria-hidden="true">
+      <rect x="5" y="5" width="90" height="90" rx="10" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="3" />
+      <text x="50" y="55" textAnchor="middle" fontSize="14" fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif" fill="#334155">
         {code ?? 'StVO'}
       </text>
     </svg>
   );
 }
 
-/**
- * Maps a TrafficSign object to its visual representation.
- * Prioritizes matching by ID (defined in curriculum.ts), 
- * falls back to StVO code matching for robustness.
- */
 function getSignGraphic(sign: TrafficSign) {
   switch (sign.id) {
-    case 'sign-yield':
-      return <YieldSign />;
-    case 'sign-parking':
-      return <ParkingSign />;
-    case 'sign-no-stopping':
-      return <NoStoppingSign />;
-    case 'sign-motorway':
-      return <MotorwaySign />;
-    case 'sign-roundabout':
-      return <RoundaboutSign />;
-    case 'sign-crosswalk':
-      return <PedestrianCrossingSign />;
-    case 'sign-bending-priority':
-      return <BendingPrioritySign variant={sign.variant} />;
-    case 'sign-priority-road':
-      return <PriorityRoadSign />;
-    case 'sign-green-arrow':
-      return <GreenArrowSign />;
-    case 'sign-stop':
-      return <StopSign />;
-    case 'sign-one-way':
-      return <OneWaySign />;
-    case 'sign-no-entry':
-      return <NoEntrySign />;
-    case 'sign-cyclists-allowed':
-      return <CyclistsAllowedSign />;
-    case 'sign-green-arrow-signal':
-      return <GreenArrowSignal />;
-    case 'sign-yield-bending':
-      return <YieldBendingSign variant={sign.variant} />;
-    case 'sign-stop-bending':
-      return <StopBendingSign variant={sign.variant} />;
-    case 'visual-dipstick':
-      return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
-    case 'visual-tyre':
-      return <VehicleCheckImage src={tyreTreadImg} alt="Tyre tread inspection" />;
-    case 'visual-dashboard':
-      return <VehicleCheckImage src={dashboardWarningsImg} alt="Dashboard warning lights" />;
-    case 'visual-lights':
-      return <VehicleCheckImage src={carLightsImg} alt="Car lights check" />;
+    case 'sign-yield':          return <YieldSign />;
+    case 'sign-stop':           return <StopSign />;
+    case 'sign-priority-road':  return <PriorityRoadSign />;
+    case 'sign-roundabout':     return <RoundaboutSign />;
+    case 'sign-crosswalk':      return <PedestrianCrossingSign />;
+    case 'sign-one-way':        return <OneWaySign />;
+    case 'sign-no-entry':       return <NoEntrySign />;
+    case 'sign-no-stopping':    return <NoStoppingSign />;
+    case 'sign-parking':        return <ParkingSign />;
+    case 'sign-motorway':       return <MotorwaySign />;
+    case 'sign-green-arrow':    return <GreenArrowSign />;
+    case 'sign-green-arrow-signal': return <GreenArrowSignal />;
+    case 'sign-cyclists-allowed':   return <CyclistsAllowedSign />;
+    case 'sign-bending-priority':   return <BendingPrioritySign variant={sign.variant} />;
+    case 'sign-yield-bending':      return <YieldBendingSign variant={sign.variant} />;
+    case 'sign-stop-bending':       return <StopBendingSign variant={sign.variant} />;
+    case 'visual-dipstick':   return <VehicleCheckImage src={oilDipstickImg} alt="Oil dipstick check" />;
+    case 'visual-tyre':       return <VehicleCheckImage src={tyreTreadImg} alt="Tyre tread inspection" />;
+    case 'visual-dashboard':  return <VehicleCheckImage src={dashboardWarningsImg} alt="Dashboard warning lights" />;
+    case 'visual-lights':     return <VehicleCheckImage src={carLightsImg} alt="Car lights check" />;
     default:
-      if (sign.code === 'Zeichen 205') return <YieldSign />;
-      if (sign.code === 'Zeichen 314') return <ParkingSign />;
-      if (sign.code === 'Zeichen 283') return <NoStoppingSign />;
+      if (sign.code === 'Zeichen 205')  return <YieldSign />;
+      if (sign.code === 'Zeichen 206')  return <StopSign />;
+      if (sign.code === 'Zeichen 306')  return <PriorityRoadSign />;
+      if (sign.code === 'Zeichen 215')  return <RoundaboutSign />;
+      if (sign.code === 'Zeichen 350')  return <PedestrianCrossingSign />;
+      if (sign.code === 'Zeichen 220')  return <OneWaySign />;
+      if (sign.code === 'Zeichen 267')  return <NoEntrySign />;
+      if (sign.code === 'Zeichen 283')  return <NoStoppingSign />;
+      if (sign.code === 'Zeichen 314')  return <ParkingSign />;
       if (sign.code === 'Zeichen 330.1') return <MotorwaySign />;
-      if (sign.code === 'Zeichen 215') return <RoundaboutSign />;
-      if (sign.code === 'Zeichen 350') return <PedestrianCrossingSign />;
-      if (sign.code === 'Zeichen 306') return <PriorityRoadSign />;
-      if (sign.code === 'Zeichen 206') return <StopSign />;
-      if (sign.code === 'Zeichen 220') return <OneWaySign />;
-      if (sign.code === 'Zeichen 267') return <NoEntrySign />;
-      if (sign.code === 'Zusatzzeichen 1022-10') return <CyclistsAllowedSign />;
-      if (sign.code === 'Zeichen 720') return <GreenArrowSign />;
+      if (sign.code === 'Zeichen 720')  return <GreenArrowSign />;
       if (sign.code === 'Lichtzeichen') return <GreenArrowSignal />;
+      if (sign.code === 'Zusatzzeichen 1022-10') return <CyclistsAllowedSign />;
       return <FallbackSign code={sign.code} />;
   }
 }
