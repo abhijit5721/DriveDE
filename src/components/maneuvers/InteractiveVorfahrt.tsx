@@ -8,10 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
 import { TRANSLATIONS } from '../../data/translations';
 import { TrafficSignIcon } from '../common/TrafficSignIcon';
+import { cn } from '../../utils/cn';
 
 import { SimulatorScenario } from '../../types';
 
-const CAR_COLORS = {
+const CAR_COLORS: Record<string, string> = {
   blue: '#3b82f6',
   red: '#ef4444',
   yellow: '#f59e0b',
@@ -20,14 +21,14 @@ const CAR_COLORS = {
   silver: '#94a3b8',
 };
 
-const POSITION_MAP = {
+const POSITION_MAP: Record<string, { x: number; y: number; rotate: number; targetX: number; targetY: number }> = {
   right: { x: 260, y: 150, rotate: 0, targetX: 40, targetY: 150 },
   bottom: { x: 150, y: 260, rotate: -90, targetX: 150, targetY: 40 },
   left: { x: 40, y: 150, rotate: 180, targetX: 260, targetY: 150 },
   top: { x: 150, y: 40, rotate: 90, targetX: 150, targetY: 260 },
 };
 
-const SIGN_POSITION_MAP = {
+const SIGN_POSITION_MAP: Record<string, { x: number; y: number }> = {
   right: { x: 210, y: 80 },
   bottom: { x: 210, y: 210 },
   left: { x: 80, y: 210 },
@@ -62,7 +63,7 @@ export default function InteractiveVorfahrt({
         { id: 'blue-car', color: 'blue', positionKey: 'right', order: 0, labelKey: 'blueCar' },
         { id: 'red-car', color: 'red', positionKey: 'bottom', order: 1, labelKey: 'redCar' },
       ]
-    }];
+    } as SimulatorScenario];
   }, [propScenario, propScenarios]);
 
   const scenario = scenarios[currentScenarioIndex];
@@ -196,10 +197,11 @@ export default function InteractiveVorfahrt({
           <line x1="190" y1="110" x2="190" y2="190" stroke="white" strokeWidth="3" opacity="0.8" />
 
           {/* Traffic Signs */}
-          {scenario.signs?.map((sign, idx) => {
+          {scenario.signs?.map((sign: any, idx: number) => {
             const signId = sign.type === 'priority' ? 'sign-priority-road' : `sign-${sign.type}`;
+            const pos = SIGN_POSITION_MAP[sign.position as string];
             return (
-              <g key={`sign-${idx}`} transform={`translate(${SIGN_POSITION_MAP[sign.position].x}, ${SIGN_POSITION_MAP[sign.position].y}) scale(0.6)`}>
+              <g key={`sign-${idx}`} transform={`translate(${pos.x}, ${pos.y}) scale(0.6)`}>
                 <foreignObject x="-25" y="-25" width="50" height="50">
                   <div className="flex items-center justify-center">
                     <TrafficSignIcon sign={{ id: signId, titleDe: '', titleEn: '', descriptionDe: '', descriptionEn: '', variant: sign.variant } as any} />
