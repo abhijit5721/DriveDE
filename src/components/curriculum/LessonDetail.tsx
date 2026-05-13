@@ -293,6 +293,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               onComplete={() => setIsSimulatorComplete(true)} 
               language={language} 
               scenario={lesson.simulatorScenario}
+              scenarios={lesson.simulatorScenarios}
             />
             
             {isSimulatorComplete && (

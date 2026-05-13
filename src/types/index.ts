@@ -77,6 +77,7 @@ export interface Lesson {
   isPremium?: boolean;
   isInteractive?: boolean;
   simulatorScenario?: SimulatorScenario;
+  simulatorScenarios?: SimulatorScenario[];
 }
 
 export interface ManeuverStep {

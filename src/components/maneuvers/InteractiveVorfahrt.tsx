@@ -9,31 +9,7 @@ import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
 import { TRANSLATIONS } from '../../data/translations';
 import { TrafficSignIcon } from '../common/TrafficSignIcon';
 
-interface Car {
-  id: string;
-  color: 'blue' | 'red' | 'yellow' | 'green' | 'white' | 'silver';
-  positionKey: 'top' | 'right' | 'bottom' | 'left';
-  order: number;
-  labelKey: string;
-  turn?: 'left' | 'right' | 'straight';
-}
-
-interface Sign {
-  type: 'priority' | 'yield' | 'stop' | 'bending-priority' | 'yield-bending' | 'stop-bending';
-  position: 'top' | 'right' | 'bottom' | 'left';
-  rotation?: number;
-  variant?: string;
-}
-
-interface Scenario {
-  id: string;
-  cars: Car[];
-  factKey: 'rvl' | 'bending' | 'stop' | 'yield';
-  signs?: Sign[];
-  bendingConfig?: {
-    path: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
-  };
-}
+import { SimulatorScenario } from '../../types';
 
 const CAR_COLORS = {
   blue: '#3b82f6',
@@ -57,29 +33,39 @@ const SIGN_POSITION_MAP = {
   left: { x: 80, y: 210 },
   top: { x: 80, y: 80 },
 };
-
 export default function InteractiveVorfahrt({ 
   onComplete, 
   language,
-  scenario: propScenario 
+  scenario: propScenario,
+  scenarios: propScenarios
 }: { 
   onComplete: () => void; 
   language: 'de' | 'en';
-  scenario?: Scenario;
+  scenario?: SimulatorScenario;
+  scenarios?: SimulatorScenario[];
 }) {
   const t = TRANSLATIONS[language];
   
-  // Default scenario if none provided (Right before Left)
-  const defaultScenario: Scenario = {
-    id: 'rvl-default',
-    factKey: 'rvl',
-    cars: [
-      { id: 'blue-car', color: 'blue', positionKey: 'right', order: 0, labelKey: 'blueCar' },
-      { id: 'red-car', color: 'red', positionKey: 'bottom', order: 1, labelKey: 'redCar' },
-    ]
-  };
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const scenarios = useMemo(() => {
+    const list = propScenarios || [];
+    if (propScenario) {
+      // Avoid duplicates if propScenario is also in propScenarios
+      if (!list.find(s => s.id === propScenario.id)) {
+        return [propScenario, ...list];
+      }
+    }
+    return list.length > 0 ? list : [{
+      id: 'rvl-default',
+      factKey: 'rvl',
+      cars: [
+        { id: 'blue-car', color: 'blue', positionKey: 'right', order: 0, labelKey: 'blueCar' },
+        { id: 'red-car', color: 'red', positionKey: 'bottom', order: 1, labelKey: 'redCar' },
+      ]
+    }];
+  }, [propScenario, propScenarios]);
 
-  const scenario = propScenario || defaultScenario;
+  const scenario = scenarios[currentScenarioIndex];
   
   const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -123,6 +109,11 @@ export default function InteractiveVorfahrt({
     setAnimatingCar(null);
   };
 
+  const switchScenario = (index: number) => {
+    setCurrentScenarioIndex(index);
+    reset();
+  };
+
   return (
     <div className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-900/50 shadow-inner">
       <div className="flex items-center justify-between">
@@ -132,13 +123,33 @@ export default function InteractiveVorfahrt({
           </div>
           {t.maneuvers.interactive.priority.title}
         </h4>
-        <button 
-          onClick={reset}
-          className="rounded-full p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-          title="Reset"
-        >
-          <RotateCcw className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          {scenarios.length > 1 && (
+            <div className="mr-2 flex items-center gap-1 rounded-lg bg-slate-200 p-1 dark:bg-slate-800">
+              {scenarios.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => switchScenario(idx)}
+                  className={cn(
+                    "h-6 w-6 rounded-md text-[10px] font-bold transition-all",
+                    currentScenarioIndex === idx
+                      ? "bg-blue-500 text-white shadow-sm"
+                      : "text-slate-500 hover:bg-slate-300 dark:text-slate-400 dark:hover:bg-slate-700"
+                  )}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+          <button 
+            onClick={reset}
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            title="Reset"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">

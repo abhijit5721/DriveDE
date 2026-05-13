@@ -1351,34 +1351,6 @@ export const TRANSLATIONS = {
                   { id: 'stop-tip1', title: 'Haltlinie missachten = Durchgefallen', content: 'Das Überrollen der Haltlinie ohne Stopp führt in der Prüfung sofort zum Nichtbestehen.', type: 'warning' }
                 ]
               },
-              'city-12a': {
-                title: 'Abknickende Vorfahrt (Links)',
-                description: 'Dem Verlauf der Vorfahrtstraße nach links folgen.',
-                tips: [
-                  { id: 'bp-left-tip1', title: 'Blinken nicht vergessen!', content: 'Auch wenn Sie auf der Hauptstraße bleiben: Da Sie die Fahrtrichtung ändern, müssen Sie links blinken.', type: 'warning' }
-                ]
-              },
-              'city-12b': {
-                title: 'Abknickende Vorfahrt (Rechts)',
-                description: 'Dem Verlauf der Vorfahrtstraße nach rechts folgen.',
-                tips: [
-                  { id: 'bp-right-tip1', title: 'Blinken nicht vergessen!', content: 'Beim Folgen der Vorfahrtstraße nach rechts muss der rechte Blinker gesetzt werden.', type: 'warning' }
-                ]
-              },
-              'city-12c': {
-                title: 'Einfahrt in Vorfahrtstraße',
-                description: 'Vorfahrt gewähren beim Einfahren aus einer Nebenstraße in eine abknickende Vorfahrtstraße.',
-                tips: [
-                  { id: 'bp-entry-tip1', title: 'Beide Richtungen prüfen', content: 'Prüfen Sie genau, woher die Fahrzeuge auf der Hauptstraße kommen. Die dicke Linie auf dem Schild hilft Ihnen.', type: 'info' }
-                ]
-              },
-              'city-12d': {
-                title: 'Vorfahrtstraße verlassen',
-                description: 'Geradeaus weiterfahren, während die Vorfahrtstraße abknickt.',
-                tips: [
-                  { id: 'bp-leave-tip1', title: 'Nicht blinken!', content: 'Wenn Sie geradeaus fahren, blinken Sie nicht, auch wenn die Hauptstraße abknickt.', type: 'info' }
-                ]
-              },
               'city-13': {
                 title: 'Einbahnstraße: Regeln & Schilder',
                 description: 'Beschilderung (§ 41), Einordnen (§ 9) und Parken (§ 12) in der Einbahnstraße.',
@@ -3581,34 +3553,6 @@ export const TRANSLATIONS = {
                 ],
                 tips: [
                   { id: 'stop-tip1', title: 'Ignoring the stop line = Fail', content: 'Rolling over the stop line without stopping leads to immediate failure in the exam.', type: 'warning' }
-                ]
-              },
-              'city-12a': {
-                title: 'Bending Priority (Left)',
-                description: 'Following the priority road as it bends to the left.',
-                tips: [
-                  { id: 'bp-left-tip1', title: 'Don\'t forget to signal!', content: 'Even if you stay on the main road: since you are changing direction, you must signal left.', type: 'warning' }
-                ]
-              },
-              'city-12b': {
-                title: 'Bending Priority (Right)',
-                description: 'Following the priority road as it bends to the right.',
-                tips: [
-                  { id: 'bp-right-tip1', title: 'Don\'t forget to signal!', content: 'When following the priority road to the right, the right turn signal must be used.', type: 'warning' }
-                ]
-              },
-              'city-12c': {
-                title: 'Entering Priority Road',
-                description: 'Yielding when entering from a side street into a bending priority road.',
-                tips: [
-                  { id: 'bp-entry-tip1', title: 'Check both directions', content: 'Check carefully where the vehicles on the main road are coming from. The thick line on the sign helps you.', type: 'info' }
-                ]
-              },
-              'city-12d': {
-                title: 'Leaving Priority Road',
-                description: 'Continuing straight while the priority road bends.',
-                tips: [
-                  { id: 'bp-leave-tip1', title: 'Do not signal!', content: 'If you are going straight, do not signal, even if the main road bends.', type: 'info' }
                 ]
               },
               'city-13': {

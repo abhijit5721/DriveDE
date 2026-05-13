@@ -1189,6 +1189,60 @@ const cityLessons: Lesson[] = [
         { id: 'red-car', color: 'red', positionKey: 'left', order: 0, labelKey: 'redCar' },
       ]
     },
+    simulatorScenarios: [
+      {
+        id: 'bending-left',
+        factKey: 'bending',
+        bendingConfig: { path: 'bottom-left' },
+        signs: [
+          { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
+          { type: 'yield', position: 'right', variant: 'priority-top-left' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
+          { id: 'red-car', color: 'red', positionKey: 'right', order: 1, labelKey: 'redCar' },
+        ]
+      },
+      {
+        id: 'bending-right',
+        factKey: 'bending',
+        bendingConfig: { path: 'bottom-right' },
+        signs: [
+          { type: 'bending-priority', position: 'bottom', variant: 'bottom-right' },
+          { type: 'stop', position: 'left', variant: 'priority-top-right' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
+          { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
+        ]
+      },
+      {
+        id: 'bending-side-entry',
+        factKey: 'bending',
+        bendingConfig: { path: 'top-left' },
+        signs: [
+          { type: 'yield-bending', position: 'bottom', variant: 'priority-top-left' },
+          { type: 'bending-priority', position: 'top', variant: 'bottom-right' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar' },
+          { id: 'red-car', color: 'red', positionKey: 'top', order: 0, labelKey: 'redCar' },
+        ]
+      },
+      {
+        id: 'bending-straight-leave',
+        factKey: 'bending',
+        bendingConfig: { path: 'bottom-left' },
+        signs: [
+          { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
+          { type: 'yield', position: 'top', variant: 'priority-top-left' }
+        ],
+        cars: [
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
+          { id: 'red-car', color: 'red', positionKey: 'top', order: 1, labelKey: 'redCar' },
+        ]
+      }
+    ],
     guidedPoints: getGuidedPoints('priority', 'prio-gp'),
     scenarios: [
       getScenario('left-turn-bending-priority-follow'),
@@ -1197,98 +1251,6 @@ const cityLessons: Lesson[] = [
       getScenario('bending-priority-right-turn'),
     ],
     trafficSigns: [signStop, signYield, signPriorityRoadBending, signStopBending, signYieldBending],
-    quiz: priorityQuiz,
-  },
-  {
-    id: 'city-12a',
-    chapterId: 'chapter-3',
-    ...getLessonStrings('city-12a'),
-    completed: false,
-    isPremium: false,
-    isInteractive: true,
-    simulatorScenario: {
-      id: 'bending-left',
-      factKey: 'bending',
-      bendingConfig: { path: 'bottom-left' },
-      signs: [
-        { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
-        { type: 'yield', position: 'right', variant: 'priority-top-left' }
-      ],
-      cars: [
-        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-        { id: 'red-car', color: 'red', positionKey: 'right', order: 1, labelKey: 'redCar' },
-      ]
-    },
-    trafficSigns: [signPriorityRoadBending, signYieldBending],
-    quiz: priorityQuiz,
-  },
-  {
-    id: 'city-12b',
-    chapterId: 'chapter-3',
-    ...getLessonStrings('city-12b'),
-    completed: false,
-    isPremium: false,
-    isInteractive: true,
-    simulatorScenario: {
-      id: 'bending-right',
-      factKey: 'bending',
-      bendingConfig: { path: 'bottom-right' },
-      signs: [
-        { type: 'bending-priority', position: 'bottom', variant: 'bottom-right' },
-        { type: 'stop', position: 'left', variant: 'priority-top-right' }
-      ],
-      cars: [
-        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-        { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
-      ]
-    },
-    trafficSigns: [signPriorityRoadBending, signStopBending],
-    quiz: priorityQuiz,
-  },
-  {
-    id: 'city-12c',
-    chapterId: 'chapter-3',
-    ...getLessonStrings('city-12c'),
-    completed: false,
-    isPremium: false,
-    isInteractive: true,
-    simulatorScenario: {
-      id: 'bending-side-entry',
-      factKey: 'bending',
-      bendingConfig: { path: 'top-left' },
-      signs: [
-        { type: 'yield-bending', position: 'bottom', variant: 'priority-top-left' },
-        { type: 'bending-priority', position: 'top', variant: 'bottom-right' }
-      ],
-      cars: [
-        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar' },
-        { id: 'red-car', color: 'red', positionKey: 'top', order: 0, labelKey: 'redCar' },
-      ]
-    },
-    trafficSigns: [signYieldBending, signPriorityRoadBending],
-    quiz: priorityQuiz,
-  },
-  {
-    id: 'city-12d',
-    chapterId: 'chapter-3',
-    ...getLessonStrings('city-12d'),
-    completed: false,
-    isPremium: false,
-    isInteractive: true,
-    simulatorScenario: {
-      id: 'bending-straight-leave',
-      factKey: 'bending',
-      bendingConfig: { path: 'bottom-left' },
-      signs: [
-        { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
-        { type: 'yield', position: 'top', variant: 'priority-top-left' }
-      ],
-      cars: [
-        { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-        { id: 'red-car', color: 'red', positionKey: 'top', order: 1, labelKey: 'redCar' },
-      ]
-    },
-    trafficSigns: [signPriorityRoadBending, signYield],
     quiz: priorityQuiz,
   },
   {
