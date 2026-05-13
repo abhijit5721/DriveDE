@@ -98,89 +98,164 @@ function RoundaboutSign() {
   );
 }
 
+/**
+ * Zusatzzeichen (supplementary sign) showing which road has priority at the bending junction.
+ * Rendered as a white square with a + cross, thick line = priority road.
+ * Matches the official German StVO Zusatzzeichen 1000-series exactly.
+ */
 function BendingSubSign({ variant }: { variant?: string }) {
   const layout = variant || 'bottom-left';
-  
+
+  // The sub-sign sits at x=34..62, y=28..56 (a 28×28 square)
+  const sx = 35; // sub-sign left
+  const sy = 28; // sub-sign top
+  const sw = 28; // sub-sign width/height (square)
+  const cx = sx + sw / 2; // center x = 49
+  const cy = sy + sw / 2; // center y = 42
+
+  // Thin grey cross lines (all 4 arms of intersection)
+  const tw = 1.2; // thin road stroke
+
+  // Bold priority road stroke width
+  const bw = 4.5;
+
   return (
     <g>
-      {/* Supplementary Sign Box - Square and professional */}
-      <rect x="17" y="32" width="30" height="30" rx="1" fill="#ffffff" stroke="#111827" strokeWidth="1" />
-      
-      {/* Secondary Roads (Thin, split lines for realism) */}
-      <g stroke="#111827" strokeWidth="1.5" strokeLinecap="butt">
-        <line x1="32" y1="35" x2="32" y2="43" opacity="0.6" /> {/* Top */}
-        <line x1="32" y1="51" x2="32" y2="59" opacity="0.6" /> {/* Bottom */}
-        <line x1="20" y1="47" x2="28" y2="47" opacity="0.6" /> {/* Left */}
-        <line x1="36" y1="47" x2="44" y2="47" opacity="0.6" /> {/* Right */}
-      </g>
+      {/* Sub-sign white rectangle with black border */}
+      <rect x={sx} y={sy} width={sw} height={sw} rx="1.5" fill="#ffffff" stroke="#111827" strokeWidth="1.2" />
 
-      {/* Thick Priority Path (StVO compliant curve) */}
-      <g stroke="#111827" strokeWidth="6" strokeLinecap="round" fill="none">
-        {layout === 'bottom-left' && <path d="M32 59 Q32 47 20 47" />}
-        {layout === 'bottom-right' && <path d="M32 59 Q32 47 44 47" />}
-        {layout === 'left-top' && <path d="M20 47 Q32 47 32 35" />}
-        {layout === 'right-top' && <path d="M44 47 Q32 47 32 35" />}
-        {layout === 'priority-top-left' && <path d="M32 35 Q32 47 20 47" />}
-        {layout === 'priority-top-right' && <path d="M32 35 Q32 47 44 47" />}
-        {layout === 'priority-left-right' && <path d="M20 47 L44 47" />}
-      </g>
+      {/* Thin lines: all 4 roads of the intersection (grey) */}
+      <line x1={cx} y1={sy + 2} x2={cx} y2={cy - 2} stroke="#555" strokeWidth={tw} />
+      <line x1={cx} y1={cy + 2} x2={cx} y2={sy + sw - 2} stroke="#555" strokeWidth={tw} />
+      <line x1={sx + 2} y1={cy} x2={cx - 2} y2={cy} stroke="#555" strokeWidth={tw} />
+      <line x1={cx + 2} y1={cy} x2={sx + sw - 2} y2={cy} stroke="#555" strokeWidth={tw} />
+
+      {/* Bold black line: the priority road path */}
+      {/* bottom-left: comes from bottom, bends left */}
+      {layout === 'bottom-left' && (
+        <path d={`M ${cx} ${sy + sw - 2} Q ${cx} ${cy} ${sx + 2} ${cy}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* bottom-right: comes from bottom, bends right */}
+      {layout === 'bottom-right' && (
+        <path d={`M ${cx} ${sy + sw - 2} Q ${cx} ${cy} ${sx + sw - 2} ${cy}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* top-left: comes from top, bends left */}
+      {layout === 'top-left' && (
+        <path d={`M ${cx} ${sy + 2} Q ${cx} ${cy} ${sx + 2} ${cy}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* top-right: comes from top, bends right */}
+      {layout === 'top-right' && (
+        <path d={`M ${cx} ${sy + 2} Q ${cx} ${cy} ${sx + sw - 2} ${cy}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* left-top: comes from left, bends up */}
+      {layout === 'left-top' && (
+        <path d={`M ${sx + 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + 2}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* left-bottom: comes from left, bends down */}
+      {layout === 'left-bottom' && (
+        <path d={`M ${sx + 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + sw - 2}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* right-top: comes from right, bends up */}
+      {layout === 'right-top' && (
+        <path d={`M ${sx + sw - 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + 2}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* right-bottom: comes from right, bends down */}
+      {layout === 'right-bottom' && (
+        <path d={`M ${sx + sw - 2} ${cy} Q ${cx} ${cy} ${cx} ${sy + sw - 2}`}
+          fill="none" stroke="#111827" strokeWidth={bw} strokeLinecap="round" strokeLinejoin="round" />
+      )}
+      {/* straight left-right */}
+      {layout === 'priority-left-right' && (
+        <line x1={sx + 2} y1={cy} x2={sx + sw - 2} y2={cy}
+          stroke="#111827" strokeWidth={bw} strokeLinecap="round" />
+      )}
+      {/* straight top-bottom */}
+      {layout === 'priority-top-bottom' && (
+        <line x1={cx} y1={sy + 2} x2={cx} y2={sy + sw - 2}
+          stroke="#111827" strokeWidth={bw} strokeLinecap="round" />
+      )}
     </g>
   );
 }
 
+/**
+ * Priority road sign (yellow diamond) stacked above the Zusatzzeichen.
+ * Layout: post | [diamond on left] [sub-sign on right] — matching reference image.
+ */
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Sign Post */}
-      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
-      
-      {/* Priority Diamond */}
-      <g transform="translate(32 17) rotate(45) translate(-32 -17)">
-        <rect x="19" y="4" width="26" height="26" fill="#ffffff" stroke="#111827" strokeWidth="1" />
-        <rect x="22" y="7" width="20" height="20" fill="#ffff00" stroke="#111827" strokeWidth="0.5" />
+    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
+      {/* Vertical post */}
+      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
+
+      {/* Yellow priority diamond — centered left portion (x=2..30) */}
+      <g transform="translate(16 18) rotate(45) translate(-16 -18)">
+        <rect x="4" y="6" width="24" height="24" fill="#ffffff" stroke="#111827" strokeWidth="1.2" />
+        <rect x="7" y="9" width="18" height="18" fill="#f9c802" />
       </g>
+
+      {/* Zusatzzeichen sub-sign */}
       <BendingSubSign variant={variant} />
     </svg>
   );
 }
 
+/**
+ * Yield sign (inverted red triangle) with Zusatzzeichen below.
+ */
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Sign Post */}
-      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
-      
-      {/* Yield Triangle */}
-      <g transform="translate(32 16) scale(0.65) translate(-32 -16)">
-        <polygon points="10,2 54,2 32,36" fill="#d92d20" />
-        <polygon points="19,6 45,6 32,28" fill="#ffffff" />
+    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
+      {/* Vertical post */}
+      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
+
+      {/* Yield triangle — centered in left portion */}
+      <g transform="translate(16 16) scale(0.55) translate(-32 -16)">
+        <polygon points="8,4 56,4 32,40" fill="#d92d20" />
+        <polygon points="16,8 48,8 32,34" fill="#ffffff" />
       </g>
+
+      {/* Zusatzzeichen sub-sign */}
       <BendingSubSign variant={variant} />
     </svg>
   );
 }
 
+/**
+ * Stop sign (red octagon) with Zusatzzeichen below.
+ */
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 64 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
-      {/* Sign Post */}
-      <rect x="31" y="0" width="2" height="64" fill="#94a3b8" />
-      
-      {/* Stop Octagon */}
-      <g transform="translate(32 16) scale(0.6) translate(-32 -16)">
-        <path 
-          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z" 
-          fill="#d92d20" 
-          stroke="#ffffff" 
-          strokeWidth="3" 
+    <svg viewBox="0 0 70 64" className={svgClass} aria-hidden="true" style={{ overflow: 'visible' }}>
+      {/* Vertical post */}
+      <rect x="30" y="0" width="2.5" height="64" fill="#6b7280" />
+
+      {/* Stop octagon — centered in left portion */}
+      <g transform="translate(16 16) scale(0.52) translate(-32 -16)">
+        <path
+          d="M22 2h20l12 12v20L42 46H22L10 34V14L22 2z"
+          fill="#d92d20"
+          stroke="#ffffff"
+          strokeWidth="2.5"
         />
-        <text x="32" y="30" textAnchor="middle" fontSize="14" fontWeight="900" fill="#ffffff" fontFamily="Arial, sans-serif">STOP</text>
+        <text x="32" y="30" textAnchor="middle" fontSize="13" fontWeight="900"
+          fill="#ffffff" fontFamily="Arial Black, Arial, sans-serif" letterSpacing="-0.5">
+          STOP
+        </text>
       </g>
+
+      {/* Zusatzzeichen sub-sign */}
       <BendingSubSign variant={variant} />
     </svg>
   );
 }
-
 
 
 /**
