@@ -8,48 +8,84 @@ import { calculateTotalReadiness } from './readiness';
 import { DrivingSession } from '../types';
 
 describe('calculateTotalReadiness', () => {
-  it('should return 0 for a brand new student', () => {
-    expect(calculateTotalReadiness([], 0, 10)).toBe(0);
+  it('should return breakdown object with score for new student', () => {
+    const result = calculateTotalReadiness([], 0, 10);
+    expect(result.score).toBe(0);
+    expect(result.theory).toBe(0);
+    expect(result.recentSessionsAnalyzed).toBe(0);
   });
 
   it('should reflect theory progress', () => {
-    // 100% theory, 0% practical
-    const score = calculateTotalReadiness([], 10, 10);
-    // Theory is 30% weight, so 100% theory should be ~30 points
-    expect(score).toBe(30);
+    const result = calculateTotalReadiness([], 10, 10);
+    expect(result.score).toBe(30);
+    expect(result.theory).toBe(100);
   });
 
   it('should reflect legal hour progress', () => {
-    // 0% theory, 100% legal hours (12 * 45 mins), 100% performance (no mistakes)
     const sessions = Array(12).fill({
       duration: 45,
       mistakes: [],
       type: 'ueberland'
     }) as DrivingSession[];
-    
-    const score = calculateTotalReadiness(sessions, 0, 10);
-    // Legal (30%) + Performance (40%) = 70%
-    expect(score).toBe(70);
+
+    const result = calculateTotalReadiness(sessions, 0, 10);
+    expect(result.score).toBe(65);
   });
 
   it('should penalize recent mistakes heavily', () => {
     const sessionsWithMistakes: DrivingSession[] = [
-      { 
-        id: '1', 
-        duration: 45, 
-        mistakes: Array(5).fill({ type: 'speeding', timestamp: Date.now() }), 
-        date: '', 
-        type: 'normal', 
-        notes: '', 
-        instructorName: '', 
-        route: [], 
-        totalDistance: 0, 
-        locationSummary: '' 
+      {
+        id: '1',
+        duration: 45,
+        mistakes: Array(5).fill({ type: 'speeding', timestamp: Date.now() }),
+        date: '',
+        type: 'normal',
+        notes: '',
+        instructorName: '',
+        route: [],
+        totalDistance: 0,
+        locationSummary: ''
       }
     ];
-    
-    const score = calculateTotalReadiness(sessionsWithMistakes, 10, 10);
-    // Theory (30) + Legal (~2) + Performance (should be low)
-    expect(score).toBeLessThan(40);
+
+    const result = calculateTotalReadiness(sessionsWithMistakes, 10, 10);
+    expect(result.score).toBeLessThan(40);
+  });
+
+  it('should weight critical mistakes higher', () => {
+    const normalMistakes: DrivingSession[] = [
+      {
+        id: '1',
+        duration: 45,
+        mistakes: [{ type: 'harsh_braking', timestamp: Date.now() }],
+        date: '',
+        type: 'normal',
+        notes: '',
+        instructorName: '',
+        route: [],
+        totalDistance: 0,
+        locationSummary: ''
+      }
+    ];
+
+    const criticalMistakes: DrivingSession[] = [
+      {
+        id: '1',
+        duration: 45,
+        mistakes: [{ type: 'wrong_way', timestamp: Date.now() }],
+        date: '',
+        type: 'normal',
+        notes: '',
+        instructorName: '',
+        route: [],
+        totalDistance: 0,
+        locationSummary: ''
+      }
+    ];
+
+    const normalScore = calculateTotalReadiness(normalMistakes, 10, 10);
+    const criticalScore = calculateTotalReadiness(criticalMistakes, 10, 10);
+
+    expect(criticalScore.score).toBeLessThan(normalScore.score);
   });
 });

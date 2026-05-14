@@ -205,11 +205,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
   ).length;
 
   // Hybrid Readiness Model (Theory + Legal + Performance)
-  const readiness = calculateTotalReadiness(
+  const readinessData = calculateTotalReadiness(
     data.sessions,
     validCompletedLessonsCount,
     totalVisibleLessons
   );
+  const readiness = readinessData.score;
 
   // --- Practical Analytics ---
   // 1. Sonderfahrten Progress (Units)
@@ -283,44 +284,6 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
     return briefing;
   };
-
-  // --- Trend Calculation ---
-  /**
-   * DRIVING PERFORMANCE TREND ANALYSIS
-   * 
-   * Compares the "Fault Frequency" (Mistakes per hour) of the most recent 3 sessions
-   * against the previous 3 sessions to determine if the student is:
-   * - Improving (Reducing faults)
-   * - Regressing (Increasing faults)
-   * - Stabilizing (Consistent performance)
-   */
-  const calculateTrend = () => {
-    if (data.sessions.length < 2) return null;
-    
-    const sorted = [...data.sessions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    const recent = sorted.slice(-3); // Last 3 sessions
-    const previous = sorted.slice(0, -3).slice(-3); // 3 sessions before that
-    
-    const avgMistakes = (sessions: DrivingSession[]) => {
-      if (sessions.length === 0) return 0;
-      return sessions.reduce((acc, s) => acc + (s.mistakes?.filter(m => m.status === 'confirmed').length || 0), 0) / sessions.length;
-    };
-
-    const recentAvg = avgMistakes(recent);
-    const prevAvg = avgMistakes(previous);
-
-    if (previous.length === 0) return { type: 'neutral', value: 0 };
-    
-    const diff = prevAvg - recentAvg; // Positive means fewer mistakes now (improving)
-    const percent = Math.round((diff / (prevAvg || 1)) * 100);
-
-    return {
-      type: diff > 0 ? 'improving' : diff < 0 ? 'regressing' : 'neutral',
-      value: Math.abs(percent)
-    };
-  };
-
-  const trend = calculateTrend();
 
   const faultAdvice: Record<string, string> = {
     speeding: 'Focus on regular speedometer checks, especially in 30km/h zones. Anticipate speed limit changes ahead.',
@@ -496,18 +459,18 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
           <div className="rounded-3xl bg-slate-900 border border-white/5 p-6 flex flex-col justify-center">
             <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Driving Trend</div>
-            {trend ? (
+            {readinessData.trendDirection !== 'stable' || readinessData.recentSessionsAnalyzed >= 4 ? (
               <div className="space-y-2">
                 <div className={cn(
                   'flex items-center gap-2 text-2xl font-bold',
-                  trend.type === 'improving' ? 'text-emerald-500' : trend.type === 'regressing' ? 'text-rose-500' : 'text-slate-400'
+                  readinessData.trendDirection === 'improving' ? 'text-emerald-500' : readinessData.trendDirection === 'regressing' ? 'text-rose-500' : 'text-slate-400'
                 )}>
-                  {trend.type === 'improving' ? <TrendingUp className="h-6 w-6" /> : trend.type === 'regressing' ? <TrendingDown className="h-6 w-6" /> : <Minus className="h-6 w-6" />}
-                  {trend.type === 'neutral' ? 'Stable' : `${trend.value}%`}
+                  {readinessData.trendDirection === 'improving' ? <TrendingUp className="h-6 w-6" /> : readinessData.trendDirection === 'regressing' ? <TrendingDown className="h-6 w-6" /> : <Minus className="h-6 w-6" />}
+                  {readinessData.trendDirection === 'stable' ? 'Stable' : (readinessData.trend >= 0 ? '+' : '') + readinessData.trend + '%'}
                 </div>
                 <p className="text-xs text-slate-400 font-medium">
-                  {trend.type === 'improving' ? 'Fault frequency decreased vs. previous sessions.' : 
-                   trend.type === 'regressing' ? 'Fault frequency increased. More focus needed.' : 
+                  {readinessData.trendDirection === 'improving' ? 'Fault frequency decreased vs. previous sessions.' :
+                   readinessData.trendDirection === 'regressing' ? 'Fault frequency increased. More focus needed.' :
                    'Consistency maintained across recent sessions.'}
                 </p>
               </div>
