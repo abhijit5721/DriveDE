@@ -322,8 +322,18 @@ function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string
       <g clipPath={`url(#${clipId})`}>
         {/* Secondary roads — thin, drawn first so priority covers center */}
         {cfg.s.map(dir => {
-          const [ex, ey] = pts[dir];
-          return <line key={dir} x1={c} y1={c} x2={ex} y2={ey}
+          const isTop = dir === 'top';
+          const isBottom = dir === 'bottom';
+          const isLeft = dir === 'left';
+          const isRight = dir === 'right';
+
+          const ex = isLeft ? edge : isRight ? 100 - edge : c;
+          const ey = isTop ? edge : isBottom ? 100 - edge : c;
+          
+          const sx = isLeft ? 32 : isRight ? 68 : c;
+          const sy = isTop ? 32 : isBottom ? 68 : c;
+
+          return <line key={dir} x1={sx} y1={sy} x2={ex} y2={ey}
             stroke="#1a1a1a" strokeWidth={sw} strokeLinecap="square" />;
         })}
         {/* Priority road — thick, drawn last (on top) */}

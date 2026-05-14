@@ -328,21 +328,30 @@ export default function InteractiveVorfahrt({
                 {showExplanation && (
                    <circle r="28" fill={sign.type === 'priority' || sign.type === 'bending-priority' ? '#22c55e' : '#94a3b8'} opacity="0.2" />
                 )}
-                <foreignObject x="-22" y="-22" width="44" height="44">
-                  <div className="flex h-full w-full items-center justify-center">
-                    <TrafficSignIcon 
-                      noFrame 
-                      sign={{ 
-                        id: signId, 
-                        titleDe: '', 
-                        titleEn: '', 
-                        descriptionDe: '', 
-                        descriptionEn: '', 
-                        variant: sign.variant 
-                      } as any} 
-                    />
-                  </div>
-                </foreignObject>
+                {(() => {
+                  const isCompound = sign.type === 'bending-priority' || sign.type === 'stop-bending' || sign.type === 'yield-bending';
+                  const foWidth = isCompound ? 50 : 44;
+                  const foHeight = isCompound ? 104 : 44;
+                  const foX = isCompound ? -25 : -22;
+                  const foY = isCompound ? -27 : -22;
+                  return (
+                    <foreignObject x={foX} y={foY} width={foWidth} height={foHeight}>
+                      <div className="flex h-full w-full items-start justify-center">
+                        <TrafficSignIcon 
+                          noFrame 
+                          sign={{ 
+                            id: signId, 
+                            titleDe: '', 
+                            titleEn: '', 
+                            descriptionDe: '', 
+                            descriptionEn: '', 
+                            variant: sign.variant 
+                          } as any} 
+                        />
+                      </div>
+                    </foreignObject>
+                  );
+                })()}
               </g>
             );
           })}
