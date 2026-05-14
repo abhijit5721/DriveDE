@@ -81,12 +81,12 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
         <div className="relative w-full rounded-3xl glass p-6 shadow-2xl animate-in zoom-in-95 duration-200">
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white transition"
+            className="absolute right-4 top-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition"
           >
             <X className="h-5 w-5" />
           </button>
 
-          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
             <Info className="h-5 w-5 text-blue-400" />
             {language === 'de' ? 'Readiness-Analyse' : 'Readiness Analysis'}
           </h3>
@@ -96,12 +96,12 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
               <div key={comp.label} className="space-y-2">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <comp.icon className="h-4 w-4 text-slate-400" />
-                    <span className="text-sm font-medium text-slate-300">{comp.label}</span>
+                    <comp.icon className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{comp.label}</span>
                   </div>
-                  <span className="text-sm font-bold text-white">{comp.value}%</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{comp.value}%</span>
                 </div>
-                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className={cn('h-full rounded-full transition-all duration-700', comp.color)}
                     style={{ width: `${comp.value}%` }}
@@ -111,10 +111,10 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
             ))}
           </div>
 
-          <div className="rounded-xl bg-slate-800/50 border border-white/5 p-4 mb-6">
+          <div className="rounded-xl bg-slate-100/50 dark:bg-slate-800/50 border border-black/5 dark:border-white/5 p-4 mb-6">
             <div className="flex items-center gap-2 mb-2">
               {getTrendIcon()}
-              <span className="text-sm font-medium text-slate-300">
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                 {language === 'de' ? 'Trend' : 'Trend'}
               </span>
               <span className={cn(
@@ -129,7 +129,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
                 )}
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               {readinessData.trendDirection === 'improving'
                 ? (language === 'de' ? 'Fehlerquote sinkt!' : 'Fault frequency decreasing!')
                 : readinessData.trendDirection === 'regressing'
@@ -144,7 +144,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
             </p>
             <ul className="space-y-1.5">
               {getAdvice().map((advice, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                <li key={i} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
                   <div className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
                   {advice}
                 </li>
@@ -154,7 +154,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
 
           <button
             onClick={onClose}
-            className="w-full mt-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-medium transition border border-white/5"
+            className="w-full mt-6 py-3 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 text-sm font-medium transition border border-black/5 dark:border-white/5"
           >
             {language === 'de' ? 'Schließen' : 'Close'}
           </button>
