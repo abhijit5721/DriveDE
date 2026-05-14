@@ -8,17 +8,11 @@ import { calculateTotalReadiness } from './readiness';
 import { DrivingSession } from '../types';
 
 describe('calculateTotalReadiness', () => {
-  it('should return breakdown object with score for new student', () => {
+  it('should return 0 for no sessions', () => {
     const result = calculateTotalReadiness([], 0, 10);
     expect(result.score).toBe(0);
-    expect(result.theory).toBe(0);
+    expect(result.legal).toBe(0);
     expect(result.recentSessionsAnalyzed).toBe(0);
-  });
-
-  it('should reflect theory progress', () => {
-    const result = calculateTotalReadiness([], 10, 10);
-    expect(result.score).toBe(100);
-    expect(result.theory).toBe(100);
   });
 
   it('should reflect legal hour progress', () => {
@@ -29,7 +23,7 @@ describe('calculateTotalReadiness', () => {
     }) as DrivingSession[];
 
     const result = calculateTotalReadiness(sessions, 0, 10);
-    expect(result.score).toBe(65);
+    expect(result.score).toBe(90);
   });
 
   it('should penalize recent mistakes heavily', () => {

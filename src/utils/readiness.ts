@@ -36,7 +36,6 @@ const getWeightedMistakeCount = (mistakes?: DrivingMistake[]): number => {
 
 export interface ReadinessBreakdown {
   score: number;
-  theory: number;
   legal: number;
   performance: number;
   trend: number;
@@ -46,20 +45,16 @@ export interface ReadinessBreakdown {
 
 export const calculateTotalReadiness = (
   sessions: DrivingSession[],
-  completedLessonsCount: number,
-  totalLessons: number
+  _completedLessonsCount: number,
+  _totalLessons: number
 ): ReadinessBreakdown => {
   const SESSIONS_TO_ANALYZE = 5;
 
-  const theoryScore = Math.min(100, (completedLessonsCount / (totalLessons || 1)) * 100);
-
   if (!sessions || sessions.length === 0) {
-    const score = Math.round(theoryScore);
     return {
-      score,
-      theory: Math.round(theoryScore),
+      score: 0,
       legal: 0,
-      performance: 0,
+      performance: 100,
       trend: 0,
       trendDirection: 'stable',
       recentSessionsAnalyzed: 0,
@@ -104,9 +99,8 @@ export const calculateTotalReadiness = (
     Math.max(
       0,
       Math.round(
-        (theoryScore * 0.25) +
-        (legalScore * 0.25) +
-        (performanceScore * 0.40) +
+        (legalScore * 0.35) +
+        (performanceScore * 0.55) +
         trend
       )
     )
@@ -114,7 +108,6 @@ export const calculateTotalReadiness = (
 
   return {
     score,
-    theory: Math.round(theoryScore),
     legal: Math.round(legalScore),
     performance: Math.round(performanceScore),
     trend,

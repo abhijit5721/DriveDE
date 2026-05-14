@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { X, TrendingUp, TrendingDown, Minus, BookOpen, Car, Target, Info } from 'lucide-react';
+import { X, TrendingUp, TrendingDown, Minus, Car, Target, Info } from 'lucide-react';
 import { useEffect } from 'react';
 import { cn } from '../../utils/cn';
 import type { ReadinessBreakdown } from '../../utils/readiness';
@@ -25,7 +25,6 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
   if (!isOpen) return null;
 
   const components = [
-    { label: language === 'de' ? 'Theorie' : 'Theory', value: readinessData.theory, color: 'bg-blue-500', icon: BookOpen },
     { label: language === 'de' ? 'Fahrstunden' : 'Driving Hours', value: readinessData.legal, color: 'bg-emerald-500', icon: Car },
     { label: language === 'de' ? 'Fahrleistung' : 'Performance', value: readinessData.performance, color: 'bg-amber-500', icon: Target },
   ];
@@ -41,11 +40,6 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
   const getAdvice = () => {
     const advices: string[] = [];
 
-    if (readinessData.theory < 80) {
-      advices.push(language === 'de'
-        ? 'Theorie-Lektionen abschließen'
-        : 'Complete theory lessons');
-    }
     if (readinessData.legal < 80) {
       advices.push(language === 'de'
         ? 'Mehr Fahrstunden absolvieren'
