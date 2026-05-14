@@ -4,6 +4,7 @@
  */
 
 import { X, TrendingUp, TrendingDown, Minus, BookOpen, Car, Target, Info } from 'lucide-react';
+import { useEffect } from 'react';
 import { cn } from '../../utils/cn';
 import type { ReadinessBreakdown } from '../../utils/readiness';
 
@@ -15,6 +16,11 @@ interface ReadinessBreakdownModalProps {
 }
 
 export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, language }: ReadinessBreakdownModalProps) {
+  useEffect(() => {
+    if (isOpen) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isOpen]);
   if (!isOpen) return null;
 
   const components = [
@@ -70,7 +76,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white transition"
