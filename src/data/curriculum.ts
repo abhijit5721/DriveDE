@@ -1218,16 +1218,18 @@ const cityLessons: Lesson[] = [
         ]
       },
       {
+        // Blue (bottom) follows the bend left = stays on priority road → goes first
+        // Red (left) goes straight (exits right) = LEAVES the priority road → must yield
         id: 'bending-tie-priority',
         factKey: 'bending',
         bendingConfig: { path: 'bottom-left' },
         signs: [
           { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
-          { type: 'bending-priority', position: 'left', variant: 'bottom-right' }
+          { type: 'yield',            position: 'left'  }
         ],
         cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'left' },
-          { id: 'red-car', color: 'red', positionKey: 'left', order: 0, labelKey: 'redCar', turn: 'right' },
+          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar', turn: 'left'     },
+          { id: 'red-car',  color: 'red',  positionKey: 'left',   order: 1, labelKey: 'redCar',  turn: 'straight' },
         ]
       },
       {
