@@ -71,12 +71,12 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4 overflow-y-auto">
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white transition"
