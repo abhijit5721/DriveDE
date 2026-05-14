@@ -29,6 +29,11 @@ const Welcome = lazy(() => import('./components/auth/Welcome').then(m => ({ defa
 const LicenseSelector = lazy(() => import('./components/auth/LicenseSelector').then(m => ({ default: m.LicenseSelector })));
 const AuthModal = lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 import { MobileSplash } from './components/common/MobileSplash';
+import { ReadinessBreakdownModal } from './components/dashboard/ReadinessBreakdownModal';
+import { calculateTotalReadiness } from './utils/readiness';
+import { getAllLessons } from './data/curriculum';
+import { filterLessonsForSelection } from './utils/contentFilter';
+import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from './utils/license';
 
 
 // Lazy loaded routes
@@ -61,6 +66,7 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showExamSimulation, setShowExamSimulation] = useState(false);
   const [showPathSelector, setShowPathSelector] = useState(false);
+  const [showReadinessModal, setShowReadinessModal] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
@@ -78,7 +84,20 @@ export default function App() {
     logoutCleanup,
     activeTab,
     setActiveTab,
+    language,
   } = useAppStore();
+
+  const learningPathVal = getLearningPathFromLicenseType(licenseType);
+  const transmissionTypeVal = getTransmissionFromLicenseType(licenseType);
+  const visibleLessons = filterLessonsForSelection(getAllLessons(), transmissionTypeVal, learningPathVal);
+  const totalLessons = visibleLessons.length;
+  const completedLessons = userProgress.completedLessons.length;
+
+  const readinessData = calculateTotalReadiness(
+    userProgress.drivingSessions,
+    completedLessons,
+    totalLessons
+  );
   
   const [reportUserId, setReportUserId] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
@@ -570,6 +589,7 @@ export default function App() {
             onStartSimulation={() => setShowExamSimulation(true)}
             onDirectLessonSelect={handleDirectLessonSelect}
             onOpenAuth={handleOpenAuth}
+            onOpenReadiness={() => setShowReadinessModal(true)}
           />
         );
       case 'curriculum':
@@ -631,7 +651,7 @@ export default function App() {
           </Suspense>
         );
       default:
-        return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} />;
+        return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} onOpenReadiness={() => setShowReadinessModal(true)} />;
     }
   };
 
@@ -727,6 +747,13 @@ export default function App() {
             <Paywall onClose={() => setShowPaywall(false)} />
           </Suspense>
         )}
+
+        <ReadinessBreakdownModal
+          isOpen={showReadinessModal}
+          onClose={() => setShowReadinessModal(false)}
+          readinessData={readinessData}
+          language={language}
+        />
 
         <PrivacyConsentModal 
           isOpen={!userProgress.hasAcceptedPrivacy && hasVisited && authStatus !== 'guest'} 

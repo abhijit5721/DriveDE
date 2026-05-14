@@ -4,7 +4,6 @@
  */
 
 import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud } from 'lucide-react';
-import { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
@@ -15,7 +14,6 @@ import { ExamReadinessGauge } from './ExamReadinessGauge';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
 import { calculateTotalReadiness } from '../../utils/readiness';
-import { ReadinessBreakdownModal } from './ReadinessBreakdownModal';
 import packageJson from '../../../package.json';
 
 interface DashboardProps {
@@ -25,10 +23,10 @@ interface DashboardProps {
   onStartSimulation: () => void;
   onDirectLessonSelect: (lessonId: string) => void;
   onOpenAuth?: () => void;
+  onOpenReadiness: () => void;
 }
 
-export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
-  const [showReadinessModal, setShowReadinessModal] = useState(false);
+export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -127,7 +125,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
 
             <button
-                onClick={() => setShowReadinessModal(true)}
+                onClick={onOpenReadiness}
                 className="w-full cursor-pointer"
                 aria-label={t.dashboard.examReadiness}
               >
@@ -552,12 +550,6 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
       </div>
 
-      <ReadinessBreakdownModal
-        isOpen={showReadinessModal}
-        onClose={() => setShowReadinessModal(false)}
-        readinessData={readinessData}
-        language={language}
-      />
     </div>
   );
 }
