@@ -807,7 +807,9 @@ export const useAppStore = create<AppState>()(
         if (error) {
           console.error('[Store] Hydration failed (possible corruption):', error);
         }
-        state?.setHydrated(true);
+        if (state && typeof state.setHydrated === 'function') {
+          state.setHydrated(true);
+        }
       },
     }
   )
