@@ -385,21 +385,49 @@ export default function InteractiveVorfahrt({
                    </motion.g>
                  )}
                  {/* Car Shadow */}
-                 <rect x='-14' y='-22' width='28' height='44' rx='6' fill='black' opacity='0.2' transform='translate(2, 2)' />
+                 <rect x="-16" y="-22" width="32" height="46" rx="8" fill="black" opacity="0.3" transform="translate(3, 3)" />
                  
+                 {/* Side Mirrors */}
+                 <rect x="-15" y="-6" width="4" height="6" rx="2" fill={car.colorValue} stroke="rgba(0,0,0,0.2)" strokeWidth="0.5" />
+                 <rect x="11" y="-6" width="4" height="6" rx="2" fill={car.colorValue} stroke="rgba(0,0,0,0.2)" strokeWidth="0.5" />
+
                  {/* Car Body */}
-                 <rect x='-12' y='-20' width='24' height='40' rx='4' fill={car.colorValue} className='shadow-lg' />
+                 <path d="M -10 -20 C -12 -20 -13 -15 -13 0 C -13 15 -12 20 -10 20 L 10 20 C 12 20 13 15 13 0 C 13 -15 12 -20 10 -20 Z" fill={car.colorValue} stroke="rgba(0,0,0,0.2)" strokeWidth="1" className="shadow-lg" />
                  
-                 {/* Roof Detail */}
-                 <rect x="-9" y="-12" width="18" height="20" rx="2" fill="white" opacity="0.15" />
+                 {/* Front Windshield */}
+                 <path d="M -10 -8 C -11 -13 11 -13 10 -8 L 8 -3 Q 0 -5 -8 -3 Z" fill="#1e293b" />
                  
-                 {/* Windows */}
-                 <rect x="-10" y="-15" width="20" height="8" rx="1.5" fill="white" opacity="0.3" />
-                 <rect x="-10" y="8" width="20" height="4" rx="1" fill="white" opacity="0.2" />
+                 {/* Rear Windshield */}
+                 <path d="M -8 11 C -9 14 9 14 8 11 L 7 6 Q 0 8 -7 6 Z" fill="#1e293b" />
+                 
+                 {/* Roof Top Edge Shading */}
+                 <rect x="-10" y="-7" width="20" height="15" rx="3" fill="black" opacity="0.1" />
                  
                  {/* Headlights */}
-                 <rect x="-10" y="-21" width="6" height="3" rx="1" fill="#fef08a" />
-                 <rect x="4" y="-21" width="6" height="3" rx="1" fill="#fef08a" />
+                 <rect x="-9" y="-20" width="5" height="2" rx="1" fill="#fef08a" />
+                 <rect x="4" y="-20" width="5" height="2" rx="1" fill="#fef08a" />
+
+                 {/* Taillights */}
+                 <rect x="-9" y="18" width="5" height="2" rx="1" fill="#ef4444" />
+                 <rect x="4" y="18" width="5" height="2" rx="1" fill="#ef4444" />
+
+                 {/* Blinkers */}
+                 {turn === 'left' && (
+                   <motion.g animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 0.7, ease: 'linear' }}>
+                     <circle cx="-11" cy="-18" r="6" fill="#f97316" opacity="0.6" style={{ filter: 'blur(1px)' }} />
+                     <circle cx="-11" cy="-18" r="2.5" fill="#fbd38d" />
+                     <circle cx="-11" cy="17" r="6" fill="#f97316" opacity="0.6" style={{ filter: 'blur(1px)' }} />
+                     <circle cx="-11" cy="17" r="2.5" fill="#fbd38d" />
+                   </motion.g>
+                 )}
+                 {turn === 'right' && (
+                   <motion.g animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 0.7, ease: 'linear' }}>
+                     <circle cx="11" cy="-18" r="6" fill="#f97316" opacity="0.6" style={{ filter: 'blur(1px)' }} />
+                     <circle cx="11" cy="-18" r="2.5" fill="#fbd38d" />
+                     <circle cx="11" cy="17" r="6" fill="#f97316" opacity="0.6" style={{ filter: 'blur(1px)' }} />
+                     <circle cx="11" cy="17" r="2.5" fill="#fbd38d" />
+                   </motion.g>
+                 )}
                  
                  {/* Interaction Hint */}
                  {!isMoved && !isCurrentAnimation && (
