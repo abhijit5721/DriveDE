@@ -356,8 +356,15 @@ function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 120 250" className={svgClass}>
+      <defs>
+        <linearGradient id="poleGrad" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="40%" stopColor="#a1a1aa" />
+          <stop offset="100%" stopColor="#27272a" />
+        </linearGradient>
+      </defs>
       {/* Grey post */}
-      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
+      <rect x="56" y="25" width="8" height="225" fill="url(#poleGrad)" />
       {/* Zeichen 306 diamond (top) */}
       <g transform="translate(60,65) rotate(45)">
         <rect x="-34" y="-34" width="68" height="68" rx="2" fill="white" stroke="#1a1a1a" strokeWidth="4" />
@@ -375,7 +382,14 @@ function BendingPrioritySign({ variant }: { variant?: string }) {
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 120 250" className={svgClass}>
-      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
+      <defs>
+        <linearGradient id="poleGrad2" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="40%" stopColor="#a1a1aa" />
+          <stop offset="100%" stopColor="#27272a" />
+        </linearGradient>
+      </defs>
+      <rect x="56" y="30" width="8" height="220" fill="url(#poleGrad2)" />
       {/* Yield triangle — apex DOWN, flat edge at top */}
       <g transform="translate(60,65)">
         <polygon points="-46,-35 46,-35 0,45" fill="#C1121C" strokeLinejoin="round" />
@@ -393,7 +407,14 @@ function YieldBendingSign({ variant }: { variant?: string }) {
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 120 250" className={svgClass}>
-      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
+      <defs>
+        <linearGradient id="poleGrad3" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="40%" stopColor="#a1a1aa" />
+          <stop offset="100%" stopColor="#27272a" />
+        </linearGradient>
+      </defs>
+      <rect x="56" y="20" width="8" height="230" fill="url(#poleGrad3)" />
       {/* Stop octagon (top) */}
       <g transform="translate(60,65) scale(0.95)">
         <polygon points="-20,-48 20,-48 48,-20 48,20 20,48 -20,48 -48,20 -48,-20" fill="#C1121C" />
