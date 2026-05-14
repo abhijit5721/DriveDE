@@ -45,10 +45,35 @@ const CAR_PATHS: Record<string, Record<string, string>> = {
 };
 
 const POSITION_MAP: Record<string, { x: number; y: number; rotate: number; targetX: number; targetY: number }> = {
-  bottom: { x: 170, y: 260, rotate: 0, targetX: 170, targetY: 40 },
-  top: { x: 130, y: 40, rotate: 180, targetX: 130, targetY: 260 },
-  left: { x: 40, y: 170, rotate: 90, targetX: 260, targetY: 170 },
-  right: { x: 260, y: 130, rotate: 270, targetX: 40, targetY: 130 },
+  bottom: { x: 170, y: 260, rotate: 0,   targetX: 170, targetY: 40  },
+  top:    { x: 130, y: 40,  rotate: 180, targetX: 130, targetY: 260 },
+  left:   { x: 40,  y: 170, rotate: 90,  targetX: 260, targetY: 170 },
+  right:  { x: 260, y: 130, rotate: 270, targetX: 40,  targetY: 130 },
+};
+
+// Exit point + final heading angle for each positionKey × turn combination.
+// Endpoints read from CAR_PATHS bezier endpoints. Rotate = heading at exit (0=up,90=right,180=down,270=left).
+const TURN_ENDPOINTS: Record<string, Record<string, { x: number; y: number; rotate: number; midX: number; midY: number }>> = {
+  bottom: {
+    straight: { x: 170, y:   0, rotate:   0, midX: 170, midY: 130 },
+    left:     { x:   0, y: 130, rotate: -90, midX: 170, midY: 130 },
+    right:    { x: 300, y: 170, rotate:  90, midX: 170, midY: 170 },
+  },
+  top: {
+    straight: { x: 130, y: 300, rotate: 180, midX: 130, midY: 170 },
+    left:     { x: 300, y: 170, rotate:  90, midX: 130, midY: 170 },
+    right:    { x:   0, y: 130, rotate: -90, midX: 130, midY: 130 },
+  },
+  left: {
+    straight: { x: 300, y: 170, rotate:  90, midX: 130, midY: 170 },
+    left:     { x: 130, y: 300, rotate: 180, midX: 130, midY: 170 },
+    right:    { x: 170, y:   0, rotate:   0, midX: 170, midY: 170 },
+  },
+  right: {
+    straight: { x:   0, y: 130, rotate: -90, midX: 170, midY: 130 },
+    left:     { x: 170, y:   0, rotate:   0, midX: 170, midY: 130 },
+    right:    { x: 130, y: 300, rotate: 180, midX: 130, midY: 130 },
+  },
 };
 
 // Signs placed on the right shoulder of the road, before the stop/yield line, facing the driver.
@@ -326,17 +351,25 @@ export default function InteractiveVorfahrt({
           {translatedCars.map(car => {
              const isMoved = selectedOrder.includes(car.id);
              const isCurrentAnimation = animatingCar === car.id;
+             const turn = car.turn || 'straight';
+             const posEps = TURN_ENDPOINTS[car.positionKey] ?? TURN_ENDPOINTS['bottom'];
+             const ep = posEps[turn] ?? posEps['straight'] ?? { x: car.targetX, y: car.targetY, rotate: car.rotate, midX: car.x, midY: car.y };
+             const animateProps = isCurrentAnimation || isMoved
+               ? {
+                   x: [car.x, ep.midX, ep.x],
+                   y: [car.y, ep.midY, ep.y],
+                   rotate: [car.rotate, car.rotate, ep.rotate],
+                   opacity: [1, 1, 0],
+                 }
+               : { x: car.x, y: car.y, rotate: car.rotate, opacity: 1 };
              
              return (
                <motion.g
                  key={car.id}
                  data-testid={`car-${car.id}`}
                  initial={{ x: car.x, y: car.y, rotate: car.rotate, opacity: 1 }}
-                 animate={isCurrentAnimation || isMoved 
-                   ? { x: car.targetX, y: car.targetY, opacity: 0 } 
-                   : { x: car.x, y: car.y, rotate: car.rotate, opacity: 1 }
-                 }
-                 transition={{ duration: 0.8, ease: 'easeInOut' }}
+                 animate={animateProps}
+                 transition={{ duration: 0.9, ease: 'easeInOut' }}
                  style={{ cursor: isMoved ? 'default' : 'pointer' }}
                  onClick={() => handleCarClick(car.id)}
                  onMouseEnter={() => setHoveredCar(car.id)}
