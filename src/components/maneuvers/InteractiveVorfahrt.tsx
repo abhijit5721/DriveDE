@@ -78,10 +78,10 @@ const TURN_ENDPOINTS: Record<string, Record<string, { x: number; y: number; rota
 
 // Signs placed on the right shoulder of the road, before the stop/yield line, facing the driver.
 const SIGN_POSITION_MAP: Record<string, { x: number; y: number; rotate: number }> = {
-  bottom: { x: 195, y: 228, rotate: 0   },   // car from bottom → sign east of lane, before top stop-line
-  top:    { x: 105, y: 72,  rotate: 180 },   // car from top    → sign west of lane, before bottom stop-line
-  left:   { x: 72,  y: 195, rotate: 90  },   // car from left   → sign south of lane, before right stop-line
-  right:  { x: 228, y: 105, rotate: 270 },   // car from right  → sign north of lane, before left stop-line
+  bottom: { x: 215, y: 230, rotate: 0   },   // car from bottom → sign east of lane, before top stop-line
+  top:    { x: 85,  y: 70,  rotate: 180 },   // car from top    → sign west of lane, before bottom stop-line
+  left:   { x: 70,  y: 215, rotate: 90  },   // car from left   → sign south of lane, before right stop-line
+  right:  { x: 230, y: 85,  rotate: 270 },   // car from right  → sign north of lane, before left stop-line
 };
 export default function InteractiveVorfahrt({ 
   onComplete, 
