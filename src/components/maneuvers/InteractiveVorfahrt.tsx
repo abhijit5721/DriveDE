@@ -51,11 +51,12 @@ const POSITION_MAP: Record<string, { x: number; y: number; rotate: number; targe
   right: { x: 260, y: 130, rotate: 270, targetX: 40, targetY: 130 },
 };
 
-const SIGN_POSITION_MAP: Record<string, { x: number; y: number }> = {
-  bottom: { x: 205, y: 205 },
-  top: { x: 95, y: 95 },
-  left: { x: 95, y: 205 },
-  right: { x: 205, y: 95 },
+// Signs placed on the right shoulder of the road, before the stop/yield line, facing the driver.
+const SIGN_POSITION_MAP: Record<string, { x: number; y: number; rotate: number }> = {
+  bottom: { x: 195, y: 228, rotate: 0   },   // car from bottom → sign east of lane, before top stop-line
+  top:    { x: 105, y: 72,  rotate: 180 },   // car from top    → sign west of lane, before bottom stop-line
+  left:   { x: 72,  y: 195, rotate: 90  },   // car from left   → sign south of lane, before right stop-line
+  right:  { x: 228, y: 105, rotate: 270 },   // car from right  → sign north of lane, before left stop-line
 };
 export default function InteractiveVorfahrt({ 
   onComplete, 
@@ -293,16 +294,16 @@ export default function InteractiveVorfahrt({
             );
           })}
 
-          {/* Traffic Signs */}
+          {/* Traffic Signs — placed on road shoulder before stop line, facing driver */}
           {scenario.signs?.map((sign: any, idx: number) => {
             const signId = sign.type === 'priority' ? 'sign-priority-road' : `sign-${sign.type}`;
             const pos = SIGN_POSITION_MAP[sign.position as string];
             return (
-              <g key={`sign-${idx}`} transform={`translate(${pos.x}, ${pos.y})`}>
+              <g key={`sign-${idx}`} transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.rotate})`}>
                 {showExplanation && (
-                   <circle r="35" fill={sign.type === 'priority' || sign.type === 'bending-priority' ? '#22c55e' : '#94a3b8'} opacity="0.2" />
+                   <circle r="28" fill={sign.type === 'priority' || sign.type === 'bending-priority' ? '#22c55e' : '#94a3b8'} opacity="0.2" />
                 )}
-                <foreignObject x="-30" y="-30" width="60" height="60">
+                <foreignObject x="-22" y="-22" width="44" height="44">
                   <div className="flex h-full w-full items-center justify-center">
                     <TrafficSignIcon 
                       noFrame 
