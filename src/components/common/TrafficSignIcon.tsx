@@ -296,6 +296,13 @@ function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string
   const [px1, py1] = pts[p1];
   const [px2, py2] = pts[p2];
 
+  const bendPts: Record<string, [number, number]> = {
+    top: [c, c - 15],
+    bottom: [c, c + 15],
+    left: [c - 15, c],
+    right: [c + 15, c]
+  };
+
   /* Is the priority road straight (opposite directions)? */
   const isStraight = (p1 === 'left' && p2 === 'right') || (p1 === 'right' && p2 === 'left') ||
     (p1 === 'top' && p2 === 'bottom') || (p1 === 'bottom' && p2 === 'top');
@@ -323,9 +330,9 @@ function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string
         {isStraight
           ? <line x1={px1} y1={py1} x2={px2} y2={py2}
               stroke="#1a1a1a" strokeWidth={pw} strokeLinecap="square" />
-          : <path d={`M${px1},${py1} L${c},${c} L${px2},${py2}`}
+          : <path d={`M${px1},${py1} L${bendPts[p1][0]},${bendPts[p1][1]} Q${c},${c} ${bendPts[p2][0]},${bendPts[p2][1]} L${px2},${py2}`}
               fill="none" stroke="#1a1a1a" strokeWidth={pw}
-              strokeLinecap="square" strokeLinejoin="miter" />
+              strokeLinecap="square" strokeLinejoin="round" />
         }
       </g>
       {/* Black border drawn last so it appears on top of any lines at edge */}
@@ -338,16 +345,16 @@ function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string
    The diamond sign sits on top, with the sub-sign plate mounted below. */
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 230" className={svgClass}>
+    <svg viewBox="0 0 120 250" className={svgClass}>
       {/* Grey post */}
-      <rect x="56" y="0" width="8" height="230" rx="4" fill="#888" />
+      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
       {/* Zeichen 306 diamond (top) */}
-      <g transform="translate(60,55) rotate(45)">
-        <rect x="-26" y="-26" width="52" height="52" rx="2" fill="white" stroke="#1a1a1a" strokeWidth="3.5" />
-        <rect x="-20" y="-20" width="40" height="40" rx="1" fill="#F5A800" stroke="#1a1a1a" strokeWidth="2" />
+      <g transform="translate(60,65) rotate(45)">
+        <rect x="-34" y="-34" width="68" height="68" rx="2" fill="white" stroke="#1a1a1a" strokeWidth="4" />
+        <rect x="-26" y="-26" width="52" height="52" rx="1" fill="#F5A800" stroke="#1a1a1a" strokeWidth="2.5" />
       </g>
       {/* Zusatzzeichen 1002 (bottom) */}
-      <g transform="translate(15,115) scale(0.9)">
+      <g transform="translate(20,130) scale(0.8)">
         <BendingSubSign variant={variant} uid="bp" />
       </g>
     </svg>
@@ -357,15 +364,15 @@ function BendingPrioritySign({ variant }: { variant?: string }) {
 /* ── Yield + Bending ── */
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 230" className={svgClass}>
-      <rect x="56" y="0" width="8" height="230" rx="4" fill="#888" />
+    <svg viewBox="0 0 120 250" className={svgClass}>
+      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
       {/* Yield triangle — apex DOWN, flat edge at top */}
-      <g transform="translate(60,50)">
-        <polygon points="-35,-25 35,-25 0,35" fill="#C1121C" strokeLinejoin="round" />
-        <polygon points="-24,-17 24,-17 0,25" fill="white" />
+      <g transform="translate(60,65)">
+        <polygon points="-46,-35 46,-35 0,45" fill="#C1121C" strokeLinejoin="round" />
+        <polygon points="-30,-22 30,-22 0,30" fill="white" />
       </g>
       {/* Zusatzzeichen 1002 */}
-      <g transform="translate(15,115) scale(0.9)">
+      <g transform="translate(20,130) scale(0.8)">
         <BendingSubSign variant={variant} uid="yb" />
       </g>
     </svg>
@@ -375,10 +382,10 @@ function YieldBendingSign({ variant }: { variant?: string }) {
 /* ── Stop + Bending ── */
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 230" className={svgClass}>
-      <rect x="56" y="0" width="8" height="230" rx="4" fill="#888" />
+    <svg viewBox="0 0 120 250" className={svgClass}>
+      <rect x="56" y="10" width="8" height="222" rx="4" fill="#888" />
       {/* Stop octagon (top) */}
-      <g transform="translate(60,55) scale(0.8)">
+      <g transform="translate(60,65) scale(0.95)">
         <polygon points="-20,-48 20,-48 48,-20 48,20 20,48 -20,48 -48,20 -48,-20" fill="#C1121C" />
         <polygon points="-18,-43 18,-43 43,-18 43,18 18,43 -18,43 -43,18 -43,-18"
           fill="none" stroke="white" strokeWidth="4" />
@@ -387,7 +394,7 @@ function StopBendingSign({ variant }: { variant?: string }) {
           fontFamily="'Arial Black', Arial, sans-serif" letterSpacing="1">STOP</text>
       </g>
       {/* Zusatzzeichen 1002 */}
-      <g transform="translate(15,115) scale(0.9)">
+      <g transform="translate(20,130) scale(0.8)">
         <BendingSubSign variant={variant} uid="sb" />
       </g>
     </svg>
