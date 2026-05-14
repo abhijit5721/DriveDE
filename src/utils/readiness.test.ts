@@ -17,7 +17,7 @@ describe('calculateTotalReadiness', () => {
 
   it('should reflect theory progress', () => {
     const result = calculateTotalReadiness([], 10, 10);
-    expect(result.score).toBe(30);
+    expect(result.score).toBe(100);
     expect(result.theory).toBe(100);
   });
 

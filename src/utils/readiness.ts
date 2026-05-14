@@ -51,9 +51,10 @@ export const calculateTotalReadiness = (
 ): ReadinessBreakdown => {
   const SESSIONS_TO_ANALYZE = 5;
 
+  const theoryScore = Math.min(100, (completedLessonsCount / (totalLessons || 1)) * 100);
+
   if (!sessions || sessions.length === 0) {
-    const theoryScore = Math.min(100, (completedLessonsCount / (totalLessons || 1)) * 100);
-    const score = Math.round(theoryScore * 0.3);
+    const score = Math.round(theoryScore);
     return {
       score,
       theory: Math.round(theoryScore),
@@ -66,9 +67,6 @@ export const calculateTotalReadiness = (
   }
 
   const totalMinutes = sessions.reduce((acc, s) => acc + s.duration, 0);
-
-  const theoryScore = Math.min(100, (completedLessonsCount / (totalLessons || 1)) * 100);
-
   const legalRequirementMinutes = 12 * 45;
   const legalScore = Math.min(100, (totalMinutes / legalRequirementMinutes) * 100);
 
