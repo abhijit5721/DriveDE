@@ -1246,18 +1246,23 @@ const cityLessons: Lesson[] = [
         ]
       },
       {
+        // Priority road bends bottom→left.
+        // Blue (bottom) follows bend → exits left. FIRST: on priority road.
+        // Red (left) follows bend → exits bottom (turn 'left' from east-facing = south). SECOND:
+        //   also on priority road but its path crosses oncoming Blue → yields to Blue.
+        // Yellow (right) on secondary road, yield sign. THIRD: yields to all.
         id: 'bending-complex',
         factKey: 'bending',
         bendingConfig: { path: 'bottom-left' },
         signs: [
           { type: 'bending-priority', position: 'bottom', variant: 'bottom-left' },
-          { type: 'bending-priority', position: 'left', variant: 'bottom-right' },
-          { type: 'yield', position: 'right', variant: 'priority-top-left' }
+          { type: 'bending-priority', position: 'left',   variant: 'bottom-right' },
+          { type: 'yield',            position: 'right' }
         ],
         cars: [
-          { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 1, labelKey: 'blueCar', turn: 'straight' },
-          { id: 'red-car', color: 'red', positionKey: 'left', order: 0, labelKey: 'redCar', turn: 'right' },
-          { id: 'yellow-car', color: 'yellow', positionKey: 'right', order: 2, labelKey: 'yellowCar', turn: 'left' },
+          { id: 'blue-car',   color: 'blue',   positionKey: 'bottom', order: 0, labelKey: 'blueCar',   turn: 'left'     },
+          { id: 'red-car',    color: 'red',    positionKey: 'left',   order: 1, labelKey: 'redCar',    turn: 'left'     },
+          { id: 'yellow-car', color: 'yellow', positionKey: 'right',  order: 2, labelKey: 'yellowCar', turn: 'right'    },
         ]
       }
     ],
