@@ -4,6 +4,7 @@
  */
 
 import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud } from 'lucide-react';
+import { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
@@ -14,6 +15,7 @@ import { ExamReadinessGauge } from './ExamReadinessGauge';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
 import { calculateTotalReadiness } from '../../utils/readiness';
+import { ReadinessBreakdownModal } from './ReadinessBreakdownModal';
 import packageJson from '../../../package.json';
 
 interface DashboardProps {
@@ -26,6 +28,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth }: DashboardProps) {
+  const [showReadinessModal, setShowReadinessModal] = useState(false);
   const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -123,12 +126,18 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               </button>
             </div>
 
-            <ExamReadinessGauge 
-              progress={progressPercent}
-              label={t.dashboard.examChance}
-              subLabel={t.dashboard.combinedScore}
-              className="w-full"
-            />
+            <button
+                onClick={() => setShowReadinessModal(true)}
+                className="w-full cursor-pointer"
+                aria-label={t.dashboard.examReadiness}
+              >
+                <ExamReadinessGauge
+                  progress={progressPercent}
+                  label={t.dashboard.examChance}
+                  subLabel={t.dashboard.combinedScore}
+                  className="w-full"
+                />
+              </button>
           </div>
         </div>
         
@@ -542,6 +551,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </p>
         </div>
       </div>
+
+      <ReadinessBreakdownModal
+        isOpen={showReadinessModal}
+        onClose={() => setShowReadinessModal(false)}
+        readinessData={readinessData}
+        language={language}
+      />
     </div>
   );
 }
