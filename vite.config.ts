@@ -83,8 +83,9 @@ export default defineConfig({
     })
   ],
   build: {
-    sourcemap: false, // Ensures source code is NOT visible in production
-    minify: true,    // Uses esbuild for fast, secure minification
+    sourcemap: false,
+    minify: true,
+    chunkSizeWarningLimit: 2000,
   },
   resolve: {
     alias: {
