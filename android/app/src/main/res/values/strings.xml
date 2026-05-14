@@ -1,10 +1,9 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DriveDE</string>
     <string name="title_activity_main">DriveDE</string>
-    <string name="package_name">de.drivede.app</string>
-    <string name="custom_url_scheme">de.drivede.app</string>
-    <string name="server_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
-    <string name="google_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
-    <string name="default_web_client_id">712119605930-5q3uukgohlqb6h2h37o8bp7fe6o8rjml.apps.googleusercontent.com</string>
+    <string name="tracking_notification_text">Recording your drive…</string>
+    <string name="tracking_notification_stop">Stop</string>
+    <string name="tracking_channel_name">DriveDE Tracking</string>
+    <string name="tracking_channel_description">Shows when DriveDE is recording your driving session in the background</string>
 </resources>

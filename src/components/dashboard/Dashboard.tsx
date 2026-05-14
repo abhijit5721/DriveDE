@@ -14,6 +14,7 @@ import { ExamReadinessGauge } from './ExamReadinessGauge';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
 import { calculateTotalReadiness } from '../../utils/readiness';
+import { HotspotPanel } from './HotspotPanel';
 import packageJson from '../../../package.json';
 
 interface DashboardProps {
@@ -24,9 +25,12 @@ interface DashboardProps {
   onDirectLessonSelect: (lessonId: string) => void;
   onOpenAuth?: () => void;
   onOpenReadiness: () => void;
+  onOpenHotspots: () => void;
+  userLat?: number;
+  userLng?: number;
 }
 
-export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness }: DashboardProps) {
+export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness, onOpenHotspots, userLat = 52.52, userLng = 13.405 }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -244,6 +248,16 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       {/* Driving Insights & Weekly Stats */}
       <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
         <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
+      </div>
+
+      {/* Mistake Hotspots - Pro feature */}
+      <div className="animate-fade-in-up" style={{ animationDelay: '350ms' }}>
+        <HotspotPanel
+          lat={userLat}
+          lng={userLng}
+          onOpenMap={onOpenHotspots}
+          onOpenPaywall={onOpenPaywall}
+        />
       </div>
 
       {isUmschreibung && (

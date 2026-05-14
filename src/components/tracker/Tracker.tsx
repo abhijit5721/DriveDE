@@ -25,6 +25,7 @@ import { EmptyState } from '../common/EmptyState';
 import { NavigationHUD } from './NavigationHUD';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
+import { DriveTracking } from '../../native/DriveTracking';
 
 import { updateSpatialCache, findNearestFeature, SpatialCacheData } from '../../services/spatialCache';
 import { syncAllData } from '../../services/supabaseSync';
@@ -1193,17 +1194,32 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           };
 
           if (Capacitor.isNativePlatform()) {
-            Geolocation.requestPermissions().then(permission => {
-              if (permission.location === 'granted') {
-                Geolocation.watchPosition({
-                  enableHighAccuracy: true,
-                  timeout: 10000
-                }, (pos) => {
-                  handlePosition(pos);
-                }).then(id => {
-                  watchRef.current = id;
-                });
-              }
+            DriveTracking.addListener('onLocationUpdate', (location: any) => {
+              const pos = {
+                coords: {
+                  latitude: location.lat,
+                  longitude: location.lng,
+                  speed: location.speed / 3.6,
+                  accuracy: location.accuracy,
+                  altitude: location.altitude,
+                  heading: location.bearing,
+                },
+              };
+              handlePosition(pos);
+            });
+            DriveTracking.startTracking().then(() => {
+              console.log('[Tracker] Native tracking service started');
+            }).catch((e: any) => {
+              console.error('[Tracker] Failed to start native tracking:', e);
+              Geolocation.requestPermissions().then(permission => {
+                if (permission.location === 'granted') {
+                  Geolocation.watchPosition({ enableHighAccuracy: true, timeout: 10000 }, (pos: any) => {
+                    handlePosition(pos);
+                  }).then((id: string) => {
+                    watchRef.current = id;
+                  });
+                }
+              });
             });
           } else if ('geolocation' in navigator) {
             watchRef.current = navigator.geolocation.watchPosition(
@@ -1280,11 +1296,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return () => {
         window.removeEventListener('devicemotion', handleMotion as EventListener);
         if (timerRef.current) clearInterval(timerRef.current);
-        const currentWatch = watchRef.current;
-        if (currentWatch !== null) {
-          if (Capacitor.isNativePlatform()) {
-            Geolocation.clearWatch({ id: currentWatch as string });
-          } else if (typeof currentWatch === 'number') {
+        if (Capacitor.isNativePlatform()) {
+          DriveTracking.stopTracking().then(() => {
+            console.log('[Tracker] Native tracking service stopped');
+          });
+        } else {
+          const currentWatch = watchRef.current;
+          if (currentWatch !== null && typeof currentWatch === 'number') {
             navigator.geolocation.clearWatch(currentWatch);
           }
           watchRef.current = null;
@@ -1293,11 +1311,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       };
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
-      const currentWatch = watchRef.current;
-      if (currentWatch !== null) {
-        if (Capacitor.isNativePlatform()) {
-          Geolocation.clearWatch({ id: currentWatch as string });
-        } else if (typeof currentWatch === 'number') {
+      if (Capacitor.isNativePlatform()) {
+        DriveTracking.stopTracking();
+      } else {
+        const currentWatch = watchRef.current;
+        if (currentWatch !== null && typeof currentWatch === 'number') {
           navigator.geolocation.clearWatch(currentWatch);
         }
         watchRef.current = null;

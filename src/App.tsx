@@ -57,6 +57,7 @@ import { PathSelectorModal } from './components/auth/PathSelectorModal';
 import { CookieConsent } from './components/legal/CookieConsent';
 import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 import { TRANSLATIONS } from './data/translations';
+import { HotspotMap } from './components/dashboard/HotspotMap';
 
 
 export default function App() {
@@ -67,6 +68,7 @@ export default function App() {
   const [showExamSimulation, setShowExamSimulation] = useState(false);
   const [showPathSelector, setShowPathSelector] = useState(false);
   const [showReadinessModal, setShowReadinessModal] = useState(false);
+  const [showHotspotMap, setShowHotspotMap] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const {
@@ -590,6 +592,7 @@ export default function App() {
             onDirectLessonSelect={handleDirectLessonSelect}
             onOpenAuth={handleOpenAuth}
             onOpenReadiness={() => setShowReadinessModal(true)}
+            onOpenHotspots={() => setShowHotspotMap(true)}
           />
         );
       case 'curriculum':
@@ -651,7 +654,7 @@ export default function App() {
           </Suspense>
         );
       default:
-        return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} onOpenReadiness={() => setShowReadinessModal(true)} />;
+        return <Dashboard onNavigate={handleNavigate} onChangePath={handleChangePath} onOpenPaywall={() => setShowPaywall(true)} onStartSimulation={() => setShowExamSimulation(true)} onDirectLessonSelect={handleDirectLessonSelect} onOpenAuth={handleOpenAuth} onOpenReadiness={() => setShowReadinessModal(true)} onOpenHotspots={() => setShowHotspotMap(true)} />;
     }
   };
 
@@ -763,6 +766,8 @@ export default function App() {
             setSelectedLegalPage('privacy');
           }}
         />
+
+        {showHotspotMap && <HotspotMap onClose={() => setShowHotspotMap(false)} />}
       </div>
     );
   };

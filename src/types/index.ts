@@ -206,7 +206,7 @@ export interface DrivingSession {
 export interface ActiveSession {
   startTime: number | null;
   isPaused: boolean;
-  pausedDuration: number; // cumulative paused time in ms
+  pausedDuration: number;
   lastPauseTimestamp: number | null;
   currentDistance: number;
   route: GPSPoint[];
@@ -215,6 +215,18 @@ export interface ActiveSession {
   isSimulation: boolean;
   targetDestination?: string;
   destinationCoords?: { lat: number; lng: number } | null;
+}
+
+export interface MistakeHotspot {
+  id: string;
+  lat: number;
+  lng: number;
+  mistake_type: DrivingMistake['type'];
+  city: string | null;
+  total_incidents: number;
+  unique_drivers: number;
+  risk_score: number;
+  last_updated: string;
 }
 
 export interface UserProgress {
