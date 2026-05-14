@@ -71,12 +71,13 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4 overflow-y-auto">
+    <>
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
+      <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-md">
+        <div className="relative w-full rounded-3xl bg-slate-900 border border-white/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white transition"
@@ -156,7 +157,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
         >
           {language === 'de' ? 'Schließen' : 'Close'}
         </button>
-      </div>
-    </div>
+        </div>
+      </>
   );
 }
