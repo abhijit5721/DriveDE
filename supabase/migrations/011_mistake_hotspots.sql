@@ -17,9 +17,7 @@ CREATE TABLE IF NOT EXISTS public.mistake_hotspots (
   CONSTRAINT valid_risk CHECK (risk_score >= 0 AND risk_score <= 10)
 );
 
-CREATE INDEX IF NOT EXISTS idx_hotspots_location ON public.mistake_hotspots USING gist (
-  geog::geometry
-);
+CREATE INDEX IF NOT EXISTS idx_hotspots_lat_lng ON public.mistake_hotspots(lat, lng);
 CREATE INDEX IF NOT EXISTS idx_hotspots_type ON public.mistake_hotspots(mistake_type);
 CREATE INDEX IF NOT EXISTS idx_hotspots_city ON public.mistake_hotspots(city);
 CREATE INDEX IF NOT EXISTS idx_hotspots_risk ON public.mistake_hotspots(risk_score DESC);
