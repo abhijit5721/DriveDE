@@ -13,6 +13,7 @@ import type { TabType } from '../../types';
 import { ExamReadinessGauge } from './ExamReadinessGauge';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
+import { calculateTotalReadiness } from '../../utils/readiness';
 import packageJson from '../../../package.json';
 
 interface DashboardProps {
@@ -36,12 +37,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
   );
   const totalLessons = visibleLessons.length;
   const completedLessons = userProgress.completedLessons.length;
-  
-  // Weighted Progress Calculation: 70% Lessons, 30% Quizzes
-  const activeLessonsPercent = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-  const mainQuizScore = userProgress.quizScores['main-scenarios'] || 0;
-  
-  const progressPercent = Math.round((activeLessonsPercent * 0.7) + (mainQuizScore * 0.3));
+
+  const readinessData = calculateTotalReadiness(
+    userProgress.drivingSessions,
+    completedLessons,
+    totalLessons
+  );
+  const progressPercent = readinessData.score;
 
   const totalHours = Math.floor((Number(userProgress.totalDrivingMinutes) || 0) / 60);
   const totalMinutes = (Number(userProgress.totalDrivingMinutes) || 0) % 60;
