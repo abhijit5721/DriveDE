@@ -377,6 +377,7 @@ const signGreenArrowSignal: TrafficSign = {
   descriptionDe: TRANSLATIONS.de.curriculumData.trafficSigns.greenArrowSignal.description,
   descriptionEn: TRANSLATIONS.en.curriculumData.trafficSigns.greenArrowSignal.description,
   category: 'traffic-light',
+  variant: 'left', // Protected left-turn arrow signal — matches "Turning (Left)" lesson context
 };
 
 const leftTurnScenarios: LessonScenario[] = TRANSLATIONS.de.curriculumData.scenarios

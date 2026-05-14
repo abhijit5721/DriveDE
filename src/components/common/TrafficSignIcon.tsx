@@ -2,6 +2,10 @@
  * (c) 2026 DriveDE. All rights reserved.
  * TrafficSignIcon.tsx — Authentic German StVO traffic signs as SVG.
  * Based on official Verkehrszeichenkatalog (VzKat) reference images.
+ *
+ * References:
+ * - Bildtafel der Verkehrszeichen in der BRD seit 2017 (Wikipedia)
+ * - Wikimedia Commons SVG originals for each Zeichen
  */
 
 import type { TrafficSign } from '../../types';
@@ -28,15 +32,15 @@ function SignFrame({ children, noFrame }: { children: React.ReactNode; noFrame?:
 }
 
 /* ── Zeichen 205 — Vorfahrt gewähren (Yield) ──
-   Inverted equilateral triangle: thick red border (~12% of side), white fill.
-   Corners slightly rounded. ONE border band only. */
+   Inverted equilateral triangle: thick red border, white center.
+   The red border is notably thick (~15% of the triangle height). */
 function YieldSign() {
   return (
-    <svg viewBox="0 0 100 87" className={svgClass}>
+    <svg viewBox="0 0 100 90" className={svgClass}>
       {/* Red outer triangle (pointing down) */}
-      <polygon points="50,2 98,85 2,85" fill="#C1121C" stroke="#C1121C" strokeWidth="1" strokeLinejoin="round" />
+      <polygon points="50,2 98,87 2,87" fill="#C1121C" stroke="#C1121C" strokeWidth="1" strokeLinejoin="round" />
       {/* White inner triangle */}
-      <polygon points="50,18 86,78 14,78" fill="white" />
+      <polygon points="50,20 84,78 16,78" fill="white" />
     </svg>
   );
 }
@@ -58,11 +62,9 @@ function StopSign() {
   );
 }
 
-/* ── Zeichen 301 — Vorfahrt (Priority at next junction) ──
-   Same diamond shape as 306 but smaller, single-use. */
-
 /* ── Zeichen 306 — Vorfahrtstraße (Priority Road) ──
-   Diamond (square rotated 45°): black outer → white ring → yellow fill. */
+   Diamond (square rotated 45°): thin black outer → white ring → large yellow fill.
+   The yellow area dominates. Border proportions: black ~2.5%, white ~4%. */
 function PriorityRoadSign() {
   return (
     <svg viewBox="0 0 100 100" className={svgClass}>
@@ -85,7 +87,6 @@ function RoundaboutSign() {
       <circle cx="50" cy="50" r="44" fill="#003893" />
       {/* Three curved arrows going counter-clockwise */}
       <g fill="none" stroke="white" strokeWidth="5" strokeLinecap="round">
-        {/* Arc segments around the center */}
         <path d="M50,22 A28,28 0 0,0 22,50" />
         <path d="M22,50 A28,28 0 0,0 50,78" />
         <path d="M50,78 A28,28 0 0,0 78,50" />
@@ -183,28 +184,55 @@ function MotorwaySign() {
   );
 }
 
-/* ── Zeichen 720 — Grünpfeilschild ── */
+/* ── Zeichen 720 — Grünpfeilschild ──
+   Official: Black plate with GREEN right-pointing arrow.
+   The plate has a thin WHITE BORDER around all edges.
+   The arrow is a proper arrow shape (shaft + head, NOT a simple triangle). */
 function GreenArrowSign() {
   return (
     <svg viewBox="0 0 100 100" className={svgClass}>
-      <rect x="3" y="3" width="94" height="94" rx="4" fill="#1a1a1a" />
-      <polygon points="20,50 60,50 60,32 88,50 60,68 60,50" fill="#00882B" />
+      {/* White border plate */}
+      <rect x="2" y="2" width="96" height="96" rx="3" fill="white" />
+      {/* Black background */}
+      <rect x="6" y="6" width="88" height="88" rx="2" fill="#1a1a1a" />
+      {/* Green right-pointing arrow: shaft + triangular head */}
+      {/* Arrow shaft */}
+      <rect x="18" y="40" width="38" height="20" fill="#00882B" />
+      {/* Arrow head (triangle) */}
+      <polygon points="52,26 84,50 52,74" fill="#00882B" />
     </svg>
   );
 }
 
-/* ── Traffic Light with green arrow ── */
-function GreenArrowSignal() {
+/* ── Traffic Light with green arrow signal (Lichtzeichen "Grüner Pfeil") ──
+   A standard 3-lens traffic light housing. The green lens shows an arrow
+   pointing in the direction of the protected movement.
+   direction: 'left' | 'right' | 'straight'
+   The other two lenses are dim/off (dark red-brown, dark amber). */
+function GreenArrowSignal({ direction = 'right' }: { direction?: 'left' | 'right' | 'straight' }) {
+  /* Rotation angle around lens center (cx=30, cy=82):
+     right = 0°, left = 180°, straight (up) = -90° */
+  const rotate = direction === 'left' ? 180 : direction === 'straight' ? -90 : 0;
   return (
-    <svg viewBox="0 0 60 120" className={svgClass}>
-      <rect x="12" y="2" width="36" height="86" rx="6" fill="#2a2a2a" />
-      <circle cx="30" cy="22" r="12" fill="#3a0000" />
-      <circle cx="30" cy="46" r="12" fill="#3a2a00" />
-      <circle cx="30" cy="70" r="12" fill="#003a00" />
-      <circle cx="30" cy="70" r="9" fill="#00cc00" />
-      {/* Arrow inside green light */}
-      <polygon points="26,70 34,70 34,64 40,70 34,76 34,70" fill="white" />
-      <rect x="27" y="88" width="6" height="28" rx="3" fill="#666" />
+    <svg viewBox="0 0 60 140" className={svgClass}>
+      {/* Traffic light housing */}
+      <rect x="10" y="2" width="40" height="100" rx="6" fill="#2a2a2a" />
+      {/* Red lens (off) */}
+      <circle cx="30" cy="22" r="14" fill="#3a0000" />
+      {/* Yellow lens (off) */}
+      <circle cx="30" cy="52" r="14" fill="#3a2a00" />
+      {/* Green lens (active glow) */}
+      <circle cx="30" cy="82" r="14" fill="#004400" />
+      <circle cx="30" cy="82" r="11" fill="#00cc00" />
+      {/* Directional arrow — rotated around lens center */}
+      <g transform={`rotate(${rotate}, 30, 82)`}>
+        {/* Arrow shaft */}
+        <rect x="21" y="79" width="10" height="6" fill="white" />
+        {/* Arrow head */}
+        <polygon points="30,74 40,82 30,90" fill="white" />
+      </g>
+      {/* Post */}
+      <rect x="27" y="102" width="6" height="34" rx="3" fill="#666" />
     </svg>
   );
 }
@@ -228,95 +256,102 @@ function CyclistsAllowedSign() {
 
 /* ══════════════════════════════════════════════════════════════════════════════
    Zusatzzeichen 1002 — Verlauf der Vorfahrtstraße (Bending Priority Sub-Sign)
-   
-   Based on official VzKat reference: white square, black border.
-   The intersection is drawn with:
-   - THICK black lines (~12px stroke) for the priority road
-   - MEDIUM black lines (~6px stroke) for secondary roads  
-   - Lines have flat/square ends and meet at a center point
+
+   Based on official Bildtafel reference images (Wikipedia):
+   - White square plate, thin black border
+   - Priority road = VERY THICK black lines (pw), squared ends
+   - Secondary roads = THIN black lines (sw), squared ends  
+   - Right-angle corners — NOT smooth curves
+   - ClipPath prevents strokes from bleeding outside sign boundary
    ══════════════════════════════════════════════════════════════════════════════ */
-function BendingSubSign({ variant }: { variant?: string }) {
+function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string }) {
   const v = variant || 'bottom-left';
-  const c = 50; // center
-  const pw = 12; // priority road width (thick)
-  const sw = 6;  // secondary road width (medium)
+  const c = 50;   // center
+  const pw = 22;  // priority road stroke (very thick, ~3.3x secondary)
+  const sw = 6;   // secondary road stroke (thin)
+  const edge = 2; // endpoint right at the edge
 
-  /* Each arm extends from the center to the edge.
-     The priority road connects two arms with a smooth curve. */
-  const arm = (x1: number, y1: number, x2: number, y2: number, w: number) => (
-    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#1a1a1a" strokeWidth={w} />
-  );
-
-  /* Priority curves — smooth 90° bend through the center */
-  const curve = (from: string, to: string) => {
-    const pts: Record<string, [number, number]> = {
-      top: [c, 8], bottom: [c, 92], left: [8, c], right: [92, c],
-    };
-    const [x1, y1] = pts[from];
-    const [x2, y2] = pts[to];
-    return (
-      <path d={`M${x1},${y1} Q${c},${c} ${x2},${y2}`}
-        fill="none" stroke="#1a1a1a" strokeWidth={pw} strokeLinecap="butt" />
-    );
+  /* Points: edge of the sign in each cardinal direction */
+  const pts: Record<string, [number, number]> = {
+    top:    [c, edge],
+    bottom: [c, 100 - edge],
+    left:   [edge, c],
+    right:  [100 - edge, c],
   };
 
-  /* Determine which arms are priority and which are secondary */
-  const configs: Record<string, { priority: [string, string]; secondary: string[] }> = {
-    'bottom-left':  { priority: ['bottom', 'left'],  secondary: ['top', 'right'] },
-    'bottom-right': { priority: ['bottom', 'right'], secondary: ['top', 'left'] },
-    'top-left':     { priority: ['top', 'left'],     secondary: ['bottom', 'right'] },
-    'top-right':    { priority: ['top', 'right'],    secondary: ['bottom', 'left'] },
-    'left-top':     { priority: ['left', 'top'],     secondary: ['bottom', 'right'] },
-    'left-bottom':  { priority: ['left', 'bottom'],  secondary: ['top', 'right'] },
-    'right-top':    { priority: ['right', 'top'],    secondary: ['bottom', 'left'] },
-    'right-bottom': { priority: ['right', 'bottom'], secondary: ['top', 'left'] },
-    'priority-left-right': { priority: ['left', 'right'], secondary: ['top', 'bottom'] },
-    'priority-top-bottom': { priority: ['top', 'bottom'], secondary: ['left', 'right'] },
-  };
-
-  const armCoords: Record<string, [number, number, number, number]> = {
-    top:    [c, 8, c, c],
-    bottom: [c, c, c, 92],
-    left:   [8, c, c, c],
-    right:  [c, c, 92, c],
+  /* Configurations: which two arms form the priority road, rest are secondary */
+  const configs: Record<string, { p: [string, string]; s: string[] }> = {
+    'bottom-left':  { p: ['bottom', 'left'],  s: ['top', 'right'] },
+    'bottom-right': { p: ['bottom', 'right'], s: ['top', 'left'] },
+    'top-left':     { p: ['top', 'left'],     s: ['bottom', 'right'] },
+    'top-right':    { p: ['top', 'right'],    s: ['bottom', 'left'] },
+    'left-top':     { p: ['left', 'top'],     s: ['bottom', 'right'] },
+    'left-bottom':  { p: ['left', 'bottom'],  s: ['top', 'right'] },
+    'right-top':    { p: ['right', 'top'],    s: ['bottom', 'left'] },
+    'right-bottom': { p: ['right', 'bottom'], s: ['top', 'left'] },
+    'priority-left-right': { p: ['left', 'right'], s: ['top', 'bottom'] },
+    'priority-top-bottom': { p: ['top', 'bottom'], s: ['left', 'right'] },
   };
 
   const cfg = configs[v] || configs['bottom-left'];
+  const [p1, p2] = cfg.p;
+  const [px1, py1] = pts[p1];
+  const [px2, py2] = pts[p2];
+
+  /* Is the priority road straight (opposite directions)? */
+  const isStraight = (p1 === 'left' && p2 === 'right') || (p1 === 'right' && p2 === 'left') ||
+    (p1 === 'top' && p2 === 'bottom') || (p1 === 'bottom' && p2 === 'top');
+
+  const clipId = `bsc-${uid}`;
 
   return (
     <g>
-      {/* White background with black border */}
-      <rect x="2" y="2" width="96" height="96" rx="3" fill="white" stroke="#1a1a1a" strokeWidth="3" />
-      {/* Secondary roads (thinner lines) */}
-      {cfg.secondary.map(dir => {
-        const [x1, y1, x2, y2] = armCoords[dir];
-        return <g key={dir}>{arm(x1, y1, x2, y2, sw)}</g>;
-      })}
-      {/* Priority road (thick curved line or straight) */}
-      {cfg.priority[0] === 'left' && cfg.priority[1] === 'right'
-        ? arm(8, c, 92, c, pw)
-        : cfg.priority[0] === 'top' && cfg.priority[1] === 'bottom'
-        ? arm(c, 8, c, 92, pw)
-        : curve(cfg.priority[0], cfg.priority[1])}
+      <defs>
+        <clipPath id={clipId}>
+          <rect x="4" y="4" width="92" height="92" />
+        </clipPath>
+      </defs>
+      {/* White background */}
+      <rect x="2" y="2" width="96" height="96" rx="3" fill="white" />
+      {/* Clipped road lines */}
+      <g clipPath={`url(#${clipId})`}>
+        {/* Secondary roads — thin, drawn first so priority covers center */}
+        {cfg.s.map(dir => {
+          const [ex, ey] = pts[dir];
+          return <line key={dir} x1={c} y1={c} x2={ex} y2={ey}
+            stroke="#1a1a1a" strokeWidth={sw} strokeLinecap="square" />;
+        })}
+        {/* Priority road — thick, drawn last (on top) */}
+        {isStraight
+          ? <line x1={px1} y1={py1} x2={px2} y2={py2}
+              stroke="#1a1a1a" strokeWidth={pw} strokeLinecap="square" />
+          : <path d={`M${px1},${py1} L${c},${c} L${px2},${py2}`}
+              fill="none" stroke="#1a1a1a" strokeWidth={pw}
+              strokeLinecap="square" strokeLinejoin="miter" />
+        }
+      </g>
+      {/* Black border drawn last so it appears on top of any lines at edge */}
+      <rect x="2" y="2" width="96" height="96" rx="3" fill="none" stroke="#1a1a1a" strokeWidth="3" />
     </g>
   );
 }
 
-/* ── Bending Priority Road — Zeichen 306 + Zusatzzeichen 1002 on a post ── */
+/* ── Bending Priority Road — Zeichen 306 + Zusatzzeichen 1002 on a post ──
+   The diamond sign sits on top, with the sub-sign plate mounted below. */
 function BendingPrioritySign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 220" className={svgClass}>
+    <svg viewBox="0 0 120 210" className={svgClass}>
       {/* Grey post */}
-      <rect x="56" y="0" width="8" height="220" rx="4" fill="#888" />
-      {/* Zeichen 306 diamond (top) — centered, ~60px */}
-      <g transform="translate(60,48) rotate(45)">
-        <rect x="-28" y="-28" width="56" height="56" rx="2" fill="#1a1a1a" />
-        <rect x="-25" y="-25" width="50" height="50" rx="2" fill="white" />
-        <rect x="-21" y="-21" width="42" height="42" rx="1" fill="#F5A800" />
+      <rect x="56" y="0" width="8" height="210" rx="4" fill="#888" />
+      {/* Zeichen 306 diamond (top) — larger: ~70px wide */}
+      <g transform="translate(60,44) rotate(45)">
+        <rect x="-32" y="-32" width="64" height="64" rx="2" fill="#1a1a1a" />
+        <rect x="-28" y="-28" width="56" height="56" rx="2" fill="white" />
+        <rect x="-24" y="-24" width="48" height="48" rx="1" fill="#F5A800" />
       </g>
       {/* Zusatzzeichen 1002 (bottom) — 90x90 */}
-      <g transform="translate(15,110) scale(0.9)">
-        <BendingSubSign variant={variant} />
+      <g transform="translate(15,100) scale(0.9)">
+        <BendingSubSign variant={variant} uid="bp" />
       </g>
     </svg>
   );
@@ -325,14 +360,14 @@ function BendingPrioritySign({ variant }: { variant?: string }) {
 /* ── Yield + Bending ── */
 function YieldBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 220" className={svgClass}>
-      <rect x="56" y="0" width="8" height="220" rx="4" fill="#888" />
-      {/* Yield triangle (top, inverted, ~55px wide) */}
-      <polygon points="60,12 92,66 28,66" fill="#C1121C" strokeLinejoin="round" />
-      <polygon points="60,24 84,60 36,60" fill="white" />
+    <svg viewBox="0 0 120 210" className={svgClass}>
+      <rect x="56" y="0" width="8" height="210" rx="4" fill="#888" />
+      {/* Yield triangle (top, inverted, ~60px wide) */}
+      <polygon points="60,10 94,68 26,68" fill="#C1121C" strokeLinejoin="round" />
+      <polygon points="60,23 86,62 34,62" fill="white" />
       {/* Zusatzzeichen 1002 */}
-      <g transform="translate(15,110) scale(0.9)">
-        <BendingSubSign variant={variant} />
+      <g transform="translate(15,100) scale(0.9)">
+        <BendingSubSign variant={variant} uid="yb" />
       </g>
     </svg>
   );
@@ -341,20 +376,20 @@ function YieldBendingSign({ variant }: { variant?: string }) {
 /* ── Stop + Bending ── */
 function StopBendingSign({ variant }: { variant?: string }) {
   return (
-    <svg viewBox="0 0 120 220" className={svgClass}>
-      <rect x="56" y="0" width="8" height="220" rx="4" fill="#888" />
-      {/* Stop octagon (top, ~55px) */}
-      <g transform="translate(60,42)">
-        <polygon points="-14,-28 14,-28 28,-14 28,14 14,28 -14,28 -28,14 -28,-14" fill="#C1121C" />
-        <polygon points="-12,-24 12,-24 24,-12 24,12 12,24 -12,24 -24,12 -24,-12"
+    <svg viewBox="0 0 120 210" className={svgClass}>
+      <rect x="56" y="0" width="8" height="210" rx="4" fill="#888" />
+      {/* Stop octagon (top, ~60px) */}
+      <g transform="translate(60,40)">
+        <polygon points="-15,-30 15,-30 30,-15 30,15 15,30 -15,30 -30,15 -30,-15" fill="#C1121C" />
+        <polygon points="-13,-26 13,-26 26,-13 26,13 13,26 -13,26 -26,13 -26,-13"
           fill="none" stroke="white" strokeWidth="1.5" />
         <text x="0" y="4" textAnchor="middle" dominantBaseline="middle"
-          fontSize="14" fontWeight="900" fill="white"
+          fontSize="15" fontWeight="900" fill="white"
           fontFamily="'Arial Black', Arial, sans-serif" letterSpacing="1">STOP</text>
       </g>
       {/* Zusatzzeichen 1002 */}
-      <g transform="translate(15,110) scale(0.9)">
-        <BendingSubSign variant={variant} />
+      <g transform="translate(15,100) scale(0.9)">
+        <BendingSubSign variant={variant} uid="sb" />
       </g>
     </svg>
   );
@@ -387,7 +422,7 @@ function getSignGraphic(sign: TrafficSign) {
     case 'sign-parking':            return <ParkingSign />;
     case 'sign-motorway':           return <MotorwaySign />;
     case 'sign-green-arrow':        return <GreenArrowSign />;
-    case 'sign-green-arrow-signal': return <GreenArrowSignal />;
+    case 'sign-green-arrow-signal': return <GreenArrowSignal direction={sign.variant as 'left' | 'right' | 'straight' | undefined} />;
     case 'sign-cyclists-allowed':   return <CyclistsAllowedSign />;
     case 'sign-bending-priority':   return <BendingPrioritySign variant={sign.variant} />;
     case 'sign-yield-bending':      return <YieldBendingSign variant={sign.variant} />;
