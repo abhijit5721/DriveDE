@@ -440,11 +440,11 @@ const signPriorityRoadBending: TrafficSign = {
   id: 'sign-bending-priority',
   code: 'Zeichen 306',
   titleDe: 'Vorfahrtstraße mit Verlauf',
-
   titleEn: 'Priority Road with Course',
   descriptionDe: 'Die dicke Linie zeigt, wie die Vorfahrtstraße verläuft. Beim Verlassen oder Folgen gelten Blink- und Wartepflichten je nach Fahrtrichtung.',
   descriptionEn: 'The thick line shows how the priority road bends. Depending on your route, signaling and yielding duties apply.',
   category: 'priority',
+  variant: 'bottom-left', // Priority road bends left — matches "Turning (Left)" lesson context
 };
 
 const signYieldBending: TrafficSign = {
@@ -1048,14 +1048,14 @@ const cityLessons: Lesson[] = [
     simulatorScenario: {
       id: 'bending-priority',
       factKey: 'bending',
-      bendingConfig: { path: 'bottom-right' },
+      bendingConfig: { path: 'bottom-left' },
       signs: [
         { type: 'bending-priority', position: 'bottom' },
-        { type: 'yield', position: 'left' }
+        { type: 'yield', position: 'right' }
       ],
       cars: [
         { id: 'blue-car', color: 'blue', positionKey: 'bottom', order: 0, labelKey: 'blueCar' },
-        { id: 'red-car', color: 'red', positionKey: 'left', order: 1, labelKey: 'redCar' },
+        { id: 'red-car', color: 'red', positionKey: 'right', order: 1, labelKey: 'redCar' },
       ]
     },
     guidedPoints: leftTurnGuidedPoints,
