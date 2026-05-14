@@ -34,13 +34,13 @@ const CAR_PATHS: Record<string, Record<string, string>> = {
   },
   left: {
     straight: 'M 0 170 L 300 170',
-    left: 'M 0 170 Q 130 170 130 300',
-    right: 'M 0 170 Q 170 170 170 0',
+    left: 'M 0 170 Q 170 170 170 0',
+    right: 'M 0 170 Q 130 170 130 300',
   },
   right: {
     straight: 'M 300 130 L 0 130',
-    left: 'M 300 130 Q 170 130 170 0',
-    right: 'M 300 130 Q 130 130 130 300',
+    left: 'M 300 130 Q 130 130 130 300',
+    right: 'M 300 130 Q 170 130 170 0',
   },
 };
 
@@ -66,13 +66,13 @@ const TURN_ENDPOINTS: Record<string, Record<string, { x: number; y: number; rota
   },
   left: {
     straight: { x: 300, y: 170, rotate:  90, midX: 130, midY: 170 },
-    left:     { x: 130, y: 300, rotate: 180, midX: 130, midY: 170 },
-    right:    { x: 170, y:   0, rotate:   0, midX: 170, midY: 170 },
+    left:     { x: 170, y:   0, rotate:   0, midX: 170, midY: 170 },
+    right:    { x: 130, y: 300, rotate: 180, midX: 130, midY: 170 },
   },
   right: {
     straight: { x:   0, y: 130, rotate: -90, midX: 170, midY: 130 },
-    left:     { x: 170, y:   0, rotate:   0, midX: 170, midY: 130 },
-    right:    { x: 130, y: 300, rotate: 180, midX: 130, midY: 130 },
+    left:     { x: 130, y: 300, rotate: 180, midX: 130, midY: 130 },
+    right:    { x: 170, y:   0, rotate:   0, midX: 170, midY: 130 },
   },
 };
 
