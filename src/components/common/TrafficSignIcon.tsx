@@ -32,15 +32,15 @@ function SignFrame({ children, noFrame }: { children: React.ReactNode; noFrame?:
 }
 
 /* ── Zeichen 205 — Vorfahrt gewähren (Yield) ──
-   Inverted equilateral triangle: thick red border, white center.
-   The red border is notably thick (~15% of the triangle height). */
+   INVERTED equilateral triangle (apex DOWN, flat edge TOP): thick red border, white fill.
+   StVO Zeichen 205: the SINGLE POINT is at the BOTTOM, flat side at top. */
 function YieldSign() {
   return (
-    <svg viewBox="0 0 100 90" className={svgClass}>
-      {/* Red outer triangle (pointing down) */}
-      <polygon points="50,2 98,87 2,87" fill="#C1121C" stroke="#C1121C" strokeWidth="1" strokeLinejoin="round" />
-      {/* White inner triangle */}
-      <polygon points="50,20 84,78 16,78" fill="white" />
+    <svg viewBox="0 0 100 92" className={svgClass}>
+      {/* Red outer triangle — apex DOWN */}
+      <polygon points="2,4 98,4 50,90" fill="#C1121C" strokeLinejoin="round" />
+      {/* White inner triangle — apex DOWN */}
+      <polygon points="14,14 86,14 50,77" fill="white" />
     </svg>
   );
 }
@@ -362,9 +362,9 @@ function YieldBendingSign({ variant }: { variant?: string }) {
   return (
     <svg viewBox="0 0 120 210" className={svgClass}>
       <rect x="56" y="0" width="8" height="210" rx="4" fill="#888" />
-      {/* Yield triangle (top, inverted, ~60px wide) */}
-      <polygon points="60,10 94,68 26,68" fill="#C1121C" strokeLinejoin="round" />
-      <polygon points="60,23 86,62 34,62" fill="white" />
+      {/* Yield triangle — apex DOWN, flat edge at top */}
+      <polygon points="26,8 94,8 60,68" fill="#C1121C" strokeLinejoin="round" />
+      <polygon points="34,18 86,18 60,57" fill="white" />
       {/* Zusatzzeichen 1002 */}
       <g transform="translate(15,100) scale(0.9)">
         <BendingSubSign variant={variant} uid="yb" />
