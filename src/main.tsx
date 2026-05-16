@@ -13,10 +13,16 @@ import { analyticsService } from './services/AnalyticsService';
 
 analyticsService.init();
 
+const Root = () => (
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
+
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </StrictMode>
+  import.meta.env.DEV ? <Root /> : (
+    <StrictMode>
+      <Root />
+    </StrictMode>
+  )
 );
