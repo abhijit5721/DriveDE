@@ -1,0 +1,1 @@
+import{c}from"./index-DS2CYD9R.js";const e=[["path",{d:"m12 14 4-4",key:"9kzdfg"}],["path",{d:"M3.34 19a10 10 0 1 1 17.32 0",key:"19p75a"}]],t=c("gauge",e);const a=[["path",{d:"m21 21-4.34-4.34",key:"14j7rj"}],["circle",{cx:"11",cy:"11",r:"8",key:"4ej97u"}]],r=c("search",a);export{t as G,r as S};
