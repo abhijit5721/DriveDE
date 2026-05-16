@@ -1,0 +1,12 @@
+{
+  "name": "DriveDE - Fahrschule App",
+  "short_name": "DriveDE",
+  "description": "Deine App für die praktische Fahrprüfung in Deutschland / Your app for the practical driving test in Germany",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e40af",
+  "theme_color": "#1e40af",
+  "orientation": "portrait",
+  "categories": ["education", "lifestyle"],
+  "lang": "de"
+}

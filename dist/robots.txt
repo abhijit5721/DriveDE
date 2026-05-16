@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://drivede.app/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /*.json
+Disallow: /auth/
