@@ -1,5 +1,8 @@
 # Dependencies
+node_modules/
 /node_modules
+backend/node_modules
+android/node_modules
 /backend/node_modules
 /brain
 
@@ -34,6 +37,10 @@ test-results/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Android build outputs
+android/app/src/main/res/drawable-*/
+android/app/src/main/res/mipmap-*/
 
 # Capacitor (keeping config but ignoring builds)
 /www/
