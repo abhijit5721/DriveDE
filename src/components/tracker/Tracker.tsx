@@ -1119,15 +1119,22 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             if (!position) return;
             const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
             
-            // Compliance/Quality: Filter out extreme noise
-            // In trains/dense cities, accuracy can drop. 65m is a safer "useful" limit.
-            if (accuracy && accuracy > 65) {
+            // Relaxed GPS accuracy filtering to ensure tracking works reliably inside buses and trains.
+            // Under metal bodies or in high-density urban canyons, GPS accuracy frequently drops to 70m-120m.
+            // 150m is a safe industry standard threshold for filtering out major cell-tower jumps while keeping usable GPS.
+            if (accuracy && accuracy > 150) {
               setGpsSignalQuality('poor');
-              console.warn('[Tracker] GPS accuracy poor:', accuracy);
+              console.warn('[Tracker] GPS accuracy extremely poor:', accuracy);
               return;
             }
             
-            setGpsSignalQuality(accuracy && accuracy < 15 ? 'excellent' : 'good');
+            if (!accuracy || accuracy < 15) {
+              setGpsSignalQuality('excellent');
+            } else if (accuracy < 50) {
+              setGpsSignalQuality('good');
+            } else {
+              setGpsSignalQuality('poor');
+            }
 
             const newPoint = { lat, lng, timestamp: Date.now() };
             
