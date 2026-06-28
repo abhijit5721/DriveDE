@@ -152,12 +152,12 @@ export default function App() {
     
     if (Capacitor.isNativePlatform()) {
       // Handle app already open
-      urlListener = CapacitorApp.addListener('appUrlOpen', async (data) => {
+      urlListener = CapacitorApp.addListener('appUrlOpen', async (data: { url: string }) => {
         handleDeepLink(data.url);
       });
 
       // Handle app being launched from scratch via URL
-      CapacitorApp.getLaunchUrl().then((launchUrl) => {
+      CapacitorApp.getLaunchUrl().then((launchUrl: { url: string } | null) => {
         if (launchUrl?.url) {
           console.log('[DeepLink] Initial launch URL detected:', launchUrl.url);
           handleDeepLink(launchUrl.url);
@@ -233,7 +233,21 @@ export default function App() {
 
   // --- AUTH & DATA SYNC LOGIC ---
   useEffect(() => {
+    // Safety timeout: if Supabase is paused/unreachable the auth callback may
+    // never fire. After 4 s we fall back to guest mode so the app is usable.
+    const fallbackTimer = setTimeout(() => {
+      setIsAuthLoading((prev) => {
+        if (prev) {
+          console.warn('[App] Auth callback did not fire within 4s — Supabase may be paused. Falling back to guest mode.');
+          setAuthState(null, 'guest', null, null);
+          return false;
+        }
+        return prev;
+      });
+    }, 4000);
+
     const unsubscribe = subscribeToAuthChanges(async (session) => {
+      clearTimeout(fallbackTimer);
       try {
         const isNewUser = !useAppStore.getState().authEmail && !!session?.user;
         
@@ -373,6 +387,7 @@ export default function App() {
     });
 
     return () => {
+      clearTimeout(fallbackTimer);
       unsubscribe();
     };
   }, [setAuthState, logoutCleanup]);
@@ -429,7 +444,7 @@ export default function App() {
         });
 
         // Hardware Back Button
-        App.addListener('backButton', ({ canGoBack }) => {
+        App.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
           console.log('[App] Hardware back button pressed');
           
           // 1. Priority: Close Modals
