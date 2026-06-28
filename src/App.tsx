@@ -14,7 +14,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { Capacitor } from '@capacitor/core';
-import { App as CapacitorApp } from '@capacitor/app';
+import { App as CapacitorApp, AppLaunchUrl } from '@capacitor/app';
 import { useAppStore } from './store/useAppStore';
 import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
@@ -157,7 +157,7 @@ export default function App() {
       });
 
       // Handle app being launched from scratch via URL
-      CapacitorApp.getLaunchUrl().then((launchUrl: { url: string } | null) => {
+      CapacitorApp.getLaunchUrl().then((launchUrl: AppLaunchUrl | undefined) => {
         if (launchUrl?.url) {
           console.log('[DeepLink] Initial launch URL detected:', launchUrl.url);
           handleDeepLink(launchUrl.url);
