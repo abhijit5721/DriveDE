@@ -267,31 +267,39 @@ export default function App() {
           if (remoteData) {
             console.log('[App] State hydrated from Supabase. isPremium:', remoteData.profile?.is_premium);
             useAppStore.setState((state) => {
-                const combinedCompletedLessons = Array.from(new Set([
-                    ...state.userProgress.completedLessons,
-                    ...(remoteData.lessons?.map(l => l.lesson_id) || [])
-                ]));
+                // REMOTE IS SOURCE OF TRUTH on login.
+                // Remote lessons override local - avoids divergence between devices.
+                const remoteLessonIds = remoteData.lessons?.map(l => l.lesson_id) || [];
                 
-                // Track existing sessions to avoid duplicates
-                const existingSessionIds = new Set(state.userProgress.drivingSessions.map(s => s.id));
+                // For lessons: if we have remote data, use it as truth.
+                // If remote has none yet (brand new account), keep local so offline progress isn't lost.
+                const combinedCompletedLessons = remoteLessonIds.length > 0
+                    ? Array.from(new Set([
+                        ...remoteLessonIds,
+                        // Only add local lessons that haven't been synced yet (offline additions)
+                        ...state.userProgress.completedLessons.filter(id => !remoteLessonIds.includes(id))
+                      ]))
+                    : state.userProgress.completedLessons;
 
-                const remoteSessions = (remoteData.sessions || [])
-                    .filter(s => !existingSessionIds.has(s.id))
-                    .map(s => ({
-                        id: s.id,
-                        date: s.date,
-                        duration: s.duration,
-                        type: s.type,
-                        notes: s.notes || '',
-                        instructorName: s.instructorName || '',
-                        route: s.route || [],
-                        mistakes: s.mistakes || [],
-                        totalDistance: s.totalDistance || 0,
-                        locationSummary: s.locationSummary || undefined
-                    }));
+                // For sessions: remote is truth. Deduplicate by session ID.
+                const remoteSessions = (remoteData.sessions || []).map(s => ({
+                    id: s.id,
+                    date: s.date,
+                    duration: s.duration,
+                    type: s.type,
+                    notes: s.notes || '',
+                    instructorName: s.instructorName || '',
+                    route: s.route || [],
+                    mistakes: s.mistakes || [],
+                    totalDistance: s.totalDistance || 0,
+                    locationSummary: s.locationSummary || undefined
+                }));
 
-                const combinedSessions = [...state.userProgress.drivingSessions, ...remoteSessions];
-                
+                // Add local-only sessions not yet synced to remote (offline sessions)
+                const remoteSessionIds = new Set(remoteSessions.map(s => s.id));
+                const localOnlySessions = state.userProgress.drivingSessions.filter(s => !remoteSessionIds.has(s.id));
+                const combinedSessions = [...remoteSessions, ...localOnlySessions];
+
                 let totalDrivingMinutes = 0;
                 const specialDrivingMinutes = { ueberland: 0, autobahn: 0, nacht: 0 };
                 
@@ -303,7 +311,7 @@ export default function App() {
                     if (s.type === 'nacht') specialDrivingMinutes.nacht += duration;
                 });
 
-                // Robust premium check: true if remote is true, otherwise keep local if it was already true (though DB is truth)
+                // Robust premium check: DB is truth
                 const isPremium = remoteData.profile?.is_premium ?? state.isPremium;
 
                 const finalUserProgress = {
@@ -349,6 +357,7 @@ export default function App() {
                 };
             });
           }
+
 
           // Unblock the UI immediately after critical hydration
           setIsAuthLoading(false);
