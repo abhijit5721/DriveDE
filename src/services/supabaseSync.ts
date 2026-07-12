@@ -213,6 +213,7 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
         hourly_rate_45: state.userProgress.hourlyRate45,
         fixed_costs: state.userProgress.fixedCosts,
         is_public_report_enabled: state.isPublicReportEnabled,
+        has_completed_onboarding: state.hasCompletedOnboarding,
       });
 
       if (error) {
@@ -407,6 +408,7 @@ export async function hydrateFromSupabase() {
     learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
     transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,
     lessons: lessons ?? [],
+    hasCompletedOnboarding: profile?.has_completed_onboarding ?? false,
     sessions: (sessions ?? []).map(s => ({
       id: s.external_id || s.id,
       date: s.session_date || '',

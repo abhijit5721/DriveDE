@@ -355,6 +355,7 @@ export default function App() {
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,
                     transmissionType: remoteData.transmissionType || state.transmissionType,
+                    hasCompletedOnboarding: remoteData.hasCompletedOnboarding ?? state.hasCompletedOnboarding,
                     userProgress: finalUserProgress
                 };
             });
