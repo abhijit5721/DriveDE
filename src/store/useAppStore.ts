@@ -163,6 +163,7 @@ export const useAppStore = create<AppState>()(
       userProgress: initialProgress,
       activeSession: null,
       hasVisited: false,
+      hasCompletedOnboarding: false,
       activeTab: 'home',
       isHydrated: false,
       recentAchievements: [],
@@ -178,6 +179,8 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
 
       setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
+
+      setHasCompletedOnboarding: (value: boolean) => set({ hasCompletedOnboarding: value }),
 
       clearRecentAchievements: () => set({ recentAchievements: [] }),
 
@@ -789,6 +792,7 @@ export const useAppStore = create<AppState>()(
           darkMode: state.darkMode,
           authStatus: state.authStatus,
           hasVisited: state.hasVisited,
+          hasCompletedOnboarding: state.hasCompletedOnboarding,
           activeTab: state.activeTab,
           licenseType: state.licenseType,
           learningPath: state.learningPath,

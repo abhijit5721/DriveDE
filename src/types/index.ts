@@ -269,9 +269,11 @@ export interface AppState {
   userProgress: UserProgress;
   activeSession: ActiveSession | null;
   hasVisited: boolean;
+  hasCompletedOnboarding: boolean;
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
   setHasVisited: (hasVisited: boolean) => void;
+  setHasCompletedOnboarding: (value: boolean) => void;
   setLanguage: (lang: Language) => void;
   toggleDarkMode: () => void;
   setLicenseType: (type: LicenseType) => void;

@@ -58,6 +58,7 @@ import { CookieConsent } from './components/legal/CookieConsent';
 import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 import { TRANSLATIONS } from './data/translations';
 import { HotspotMap } from './components/dashboard/HotspotMap';
+import { OnboardingTour } from './components/onboarding/OnboardingTour';
 
 
 export default function App() {
@@ -87,6 +88,7 @@ export default function App() {
     activeTab,
     setActiveTab,
     language,
+    hasCompletedOnboarding,
   } = useAppStore();
 
   const learningPathVal = getLearningPathFromLicenseType(licenseType);
@@ -812,6 +814,7 @@ export default function App() {
 
       {!Capacitor.isNativePlatform() && <CookieConsent />}
       <AchievementOverlay />
+      {hasVisited && !hasCompletedOnboarding && activeTab === 'home' && <OnboardingTour />}
     </>
   );
 }

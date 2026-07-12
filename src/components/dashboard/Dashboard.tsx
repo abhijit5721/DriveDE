@@ -104,7 +104,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
   return (
     <div className="space-y-8 pb-10 animate-scale-in">
       {/* Premium Hero Section: Exam Readiness & Path */}
-      <div className="overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10 animate-fade-in-up">
+      <div data-tour="readiness" className="overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10 animate-fade-in-up">
         <div className="bg-premium-blue p-8 text-white relative overflow-hidden">
           {/* Decorative background element */}
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -167,7 +167,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div data-tour="exam-sim" className="grid grid-cols-1 gap-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
         <button
           onClick={onStartSimulation}
           aria-label={t.dashboard.examSimulation}
@@ -196,7 +196,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       </div>
 
       {/* Core Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+      <div data-tour="stats" className="grid grid-cols-2 gap-4 sm:grid-cols-3 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
         {[
           { 
             icon: Clock, 
@@ -389,7 +389,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         ))}
       </div>
 
-      <div className="rounded-3xl glass p-8 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+      <div data-tour="special-drives" className="rounded-3xl glass p-8 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
         <div className="mb-6">
           <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}

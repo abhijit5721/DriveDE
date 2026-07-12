@@ -32,6 +32,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
     <nav 
       role="navigation"
       aria-label={t.common.nav.mobileNav}
+      data-tour="nav"
       className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/10 dark:border-white/5 pb-safe"
     >
       <div className="px-1 pt-2 pb-1">
