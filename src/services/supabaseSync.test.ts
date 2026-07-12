@@ -179,4 +179,28 @@ describe('supabaseSync', () => {
     
     vi.useRealTimers();
   });
+
+  it('should sync hasCompletedOnboarding to profiles table', async () => {
+    vi.mocked(supabase!.auth.getUser).mockResolvedValue({ data: { user: { id: 'user_123' } }, error: null } as any);
+    
+    const mockUpsert = vi.fn().mockResolvedValue({ error: null });
+    vi.mocked(supabase!.from).mockReturnValue({ upsert: mockUpsert } as any);
+
+    vi.useFakeTimers();
+    
+    const syncPromise = ensureProfileFromState({
+      ...mockState,
+      hasCompletedOnboarding: true
+    });
+    vi.runAllTimers();
+    await syncPromise;
+
+    expect(mockUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        has_completed_onboarding: true
+      })
+    );
+    
+    vi.useRealTimers();
+  });
 });
