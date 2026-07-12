@@ -66,22 +66,24 @@ Deno.serve(async (req) => {
           expires_at = d.toISOString();
         }
 
-        console.log(`[Webhook] Inserting subscription record for ${userId}...`);
+        console.log(`[Webhook] Upserting subscription record for ${userId}...`);
         const { error: subError } = await supabase
           .from('subscriptions')
-          .insert({
+          .upsert({
             user_id: userId,
             provider: 'stripe',
             product_id: session.id,
             status: 'active',
             started_at,
             expires_at
+          }, {
+            onConflict: 'product_id'
           });
 
         if (subError) {
-          console.error(`[Webhook] Subscription Insert Error for ${userId}:`, subError.message);
+          console.error(`[Webhook] Subscription Upsert Error for ${userId}:`, subError.message);
         } else {
-          console.log(`[Webhook] Subscription record created successfully for ${userId}`);
+          console.log(`[Webhook] Subscription record upserted successfully for ${userId}`);
         }
       } else {
         console.warn('[Webhook] No client_reference_id or metadata.user_id found in session.');

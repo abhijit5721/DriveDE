@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
@@ -519,11 +519,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
   
-  const spatialWorker = useMemo(() => {
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      return new Worker(new URL('../../workers/spatial.worker.ts', import.meta.url));
+      workerRef.current = new Worker(new URL('../../workers/spatial.worker.ts', import.meta.url));
     }
-    return null;
+    return () => {
+      workerRef.current?.terminate();
+    };
   }, []);
 
   const [spatialCache, setSpatialCache] = useState<SpatialCacheData | null>(null);
@@ -780,7 +784,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const checkNearbyStopSign = useCallback(async (lat: number, lng: number) => {
     if (spatialCache) {
-      spatialWorker?.postMessage({
+      workerRef.current?.postMessage({
         type: 'findNearest',
         data: {
           position: { lat, lng },
@@ -811,7 +815,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (e) {
       console.error('[Tracker] Stop sign fetch failed:', e);
     }
-  }, [activeStopSign, t, spatialCache, spatialWorker]);
+  }, [activeStopSign, t, spatialCache]);
 
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
@@ -832,9 +836,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         }
       }
     };
-    spatialWorker?.addEventListener('message', onMessage);
-    return () => spatialWorker?.removeEventListener('message', onMessage);
-  }, [spatialWorker, activeStopSign, t]);
+    workerRef.current?.addEventListener('message', onMessage);
+    return () => workerRef.current?.removeEventListener('message', onMessage);
+  }, [activeStopSign, t]);
 
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
@@ -850,10 +854,26 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     if (Date.now() - lastWrongWayLogRef.current < 30000) return;
     if (currentSpeed < 10) return;
 
+    const onWorkerMessage = (e: MessageEvent) => {
+      if (e.data.type === 'wrongWayCheck' && e.data.result === true) {
+        lastWrongWayLogRef.current = Date.now();
+        toast.error(
+          t.tracker.wrongWayAlert,
+          { position: 'bottom-center', duration: 6000 }
+        );
+        logMistake({
+          type: 'wrong_way',
+          timestamp: Date.now(),
+          location: { lat, lng }
+        });
+      }
+    };
+
     if (spatialCache) {
       const nearestWay = findNearestFeature(lat, lng, spatialCache, (f) => f.type === 'way' && (f.tags?.oneway === 'yes' || !!f.tags?.highway), 0.03);
       if (nearestWay && nearestWay.geometry) {
-        spatialWorker?.postMessage({
+        workerRef.current?.addEventListener('message', onWorkerMessage, { once: true });
+        workerRef.current?.postMessage({
           type: 'wrongWayCheck',
           data: { travelBearing, roadNodes: nearestWay.geometry }
         });
@@ -875,31 +895,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const nodes = way.geometry as { lat: number; lon: number }[];
       if (!nodes || nodes.length < 2) return;
 
-      spatialWorker?.postMessage({
+      workerRef.current?.addEventListener('message', onWorkerMessage, { once: true });
+      workerRef.current?.postMessage({
         type: 'wrongWayCheck',
         data: { travelBearing, roadNodes: nodes }
       });
-
-      const onWorkerMessage = (e: MessageEvent) => {
-        if (e.data.type === 'wrongWayCheck' && e.data.result === true) {
-          lastWrongWayLogRef.current = Date.now();
-          toast.error(
-            t.tracker.wrongWayAlert,
-            { position: 'bottom-center', duration: 6000 }
-          );
-          logMistake({
-            type: 'wrong_way',
-            timestamp: Date.now(),
-            location: { lat, lng }
-          });
-        }
-      };
-
-      spatialWorker?.addEventListener('message', onWorkerMessage, { once: true });
     } catch (e) {
       console.error('[Tracker] Wrong way check error:', e);
     }
-  }, [currentSpeed, t, logMistake, spatialWorker, spatialCache]);
+  }, [currentSpeed, t, logMistake, spatialCache]);
 
   const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;

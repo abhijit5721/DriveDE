@@ -24,9 +24,11 @@ interface SyncTask {
   payload: Record<string, unknown>;
   timestamp: number;
   retryCount: number;
+  lastAttemptTimestamp?: number;
 }
 
 const QUEUE_KEY = 'drivede-sync-queue';
+let isProcessing = false;
 
 // --- MAPPING HELPERS ---
 // These ensure that local TS types match the naming conventions and constraints of the DB.
@@ -54,7 +56,26 @@ async function saveQueue(queue: SyncTask[]) {
 }
 
 async function addToQueue(type: SyncTaskType, payload: Record<string, unknown>) {
-  const queue = await getQueue();
+  let queue = await getQueue();
+
+  if (type === 'profile') {
+    const existingIndex = queue.findIndex(t => t.type === 'profile');
+    if (existingIndex !== -1) {
+      queue[existingIndex] = {
+        ...queue[existingIndex],
+        payload,
+        timestamp: Date.now(),
+        retryCount: 0,
+        lastAttemptTimestamp: undefined
+      };
+      await saveQueue(queue);
+      console.log(`[SyncQueue] Profile task updated in-place. Queue length: ${queue.length}`);
+      return;
+    }
+  } else if (type === 'clear_history') {
+    queue = queue.filter(t => t.type !== 'session' && t.type !== 'delete_session');
+  }
+
   const task: SyncTask = {
     id: `${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     type,
@@ -71,59 +92,75 @@ async function addToQueue(type: SyncTaskType, payload: Record<string, unknown>) 
  * Processes the offline sync queue.
  */
 export async function processSyncQueue() {
-  if (!navigator.onLine) return;
+  if (isProcessing || !navigator.onLine) return;
   
   const queue = await getQueue();
   if (queue.length === 0) return;
 
+  isProcessing = true;
   console.log(`[SyncQueue] Processing ${queue.length} pending tasks...`);
   const remainingTasks: SyncTask[] = [];
 
-  for (const task of queue) {
-    try {
-      let success = false;
-      
-      switch (task.type) {
-        case 'lesson':
-          await syncCompletedLesson(task.payload.lessonId as string, true);
-          success = true;
-          break;
-        case 'session':
-          await syncDrivingSession(task.payload.session as DrivingSession, task.payload.transmissionType as TransmissionType, true);
-          success = true;
-          break;
-        case 'quiz':
-          await syncQuizAttempt(task.payload.quizId as string, task.payload.score as number, true);
-          success = true;
-          break;
-        case 'profile':
-          await ensureProfileFromState(task.payload.state as AppState, true);
-          success = true;
-          break;
-        case 'delete_session':
-          await deleteDrivingSessionFromCloud(task.payload.sessionId as string);
-          success = true;
-          break;
-        case 'clear_history':
-          await clearDrivingHistoryFromCloud();
-          success = true;
-          break;
+  try {
+    for (const task of queue) {
+      const backoffMs = Math.min(Math.pow(2, task.retryCount) * 1000, 60000);
+      if (task.lastAttemptTimestamp && (Date.now() - task.lastAttemptTimestamp) < backoffMs) {
+        remainingTasks.push(task);
+        continue;
       }
 
-      if (!success && task.retryCount < 5) {
-        task.retryCount++;
-        remainingTasks.push(task);
-      }
-    } catch (error) {
-      console.warn(`[SyncQueue] Task failed: ${task.id}`, error);
-      if (task.retryCount < 5) {
-        task.retryCount++;
-        remainingTasks.push(task);
+      try {
+        let success = false;
+        let result = { error: null as any };
+        
+        switch (task.type) {
+          case 'lesson':
+            result = await syncCompletedLesson(task.payload.lessonId as string, true);
+            break;
+          case 'session':
+            result = await syncDrivingSession(task.payload.session as DrivingSession, task.payload.transmissionType as TransmissionType, true);
+            break;
+          case 'quiz':
+            result = await syncQuizAttempt(task.payload.quizId as string, task.payload.score as number, true);
+            break;
+          case 'profile':
+            result = await ensureProfileFromState(task.payload.state as AppState, true);
+            break;
+          case 'delete_session':
+            result = await deleteDrivingSessionFromCloud(task.payload.sessionId as string, true);
+            break;
+          case 'clear_history':
+            result = await clearDrivingHistoryFromCloud(true);
+            break;
+        }
+
+        success = !result || !result.error;
+
+        if (!success) {
+          if (task.retryCount < 5) {
+            task.retryCount++;
+            task.lastAttemptTimestamp = Date.now();
+            remainingTasks.push(task);
+          } else {
+            console.warn(`[SyncQueue] Task ${task.id} exceeded max retries. Dropped.`);
+          }
+        }
+      } catch (error) {
+        console.warn(`[SyncQueue] Task failed: ${task.id}`, error);
+        if (task.retryCount < 5) {
+          task.retryCount++;
+          task.lastAttemptTimestamp = Date.now();
+          remainingTasks.push(task);
+        } else {
+          console.warn(`[SyncQueue] Task ${task.id} exceeded max retries. Dropped.`);
+        }
       }
     }
-  }
 
-  await saveQueue(remainingTasks);
+    await saveQueue(remainingTasks);
+  } finally {
+    isProcessing = false;
+  }
 }
 
 // --- CORE SYNC FUNCTIONS ---
@@ -145,21 +182,21 @@ let profileSyncTimer: NodeJS.Timeout | null = null;
  * Syncs the global application state (settings, progress, etc) to the profiles table.
  * Includes a 2-second debounce to prevent spamming the database with high-frequency updates.
  */
-export async function ensureProfileFromState(state: AppState, isRetry: boolean = false) {
+export async function ensureProfileFromState(state: AppState, isRetry: boolean = false): Promise<{ error: any }> {
   if (profileSyncTimer && !isRetry) {
     clearTimeout(profileSyncTimer);
   }
 
-  return new Promise<void>((resolve) => {
+  return new Promise<{ error: any }>((resolve) => {
     const performSync = async () => {
       if (!isSupabaseConfigured || !supabase) {
-        resolve();
+        resolve({ error: new Error('Supabase not configured') });
         return;
       }
       
       const userId = await getCurrentUserId();
       if (!userId) {
-        resolve();
+        resolve({ error: new Error('No user session') });
         return;
       }
 
@@ -183,10 +220,11 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
         if (!isRetry) {
           await addToQueue('profile', { state });
         }
+        resolve({ error });
       } else {
         console.log('[DB-Sync] Profile sync successful!');
+        resolve({ error: null });
       }
-      resolve();
     };
 
     if (isRetry) {
@@ -199,13 +237,13 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
   });
 }
 
-export async function syncCompletedLesson(lessonId: string, isRetry = false) {
-  if (!isSupabaseConfigured || !supabase) return;
+export async function syncCompletedLesson(lessonId: string, isRetry = false): Promise<{ error: any }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   
   if (!userId) {
     if (!isRetry) await addToQueue('lesson', { lessonId });
-    return;
+    return { error: new Error('No user session') };
   }
 
   const { error } = await supabase.from('lesson_progress').upsert({
@@ -215,18 +253,22 @@ export async function syncCompletedLesson(lessonId: string, isRetry = false) {
     completed_at: new Date().toISOString()
   }, { onConflict: 'user_id,lesson_id' });
 
-  if (error && !isRetry) {
-    await addToQueue('lesson', { lessonId });
+  if (error) {
+    if (!isRetry) {
+      await addToQueue('lesson', { lessonId });
+    }
+    return { error };
   }
+  return { error: null };
 }
 
-export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType, isRetry = false) {
-  if (!isSupabaseConfigured || !supabase) return;
+export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType, isRetry = false): Promise<{ error: any }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
 
   if (!userId) {
     if (!isRetry) await addToQueue('session', { session, transmissionType });
-    return;
+    return { error: new Error('No user session') };
   }
 
   const { error } = await supabase.from('driving_sessions').upsert({
@@ -252,21 +294,23 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
     // Update local store with error status
     const { useAppStore } = await import('../store/useAppStore');
     useAppStore.getState().updateDrivingSession(session.id, { syncStatus: 'error' });
+    return { error };
   } else {
     console.log('[DB-Sync] Driving session sync successful:', session.id);
     // Update local store with synced status
     const { useAppStore } = await import('../store/useAppStore');
     useAppStore.getState().updateDrivingSession(session.id, { syncStatus: 'synced' });
+    return { error: null };
   }
 }
 
-export async function syncQuizAttempt(quizId: string, score: number, isRetry = false) {
-  if (!isSupabaseConfigured || !supabase) return;
+export async function syncQuizAttempt(quizId: string, score: number, isRetry = false): Promise<{ error: any }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
 
   if (!userId) {
     if (!isRetry) await addToQueue('quiz', { quizId, score });
-    return;
+    return { error: new Error('No user session') };
   }
 
   const { error } = await supabase.from('quiz_attempts').insert({
@@ -276,9 +320,13 @@ export async function syncQuizAttempt(quizId: string, score: number, isRetry = f
     completed_at: new Date().toISOString()
   });
 
-  if (error && !isRetry) {
-    await addToQueue('quiz', { quizId, score });
+  if (error) {
+    if (!isRetry) {
+      await addToQueue('quiz', { quizId, score });
+    }
+    return { error };
   }
+  return { error: null };
 }
 
 export async function hydrateFromSupabase() {
@@ -442,32 +490,36 @@ export async function syncAllData(state: AppState) {
   }
 }
 
-export async function deleteDrivingSessionFromCloud(sessionId: string) {
-  if (!isSupabaseConfigured || !supabase) return;
+export async function deleteDrivingSessionFromCloud(sessionId: string, isRetry = false): Promise<{ error: any }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   if (!userId) {
-    await addToQueue('delete_session', { sessionId });
-    return;
+    if (!isRetry) await addToQueue('delete_session', { sessionId });
+    return { error: new Error('No user session') };
   }
 
   const { error } = await supabase.from('driving_sessions').delete().eq('id', sessionId).eq('user_id', userId);
   if (error) {
-    await addToQueue('delete_session', { sessionId });
+    if (!isRetry) await addToQueue('delete_session', { sessionId });
+    return { error };
   }
+  return { error: null };
 }
 
-export async function clearDrivingHistoryFromCloud() {
-  if (!isSupabaseConfigured || !supabase) return;
+export async function clearDrivingHistoryFromCloud(isRetry = false): Promise<{ error: any }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   if (!userId) {
-    await addToQueue('clear_history', {});
-    return;
+    if (!isRetry) await addToQueue('clear_history', {});
+    return { error: new Error('No user session') };
   }
 
   const { error } = await supabase.from('driving_sessions').delete().eq('user_id', userId);
   if (error) {
-    await addToQueue('clear_history', {});
+    if (!isRetry) await addToQueue('clear_history', {});
+    return { error };
   }
+  return { error: null };
 }
 
 export async function resetAllDataFromCloud() {

@@ -109,4 +109,74 @@ describe('supabaseSync', () => {
     // Verify queue was cleared (setIDB called with empty array)
     expect(setIDB).toHaveBeenCalledWith('drivede-sync-queue', []);
   });
+
+  it('should apply exponential backoff and skip tasks within backoff window', async () => {
+    // Mock a task that failed recently
+    const recentTask = {
+      id: 'task-backoff',
+      type: 'lesson',
+      payload: { lessonId: 'lesson-1' },
+      timestamp: Date.now() - 500, // Created 500ms ago
+      retryCount: 1, // backoff window = 2^1 * 1000 = 2000ms
+      lastAttemptTimestamp: Date.now() - 500 // Last attempted 500ms ago
+    };
+    vi.mocked(getIDB).mockResolvedValue([recentTask]);
+
+    const mockUpsert = vi.fn().mockResolvedValue({ error: null });
+    vi.mocked(supabase!.from).mockReturnValue({ 
+      upsert: mockUpsert
+    } as any);
+
+    await processSyncQueue();
+
+    // Verify it did NOT attempt to sync the lesson because of backoff
+    expect(mockUpsert).not.toHaveBeenCalled();
+    
+    // Verify queue was saved with the task still in it
+    expect(setIDB).toHaveBeenCalledWith('drivede-sync-queue', [recentTask]);
+  });
+
+  it('should deduplicate profile sync tasks in the queue when offline', async () => {
+    Object.defineProperty(navigator, 'onLine', {
+      configurable: true,
+      value: false,
+      writable: true
+    });
+
+    vi.mocked(supabase!.auth.getUser).mockResolvedValue({ data: { user: { id: 'user_123' } }, error: null } as any);
+    
+    // Mock getIDB to return an existing profile task in queue
+    const existingTask = {
+      id: 'profile-existing-id',
+      type: 'profile' as const,
+      payload: { state: { ...mockState, darkMode: false } },
+      timestamp: Date.now() - 5000,
+      retryCount: 0
+    };
+    
+    // Mock upsert to fail so it gets queued
+    const mockUpsert = vi.fn().mockResolvedValue({ error: { message: 'Network Error' } });
+    vi.mocked(supabase!.from).mockReturnValue({ upsert: mockUpsert } as any);
+    
+    let savedQueue: any[] = [];
+    vi.mocked(getIDB).mockImplementation(async (key) => {
+      if (key === 'drivede-sync-queue') return [existingTask];
+      return null;
+    });
+    vi.mocked(setIDB).mockImplementation(async (key, val) => {
+      if (key === 'drivede-sync-queue') savedQueue = val;
+    });
+
+    vi.useFakeTimers();
+
+    const syncPromise = ensureProfileFromState({ ...mockState, darkMode: true });
+    vi.runAllTimers();
+    await syncPromise;
+
+    // Verify that instead of appending, the existing task was replaced or updated
+    expect(savedQueue.length).toBe(1);
+    expect(savedQueue[0].payload.state.darkMode).toBe(true); // Should have updated value
+    
+    vi.useRealTimers();
+  });
 });
