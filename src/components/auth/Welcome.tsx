@@ -389,7 +389,7 @@ export function Welcome() {
           <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" onClick={() => setShowDemo(false)} />
           <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl">
             <button onClick={() => setShowDemo(false)} className="absolute top-4 right-4 z-[110] flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white"><X className="h-6 w-6" /></button>
-            <img src="/demo-video-final-v12.webp" className="h-full w-full object-contain" alt="Demo" />
+            <img src="/demo-video-final-v12.webp" className="h-full w-full object-contain" alt="Demo" loading="lazy" decoding="async" />
           </div>
         </div>
       )}
