@@ -297,8 +297,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     authStatus, updateMistakeStatus, isHydrated: storeHydrated
   } = useAppStore();
 
-  const [isInitializing] = useState(false);
+  const [isInitializing] = useState(false);  // --- UI STATE ---
   const [activeTab, setActiveTab] = useState<'tracker' | 'history'>('tracker');
+  
+  // Feature Toggle for Auto Fault Detection
+  const isAutoDetectEnabled = import.meta.env.VITE_ENABLE_AUTO_FAULT_DETECTION === 'true';
   const [currentLocation, setCurrentLocation] = useState<GPSPoint | null>(null);
   
   // ── Session Data ──────────────────────────────────────────
@@ -1247,7 +1250,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
         const canDetectMotion = isPremium || hasTrial;
         
-        if (!canDetectMotion || isSimulationMode) return;
+        if (!isAutoDetectEnabled || !canDetectMotion || isSimulationMode) return;
         
         const acc = event.acceleration;
         if (!acc) return;
@@ -1348,7 +1351,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       const distFromSign = calculateDistance(lastPoint.lat, lastPoint.lng, activeStopSign.lat, activeStopSign.lng);
       
       if (distFromSign > 0.03 && gpsPoints.length > 3) { 
-        if (!hasStoppedAtSign) {
+        if (!hasStoppedAtSign && isAutoDetectEnabled) {
           toast.error(t.tracker.stopSignViolation, { position: 'bottom-center' });
           logMistake({
             type: 'stop_sign',
@@ -1362,7 +1365,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
 
     // 4. SMART SPEEDING DETECTION
-    if (currentLimit && currentSpeed > currentLimit) {
+    if (isAutoDetectEnabled && currentLimit && currentSpeed > currentLimit) {
       // Thresholds: Strict in sensitive areas, lenient on open roads
       const isSensitiveZone = currentLimit <= 30; // 30 zones, school zones, living streets
       const tolerance = isSensitiveZone ? 3 : Math.max(5, Math.round(currentLimit * 0.1)); 
@@ -1398,7 +1401,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     const IDLING_THRESHOLD = isSimulationMode ? 15000 : 60000;
     
-    if (currentSpeed === 0) {
+    if (isAutoDetectEnabled && currentSpeed === 0) {
       if (stationaryStartRef.current === null) {
         stationaryStartRef.current = Date.now();
       } else {
