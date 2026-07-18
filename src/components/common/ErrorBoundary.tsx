@@ -26,6 +26,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    if (error.message.includes('Failed to fetch dynamically imported module') || error.message.includes('Importing a module script failed')) {
+      window.location.reload();
+      return;
+    }
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
   }
 
@@ -41,6 +45,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      if (this.state.error?.message?.includes('Failed to fetch dynamically imported module') || this.state.error?.message?.includes('Importing a module script failed')) {
+        return <div className="flex min-h-screen items-center justify-center dark:bg-slate-950 bg-slate-50"><RefreshCcw className="h-8 w-8 animate-spin text-blue-500" /></div>;
+      }
       return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4 dark:bg-slate-950">
           <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900">

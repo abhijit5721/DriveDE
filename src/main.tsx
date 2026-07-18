@@ -10,6 +10,11 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 import { analyticsService } from './services/AnalyticsService';
 
+// Handle chunk load errors (e.g. when a new version is deployed while user has app open)
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload();
+});
+
 analyticsService.init();
 
 const Root = () => (
