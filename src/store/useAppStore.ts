@@ -791,7 +791,6 @@ export const useAppStore = create<AppState>()(
           language: state.language,
           darkMode: state.darkMode,
           authStatus: state.authStatus,
-          hasVisited: state.hasVisited,
           hasCompletedOnboarding: state.hasCompletedOnboarding,
           activeTab: state.activeTab,
           licenseType: state.licenseType,
