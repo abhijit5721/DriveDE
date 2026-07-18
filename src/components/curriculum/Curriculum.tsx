@@ -67,7 +67,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
           <Crown className="h-3 w-3" />
-          Pro
+          <span>Pro</span>
         </span>
       );
     }
@@ -75,7 +75,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700 dark:bg-orange-900/50 dark:text-orange-300">
           <Cog className="h-3 w-3" />
-          {t.curriculum.manualBadge}
+          <span>{t.curriculum.manualBadge}</span>
         </span>
       );
     }
@@ -83,7 +83,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
           <Zap className="h-3 w-3" />
-          {t.curriculum.autoBadge}
+          <span>{t.curriculum.autoBadge}</span>
         </span>
       );
     }
@@ -91,7 +91,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200 shadow-sm shadow-indigo-500/10">
           <Activity className="h-3 w-3" />
-          {t.curriculum.interactiveBadge}
+          <span>{t.curriculum.interactiveBadge}</span>
         </span>
       );
     }

@@ -302,10 +302,10 @@ export function OnboardingTour() {
                 {/* Content */}
                 <div className="relative z-10">
                   <h3 className="text-lg font-bold text-white mb-2 pr-8 tracking-tight">
-                    {t.onboarding.steps[currentStep]?.title}
+                    <span>{t.onboarding.steps[currentStep]?.title}</span>
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed mb-5 font-medium">
-                    {t.onboarding.steps[currentStep]?.desc}
+                    <span>{t.onboarding.steps[currentStep]?.desc}</span>
                   </p>
 
                   {/* Step Progress + Actions */}
@@ -329,7 +329,7 @@ export function OnboardingTour() {
                         />
                       ))}
                       <span className="ml-2 text-[10px] font-bold text-slate-500 tabular-nums">
-                        {currentStep + 1} {t.onboarding.stepOf} {totalSteps}
+                        <span>{currentStep + 1}</span> <span>{t.onboarding.stepOf}</span> <span>{totalSteps}</span>
                       </span>
                     </div>
 
@@ -345,7 +345,7 @@ export function OnboardingTour() {
                           : 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-600/30'
                       )}
                     >
-                      {isLastStep ? t.onboarding.finish : t.onboarding.next}
+                      <span>{isLastStep ? t.onboarding.finish : t.onboarding.next}</span>
                       {!isLastStep && <ChevronRight className="h-3.5 w-3.5" />}
                     </motion.button>
                   </div>

@@ -2204,7 +2204,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
                 >
                   <Pause className="h-4 w-4" />
-                  {t.common.pause}
+                  <span>{t.common.pause}</span>
                 </button>
               ) : (
                 <button
@@ -2231,22 +2231,22 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   {(activeSession && activeSession.isPaused) ? (
                     <>
                       <Play className="h-4 w-4" />
-                      {t.common.resume}
+                      <span>{t.common.resume}</span>
                     </>
                   ) : isInitializing ? (
                     <>
                       <RefreshCcw className="h-4 w-4 animate-spin" />
-                      Launching...
+                      <span>Launching...</span>
                     </>
                   ) : (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT ? (
                     <>
                       <Crown className="h-4 w-4" />
-                      {t.tracker.trackingPro}
+                      <span>{t.tracker.trackingPro}</span>
                     </>
                   ) : (
                     <>
                       <Play className="h-4 w-4" />
-                      {t.tracker.startLive}
+                      <span>{t.tracker.startLive}</span>
                     </>
                   ))}
                 </button>
