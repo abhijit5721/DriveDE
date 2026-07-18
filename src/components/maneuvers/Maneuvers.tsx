@@ -78,6 +78,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
 
   return (
     <motion.div 
+      data-tour="tour-maneuvers"
       className="space-y-6 pb-6"
       initial="hidden"
       animate="visible"

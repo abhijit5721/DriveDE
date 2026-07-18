@@ -17,7 +17,15 @@ import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { cn } from '../../utils/cn';
 
-const TOUR_TARGETS = ['readiness', 'exam-sim', 'stats', 'special-drives', 'nav'] as const;
+import type { TabType } from '../../types';
+
+const TOUR_STEPS: { target: string; tab: TabType }[] = [
+  { target: 'readiness', tab: 'home' },
+  { target: 'tour-curriculum', tab: 'curriculum' },
+  { target: 'tour-maneuvers', tab: 'maneuvers' },
+  { target: 'tour-tracker', tab: 'tracker' },
+  { target: 'tour-account', tab: 'account' }
+];
 
 interface SpotlightRect {
   top: number;
@@ -27,7 +35,7 @@ interface SpotlightRect {
 }
 
 export function OnboardingTour() {
-  const { language, setHasCompletedOnboarding } = useAppStore();
+  const { language, setHasCompletedOnboarding, setActiveTab, activeTab } = useAppStore();
   const t = TRANSLATIONS[language];
   const [currentStep, setCurrentStep] = useState(-1); // -1 = welcome screen
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null);
@@ -35,7 +43,7 @@ export function OnboardingTour() {
   const [isVisible, setIsVisible] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const totalSteps = TOUR_TARGETS.length;
+  const totalSteps = TOUR_STEPS.length;
   const isWelcome = currentStep === -1;
   const isLastStep = currentStep === totalSteps - 1;
 
@@ -45,6 +53,16 @@ export function OnboardingTour() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Check if we need to switch tabs before updating the spotlight
+  useEffect(() => {
+    if (currentStep >= 0 && currentStep < totalSteps) {
+      const step = TOUR_STEPS[currentStep];
+      if (activeTab !== step.tab) {
+        setActiveTab(step.tab);
+      }
+    }
+  }, [currentStep, activeTab, setActiveTab, totalSteps]);
+
   // Calculate spotlight position for current step
   const updateSpotlight = useCallback(() => {
     if (currentStep < 0 || currentStep >= totalSteps) {
@@ -52,7 +70,9 @@ export function OnboardingTour() {
       return;
     }
 
-    const target = document.querySelector(`[data-tour="${TOUR_TARGETS[currentStep]}"]`);
+    const step = TOUR_STEPS[currentStep];
+    const target = document.querySelector(`[data-tour="${step.target}"]`);
+    
     if (!target) {
       setSpotlight(null);
       return;
@@ -76,10 +96,26 @@ export function OnboardingTour() {
     target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [currentStep, totalSteps]);
 
+  // Handle polling for target elements when switching tabs
   useEffect(() => {
+    if (currentStep < 0 || currentStep >= totalSteps) return;
+    
+    // Set an interval to poll for the DOM element to appear after tab switches
+    const interval = setInterval(() => {
+      const target = document.querySelector(`[data-tour="${TOUR_STEPS[currentStep].target}"]`);
+      if (target) {
+        updateSpotlight();
+        clearInterval(interval);
+      }
+    }, 100);
+
+    // Initial check
     updateSpotlight();
 
-    // Recalculate on resize/scroll
+    return () => clearInterval(interval);
+  }, [currentStep, updateSpotlight, totalSteps, activeTab]);
+
+  useEffect(() => {
     window.addEventListener('resize', updateSpotlight);
     window.addEventListener('scroll', updateSpotlight, true);
     return () => {
@@ -100,6 +136,7 @@ export function OnboardingTour() {
     setIsVisible(false);
     setTimeout(() => {
       setHasCompletedOnboarding(true);
+      setActiveTab('home');
     }, 400);
   };
 
@@ -268,7 +305,7 @@ export function OnboardingTour() {
                   <div className="flex items-center justify-between">
                     {/* Step Dots */}
                     <div className="flex items-center gap-1.5">
-                      {TOUR_TARGETS.map((_, i) => (
+                      {TOUR_STEPS.map((_, i) => (
                         <motion.div
                           key={i}
                           initial={false}

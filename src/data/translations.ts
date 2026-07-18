@@ -2222,11 +2222,11 @@ export const TRANSLATIONS = {
       welcome: 'Willkommen bei DriveDE! 🚗',
       welcomeDesc: 'Lass uns dir kurz die wichtigsten Bereiche zeigen.',
       steps: [
-        { title: '📊 Deine Prüfungsbereitschaft', desc: 'Hier siehst du deinen kombinierten Theorie- und Praxis-Score. Tippe darauf für eine detaillierte Aufschlüsselung.' },
-        { title: '🎙️ KI-Prüfungssimulation', desc: 'Übe mit unserem KI-Sprachprüfer. Er simuliert die echte deutsche Fahrprüfung.' },
-        { title: '📈 Dein Fortschritt', desc: 'Verfolge deine Fahrstunden, abgeschlossene Kapitel und deinen aktuellen Lernstreak.' },
-        { title: '🛣️ Pflichtfahrstunden', desc: 'Verfolge deine Überland-, Autobahn- und Nachtfahrstunden, um die deutschen Anforderungen zu erfüllen.' },
-        { title: '🧭 App erkunden', desc: 'Nutze diese Tabs, um zwischen Dashboard, Lernstoff, Manöver, Erfolge, Tracker, Budget und Konto zu wechseln.' }
+        { title: '📊 Deine Prüfungsbereitschaft', desc: 'Hier siehst du deinen kombinierten Theorie- und Praxis-Score auf dem Dashboard.' },
+        { title: '📚 Dein Lernstoff', desc: 'Lerne alle Kapitel und bereite dich gezielt auf Theorie und Praxis vor.' },
+        { title: '✅ Manöver & Checklisten', desc: 'Gehe die Schritt-für-Schritt Anleitungen für alle Prüfungsmanöver durch.' },
+        { title: '📝 Fahrten-Tracker', desc: 'Erfasse deine Fahrstunden und trage besondere Fahrten (Nacht, Autobahn) ein.' },
+        { title: '👤 Dein Konto', desc: 'Passe deine Einstellungen an, exportiere Daten und teile Berichte mit deinem Fahrlehrer.' }
       ],
       next: 'Weiter',
       skip: 'Tour überspringen',
@@ -4460,11 +4460,11 @@ export const TRANSLATIONS = {
       welcome: 'Welcome to DriveDE! 🚗',
       welcomeDesc: 'Let us give you a quick tour of the key areas.',
       steps: [
-        { title: '📊 Your Exam Readiness', desc: 'This gauge shows your combined theory + driving readiness score. Tap it for a detailed breakdown.' },
-        { title: '🎙️ AI Exam Simulation', desc: 'Practice with our AI-powered voice exam simulator. It mimics the real German driving exam.' },
-        { title: '📈 Your Progress at a Glance', desc: 'Track your driving hours, completed chapters, and current learning streak here.' },
-        { title: '🛣️ Special Driving Requirements', desc: 'Track your mandatory Überland, Autobahn, and night driving hours to meet German requirements.' },
-        { title: '🧭 Explore the App', desc: 'Use these tabs to navigate between Dashboard, Curriculum, Maneuvers, Achievements, Tracker, Budget, and Account.' }
+        { title: '📊 Your Exam Readiness', desc: 'This gauge on the Dashboard shows your combined theory + driving readiness score.' },
+        { title: '📚 Curriculum', desc: 'Learn all chapters and prepare specifically for theory and practice.' },
+        { title: '✅ Maneuvers & Checklists', desc: 'Go through the step-by-step instructions for all practical exam maneuvers.' },
+        { title: '📝 Drive Tracker', desc: 'Log your driving hours and track special drives like night or Autobahn.' },
+        { title: '👤 Your Account', desc: 'Customize your settings, export data, and share reports with your instructor.' }
       ],
       next: 'Next',
       skip: 'Skip Tour',

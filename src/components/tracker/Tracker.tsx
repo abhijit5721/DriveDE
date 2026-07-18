@@ -2197,7 +2197,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
             )}
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div data-tour="tour-tracker" className="mt-6 grid grid-cols-2 gap-3">
               {isTimerRunning ? (
                 <button
                   onClick={handlePauseTimer}

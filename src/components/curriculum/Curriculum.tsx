@@ -331,7 +331,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           variants={containerVariants}
         >
           <div className="absolute left-6 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-700" />
-          <div className="relative space-y-4">
+          <div data-tour="tour-curriculum" className="relative space-y-4">
             {filteredChapters.map((chapter, index) => {
               // Calculate completion percentage for the current chapter
               const completedInChapter = chapter.lessons.filter(l =>

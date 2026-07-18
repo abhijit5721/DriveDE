@@ -815,7 +815,7 @@ export default function App() {
 
       {!Capacitor.isNativePlatform() && <CookieConsent />}
       <AchievementOverlay />
-      {hasVisited && !hasCompletedOnboarding && activeTab === 'home' && <OnboardingTour />}
+      {hasVisited && !hasCompletedOnboarding && <OnboardingTour />}
     </>
   );
 }

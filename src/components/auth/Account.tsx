@@ -164,7 +164,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
 
   return (
     <div className="space-y-6 pb-6">
-      <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+      <div data-tour="tour-account" className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
             {authStatus === 'signed_in' ? <Cloud className="h-7 w-7" /> : <User className="h-7 w-7" />}
