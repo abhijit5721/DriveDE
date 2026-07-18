@@ -408,7 +408,7 @@ export async function hydrateFromSupabase() {
     learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
     transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,
     lessons: lessons ?? [],
-    hasCompletedOnboarding: profile?.has_completed_onboarding ?? false,
+    hasCompletedOnboarding: profile?.has_completed_onboarding ?? null,
     sessions: (sessions ?? []).map(s => ({
       id: s.external_id || s.id,
       date: s.session_date || '',

@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, X, Sparkles } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
+import { syncAllData } from '../../services/supabaseSync';
 import { cn } from '../../utils/cn';
 
 import type { TabType } from '../../types';
@@ -137,6 +138,12 @@ export function OnboardingTour() {
     setTimeout(() => {
       setHasCompletedOnboarding(true);
       setActiveTab('home');
+      
+      // Sync immediately so the user doesn't see the tour again on next login
+      const state = useAppStore.getState();
+      if (state.authStatus === 'signed_in') {
+        syncAllData(state).catch(console.error);
+      }
     }, 400);
   };
 
