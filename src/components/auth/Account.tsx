@@ -200,7 +200,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
               >
                 <LogOut className="h-4 w-4" />
-                {t.signOut}
+                <span>{t.signOut}</span>
               </button>
 
               <button
