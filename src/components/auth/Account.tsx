@@ -467,26 +467,28 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
             </button>
           )}
 
-          <div className="pt-2">
-            <div className="mb-2 px-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.developerTools}</p>
-            </div>
-            <button
-              onClick={enableDemoMode}
-              className="flex w-full items-center justify-between rounded-xl border border-blue-200 bg-blue-50/50 px-4 py-3 text-left transition hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/10"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
-                  <Zap className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.enableDemo}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{t.enableDemoDesc}</p>
-                </div>
+          {import.meta.env.DEV && (
+            <div className="pt-2">
+              <div className="mb-2 px-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{t.developerTools}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-400" />
-            </button>
-          </div>
+              <button
+                onClick={enableDemoMode}
+                className="flex w-full items-center justify-between rounded-xl border border-blue-200 bg-blue-50/50 px-4 py-3 text-left transition hover:bg-blue-50 dark:border-blue-900/40 dark:hover:bg-blue-900/10"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.enableDemo}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t.enableDemoDesc}</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-slate-400" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
