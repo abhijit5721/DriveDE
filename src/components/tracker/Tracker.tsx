@@ -1568,33 +1568,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             toast(t.tracker.stopSignAhead, { id: 'mock-stop-toast' });
           }
 
-          if (currentStep === 28) {
+          if (currentStep === 28 && isAutoDetectEnabled) {
             toast.dismiss();
             toast.error(t.tracker.wrongWayAlert, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'wrong_way', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
 
-          if (currentStep === 30) {
+          if (currentStep === 30 && isAutoDetectEnabled) {
             toast.error(`${t.tracker.illegalTurn} (${t.tracker.pedestrianZone})`, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'illegal_turn', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
 
-          if (currentStep === 8) {
+          if (currentStep === 8 && isAutoDetectEnabled) {
             toast.error(t.tracker.mistakes.roundaboutSignal, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'roundabout_signal', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
           
-          if (currentStep === 11) {
+          if (currentStep === 11 && isAutoDetectEnabled) {
             toast.error(t.tracker.mistakes.curveSpeeding, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'curve_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
           
-          if (currentStep === 14) {
+          if (currentStep === 14 && isAutoDetectEnabled) {
             toast.error(t.tracker.mistakes.aggressiveCornering, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'aggressive_cornering', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
 
-          if (currentStep === 22) {
+          if (currentStep === 22 && isAutoDetectEnabled) {
             toast.error(t.tracker.mistakes.rightBeforeLeft, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'right_before_left', speed: point.speed, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
