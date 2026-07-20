@@ -13,10 +13,16 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  const contactEmail = process.env.CONTACT_EMAIL;
+  if (!contactEmail) {
+    console.error('[Contact] CONTACT_EMAIL env var is not set.');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
   try {
     const data = await resend.emails.send({
       from: 'DriveDE Feedback <system@drivede.app>',
-      to: ['your-personal-email@example.com'], // The user should replace this or we can use an env var
+      to: [contactEmail],
       replyTo: email,
       subject: `New Feedback: ${subject || 'General Inquiry'}`,
       html: `
