@@ -564,31 +564,37 @@ export function Welcome() {
 
       {/* 💳 Transparent Pricing Comparison Section */}
       <section id="pricing" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-bold text-emerald-400 uppercase tracking-widest">
               Simple Transparent Pricing
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Choose Your Learning Path</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Pass Your Fahrprüfung For Less</h2>
             <p className="mt-4 text-slate-400 max-w-xl mx-auto">
-              Start for free today. Upgrade to Pro whenever you're ready for full GPS & AI coaching.
+              Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {/* Free Plan */}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 items-stretch">
+            {/* 30 Days Pass */}
             <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Free Forever</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">30-Day Pass</span>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">€0</span>
-                  <span className="text-slate-500 text-sm">/ forever</span>
+                  <span className="text-4xl font-black text-white">€9.99</span>
+                  <span className="text-slate-500 text-sm">/ 30 days</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-400">Essential tools to log lessons and track theory progress.</p>
+                <p className="mt-3 text-sm text-slate-400">Great for quick exam prep in your final driving weeks.</p>
                 <div className="mt-8 space-y-4">
-                  {['Full Official Theory Curriculum', 'Standard Driving Logbook', 'Basic Exam Readiness Score', 'Manual & Automatic Support'].map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm text-slate-300">
-                      <Check className="h-4 w-4 text-slate-500" />
+                  {[
+                    'Full GPS Live Driving Tracker',
+                    'OpenStreetMap Speed Limit Warnings',
+                    'AI Instructor Debriefings',
+                    '3D Maneuver Simulations (Einparken)',
+                    'Official Theory Curriculum'
+                  ].map((feat, i) => (
+                    <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
+                      <Check className="h-4 w-4 text-slate-400 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -598,22 +604,22 @@ export function Welcome() {
                 onClick={handleStart} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
               >
-                Start Free
+                Get 30-Day Pass
               </button>
             </div>
 
-            {/* Pro Plan */}
+            {/* 90 Days Pass (Most Popular) */}
             <div className="relative rounded-3xl border-2 border-blue-500 bg-gradient-to-b from-blue-950/40 via-slate-900/90 to-slate-900 p-8 text-left shadow-2xl shadow-blue-500/20 flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 text-xs font-bold text-white shadow-md">
                 MOST POPULAR
               </span>
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">DriveDE Pro</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">90-Day Pass</span>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">€14.99</span>
-                  <span className="text-slate-400 text-sm">/ one-time lifetime</span>
+                  <span className="text-4xl font-black text-white">€19.99</span>
+                  <span className="text-slate-400 text-sm">/ 90 days</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-300">Complete GPS tracking, AI briefings, and 3D maneuver simulations.</p>
+                <p className="mt-3 text-sm text-slate-300">Covers your complete driving school journey from day 1 to exam.</p>
                 <div className="mt-8 space-y-4">
                   {[
                     'Unlimited GPS Live Driving Tracker',
@@ -623,8 +629,8 @@ export function Welcome() {
                     'Fahrlehrer PDF Report Exports',
                     'Foreign License Umschreibung Mode'
                   ].map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm text-white">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <div key={i} className="flex items-center gap-3 text-xs text-white">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -634,7 +640,39 @@ export function Welcome() {
                 onClick={handleStart} 
                 className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
               >
-                Get DriveDE Pro
+                Get 90-Day Pass
+              </button>
+            </div>
+
+            {/* Lifetime Access */}
+            <div className="rounded-3xl border border-purple-500/30 bg-gradient-to-b from-purple-950/20 to-slate-900 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Lifetime Access</span>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-white">€29.99</span>
+                  <span className="text-slate-500 text-sm">/ one-time</span>
+                </div>
+                <p className="mt-3 text-sm text-slate-400">Lifetime access to all current & future DriveDE updates.</p>
+                <div className="mt-8 space-y-4">
+                  {[
+                    'Everything in 90-Day Pass',
+                    'Lifetime Access (No Expiry)',
+                    'All Future AI & Features',
+                    'Priority Student Support',
+                    'Multi-Device Sync'
+                  ].map((feat, i) => (
+                    <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
+                      <Check className="h-4 w-4 text-purple-400 shrink-0" />
+                      {feat}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button 
+                onClick={handleStart} 
+                className="mt-10 w-full rounded-2xl bg-slate-800 border border-purple-500/30 py-4 text-sm font-bold text-white transition hover:bg-purple-900/40"
+              >
+                Get Lifetime Access
               </button>
             </div>
           </div>
