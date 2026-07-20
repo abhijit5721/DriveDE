@@ -7,7 +7,6 @@ import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, 
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
-import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
 
 interface DesktopNavProps {
@@ -42,16 +41,13 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           className="group flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none"
           aria-label="Go to Home"
         >
-          <div className={cn(
-            'flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-lg transition-all',
-            isPremium ? 'bg-premium-gold shadow-orange-500/20' : 'bg-premium-blue shadow-blue-500/20'
-          )}>
-            {isPremium ? (
+          {isPremium ? (
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-premium-gold text-white shadow-lg shadow-orange-500/20 transition-all">
               <Crown className="h-6 w-6 transition-transform scale-110" />
-            ) : (
-              <Logo className="h-6 w-6" />
-            )}
-          </div>
+            </div>
+          ) : (
+            <Logo className="h-10 w-10 transition-all" />
+          )}
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DriveDE</h2>

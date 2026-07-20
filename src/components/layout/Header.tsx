@@ -6,7 +6,6 @@
 import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { useAppStore } from '../../store/useAppStore';
-import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 
 interface HeaderProps {
@@ -27,18 +26,13 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             className="group flex items-center gap-3 focus:outline-none active:scale-95 transition-all"
             aria-label="Go to Home"
           >
-            <div className={cn(
-              'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl shadow-lg transition-all group-hover:scale-110 group-hover:rotate-3',
-              isPremium 
-                ? 'bg-premium-gold shadow-orange-500/20' 
-                : 'bg-premium-blue shadow-blue-500/20'
-            )}>
-              {isPremium ? (
+            {isPremium ? (
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-premium-gold shadow-lg shadow-orange-500/20 transition-all group-hover:scale-110 group-hover:rotate-3">
                 <Crown className="h-6 w-6 text-white" />
-              ) : (
-                <Logo className="h-6 w-6" />
-              )}
-            </div>
+              </div>
+            ) : (
+              <Logo className="h-10 w-10 flex-shrink-0 transition-all group-hover:scale-110 group-hover:rotate-3" />
+            )}
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
