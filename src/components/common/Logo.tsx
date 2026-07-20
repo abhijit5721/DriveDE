@@ -20,7 +20,7 @@ export function Logo({ className, size = 'md' }: LogoProps) {
       alt="DriveDE Logo"
       className={cn(
         sizeClasses[size],
-        'object-contain drop-shadow-[0_2px_6px_rgba(15,23,42,0.18)] dark:drop-shadow-[0_0_10px_rgba(96,165,250,0.4)] transition-all',
+        'object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)] transition-all',
         className
       )}
     />
