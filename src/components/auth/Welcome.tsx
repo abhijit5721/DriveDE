@@ -68,29 +68,7 @@ export function Welcome() {
     }
   };
 
-  const openPositions = [
-    {
-      title: 'Senior Mobile & Web Engineer',
-      dept: 'Engineering',
-      location: 'Remote (Germany) / Munich',
-      type: 'Full-time',
-      desc: 'Build the next generation of real-time GPS tracking and offline-first PWA features using React, TypeScript, and Capacitor.'
-    },
-    {
-      title: 'AI Traffic Systems & Perception Lead',
-      dept: 'AI & Data Science',
-      location: 'Remote (Germany) / Berlin',
-      type: 'Full-time',
-      desc: 'Develop OpenStreetMap-powered speed limit prediction engines and computer vision maneuver analysis models.'
-    },
-    {
-      title: 'Fahrschule Partnerships Manager',
-      dept: 'Growth & BD',
-      location: 'Munich / Frankfurt',
-      type: 'Full-time',
-      desc: 'Partner directly with leading driving schools across Germany to integrate DriveDE into instructor workflows.'
-    }
-  ];
+
 
   const faqs = [
     {
@@ -392,12 +370,12 @@ export function Welcome() {
                 Over 500,000 students take their practical driving exam (*Fahrprüfung*) in Germany every year, facing high stress and high re-test costs.
               </p>
               <p className="mt-4 text-slate-400 text-sm leading-relaxed">
-                DriveDE was founded in Munich with a single clear mission: leverage real-time GPS telemetry, OpenStreetMap data, and AI debriefings to empower students and driving instructors with complete transparency.
+                DriveDE was founded in Hamburg with a single clear mission: leverage real-time GPS telemetry, OpenStreetMap data, and AI debriefings to empower students and driving instructors with complete transparency.
               </p>
               <div className="mt-8 grid grid-cols-2 gap-4 border-t border-slate-800 pt-6">
                 <div>
-                  <p className="text-2xl font-bold text-white">Munich, DE</p>
-                  <p className="text-xs text-slate-500">Company Headquarters</p>
+                  <p className="text-2xl font-bold text-white">Hamburg, DE</p>
+                  <p className="text-xs text-slate-500">Company Origin</p>
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-emerald-400">100% GDPR</p>
@@ -447,42 +425,29 @@ export function Welcome() {
 
       {/* 💼 Careers Section */}
       <section id="careers" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
-        <div className="mx-auto max-w-5xl text-left">
-          <div className="mb-16 text-center">
-            <span className="rounded-full bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 text-xs font-bold text-purple-400 uppercase tracking-widest">
-              We Are Hiring
-            </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Join the DriveDE Team</h2>
-            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
-              Help us build the future of mobility and driver safety in Europe.
-            </p>
-          </div>
+        <div className="mx-auto max-w-4xl text-center">
+          <span className="rounded-full bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 text-xs font-bold text-purple-400 uppercase tracking-widest">
+            Lean & Focused Team
+          </span>
+          <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Careers at DriveDE</h2>
+          <p className="mt-6 text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
+            DriveDE is currently built and maintained by an agile product team based in Hamburg. While we don't have active open roles right now, we are always eager to connect with passionate engineers, driving instructors, and collaborators!
+          </p>
 
-          <div className="space-y-6">
-            {openPositions.map((job, idx) => (
-              <div 
-                key={idx} 
-                className="group rounded-3xl border border-slate-800 bg-slate-900/60 p-8 transition hover:border-purple-500/40 hover:bg-slate-900 flex flex-col md:flex-row md:items-center justify-between gap-6"
-              >
-                <div>
-                  <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition">{job.title}</h3>
-                    <span className="rounded-full bg-purple-500/10 border border-purple-500/20 px-3 py-0.5 text-[10px] font-bold text-purple-400">{job.dept}</span>
-                  </div>
-                  <p className="text-xs text-slate-400 mb-3">{job.location} • {job.type}</p>
-                  <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">{job.desc}</p>
-                </div>
-                <button
-                  onClick={() => {
-                    window.location.href = 'mailto:abhishek572021@gmail.com?subject=Career%20Application:%20' + encodeURIComponent(job.title);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-purple-600 hover:text-white shrink-0 active:scale-95"
-                >
-                  Apply Now
-                  <ArrowUpRight className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+          <div className="mt-10 rounded-3xl border border-slate-800 bg-slate-950/60 p-8 text-center max-w-xl mx-auto">
+            <h3 className="text-lg font-bold text-white mb-2">Want to work with us?</h3>
+            <p className="text-xs text-slate-400 leading-relaxed mb-6">
+              Send us a spontaneous application or drop an email to discuss potential partnerships and freelance opportunities.
+            </p>
+            <button
+              onClick={() => {
+                window.location.href = 'mailto:abhishek572021@gmail.com?subject=DriveDE%20Spontaneous%20Application';
+              }}
+              className="inline-flex items-center gap-2 rounded-2xl bg-purple-600 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition hover:bg-purple-500 hover:scale-105 active:scale-95"
+            >
+              Send Spontaneous Application
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </section>
@@ -808,7 +773,7 @@ export function Welcome() {
             <p className="text-xs text-slate-400 leading-relaxed">
               DriveDE is Germany's premier AI-powered driving preparation platform. Track driving lessons, master maneuvers, and ace your Fahrprüfung on the first try.
             </p>
-            <p className="text-[11px] text-slate-500">Munich, Bavaria, Germany</p>
+            <p className="text-[11px] text-slate-500">Hamburg, Germany</p>
           </div>
 
           {/* Col 2: Product */}
@@ -827,7 +792,7 @@ export function Welcome() {
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">Company</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
               <li><a href="#about" className="hover:text-white transition">About Us & Mission</a></li>
-              <li><a href="#careers" className="hover:text-white transition flex items-center gap-1.5">Careers <span className="rounded-full bg-purple-500/20 px-2 py-0.5 text-[9px] font-bold text-purple-400">Hiring</span></a></li>
+              <li><a href="#careers" className="hover:text-white transition">Careers</a></li>
               <li><a href="#reviews" className="hover:text-white transition">Student Success Stories</a></li>
               <li><a href="#feedback" className="hover:text-white transition">Contact & Support</a></li>
             </ul>
@@ -846,9 +811,9 @@ export function Welcome() {
         </div>
 
         <div className="mx-auto max-w-7xl mt-12 border-t border-slate-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© 2026 DriveDE GmbH. {t.common.allRightsReserved}</p>
+          <p>© 2026 DriveDE. {t.common.allRightsReserved}</p>
           <div className="flex items-center gap-4">
-            <span>Made with ❤️ in Munich</span>
+            <span>Made with ❤️ in Hamburg, Germany</span>
             <span>•</span>
             <span>OpenStreetMap™ Powered</span>
           </div>
