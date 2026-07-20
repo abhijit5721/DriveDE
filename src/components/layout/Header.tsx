@@ -26,13 +26,7 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             className="group flex items-center gap-3 focus:outline-none active:scale-95 transition-all"
             aria-label="Go to Home"
           >
-            {isPremium ? (
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-premium-gold shadow-lg shadow-orange-500/20 transition-all group-hover:scale-110 group-hover:rotate-3">
-                <Crown className="h-6 w-6 text-white" />
-              </div>
-            ) : (
-              <Logo className="h-10 w-10 flex-shrink-0 transition-all group-hover:scale-110 group-hover:rotate-3" />
-            )}
+            <Logo className="h-10 w-10 flex-shrink-0 transition-all group-hover:scale-110 group-hover:rotate-3" />
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
