@@ -8,7 +8,7 @@ import {
   Car, BadgeCheck, Zap, Users, Shield, 
   Menu, X, ArrowRight, Play, CheckCircle2, Cog,
   Star, ChevronDown, Check, Sparkles, MapPin, Award,
-  Globe, Heart, ArrowUpRight, ShieldCheck
+  Globe, Heart, ArrowUpRight, ShieldCheck, Coins, Clock
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
@@ -46,6 +46,7 @@ export function Welcome() {
 
   const navLinks = useMemo(() => [
     { name: t.common.home, href: '#' },
+    { name: 'Why DriveDE', href: '#problem-solution' },
     { name: 'How It Works', href: '#how-it-works' },
     { name: t.common.features, href: '#features' },
     { name: 'Pricing', href: '#pricing' },
@@ -68,9 +69,13 @@ export function Welcome() {
     }
   };
 
-
-
   const faqs = [
+    {
+      q: language === 'de' ? 'Wie hilft mir DriveDE Geld zu sparen?' : 'How does DriveDE help me save money?',
+      a: language === 'de'
+        ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Indem du Manöver (wie Einparken) in der 3D-Simulation vorbereitest und deine Fahrfehler per GPS analysierst, brauchst du weniger Fahrstunden und bestehst im ersten Anlauf.'
+        : 'In Germany, driving lessons cost up to €95/hour. By mentally mastering maneuvers via 3D simulations and reviewing GPS mistake telemetry, students take fewer extra hours and pass on their 1st attempt.'
+    },
     {
       q: language === 'de' ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
       a: language === 'de' 
@@ -278,6 +283,111 @@ export function Welcome() {
           </div>
         </div>
       </main>
+
+      {/* 💡 Problem vs Solution: Why Driving in Germany Costs €3,000+ */}
+      <section id="problem-solution" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+        <div className="mx-auto max-w-6xl text-left">
+          <div className="text-center mb-16">
+            <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-4 py-1.5 text-xs font-bold text-amber-400 uppercase tracking-widest">
+              The €3,000+ Driving School Problem
+            </span>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl leading-tight">
+              Spend Less on Driving Hours. <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Pass Faster.</span>
+            </h2>
+            <p className="mt-4 text-slate-300 max-w-2xl mx-auto text-base">
+              In Germany, driving lessons (*Fahrstunden*) cost up to <strong className="text-white">€95 per hour</strong>. Most students take 35–45+ hours because they learn purely by trial and error.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            {/* Old Way (Expensive & Slow) */}
+            <div className="rounded-3xl border border-red-500/30 bg-red-950/20 p-8 text-left backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/20 text-red-400 font-black text-xl">
+                    ✕
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">The Old Expensive Way</h3>
+                    <p className="text-xs text-red-400 font-semibold">Without DriveDE</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
+                    <Coins className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">€3,200+ Total Spent</p>
+                      <p className="text-xs text-slate-400 mt-0.5">Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
+                    <Clock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">38% First-Time Failure Rate</p>
+                      <p className="text-xs text-slate-400 mt-0.5">Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
+                    <Shield className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">No Progress Visibility</p>
+                      <p className="text-xs text-slate-400 mt-0.5">Zero objective data on whether you are truly exam ready — leaving you dependent on instructor guesswork.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
+            <div className="relative rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-950/40 via-slate-900/95 to-slate-900 p-8 text-left shadow-2xl shadow-emerald-500/15 backdrop-blur-xl flex flex-col justify-between">
+              <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-1 text-xs font-bold text-slate-950 shadow-md">
+                THE DRIVEDE ADVANTAGE
+              </span>
+
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 font-black text-xl">
+                    ✓
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">The DriveDE Smart Way</h3>
+                    <p className="text-xs text-emerald-400 font-bold">Save Money & Pass First Try</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
+                    <Coins className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">Save €800 – €1,200 in Driving Hours</p>
+                      <p className="text-xs text-slate-300 mt-0.5">Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">Zero Speed Limit Exam Failures</p>
+                      <p className="text-xs text-slate-300 mt-0.5">Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
+                    <Award className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-white">100% Objective Exam Readiness Score</p>
+                      <p className="text-xs text-slate-300 mt-0.5">Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 🚀 How It Works Section */}
       <section id="how-it-works" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
