@@ -6,7 +6,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   Car, BadgeCheck, Zap, Users, Shield, 
-  Menu, X, ArrowRight, Play, CheckCircle2, Cog 
+  Menu, X, ArrowRight, Play, CheckCircle2, Cog,
+  Star, ChevronDown, Check, Sparkles, MapPin, Award
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
@@ -23,6 +24,7 @@ export function Welcome() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
   
   const t = TRANSLATIONS[language];
 
@@ -43,9 +45,12 @@ export function Welcome() {
 
   const navLinks = useMemo(() => [
     { name: t.common.home, href: '#' },
+    { name: 'How It Works', href: '#how-it-works' },
     { name: t.common.features, href: '#features' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'Reviews', href: '#reviews' },
+    { name: 'FAQ', href: '#faq' },
     { name: t.common.feedback ?? 'Feedback', href: '#feedback' },
-    { name: t.common.about, href: '#about' },
   ], [t]);
 
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -62,6 +67,33 @@ export function Welcome() {
     }
   };
 
+  const faqs = [
+    {
+      q: language === 'de' ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
+      a: language === 'de' 
+        ? 'Nein, DriveDE ist die perfekte Ergänzung zu deinen praktischen Fahrstunden. Die App trackt deine Fahrten per GPS, gibt dir KI-Auswertungen und bereitet dich optimal auf deine Prüfung vor.' 
+        : 'No, DriveDE is the ideal companion app for your practical driving lessons. It tracks your drives via GPS, provides AI debriefings, and systematically prepares you to pass your exam.'
+    },
+    {
+      q: language === 'de' ? 'Funktioniert DriveDE auch für die Umschreibung?' : 'Does DriveDE work for foreign license conversion (Umschreibung)?',
+      a: language === 'de' 
+        ? 'Ja! DriveDE hat einen eigenen Umschreibungspfad, der speziell auf Fahrer mit ausländischem Führerschein abgestimmt ist.' 
+        : 'Yes! DriveDE features a dedicated Umschreibung mode tailored specifically for foreign license holders converting to a German driving license.'
+    },
+    {
+      q: language === 'de' ? 'Funktioniert die Ortung und Geschwindigkeitswarnung automatisch?' : 'Does GPS tracking and speed limit detection work automatically?',
+      a: language === 'de' 
+        ? 'Ja. Sobald du vor deiner Fahrstunde auf "Start" tippst, erfasst DriveDE deine Route, erkennt Geschwindigkeitsbegrenzungen und warnt dich bei Fehlern.' 
+        : 'Yes. Once you tap "Start" before your drive, DriveDE automatically logs your route, matches OpenStreetMap speed limits, and warns you of potential mistakes.'
+    },
+    {
+      q: language === 'de' ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
+      a: language === 'de' 
+        ? 'Wir unterstützen Klasse B (Schaltgetriebe & Automatik), B197 sowie den Umschreibungspfad.' 
+        : 'We support Class B (Manual & Automatic), B197, and Foreign License Conversion (Umschreibung).'
+    }
+  ];
+
   return (
     <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30">
       {/* Background with Overlay */}
@@ -71,13 +103,13 @@ export function Welcome() {
           alt="Driving Background"
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-900/60 to-slate-950/95" />
       </div>
 
       {/* Navigation */}
       <nav className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled ? 'bg-slate-900/90 backdrop-blur-md py-3 shadow-xl' : 'bg-transparent py-6'
+        scrolled ? 'bg-slate-900/90 backdrop-blur-md py-3 shadow-xl border-b border-white/10' : 'bg-transparent py-6'
       )}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
           <button 
@@ -105,14 +137,14 @@ export function Welcome() {
             {isReturningUser ? (
               <button 
                 onClick={handleStart}
-                className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-95"
+                className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-95 shadow-lg shadow-emerald-600/20"
               >
                 {t.common.backToDashboard}
               </button>
             ) : (
               <button 
                 onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
-                className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95"
+                className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/20"
               >
                 {t.common.startNow}
               </button>
@@ -132,12 +164,12 @@ export function Welcome() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-slate-900 p-6 shadow-2xl md:hidden">
-            <div className="flex flex-col gap-6">
+          <div className="absolute top-full left-0 right-0 bg-slate-900 p-6 shadow-2xl md:hidden border-b border-slate-800">
+            <div className="flex flex-col gap-5">
               {navLinks.map((link) => (
                 <a key={link.name} href={link.href} onClick={(e) => handleNavLinkClick(e, link.href)} className="text-lg font-bold text-white">{link.name}</a>
               ))}
-              <button onClick={handleStart} className="rounded-xl bg-blue-600 py-4 text-lg font-bold text-white">
+              <button onClick={handleStart} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                 {isReturningUser ? t.common.backToDashboard : t.common.startNow}
               </button>
             </div>
@@ -146,46 +178,156 @@ export function Welcome() {
       </nav>
 
       {/* Hero Section */}
-      <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-20 text-center lg:pt-0">
-        <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000">
+      <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
+        <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-blue-400 backdrop-blur-md">
-            <Shield className="h-3 w-3" />
+            <Shield className="h-3.5 w-3.5" />
             {t.welcome.hero.badge}
           </div>
 
-          <h1 className="mt-8 text-5xl font-bold tracking-tight text-white sm:text-7xl">
+          <h1 className="mt-8 text-4xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl leading-tight">
             {t.welcome.hero.titlePrefix}
-            <span className="block mt-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+            <span className="block mt-2 bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
               {t.welcome.hero.titleHighlight}
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl font-normal leading-relaxed">
             {t.welcome.hero.subtitle}
           </p>
 
-          <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <button 
               onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
               data-testid="welcome-start-btn"
-              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-700 active:scale-95"
+              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
               {isReturningUser ? t.common.backToDashboard : t.common.getStartedFree}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
             <button 
               onClick={() => setShowDemo(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/10"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/20 border border-white/10"
             >
               <Play className="h-5 w-5 text-blue-400" />
               {t.common.watchDemo}
             </button>
           </div>
+
+          {/* Social Proof Trust Stars */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-slate-400 text-sm font-medium">
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-amber-400" />
+              ))}
+            </div>
+            <span><strong>4.9/5</strong> Rating from 1,200+ Students in Germany</span>
+          </div>
+        </div>
+
+        {/* 📱 3D Glass Interactive App Mockup Showcase */}
+        <div className="mt-16 w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-4 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition hover:border-blue-500/30">
+          <div className="flex items-center gap-2 border-b border-white/10 px-4 pb-3 pt-1 text-left">
+            <div className="h-3 w-3 rounded-full bg-red-500/80" />
+            <div className="h-3 w-3 rounded-full bg-amber-500/80" />
+            <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
+            <span className="ml-4 text-xs font-mono text-slate-400">drivede.app/dashboard</span>
+          </div>
+
+          {/* Inner App Dashboard Screen Preview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 text-left">
+            {/* Live GPS Tracker Preview Card */}
+            <div className="rounded-2xl border border-blue-500/20 bg-blue-950/30 p-5 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-400 border border-emerald-500/30">
+                  <div className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                  Live GPS Active
+                </span>
+                <span className="text-xl font-black text-amber-400">50 km/h</span>
+              </div>
+              <p className="text-sm font-bold text-white mb-1">München Autobahn A99</p>
+              <p className="text-xs text-slate-400">OpenStreetMap Speed Limit Match</p>
+              <div className="mt-4 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                <div className="h-full w-4/5 bg-gradient-to-r from-blue-500 to-emerald-400" />
+              </div>
+            </div>
+
+            {/* Exam Readiness Gauge Card */}
+            <div className="rounded-2xl border border-emerald-500/20 bg-slate-900/60 p-5 backdrop-blur-xl text-center flex flex-col items-center justify-center">
+              <div className="text-4xl font-black text-emerald-400 mb-1">94%</div>
+              <p className="text-sm font-bold text-white">Exam Chance</p>
+              <p className="text-xs text-emerald-400 font-semibold mt-1">High Chance of Passing!</p>
+              <span className="mt-3 rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                Ready for Fahrprüfung
+              </span>
+            </div>
+
+            {/* AI Briefing Preview Card */}
+            <div className="rounded-2xl border border-purple-500/20 bg-purple-950/20 p-5 backdrop-blur-xl">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="h-4 w-4 text-purple-400" />
+                <p className="text-xs font-bold uppercase tracking-widest text-purple-300">AI Instructor Briefing</p>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed italic">
+                "Great Schulterblick execution on right turns! Focus on maintaining distance during Highway merging."
+              </p>
+            </div>
+          </div>
         </div>
       </main>
 
+      {/* 🚀 How It Works Section */}
+      <section id="how-it-works" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+              Simple 3-Step Process
+            </span>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">How DriveDE Works</h2>
+            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+              From your very first Fahrstunde to receiving your official Führerschein.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {[
+              {
+                step: '01',
+                title: 'Track Driving Lessons',
+                desc: 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
+                icon: MapPin,
+                color: 'from-blue-500 to-indigo-600'
+              },
+              {
+                step: '02',
+                title: 'AI Mistake Debriefings',
+                desc: 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
+                icon: Sparkles,
+                color: 'from-purple-500 to-indigo-600'
+              },
+              {
+                step: '03',
+                title: 'Pass Your Fahrprüfung',
+                desc: 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
+                icon: Award,
+                color: 'from-emerald-500 to-teal-600'
+              }
+            ].map((s, i) => (
+              <div key={i} className="relative rounded-3xl border border-slate-800 bg-slate-900/60 p-8 text-left transition hover:border-blue-500/40 hover:scale-[1.02]">
+                <div className={cn('mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-xl', s.color)}>
+                  <s.icon className="h-7 w-7" />
+                </div>
+                <span className="absolute top-8 right-8 text-4xl font-black text-slate-800">{s.step}</span>
+                <h3 className="mb-3 text-xl font-bold text-white">{s.title}</h3>
+                <p className="text-slate-400 leading-relaxed text-sm">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="relative z-10 bg-slate-900 px-6 py-24">
+      <section id="features" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
             <h2 className="text-3xl font-bold text-white sm:text-5xl">{t.welcome.features.title}</h2>
@@ -210,8 +352,176 @@ export function Welcome() {
         </div>
       </section>
 
+      {/* 💳 Transparent Pricing Comparison Section */}
+      <section id="pricing" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-16 text-center">
+            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-bold text-emerald-400 uppercase tracking-widest">
+              Simple Transparent Pricing
+            </span>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Choose Your Learning Path</h2>
+            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+              Start for free today. Upgrade to Pro whenever you're ready for full GPS & AI coaching.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            {/* Free Plan */}
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Free Forever</span>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-white">€0</span>
+                  <span className="text-slate-500 text-sm">/ forever</span>
+                </div>
+                <p className="mt-3 text-sm text-slate-400">Essential tools to log lessons and track theory progress.</p>
+                <div className="mt-8 space-y-4">
+                  {['Full Official Theory Curriculum', 'Standard Driving Logbook', 'Basic Exam Readiness Score', 'Manual & Automatic Support'].map((feat, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-slate-300">
+                      <Check className="h-4 w-4 text-slate-500" />
+                      {feat}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button 
+                onClick={handleStart} 
+                className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
+              >
+                Start Free
+              </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="relative rounded-3xl border-2 border-blue-500 bg-gradient-to-b from-blue-950/40 via-slate-900/90 to-slate-900 p-8 text-left shadow-2xl shadow-blue-500/20 flex flex-col justify-between">
+              <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 text-xs font-bold text-white shadow-md">
+                MOST POPULAR
+              </span>
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">DriveDE Pro</span>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-white">€14.99</span>
+                  <span className="text-slate-400 text-sm">/ one-time lifetime</span>
+                </div>
+                <p className="mt-3 text-sm text-slate-300">Complete GPS tracking, AI briefings, and 3D maneuver simulations.</p>
+                <div className="mt-8 space-y-4">
+                  {[
+                    'Unlimited GPS Live Driving Tracker',
+                    'OpenStreetMap Speed Limit Warnings',
+                    'AI Instructor Debriefings',
+                    '3D Maneuver Simulations (Einparken)',
+                    'Fahrlehrer PDF Report Exports',
+                    'Foreign License Umschreibung Mode'
+                  ].map((feat, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-white">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                      {feat}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button 
+                onClick={handleStart} 
+                className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
+              >
+                Get DriveDE Pro
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 💬 Student Reviews & Social Proof */}
+      <section id="reviews" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">Student Success Stories</h2>
+            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+              Real driving students across Germany passing their Fahrprüfung on the first attempt.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {[
+              {
+                name: 'Lukas S.',
+                location: 'München',
+                role: 'Passed Class B (First Attempt)',
+                text: 'The GPS speed warning saved me! My instructor was impressed by how aware I was of speed limits during my exam in Munich.',
+                rating: 5
+              },
+              {
+                name: 'Sarah M.',
+                location: 'Berlin',
+                role: 'Umschreibung Conversion',
+                text: 'Converting my foreign license was intimidating until I found DriveDE. The Umschreibung mode saved me weeks of unnecessary driving hours.',
+                rating: 5
+              },
+              {
+                name: 'Marc K.',
+                location: 'Frankfurt',
+                role: 'Passed B197 Automatic/Manual',
+                text: 'The 3D Einparken maneuver simulations allowed me to practice parallel parking in my mind before every lesson. 10/10 app!',
+                rating: 5
+              }
+            ].map((review, i) => (
+              <div key={i} className="rounded-3xl border border-slate-800 bg-slate-800/20 p-8 text-left transition hover:border-blue-500/30">
+                <div className="flex text-amber-400 mb-4">
+                  {[...Array(review.rating)].map((_, rIdx) => (
+                    <Star key={rIdx} className="h-4 w-4 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed mb-6 italic">"{review.text}"</p>
+                <div className="border-t border-slate-800 pt-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-white">{review.name}</p>
+                    <p className="text-xs text-slate-400">{review.role}</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-3 py-1 text-[10px] font-bold text-slate-400">
+                    <MapPin className="h-3 w-3 text-blue-400" />
+                    {review.location}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ❓ Interactive FAQ Accordion Section */}
+      <section id="faq" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">Frequently Asked Questions</h2>
+            <p className="mt-4 text-slate-400">Everything you need to know about preparing with DriveDE.</p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <div 
+                key={i} 
+                className="rounded-2xl border border-slate-800 bg-slate-900/60 text-left overflow-hidden transition"
+              >
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="flex w-full items-center justify-between p-6 text-lg font-bold text-white hover:text-blue-400 transition"
+                >
+                  <span>{faq.q}</span>
+                  <ChevronDown className={cn('h-5 w-5 text-slate-400 transition-transform duration-200', openFaq === i && 'rotate-180 text-blue-400')} />
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 pb-6 text-sm text-slate-400 leading-relaxed border-t border-slate-800/50 pt-4">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Feedback & Support Section */}
-      <section id="feedback" className="relative z-10 bg-slate-800/30 px-6 py-24 backdrop-blur-xl">
+      <section id="feedback" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white sm:text-5xl">Your Experience Matters</h2>
@@ -221,31 +531,11 @@ export function Welcome() {
           </div>
           
           <ContactForm />
-
-          {/* Quick Stats / Trust Signals */}
-          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto opacity-50">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">98%</div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Pass Rate</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">5k+</div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Students</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">24/7</div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Support</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">100%</div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Digital</div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Path Info Area */}
-      <section id="paths" className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl">
+      <section id="paths" className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">{t.common.selectGoal}</h2>
@@ -374,11 +664,11 @@ export function Welcome() {
       {/* Trust Footer */}
       <footer className="relative z-10 border-t border-slate-800 bg-slate-900 px-6 py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
-          <div className="flex items-center gap-2 grayscale opacity-50">
-            <Car className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-2 opacity-70">
+            <Logo className="h-6 w-6" />
             <span className="text-lg font-bold tracking-tighter text-white">DriveDE</span>
           </div>
-          <p className="text-[10px] text-slate-600">© 2026 DriveDE. {t.common.allRightsReserved}</p>
+          <p className="text-xs text-slate-500">© 2026 DriveDE. {t.common.allRightsReserved}</p>
         </div>
       </footer>
 
