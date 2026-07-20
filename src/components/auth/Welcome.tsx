@@ -28,6 +28,7 @@ export function Welcome() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   
   const t = TRANSLATIONS[language];
+  const isDe = language === 'de';
 
   // A signed-in user always sees "Back to Dashboard" (they'll hit LicenseSelector if no path chosen).
   const isReturningUser = (authStatus === 'signed_in') ||
@@ -45,15 +46,15 @@ export function Welcome() {
   };
 
   const navLinks = useMemo(() => [
-    { name: t.common.home, href: '#' },
-    { name: 'Why DriveDE', href: '#problem-solution' },
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: t.common.features, href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '#about' },
-    { name: 'Careers', href: '#careers' },
+    { name: isDe ? 'Startseite' : t.common.home, href: '#' },
+    { name: isDe ? 'Warum DriveDE' : 'Why DriveDE', href: '#problem-solution' },
+    { name: isDe ? 'So funktioniert\'s' : 'How It Works', href: '#how-it-works' },
+    { name: isDe ? 'Funktionen' : t.common.features, href: '#features' },
+    { name: isDe ? 'Preise' : 'Pricing', href: '#pricing' },
+    { name: isDe ? 'Über uns' : 'About', href: '#about' },
+    { name: isDe ? 'Karriere' : 'Careers', href: '#careers' },
     { name: 'FAQ', href: '#faq' },
-  ], [t]);
+  ], [isDe, t]);
 
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -71,32 +72,32 @@ export function Welcome() {
 
   const faqs = [
     {
-      q: language === 'de' ? 'Wie hilft mir DriveDE Geld zu sparen?' : 'How does DriveDE help me save money?',
-      a: language === 'de'
+      q: isDe ? 'Wie hilft mir DriveDE Geld zu sparen?' : 'How does DriveDE help me save money?',
+      a: isDe
         ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Indem du Manöver (wie Einparken) in der 3D-Simulation vorbereitest und deine Fahrfehler per GPS analysierst, brauchst du weniger Fahrstunden und bestehst im ersten Anlauf.'
         : 'In Germany, driving lessons cost up to €95/hour. By mentally mastering maneuvers via 3D simulations and reviewing GPS mistake telemetry, students take fewer extra hours and pass on their 1st attempt.'
     },
     {
-      q: language === 'de' ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
-      a: language === 'de' 
+      q: isDe ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
+      a: isDe 
         ? 'Nein, DriveDE ist die perfekte Ergänzung zu deinen praktischen Fahrstunden. Die App trackt deine Fahrten per GPS, gibt dir KI-Auswertungen und bereitet dich optimal auf deine Prüfung vor.' 
         : 'No, DriveDE is the ideal companion app for your practical driving lessons. It tracks your drives via GPS, provides AI debriefings, and systematically prepares you to pass your exam.'
     },
     {
-      q: language === 'de' ? 'Funktioniert DriveDE auch für die Umschreibung?' : 'Does DriveDE work for foreign license conversion (Umschreibung)?',
-      a: language === 'de' 
+      q: isDe ? 'Funktioniert DriveDE auch für die Umschreibung?' : 'Does DriveDE work for foreign license conversion (Umschreibung)?',
+      a: isDe 
         ? 'Ja! DriveDE hat einen eigenen Umschreibungspfad, der speziell auf Fahrer mit ausländischem Führerschein abgestimmt ist.' 
         : 'Yes! DriveDE features a dedicated Umschreibung mode tailored specifically for foreign license holders converting to a German driving license.'
     },
     {
-      q: language === 'de' ? 'Funktioniert die Ortung und Geschwindigkeitswarnung automatisch?' : 'Does GPS tracking and speed limit detection work automatically?',
-      a: language === 'de' 
+      q: isDe ? 'Funktioniert die Ortung und Geschwindigkeitswarnung automatisch?' : 'Does GPS tracking and speed limit detection work automatically?',
+      a: isDe 
         ? 'Ja. Sobald du vor deiner Fahrstunde auf "Start" tippst, erfasst DriveDE deine Route, erkennt Geschwindigkeitsbegrenzungen und warnt dich bei Fehlern.' 
         : 'Yes. Once you tap "Start" before your drive, DriveDE automatically logs your route, matches OpenStreetMap speed limits, and warns you of potential mistakes.'
     },
     {
-      q: language === 'de' ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
-      a: language === 'de' 
+      q: isDe ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
+      a: isDe 
         ? 'Wir unterstützen Klasse B (Schaltgetriebe & Automatik), B197 sowie den Umschreibungspfad.' 
         : 'We support Class B (Manual & Automatic), B197, and Foreign License Conversion (Umschreibung).'
     }
@@ -160,8 +161,8 @@ export function Welcome() {
 
             {/* Language Switcher Desktop */}
             <div className="flex items-center gap-1 ml-2 border-l border-slate-700/50 pl-4">
-              <button onClick={() => setLanguage('de')} className={cn('px-2 py-1 text-[10px] font-bold rounded-lg transition-all', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
-              <button onClick={() => setLanguage('en')} className={cn('px-2 py-1 text-[10px] font-bold rounded-lg transition-all', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
+              <button onClick={() => setLanguage('de')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'de' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:text-white')}>DE</button>
+              <button onClick={() => setLanguage('en')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'en' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:text-white')}>EN</button>
             </div>
           </div>
 
@@ -177,6 +178,11 @@ export function Welcome() {
               {navLinks.map((link) => (
                 <a key={link.name} href={link.href} onClick={(e) => handleNavLinkClick(e, link.href)} className="text-lg font-bold text-white">{link.name}</a>
               ))}
+              <div className="flex items-center gap-2 border-t border-slate-800 pt-4">
+                <span className="text-xs font-bold text-slate-400">Language:</span>
+                <button onClick={() => setLanguage('de')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
+                <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
+              </div>
               <button onClick={handleStart} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                 {isReturningUser ? t.common.backToDashboard : t.common.startNow}
               </button>
@@ -229,7 +235,9 @@ export function Welcome() {
                 <Star key={i} className="h-4 w-4 fill-amber-400" />
               ))}
             </div>
-            <span><strong>4.9/5</strong> Rating from 1,200+ Students in Germany</span>
+            <span>
+              <strong>4.9/5</strong> {isDe ? 'Bewertung von 1.200+ Fahrschülern in Deutschland' : 'Rating from 1,200+ Students in Germany'}
+            </span>
           </div>
         </div>
 
@@ -249,12 +257,12 @@ export function Welcome() {
               <div className="flex items-center justify-between mb-4">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-400 border border-emerald-500/30">
                   <div className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                  Live GPS Active
+                  {isDe ? 'Live GPS Aktiv' : 'Live GPS Active'}
                 </span>
                 <span className="text-xl font-black text-amber-400">50 km/h</span>
               </div>
               <p className="text-sm font-bold text-white mb-1">München Autobahn A99</p>
-              <p className="text-xs text-slate-400">OpenStreetMap Speed Limit Match</p>
+              <p className="text-xs text-slate-400">{isDe ? 'OpenStreetMap Tempolimit Abgleich' : 'OpenStreetMap Speed Limit Match'}</p>
               <div className="mt-4 h-2 w-full rounded-full bg-slate-800 overflow-hidden">
                 <div className="h-full w-4/5 bg-gradient-to-r from-blue-500 to-emerald-400" />
               </div>
@@ -263,10 +271,10 @@ export function Welcome() {
             {/* Exam Readiness Gauge Card */}
             <div className="rounded-2xl border border-emerald-500/20 bg-slate-900/60 p-5 backdrop-blur-xl text-center flex flex-col items-center justify-center">
               <div className="text-4xl font-black text-emerald-400 mb-1">94%</div>
-              <p className="text-sm font-bold text-white">Exam Chance</p>
-              <p className="text-xs text-emerald-400 font-semibold mt-1">High Chance of Passing!</p>
+              <p className="text-sm font-bold text-white">{isDe ? 'Bestehenschance' : 'Exam Chance'}</p>
+              <p className="text-xs text-emerald-400 font-semibold mt-1">{isDe ? 'Hohe Bestehenschance!' : 'High Chance of Passing!'}</p>
               <span className="mt-3 rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-                Ready for Fahrprüfung
+                {isDe ? 'Bereit für die Fahrprüfung' : 'Ready for Fahrprüfung'}
               </span>
             </div>
 
@@ -274,10 +282,13 @@ export function Welcome() {
             <div className="rounded-2xl border border-purple-500/20 bg-purple-950/20 p-5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="h-4 w-4 text-purple-400" />
-                <p className="text-xs font-bold uppercase tracking-widest text-purple-300">AI Instructor Briefing</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-purple-300">{isDe ? 'KI-Fahrlehrer Auswertung' : 'AI Instructor Briefing'}</p>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed italic">
-                "Great Schulterblick execution on right turns! Focus on maintaining distance during Highway merging."
+                {isDe 
+                  ? '"Perfekter Schulterblick beim Rechtsabbiegen! Achte beim Auffahren auf die Autobahn noch etwas mehr auf den Abstand."'
+                  : '"Great Schulterblick execution on right turns! Focus on maintaining distance during Highway merging."'
+                }
               </p>
             </div>
           </div>
@@ -289,13 +300,16 @@ export function Welcome() {
         <div className="mx-auto max-w-6xl text-left">
           <div className="text-center mb-16">
             <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-4 py-1.5 text-xs font-bold text-amber-400 uppercase tracking-widest">
-              The €3,000+ Driving School Problem
+              {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ Driving School Problem'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl leading-tight">
-              Spend Less on Driving Hours. <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Pass Faster.</span>
+              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
             </h2>
             <p className="mt-4 text-slate-300 max-w-2xl mx-auto text-base">
-              In Germany, driving lessons (*Fahrstunden*) cost up to <strong className="text-white">€95 per hour</strong>. Most students take 35–45+ hours because they learn purely by trial and error.
+              {isDe 
+                ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Die meisten Fahrschüler brauchen 35–45+ Stunden, weil sie rein nach Versuch und Irrtum lernen.'
+                : 'In Germany, driving lessons (Fahrstunden) cost up to €95 per hour. Most students take 35–45+ hours because they learn purely by trial and error.'
+              }
             </p>
           </div>
 
@@ -308,8 +322,8 @@ export function Welcome() {
                     ✕
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">The Old Expensive Way</h3>
-                    <p className="text-xs text-red-400 font-semibold">Without DriveDE</p>
+                    <h3 className="text-xl font-bold text-white">{isDe ? 'Der alte teure Weg' : 'The Old Expensive Way'}</h3>
+                    <p className="text-xs text-red-400 font-semibold">{isDe ? 'Ohne DriveDE' : 'Without DriveDE'}</p>
                   </div>
                 </div>
 
@@ -317,24 +331,24 @@ export function Welcome() {
                   <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
                     <Coins className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">€3,200+ Total Spent</p>
-                      <p className="text-xs text-slate-400 mt-0.5">Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.</p>
+                      <p className="font-bold text-white">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€–95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.'}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
                     <Clock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">38% First-Time Failure Rate</p>
-                      <p className="text-xs text-slate-400 mt-0.5">Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.</p>
+                      <p className="font-bold text-white">{isDe ? '38% Durchfallquote beim 1. Versuch' : '38% First-Time Failure Rate'}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Durchfallen kostet 600€+ für Pflicht-Zusatzstunden und Prüfungsgebühren.' : 'Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.'}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
                     <Shield className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">No Progress Visibility</p>
-                      <p className="text-xs text-slate-400 mt-0.5">Zero objective data on whether you are truly exam ready — leaving you dependent on instructor guesswork.</p>
+                      <p className="font-bold text-white">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready — leaving you dependent on guesswork.'}</p>
                     </div>
                   </div>
                 </div>
@@ -344,7 +358,7 @@ export function Welcome() {
             {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
             <div className="relative rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-950/40 via-slate-900/95 to-slate-900 p-8 text-left shadow-2xl shadow-emerald-500/15 backdrop-blur-xl flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-1 text-xs font-bold text-slate-950 shadow-md">
-                THE DRIVEDE ADVANTAGE
+                {isDe ? 'DER DRIVEDE VORTEIL' : 'THE DRIVEDE ADVANTAGE'}
               </span>
 
               <div>
@@ -353,8 +367,8 @@ export function Welcome() {
                     ✓
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">The DriveDE Smart Way</h3>
-                    <p className="text-xs text-emerald-400 font-bold">Save Money & Pass First Try</p>
+                    <h3 className="text-xl font-bold text-white">{isDe ? 'Der smarte DriveDE Weg' : 'The DriveDE Smart Way'}</h3>
+                    <p className="text-xs text-emerald-400 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
                   </div>
                 </div>
 
@@ -362,24 +376,24 @@ export function Welcome() {
                   <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
                     <Coins className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">Save €800 – €1,200 in Driving Hours</p>
-                      <p className="text-xs text-slate-300 mt-0.5">Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.</p>
+                      <p className="font-bold text-white">{isDe ? '800€ – 1.200€ an Fahrstunden sparen' : 'Save €800 – €1,200 in Driving Hours'}</p>
+                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
                     <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">Zero Speed Limit Exam Failures</p>
-                      <p className="text-xs text-slate-300 mt-0.5">Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.</p>
+                      <p className="font-bold text-white">{isDe ? 'Kein Durchfallen wegen Tempolimit' : 'Zero Speed Limit Exam Failures'}</p>
+                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Echtzeit OpenStreetMap GPS-Warnungen verhindern die häufigste Ursache für Prüfungsausfälle.' : 'Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.'}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
                     <Award className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">100% Objective Exam Readiness Score</p>
-                      <p className="text-xs text-slate-300 mt-0.5">Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.</p>
+                      <p className="font-bold text-white">{isDe ? '100% objektive Prüfungsreife' : '100% Objective Exam Readiness Score'}</p>
+                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Erkenne genau den Tag, an dem du 90%+ Prüfungsreife erreichst.' : 'Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.'}</p>
                     </div>
                   </div>
                 </div>
@@ -394,11 +408,14 @@ export function Welcome() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
             <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
-              Simple 3-Step Process
+              {isDe ? 'Einfacher 3-Schritte Ablauf' : 'Simple 3-Step Process'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">How DriveDE Works</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
             <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
-              From your very first Fahrstunde to receiving your official Führerschein.
+              {isDe 
+                ? 'Von deiner ersten Fahrstunde bis zum Erhalt deines Führerscheins.'
+                : 'From your very first Fahrstunde to receiving your official Führerschein.'
+              }
             </p>
           </div>
 
@@ -406,22 +423,28 @@ export function Welcome() {
             {[
               {
                 step: '01',
-                title: 'Track Driving Lessons',
-                desc: 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
+                title: isDe ? 'Fahrstunden aufzeichnen' : 'Track Driving Lessons',
+                desc: isDe 
+                  ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet Route, Tempolimits und Fehler auf.'
+                  : 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
                 icon: MapPin,
                 color: 'from-blue-500 to-indigo-600'
               },
               {
                 step: '02',
-                title: 'AI Mistake Debriefings',
-                desc: 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
+                title: isDe ? 'KI-Fehleranalyse & 3D' : 'AI Mistake Debriefings',
+                desc: isDe 
+                  ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
+                  : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
                 icon: Sparkles,
                 color: 'from-purple-500 to-indigo-600'
               },
               {
                 step: '03',
-                title: 'Pass Your Fahrprüfung',
-                desc: 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
+                title: isDe ? 'Prüfung sicher bestehen' : 'Pass Your Fahrprüfung',
+                desc: isDe 
+                  ? 'Verfolge deine Prüfungsreife bis 100% und gehe voller Selbstvertrauen in die Fahrprüfung.'
+                  : 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
                 icon: Award,
                 color: 'from-emerald-500 to-teal-600'
               }
@@ -471,25 +494,31 @@ export function Welcome() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
-                Our Mission
+                {isDe ? 'Unsere Mission' : 'Our Mission'}
               </span>
               <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl leading-tight">
-                Modernizing Driver Education in Germany
+                {isDe ? 'Fahrausbildung in Deutschland digitalisieren' : 'Modernizing Driver Education in Germany'}
               </h2>
               <p className="mt-6 text-slate-300 text-base leading-relaxed">
-                Over 500,000 students take their practical driving exam (*Fahrprüfung*) in Germany every year, facing high stress and high re-test costs.
+                {isDe
+                  ? 'Über 500.000 Fahrschüler legen jedes Jahr in Deutschland ihre praktische Fahrprüfung ab – oft unter hohem Stress und mit teuren Nachprüfungen.'
+                  : 'Over 500,000 students take their practical driving exam (Fahrprüfung) in Germany every year, facing high stress and high re-test costs.'
+                }
               </p>
               <p className="mt-4 text-slate-400 text-sm leading-relaxed">
-                DriveDE was founded in Hamburg with a single clear mission: leverage real-time GPS telemetry, OpenStreetMap data, and AI debriefings to empower students and driving instructors with complete transparency.
+                {isDe
+                  ? 'DriveDE wurde in Hamburg gegründet mit der klaren Mission: Echtzeit-GPS, OpenStreetMap-Daten und KI-Auswertungen zu nutzen, um Fahrschülern und Fahrlehrern volle Transparenz zu bieten.'
+                  : 'DriveDE was founded in Hamburg with a single clear mission: leverage real-time GPS telemetry, OpenStreetMap data, and AI debriefings to empower students and driving instructors with complete transparency.'
+                }
               </p>
               <div className="mt-8 grid grid-cols-2 gap-4 border-t border-slate-800 pt-6">
                 <div>
                   <p className="text-2xl font-bold text-white">Hamburg, DE</p>
-                  <p className="text-xs text-slate-500">Company Origin</p>
+                  <p className="text-xs text-slate-500">{isDe ? 'Unternehmensursprung' : 'Company Origin'}</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-emerald-400">100% GDPR</p>
-                  <p className="text-xs text-slate-500">German Privacy Standards</p>
+                  <p className="text-2xl font-bold text-emerald-400">100% DSGVO</p>
+                  <p className="text-xs text-slate-500">{isDe ? 'Deutscher Datenschutz' : 'German Privacy Standards'}</p>
                 </div>
               </div>
             </div>
@@ -497,7 +526,7 @@ export function Welcome() {
             <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-8 space-y-6 shadow-2xl">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Heart className="h-5 w-5 text-red-500" />
-                Our Core Pillars
+                {isDe ? 'Unsere Säulen' : 'Our Core Pillars'}
               </h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
@@ -505,8 +534,8 @@ export function Welcome() {
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">Exam Readiness Transparency</p>
-                    <p className="text-xs text-slate-400">Clear algorithmic score metrics instead of guessing if you are ready.</p>
+                    <p className="font-bold text-white text-sm">{isDe ? 'Transparente Prüfungsreife' : 'Exam Readiness Transparency'}</p>
+                    <p className="text-xs text-slate-400">{isDe ? 'Objektive Algorithmen statt Bauchgefühl.' : 'Clear algorithmic score metrics instead of guessing if you are ready.'}</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -514,8 +543,8 @@ export function Welcome() {
                     <Globe className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">Bilingual First (EN & DE)</p>
-                    <p className="text-xs text-slate-400">Equal access for international students and German native speakers.</p>
+                    <p className="font-bold text-white text-sm">{isDe ? 'Zweisprachig (DE & EN)' : 'Bilingual First (EN & DE)'}</p>
+                    <p className="text-xs text-slate-400">{isDe ? 'Chancengleichheit für internationale und deutsche Fahrschüler.' : 'Equal access for international students and German native speakers.'}</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -523,8 +552,8 @@ export function Welcome() {
                     <Zap className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">Open Data Innovation</p>
-                    <p className="text-xs text-slate-400">Powered by OpenStreetMap data for live speed limit verification.</p>
+                    <p className="font-bold text-white text-sm">{isDe ? 'Open Data Innovation' : 'Open Data Innovation'}</p>
+                    <p className="text-xs text-slate-400">{isDe ? 'Echtzeit-Tempolimits durch OpenStreetMap Daten.' : 'Powered by OpenStreetMap data for live speed limit verification.'}</p>
                   </div>
                 </div>
               </div>
@@ -537,17 +566,23 @@ export function Welcome() {
       <section id="careers" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-4xl text-center">
           <span className="rounded-full bg-purple-500/10 border border-purple-500/20 px-4 py-1.5 text-xs font-bold text-purple-400 uppercase tracking-widest">
-            Lean & Focused Team
+            {isDe ? 'Fokussiertes Team' : 'Lean & Focused Team'}
           </span>
-          <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Careers at DriveDE</h2>
+          <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Karriere bei DriveDE' : 'Careers at DriveDE'}</h2>
           <p className="mt-6 text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
-            DriveDE is currently built and maintained by an agile product team based in Hamburg. While we don't have active open roles right now, we are always eager to connect with passionate engineers, driving instructors, and collaborators!
+            {isDe 
+              ? 'DriveDE wird von einem fokussierten Produkt-Team in Hamburg entwickelt. Obwohl wir aktuell keine offenen Vollzeitstellen haben, freuen wir uns immer über Initiativbewerbungen und Kooperationen!'
+              : 'DriveDE is currently built and maintained by an agile product team based in Hamburg. While we don\'t have active open roles right now, we are always eager to connect with passionate engineers, driving instructors, and collaborators!'
+            }
           </p>
 
           <div className="mt-10 rounded-3xl border border-slate-800 bg-slate-950/60 p-8 text-center max-w-xl mx-auto">
-            <h3 className="text-lg font-bold text-white mb-2">Want to work with us?</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{isDe ? 'Möchtest du mit uns arbeiten?' : 'Want to work with us?'}</h3>
             <p className="text-xs text-slate-400 leading-relaxed mb-6">
-              Send us a spontaneous application or drop an email to discuss potential partnerships and freelance opportunities.
+              {isDe 
+                ? 'Sende uns eine Initiativbewerbung oder kontaktiere uns für Partnerschaften.'
+                : 'Send us a spontaneous application or drop an email to discuss potential partnerships and freelance opportunities.'
+              }
             </p>
             <button
               onClick={() => {
@@ -555,7 +590,7 @@ export function Welcome() {
               }}
               className="inline-flex items-center gap-2 rounded-2xl bg-purple-600 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-purple-600/30 transition hover:bg-purple-500 hover:scale-105 active:scale-95"
             >
-              Send Spontaneous Application
+              {isDe ? 'Initiativbewerbung senden' : 'Send Spontaneous Application'}
               <ArrowUpRight className="h-4 w-4" />
             </button>
           </div>
@@ -567,11 +602,14 @@ export function Welcome() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-bold text-emerald-400 uppercase tracking-widest">
-              Simple Transparent Pricing
+              {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Pass Your Fahrprüfung For Less</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
             <p className="mt-4 text-slate-400 max-w-xl mx-auto">
-              Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.
+              {isDe 
+                ? 'Starte heute kostenlos. Schalte Pro frei, wenn du bereit für GPS-Tracking & KI-Coaching bist.'
+                : 'Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.'
+              }
             </p>
           </div>
 
@@ -579,19 +617,19 @@ export function Welcome() {
             {/* 30 Days Pass */}
             <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">30-Day Pass</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{isDe ? '30-Tage Pass' : '30-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-white">€9.99</span>
-                  <span className="text-slate-500 text-sm">/ 30 days</span>
+                  <span className="text-slate-500 text-sm">{isDe ? '/ 30 Tage' : '/ 30 days'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-400">Great for quick exam prep in your final driving weeks.</p>
+                <p className="mt-3 text-sm text-slate-400">{isDe ? 'Ideal für die gezielte Prüfungsvorbereitung in den letzten Wochen.' : 'Great for quick exam prep in your final driving weeks.'}</p>
                 <div className="mt-8 space-y-4">
                   {[
-                    'Full GPS Live Driving Tracker',
-                    'OpenStreetMap Speed Limit Warnings',
-                    'AI Instructor Debriefings',
-                    '3D Maneuver Simulations (Einparken)',
-                    'Official Theory Curriculum'
+                    isDe ? 'Vollständiges GPS Live Fahrtenbuch' : 'Full GPS Live Driving Tracker',
+                    isDe ? 'OpenStreetMap Tempolimit Abgleich' : 'OpenStreetMap Speed Limit Warnings',
+                    isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
+                    isDe ? '3D Manöversimulationen (Einparken)' : '3D Maneuver Simulations (Einparken)',
+                    isDe ? 'Offizieller Theorie-Lehrplan' : 'Official Theory Curriculum'
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
                       <Check className="h-4 w-4 text-slate-400 shrink-0" />
@@ -604,30 +642,30 @@ export function Welcome() {
                 onClick={handleStart} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
               >
-                Get 30-Day Pass
+                {isDe ? '30-Tage Pass wählen' : 'Get 30-Day Pass'}
               </button>
             </div>
 
             {/* 90 Days Pass (Most Popular) */}
             <div className="relative rounded-3xl border-2 border-blue-500 bg-gradient-to-b from-blue-950/40 via-slate-900/90 to-slate-900 p-8 text-left shadow-2xl shadow-blue-500/20 flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 text-xs font-bold text-white shadow-md">
-                MOST POPULAR
+                {isDe ? 'BELIEBTESTE WAHL' : 'MOST POPULAR'}
               </span>
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">90-Day Pass</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">{isDe ? '90-Tage Pass' : '90-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-white">€19.99</span>
-                  <span className="text-slate-400 text-sm">/ 90 days</span>
+                  <span className="text-slate-400 text-sm">{isDe ? '/ 90 Tage' : '/ 90 days'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-300">Covers your complete driving school journey from day 1 to exam.</p>
+                <p className="mt-3 text-sm text-slate-300">{isDe ? 'Deckt deine gesamte Fahrschulausbildung von der 1. Stunde bis zur Prüfung ab.' : 'Covers your complete driving school journey from day 1 to exam.'}</p>
                 <div className="mt-8 space-y-4">
                   {[
-                    'Unlimited GPS Live Driving Tracker',
-                    'OpenStreetMap Speed Limit Warnings',
-                    'AI Instructor Debriefings',
-                    '3D Maneuver Simulations (Einparken)',
-                    'Fahrlehrer PDF Report Exports',
-                    'Foreign License Umschreibung Mode'
+                    isDe ? 'Unbegrenztes GPS Fahrtenbuch' : 'Unlimited GPS Live Driving Tracker',
+                    isDe ? 'OpenStreetMap Tempolimit Warnungen' : 'OpenStreetMap Speed Limit Warnings',
+                    isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
+                    isDe ? '3D Manöversimulationen (Einparken)' : '3D Maneuver Simulations (Einparken)',
+                    isDe ? 'Fahrlehrer PDF Berichtsexport' : 'Fahrlehrer PDF Report Exports',
+                    isDe ? 'Umschreibungs-Modus inklusive' : 'Foreign License Umschreibung Mode'
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-white">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
@@ -640,26 +678,26 @@ export function Welcome() {
                 onClick={handleStart} 
                 className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
               >
-                Get 90-Day Pass
+                {isDe ? '90-Tage Pass wählen' : 'Get 90-Day Pass'}
               </button>
             </div>
 
             {/* Lifetime Access */}
             <div className="rounded-3xl border border-purple-500/30 bg-gradient-to-b from-purple-950/20 to-slate-900 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-purple-400">Lifetime Access</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-purple-400">{isDe ? 'Lebenslanger Zugang' : 'Lifetime Access'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-white">€29.99</span>
-                  <span className="text-slate-500 text-sm">/ one-time</span>
+                  <span className="text-slate-500 text-sm">{isDe ? '/ einmalig' : '/ one-time'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-400">Lifetime access to all current & future DriveDE updates.</p>
+                <p className="mt-3 text-sm text-slate-400">{isDe ? 'Dauerhafter Zugang zu allen aktuellen & zukünftigen DriveDE Updates.' : 'Lifetime access to all current & future DriveDE updates.'}</p>
                 <div className="mt-8 space-y-4">
                   {[
-                    'Everything in 90-Day Pass',
-                    'Lifetime Access (No Expiry)',
-                    'All Future AI & Features',
-                    'Priority Student Support',
-                    'Multi-Device Sync'
+                    isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in 90-Day Pass',
+                    isDe ? 'Lebenslanger Zugang (kein Ablauf)' : 'Lifetime Access (No Expiry)',
+                    isDe ? 'Alle zukünftigen KI-Funktionen' : 'All Future AI & Features',
+                    isDe ? 'Priorisierter Kundensupport' : 'Priority Student Support',
+                    isDe ? 'Geräteübergreifende Synchronisation' : 'Multi-Device Sync'
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
                       <Check className="h-4 w-4 text-purple-400 shrink-0" />
@@ -672,7 +710,7 @@ export function Welcome() {
                 onClick={handleStart} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 border border-purple-500/30 py-4 text-sm font-bold text-white transition hover:bg-purple-900/40"
               >
-                Get Lifetime Access
+                {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}
               </button>
             </div>
           </div>
@@ -683,9 +721,9 @@ export function Welcome() {
       <section id="reviews" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">Student Success Stories</h2>
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Erfahrungsberichte unserer Fahrschüler' : 'Student Success Stories'}</h2>
             <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
-              Real driving students across Germany passing their Fahrprüfung on the first attempt.
+              {isDe ? 'Echte Fahrschüler in ganz Deutschland bestehen ihre Fahrprüfung im ersten Anlauf.' : 'Real driving students across Germany passing their Fahrprüfung on the first attempt.'}
             </p>
           </div>
 
@@ -694,22 +732,28 @@ export function Welcome() {
               {
                 name: 'Lukas S.',
                 location: 'München',
-                role: 'Passed Class B (First Attempt)',
-                text: 'The GPS speed warning saved me! My instructor was impressed by how aware I was of speed limits during my exam in Munich.',
+                role: isDe ? 'Bestanden Klasse B (1. Versuch)' : 'Passed Class B (First Attempt)',
+                text: isDe 
+                  ? 'Die GPS-Geschwindigkeitswarnung hat mich gerettet! Mein Fahrlehrer war beeindruckt, wie aufmerksam ich auf Tempolimits geachtet habe.'
+                  : 'The GPS speed warning saved me! My instructor was impressed by how aware I was of speed limits during my exam in Munich.',
                 rating: 5
               },
               {
                 name: 'Sarah M.',
                 location: 'Berlin',
-                role: 'Umschreibung Conversion',
-                text: 'Converting my foreign license was intimidating until I found DriveDE. The Umschreibung mode saved me weeks of unnecessary driving hours.',
+                role: isDe ? 'Umschreibung Führerschein' : 'Umschreibung Conversion',
+                text: isDe
+                  ? 'Führerschein-Umschreibung schien kompliziert, bis ich DriveDE genutzt habe. Der Umschreibungsmodus hat mir Wochen an Extra-Fahrstunden gespart.'
+                  : 'Converting my foreign license was intimidating until I found DriveDE. The Umschreibung mode saved me weeks of unnecessary driving hours.',
                 rating: 5
               },
               {
                 name: 'Marc K.',
                 location: 'Frankfurt',
-                role: 'Passed B197 Automatic/Manual',
-                text: 'The 3D Einparken maneuver simulations allowed me to practice parallel parking in my mind before every lesson. 10/10 app!',
+                role: isDe ? 'Bestanden B197 Automatik/Schalter' : 'Passed B197 Automatic/Manual',
+                text: isDe
+                  ? 'Mit den 3D-Manöversimulationen konnte ich das Einparken vor jeder Fahrstunde gedanklich durchgehen. 10/10 App!'
+                  : 'The 3D Einparken maneuver simulations allowed me to practice parallel parking in my mind before every lesson. 10/10 app!',
                 rating: 5
               }
             ].map((review, i) => (
@@ -740,8 +784,8 @@ export function Welcome() {
       <section id="faq" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
         <div className="mx-auto max-w-4xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">Frequently Asked Questions</h2>
-            <p className="mt-4 text-slate-400">Everything you need to know about preparing with DriveDE.</p>
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Häufig gestellte Fragen (FAQ)' : 'Frequently Asked Questions'}</h2>
+            <p className="mt-4 text-slate-400">{isDe ? 'Alles was du über die Vorbereitung mit DriveDE wissen musst.' : 'Everything you need to know about preparing with DriveDE.'}</p>
           </div>
 
           <div className="space-y-4">
@@ -772,9 +816,12 @@ export function Welcome() {
       <section id="feedback" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">Your Experience Matters</h2>
+            <h2 className="text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
             <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
-              Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we're all ears.
+              {isDe 
+                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht – wir freuen uns von dir zu hören.'
+                : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
+              }
             </p>
           </div>
           
@@ -919,40 +966,43 @@ export function Welcome() {
               <span className="text-xl font-bold tracking-tighter text-white">DriveDE</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              DriveDE is Germany's premier AI-powered driving preparation platform. Track driving lessons, master maneuvers, and ace your Fahrprüfung on the first try.
+              {isDe 
+                ? 'DriveDE ist Deutschlands führende KI-gestützte Plattform zur Vorbereitung auf die Fahrprüfung. Fahrstunden per GPS aufzeichnen, Manöver meistern & im 1. Versuch bestehen.'
+                : 'DriveDE is Germany\'s premier AI-powered driving preparation platform. Track driving lessons, master maneuvers, and ace your Fahrprüfung on the first try.'
+              }
             </p>
             <p className="text-[11px] text-slate-500">Hamburg, Germany</p>
           </div>
 
           {/* Col 2: Product */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">Product</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Produkt' : 'Product'}</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#how-it-works" className="hover:text-white transition">How It Works</a></li>
-              <li><a href="#features" className="hover:text-white transition">Features & GPS Tracker</a></li>
-              <li><a href="#pricing" className="hover:text-white transition">DriveDE Pro Pricing</a></li>
-              <li><a href="#paths" className="hover:text-white transition">Umschreibung Mode</a></li>
+              <li><a href="#how-it-works" className="hover:text-white transition">{isDe ? 'So funktioniert\'s' : 'How It Works'}</a></li>
+              <li><a href="#features" className="hover:text-white transition">{isDe ? 'Funktionen & GPS-Tracker' : 'Features & GPS Tracker'}</a></li>
+              <li><a href="#pricing" className="hover:text-white transition">{isDe ? 'DriveDE Pro Preise' : 'DriveDE Pro Pricing'}</a></li>
+              <li><a href="#paths" className="hover:text-white transition">{isDe ? 'Umschreibungs-Modus' : 'Umschreibung Mode'}</a></li>
             </ul>
           </div>
 
           {/* Col 3: Company */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">Company</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Unternehmen' : 'Company'}</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#about" className="hover:text-white transition">About Us & Mission</a></li>
-              <li><a href="#careers" className="hover:text-white transition">Careers</a></li>
-              <li><a href="#reviews" className="hover:text-white transition">Student Success Stories</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">Contact & Support</a></li>
+              <li><a href="#about" className="hover:text-white transition">{isDe ? 'Über uns & Mission' : 'About Us & Mission'}</a></li>
+              <li><a href="#careers" className="hover:text-white transition">{isDe ? 'Karriere' : 'Careers'}</a></li>
+              <li><a href="#reviews" className="hover:text-white transition">{isDe ? 'Erfolgsberichte' : 'Student Success Stories'}</a></li>
+              <li><a href="#feedback" className="hover:text-white transition">{isDe ? 'Kontakt & Support' : 'Contact & Support'}</a></li>
             </ul>
           </div>
 
           {/* Col 4: Legal & Compliance */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">Legal & Privacy</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#feedback" className="hover:text-white transition">Impressum (German Legal Notice)</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">Datenschutz (Privacy Policy)</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">AGB (Terms of Service)</a></li>
+              <li><a href="#feedback" className="hover:text-white transition">Impressum</a></li>
+              <li><a href="#feedback" className="hover:text-white transition">Datenschutz</a></li>
+              <li><a href="#feedback" className="hover:text-white transition">AGB</a></li>
               <li><a href="#faq" className="hover:text-white transition">FAQ</a></li>
             </ul>
           </div>
