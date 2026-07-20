@@ -8,6 +8,7 @@ import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
 import { cn } from '../../utils/cn';
+import { Logo } from '../common/Logo';
 
 interface DesktopNavProps {
   activeTab: TabType;
@@ -45,7 +46,11 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
             'flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-lg transition-all',
             isPremium ? 'bg-premium-gold shadow-orange-500/20' : 'bg-premium-blue shadow-blue-500/20'
           )}>
-            <Crown className={cn('h-6 w-6 transition-transform', isPremium && 'scale-110')} />
+            {isPremium ? (
+              <Crown className="h-6 w-6 transition-transform scale-110" />
+            ) : (
+              <Logo className="h-6 w-6" />
+            )}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">

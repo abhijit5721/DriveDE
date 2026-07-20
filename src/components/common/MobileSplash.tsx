@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Car } from 'lucide-react';
+import { Logo } from './Logo';
 
 export const MobileSplash: React.FC = () => {
   return (
@@ -31,9 +31,7 @@ export const MobileSplash: React.FC = () => {
             className="absolute -inset-16 rounded-full border border-blue-500/10"
           />
           
-          <div className="flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-indigo-700 shadow-2xl shadow-blue-500/40">
-            <Car className="h-12 w-12 text-white" />
-          </div>
+          <Logo className="h-24 w-24 select-none drop-shadow-[0_10px_20px_rgba(59,130,246,0.3)]" />
         </div>
 
         <div className="flex flex-col items-center">

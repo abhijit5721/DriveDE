@@ -13,6 +13,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { ContactForm } from '../common/ContactForm';
+import { Logo } from '../common/Logo';
 
 export function Welcome() {
   const { 
@@ -83,9 +84,7 @@ export function Welcome() {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2 transition hover:opacity-80 active:scale-95"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
-              <Car className="h-6 w-6 text-white" />
-            </div>
+            <Logo className="h-10 w-10 select-none drop-shadow-[0_4px_8px_rgba(59,130,246,0.3)]" />
             <span className="text-xl font-bold tracking-tighter text-white">
               Drive<span className="text-blue-500">DE</span>
             </span>

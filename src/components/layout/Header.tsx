@@ -4,6 +4,7 @@
  */
 
 import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
+import { Logo } from '../common/Logo';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
@@ -35,7 +36,7 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
               {isPremium ? (
                 <Crown className="h-6 w-6 text-white" />
               ) : (
-                <span className="text-xl">🚗</span>
+                <Logo className="h-6 w-6" />
               )}
             </div>
             <div className="min-w-0">
