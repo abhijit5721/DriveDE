@@ -7,9 +7,10 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Verification token from Supabase (optional security)
+  // Verification token from Supabase (skip check if secret not configured)
   const webhookSecret = req.headers['x-supabase-webhook-secret'];
-  if (webhookSecret !== process.env.SUPABASE_WEBHOOK_SECRET) {
+  const expectedSecret = process.env.SUPABASE_WEBHOOK_SECRET;
+  if (expectedSecret && webhookSecret !== expectedSecret) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -19,7 +20,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const data = await resend.emails.send({
-      from: 'DriveDE <welcome@drivede.app>',
+      from: 'DriveDE <onboarding@resend.dev>',
       to: [email],
       subject: 'Welcome to DriveDE! 🚗',
       html: `
