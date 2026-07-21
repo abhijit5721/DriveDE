@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { LogIn, Mail, Lock, UserPlus, Loader2, AlertCircle } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
-import { signInWithProvider } from '../../services/auth';
+import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 
@@ -146,25 +146,58 @@ export function AuthModal({ onClose }: AuthModalProps) {
       }
     }
 
+    // Check if user tries to sign up with an existing email
+    const cleanEmail = email.toLowerCase().trim();
+    const isDe = language === 'de';
+
+    if (mode === 'signup' && (isEmailRegisteredLocally(cleanEmail) || useAppStore.getState().authEmail?.toLowerCase() === cleanEmail)) {
+      setMode('signin');
+      setError(isDe 
+        ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich an.' 
+        : 'An account with this email address already exists. Please sign in instead.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (mode === 'signin') {
         const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
+          email: cleanEmail,
           password,
         });
 
         if (signInError) throw signInError;
+        registerEmailLocally(cleanEmail);
         startFreeTrial(intendedPlan || '90-days');
         onClose();
       } else {
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
+        const { error: signUpError, data } = await supabase.auth.signUp({
+          email: cleanEmail,
           password,
         });
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+          const msg = signUpError.message.toLowerCase();
+          if (msg.includes('already registered') || msg.includes('already exists') || signUpError.status === 422) {
+            setMode('signin');
+            registerEmailLocally(cleanEmail);
+            throw new Error(isDe 
+              ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich an.' 
+              : 'An account with this email address already exists. Please sign in instead.');
+          }
+          throw signUpError;
+        }
+
+        if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          setMode('signin');
+          registerEmailLocally(cleanEmail);
+          throw new Error(isDe 
+            ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich an oder verwende Google.' 
+            : 'An account with this email address already exists. Please sign in instead or use Google.');
+        }
+
+        registerEmailLocally(cleanEmail);
         startFreeTrial(intendedPlan || '90-days');
         setSuccess(copy.signupSuccess);
         setMode('signin');

@@ -116,8 +116,42 @@ export function subscribeToAuthChanges(callback: (session: Session | null) => vo
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user?.email) {
+      registerEmailLocally(session.user.email);
+    }
     callback(session ?? null);
   });
 
   return () => subscription.unsubscribe();
 }
+
+const REGISTERED_EMAILS_KEY = 'drivede_registered_emails';
+
+export function isEmailRegisteredLocally(email: string): boolean {
+  try {
+    const clean = email.toLowerCase().trim();
+    if (!clean) return false;
+    const raw = localStorage.getItem(REGISTERED_EMAILS_KEY);
+    if (!raw) return false;
+    const list = JSON.parse(raw);
+    return Array.isArray(list) && list.includes(clean);
+  } catch {
+    return false;
+  }
+}
+
+export function registerEmailLocally(email: string): void {
+  try {
+    const clean = email.toLowerCase().trim();
+    if (!clean) return;
+    const raw = localStorage.getItem(REGISTERED_EMAILS_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(list) && !list.includes(clean)) {
+      list.push(clean);
+      localStorage.setItem(REGISTERED_EMAILS_KEY, JSON.stringify(list));
+    }
+  } catch {
+    // Ignore storage errors
+  }
+}
+

@@ -18,7 +18,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
-import { signInWithProvider } from '../../services/auth';
+import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 
 type Plan = '30-days' | '90-days' | 'lifetime';
 type ScreenStep = 'plan' | 'signup';
@@ -180,8 +180,11 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
     if (e) e.preventDefault();
     setError(null);
 
+    const cleanEmail = email.toLowerCase().trim();
+    const isDe = language === 'de';
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!emailRegex.test(cleanEmail)) {
       setError(t.emailRequired);
       return;
     }
@@ -191,33 +194,66 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
       return;
     }
 
+    // Check if user is trying to SIGN UP with an email that is already registered
+    if (!isExistingUser && (isEmailRegisteredLocally(cleanEmail) || useAppStore.getState().authEmail?.toLowerCase() === cleanEmail)) {
+      setIsExistingUser(true);
+      setError(isDe 
+        ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich mit deinem Passwort an.' 
+        : 'An account with this email address already exists. Please sign in with your password.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (isSupabaseConfigured && supabase) {
         if (isExistingUser) {
           const { data, error: signInErr } = await supabase.auth.signInWithPassword({
-            email: email.trim(),
+            email: cleanEmail,
             password,
           });
           if (signInErr) throw signInErr;
           const user = data.user;
-          setAuthState(user?.email || email.trim(), 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
+          registerEmailLocally(cleanEmail);
+          setAuthState(user?.email || cleanEmail, 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
         } else {
           const { data, error: signUpErr } = await supabase.auth.signUp({
-            email: email.trim(),
+            email: cleanEmail,
             password,
           });
-          if (signUpErr) throw signUpErr;
+
+          if (signUpErr) {
+            const msg = signUpErr.message.toLowerCase();
+            if (msg.includes('already registered') || msg.includes('already exists') || signUpErr.status === 422) {
+              setIsExistingUser(true);
+              registerEmailLocally(cleanEmail);
+              throw new Error(isDe 
+                ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich an.' 
+                : 'An account with this email address already exists. Please sign in instead.');
+            }
+            throw signUpErr;
+          }
+
+          // Check if Supabase returned an empty identities array (indicating user already exists)
+          if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            setIsExistingUser(true);
+            registerEmailLocally(cleanEmail);
+            throw new Error(isDe 
+              ? 'Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich an oder verwende Google.' 
+              : 'An account with this email address already exists. Please sign in instead or use Google.');
+          }
+
           const user = data.user;
-          setAuthState(user?.email || email.trim(), 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
+          registerEmailLocally(cleanEmail);
+          setAuthState(user?.email || cleanEmail, 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
         }
       } else {
         // Local / Offline fallback mode
-        setAuthState(email.trim(), 'signed_in', email.split('@')[0], `local-${Date.now()}`);
+        registerEmailLocally(cleanEmail);
+        setAuthState(cleanEmail, 'signed_in', cleanEmail.split('@')[0], `local-${Date.now()}`);
       }
 
-      // Start 7-day free trial on signup
+      // Start 7-day free trial on signup / signin
       startFreeTrial(selected);
 
       setTimeout(() => {
@@ -236,7 +272,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
     setError(null);
     if (!isSupabaseConfigured || !supabase) {
       // Offline fallback
-      setAuthState('google-user@drivede.de', 'signed_in', 'Google User', `google-${Date.now()}`);
+      const mockEmail = 'google-user@drivede.de';
+      registerEmailLocally(mockEmail);
+      setAuthState(mockEmail, 'signed_in', 'Google User', `google-${Date.now()}`);
       startFreeTrial(selected);
       onComplete();
       return;
