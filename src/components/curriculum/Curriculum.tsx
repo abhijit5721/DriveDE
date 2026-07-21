@@ -5,9 +5,9 @@
  * Curriculum.tsx
  *
  * Visual Learning Path / Quest Map (Duolingo & Babbel Style):
- * Chapter 1 (Basics - Conversion: Germany Quickstart) rendered as an interactive 
- * milestone quest path with German rule quick-pills, slide-over lesson preview drawers, 
- * readiness impact counters, and progress rings.
+ * Renders all chapters (1 through 5) as a continuous interactive milestone quest path
+ * with German rule quick-pills, slide-over lesson preview drawers, readiness impact counters,
+ * and left-aligned timeline tracks without text overlays.
  */
 
 import { useState, useMemo } from 'react';
@@ -29,24 +29,40 @@ interface CurriculumProps {
   onLessonSelect: (lesson: Lesson) => void;
 }
 
-// German rule badges mapped to specific lesson topics
+// German rule badges mapped to specific lesson topics across all chapters
 const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; icon: string }> = {
-  'lesson-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirror Setup', icon: '🪞' },
-  'lesson-2': { labelDe: 'Schulterblick & Spiegel', labelEn: 'Schulterblick Check', icon: '👀' },
-  'lesson-3': { labelDe: 'Vorfahrt (Rechts vor Links)', labelEn: 'Right-Before-Left Priority', icon: '⚠️' },
-  'lesson-4': { labelDe: 'Spurwechsel & Blinken', labelEn: 'Lane Change & Indicators', icon: '↔️' },
-  'lesson-5': { labelDe: 'Grüner Pfeil (Zeichen 720)', labelEn: 'Green Arrow Signal', icon: '🚦' },
-  'lesson-6': { labelDe: 'Fahrzeug-Sicherheitskontrolle', labelEn: 'Pre-Drive Safety Check', icon: '🔍' },
-  'lesson-7': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout Rules', icon: '🔄' },
-  'lesson-8': { labelDe: 'Fußgängerüberweg (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: '🚶' },
-  'lesson-9': { labelDe: 'Parallel-Einparken 3D', labelEn: 'Parallel Parking 3D', icon: '🅿️' },
-  'lesson-10': { labelDe: 'Rückwärts-Einparken 3D', labelEn: 'Reverse Parking 3D', icon: '🚗' },
-  'lesson-11': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: '🔄' },
-  'lesson-12': { labelDe: 'Gefahrenbremsung (Abstoppen)', labelEn: 'Emergency Stop Braking', icon: '⚡' },
-  'lesson-13': { labelDe: 'Autobahn Einfädelungsstreifen', labelEn: 'Autobahn Ramp Merging', icon: '🛣️' },
-  'lesson-14': { labelDe: 'Landstraße & Kurven', labelEn: 'Country Road & Passing', icon: '🌲' },
-  'lesson-15': { labelDe: 'Nachtfahrt & Fernlicht', labelEn: 'Night Drive & High Beams', icon: '🌙' },
-  'lesson-16': { labelDe: 'Prüfungssimulation 100%', labelEn: 'Full Exam Simulation', icon: '🏆' },
+  'basics-0': { labelDe: 'Umschreibung: Schnellstart & Prüfungsregeln', labelEn: 'Conversion: Germany Quickstart', icon: '🇩🇪' },
+  'basics-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirror Setup', icon: '🪞' },
+  'basics-1b': { labelDe: 'Schulterblick (Pflicht)', labelEn: 'Schulterblick Check', icon: '👀' },
+  'basics-1a': { labelDe: 'Fahrzeug-Sicherheitskontrolle', labelEn: 'Pre-Drive Safety Check', icon: '🔍' },
+  'basics-2': { labelDe: 'Kupplung & Anfahren (Schalter)', labelEn: 'Clutch & Moving Off (Manual)', icon: '⚙️' },
+  'basics-2a': { labelDe: 'Wählhebel & Anfahren (Automatik)', labelEn: 'Gear Selector & Moving Off (Auto)', icon: '⚡' },
+  'basics-3': { labelDe: 'Schaltpraxis & Gänge', labelEn: 'Shifting Technique', icon: '🏎️' },
+  'basics-3a': { labelDe: 'Fahrmodi & Tiptronic', labelEn: 'Drive Modes & Override', icon: '⚡' },
+  'basics-4': { labelDe: 'Lenkradhaltung (9 & 3 Uhr)', labelEn: 'Steering Wheel Control', icon: '🎯' },
+  'basics-5': { labelDe: 'Berganfahren (Handbremse)', labelEn: 'Hill Start (Manual)', icon: '🏔️' },
+  'basics-5a': { labelDe: 'Berganfahren (Hill-Hold)', labelEn: 'Hill Start (Auto)', icon: '🏔️' },
+
+  'maneuver-1': { labelDe: 'Parallel-Einparken (3D)', labelEn: 'Parallel Parking (3D)', icon: '🅿️' },
+  'maneuver-2': { labelDe: 'Rückwärts-Einparken (3D)', labelEn: 'Reverse Parking (3D)', icon: '🚗' },
+  'maneuver-3': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: '🔄' },
+  'maneuver-4': { labelDe: 'Gefahrenbremsung (Schaltwagen)', labelEn: 'Emergency Stop (Manual)', icon: '⚡' },
+  'maneuver-4a': { labelDe: 'Gefahrenbremsung (Automatik)', labelEn: 'Emergency Stop (Auto)', icon: '⚡' },
+
+  'city-1': { labelDe: 'Rechts vor Links (StVO §8)', labelEn: 'Right-Before-Left Priority', icon: '⚠️' },
+  'city-2': { labelDe: 'Abknickende Vorfahrt & Linksabbiegen', labelEn: 'Priority Roads & Left Turns', icon: '📐' },
+  'city-3': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout & Indicators', icon: '🔄' },
+  'city-4': { labelDe: 'Zebrastreifen (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: '🚶' },
+  'city-5': { labelDe: 'Abbiegen & Radweg-Check', labelEn: 'Right Turn Bike Check', icon: '🚴' },
+  'city-6': { labelDe: 'Spurwechsel im Verkehr', labelEn: 'Dense Traffic Lane Change', icon: '↔️' },
+
+  'hwy-1': { labelDe: 'Einfädelungsstreifen (Autobahn)', labelEn: 'Autobahn Ramp Merging', icon: '🛣️' },
+  'hwy-2': { labelDe: 'Rechtsfahrgebot & Überholen', labelEn: 'Keep-Right Rule & Passing', icon: '🚗' },
+  'hwy-3': { labelDe: 'Rettungsgasse bilden (StVO §11)', labelEn: 'Emergency Corridor', icon: '🚑' },
+
+  'exam-1': { labelDe: 'Die 5 Häufigsten Durchfallgründe', labelEn: 'Top 5 Exam Fail Traps', icon: '🚨' },
+  'exam-2': { labelDe: 'Prüferanweisung: "Die Nächste Links"', labelEn: 'Examiner Commands', icon: '🗣️' },
+  'exam-3': { labelDe: '100% Praktische Simulation', labelEn: 'Full Exam Simulation', icon: '🏆' },
 };
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
@@ -55,7 +71,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
 
-  const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-2');
+  const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [selectedLessonForDrawer, setSelectedLessonForDrawer] = useState<Lesson | null>(null);
   const [viewMode, setViewMode] = useState<'quest' | 'list'>('quest');
@@ -73,10 +89,6 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const filteredChapters = useMemo((): Chapter[] => {
     return filterChaptersForSelection(chapters, transmissionType, learningPath);
   }, [transmissionType, learningPath]);
-
-  // Separate Chapter 1 (Basics & Germany Conversion Quickstart) from remaining chapters
-  const chapter1 = useMemo(() => filteredChapters[0], [filteredChapters]);
-  const otherChapters = useMemo(() => filteredChapters.slice(1), [filteredChapters]);
 
   // Total lessons count and total completed
   const totalLessons = useMemo(() => {
@@ -237,32 +249,39 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
         </div>
       </div>
 
-      {/* 2. Visual Quest Map View */}
+      {/* 2. Visual Quest Map View for ALL Chapters */}
       {viewMode === 'quest' ? (
-        <div className="space-y-8 relative pt-2">
-          
-          {/* CHAPTER 1: BASICS & GERMAN DRIVING RULES QUEST PATH */}
-          {chapter1 && (() => {
-            const completedInCh1 = chapter1.lessons.filter(l =>
+        <div className="space-y-10 relative pt-2">
+          {filteredChapters.map((chapter, cIdx) => {
+            const completedInChapter = chapter.lessons.filter(l =>
               userProgress.completedLessons.includes(l.id)
             ).length;
-            const ch1Progress = Math.round((completedInCh1 / chapter1.lessons.length) * 100);
-            const isCh1Completed = ch1Progress === 100;
+            const chapterProgress = chapter.lessons.length > 0 
+              ? Math.round((completedInChapter / chapter.lessons.length) * 100)
+              : 0;
+
+            const isChapterCompleted = chapterProgress === 100;
+            const previousChapter = cIdx > 0 ? filteredChapters[cIdx - 1] : null;
+            const hasCompletedInPrevious = previousChapter?.lessons.some(l =>
+              userProgress.completedLessons.includes(l.id)
+            );
+            const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
+            const isChapterUnlocked = cIdx === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !proActive);
 
             return (
-              <div className="relative">
-                {/* Chapter 1 Quest Banner */}
-                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-blue-500/30 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+              <div key={chapter.id} className="relative">
+                {/* Chapter Quest Banner Header */}
+                <div className="sticky top-16 z-20 mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-blue-500/30 shadow-2xl backdrop-blur-xl flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl shadow-inner">
-                      {learningPath === 'umschreibung' ? '🇩🇪' : '🚗'}
+                      {getChapterIcon(chapter.id)}
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
-                          {isDe ? 'KAPITEL 1 • GRUNDLAGEN' : 'CHAPTER 1 • FUNDAMENTALS'}
+                          {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
                         </span>
-                        {isCh1Completed && (
+                        {isChapterCompleted && (
                           <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
                             <Check className="w-3 h-3" />
                             {isDe ? 'ABGESCHLOSSEN' : 'COMPLETED'}
@@ -270,28 +289,28 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                         )}
                       </div>
                       <h2 className="text-base sm:text-xl font-extrabold text-white">
-                        {isDe ? chapter1.titleDe : chapter1.titleEn}
+                        {isDe ? chapter.titleDe : chapter.titleEn}
                       </h2>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-black text-blue-400">{completedInCh1}/{chapter1.lessons.length}</span>
+                    <span className="text-xs font-black text-blue-400">{completedInChapter}/{chapter.lessons.length}</span>
                     <p className="text-[10px] text-slate-400 font-medium">{isDe ? 'Lektionen' : 'Lessons'}</p>
                   </div>
                 </div>
 
-                {/* Chapter 1 Quest Nodes Path */}
+                {/* Chapter Quest Nodes Path (Left-aligned timeline track to avoid text overlays) */}
                 <div className="relative space-y-4 pl-14 py-2">
                   {/* Connecting Line background running strictly behind left milestone circles */}
                   <div className="absolute top-7 bottom-7 left-6 w-1 bg-gradient-to-b from-blue-500/60 via-indigo-500/40 to-emerald-500/40 rounded-full" />
 
-                  {chapter1.lessons.map((lesson, lIdx) => {
+                  {chapter.lessons.map((lesson, lIdx) => {
                     const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
                     const isCurrentActive = lesson.id === activeLessonId;
-                    const previousLesson = lIdx > 0 ? chapter1.lessons[lIdx - 1] : null;
+                    const previousLesson = lIdx > 0 ? chapter.lessons[lIdx - 1] : null;
                     const isPreviousCompleted = !previousLesson || userProgress.completedLessons.includes(previousLesson.id);
                     const canSkipPrevious = previousLesson?.isPremium && !proActive;
-                    const isLessonUnlocked = lIdx === 0 || isPreviousCompleted || canSkipPrevious;
+                    const isLessonUnlocked = isChapterUnlocked && (lIdx === 0 || isPreviousCompleted || canSkipPrevious);
                     const isLockedForFreeUser = lesson.isPremium && !proActive;
 
                     const ruleBadge = GERMAN_RULE_BADGES[lesson.id];
@@ -387,78 +406,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 </div>
               </div>
             );
-          })()}
-
-          {/* SUBSEQUENT CHAPTERS (CHAPTERS 2 TO 5) ACCORDION LIST */}
-          <div className="pt-6 space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 px-1">
-              {isDe ? 'Weitere Kapitel im Ausbildungsplan' : 'Next Chapters in Curriculum'}
-            </h3>
-
-            {otherChapters.map((chapter, cIdx) => {
-              const completedInChapter = chapter.lessons.filter(l =>
-                userProgress.completedLessons.includes(l.id)
-              ).length;
-              const chapterProgress = chapter.lessons.length > 0 
-                ? Math.round((completedInChapter / chapter.lessons.length) * 100)
-                : 0;
-
-              const isExpanded = expandedChapter === chapter.id;
-              const isCompleted = chapterProgress === 100;
-
-              return (
-                <div key={chapter.id} className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shadow-lg">
-                  <button
-                    onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
-                    className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-850 transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                            {isDe ? `KAPITEL ${cIdx + 2}` : `CHAPTER ${cIdx + 2}`}
-                          </span>
-                          {isCompleted && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-bold">
-                              ✓ {isDe ? 'FERTIG' : 'DONE'}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-bold text-white text-sm sm:text-base">
-                          {isDe ? chapter.titleDe : chapter.titleEn}
-                        </h3>
-                        <p className="text-[11px] text-slate-400">{completedInChapter}/{chapter.lessons.length} {isDe ? 'Lektionen' : 'Lessons'}</p>
-                      </div>
-                    </div>
-                    <ChevronDown className={cn('w-5 h-5 text-slate-400 transition-transform', isExpanded && 'rotate-180')} />
-                  </button>
-
-                  {isExpanded && (
-                    <div className="p-4 pt-0 space-y-2 border-t border-slate-800/80">
-                      {chapter.lessons.map((lesson) => (
-                        <button
-                          key={lesson.id}
-                          onClick={() => onLessonSelect(lesson)}
-                          className="w-full p-3 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 text-left flex items-center justify-between transition-all"
-                        >
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="text-xs font-bold text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
-                              {getLessonBadge(lesson)}
-                            </div>
-                            <p className="text-[10px] text-slate-400">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
+          })}
         </div>
       ) : (
         /* 3. Classic List View */
