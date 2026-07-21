@@ -19,6 +19,7 @@ import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
+import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
 
 type Plan = '30-days' | '90-days' | 'lifetime';
 type ScreenStep = 'plan' | 'signup' | 'confirm_email';
@@ -208,9 +209,17 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
       return;
     }
 
-    if (password.length < 6) {
-      setError(t.passwordRequired);
-      return;
+    if (!isExistingUser) {
+      const passValidation = validatePassword(password);
+      if (!passValidation.isValid) {
+        setError(getPasswordErrorMessage(passValidation, language));
+        return;
+      }
+    } else {
+      if (password.length < 6) {
+        setError(isDe ? 'Passwort muss mindestens 6 Zeichen lang sein.' : 'Password must be at least 6 characters.');
+        return;
+      }
     }
 
     // Check if user tries to SIGN UP with an email that is already registered
@@ -621,6 +630,28 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500"
                     />
                   </div>
+
+                  {!isExistingUser && (
+                    <div className="mt-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        {isDe ? 'Passwortanforderungen:' : 'Password requirements:'}
+                      </p>
+                      <div className="grid grid-cols-2 gap-1 text-[11px] font-medium">
+                        {[
+                          { ok: validatePassword(password).hasMinLength, label: isDe ? 'Mind. 8 Zeichen' : 'Min 8 characters' },
+                          { ok: validatePassword(password).hasUpper, label: isDe ? 'Großbuchstabe (A-Z)' : 'Uppercase (A-Z)' },
+                          { ok: validatePassword(password).hasLower, label: isDe ? 'Kleinbuchstabe (a-z)' : 'Lowercase (a-z)' },
+                          { ok: validatePassword(password).hasNumber, label: isDe ? 'Zahl (0-9)' : 'Number (0-9)' },
+                          { ok: validatePassword(password).hasSpecial, label: isDe ? 'Sonderzeichen (!@#$)' : 'Special char (!@#$)' },
+                        ].map((item, idx) => (
+                          <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'text-emerald-400 font-bold' : 'text-slate-500')}>
+                            <span className="text-xs">{item.ok ? '✓' : '•'}</span>
+                            <span>{item.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <button

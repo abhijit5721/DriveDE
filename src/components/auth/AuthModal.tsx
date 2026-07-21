@@ -8,6 +8,7 @@ import { LogIn, Mail, Lock, UserPlus, Loader2, AlertCircle } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 import { useAppStore } from '../../store/useAppStore';
+import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
 import { cn } from '../../utils/cn';
 
 type AuthMode = 'signin' | 'signup';
@@ -123,20 +124,11 @@ export function AuthModal({ onClose }: AuthModalProps) {
       }
     }
 
-    // Password validation (only for signup or strict signin)
+    // Password validation (only for signup)
     if (mode === 'signup') {
-      if (password.length < 8) {
-        setError(copy.passwordShort);
-        return;
-      }
-
-      const hasUpper = /[A-Z]/.test(password);
-      const hasLower = /[a-z]/.test(password);
-      const hasNumber = /[0-9]/.test(password);
-      const hasSpecial = /[^A-Za-z0-9]/.test(password);
-
-      if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
-        setError(copy.passwordComplexity);
+      const passValidation = validatePassword(password);
+      if (!passValidation.isValid) {
+        setError(getPasswordErrorMessage(passValidation, language));
         return;
       }
 
@@ -304,19 +296,41 @@ export function AuthModal({ onClose }: AuthModalProps) {
           </label>
 
           {mode === 'signup' && (
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{copy.confirmPassword}</span>
-              <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
-                <Lock className="h-4 w-4 text-slate-400" />
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
-                  placeholder="••••••••"
-                />
+            <>
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{copy.confirmPassword}</span>
+                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+                  <Lock className="h-4 w-4 text-slate-400" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </label>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700/80 dark:bg-slate-800/60">
+                <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {language === 'de' ? 'Passwortanforderungen:' : 'Password requirements:'}
+                </p>
+                <div className="grid grid-cols-2 gap-1 text-[11px] font-medium">
+                  {[
+                    { ok: validatePassword(password).hasMinLength, label: language === 'de' ? 'Mind. 8 Zeichen' : 'Min 8 characters' },
+                    { ok: validatePassword(password).hasUpper, label: language === 'de' ? 'Großbuchstabe (A-Z)' : 'Uppercase (A-Z)' },
+                    { ok: validatePassword(password).hasLower, label: language === 'de' ? 'Kleinbuchstabe (a-z)' : 'Lowercase (a-z)' },
+                    { ok: validatePassword(password).hasNumber, label: language === 'de' ? 'Zahl (0-9)' : 'Number (0-9)' },
+                    { ok: validatePassword(password).hasSpecial, label: language === 'de' ? 'Sonderzeichen (!@#$)' : 'Special char (!@#$)' },
+                  ].map((item, idx) => (
+                    <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'font-bold text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500')}>
+                      <span className="text-xs">{item.ok ? '✓' : '•'}</span>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </label>
+            </>
           )}
         </div>
 
