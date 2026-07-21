@@ -21,6 +21,7 @@ import { Logo } from '../common/Logo';
 type Plan = '30-days' | '90-days' | 'lifetime';
 
 interface PlanPickerScreenProps {
+  initialPlan?: Plan;
   onComplete: () => void;
 }
 
@@ -132,9 +133,9 @@ const planIcons = {
   'lifetime': Sparkles,
 };
 
-export function PlanPickerScreen({ onComplete }: PlanPickerScreenProps) {
+export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPickerScreenProps) {
   const { language, startFreeTrial } = useAppStore();
-  const [selected, setSelected] = useState<Plan>('90-days');
+  const [selected, setSelected] = useState<Plan>(initialPlan);
   const [loading, setLoading] = useState(false);
 
   const t = PLAN_CONFIG[language] || PLAN_CONFIG['de'];

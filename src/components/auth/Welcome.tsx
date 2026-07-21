@@ -28,6 +28,7 @@ export function Welcome() {
   const [showDemo, setShowDemo] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
+  const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
   
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
@@ -42,8 +43,14 @@ export function Welcome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStart = () => {
-    // Show plan picker instead of going directly to the app
+  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime') => {
+    if (isReturningUser) {
+      setHasVisited(true);
+      return;
+    }
+    if (plan) {
+      setSelectedPlanForPicker(plan);
+    }
     setShowPlanPicker(true);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -118,7 +125,7 @@ export function Welcome() {
       {/* Plan Picker Overlay — shown after "Get Started" click */}
       {showPlanPicker && (
         <div className="fixed inset-0 z-[100] animate-fade-in">
-          <PlanPickerScreen onComplete={handlePlanPickerComplete} />
+          <PlanPickerScreen initialPlan={selectedPlanForPicker} onComplete={handlePlanPickerComplete} />
         </div>
       )}
       {/* Background with Overlay */}
@@ -161,14 +168,14 @@ export function Welcome() {
             ))}
             {isReturningUser ? (
               <button 
-                onClick={handleStart}
+                onClick={() => handleStart()}
                 className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-95 shadow-lg shadow-emerald-600/20"
               >
                 {t.common.backToDashboard}
               </button>
             ) : (
               <button 
-                onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => handleStart()}
                 className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/20"
               >
                 {t.common.startNow}
@@ -199,7 +206,7 @@ export function Welcome() {
                 <button onClick={() => setLanguage('de')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
                 <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
               </div>
-              <button onClick={handleStart} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
+              <button onClick={() => handleStart()} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                 {isReturningUser ? t.common.backToDashboard : t.common.startNow}
               </button>
             </div>
@@ -228,7 +235,7 @@ export function Welcome() {
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <button 
-              onClick={() => document.getElementById('paths')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleStart()}
               data-testid="welcome-start-btn"
               className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
@@ -655,7 +662,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={handleStart} 
+                onClick={() => handleStart('30-days')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
               >
                 {isDe ? '30-Tage Pass wählen' : 'Get 30-Day Pass'}
@@ -691,7 +698,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={handleStart} 
+                onClick={() => handleStart('90-days')} 
                 className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
               >
                 {isDe ? '90-Tage Pass wählen' : 'Get 90-Day Pass'}
@@ -723,7 +730,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={handleStart} 
+                onClick={() => handleStart('lifetime')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 border border-purple-500/30 py-4 text-sm font-bold text-white transition hover:bg-purple-900/40"
               >
                 {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}
@@ -961,7 +968,7 @@ export function Welcome() {
 
           <div className="mt-16 text-center">
             <button 
-              onClick={handleStart} 
+              onClick={() => handleStart()} 
               data-testid="welcome-get-started"
               className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-bold text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105"
             >
