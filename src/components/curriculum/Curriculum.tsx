@@ -280,10 +280,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </div>
                 </div>
 
-                {/* Chapter 1 Serpentine Quest Nodes Path */}
-                <div className="relative flex flex-col items-center space-y-6 py-2">
-                  {/* Connecting Line background */}
-                  <div className="absolute top-4 bottom-4 left-1/2 -translate-x-1/2 w-1.5 bg-gradient-to-b from-blue-500/60 via-indigo-500/40 to-emerald-500/40 rounded-full" />
+                {/* Chapter 1 Quest Nodes Path */}
+                <div className="relative space-y-4 pl-14 py-2">
+                  {/* Connecting Line background running strictly behind left milestone circles */}
+                  <div className="absolute top-7 bottom-7 left-6 w-1 bg-gradient-to-b from-blue-500/60 via-indigo-500/40 to-emerald-500/40 rounded-full" />
 
                   {chapter1.lessons.map((lesson, lIdx) => {
                     const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
@@ -295,24 +295,19 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                     const isLockedForFreeUser = lesson.isPremium && !proActive;
 
                     const ruleBadge = GERMAN_RULE_BADGES[lesson.id];
-                    // Alternate left/right alignment along path for quest map feel
-                    const isEven = lIdx % 2 === 0;
 
                     return (
                       <motion.div
                         key={lesson.id}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: lIdx * 0.06 }}
-                        className={cn(
-                          'relative z-10 flex items-center gap-4 max-w-lg w-full px-4',
-                          isEven ? 'flex-row' : 'flex-row-reverse text-right'
-                        )}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: lIdx * 0.05 }}
+                        className="relative z-10 flex items-center gap-4 w-full"
                       >
-                        {/* Milestone Node Button */}
-                        <div className="relative shrink-0 mx-auto sm:mx-0">
+                        {/* Milestone Node Button (sitting on the left timeline track) */}
+                        <div className="relative shrink-0 -ml-14">
                           {isCurrentActive && (
-                            <div className="absolute -inset-3 rounded-full bg-blue-500/30 animate-ping opacity-75 pointer-events-none" />
+                            <div className="absolute -inset-2.5 rounded-full bg-blue-500/30 animate-ping opacity-75 pointer-events-none" />
                           )}
 
                           <button
@@ -324,7 +319,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                               }
                             }}
                             className={cn(
-                              'relative w-14 h-14 rounded-2xl border-2 flex items-center justify-center text-lg font-bold transition-all duration-300 transform shadow-xl',
+                              'relative w-12 h-12 rounded-xl border-2 flex items-center justify-center text-base font-bold transition-all duration-300 transform shadow-xl',
                               isCurrentActive
                                 ? 'bg-gradient-to-br from-blue-500 to-indigo-600 border-white text-white scale-110 shadow-blue-500/50'
                                 : isLessonCompleted
@@ -335,13 +330,13 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                             )}
                           >
                             {isLessonCompleted ? (
-                              <Check className="w-6 h-6 stroke-[3px]" />
+                              <Check className="w-5 h-5 stroke-[3px]" />
                             ) : isCurrentActive ? (
-                              <Play className="w-6 h-6 fill-white ml-0.5" />
+                              <Play className="w-5 h-5 fill-white ml-0.5" />
                             ) : isLockedForFreeUser ? (
-                              <Crown className="w-5 h-5 text-amber-400" />
+                              <Crown className="w-4 h-4 text-amber-400" />
                             ) : !isLessonUnlocked ? (
-                              <Lock className="w-5 h-5 text-slate-600" />
+                              <Lock className="w-4 h-4 text-slate-600" />
                             ) : (
                               <span>{lIdx + 1}</span>
                             )}
@@ -349,17 +344,17 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                           {/* Active "Start Here" Floating Badge */}
                           {isCurrentActive && (
-                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-blue-600 text-white text-[9px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap animate-bounce">
-                              🎯 {isDe ? 'Hier starten' : 'Start Here'}
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[8px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap animate-bounce">
+                              🎯 {isDe ? 'Start' : 'Start'}
                             </div>
                           )}
                         </div>
 
-                        {/* Node Card Content */}
+                        {/* Node Card Content (sitting cleanly to the right of node) */}
                         <div
                           onClick={() => setSelectedLessonForDrawer(lesson)}
                           className={cn(
-                            'flex-1 p-3.5 rounded-2xl border transition-all duration-300 cursor-pointer text-left',
+                            'flex-1 p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left',
                             isCurrentActive
                               ? 'bg-blue-950/40 border-blue-500/40 hover:border-blue-400 shadow-lg shadow-blue-500/10'
                               : isLessonCompleted

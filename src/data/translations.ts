@@ -1081,8 +1081,8 @@ export const TRANSLATIONS = {
     curriculumData: {
             lessons: {
               'basics-0': {
-                title: 'Umschreibung: Schnellstart Deutschland',
-                description: 'Der kompakte Einstieg für Umschreiber: deutsche Prüfungslogik, Schulterblick, Vorfahrt, Prüferanweisungen und typische Fallen.'
+                title: 'Umschreibung: Deutsche Prüfungsregeln & Grundlagen',
+                description: 'Kompakter Einstieg für Umschreiber: deutsche Prüfungslogik, Schulterblick, Vorfahrt, Prüferanweisungen und typische Prüfungsfallen.',
               },
               'basics-1': {
                 title: 'Sitzposition & Spiegel',
@@ -3308,8 +3308,8 @@ export const TRANSLATIONS = {
     curriculumData: {
             lessons: {
               'basics-0': {
-                title: 'Conversion: Germany Quickstart',
-                description: 'The compact entry for conversion candidates: German exam logic, shoulder checks, priority, examiner commands, and typical traps.'
+                title: 'German License Conversion & Exam Rules',
+                description: 'Essential rules for license conversion candidates: German exam logic, shoulder checks, priority rules, examiner commands, and typical traps.',
               },
               'basics-1': {
                 title: 'Seating Position & Mirrors',
