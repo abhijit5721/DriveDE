@@ -16,6 +16,7 @@ import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { ContactForm } from '../common/ContactForm';
 import { Logo } from '../common/Logo';
+import { PlanPickerScreen } from './PlanPickerScreen';
 
 export function Welcome() {
   const { 
@@ -26,6 +27,7 @@ export function Welcome() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
   
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
@@ -41,8 +43,16 @@ export function Welcome() {
   }, []);
 
   const handleStart = () => {
+    // Show plan picker instead of going directly to the app
+    setShowPlanPicker(true);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePlanPickerComplete = () => {
+    // Trial has been started by PlanPickerScreen — now enter the app
     setHasVisited(true);
-    console.log('[Welcome] User entering app dashboard');
+    console.log('[Welcome] Trial started, entering app');
   };
 
   const navLinks = useMemo(() => [
@@ -105,6 +115,12 @@ export function Welcome() {
 
   return (
     <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30 text-slate-100">
+      {/* Plan Picker Overlay — shown after "Get Started" click */}
+      {showPlanPicker && (
+        <div className="fixed inset-0 z-[100] animate-fade-in">
+          <PlanPickerScreen onComplete={handlePlanPickerComplete} />
+        </div>
+      )}
       {/* Background with Overlay */}
       <div className="fixed inset-0 z-0">
         <img 

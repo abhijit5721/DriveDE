@@ -315,7 +315,9 @@ export interface AppState {
   // Hydration & Trial State
   trialStartedAt: string | null;
   trialEndsAt: string | null;
-  startFreeTrial: () => void;
+  intendedPlan: '30-days' | '90-days' | 'lifetime' | null;
+  startFreeTrial: (plan: '30-days' | '90-days' | 'lifetime') => void;
+  setIntendedPlan: (plan: '30-days' | '90-days' | 'lifetime') => void;
   isProActive: () => boolean;
   getRemainingTrialDays: () => number;
 

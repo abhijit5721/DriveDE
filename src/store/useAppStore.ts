@@ -158,6 +158,7 @@ export const useAppStore = create<AppState>()(
       })(),
       trialStartedAt: null,
       trialEndsAt: null,
+      intendedPlan: null,
       authEmail: null,
       authDisplayName: null,
       authUserId: null,
@@ -176,30 +177,31 @@ export const useAppStore = create<AppState>()(
         hasSet: false
       },
 
-      startFreeTrial: () => set((state) => {
+      startFreeTrial: (plan) => set((state) => {
         if (state.trialStartedAt) return state; // Already started
         const now = new Date();
         const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         return {
           trialStartedAt: now.toISOString(),
-          trialEndsAt: end.toISOString()
+          trialEndsAt: end.toISOString(),
+          intendedPlan: plan,
         };
       }),
+
+      setIntendedPlan: (plan) => set({ intendedPlan: plan }),
 
       isProActive: () => {
         const state = get();
         if (state.isPremium) return true;
-        if (!state.trialEndsAt) {
-          // If trial not started yet, it is active (7 days left)
-          return true;
-        }
+        // Trial must be explicitly started (via plan picker) to be active
+        if (!state.trialEndsAt) return false;
         return new Date(state.trialEndsAt) > new Date();
       },
 
       getRemainingTrialDays: () => {
         const state = get();
         if (state.isPremium) return 999;
-        if (!state.trialEndsAt) return 7;
+        if (!state.trialEndsAt) return 0;
         const diff = new Date(state.trialEndsAt).getTime() - new Date().getTime();
         if (diff <= 0) return 0;
         return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
@@ -830,6 +832,7 @@ export const useAppStore = create<AppState>()(
           isPremium: state.isPremium,
           trialStartedAt: state.trialStartedAt,
           trialEndsAt: state.trialEndsAt,
+          intendedPlan: state.intendedPlan,
           authEmail: state.authEmail,
           authDisplayName: state.authDisplayName,
           authUserId: state.authUserId,
@@ -847,9 +850,8 @@ export const useAppStore = create<AppState>()(
           if (typeof state.setHydrated === 'function') {
             state.setHydrated(true);
           }
-          if (!state.trialStartedAt && typeof state.startFreeTrial === 'function') {
-            state.startFreeTrial();
-          }
+          // Trial is no longer auto-started here.
+          // It starts explicitly when the user picks a plan on the PlanPickerScreen.
         }
       },
     }

@@ -15,8 +15,8 @@ import { TRANSLATIONS } from '../../data/translations';
 type Tier = '30-days' | '90-days' | 'lifetime';
 
 export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { language, setPremium } = useAppStore();
-  const [selectedTier, setSelectedTier] = useState<Tier>('90-days');
+  const { language, setPremium, intendedPlan } = useAppStore();
+  const [selectedTier, setSelectedTier] = useState<Tier>(intendedPlan ?? '90-days');
   const [isLoading, setIsLoading] = useState(false);
 
   const t = TRANSLATIONS[language]?.instructor?.paywall || TRANSLATIONS['de'].instructor.paywall;
