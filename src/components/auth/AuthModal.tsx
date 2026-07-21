@@ -198,7 +198,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
         }
 
         registerEmailLocally(cleanEmail);
-        startFreeTrial(intendedPlan || '90-days');
+        if (data?.session) {
+          startFreeTrial(intendedPlan || '90-days');
+        }
         setSuccess(copy.signupSuccess);
         setMode('signin');
         setConfirmPassword('');

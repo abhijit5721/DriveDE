@@ -6,14 +6,14 @@
  *
  * Flow:
  * Step 1 (Plan Selection): User picks 30-Day, 90-Day, or Lifetime.
- * Step 2 (Account Creation / Auth): User MUST sign up with email or Google to activate the 7-day trial.
- * Upon successful signup, trial starts (7 days), authState is saved, and user proceeds into app.
- * After 7 days, Pro features are revoked unless upgraded.
+ * Step 2 (Account Creation): User enters email & password (or Google).
+ * Step 3 (Email Confirmation): New signups must verify their email link before accessing dashboard.
+ * Upon verification/sign-in, 7-day trial activates and user enters app.
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Calendar, Sparkles, Check, ArrowRight, ShieldCheck, Zap, X, Mail, Lock, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Clock, Calendar, Sparkles, Check, ArrowRight, ShieldCheck, Zap, X, Mail, Lock, AlertCircle, ArrowLeft, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
@@ -21,7 +21,7 @@ import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 
 type Plan = '30-days' | '90-days' | 'lifetime';
-type ScreenStep = 'plan' | 'signup';
+type ScreenStep = 'plan' | 'signup' | 'confirm_email';
 
 interface PlanPickerScreenProps {
   initialPlan?: Plan;
@@ -75,7 +75,7 @@ const PLAN_CONFIG = {
       '📊 Fortschritts- & Fahrbereitschafts-Score',
     ],
     ctaPlan: 'Weiter zur kostenlosen Registrierung',
-    ctaSignup: 'Konto erstellen & 7 Tage Pro testen',
+    ctaSignup: 'Konto erstellen & Bestätigen',
     ctaSub: 'Keine Kreditkarte erforderlich · Jederzeit kündbar',
     guarantee: 'Kein Risiko',
     guaranteeDesc: 'Teste alle Pro-Funktionen 7 Tage lang komplett kostenlos.',
@@ -88,6 +88,14 @@ const PLAN_CONFIG = {
     alreadyAccount: 'Schon ein Konto? Hier anmelden',
     emailRequired: 'Bitte gib eine gültige E-Mail-Adresse ein.',
     passwordRequired: 'Passwort muss mindestens 8 Zeichen lang sein.',
+    confirmTitle: 'Bitte E-Mail-Adresse bestätigen',
+    confirmSubline: 'Wir haben einen Bestätigungslink gesendet an:',
+    confirmDesc: 'Klicke auf den Link in deiner E-Mail, um dein Konto zu aktivieren und deine 7-Tage Pro Testversion zu starten.',
+    confirmDoneBtn: 'Ich habe meine E-Mail bestätigt → Anmelden',
+    confirmSimulateBtn: 'Bestätigung simulieren & Trial starten →',
+    resendLink: 'Bestätigungslink erneut senden',
+    resendSuccess: 'Bestätigungslink wurde erneut gesendet.',
+    changeEmail: 'E-Mail-Adresse ändern',
   },
   'en': {
     badge: 'START FOR FREE',
@@ -135,7 +143,7 @@ const PLAN_CONFIG = {
       '📊 Progress & Readiness Score',
     ],
     ctaPlan: 'Continue to Free Signup',
-    ctaSignup: 'Create Account & Start 7-Day Trial',
+    ctaSignup: 'Create Account & Confirm',
     ctaSub: 'No credit card required · Cancel anytime',
     guarantee: 'Zero Risk',
     guaranteeDesc: 'Try all Pro features free for 7 full days.',
@@ -148,6 +156,14 @@ const PLAN_CONFIG = {
     alreadyAccount: 'Already have an account? Sign in',
     emailRequired: 'Please enter a valid email address.',
     passwordRequired: 'Password must be at least 8 characters long.',
+    confirmTitle: 'Please confirm your email address',
+    confirmSubline: 'We sent a confirmation link to:',
+    confirmDesc: 'Click the link in your email to activate your account and start your 7-day Pro trial.',
+    confirmDoneBtn: 'I\'ve confirmed my email → Sign in',
+    confirmSimulateBtn: 'Simulate Confirmation & Start Trial →',
+    resendLink: 'Resend confirmation link',
+    resendSuccess: 'Confirmation link has been resent.',
+    changeEmail: 'Change email address',
   },
 };
 
@@ -159,17 +175,20 @@ const planIcons = {
 };
 
 export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPickerScreenProps) {
-  const { language, startFreeTrial, setAuthState } = useAppStore();
+  const { language, startFreeTrial, setAuthState, setIntendedPlan } = useAppStore();
   const [step, setStep] = useState<ScreenStep>('plan');
   const [selected, setSelected] = useState<Plan>(initialPlan);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [pendingConfirmEmail, setPendingConfirmEmail] = useState('');
   const [isExistingUser, setIsExistingUser] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   const t = PLAN_CONFIG[language] || PLAN_CONFIG['de'];
   const activePlan = t.plans[selected];
+  const isDe = language === 'de';
 
   const handleGoToSignup = () => {
     setStep('signup');
@@ -179,9 +198,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
   const handleSignupSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError(null);
+    setInfoMessage(null);
 
     const cleanEmail = email.toLowerCase().trim();
-    const isDe = language === 'de';
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(cleanEmail)) {
@@ -194,7 +213,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
       return;
     }
 
-    // Check if user is trying to SIGN UP with an email that is already registered
+    // Check if user tries to SIGN UP with an email that is already registered
     if (!isExistingUser && (isEmailRegisteredLocally(cleanEmail) || useAppStore.getState().authEmail?.toLowerCase() === cleanEmail)) {
       setIsExistingUser(true);
       setError(isDe 
@@ -208,6 +227,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
     try {
       if (isSupabaseConfigured && supabase) {
         if (isExistingUser) {
+          // Signing in existing confirmed user
           const { data, error: signInErr } = await supabase.auth.signInWithPassword({
             email: cleanEmail,
             password,
@@ -216,10 +236,19 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
           const user = data.user;
           registerEmailLocally(cleanEmail);
           setAuthState(user?.email || cleanEmail, 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
+          startFreeTrial(selected);
+          setTimeout(() => {
+            setLoading(false);
+            onComplete();
+          }, 400);
         } else {
+          // Creating NEW account in Supabase
           const { data, error: signUpErr } = await supabase.auth.signUp({
             email: cleanEmail,
             password,
+            options: {
+              emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+            },
           });
 
           if (signUpErr) {
@@ -234,7 +263,6 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
             throw signUpErr;
           }
 
-          // Check if Supabase returned an empty identities array (indicating user already exists)
           if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
             setIsExistingUser(true);
             registerEmailLocally(cleanEmail);
@@ -243,28 +271,65 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
               : 'An account with this email address already exists. Please sign in instead or use Google.');
           }
 
-          const user = data.user;
           registerEmailLocally(cleanEmail);
+          setIntendedPlan(selected);
+
+          // If session is NOT active yet, email confirmation link was sent
+          if (!data.session || data.user?.email_confirmed_at === null) {
+            setPendingConfirmEmail(cleanEmail);
+            setStep('confirm_email');
+            setLoading(false);
+            return;
+          }
+
+          // If session is immediately active (e.g. auto-confirm enabled on Supabase)
+          const user = data.user;
           setAuthState(user?.email || cleanEmail, 'signed_in', user?.user_metadata?.full_name || null, user?.id || null);
+          startFreeTrial(selected);
+          setTimeout(() => {
+            setLoading(false);
+            onComplete();
+          }, 400);
         }
       } else {
-        // Local / Offline fallback mode
+        // Local / Offline fallback mode: Require confirmation step first
         registerEmailLocally(cleanEmail);
-        setAuthState(cleanEmail, 'signed_in', cleanEmail.split('@')[0], `local-${Date.now()}`);
-      }
-
-      // Start 7-day free trial on signup / signin
-      startFreeTrial(selected);
-
-      setTimeout(() => {
+        setIntendedPlan(selected);
+        setPendingConfirmEmail(cleanEmail);
+        setStep('confirm_email');
         setLoading(false);
-        onComplete();
-      }, 400);
+      }
 
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Authentication failed.';
       setError(message);
       setLoading(false);
+    }
+  };
+
+  const handleSimulateLocalConfirmation = () => {
+    const cleanEmail = pendingConfirmEmail || email || 'user@drivede.de';
+    setAuthState(cleanEmail, 'signed_in', cleanEmail.split('@')[0], `local-${Date.now()}`);
+    startFreeTrial(selected);
+    onComplete();
+  };
+
+  const handleResendConfirmation = async () => {
+    setError(null);
+    setInfoMessage(null);
+    if (isSupabaseConfigured && supabase && pendingConfirmEmail) {
+      try {
+        const { error: resendErr } = await supabase.auth.resend({
+          type: 'signup',
+          email: pendingConfirmEmail,
+        });
+        if (resendErr) throw resendErr;
+        setInfoMessage(t.resendSuccess);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to resend confirmation email.');
+      }
+    } else {
+      setInfoMessage(t.resendSuccess);
     }
   };
 
@@ -303,7 +368,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
       {/* Header */}
       <div className="relative flex items-center justify-between px-6 py-5 shrink-0">
         <Logo size="sm" />
-        {step === 'signup' ? (
+        {step !== 'plan' ? (
           <button
             onClick={() => setStep('plan')}
             className="flex items-center gap-1.5 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
@@ -329,7 +394,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
       <div className="relative flex-1 flex flex-col items-center px-4 pb-8 pt-2">
 
         <AnimatePresence mode="wait">
-          {step === 'plan' ? (
+          {step === 'plan' && (
             <motion.div
               key="step-plan"
               initial={{ opacity: 0, y: 10 }}
@@ -482,7 +547,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
                 </div>
               </div>
             </motion.div>
-          ) : (
+          )}
+
+          {step === 'signup' && (
             <motion.div
               key="step-signup"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -604,6 +671,93 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
                   {isExistingUser
                     ? (language === 'de' ? 'Noch kein Konto? Registrieren' : 'Need an account? Sign up')
                     : t.alreadyAccount}
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 'confirm_email' && (
+            <motion.div
+              key="step-confirm"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl text-center"
+            >
+              {/* Mail Icon */}
+              <div className="w-16 h-16 rounded-full bg-blue-500/15 border border-blue-500/30 flex items-center justify-center mx-auto mb-5 text-blue-400">
+                <Mail className="w-8 h-8 animate-pulse" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-white tracking-tight mb-2">
+                {t.confirmTitle}
+              </h2>
+
+              <p className="text-xs text-slate-400 mb-3 font-medium">
+                {t.confirmSubline}
+              </p>
+
+              <div className="inline-block px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 font-bold text-xs mb-5 break-all">
+                {pendingConfirmEmail || email}
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed mb-6">
+                {t.confirmDesc}
+              </p>
+
+              {infoMessage && (
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-400">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{infoMessage}</span>
+                </div>
+              )}
+
+              {error && (
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-400">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                {isSupabaseConfigured && supabase ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsExistingUser(true);
+                      setStep('signup');
+                    }}
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>{t.confirmDoneBtn}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSimulateLocalConfirmation}
+                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>{t.confirmSimulateBtn}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleResendConfirmation}
+                  className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-slate-300 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>{t.resendLink}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStep('signup')}
+                  className="text-xs text-slate-400 hover:text-white font-medium transition-colors pt-2"
+                >
+                  {t.changeEmail}
                 </button>
               </div>
             </motion.div>

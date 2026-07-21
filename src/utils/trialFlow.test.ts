@@ -78,7 +78,6 @@ describe('7-Day Trial & Auth Flow Verification', () => {
   });
 
   it('3. Pro access is automatically revoked when 7 days expire', () => {
-    const store = useAppStore.getState();
     // Simulate a trial that started 8 days ago
     const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
     const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString();
@@ -117,8 +116,7 @@ describe('7-Day Trial & Auth Flow Verification', () => {
   });
 
   it('6. Intended plan persists so Paywall pre-selects chosen plan on expiry', () => {
-    const store = useAppStore.getState();
-    store.setIntendedPlan('lifetime');
+    useAppStore.getState().setIntendedPlan('lifetime');
 
     expect(useAppStore.getState().intendedPlan).toBe('lifetime');
   });
