@@ -5,8 +5,9 @@
  * Curriculum.tsx
  *
  * Visual Learning Path / Quest Map (Duolingo & Babbel Style):
- * Interactive serpentine milestone path with German rule quick-pills,
- * slide-over lesson preview drawers, readiness impact counters, and progress rings.
+ * Chapter 1 (Basics - Conversion: Germany Quickstart) rendered as an interactive 
+ * milestone quest path with German rule quick-pills, slide-over lesson preview drawers, 
+ * readiness impact counters, and progress rings.
  */
 
 import { useState, useMemo } from 'react';
@@ -30,14 +31,14 @@ interface CurriculumProps {
 
 // German rule badges mapped to specific lesson topics
 const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; icon: string }> = {
-  'lesson-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirrors', icon: '🪞' },
+  'lesson-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirror Setup', icon: '🪞' },
   'lesson-2': { labelDe: 'Schulterblick & Spiegel', labelEn: 'Schulterblick Check', icon: '👀' },
   'lesson-3': { labelDe: 'Vorfahrt (Rechts vor Links)', labelEn: 'Right-Before-Left Priority', icon: '⚠️' },
   'lesson-4': { labelDe: 'Spurwechsel & Blinken', labelEn: 'Lane Change & Indicators', icon: '↔️' },
   'lesson-5': { labelDe: 'Grüner Pfeil (Zeichen 720)', labelEn: 'Green Arrow Signal', icon: '🚦' },
-  'lesson-6': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout Rules', icon: '🔄' },
-  'lesson-7': { labelDe: 'Fußgängerüberweg (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: '🚶' },
-  'lesson-8': { labelDe: 'Abbiegen nach rechts (Radweg)', labelEn: 'Right Turn Bike Check', icon: '🚴' },
+  'lesson-6': { labelDe: 'Fahrzeug-Sicherheitskontrolle', labelEn: 'Pre-Drive Safety Check', icon: '🔍' },
+  'lesson-7': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout Rules', icon: '🔄' },
+  'lesson-8': { labelDe: 'Fußgängerüberweg (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: '🚶' },
   'lesson-9': { labelDe: 'Parallel-Einparken 3D', labelEn: 'Parallel Parking 3D', icon: '🅿️' },
   'lesson-10': { labelDe: 'Rückwärts-Einparken 3D', labelEn: 'Reverse Parking 3D', icon: '🚗' },
   'lesson-11': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: '🔄' },
@@ -54,7 +55,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
 
-  const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
+  const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-2');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [selectedLessonForDrawer, setSelectedLessonForDrawer] = useState<Lesson | null>(null);
   const [viewMode, setViewMode] = useState<'quest' | 'list'>('quest');
@@ -72,6 +73,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const filteredChapters = useMemo((): Chapter[] => {
     return filterChaptersForSelection(chapters, transmissionType, learningPath);
   }, [transmissionType, learningPath]);
+
+  // Separate Chapter 1 (Basics & Germany Conversion Quickstart) from remaining chapters
+  const chapter1 = useMemo(() => filteredChapters[0], [filteredChapters]);
+  const otherChapters = useMemo(() => filteredChapters.slice(1), [filteredChapters]);
 
   // Total lessons count and total completed
   const totalLessons = useMemo(() => {
@@ -202,20 +207,20 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       </div>
 
       {/* Progress Bar Card */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-900/40 via-slate-900 to-indigo-900/40 border border-blue-500/20 p-4 sm:p-5 shadow-xl backdrop-blur-xl">
+      <div className="rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/60 border border-blue-500/20 p-4 sm:p-5 shadow-xl backdrop-blur-xl">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold">
               <TrendingUp className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-white">
+              <p className="text-xs sm:text-sm font-bold text-white">
                 {learningPath === 'umschreibung'
-                  ? (isDe ? '🇩🇪 Umschreibung Quickstart & Fahrprüfung' : '🇩🇪 Conversion Quickstart & Driving Exam')
-                  : (isDe ? 'Klasse B Führerschein-Lernpfad' : 'Class B Driving License Path')}
+                  ? (isDe ? '🇩🇪 Umschreibung: Deutschland Quickstart' : '🇩🇪 License Conversion: Germany Quickstart')
+                  : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving Curriculum')}
               </p>
               <p className="text-[11px] text-slate-400 font-medium">
-                {isDe ? 'Erforderliche Lektionen für 100% Prüfungsreife' : 'Required lessons for 100% Exam Readiness'}
+                {isDe ? 'Gesamtforschritt & Prüfungsreife' : 'Overall Progress & Exam Readiness'}
               </p>
             </div>
           </div>
@@ -234,65 +239,59 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
       {/* 2. Visual Quest Map View */}
       {viewMode === 'quest' ? (
-        <div className="space-y-10 relative pt-2">
-          {filteredChapters.map((chapter, cIdx) => {
-            const completedInChapter = chapter.lessons.filter(l =>
+        <div className="space-y-8 relative pt-2">
+          
+          {/* CHAPTER 1: BASICS - CONVERSION: GERMANY QUICKSTART QUEST PATH */}
+          {chapter1 && (() => {
+            const completedInCh1 = chapter1.lessons.filter(l =>
               userProgress.completedLessons.includes(l.id)
             ).length;
-            const chapterProgress = chapter.lessons.length > 0 
-              ? Math.round((completedInChapter / chapter.lessons.length) * 100)
-              : 0;
-
-            const isChapterCompleted = chapterProgress === 100;
-            const previousChapter = cIdx > 0 ? filteredChapters[cIdx - 1] : null;
-            const hasCompletedInPrevious = previousChapter?.lessons.some(l =>
-              userProgress.completedLessons.includes(l.id)
-            );
-            const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
-            const isChapterUnlocked = cIdx === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !proActive);
+            const ch1Progress = Math.round((completedInCh1 / chapter1.lessons.length) * 100);
+            const isCh1Completed = ch1Progress === 100;
 
             return (
-              <div key={chapter.id} className="relative">
-                {/* Chapter Banner */}
-                <div className="sticky top-16 z-20 mb-6 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+              <div className="relative">
+                {/* Chapter 1 Quest Banner */}
+                <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-blue-500/30 shadow-2xl backdrop-blur-xl flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-xl shadow-inner">
-                      {getChapterIcon(chapter.id)}
+                    <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl shadow-inner">
+                      🇩🇪
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
-                          {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
+                          {isDe ? 'KAPITEL 1 • FOKUS' : 'CHAPTER 1 • FOCUS'}
                         </span>
-                        {isChapterCompleted && (
+                        {isCh1Completed && (
                           <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
                             <Check className="w-3 h-3" />
-                            {isDe ? 'ABGESCHLOSSEN' : 'COMPLETED'}
+                            {isDe ? 'MEISTER' : 'MASTERED'}
                           </span>
                         )}
                       </div>
-                      <h2 className="text-base sm:text-lg font-bold text-white">
-                        {isDe ? chapter.titleDe : chapter.titleEn}
+                      <h2 className="text-base sm:text-xl font-extrabold text-white">
+                        {isDe ? chapter1.titleDe : chapter1.titleEn}
                       </h2>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-bold text-slate-400">{completedInChapter}/{chapter.lessons.length}</span>
+                    <span className="text-xs font-black text-blue-400">{completedInCh1}/{chapter1.lessons.length}</span>
+                    <p className="text-[10px] text-slate-400 font-medium">{isDe ? 'Lektionen' : 'Lessons'}</p>
                   </div>
                 </div>
 
-                {/* Lesson Nodes Path */}
+                {/* Chapter 1 Serpentine Quest Nodes Path */}
                 <div className="relative flex flex-col items-center space-y-6 py-2">
                   {/* Connecting Line background */}
-                  <div className="absolute top-4 bottom-4 left-1/2 -translate-x-1/2 w-1.5 bg-gradient-to-b from-blue-500/40 via-indigo-500/30 to-slate-800 rounded-full" />
+                  <div className="absolute top-4 bottom-4 left-1/2 -translate-x-1/2 w-1.5 bg-gradient-to-b from-blue-500/60 via-indigo-500/40 to-emerald-500/40 rounded-full" />
 
-                  {chapter.lessons.map((lesson, lIdx) => {
+                  {chapter1.lessons.map((lesson, lIdx) => {
                     const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
                     const isCurrentActive = lesson.id === activeLessonId;
-                    const previousLesson = lIdx > 0 ? chapter.lessons[lIdx - 1] : null;
+                    const previousLesson = lIdx > 0 ? chapter1.lessons[lIdx - 1] : null;
                     const isPreviousCompleted = !previousLesson || userProgress.completedLessons.includes(previousLesson.id);
                     const canSkipPrevious = previousLesson?.isPremium && !proActive;
-                    const isLessonUnlocked = isChapterUnlocked && (lIdx === 0 || isPreviousCompleted || canSkipPrevious);
+                    const isLessonUnlocked = lIdx === 0 || isPreviousCompleted || canSkipPrevious;
                     const isLockedForFreeUser = lesson.isPremium && !proActive;
 
                     const ruleBadge = GERMAN_RULE_BADGES[lesson.id];
@@ -393,12 +392,83 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 </div>
               </div>
             );
-          })}
+          })()}
+
+          {/* SUBSEQUENT CHAPTERS (CHAPTERS 2 TO 5) ACCORDION LIST */}
+          <div className="pt-6 space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 px-1">
+              {isDe ? 'Weitere Kapitel im Ausbildungsplan' : 'Next Chapters in Curriculum'}
+            </h3>
+
+            {otherChapters.map((chapter, cIdx) => {
+              const completedInChapter = chapter.lessons.filter(l =>
+                userProgress.completedLessons.includes(l.id)
+              ).length;
+              const chapterProgress = chapter.lessons.length > 0 
+                ? Math.round((completedInChapter / chapter.lessons.length) * 100)
+                : 0;
+
+              const isExpanded = expandedChapter === chapter.id;
+              const isCompleted = chapterProgress === 100;
+
+              return (
+                <div key={chapter.id} className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shadow-lg">
+                  <button
+                    onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
+                    className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-850 transition"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            {isDe ? `KAPITEL ${cIdx + 2}` : `CHAPTER ${cIdx + 2}`}
+                          </span>
+                          {isCompleted && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-bold">
+                              ✓ {isDe ? 'FERTIG' : 'DONE'}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-bold text-white text-sm sm:text-base">
+                          {isDe ? chapter.titleDe : chapter.titleEn}
+                        </h3>
+                        <p className="text-[11px] text-slate-400">{completedInChapter}/{chapter.lessons.length} {isDe ? 'Lektionen' : 'Lessons'}</p>
+                      </div>
+                    </div>
+                    <ChevronDown className={cn('w-5 h-5 text-slate-400 transition-transform', isExpanded && 'rotate-180')} />
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 pt-0 space-y-2 border-t border-slate-800/80">
+                      {chapter.lessons.map((lesson) => (
+                        <button
+                          key={lesson.id}
+                          onClick={() => onLessonSelect(lesson)}
+                          className="w-full p-3 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 text-left flex items-center justify-between transition-all"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs font-bold text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
+                              {getLessonBadge(lesson)}
+                            </div>
+                            <p className="text-[10px] text-slate-400">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
         </div>
       ) : (
         /* 3. Classic List View */
         <div className="space-y-4">
-          {filteredChapters.map((chapter) => {
+          {filteredChapters.map((chapter, cIdx) => {
             const completedInChapter = chapter.lessons.filter(l =>
               userProgress.completedLessons.includes(l.id)
             ).length;
@@ -413,6 +483,9 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
                     <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
+                      </span>
                       <h3 className="font-bold text-white text-base">
                         {isDe ? chapter.titleDe : chapter.titleEn}
                       </h3>
