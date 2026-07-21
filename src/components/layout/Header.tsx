@@ -15,14 +15,12 @@ interface HeaderProps {
 
 export function Header({ onSignOut, onTabChange }: HeaderProps) {
   const { 
-    language, darkMode, setLanguage, toggleDarkMode, isPremium, authStatus,
-    isProActive, getRemainingTrialDays 
+    language, darkMode, setLanguage, toggleDarkMode, authStatus,
+    isProActive
   } = useAppStore();
   const t = TRANSLATIONS[language].common;
-  const isDe = language === 'de';
 
   const proActive = isProActive();
-  const remainingDays = getRemainingTrialDays();
 
   return (
     <header className="sticky top-0 z-40 glass pt-safe border-b border-white/10 dark:border-white/5 lg:hidden">
@@ -37,15 +35,10 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
-                {isPremium || remainingDays === 999 ? (
+                {proActive ? (
                   <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                     <Crown className="h-2.5 w-2.5" />
                     PRO
-                  </span>
-                ) : proActive ? (
-                  <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                    <Crown className="h-2.5 w-2.5 text-amber-300" />
-                    {isDe ? `Testversion (${remainingDays}d)` : `Trial (${remainingDays}d)`}
                   </span>
                 ) : null}
               </div>
