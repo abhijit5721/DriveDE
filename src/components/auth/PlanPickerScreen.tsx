@@ -27,6 +27,7 @@ type ScreenStep = 'plan' | 'signup' | 'confirm_email';
 interface PlanPickerScreenProps {
   initialPlan?: Plan;
   onComplete: () => void;
+  onCancel?: () => void;
 }
 
 const PLAN_CONFIG = {
@@ -175,7 +176,7 @@ const planIcons = {
   'lifetime': Sparkles,
 };
 
-export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPickerScreenProps) {
+export function PlanPickerScreen({ initialPlan = '90-days', onComplete, onCancel }: PlanPickerScreenProps) {
   const { language, startFreeTrial, setAuthState, setIntendedPlan } = useAppStore();
   const [step, setStep] = useState<ScreenStep>('plan');
   const [selected, setSelected] = useState<Plan>(initialPlan);
@@ -390,7 +391,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', onComplete }: PlanPi
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            onClick={onComplete}
+            onClick={onCancel || onComplete}
             className="flex items-center gap-1.5 text-slate-500 hover:text-slate-300 text-xs font-bold uppercase tracking-widest transition-colors"
           >
             <X className="w-3.5 h-3.5" />

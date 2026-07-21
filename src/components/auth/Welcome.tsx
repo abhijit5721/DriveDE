@@ -125,7 +125,11 @@ export function Welcome() {
       {/* Plan Picker Overlay — shown after "Get Started" click */}
       {showPlanPicker && (
         <div className="fixed inset-0 z-[100] animate-fade-in">
-          <PlanPickerScreen initialPlan={selectedPlanForPicker} onComplete={handlePlanPickerComplete} />
+          <PlanPickerScreen 
+            initialPlan={selectedPlanForPicker} 
+            onComplete={handlePlanPickerComplete} 
+            onCancel={() => setShowPlanPicker(false)} 
+          />
         </div>
       )}
       {/* Background with Overlay */}
