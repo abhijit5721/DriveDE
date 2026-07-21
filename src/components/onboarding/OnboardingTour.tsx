@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, X, Sparkles } from 'lucide-react';
+import { ChevronRight, X, Zap } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { syncAllData } from '../../services/supabaseSync';
@@ -232,7 +232,7 @@ export function OnboardingTour() {
                     transition={{ repeat: Infinity, duration: 3 }}
                     className="absolute -right-2 -top-2 rounded-full bg-white p-1.5 text-blue-500 shadow-lg"
                   >
-                    <Sparkles className="h-4 w-4" />
+                    <Zap className="h-4 w-4 fill-blue-500 text-blue-500" />
                   </motion.div>
                 </motion.div>
 

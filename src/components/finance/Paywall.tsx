@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
-import { Check, X, Clock, Calendar, Sparkles, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
+import { Check, X, Clock, Calendar, Crown, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -24,7 +24,7 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const tierIcons = {
     '30-days': Clock,
     '90-days': Calendar,
-    'lifetime': Sparkles,
+    'lifetime': Crown,
   };
 
   const tierPrices = {

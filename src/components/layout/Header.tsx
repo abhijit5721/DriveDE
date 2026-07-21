@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, LogOut, Sparkles } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
@@ -44,7 +44,7 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
                   </span>
                 ) : proActive ? (
                   <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                    <Sparkles className="h-2.5 w-2.5" />
+                    <Crown className="h-2.5 w-2.5 text-amber-300" />
                     {isDe ? `Testversion (${remainingDays}d)` : `Trial (${remainingDays}d)`}
                   </span>
                 ) : null}

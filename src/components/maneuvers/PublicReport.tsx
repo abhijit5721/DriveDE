@@ -27,7 +27,7 @@ import {
   Activity,
   Flame,
   ShieldAlert,
-  Sparkles,
+  Award,
   TrendingUp,
   TrendingDown,
   Minus,
@@ -166,7 +166,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
         <div className="h-20 w-20 rounded-3xl bg-blue-500/10 flex items-center justify-center mb-6">
-          <Sparkles className="h-10 w-10 text-blue-500" />
+          <Award className="h-10 w-10 text-blue-500" />
         </div>
         <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Waiting for Data...</h1>
         <p className="text-slate-400 mb-8 max-w-xs leading-relaxed">
@@ -342,7 +342,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {/* Condensed Smart Briefing */}
             <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl">
               <div className="flex items-center gap-2 mb-3 opacity-80">
-                <Sparkles className="h-4 w-4" />
+                <Activity className="h-4 w-4" />
                 <span className="text-[10px] font-bold uppercase tracking-widest">Active Briefing</span>
               </div>
               <p className="text-lg font-bold leading-tight">
@@ -418,12 +418,12 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {/* Instructor Briefing */}
         <div className="rounded-3xl bg-slate-900 border border-blue-500/20 p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Sparkles className="h-24 w-24 text-blue-400" />
+            <Activity className="h-24 w-24 text-blue-400" />
           </div>
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-4">
               <div className="p-1.5 rounded-lg bg-blue-500/20">
-                <Sparkles className="h-4 w-4 text-blue-400" />
+                <Activity className="h-4 w-4 text-blue-400" />
               </div>
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Instructor Briefing</h3>
             </div>

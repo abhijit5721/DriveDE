@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { 
   Car, BadgeCheck, Zap, Users, Shield, 
   Menu, X, ArrowRight, Play, CheckCircle2, Cog,
-  Star, ChevronDown, Check, Sparkles, MapPin, Award,
+  Star, ChevronDown, Check, MapPin, Award,
   Globe, Heart, ArrowUpRight, ShieldCheck, Coins, Clock
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -225,8 +225,8 @@ export function Welcome() {
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400 backdrop-blur-md">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
-            {isDe ? '✨ 7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : '✨ Includes 7-Day Free Pro Trial • No Credit Card Required'}
+            <Zap className="h-3.5 w-3.5 text-emerald-400 animate-pulse fill-emerald-400" />
+            {isDe ? '7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : 'Includes 7-Day Free Pro Trial • No Credit Card Required'}
           </div>
 
           <h1 className="mt-8 text-4xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl leading-tight">
@@ -311,7 +311,7 @@ export function Welcome() {
             {/* AI Briefing Preview Card */}
             <div className="rounded-2xl border border-purple-500/20 bg-purple-950/20 p-5 backdrop-blur-xl">
               <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="h-4 w-4 text-purple-400" />
+                <Zap className="h-4 w-4 text-purple-400 fill-purple-400" />
                 <p className="text-xs font-bold uppercase tracking-widest text-purple-300">{isDe ? 'KI-Fahrlehrer Auswertung' : 'AI Instructor Briefing'}</p>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed italic">
@@ -466,7 +466,7 @@ export function Welcome() {
                 desc: isDe 
                   ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
                   : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
-                icon: Sparkles,
+                icon: Zap,
                 color: 'from-purple-500 to-indigo-600'
               },
               {

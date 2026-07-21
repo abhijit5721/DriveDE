@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, Wallet, LogOut, Sparkles } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
@@ -59,7 +59,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
                 </span>
               ) : proActive ? (
                 <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-lg shadow-blue-500/20">
-                  <Sparkles className="h-2.5 w-2.5" />
+                  <Crown className="h-2.5 w-2.5 text-amber-300" />
                   TRIAL ({remainingDays}d)
                 </span>
               ) : null}
@@ -107,7 +107,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           ) : proActive ? (
             <div className="flex flex-col gap-1 rounded-xl bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-purple-600/20 p-3 border border-blue-500/30 text-left">
               <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400">
-                <Sparkles className="h-3.5 w-3.5" />
+                <Crown className="h-3.5 w-3.5 text-amber-300" />
                 {isDe ? '7 Tage Pro Testversion' : '7-Day Free Pro Trial'}
               </div>
               <p className="text-[10px] text-slate-400">

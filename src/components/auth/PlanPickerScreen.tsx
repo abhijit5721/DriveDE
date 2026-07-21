@@ -12,7 +12,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Calendar, Sparkles, Check, ArrowRight, ShieldCheck, Zap, X, Mail, Lock, AlertCircle, ArrowLeft, CheckCircle2, RefreshCw, Shield } from 'lucide-react';
+import { Clock, Calendar, Crown, Check, ArrowRight, ShieldCheck, Zap, X, Mail, Lock, AlertCircle, ArrowLeft, CheckCircle2, RefreshCw, Shield } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
@@ -203,7 +203,7 @@ const planOrder: Plan[] = ['30-days', '90-days', 'lifetime'];
 const planIcons = {
   '30-days': Clock,
   '90-days': Calendar,
-  'lifetime': Sparkles,
+  'lifetime': Crown,
 };
 
 export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signup', onComplete, onCancel }: PlanPickerScreenProps) {
@@ -625,7 +625,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-blue-500/10 border border-blue-500/20">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
-                    <Sparkles className="w-4 h-4" />
+                    <Crown className="w-4 h-4 text-amber-300" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white">{activePlan.label} ({activePlan.price})</p>
