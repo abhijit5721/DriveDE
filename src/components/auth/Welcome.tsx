@@ -29,6 +29,7 @@ export function Welcome() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
+  const [pickerInitialStep, setPickerInitialStep] = useState<'plan' | 'signup'>('plan');
   
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
@@ -43,7 +44,7 @@ export function Welcome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime') => {
+  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime', step: 'plan' | 'signup' = 'plan') => {
     if (isReturningUser) {
       setHasVisited(true);
       return;
@@ -51,6 +52,7 @@ export function Welcome() {
     if (plan) {
       setSelectedPlanForPicker(plan);
     }
+    setPickerInitialStep(step);
     setShowPlanPicker(true);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -127,7 +129,7 @@ export function Welcome() {
         <div className="fixed inset-0 z-[100] animate-fade-in">
           <PlanPickerScreen 
             initialPlan={selectedPlanForPicker} 
-            initialStep="signup"
+            initialStep={pickerInitialStep}
             onComplete={handlePlanPickerComplete} 
             onCancel={() => setShowPlanPicker(false)} 
           />
@@ -667,7 +669,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('30-days')} 
+                onClick={() => handleStart('30-days', 'signup')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
               >
                 {isDe ? '30-Tage Pass wählen' : 'Get 30-Day Pass'}
@@ -703,7 +705,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('90-days')} 
+                onClick={() => handleStart('90-days', 'signup')} 
                 className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
               >
                 {isDe ? '90-Tage Pass wählen' : 'Get 90-Day Pass'}
@@ -735,7 +737,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('lifetime')} 
+                onClick={() => handleStart('lifetime', 'signup')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 border border-purple-500/30 py-4 text-sm font-bold text-white transition hover:bg-purple-900/40"
               >
                 {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}
