@@ -127,6 +127,7 @@ export function Welcome() {
         <div className="fixed inset-0 z-[100] animate-fade-in">
           <PlanPickerScreen 
             initialPlan={selectedPlanForPicker} 
+            initialStep="signup"
             onComplete={handlePlanPickerComplete} 
             onCancel={() => setShowPlanPicker(false)} 
           />
