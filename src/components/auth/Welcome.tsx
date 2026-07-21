@@ -30,6 +30,7 @@ export function Welcome() {
   const [showPlanPicker, setShowPlanPicker] = useState(false);
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
   const [pickerInitialStep, setPickerInitialStep] = useState<'plan' | 'signup'>('plan');
+  const [pickerInitialIsExistingUser, setPickerInitialIsExistingUser] = useState(false);
   
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
@@ -44,7 +45,7 @@ export function Welcome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime', step: 'plan' | 'signup' = 'plan') => {
+  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime', step: 'plan' | 'signup' = 'plan', isExistingUser = false) => {
     if (isReturningUser) {
       setHasVisited(true);
       return;
@@ -53,9 +54,14 @@ export function Welcome() {
       setSelectedPlanForPicker(plan);
     }
     setPickerInitialStep(step);
+    setPickerInitialIsExistingUser(isExistingUser);
     setShowPlanPicker(true);
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSignInClick = () => {
+    handleStart('90-days', 'signup', true);
   };
 
   const handlePlanPickerComplete = () => {
@@ -130,6 +136,7 @@ export function Welcome() {
           <PlanPickerScreen 
             initialPlan={selectedPlanForPicker} 
             initialStep={pickerInitialStep}
+            initialIsExistingUser={pickerInitialIsExistingUser}
             onComplete={handlePlanPickerComplete} 
             onCancel={() => setShowPlanPicker(false)} 
           />
@@ -181,12 +188,20 @@ export function Welcome() {
                 {t.common.backToDashboard}
               </button>
             ) : (
-              <button 
-                onClick={() => handleStart()}
-                className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/20"
-              >
-                {t.common.startNow}
-              </button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleSignInClick}
+                  className="px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition"
+                >
+                  {isDe ? 'Anmelden' : 'Sign In'}
+                </button>
+                <button 
+                  onClick={() => handleStart('90-days', 'plan')}
+                  className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/20"
+                >
+                  {t.common.startNow}
+                </button>
+              </div>
             )}
 
             {/* Language Switcher Desktop */}
@@ -213,9 +228,20 @@ export function Welcome() {
                 <button onClick={() => setLanguage('de')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
                 <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
               </div>
-              <button onClick={() => handleStart()} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
-                {isReturningUser ? t.common.backToDashboard : t.common.startNow}
-              </button>
+              {isReturningUser ? (
+                <button onClick={() => handleStart()} className="rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white">
+                  {t.common.backToDashboard}
+                </button>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <button onClick={handleSignInClick} className="rounded-xl bg-slate-800 py-3 text-base font-bold text-white border border-slate-700">
+                    {isDe ? 'Anmelden' : 'Sign In'}
+                  </button>
+                  <button onClick={() => handleStart('90-days', 'plan')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
+                    {t.common.startNow}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
