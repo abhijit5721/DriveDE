@@ -17,7 +17,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ onClose }: AuthModalProps) {
-  const { language } = useAppStore();
+  const { language, startFreeTrial, intendedPlan } = useAppStore();
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -156,6 +156,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
         });
 
         if (signInError) throw signInError;
+        startFreeTrial(intendedPlan || '90-days');
         onClose();
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
@@ -164,6 +165,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
         });
 
         if (signUpError) throw signUpError;
+        startFreeTrial(intendedPlan || '90-days');
         setSuccess(copy.signupSuccess);
         setMode('signin');
         setConfirmPassword('');
