@@ -216,11 +216,11 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             <div>
               <p className="text-xs sm:text-sm font-bold text-white">
                 {learningPath === 'umschreibung'
-                  ? (isDe ? '🇩🇪 Umschreibung: Deutschland Quickstart' : '🇩🇪 License Conversion: Germany Quickstart')
-                  : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving Curriculum')}
+                  ? (isDe ? '🇩🇪 Umschreibung ausländischer Führerschein' : '🇩🇪 Foreign License Conversion (Germany)')
+                  : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving License Curriculum')}
               </p>
               <p className="text-[11px] text-slate-400 font-medium">
-                {isDe ? 'Gesamtforschritt & Prüfungsreife' : 'Overall Progress & Exam Readiness'}
+                {isDe ? 'Gesamtfortschritt & Prüfungsbereitschaft' : 'Overall Progress & Exam Readiness'}
               </p>
             </div>
           </div>
@@ -241,7 +241,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       {viewMode === 'quest' ? (
         <div className="space-y-8 relative pt-2">
           
-          {/* CHAPTER 1: BASICS - CONVERSION: GERMANY QUICKSTART QUEST PATH */}
+          {/* CHAPTER 1: BASICS & GERMAN DRIVING RULES QUEST PATH */}
           {chapter1 && (() => {
             const completedInCh1 = chapter1.lessons.filter(l =>
               userProgress.completedLessons.includes(l.id)
@@ -255,17 +255,17 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-blue-500/30 shadow-2xl backdrop-blur-xl flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl shadow-inner">
-                      🇩🇪
+                      {learningPath === 'umschreibung' ? '🇩🇪' : '🚗'}
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
-                          {isDe ? 'KAPITEL 1 • FOKUS' : 'CHAPTER 1 • FOCUS'}
+                          {isDe ? 'KAPITEL 1 • GRUNDLAGEN' : 'CHAPTER 1 • FUNDAMENTALS'}
                         </span>
                         {isCh1Completed && (
                           <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
                             <Check className="w-3 h-3" />
-                            {isDe ? 'MEISTER' : 'MASTERED'}
+                            {isDe ? 'ABGESCHLOSSEN' : 'COMPLETED'}
                           </span>
                         )}
                       </div>
