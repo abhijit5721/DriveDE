@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, LogOut, Sparkles } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
@@ -14,8 +14,15 @@ interface HeaderProps {
 }
 
 export function Header({ onSignOut, onTabChange }: HeaderProps) {
-  const { language, darkMode, setLanguage, toggleDarkMode, isPremium, authStatus } = useAppStore();
+  const { 
+    language, darkMode, setLanguage, toggleDarkMode, isPremium, authStatus,
+    isProActive, getRemainingTrialDays 
+  } = useAppStore();
   const t = TRANSLATIONS[language].common;
+  const isDe = language === 'de';
+
+  const proActive = isProActive();
+  const remainingDays = getRemainingTrialDays();
 
   return (
     <header className="sticky top-0 z-40 glass pt-safe border-b border-white/10 dark:border-white/5 lg:hidden">
@@ -30,12 +37,17 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
-                {isPremium && (
+                {isPremium ? (
                   <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                     <Crown className="h-2.5 w-2.5" />
                     PRO
                   </span>
-                )}
+                ) : proActive ? (
+                  <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                    <Sparkles className="h-2.5 w-2.5" />
+                    {isDe ? `Testversion (${remainingDays}d)` : `Trial (${remainingDays}d)`}
+                  </span>
+                ) : null}
               </div>
               <p className="truncate text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest opacity-80 mt-0.5">
                 {t.appSubtitle}

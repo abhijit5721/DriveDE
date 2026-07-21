@@ -312,6 +312,13 @@ export interface AppState {
   updateActiveSession: (updates: Partial<ActiveSession>) => void;
   stopActiveSession: () => void;
   
+  // Hydration & Trial State
+  trialStartedAt: string | null;
+  trialEndsAt: string | null;
+  startFreeTrial: () => void;
+  isProActive: () => boolean;
+  getRemainingTrialDays: () => number;
+
   // Hydration state
   isHydrated: boolean;
   setHydrated: (val: boolean) => void;

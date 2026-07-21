@@ -194,9 +194,9 @@ export function Welcome() {
       {/* Hero Section */}
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-blue-400 backdrop-blur-md">
-            <Shield className="h-3.5 w-3.5" />
-            {t.welcome.hero.badge}
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400 backdrop-blur-md">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-400 animate-pulse" />
+            {isDe ? '✨ 7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : '✨ Includes 7-Day Free Pro Trial • No Credit Card Required'}
           </div>
 
           <h1 className="mt-8 text-4xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl leading-tight">

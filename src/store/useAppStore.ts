@@ -141,8 +141,8 @@ const isYesterday = (date1: Date, date2: Date) => {
 export const useAppStore = create<AppState>()(
   subscribeWithSelector(
     persist(
-    (set) => ({
-      language: 'de',
+    (set, get) => ({
+      language: 'de' as Language,
       darkMode: false,
       isPublicReportEnabled: true,
       licenseType: null,
@@ -156,6 +156,8 @@ export const useAppStore = create<AppState>()(
         if (isNative) return false;
         return isLocal;
       })(),
+      trialStartedAt: null,
+      trialEndsAt: null,
       authEmail: null,
       authDisplayName: null,
       authUserId: null,
@@ -172,6 +174,35 @@ export const useAppStore = create<AppState>()(
         analytics: false,
         marketing: false,
         hasSet: false
+      },
+
+      startFreeTrial: () => set((state) => {
+        if (state.trialStartedAt) return state; // Already started
+        const now = new Date();
+        const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        return {
+          trialStartedAt: now.toISOString(),
+          trialEndsAt: end.toISOString()
+        };
+      }),
+
+      isProActive: () => {
+        const state = get();
+        if (state.isPremium) return true;
+        if (!state.trialEndsAt) {
+          // If trial not started yet, it is active (7 days left)
+          return true;
+        }
+        return new Date(state.trialEndsAt) > new Date();
+      },
+
+      getRemainingTrialDays: () => {
+        const state = get();
+        if (state.isPremium) return 999;
+        if (!state.trialEndsAt) return 7;
+        const diff = new Date(state.trialEndsAt).getTime() - new Date().getTime();
+        if (diff <= 0) return 0;
+        return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
       },
 
       setHydrated: (val) => set({ isHydrated: val }),
@@ -797,6 +828,8 @@ export const useAppStore = create<AppState>()(
           learningPath: state.learningPath,
           transmissionType: state.transmissionType,
           isPremium: state.isPremium,
+          trialStartedAt: state.trialStartedAt,
+          trialEndsAt: state.trialEndsAt,
           authEmail: state.authEmail,
           authDisplayName: state.authDisplayName,
           authUserId: state.authUserId,
@@ -810,8 +843,13 @@ export const useAppStore = create<AppState>()(
         if (error) {
           console.error('[Store] Hydration failed (possible corruption):', error);
         }
-        if (state && typeof state.setHydrated === 'function') {
-          state.setHydrated(true);
+        if (state) {
+          if (typeof state.setHydrated === 'function') {
+            state.setHydrated(true);
+          }
+          if (!state.trialStartedAt && typeof state.startFreeTrial === 'function') {
+            state.startFreeTrial();
+          }
         }
       },
     }
