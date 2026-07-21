@@ -284,7 +284,9 @@ export const useAppStore = create<AppState>()(
           return { transmissionType: type };
         }),
 
-      setPremium: (isPremium: boolean) => set({ isPremium }),
+      setPremium: (isPremium: boolean) => set(isPremium 
+        ? { isPremium, trialStartedAt: null, trialEndsAt: null } 
+        : { isPremium }),
 
       setAuthState: (email, status, displayName, userId) =>
         set((state) => ({

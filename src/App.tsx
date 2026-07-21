@@ -354,6 +354,8 @@ export default function App() {
 
                 return {
                     isPremium,
+                    // Clear stale trial data when DB confirms paid Pro
+                    ...(isPremium ? { trialStartedAt: null, trialEndsAt: null } : {}),
                     isPublicReportEnabled: remoteData.isPublicReportEnabled,
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,

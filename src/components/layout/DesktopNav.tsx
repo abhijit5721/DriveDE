@@ -99,7 +99,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
 
       <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
         <div className="flex flex-col gap-3">
-          {isPremium ? (
+          {isPremium || remainingDays === 999 ? (
             <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
               <Crown className="h-4 w-4" />
               DriveDE Pro Member
