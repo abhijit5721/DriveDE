@@ -31,7 +31,8 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness, onOpenHotspots, userLat = 52.52, userLng = 13.405 }: DashboardProps) {
-  const { language, userProgress, licenseType, isPremium, authStatus } = useAppStore();
+  const { language, userProgress, licenseType, isPremium, isProActive, authStatus } = useAppStore();
+  const proActive = isProActive();
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -143,7 +144,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </div>
         </div>
         
-        {!isPremium && (
+        {!proActive && (
           <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
             <button
               onClick={onOpenPaywall}
@@ -176,7 +177,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           <div className="flex items-center gap-5 text-left">
             <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:bg-blue-500/20 group-hover:border-blue-500/30 transition-all duration-300">
               <Mic className="h-7 w-7 text-blue-400" />
-              {!isPremium && (
+              {!proActive && (
                 <div className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 shadow-lg border-2 border-slate-900">
                   <Crown className="h-3.5 w-3.5 text-white" />
                 </div>

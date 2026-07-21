@@ -23,7 +23,8 @@ interface CurriculumProps {
 }
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
-  const { language, userProgress, licenseType, setLicenseType, isPremium } = useAppStore();
+  const { language, userProgress, licenseType, setLicenseType, isProActive } = useAppStore();
+  const proActive = isProActive();
   const t = TRANSLATIONS[language];
   const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
@@ -63,7 +64,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
    * Generates a descriptive badge for specific lesson types (Pro, Manual, etc).
    */
   const getLessonBadge = (lesson: Lesson) => {
-    if (lesson.isPremium && !isPremium) {
+    if (lesson.isPremium && !proActive) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
           <Crown className="h-3 w-3" />
@@ -351,7 +352,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               // If previous chapter is all premium and user is not premium, allow skipping to keep progression alive
               const isPreviousAllPremium = previousChapter?.lessons.every(l => l.isPremium);
               
-              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !isPremium);
+              const isUnlocked = index === 0 || hasCompletedInPrevious || (isPreviousAllPremium && !proActive);
 
               return (
                 <motion.div key={chapter.id} variants={itemVariants}>
@@ -430,10 +431,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                         // If the previous lesson was premium and current user is not premium,
                         // we allow them to skip that dependency so they aren't blocked from the rest of the chapter.
-                        const canSkipPrevious = previousLesson?.isPremium && !isPremium;
+                        const canSkipPrevious = previousLesson?.isPremium && !proActive;
 
                         const isLessonUnlocked = lessonIndex === 0 || isPreviousCompleted || canSkipPrevious;
-                        const isLockedForFreeUser = (lesson.isPremium && !isPremium);
+                        const isLockedForFreeUser = (lesson.isPremium && !proActive);
 
                         return (
                           <motion.button

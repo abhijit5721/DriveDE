@@ -15,7 +15,8 @@ interface DrivingInsightsProps {
 }
 
 export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: DrivingInsightsProps) {
-  const { language, userProgress, transmissionType, isPremium } = useAppStore();
+  const { language, userProgress, transmissionType, isProActive } = useAppStore();
+  const proActive = isProActive();
   const drivingSessions = (Array.isArray(userProgress?.drivingSessions) ? userProgress.drivingSessions : [])
     .filter(s => s.instructorName !== 'Safety Auditor' && !s.isSimulation);
 
@@ -175,7 +176,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </div>
             ))}
           </div>
-          {!isPremium && (
+          {!proActive && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-800/40 opacity-0 hover:opacity-100 transition-opacity">
                <button 
                 onClick={onOpenPaywall}
@@ -212,7 +213,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
           </div>
 
           <div className="space-y-3">
-            {isPremium ? (
+            {proActive ? (
               topMistakes.length > 0 ? topMistakes.map(([type, count]) => (
                 <div key={type} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -257,7 +258,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
       </div>
 
       {/* Efficiency & Environment Card */}
-      {mistakeCounts['idling'] > 0 && isPremium && (
+      {mistakeCounts['idling'] > 0 && proActive && (
         <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 dark:border-emerald-900/30 dark:bg-emerald-900/10">
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">
@@ -282,7 +283,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
       )}
 
       {/* Premium Skills Radar Section */}
-      {isPremium && (
+      {proActive && (
         <div className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-xl transition-all hover:shadow-2xl dark:border-slate-700/50 dark:bg-slate-800/80 animate-fade-in-up">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1 space-y-4 text-center md:text-left">

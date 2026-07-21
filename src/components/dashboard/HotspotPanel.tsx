@@ -13,22 +13,23 @@ interface HotspotPanelProps {
 }
 
 export function HotspotPanel({ lat = 52.52, lng = 13.405, onOpenMap, onOpenPaywall }: HotspotPanelProps) {
-  const { isPremium } = useAppStore();
+  const { isProActive } = useAppStore();
+  const proActive = isProActive();
   const [hotspots, setHotspots] = useState<MistakeHotspot[]>([]);
   const [loading, setLoading] = useState(true);
   const language = useAppStore((s) => s.language);
   const t = TRANSLATIONS[language];
 
   useEffect(() => {
-    if (!isPremium) return;
+    if (!proActive) return;
     setLoading(true);
     fetchHotspots({ lat, lng, radius: 15, limit: 5 })
       .then((r) => setHotspots(r.hotspots))
       .catch(() => setHotspots([]))
       .finally(() => setLoading(false));
-  }, [lat, lng, isPremium]);
+  }, [lat, lng, proActive]);
 
-  if (!isPremium) {
+  if (!proActive) {
     return (
       <button
         onClick={onOpenPaywall}

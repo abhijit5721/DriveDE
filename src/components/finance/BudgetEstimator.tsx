@@ -32,7 +32,8 @@ interface BudgetEstimatorProps {
 }
 
 export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
-  const { language, userProgress, licenseType, updateFinanceSettings, isPremium } = useAppStore();
+  const { language, userProgress, licenseType, updateFinanceSettings, isProActive } = useAppStore();
+  const proActive = isProActive();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
   const t = TRANSLATIONS[language];
@@ -218,7 +219,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </div>
             <div className="relative text-right space-y-1 border-l border-white/5 pl-8">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{t.budget.totalGoal}</p>
-              {isPremium ? (
+              {proActive ? (
                 <div className="flex items-baseline justify-end gap-1">
                   <span className="text-4xl font-bold text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
                 </div>
@@ -260,7 +261,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </div>
             <div className="flex flex-col items-end">
               <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {isPremium ? `~${estimation.remainingNormal + estimation.remainingSpecial}` : '?'}
+                {proActive ? `~${estimation.remainingNormal + estimation.remainingSpecial}` : '?'}
               </span>
             </div>
           </div>
@@ -271,14 +272,14 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                  <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
                  <span className="text-xs text-slate-500">{t.budget.normalLessons}</span>
               </div>
-              <span className="text-xs font-bold">{isPremium ? estimation.remainingNormal : '-'}</span>
+              <span className="text-xs font-bold">{proActive ? estimation.remainingNormal : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                  <div className="h-1.5 w-1.5 rounded-full bg-orange-400" />
                  <span className="text-xs text-slate-500">{t.budget.specialDrives}</span>
               </div>
-              <span className="text-xs font-bold text-orange-600">{isPremium ? estimation.remainingSpecial : '-'}</span>
+              <span className="text-xs font-bold text-orange-600">{proActive ? estimation.remainingSpecial : '-'}</span>
             </div>
             
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
@@ -290,7 +291,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               />
             </div>
           </div>
-          {!isPremium && (
+          {!proActive && (
              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={onOpenPaywall}
@@ -320,7 +321,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
           </div>
           <div className="mt-8">
             <p className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-              {isPremium ? `€${estimation.remainingCost.toLocaleString()}` : '€ ?,???'}
+              {proActive ? `€${estimation.remainingCost.toLocaleString()}` : '€ ?,???'}
             </p>
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
               <Info className="h-4 w-4 text-blue-500 shrink-0" />
@@ -329,7 +330,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               </p>
             </div>
           </div>
-          {!isPremium && (
+          {!proActive && (
              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={onOpenPaywall}
@@ -370,10 +371,10 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               )}>
                 {t.budget.strategyTitle}
               </h4>
-              {!isPremium && <Crown className="h-3 w-3 text-amber-500" />}
+              {!proActive && <Crown className="h-3 w-3 text-amber-500" />}
             </div>
             
-            {isPremium ? (
+            {proActive ? (
               <>
                 <p className={cn(
                   'mt-2 text-sm font-semibold leading-relaxed',
