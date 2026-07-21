@@ -200,7 +200,8 @@ function LessonPacket({ lesson, language, xt }: { lesson: Lesson; language: 'de'
 }
 
 export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProps) {
-  const { language, licenseType, userProgress, removeMistake, isPremium } = useAppStore();
+  const { language, licenseType, userProgress, removeMistake, isPremium, isProActive } = useAppStore();
+  const proActive = isProActive();
   const t = TRANSLATIONS[language];
   const xt = t.instructor;
   
@@ -395,7 +396,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
   };
 
   const handlePrintReview = () => {
-    if (!isPremium) {
+    if (!proActive) {
       onOpenPaywall?.();
       return;
     }
@@ -418,7 +419,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
   };
 
   const handleDownloadPdf = async () => {
-    if (!isPremium) {
+    if (!proActive) {
       onOpenPaywall?.();
       return;
     }

@@ -290,12 +290,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const {
     language, userProgress, addDrivingSession, 
     updateDrivingSession, removeDrivingSession, clearDrivingHistory,
-    setHourlyRate45, isPremium,
+    setHourlyRate45, isPremium, isProActive,
     activeSession, startActiveSession, pauseActiveSession, 
     resumeActiveSession, updateActiveSession, stopActiveSession,
     setAcceptedPrivacy,
     authStatus, updateMistakeStatus, isHydrated: storeHydrated
   } = useAppStore();
+
+  const proActive = isProActive();
 
   const [isInitializing] = useState(false);  // --- UI STATE ---
   const [activeTab, setActiveTab] = useState<'tracker' | 'history'>('tracker');
@@ -1438,8 +1440,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
 
       const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-      const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
-      const canStartLive = isPremium || hasTrial;
+      const hasTrial = !proActive && liveSessionCount < TRIAL_LIMIT;
+      const canStartLive = proActive || hasTrial;
 
       if (!canStartLive && !isSimulationMode) {
         if (onOpenPaywall) {
@@ -2216,7 +2218,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       handleResumeTimer();
                     } else {
                       const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-                      if (!isPremium && liveSessionCount >= TRIAL_LIMIT) {
+                      if (!proActive && liveSessionCount >= TRIAL_LIMIT) {
                         onOpenPaywall?.();
                       } else {
                         handleStartTimer();
@@ -2226,7 +2228,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   data-testid={(activeSession && activeSession.isPaused) ? 'resume-tracking-btn' : 'start-tracking-btn'}
                   className={cn(
                     'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
-                    (!isPremium && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
+                    (!proActive && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
                       ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
                       : (activeSession && activeSession.isPaused) ? 'bg-indigo-500/90 hover:bg-indigo-600 shadow-indigo-500/20' : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
                   )}
@@ -2516,14 +2518,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                                   {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
                                 </h5>
-                                {!isPremium && (
+                                {!proActive && (
                                   <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
                                     PRO Analysis
                                   </span>
                                 )}
                               </div>
                               
-                              {isPremium ? (
+                              {proActive ? (
                                 <div className="grid grid-cols-1 gap-2">
                                   {(() => {
                                     const filteredMistakes = session.mistakes.filter(m => 

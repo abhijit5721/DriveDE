@@ -80,7 +80,7 @@ export default function App() {
     learningPath,
     transmissionType,
     setAcceptedPrivacy,
-    isPremium,
+    isProActive,
     authStatus,
     setAuthState,
     setHasVisited,
@@ -90,6 +90,9 @@ export default function App() {
     language,
     hasCompletedOnboarding,
   } = useAppStore();
+
+  // Use isProActive() which accounts for both paid premium AND active trial
+  const proActive = isProActive();
 
   const learningPathVal = getLearningPathFromLicenseType(licenseType);
   const transmissionTypeVal = getTransmissionFromLicenseType(licenseType);
@@ -515,7 +518,7 @@ export default function App() {
   }, [darkMode]);
 
   const handleLessonSelect = (lesson: Lesson) => {
-    if (lesson.isPremium && !isPremium) {
+    if (lesson.isPremium && !proActive) {
       setShowPaywall(true);
       return;
     }
@@ -526,7 +529,7 @@ export default function App() {
     const allLessons = chapters.flatMap(c => c.lessons);
     const lesson = allLessons.find(l => l.id === lessonId);
     if (lesson) {
-      if (lesson.isPremium && !isPremium) {
+      if (lesson.isPremium && !proActive) {
         setShowPaywall(true);
         return;
       }
@@ -772,7 +775,7 @@ export default function App() {
         )}
         {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
 
-        {showPaywall && !isPremium && (
+        {showPaywall && !proActive && (
           <Suspense fallback={null}>
             <Paywall onClose={() => setShowPaywall(false)} />
           </Suspense>

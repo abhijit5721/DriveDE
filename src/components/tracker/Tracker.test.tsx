@@ -22,6 +22,8 @@ vi.mock('../../store/useAppStore', () => {
     language: 'en',
     licenseType: 'manual',
     isPremium: sharedState.currentIsPremium,
+    // isProActive reflects isPremium for test purposes
+    isProActive: vi.fn(() => sharedState.currentIsPremium),
     userProgress: { 
       drivingSessions: [],
       hourlyRate45: 60,
@@ -34,6 +36,7 @@ vi.mock('../../store/useAppStore', () => {
     removeDrivingSession: vi.fn(),
     clearDrivingHistory: vi.fn(),
     setHourlyRate45: vi.fn(),
+    updateMistakeStatus: vi.fn(),
     activeTab: sharedState.currentActiveTab,
     setActiveTab: vi.fn((tab) => { sharedState.currentActiveTab = tab; }),
     setAcceptedPrivacy: vi.fn((val) => { sharedState.currentAcceptedPrivacy = val; }),
@@ -45,6 +48,7 @@ vi.mock('../../store/useAppStore', () => {
     updateActiveSession: vi.fn(),
     stopActiveSession: vi.fn(),
     isHydrated: true,
+    authStatus: 'guest',
   };
   return {
     useAppStore: vi.fn((selector) => {
@@ -52,6 +56,8 @@ vi.mock('../../store/useAppStore', () => {
       mockState.activeTab = sharedState.currentActiveTab;
       mockState.userProgress.hasAcceptedPrivacy = sharedState.currentAcceptedPrivacy;
       mockState.isPremium = sharedState.currentIsPremium;
+      // Keep isProActive in sync with isPremium
+      mockState.isProActive = vi.fn(() => sharedState.currentIsPremium);
       return selector ? selector(mockState) : mockState;
     }),
   };

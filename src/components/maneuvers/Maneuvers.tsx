@@ -46,7 +46,8 @@ const itemVariants = {
 };
 
 export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
-  const { language, licenseType, isPremium } = useAppStore();
+  const { language, licenseType, isProActive } = useAppStore();
+  const proActive = isProActive();
   const t = TRANSLATIONS[language];
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationType | null>(null);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -235,7 +236,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
             <button
               key={anim.id}
               onClick={() => {
-                if (isPremium) {
+                if (proActive) {
                   setSelectedAnimation(selectedAnimation === anim.id ? null : anim.id);
                 } else {
                   onOpenPaywall?.();
@@ -250,7 +251,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
               )}
             >
-              {!isPremium && (
+              {!proActive && (
                 <div className="absolute right-1 top-1 bg-white dark:bg-slate-800 rounded-full p-0.5 shadow-sm">
                   <Lock className="h-2.5 w-2.5 text-amber-500" />
                 </div>
