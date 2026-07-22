@@ -185,10 +185,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   };
 
   const isVorfahrtLesson = lesson.isInteractive && (lesson.id === 'city-1' || lesson.id === 'city-2' || lesson.id === 'city-12');
-  const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
+  const isMirrorLesson = ['basics-1', 'basics-1b', 'city-5', 'city-6'].includes(lesson.id);
   const isRoundaboutLesson = lesson.id === 'city-3';
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
-  const isParkingLesson = lesson.id === 'maneuver-1';
+  const isParkingLesson = ['maneuver-1', 'maneuver-2', 'maneuver-3'].includes(lesson.id);
   const isTechLesson = lesson.id === 'basics-1a';
   const isExamSim = lesson.id === 'exam-sim';
 
@@ -535,6 +535,49 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
               <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
                 <InteractiveExamSimulation onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Instructor Tips & Practical How-To Instructions */}
+          {lesson.tips && lesson.tips.length > 0 && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 font-bold">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {isDE ? '💡 Experten-Tipps & Praxishinweise' : '💡 Expert Tips & Instructions'}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {isDE ? 'Wichtige Ratschläge vom Fahrlehrer für die Praxis' : 'Key practical advice from driving instructors'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {lesson.tips.map((tip) => (
+                  <div
+                    key={tip.id}
+                    className={cn(
+                      'rounded-2xl p-4 border space-y-1.5 shadow-md',
+                      tip.type === 'warning'
+                        ? 'bg-amber-950/30 border-amber-500/30 text-amber-200'
+                        : tip.type === 'success'
+                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                        : 'bg-slate-950/80 border-slate-800 text-slate-300'
+                    )}
+                  >
+                    <p className="text-sm font-extrabold text-white flex items-center gap-2">
+                      <span>{tip.type === 'warning' ? '⚠️' : tip.type === 'success' ? '✅' : '💡'}</span>
+                      <span>{isDE ? tip.titleDe : tip.titleEn}</span>
+                    </p>
+                    <p className="text-xs leading-relaxed text-slate-300">
+                      {isDE ? tip.contentDe : tip.contentEn}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           )}
