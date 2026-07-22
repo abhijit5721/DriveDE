@@ -517,7 +517,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       {/* 4. Slide-Over Lesson Details Drawer */}
       <AnimatePresence>
         {selectedLessonForDrawer && (
-          <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] flex justify-end bg-black/70 backdrop-blur-md">
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -527,16 +527,33 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             >
               {/* Scrollable Content Body */}
               <div className="flex-1 p-5 sm:p-6 overflow-y-auto space-y-5">
-                <div className="flex items-center justify-between">
+                {/* Header Row with Top Start CTA + Close button */}
+                <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
                     {isDe ? 'Lektionsübersicht' : 'Lesson Overview'}
                   </span>
-                  <button
-                    onClick={() => setSelectedLessonForDrawer(null)}
-                    className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const l = selectedLessonForDrawer;
+                        setSelectedLessonForDrawer(null);
+                        onLessonSelect(l);
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 transition-all transform active:scale-95"
+                    >
+                      <span>{isDe ? 'Starten' : 'Start Lesson'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedLessonForDrawer(null)}
+                      className="p-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                      aria-label="Close Overview"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
                 <div>
@@ -579,8 +596,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 )}
               </div>
 
-              {/* Fixed / Sticky CTA Footer Action Bar */}
-              <div className="p-5 sm:p-6 bg-slate-900 border-t border-slate-800 shrink-0">
+              {/* Elevated Footer Action Bar (Clears mobile BottomNav) */}
+              <div className="p-4 sm:p-6 pb-24 sm:pb-6 bg-slate-900 border-t border-slate-800 shrink-0">
                 <button
                   onClick={() => {
                     const l = selectedLessonForDrawer;
