@@ -523,39 +523,25 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col justify-between overflow-hidden shadow-2xl"
+              className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col shadow-2xl overflow-hidden"
             >
-              {/* Scrollable Content Body */}
+              {/* Drawer Top Header Bar */}
+              <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/90 backdrop-blur-md">
+                <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                  {isDe ? 'Lektionsübersicht' : 'Lesson Overview'}
+                </span>
+                
+                <button
+                  onClick={() => setSelectedLessonForDrawer(null)}
+                  className="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                  aria-label="Close Overview"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Drawer Body (Title, Description, Metrics, Rule, and CTA) */}
               <div className="flex-1 p-5 sm:p-6 overflow-y-auto space-y-5">
-                {/* Header Row with Top Start CTA + Close button */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
-                    {isDe ? 'Lektionsübersicht' : 'Lesson Overview'}
-                  </span>
-                  
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        const l = selectedLessonForDrawer;
-                        setSelectedLessonForDrawer(null);
-                        onLessonSelect(l);
-                      }}
-                      className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 transition-all transform active:scale-95"
-                    >
-                      <span>{isDe ? 'Starten' : 'Start Lesson'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button
-                      onClick={() => setSelectedLessonForDrawer(null)}
-                      className="p-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                      aria-label="Close Overview"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-
                 <div>
                   <h2 className="text-xl font-extrabold text-white mb-2 leading-tight">
                     {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
@@ -594,21 +580,21 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                     </p>
                   </div>
                 )}
-              </div>
 
-              {/* Elevated Footer Action Bar (Clears mobile BottomNav) */}
-              <div className="p-4 sm:p-6 pb-24 sm:pb-6 bg-slate-900 border-t border-slate-800 shrink-0">
-                <button
-                  onClick={() => {
-                    const l = selectedLessonForDrawer;
-                    setSelectedLessonForDrawer(null);
-                    onLessonSelect(l);
-                  }}
-                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span>{isDe ? 'Lektion jetzt starten' : 'Start Lesson Now'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                {/* Primary Action Button (Positioned immediately below rule card) */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => {
+                      const l = selectedLessonForDrawer;
+                      setSelectedLessonForDrawer(null);
+                      onLessonSelect(l);
+                    }}
+                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span>{isDe ? 'Lektion jetzt starten' : 'Start Lesson Now'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
