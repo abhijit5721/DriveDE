@@ -17,6 +17,25 @@ window.addEventListener('vite:preloadError', () => {
 
 analyticsService.init();
 
+// Safeguard against Google Translate / browser extension DOM mutations breaking React DOM reconciliation
+if (typeof window !== 'undefined' && typeof Node !== 'undefined' && Node.prototype) {
+  const originalInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function <T extends Node>(newNode: T, referenceNode: Node | null): T {
+    if (referenceNode && referenceNode.parentNode !== this) {
+      return this.appendChild(newNode) as T;
+    }
+    return originalInsertBefore.call(this, newNode, referenceNode) as T;
+  };
+
+  const originalRemoveChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function <T extends Node>(child: T): T {
+    if (child.parentNode !== this) {
+      return child;
+    }
+    return originalRemoveChild.call(this, child) as T;
+  };
+}
+
 const Root = () => (
   <ErrorBoundary>
     <App />
