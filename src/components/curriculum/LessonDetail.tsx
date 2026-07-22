@@ -33,6 +33,7 @@ import {
   Gauge,
   GraduationCap,
   Zap,
+  Volume2,
   Car,
   Trophy,
   Wrench,
@@ -83,6 +84,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
+
+  const [rulesSubFilter, setRulesSubFilter] = useState<'all' | 'commands' | 'vocab' | 'signs' | 'scenarios'>('all');
+  const [speakingCommandId, setSpeakingCommandId] = useState<string | null>(null);
+
+  const handleSpeakCommand = (commandId: string, text: string) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    setSpeakingCommandId(commandId);
+    utterance.onend = () => setSpeakingCommandId(null);
+    utterance.onerror = () => setSpeakingCommandId(null);
+    window.speechSynthesis.speak(utterance);
+  };
 
   const t = TRANSLATIONS[language];
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
@@ -719,8 +735,157 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       {/* --- TAB 2: EXAMINER & RULES --- */}
       {activeLessonTab === 'rules' && hasRulesTab && (
         <div className="space-y-6">
-          {/* Key Terms / Glossary */}
-          {lesson.glossary && lesson.glossary.length > 0 && (
+          {/* Sub-Category Filter Pills Bar */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button
+              onClick={() => setRulesSubFilter('all')}
+              className={cn(
+                'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0',
+                rulesSubFilter === 'all'
+                  ? 'bg-slate-800 text-white border border-slate-700 shadow'
+                  : 'bg-slate-950 text-slate-400 border border-slate-900 hover:text-slate-200'
+              )}
+            >
+              {isDE ? 'Alle Inhalte' : 'All Topics'}
+            </button>
+
+            {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
+              <button
+                onClick={() => setRulesSubFilter('commands')}
+                className={cn(
+                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  rulesSubFilter === 'commands'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:border-indigo-500/40'
+                )}
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>{isDE ? '🗣️ Prüfer-Befehle' : '🗣️ Examiner Commands'}</span>
+              </button>
+            )}
+
+            {lesson.glossary && lesson.glossary.length > 0 && (
+              <button
+                onClick={() => setRulesSubFilter('vocab')}
+                className={cn(
+                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  rulesSubFilter === 'vocab'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-blue-950/40 text-blue-300 border border-blue-500/20 hover:border-blue-500/40'
+                )}
+              >
+                <Info className="w-3.5 h-3.5" />
+                <span>{isDE ? '💡 Vokabeln' : '💡 Key Vocabulary'}</span>
+              </button>
+            )}
+
+            {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
+              <button
+                onClick={() => setRulesSubFilter('signs')}
+                className={cn(
+                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  rulesSubFilter === 'signs'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                    : 'bg-amber-950/40 text-amber-300 border border-amber-500/20 hover:border-amber-500/40'
+                )}
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>{isDE ? '🛑 Verkehrszeichen' : '🛑 Traffic Signs'}</span>
+              </button>
+            )}
+
+            {lesson.scenarios && lesson.scenarios.length > 0 && (
+              <button
+                onClick={() => setRulesSubFilter('scenarios')}
+                className={cn(
+                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  rulesSubFilter === 'scenarios'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                    : 'bg-red-950/40 text-red-300 border border-red-500/20 hover:border-red-500/40'
+                )}
+              >
+                <Target className="w-3.5 h-3.5" />
+                <span>{isDE ? '⚠️ Fallen & Traps' : '⚠️ Traps & Scenarios'}</span>
+              </button>
+            )}
+          </div>
+
+          {/* SECTION 1: EXAMINER VOICE COMMAND AUDIO CARDS */}
+          {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'commands') && (
+            <div className="rounded-3xl bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-950 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
+                    <GraduationCap className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-extrabold text-white flex items-center gap-2">
+                      <span>{t.curriculum.typicalExaminer}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                        TÜV / DEKRA
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-400">
+                      {t.curriculum.examinerSub}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {lesson.examinerCommands.map((command) => (
+                  <div key={command.id} className="rounded-2xl border border-indigo-500/25 bg-slate-950/90 p-4.5 space-y-3 shadow-lg">
+                    {/* Header + Speech Audio Play Button */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-2.5">
+                        <span className="mt-0.5 shrink-0 px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                          🗣️ PRÜFER
+                        </span>
+                        <div>
+                          <p className="text-base sm:text-lg font-black text-white notranslate leading-snug" translate="no">
+                            "{command.commandDe}"
+                          </p>
+                          <p className="text-xs font-semibold text-slate-400 italic mt-0.5">
+                            ({command.commandEn})
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Interactive German Speech Synthesis Button */}
+                      <button
+                        onClick={() => handleSpeakCommand(command.id, command.commandDe)}
+                        className={cn(
+                          'shrink-0 px-3 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 border',
+                          speakingCommandId === command.id
+                            ? 'bg-indigo-600 text-white border-indigo-400 animate-pulse'
+                            : 'bg-indigo-950/60 border-indigo-500/30 text-indigo-300 hover:bg-indigo-900/60 hover:text-white'
+                        )}
+                      >
+                        <Volume2 className="w-4 h-4" />
+                        <span>{speakingCommandId === command.id ? (isDE ? 'Spielt...' : 'Playing...') : (isDE ? 'Anhören' : 'Listen')}</span>
+                      </button>
+                    </div>
+
+                    {/* Examiner Expectation Action Guide */}
+                    {(command.noteDe || command.noteEn) && (
+                      <div className="rounded-xl bg-gradient-to-r from-indigo-950/60 to-slate-900 border border-indigo-500/20 p-3.5 text-xs text-indigo-200 leading-relaxed space-y-1">
+                        <div className="flex items-center gap-1.5 font-extrabold text-indigo-400 uppercase tracking-wider text-[11px]">
+                          <span>🎯</span>
+                          <span>{isDE ? 'WAS DER PRÜFER ZWINGEND ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'}</span>
+                        </div>
+                        <p className="text-slate-300 leading-relaxed">
+                          {isDE ? command.noteDe : command.noteEn}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECTION 2: GERMAN VOCABULARY FLASHCARDS */}
+          {lesson.glossary && lesson.glossary.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'vocab') && (
             <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
@@ -738,19 +903,19 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 {lesson.glossary.map((term) => (
-                  <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 hover:border-slate-700 transition-all">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-extrabold text-blue-400 notranslate" translate="no">
+                  <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 space-y-2.5 hover:border-slate-700 transition-all shadow-md">
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+                      <p className="text-base font-extrabold text-blue-400 notranslate" translate="no">
                         {term.german}
                       </p>
-                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-wider">
-                        DE
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 text-[10px] font-black uppercase tracking-wider border border-blue-500/20">
+                        DE TERMINOLOGY
                       </span>
                     </div>
                     <p className="text-xs font-bold text-slate-200">{term.english}</p>
                     {(term.noteDe || term.noteEn) && (
-                      <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-slate-400 flex items-start gap-1.5">
-                        <span className="text-amber-400 font-bold shrink-0">💡 Examen-Tipp:</span>
+                      <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-amber-200/90 flex items-start gap-1.5 bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
+                        <span className="text-amber-400 font-extrabold shrink-0">💡 Examen-Tipp:</span>
                         <span>{isDE ? term.noteDe : term.noteEn}</span>
                       </div>
                     )}
@@ -760,106 +925,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
           )}
 
-          {/* Examiner Commands */}
-          {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
-            <div className="rounded-3xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
-                  <GraduationCap className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="text-base font-extrabold text-white">
-                    {t.curriculum.typicalExaminer}
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    {t.curriculum.examinerSub}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {lesson.examinerCommands.map((command) => (
-                  <div key={command.id} className="rounded-2xl border border-indigo-500/20 bg-slate-950/90 p-4 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
-                        🗣️ PRÜFER
-                      </span>
-                      <p className="text-sm font-extrabold text-white notranslate" translate="no">
-                        "{command.commandDe}"
-                      </p>
-                    </div>
-                    <p className="text-xs font-semibold text-slate-300 italic pl-1">
-                      ({command.commandEn})
-                    </p>
-                    {(command.noteDe || command.noteEn) && (
-                      <div className="mt-2 rounded-xl bg-indigo-950/40 border border-indigo-500/20 p-2.5 text-xs text-indigo-200 leading-relaxed">
-                        <span className="font-bold text-indigo-400">🎯 {isDE ? 'WAS DER PRÜFER ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'} </span>
-                        {isDE ? command.noteDe : command.noteEn}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Traffic Signs */}
-          {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 font-bold">
-                  {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
-                    <Wrench className="h-5 w-5" />
-                  ) : (
-                    <Shield className="h-5 w-5" />
-                  )}
-                </div>
-                <div>
-                  <h4 className="text-base font-extrabold text-white">
-                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
-                      ? (isDE ? 'Fahrzeugkontrolle / Technik' : 'Vehicle Check & Tech')
-                      : t.curriculum.importantSigns}
-                  </h4>
-                  <p className="text-xs text-slate-400">
-                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
-                      ? (isDE ? 'Wichtige Kontrollen vor der Fahrt' : 'Important checks before driving')
-                      : t.curriculum.signsSub}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {lesson.trafficSigns.map((sign) => (
-                  <div
-                    key={sign.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
-                  >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                      <TrafficSignIcon sign={sign} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-base font-bold text-white">
-                            {isDE ? sign.titleDe : sign.titleEn}
-                          </p>
-                          {sign.code && (
-                            <span className="rounded-full bg-slate-800 border border-slate-700 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-slate-300">
-                              {sign.code}
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-1 text-xs sm:text-sm leading-relaxed text-slate-400">
-                          {isDE ? sign.descriptionDe : sign.descriptionEn}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Guided Points */}
-          {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (
+          {/* SECTION 2.5: GUIDED POINTS */}
+          {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'vocab') && (
             <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 shadow-xl space-y-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-400 font-bold">
@@ -900,61 +967,116 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
           )}
 
-          {/* Scenarios & Traps */}
-          {lesson.scenarios && lesson.scenarios.length > 0 && (
+          {/* SECTION 3: STVO TRAFFIC SIGNS & TECH INSPECTOR */}
+          {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'signs') && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">
+                  {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
+                    <Wrench className="h-5 w-5" />
+                  ) : (
+                    <Shield className="h-5 w-5" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                      ? (isDE ? 'Fahrzeugkontrolle & Technik' : 'Vehicle Check & Tech')
+                      : t.curriculum.importantSigns}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                      ? (isDE ? 'Wichtige Kontrollen vor der Prüfung' : 'Important pre-drive test checks')
+                      : t.curriculum.signsSub}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {lesson.trafficSigns.map((sign) => (
+                  <div
+                    key={sign.id}
+                    className="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 space-y-3 shadow-md"
+                  >
+                    <div className="flex items-start gap-3">
+                      <TrafficSignIcon sign={sign} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-extrabold text-white leading-tight">
+                            {isDE ? sign.titleDe : sign.titleEn}
+                          </p>
+                          {sign.code && (
+                            <span className="rounded-md bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-300">
+                              {sign.code}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1.5 text-xs leading-relaxed text-slate-300">
+                          {isDE ? sign.descriptionDe : sign.descriptionEn}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECTION 4: EXAM TRAPS & TYPICAL SCENARIOS */}
+          {lesson.scenarios && lesson.scenarios.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'scenarios') && (
             <div className="space-y-4">
-              <div>
-                <h4 className="flex items-center gap-2 text-base font-extrabold text-white">
-                  <Target className="h-5 w-5 text-indigo-400" />
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-red-400" />
+                <h4 className="text-base font-extrabold text-white">
                   {isDE
                     ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
                     : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
                 </h4>
-                <p className="mt-0.5 text-xs text-slate-400">
-                  {isDE
-                    ? (lesson.scenarioSectionSubtitleDe || t.curriculum.scenarioSub)
-                    : (lesson.scenarioSectionSubtitleEn || t.curriculum.scenarioSub)}
-                </p>
               </div>
 
               {lesson.scenarios.map((scenario) => (
                 <div 
                   key={scenario.id} 
-                  className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl"
+                  className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl space-y-4 p-5"
                 >
-                  <div className="border-b border-slate-800 bg-slate-950/60 p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 font-bold">
-                        <BookOpen className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h5 className="text-sm font-extrabold text-white">
-                          {isDE ? scenario.titleDe : scenario.titleEn}
-                        </h5>
-                        <p className="mt-0.5 text-xs text-slate-400 leading-relaxed">
-                          {isDE ? scenario.situationDe : scenario.situationEn}
-                        </p>
-                      </div>
+                  <div className="flex items-start gap-3 border-b border-slate-800 pb-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-500/20 text-red-400 font-bold border border-red-500/30">
+                      <AlertTriangle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h5 className="text-sm sm:text-base font-extrabold text-white">
+                        {isDE ? scenario.titleDe : scenario.titleEn}
+                      </h5>
+                      <p className="mt-0.5 text-xs text-slate-300 leading-relaxed">
+                        {isDE ? scenario.situationDe : scenario.situationEn}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-3 p-4">
+                  <div className="space-y-3">
                     {scenario.steps.map((step, idx) => (
-                      <div key={`${scenario.id}-${step.id}`} className="flex gap-3 items-start">
+                      <div key={`${scenario.id}-${step.id}`} className="flex gap-3 items-start p-3 rounded-2xl bg-slate-950 border border-slate-800/80">
                         <div className={cn(
-                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-bold',
+                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-black',
                           step.critical 
-                            ? 'bg-red-500 text-white' 
+                            ? 'bg-red-600 text-white shadow-md shadow-red-600/30' 
                             : 'bg-indigo-600 text-white'
                         )}>
                           {step.icon ? getStepIcon(step.icon, 'h-4 w-4') : (idx + 1)}
                         </div>
                         
                         <div className="flex-1">
-                          <p className="text-xs sm:text-sm font-bold text-white">
-                            {isDE ? step.titleDe : step.titleEn}
-                          </p>
-                          <p className="mt-0.5 text-xs text-slate-400 leading-relaxed">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-xs sm:text-sm font-extrabold text-white">
+                              {isDE ? step.titleDe : step.titleEn}
+                            </p>
+                            {step.critical && (
+                              <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-wider border border-red-500/30">
+                                ⚠️ EXAM FAIL TRAP
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-xs text-slate-300 leading-relaxed">
                             {isDE ? step.descriptionDe : step.descriptionEn}
                           </p>
                         </div>
