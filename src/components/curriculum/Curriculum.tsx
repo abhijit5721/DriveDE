@@ -135,11 +135,12 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   }, [activeChapterId]);
 
   const drawerContentRef = useRef<HTMLDivElement | null>(null);
+  const drawerBodyRef = useRef<HTMLDivElement | null>(null);
   const activeNodeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (selectedLessonForDrawer && drawerContentRef.current) {
-      drawerContentRef.current.scrollTop = 0;
+    if (selectedLessonForDrawer && drawerBodyRef.current) {
+      drawerBodyRef.current.scrollTop = 0;
     }
   }, [selectedLessonForDrawer]);
 
@@ -555,7 +556,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               </div>
 
               {/* Scrollable Content Body */}
-              <div className="p-5 sm:p-6 overflow-y-auto space-y-5">
+              <div ref={drawerBodyRef} className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6 space-y-5">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-2 leading-tight">
                     {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
