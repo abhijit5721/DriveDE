@@ -132,7 +132,7 @@ export function Welcome() {
     <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30 text-slate-100">
       {/* Plan Picker Overlay — shown after "Get Started" click */}
       {showPlanPicker && (
-        <div className="fixed inset-0 z-[100] animate-fade-in">
+        <div className="fixed inset-0 z-[100] animate-fade-in overflow-hidden">
           <PlanPickerScreen 
             initialPlan={selectedPlanForPicker} 
             initialStep={pickerInitialStep}

@@ -399,7 +399,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col overflow-y-auto selection:bg-blue-500/30">
+    <div className="h-full w-full bg-slate-950 flex flex-col overflow-y-auto selection:bg-blue-500/30">
       {/* Ambient background glows */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-blue-600/12 rounded-full blur-[140px]" />
