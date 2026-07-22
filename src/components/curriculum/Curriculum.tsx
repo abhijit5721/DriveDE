@@ -14,8 +14,8 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDown, Check, Lock, Cog, Zap, 
-  Settings2, BadgeCheck, Crown, Activity, X,
-  Play, ArrowRight, Layers, TrendingUp, Clock, Compass
+  Settings2, BadgeCheck, Crown, Activity,
+  Play, ArrowRight, Layers, TrendingUp, Compass
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
@@ -75,7 +75,6 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const isDe = language === 'de';
 
   const [showLicenseModal, setShowLicenseModal] = useState(false);
-  const [selectedLessonForDrawer, setSelectedLessonForDrawer] = useState<Lesson | null>(null);
 
   // --- DERIVED LICENSE STATE ---
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -134,23 +133,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     setExpandedChapter(activeChapterId);
   }, [activeChapterId]);
 
-  const drawerContentRef = useRef<HTMLDivElement | null>(null);
   const activeNodeRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (selectedLessonForDrawer && drawerContentRef.current) {
-      drawerContentRef.current.scrollTop = 0;
-    }
-  }, [selectedLessonForDrawer]);
-
-  useEffect(() => {
-    if (selectedLessonForDrawer) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [selectedLessonForDrawer]);
 
   useEffect(() => {
     if (curriculumViewMode === 'quest' && activeNodeRef.current) {
@@ -378,22 +361,16 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                           )}
 
                           <button
-                            onClick={() => {
-                              if (isLessonUnlocked && !isLockedForFreeUser) {
-                                onLessonSelect(lesson);
-                              } else {
-                                setSelectedLessonForDrawer(lesson);
-                              }
-                            }}
+                            onClick={() => onLessonSelect(lesson)}
                             className={cn(
-                              'relative w-12 h-12 rounded-xl border-2 flex items-center justify-center text-base font-bold transition-all duration-300 transform shadow-xl',
+                              'w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center font-black text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md',
                               isCurrentActive
-                                ? 'bg-gradient-to-br from-blue-500 to-indigo-600 border-white text-white scale-110 shadow-blue-500/50'
+                                ? 'bg-gradient-to-tr from-blue-600 to-indigo-500 text-white ring-4 ring-blue-500/30 shadow-blue-500/30'
                                 : isLessonCompleted
-                                ? 'bg-emerald-600 border-emerald-400 text-white hover:scale-105'
+                                ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/20'
                                 : isLessonUnlocked && !isLockedForFreeUser
-                                ? 'bg-slate-900 border-slate-700 text-slate-300 hover:border-blue-400 hover:scale-105'
-                                : 'bg-slate-950 border-slate-800 text-slate-600 opacity-60'
+                                ? 'bg-slate-900 border border-slate-800 text-slate-400 hover:border-slate-700'
+                                : 'bg-slate-950 border border-slate-800 text-slate-700'
                             )}
                           >
                             {isLessonCompleted ? (
@@ -419,7 +396,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                         {/* Node Card Content (sitting cleanly to the right of node) */}
                         <div
-                          onClick={() => setSelectedLessonForDrawer(lesson)}
+                          onClick={() => onLessonSelect(lesson)}
                           className={cn(
                             'flex-1 p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left',
                             isCurrentActive
@@ -528,101 +505,6 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           })}
         </div>
       )}
-
-      {/* 4. Slide-Over / Bottom Sheet Lesson Details Modal */}
-      <AnimatePresence>
-        {selectedLessonForDrawer && (
-          <div 
-            onClick={() => setSelectedLessonForDrawer(null)}
-            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-950/40 backdrop-blur-sm p-0 sm:p-4 transition-all"
-          >
-            <motion.div
-              ref={drawerContentRef}
-              onClick={(e) => e.stopPropagation()}
-              initial={{ y: '100%', opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: '100%', opacity: 0 }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-xl overflow-y-auto flex flex-col max-h-[85vh]"
-            >
-              {/* Drag handle for mobile sheet */}
-              <div className="w-12 h-1 rounded-full bg-slate-700 mx-auto mt-3 shrink-0 sm:hidden" />
-
-              {/* Drawer Top Header Bar */}
-              <div className="p-4 sm:p-5 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-900">
-                <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
-                  {isDe ? 'Lektionsübersicht' : 'Lesson Overview'}
-                </span>
-                
-                <button
-                  onClick={() => setSelectedLessonForDrawer(null)}
-                  className="p-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                  aria-label="Close Overview"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Scrollable Content Body */}
-              <div className="p-5 sm:p-6 space-y-5">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-2 leading-tight">
-                    {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
-                  </h2>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    {isDe ? selectedLessonForDrawer.descriptionDe : selectedLessonForDrawer.descriptionEn}
-                  </p>
-                </div>
-
-                {/* Key Metrics */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                      <Clock className="w-3.5 h-3.5 text-blue-400" />
-                      <span>{isDe ? 'Dauer' : 'Duration'}</span>
-                    </div>
-                    <p className="text-sm font-bold text-white">⏱️ ~8 Min</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{isDe ? 'Prüfungsreife' : 'Readiness'}</span>
-                    </div>
-                    <p className="text-sm font-bold text-emerald-400">+15% Score</p>
-                  </div>
-                </div>
-
-                {/* German Rules Highlights */}
-                {GERMAN_RULE_BADGES[selectedLessonForDrawer.id] && (
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-500/30">
-                    <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1.5">
-                      {isDe ? '🇩🇪 Deutsche Straßenregel' : '🇩🇪 German Road Rule'}
-                    </p>
-                    <p className="text-xs sm:text-sm font-bold text-white notranslate" translate="no">
-                      {isDe ? GERMAN_RULE_BADGES[selectedLessonForDrawer.id].labelDe : GERMAN_RULE_BADGES[selectedLessonForDrawer.id].labelEn}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer CTA Action Bar */}
-              <div className="p-4 sm:p-5 bg-slate-950/90 border-t border-slate-800/80 shrink-0">
-                <button
-                  onClick={() => {
-                    const l = selectedLessonForDrawer;
-                    setSelectedLessonForDrawer(null);
-                    onLessonSelect(l);
-                  }}
-                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] active:scale-[0.99]"
-                >
-                  <span>{isDe ? 'Lektion jetzt starten' : 'Start Lesson Now'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* 5. License Selector Modal */}
       <AnimatePresence>
