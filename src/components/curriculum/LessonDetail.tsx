@@ -37,6 +37,8 @@ import {
   Car,
   Trophy,
   Wrench,
+  Clock,
+  TrendingUp,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -262,13 +264,31 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   }
 
   return (
-    <div className="pb-6">
+    <div className="pb-12 space-y-6">
       <PageHeader title={language === 'de' ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
 
-      <div className="mb-6 mt-4">
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+      {/* Premium Lesson Hero Card */}
+      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
           {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
+
+        {/* Quick Metrics Bar */}
+        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800/80">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-bold text-slate-200">
+            <Clock className="w-3.5 h-3.5 text-blue-400" />
+            ⏱️ ~8 Min
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-bold text-emerald-400">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+            +15% {isDE ? 'Prüfungsreife' : 'Exam Score'}
+          </span>
+          {lesson.learningPath === 'both' && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-bold text-blue-400">
+              🇩🇪 {isDE ? 'Umschreibung & Ersterwerb' : 'Conversion & Standard'}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Interactive Simulator Section */}
@@ -655,32 +675,40 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         </>
       )}
 
-      {/* Glossary */}
+      {/* Stage 3: Key Terms & German Driving Vocabulary (Glossary) */}
       {lesson.glossary && lesson.glossary.length > 0 && (
-        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+        <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
               <Info className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-base font-semibold text-slate-900 dark:text-white">
+              <h4 className="text-base font-extrabold text-white">
                 {t.curriculum.keyTerms}
               </h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-400">
                 {t.curriculum.glossarySub}
               </p>
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {lesson.glossary.map((term) => (
-              <div key={term.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">{term.german}</p>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{term.english}</p>
-                {(term.noteDe || term.noteEn) && (
-                  <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                    {language === 'de' ? term.noteDe : term.noteEn}
+              <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 hover:border-slate-700 transition-all">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-extrabold text-blue-400 notranslate" translate="no">
+                    {term.german}
                   </p>
+                  <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-wider">
+                    DE
+                  </span>
+                </div>
+                <p className="text-xs font-bold text-slate-200">{term.english}</p>
+                {(term.noteDe || term.noteEn) && (
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-slate-400 flex items-start gap-1.5">
+                    <span className="text-amber-400 font-bold shrink-0">💡 Examen-Tipp:</span>
+                    <span>{language === 'de' ? term.noteDe : term.noteEn}</span>
+                  </div>
                 )}
               </div>
             ))}
@@ -688,18 +716,18 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         </div>
       )}
 
-      {/* Examiner Commands */}
+      {/* Stage 3.5: Typical German Examiner Voice Commands (Prüferanweisungen) */}
       {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
-        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400">
+        <div className="rounded-3xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-base font-semibold text-slate-900 dark:text-white">
+              <h4 className="text-base font-extrabold text-white">
                 {t.curriculum.typicalExaminer}
               </h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-400">
                 {t.curriculum.examinerSub}
               </p>
             </div>
@@ -707,13 +735,23 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           <div className="space-y-3">
             {lesson.examinerCommands.map((command) => (
-              <div key={command.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
-                <p className="text-sm font-bold text-slate-900 dark:text-white">{command.commandDe}</p>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{command.commandEn}</p>
-                {(command.noteDe || command.noteEn) && (
-                  <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
-                    {language === 'de' ? command.noteDe : command.noteEn}
+              <div key={command.id} className="rounded-2xl border border-indigo-500/20 bg-slate-950/90 p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                    🗣️ PRÜFER
+                  </span>
+                  <p className="text-sm font-extrabold text-white notranslate" translate="no">
+                    "{command.commandDe}"
                   </p>
+                </div>
+                <p className="text-xs font-semibold text-slate-300 italic pl-1">
+                  ({command.commandEn})
+                </p>
+                {(command.noteDe || command.noteEn) && (
+                  <div className="mt-2 rounded-xl bg-indigo-950/40 border border-indigo-500/20 p-2.5 text-xs text-indigo-200 leading-relaxed">
+                    <span className="font-bold text-indigo-400">🎯 {isDE ? 'WAS DER PRÜFER ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'} </span>
+                    {language === 'de' ? command.noteDe : command.noteEn}
+                  </div>
                 )}
               </div>
             ))}
