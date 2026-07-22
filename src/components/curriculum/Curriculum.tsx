@@ -523,14 +523,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       {/* 4. Slide-Over / Bottom Sheet Lesson Details Modal */}
       <AnimatePresence>
         {selectedLessonForDrawer && (
-          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-md p-0 sm:p-4">
+          <div 
+            onClick={() => setSelectedLessonForDrawer(null)}
+            className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-950/40 backdrop-blur-sm p-0 sm:p-4 transition-all"
+          >
             <motion.div
               ref={drawerContentRef}
+              onClick={(e) => e.stopPropagation()}
               initial={{ y: '100%', opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+              className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]"
             >
               {/* Drag handle for mobile sheet */}
               <div className="w-12 h-1 rounded-full bg-slate-700 mx-auto mt-3 shrink-0 sm:hidden" />
