@@ -75,6 +75,84 @@ const getAnimationType = (lessonId: string): AnimationType | null => {
   return mapping[lessonId] || null;
 };
 
+const getDefaultGlossary = (lesson: Lesson) => {
+  if (lesson.glossary && lesson.glossary.length > 0) return lesson.glossary;
+
+  if (lesson.id.startsWith('basics')) {
+    return [
+      { id: 'g-sb', german: 'Schulterblick', english: 'Mandatory Shoulder Check', noteDe: 'Vor jedem Anfahren, Spurwechsel und Abbiegen ist der Schulterblick in den toten Winkel zwingend.', noteEn: 'Before moving off, changing lanes, or turning, a shoulder check into the blind spot is mandatory.' },
+      { id: 'g-sp', german: 'Spiegeleinstellung', english: 'Mirror Adjustment', noteDe: 'Spiegel so einstellen, dass der hintere Türgriff gerade noch im unteren Rand sichtbar ist.', noteEn: 'Adjust mirrors so the rear door handle is just barely visible at the bottom edge.' },
+      { id: 'g-sg', german: 'Sicherheitsgurt', english: 'Seatbelt Safety', noteDe: 'Alle Insassen müssen vor Fahrtantritt angeschnallt sein.', noteEn: 'All occupants must fasten seatbelts before starting the drive.' },
+    ];
+  }
+
+  if (lesson.id.startsWith('maneuver')) {
+    return [
+      { id: 'g-gb', german: 'Gefahrenbremsung', english: 'Emergency Braking', noteDe: 'Bei Prüferanweisung sofort schlagartig volle Bremsung ohne Zögern einleiten.', noteEn: 'Upon examiner command, immediately initiate full hard braking without hesitation.' },
+      { id: 'g-ep', german: 'Einparken in Lücke', english: 'Parallel / Perpendicular Parking', noteDe: 'Maximal 2 Korrekturzüge in der praktischen Prüfung erlaubt.', noteEn: 'Maximum 2 correction moves allowed during the practical exam.' },
+      { id: 'g-rb', german: 'Rundum-Blick', english: '360° All-Round Observation', noteDe: 'Vor jedem Rückwärtsfahren den gesamten Verkehrsbereich um das Auto absichern.', noteEn: 'Secure the entire area around the vehicle before any reversing maneuver.' },
+    ];
+  }
+
+  if (lesson.id.startsWith('city')) {
+    return [
+      { id: 'g-rvl', german: 'Rechts vor Links', english: 'Right-Before-Left Priority', noteDe: 'Gilt an allen unbeschilderten Kreuzungen und Einmündungen.', noteEn: 'Applies at all unmarked intersections and side streets.' },
+      { id: 'g-kv', german: 'Kreisverkehr', english: 'Roundabout Rules', noteDe: 'Beim Einfahren NICHT blinken, beim Ausfahren ZWINGEND rechts blinken.', noteEn: 'Do NOT signal when entering; MUST signal right when exiting.' },
+      { id: 'g-tw', german: 'Toter Winkel', english: 'Blind Spot Area', noteDe: 'Besonders Radfahrer beim Rechtsabbiegen im toten Winkel absichern.', noteEn: 'Especially protect cyclists in your blind spot when turning right.' },
+    ];
+  }
+
+  if (lesson.id.startsWith('special')) {
+    return [
+      { id: 'g-ab', german: 'Autobahn-Einfädelung', english: 'Motorway Acceleration Ramp', noteDe: 'Auf dem Beschleunigungsstreifen zügig beschleunigen und Lücke im fließenden Verkehr nutzen.', noteEn: 'Accelerate briskly on the ramp and merge smoothly into traffic.' },
+      { id: 'g-rfg', german: 'Rechtsfahrgebot', english: 'Keep-Right Rule', noteDe: 'In Deutschland gilt auf Autobahnen und Außerortsstraßen das Rechtsfahrgebot.', noteEn: 'In Germany, the keep-right rule strictly applies on motorways and rural roads.' },
+      { id: 'g-rtg', german: 'Rettungsgasse', english: 'Emergency Corridor', noteDe: 'Bei Stau auf Autobahnen zwischen linker und benachbarter Spur frei halten.', noteEn: 'In traffic jams on motorways, form a corridor between the leftmost and adjacent lane.' },
+    ];
+  }
+
+  return [
+    { id: 'g-pf', german: 'Prüfungsfahrt', english: 'Practical Driving Exam', noteDe: 'Dauert 55 Minuten. Ruhig und sicher fahren, keine schweren Fehler begehen.', noteEn: 'Lasts 55 minutes. Drive calmly and safely without committing major errors.' },
+    { id: 'g-gfa', german: 'Grundfahraufgaben', english: 'Basic Exam Maneuvers', noteDe: 'Enthält Einparken, Umkehren, Gefahrenbremsung und Abbiegen.', noteEn: 'Includes parking, turning around, emergency braking, and turns.' },
+  ];
+};
+
+const getDefaultExaminerCommands = (lesson: Lesson) => {
+  if (lesson.examinerCommands && lesson.examinerCommands.length > 0) return lesson.examinerCommands;
+
+  if (lesson.id.startsWith('basics')) {
+    return [
+      { id: 'ec-b1', commandDe: 'Fahren Sie bitte los, wenn Sie bereit sind.', commandEn: 'Please move off when you are ready.', noteDe: 'Spiegel prüfen, Blinker setzen, Schulterblick links und sanft anfahren.', noteEn: 'Check mirrors, signal, shoulder check left, and move off smoothly.' },
+      { id: 'ec-b2', commandDe: 'Fahren Sie bitte rechts ran.', commandEn: 'Please pull over on the right.', noteDe: 'Blinker rechts, Schulterblick rechts, am Randstein parallel halten.', noteEn: 'Signal right, shoulder check right, stop parallel to the curb.' }
+    ];
+  }
+
+  if (lesson.id.startsWith('maneuver')) {
+    return [
+      { id: 'ec-m1', commandDe: 'Führen Sie bitte die Gefahrenbremsung durch.', commandEn: 'Please perform emergency braking.', noteDe: 'Schlagartig Bremse und Kupplung voll durchtreten bis zum Stillstand.', noteEn: 'Immediately kick brake and clutch down completely until stopped.' },
+      { id: 'ec-m2', commandDe: 'Parken Sie bitte rückwärts in die nächste Lücke ein.', commandEn: 'Please park backwards into the next gap.', noteDe: 'Warnblinker an, Verkehr absichern, mit 2 Korrekturzügen sauber einparken.', noteEn: 'Hazard lights on, check surroundings, park cleanly with max 2 corrections.' }
+    ];
+  }
+
+  if (lesson.id.startsWith('city')) {
+    return [
+      { id: 'ec-c1', commandDe: 'An der nächsten Kreuzung bitte links abbiegen.', commandEn: 'At the next intersection, please turn left.', noteDe: 'Rechtzeitig einordnen, Gegenverkehr durchfahren lassen, Schulterblick.', noteEn: 'Position early, yield to oncoming traffic, perform shoulder check.' },
+      { id: 'ec-c2', commandDe: 'Nehmen Sie im Kreisverkehr die zweite Ausfahrt.', commandEn: 'Take the second exit in the roundabout.', noteDe: 'Vorrang gewähren, beim Ausfahren rechtzeitig rechts blinken.', noteEn: 'Yield priority when entering, signal right when exiting.' }
+    ];
+  }
+
+  if (lesson.id.startsWith('special')) {
+    return [
+      { id: 'ec-s1', commandDe: 'Fahren Sie an der nächsten Anschlussstelle auf die Autobahn auf.', commandEn: 'Join the motorway at the next junction.', noteDe: 'Auf der Auffahrt kräftig beschleunigen, Verkehr beobachten, einordnen.', noteEn: 'Accelerate briskly on the ramp, observe traffic, merge smoothly.' },
+      { id: 'ec-s2', commandDe: 'Überholen Sie den LKW vor uns sicher.', commandEn: 'Overtake the truck ahead safely.', noteDe: 'Blinker links, Schulterblick, zügig vorbei und rechts wieder einordnen.', noteEn: 'Signal left, shoulder check, overtake swiftly, and return to right lane.' }
+    ];
+  }
+
+  return [
+    { id: 'ec-e1', commandDe: 'Folgen Sie der Straße, sofern keine andere Anweisung erfolgt.', commandEn: 'Follow the road unless instructed otherwise.', noteDe: 'Standardanweisung in der Prüfungsfahrt. Auf Schilder achten.', noteEn: 'Standard instruction during the exam. Pay close attention to signs.' },
+    { id: 'ec-e2', commandDe: 'Fahren Sie bitte zurück zum Prüfungszentrum.', commandEn: 'Please drive back to the test center.', noteDe: 'Letzte Etappe der Prüfung. Bis zum Schluß hochkonzentriert bleiben.', noteEn: 'Final leg of the test. Remain fully focused until the engine is off.' }
+  ];
+};
+
 export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const { language, completeLesson, userProgress } = useAppStore();
   const isDE = language === 'de';
@@ -88,6 +166,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const t = TRANSLATIONS[language];
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
   const animationType = getAnimationType(lesson.id);
+
+  const effectiveGlossary = getDefaultGlossary(lesson);
+  const effectiveExaminerCommands = getDefaultExaminerCommands(lesson);
 
   const getStepIcon = (iconName: string, className = 'h-8 w-8') => {
     switch (iconName) {
@@ -676,7 +757,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       )}
 
       {/* Stage 3: Key Terms & German Driving Vocabulary (Glossary) */}
-      {lesson.glossary && lesson.glossary.length > 0 && (
+      {effectiveGlossary && effectiveGlossary.length > 0 && (
         <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
@@ -693,7 +774,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            {lesson.glossary.map((term) => (
+            {effectiveGlossary.map((term) => (
               <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 hover:border-slate-700 transition-all">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-extrabold text-blue-400 notranslate" translate="no">
@@ -717,7 +798,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       )}
 
       {/* Stage 3.5: Typical German Examiner Voice Commands (Prüferanweisungen) */}
-      {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
+      {effectiveExaminerCommands && effectiveExaminerCommands.length > 0 && (
         <div className="rounded-3xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
@@ -734,7 +815,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           </div>
 
           <div className="space-y-3">
-            {lesson.examinerCommands.map((command) => (
+            {effectiveExaminerCommands.map((command) => (
               <div key={command.id} className="rounded-2xl border border-indigo-500/20 bg-slate-950/90 p-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
