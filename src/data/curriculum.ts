@@ -849,7 +849,7 @@ const basicsLessons: Lesson[] = [
     ...getLessonStrings('basics-0'),
     completed: false,
     licenseType: 'both',
-    learningPath: 'umschreibung',
+    learningPath: 'both',
     isPremium: true,
     glossary: [...germanRoadGlossary],
     examinerCommands: [...examinerCommandsCore],
