@@ -7,10 +7,10 @@
  * Visual Learning Path / Quest Map (Duolingo & Babbel Style):
  * Renders all chapters (1 through 5) as a continuous interactive milestone quest path
  * with German rule quick-pills, slide-over lesson preview drawers, readiness impact counters,
- * and left-aligned timeline tracks without text overlays.
+ * persistent view preferences, auto-scrolling to active left-off nodes, and smart chapter accordion states.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDown, Check, Lock, Cog, Zap, 
@@ -66,15 +66,16 @@ const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; ico
 };
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
-  const { language, userProgress, licenseType, setLicenseType, isProActive } = useAppStore();
+  const { 
+    language, userProgress, licenseType, setLicenseType, isProActive,
+    curriculumViewMode, setCurriculumViewMode 
+  } = useAppStore();
   const proActive = isProActive();
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
 
-  const [expandedChapter, setExpandedChapter] = useState<string | null>('chapter-1');
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [selectedLessonForDrawer, setSelectedLessonForDrawer] = useState<Lesson | null>(null);
-  const [viewMode, setViewMode] = useState<'quest' | 'list'>('quest');
 
   // --- DERIVED LICENSE STATE ---
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -113,6 +114,37 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
     return filteredChapters[0]?.lessons[0]?.id || null;
   }, [filteredChapters, userProgress.completedLessons]);
+
+  // Identify chapter containing active lesson (for auto-expanding active chapter while completed/future chapters stay closed)
+  const activeChapterId = useMemo(() => {
+    for (const chapter of filteredChapters) {
+      for (const lesson of chapter.lessons) {
+        if (lesson.id === activeLessonId) {
+          return chapter.id;
+        }
+      }
+    }
+    return filteredChapters[0]?.id || 'chapter-1';
+  }, [filteredChapters, activeLessonId]);
+
+  const [expandedChapter, setExpandedChapter] = useState<string | null>(activeChapterId);
+
+  // Update expanded chapter when active chapter changes
+  useEffect(() => {
+    setExpandedChapter(activeChapterId);
+  }, [activeChapterId]);
+
+  // Ref for active node to enable smooth auto-scrolling directly to where user left off
+  const activeNodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (curriculumViewMode === 'quest' && activeNodeRef.current) {
+      const timer = setTimeout(() => {
+        activeNodeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [curriculumViewMode, activeLessonId]);
 
   const getChapterIcon = (chapterId: string) => {
     switch (chapterId) {
@@ -177,14 +209,14 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           </h1>
         </div>
 
-        {/* View Mode Toggle & Path Settings */}
+        {/* View Mode Switcher (Persisted Preference) & Path Settings */}
         <div className="flex items-center gap-2">
           <div className="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <button
-              onClick={() => setViewMode('quest')}
+              onClick={() => setCurriculumViewMode('quest')}
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
-                viewMode === 'quest'
+                curriculumViewMode === 'quest'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               )}
@@ -193,10 +225,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               <span>{isDe ? 'Quest Map' : 'Quest Map'}</span>
             </button>
             <button
-              onClick={() => setViewMode('list')}
+              onClick={() => setCurriculumViewMode('list')}
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
-                viewMode === 'list'
+                curriculumViewMode === 'list'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               )}
@@ -250,7 +282,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       </div>
 
       {/* 2. Visual Quest Map View for ALL Chapters */}
-      {viewMode === 'quest' ? (
+      {curriculumViewMode === 'quest' ? (
         <div className="space-y-10 relative pt-2">
           {filteredChapters.map((chapter, cIdx) => {
             const completedInChapter = chapter.lessons.filter(l =>
@@ -318,6 +350,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                     return (
                       <motion.div
                         key={lesson.id}
+                        ref={isCurrentActive ? activeNodeRef : null}
                         initial={{ opacity: 0, x: -12 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: lIdx * 0.05 }}
@@ -409,12 +442,13 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
           })}
         </div>
       ) : (
-        /* 3. Classic List View */
+        /* 3. Classic List View (Completed Chapters CLOSED with green badge, Active Chapter OPEN) */
         <div className="space-y-4">
           {filteredChapters.map((chapter, cIdx) => {
             const completedInChapter = chapter.lessons.filter(l =>
               userProgress.completedLessons.includes(l.id)
             ).length;
+            const isChapterCompleted = chapter.lessons.length > 0 && completedInChapter === chapter.lessons.length;
             const isExpanded = expandedChapter === chapter.id;
 
             return (
@@ -426,9 +460,17 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
                     <div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
-                      </span>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
+                        </span>
+                        {isChapterCompleted && (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
+                            <Check className="w-3 h-3" />
+                            {isDe ? '100% ABGESCHLOSSEN' : '100% COMPLETED'}
+                          </span>
+                        )}
+                      </div>
                       <h3 className="font-bold text-white text-base">
                         {isDe ? chapter.titleDe : chapter.titleEn}
                       </h3>
@@ -440,19 +482,30 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                 {isExpanded && (
                   <div className="p-4 pt-0 space-y-2 border-t border-slate-800/80">
-                    {chapter.lessons.map((lesson) => (
-                      <button
-                        key={lesson.id}
-                        onClick={() => onLessonSelect(lesson)}
-                        className="w-full p-3 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-blue-500/40 text-left flex items-center justify-between"
-                      >
-                        <div>
-                          <p className="text-xs font-bold text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
-                          <p className="text-[10px] text-slate-400">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-slate-500" />
-                      </button>
-                    ))}
+                    {chapter.lessons.map((lesson) => {
+                      const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
+                      return (
+                        <button
+                          key={lesson.id}
+                          onClick={() => onLessonSelect(lesson)}
+                          className={cn(
+                            'w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all',
+                            isLessonCompleted 
+                              ? 'bg-slate-950/40 border-emerald-500/20 hover:border-emerald-500/40' 
+                              : 'bg-slate-950/80 border-slate-800 hover:border-blue-500/40'
+                          )}
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs font-bold text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
+                              {isLessonCompleted && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                            </div>
+                            <p className="text-[10px] text-slate-400">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-500" />
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>

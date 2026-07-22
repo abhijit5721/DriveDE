@@ -168,6 +168,8 @@ export const useAppStore = create<AppState>()(
       hasVisited: false,
       hasCompletedOnboarding: false,
       activeTab: 'home',
+      curriculumViewMode: 'quest',
+      setCurriculumViewMode: (mode) => set({ curriculumViewMode: mode }),
       isHydrated: false,
       recentAchievements: [],
       cookieSettings: {
@@ -828,6 +830,7 @@ export const useAppStore = create<AppState>()(
           authStatus: state.authStatus,
           hasCompletedOnboarding: state.hasCompletedOnboarding,
           activeTab: state.activeTab,
+          curriculumViewMode: state.curriculumViewMode,
           licenseType: state.licenseType,
           learningPath: state.learningPath,
           transmissionType: state.transmissionType,

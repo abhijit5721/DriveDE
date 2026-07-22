@@ -271,6 +271,8 @@ export interface AppState {
   hasVisited: boolean;
   hasCompletedOnboarding: boolean;
   activeTab: TabType;
+  curriculumViewMode: 'quest' | 'list';
+  setCurriculumViewMode: (mode: 'quest' | 'list') => void;
   setActiveTab: (tab: TabType) => void;
   setHasVisited: (hasVisited: boolean) => void;
   setHasCompletedOnboarding: (value: boolean) => void;
