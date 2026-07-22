@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Check,
   AlertTriangle,
-  AlertCircle,
   Info,
   CheckCircle,
   BookOpen,
@@ -78,16 +77,26 @@ const getAnimationType = (lessonId: string): AnimationType | null => {
 export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const { language, completeLesson, userProgress } = useAppStore();
   const isDE = language === 'de';
+  const [activeLessonTab, setActiveLessonTab] = useState<'learn' | 'rules' | 'quiz'>('learn');
   const [currentStep, setCurrentStep] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
-  const [isSimulatorComplete, setIsSimulatorComplete] = useState(false);
 
   const t = TRANSLATIONS[language];
   const isCompleted = userProgress.completedLessons.includes(lesson.id);
   const animationType = getAnimationType(lesson.id);
+
+  const hasRulesTab = Boolean(
+    (lesson.glossary && lesson.glossary.length > 0) ||
+    (lesson.examinerCommands && lesson.examinerCommands.length > 0) ||
+    (lesson.trafficSigns && lesson.trafficSigns.length > 0) ||
+    (lesson.guidedPoints && lesson.guidedPoints.length > 0) ||
+    (lesson.scenarios && lesson.scenarios.length > 0)
+  );
+
+  const hasQuizTab = Boolean(lesson.quiz && lesson.quiz.length > 0);
 
   const getStepIcon = (iconName: string, className = 'h-8 w-8') => {
     switch (iconName) {
@@ -265,12 +274,13 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
   return (
     <div className="pb-12 space-y-6">
-      <PageHeader title={language === 'de' ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
+      {/* 1. Header & Quick Back */}
+      <PageHeader title={isDE ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
 
-      {/* Premium Lesson Hero Card */}
+      {/* 2. Premium Hero Banner */}
       <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
-          {language === 'de' ? lesson.descriptionDe : lesson.descriptionEn}
+          {isDE ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
 
         {/* Quick Metrics Bar */}
@@ -283,6 +293,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
             +15% {isDE ? 'Prüfungsreife' : 'Exam Score'}
           </span>
+          {isCompleted && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-bold text-emerald-400">
+              <CheckCircle className="w-3.5 h-3.5" />
+              {isDE ? 'Abgeschlossen' : 'Completed'}
+            </span>
+          )}
           {lesson.learningPath === 'both' && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-bold text-blue-400">
               🇩🇪 {isDE ? 'Umschreibung & Ersterwerb' : 'Conversion & Standard'}
@@ -291,744 +307,761 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         </div>
       </div>
 
-      {/* Interactive Simulator Section */}
-      {isVorfahrtLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
-              <Activity className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.interactiveSimulator}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t.curriculum.masterSituation}
-              </p>
-            </div>
-          </div>
-          
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveVorfahrt 
-              key={lesson.id}
-              onComplete={() => setIsSimulatorComplete(true)} 
-              language={language} 
-              scenario={lesson.simulatorScenario}
-              scenarios={lesson.simulatorScenarios}
-            />
-            
-            {isSimulatorComplete && (
-              <div className="mx-4 mb-4">
-                <button
-                  onClick={handleFinish}
-                  className="w-full rounded-2xl bg-gradient-to-r from-green-500 to-green-600 py-4 font-bold text-white shadow-lg shadow-green-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircle className="h-5 w-5" />
-                    {t.curriculum.lessonCompleted}
-                  </div>
-                </button>
-              </div>
-            )}
-          </div>
-          
-          {!isSimulatorComplete && (
-            <p className="mt-4 text-center text-sm font-medium text-amber-600 dark:text-amber-400">
-              {t.curriculum.solveSimulatorHint}
-            </p>
+      {/* 3. Segmented 3-Tab Workspace Switcher */}
+      <div className="flex p-1 rounded-2xl bg-slate-900 border border-slate-800">
+        <button
+          onClick={() => setActiveLessonTab('learn')}
+          className={cn(
+            'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+            activeLessonTab === 'learn'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-white'
           )}
-        </div>
-      )}
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>{isDE ? 'Lernen & Praxis' : 'Learn & Practice'}</span>
+        </button>
 
-      {/* Interactive Mirror Check Section */}
-      {isMirrorLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
-              <Eye className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.shoulderScan}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.scanningSequence}
-              </p>
-            </div>
-          </div>
-          
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveMirrorCheck 
-              onComplete={() => setIsSimulatorComplete(true)} 
-              language={language}
-              direction={lesson.id === 'city-5' ? 'right' : 'left'} 
-            />
-            
-            {isSimulatorComplete && (
-              <div className="mx-4 mb-4">
-                <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                  <Check className="h-5 w-5" />
-                  {t.curriculum.scanningTrained}
+        {hasRulesTab && (
+          <button
+            onClick={() => setActiveLessonTab('rules')}
+            className={cn(
+              'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+              activeLessonTab === 'rules'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            )}
+          >
+            <Shield className="w-4 h-4" />
+            <span>{isDE ? 'Regeln & Prüfer' : 'Examiner & Rules'}</span>
+          </button>
+        )}
+
+        {hasQuizTab && (
+          <button
+            onClick={() => setActiveLessonTab('quiz')}
+            className={cn(
+              'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+              activeLessonTab === 'quiz'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            )}
+          >
+            <GraduationCap className="w-4 h-4" />
+            <span>{isDE ? 'Wissensprüfung' : 'Knowledge Quiz'}</span>
+          </button>
+        )}
+      </div>
+
+      {/* --- TAB 1: LEARN & PRACTICE --- */}
+      {activeLessonTab === 'learn' && (
+        <div className="space-y-6">
+          {/* Interactive Vorfahrt Simulator */}
+          {isVorfahrtLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                  <Activity className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.interactiveSimulator}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.masterSituation}
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Roundabout Section */}
-      {isRoundaboutLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
-              <RotateCcw className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.roundaboutCheck}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.signalingRules}
-              </p>
-            </div>
-          </div>
-          
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveRoundabout onComplete={() => setIsSimulatorComplete(true)} language={language} />
-            
-            {isSimulatorComplete && (
-              <div className="mx-4 mb-4">
-                <div className="flex items-center gap-2 rounded-xl bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                  <Check className="h-5 w-5" />
-                  {t.curriculum.roundaboutCompleted}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Emergency Brake Section */}
-      {isEmergencyBrakeLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20">
-              <Zap className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.emergencyBrakeCheck}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.reactionTimeTraining}
-              </p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveEmergencyBrake onComplete={handleFinish} language={language} />
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Parking Section */}
-      {isParkingLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
-              <Car className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.parkingCheck}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.parallelParkingStep}
-              </p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveParking onComplete={handleFinish} language={language} />
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Tech Check Section */}
-      {isTechLesson && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
-              <Activity className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.vehicleCheck}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.techKnowledge}
-              </p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800">
-            <InteractiveTechCheck onComplete={handleFinish} language={language} />
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Exam Simulation Section */}
-      {isExamSim && (
-        <div className="mb-8">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20">
-              <Trophy className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {t.curriculum.examSimulation}
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t.curriculum.expertFeedback}
-              </p>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-950 shadow-2xl">
-            <InteractiveExamSimulation onComplete={handleFinish} language={language} />
-          </div>
-        </div>
-      )}
-
-      {/* Steps Visualization */}
-      {lesson.steps && lesson.steps.length > 0 && (
-        <>
-          {/* Progress Dots */}
-          <div className="mb-4 flex justify-center gap-2">
-            {lesson.steps.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentStep(idx)}
-                className={cn(
-                  'h-2 rounded-full transition-all',
-                  idx === currentStep
-                    ? 'w-8 bg-blue-500'
-                    : idx < currentStep
-                    ? 'w-2 bg-green-500'
-                    : 'w-2 bg-slate-200 dark:bg-slate-700'
-                )}
-              />
-            ))}
-          </div>
-
-          {/* Animation Toggle Button */}
-          {animationType && (
-            <div className="mb-4">
-              <button
-                onClick={() => setShowAnimation(!showAnimation)}
-                className={cn(
-                  'flex w-full items-center justify-center gap-2 rounded-xl py-3 font-medium transition-all',
-                  showAnimation
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
-                )}
-              >
-                <Film className="h-5 w-5" />
-                {showAnimation
-                  ? t.curriculum.animationHide
-                  : t.curriculum.animationWatch}
-              </button>
-            </div>
-          )}
-
-          {/* Animated Guide */}
-          {showAnimation && animationType && (
-            <div className="mb-4">
-              <AnimatedManeuver type={animationType} language={language} />
-            </div>
-          )}
-
-          {/* Current Step Card */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
-            <div className="mb-4 flex items-center justify-between">
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                {t.curriculum.step} {currentStep + 1}/{lesson.steps.length}
-              </span>
-              {lesson.steps[currentStep].critical && (
-                <span className="flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
-                  <AlertTriangle className="h-3 w-3" />
-                  {t.curriculum.critical}
-                </span>
-              )}
-            </div>
-
-            {/* Diagram Visualization (static) */}
-            {lesson.id.startsWith('maneuver') && !showAnimation && (
-              <div className="mb-4 rounded-xl bg-slate-100 p-3 dark:bg-slate-700">
-                <ParkingDiagram
-                  type={
-                    lesson.id === 'maneuver-1' ? 'parallel' :
-                    lesson.id === 'maneuver-2' ? 'reverse' :
-                    lesson.id === 'maneuver-3' ? 'threepoint' :
-                    'emergency'
-                  }
-                  step={currentStep}
+              
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveVorfahrt 
+                  key={lesson.id}
+                  onComplete={handleFinish} 
+                  language={language} 
+                  scenario={lesson.simulatorScenario}
+                  scenarios={lesson.simulatorScenarios}
                 />
               </div>
-            )}
-
-            {/* Step Visual */}
-            <div
-              className={cn(
-                'mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full',
-                lesson.steps[currentStep].critical
-                  ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                  : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-              )}
-            >
-              {getStepIcon(lesson.steps[currentStep].icon)}
             </div>
+          )}
 
-            <h3 className="mb-2 text-center text-lg font-semibold text-slate-900 dark:text-white">
-              {language === 'de'
-                ? lesson.steps[currentStep].titleDe
-                : lesson.steps[currentStep].titleEn}
-            </h3>
-
-            <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-              {language === 'de'
-                ? lesson.steps[currentStep].descriptionDe
-                : lesson.steps[currentStep].descriptionEn}
-            </p>
-
-            {/* Navigation Buttons */}
-            <div className="mt-6 flex items-center gap-3">
-              <button
-                onClick={handlePrevStep}
-                disabled={currentStep === 0}
-                className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-xl transition-all',
-                  currentStep === 0
-                    ? 'bg-slate-100 text-slate-300 dark:bg-slate-700 dark:text-slate-600'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
-                )}
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-
-              <button
-                onClick={handleNextStep}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
-              >
-                {currentStep === lesson.steps.length - 1
-                  ? lesson.quiz && lesson.quiz.length > 0
-                    ? t.curriculum.goToQuiz
-                    : t.curriculum.complete
-                  : t.curriculum.nextStep}
-                <ChevronRight className="h-5 w-5" />
-              </button>
+          {/* Interactive Mirror Check Section */}
+          {isMirrorLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                  <Eye className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.shoulderScan}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.scanningSequence}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveMirrorCheck 
+                  onComplete={handleFinish} 
+                  language={language}
+                  direction={lesson.id === 'city-5' ? 'right' : 'left'} 
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Step Overview */}
-          <div className="mt-4 rounded-xl bg-white p-4 shadow-sm dark:bg-slate-800">
-            <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">
-              {t.curriculum.allSteps}
-            </h4>
-            <div className="space-y-2">
-              {lesson.steps.map((step, idx) => (
+          {/* Interactive Roundabout Section */}
+          {isRoundaboutLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+                  <RotateCcw className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.roundaboutCheck}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.signalingRules}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveRoundabout onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Emergency Brake Section */}
+          {isEmergencyBrakeLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.emergencyBrakeCheck}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.reactionTimeTraining}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveEmergencyBrake onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Parking Section */}
+          {isParkingLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+                  <Car className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.parkingCheck}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.parallelParkingStep}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveParking onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Tech Check Section */}
+          {isTechLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                  <Activity className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.vehicleCheck}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.techKnowledge}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <InteractiveTechCheck onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Interactive Exam Simulation Section */}
+          {isExamSim && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20">
+                  <Trophy className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.examSimulation}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.expertFeedback}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
+                <InteractiveExamSimulation onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Step Guided Walkthrough */}
+          {lesson.steps && lesson.steps.length > 0 && (
+            <div className="space-y-4">
+              {/* Progress Dots */}
+              <div className="flex justify-center gap-2 py-1">
+                {lesson.steps.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentStep(idx)}
+                    className={cn(
+                      'h-2 rounded-full transition-all',
+                      idx === currentStep
+                        ? 'w-8 bg-blue-500'
+                        : idx < currentStep
+                        ? 'w-2 bg-emerald-500'
+                        : 'w-2 bg-slate-800'
+                    )}
+                  />
+                ))}
+              </div>
+
+              {/* Animation Toggle Button */}
+              {animationType && (
                 <button
-                  key={step.id}
-                  onClick={() => setCurrentStep(idx)}
+                  onClick={() => setShowAnimation(!showAnimation)}
                   className={cn(
-                    'flex w-full items-center gap-3 rounded-lg p-2 text-left transition-all',
-                    idx === currentStep
-                      ? 'bg-blue-50 dark:bg-blue-900/30'
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-700'
+                    'flex w-full items-center justify-center gap-2 rounded-2xl py-3 font-bold text-sm transition-all',
+                    showAnimation
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                      : 'bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700'
                   )}
                 >
-                  <div
-                    className={cn(
-                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                      idx < currentStep
-                        ? 'bg-green-500 text-white'
-                        : idx === currentStep
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400'
-                    )}
-                  >
-                    {idx < currentStep ? <Check className="h-3 w-3" /> : idx + 1}
-                  </div>
-                  <span
-                    className={cn(
-                      'text-sm',
-                      idx === currentStep
-                        ? 'font-medium text-blue-700 dark:text-blue-300'
-                        : 'text-slate-600 dark:text-slate-400'
-                    )}
-                  >
-                    {language === 'de' ? step.titleDe : step.titleEn}
-                  </span>
-                  {step.critical && (
-                    <AlertTriangle className="ml-auto h-4 w-4 text-red-500" />
-                  )}
+                  <Film className="h-4 w-4" />
+                  {showAnimation
+                    ? t.curriculum.animationHide
+                    : t.curriculum.animationWatch}
                 </button>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Stage 3: Key Terms & German Driving Vocabulary (Glossary) */}
-      {lesson.glossary && lesson.glossary.length > 0 && (
-        <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
-              <Info className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-base font-extrabold text-white">
-                {t.curriculum.keyTerms}
-              </h4>
-              <p className="text-xs text-slate-400">
-                {t.curriculum.glossarySub}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {lesson.glossary.map((term) => (
-              <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 hover:border-slate-700 transition-all">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-extrabold text-blue-400 notranslate" translate="no">
-                    {term.german}
-                  </p>
-                  <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-wider">
-                    DE
-                  </span>
-                </div>
-                <p className="text-xs font-bold text-slate-200">{term.english}</p>
-                {(term.noteDe || term.noteEn) && (
-                  <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-slate-400 flex items-start gap-1.5">
-                    <span className="text-amber-400 font-bold shrink-0">💡 Examen-Tipp:</span>
-                    <span>{language === 'de' ? term.noteDe : term.noteEn}</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Stage 3.5: Typical German Examiner Voice Commands (Prüferanweisungen) */}
-      {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
-        <div className="rounded-3xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-base font-extrabold text-white">
-                {t.curriculum.typicalExaminer}
-              </h4>
-              <p className="text-xs text-slate-400">
-                {t.curriculum.examinerSub}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {lesson.examinerCommands.map((command) => (
-              <div key={command.id} className="rounded-2xl border border-indigo-500/20 bg-slate-950/90 p-4 space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
-                    🗣️ PRÜFER
-                  </span>
-                  <p className="text-sm font-extrabold text-white notranslate" translate="no">
-                    "{command.commandDe}"
-                  </p>
-                </div>
-                <p className="text-xs font-semibold text-slate-300 italic pl-1">
-                  ({command.commandEn})
-                </p>
-                {(command.noteDe || command.noteEn) && (
-                  <div className="mt-2 rounded-xl bg-indigo-950/40 border border-indigo-500/20 p-2.5 text-xs text-indigo-200 leading-relaxed">
-                    <span className="font-bold text-indigo-400">🎯 {isDE ? 'WAS DER PRÜFER ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'} </span>
-                    {language === 'de' ? command.noteDe : command.noteEn}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Traffic Signs or Vehicle Checks */}
-      {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
-        <div className="mt-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-              {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
-                <Wrench className="h-5 w-5" />
-              ) : (
-                <Shield className="h-5 w-5" />
               )}
-            </div>
-            <div>
-              <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-                {lesson.trafficSigns[0]?.category === 'vehicle-check'
-                  ? (language === 'de' ? 'Fahrzeugkontrolle / Technik' : 'Vehicle Check & Tech')
-                  : t.curriculum.importantSigns}
-              </h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {lesson.trafficSigns[0]?.category === 'vehicle-check'
-                  ? (language === 'de' ? 'Wichtige Kontrollen vor der Fahrt' : 'Important checks before driving')
-                  : t.curriculum.signsSub}
-              </p>
-            </div>
-          </div>
 
-          <div className="space-y-3">
-            {lesson.trafficSigns.map((sign) => (
-              <div
-                key={sign.id}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40"
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                  <TrafficSignIcon sign={sign} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
-                        {language === 'de' ? sign.titleDe : sign.titleEn}
-                      </p>
-                      {sign.code && (
-                        <span className="rounded-full bg-slate-200 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-700 dark:text-slate-300">
-                          {sign.code}
-                        </span>
+              {/* Animated Guide */}
+              {showAnimation && animationType && (
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl">
+                  <AnimatedManeuver type={animationType} language={language} />
+                </div>
+              )}
+
+              {/* Current Step Card */}
+              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-400">
+                    {t.curriculum.step} {currentStep + 1} / {lesson.steps.length}
+                  </span>
+                  {lesson.steps[currentStep].critical && (
+                    <span className="flex items-center gap-1 rounded-full bg-red-500/15 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400">
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                      {t.curriculum.critical}
+                    </span>
+                  )}
+                </div>
+
+                {/* Diagram Visualization */}
+                {lesson.id.startsWith('maneuver') && !showAnimation && (
+                  <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3">
+                    <ParkingDiagram
+                      type={
+                        lesson.id === 'maneuver-1' ? 'parallel' :
+                        lesson.id === 'maneuver-2' ? 'reverse' :
+                        lesson.id === 'maneuver-3' ? 'threepoint' :
+                        'emergency'
+                      }
+                      step={currentStep}
+                    />
+                  </div>
+                )}
+
+                {/* Step Icon */}
+                <div
+                  className={cn(
+                    'mx-auto flex h-20 w-20 items-center justify-center rounded-2xl shadow-lg',
+                    lesson.steps[currentStep].critical
+                      ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  )}
+                >
+                  {getStepIcon(lesson.steps[currentStep].icon)}
+                </div>
+
+                <h3 className="text-center text-lg sm:text-xl font-extrabold text-white">
+                  {isDE
+                    ? lesson.steps[currentStep].titleDe
+                    : lesson.steps[currentStep].titleEn}
+                </h3>
+
+                <p className="text-center text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  {isDE
+                    ? lesson.steps[currentStep].descriptionDe
+                    : lesson.steps[currentStep].descriptionEn}
+                </p>
+
+                {/* Step Navigation Bar */}
+                <div className="flex items-center gap-3 pt-4 border-t border-slate-800/80">
+                  <button
+                    onClick={handlePrevStep}
+                    disabled={currentStep === 0}
+                    className={cn(
+                      'flex h-12 w-12 items-center justify-center rounded-2xl transition-all border',
+                      currentStep === 0
+                        ? 'bg-slate-950 border-slate-800/50 text-slate-700'
+                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                    )}
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+
+                  <button
+                    onClick={handleNextStep}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    {currentStep === lesson.steps.length - 1
+                      ? hasQuizTab
+                        ? t.curriculum.goToQuiz
+                        : t.curriculum.complete
+                      : t.curriculum.nextStep}
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Step Overview List */}
+              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 shadow-xl space-y-3">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {t.curriculum.allSteps}
+                </h4>
+                <div className="space-y-2">
+                  {lesson.steps.map((step, idx) => (
+                    <button
+                      key={step.id}
+                      onClick={() => setCurrentStep(idx)}
+                      className={cn(
+                        'flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all border',
+                        idx === currentStep
+                          ? 'bg-blue-950/40 border-blue-500/40 text-white'
+                          : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:border-slate-700'
                       )}
-                    </div>
-                    <p className="mt-2 text-base leading-7 text-slate-600 dark:text-slate-400">
-                      {language === 'de' ? sign.descriptionDe : sign.descriptionEn}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Guided Points */}
-      {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (
-        <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-800">
-          <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                {t.curriculum.guidedPoints}
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t.curriculum.guidedPointsSub}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {lesson.guidedPoints.map((point) => (
-              <div
-                key={point.id}
-                className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm dark:bg-slate-800 dark:text-blue-400">
-                    {getGuidedPointIcon(point.emphasis)}
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900 dark:text-white">
-                      {language === 'de' ? point.titleDe : point.titleEn}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                      {language === 'de' ? point.contentDe : point.contentEn}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Guided Scenarios */}
-      {lesson.scenarios && lesson.scenarios.length > 0 && (
-        <div className="mt-8 space-y-6">
-          <div>
-            <h4 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
-              <Target className="h-5 w-5 text-indigo-500" />
-              {isDE
-                ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
-                : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
-            </h4>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {isDE
-                ? (lesson.scenarioSectionSubtitleDe || t.curriculum.scenarioSub)
-                : (lesson.scenarioSectionSubtitleEn || t.curriculum.scenarioSub)}
-            </p>
-          </div>
-
-          {lesson.scenarios.map((scenario) => (
-            <motion.div 
-              key={scenario.id} 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/50"
-            >
-              <div className="border-b border-slate-100 bg-slate-50/50 p-5 dark:border-slate-700 dark:bg-slate-800/80">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
-                    <BookOpen className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h5 className="text-lg font-bold leading-tight text-slate-900 dark:text-white">
-                      {isDE ? scenario.titleDe : scenario.titleEn}
-                    </h5>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                      {isDE ? scenario.situationDe : scenario.situationEn}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative space-y-4 p-5">
-                {/* Vertical connection line */}
-                <div className="absolute bottom-8 left-[2.35rem] top-8 w-0.5 bg-slate-100 dark:bg-slate-700" />
-                
-                {scenario.steps.map((step, idx) => (
-                  <div key={`${scenario.id}-${step.id}`} className="group relative flex gap-4">
-                    <div className={cn(
-                      'relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold shadow-sm transition-all group-hover:scale-110',
-                      step.critical 
-                        ? 'bg-red-500 text-white shadow-red-500/20' 
-                        : 'bg-indigo-600 text-white shadow-indigo-500/20'
-                    )}>
-                      {step.icon ? getStepIcon(step.icon, 'h-5 w-5') : (idx + 1)}
-                    </div>
-                    
-                    <div className="flex-1 pb-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-bold text-slate-900 dark:text-white">
-                          {language === 'de' ? step.titleDe : step.titleEn}
-                        </p>
-                        {step.critical && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                            <AlertTriangle className="h-3 w-3" />
-                            {t.curriculum.scenarioStep}
-                          </span>
+                    >
+                      <div
+                        className={cn(
+                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-black',
+                          idx < currentStep
+                            ? 'bg-emerald-600 text-white'
+                            : idx === currentStep
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-slate-800 text-slate-400'
                         )}
+                      >
+                        {idx < currentStep ? <Check className="h-3.5 w-3.5" /> : idx + 1}
                       </div>
-                      <p className="mt-1.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                        {isDE ? step.descriptionDe : step.descriptionEn}
+                      <span className="text-xs sm:text-sm font-semibold flex-1">
+                        {isDE ? step.titleDe : step.titleEn}
+                      </span>
+                      {step.critical && (
+                        <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Direct Complete Button for lessons without steps or quiz */}
+          {(!lesson.steps || lesson.steps.length === 0) && hasQuizTab && (
+            <button
+              onClick={() => setActiveLessonTab('quiz')}
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all"
+            >
+              <span>{isDE ? 'Zur Wissensprüfung' : 'Go to Knowledge Quiz'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {(!lesson.steps || lesson.steps.length === 0) && !hasQuizTab && (
+            <button
+              onClick={handleFinish}
+              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all"
+            >
+              <CheckCircle className="w-5 h-5" />
+              <span>{isDE ? 'Lektion abschließen' : 'Complete Lesson'}</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* --- TAB 2: EXAMINER & RULES --- */}
+      {activeLessonTab === 'rules' && hasRulesTab && (
+        <div className="space-y-6">
+          {/* Key Terms / Glossary */}
+          {lesson.glossary && lesson.glossary.length > 0 && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
+                  <Info className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {t.curriculum.keyTerms}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.glossarySub}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {lesson.glossary.map((term) => (
+                  <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-2 hover:border-slate-700 transition-all">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-extrabold text-blue-400 notranslate" translate="no">
+                        {term.german}
                       </p>
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-wider">
+                        DE
+                      </span>
+                    </div>
+                    <p className="text-xs font-bold text-slate-200">{term.english}</p>
+                    {(term.noteDe || term.noteEn) && (
+                      <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-slate-400 flex items-start gap-1.5">
+                        <span className="text-amber-400 font-bold shrink-0">💡 Examen-Tipp:</span>
+                        <span>{isDE ? term.noteDe : term.noteEn}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Examiner Commands */}
+          {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (
+            <div className="rounded-3xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
+                  <GraduationCap className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {t.curriculum.typicalExaminer}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.examinerSub}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {lesson.examinerCommands.map((command) => (
+                  <div key={command.id} className="rounded-2xl border border-indigo-500/20 bg-slate-950/90 p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                        🗣️ PRÜFER
+                      </span>
+                      <p className="text-sm font-extrabold text-white notranslate" translate="no">
+                        "{command.commandDe}"
+                      </p>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300 italic pl-1">
+                      ({command.commandEn})
+                    </p>
+                    {(command.noteDe || command.noteEn) && (
+                      <div className="mt-2 rounded-xl bg-indigo-950/40 border border-indigo-500/20 p-2.5 text-xs text-indigo-200 leading-relaxed">
+                        <span className="font-bold text-indigo-400">🎯 {isDE ? 'WAS DER PRÜFER ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'} </span>
+                        {isDE ? command.noteDe : command.noteEn}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Traffic Signs */}
+          {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 font-bold">
+                  {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
+                    <Wrench className="h-5 w-5" />
+                  ) : (
+                    <Shield className="h-5 w-5" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                      ? (isDE ? 'Fahrzeugkontrolle / Technik' : 'Vehicle Check & Tech')
+                      : t.curriculum.importantSigns}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {lesson.trafficSigns[0]?.category === 'vehicle-check'
+                      ? (isDE ? 'Wichtige Kontrollen vor der Fahrt' : 'Important checks before driving')
+                      : t.curriculum.signsSub}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {lesson.trafficSigns.map((sign) => (
+                  <div
+                    key={sign.id}
+                    className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                      <TrafficSignIcon sign={sign} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-base font-bold text-white">
+                            {isDE ? sign.titleDe : sign.titleEn}
+                          </p>
+                          {sign.code && (
+                            <span className="rounded-full bg-slate-800 border border-slate-700 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-slate-300">
+                              {sign.code}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1 text-xs sm:text-sm leading-relaxed text-slate-400">
+                          {isDE ? sign.descriptionDe : sign.descriptionEn}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+          )}
 
-              {scenario.mistakes && scenario.mistakes.length > 0 && (
-                <div className="m-5 mt-0 overflow-hidden rounded-2xl border border-amber-100 bg-amber-50/50 dark:border-amber-900/30 dark:bg-amber-900/10">
-                  <div className="flex items-center gap-2 bg-amber-100/50 px-4 py-2 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
-                    <AlertCircle className="h-4 w-4" />
-                    <p className="text-xs font-bold uppercase tracking-wider">
-                      {t.curriculum.commonMistakes}
-                    </p>
+          {/* Guided Points */}
+          {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 shadow-xl space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-400 font-bold">
+                  <GraduationCap className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">
+                    {t.curriculum.guidedPoints}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.guidedPointsSub}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {lesson.guidedPoints.map((point) => (
+                  <div
+                    key={point.id}
+                    className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                        {getGuidedPointIcon(point.emphasis)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-white">
+                          {isDE ? point.titleDe : point.titleEn}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400 leading-relaxed">
+                          {isDE ? point.contentDe : point.contentEn}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Scenarios & Traps */}
+          {lesson.scenarios && lesson.scenarios.length > 0 && (
+            <div className="space-y-4">
+              <div>
+                <h4 className="flex items-center gap-2 text-base font-extrabold text-white">
+                  <Target className="h-5 w-5 text-indigo-400" />
+                  {isDE
+                    ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
+                    : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
+                </h4>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {isDE
+                    ? (lesson.scenarioSectionSubtitleDe || t.curriculum.scenarioSub)
+                    : (lesson.scenarioSectionSubtitleEn || t.curriculum.scenarioSub)}
+                </p>
+              </div>
+
+              {lesson.scenarios.map((scenario) => (
+                <div 
+                  key={scenario.id} 
+                  className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl"
+                >
+                  <div className="border-b border-slate-800 bg-slate-950/60 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 text-indigo-400 font-bold">
+                        <BookOpen className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h5 className="text-sm font-extrabold text-white">
+                          {isDE ? scenario.titleDe : scenario.titleEn}
+                        </h5>
+                        <p className="mt-0.5 text-xs text-slate-400 leading-relaxed">
+                          {isDE ? scenario.situationDe : scenario.situationEn}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="space-y-3 p-4">
-                    {scenario.mistakes.map((mistake) => (
-                      <div key={mistake.id} className="flex gap-3">
-                        <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                        <div>
-                          <p className="text-sm font-bold leading-tight text-amber-900 dark:text-amber-200">
-                            {isDE ? mistake.titleDe : mistake.titleEn}
+                    {scenario.steps.map((step, idx) => (
+                      <div key={`${scenario.id}-${step.id}`} className="flex gap-3 items-start">
+                        <div className={cn(
+                          'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-bold',
+                          step.critical 
+                            ? 'bg-red-500 text-white' 
+                            : 'bg-indigo-600 text-white'
+                        )}>
+                          {step.icon ? getStepIcon(step.icon, 'h-4 w-4') : (idx + 1)}
+                        </div>
+                        
+                        <div className="flex-1">
+                          <p className="text-xs sm:text-sm font-bold text-white">
+                            {isDE ? step.titleDe : step.titleEn}
                           </p>
-                          <p className="mt-1 text-sm leading-relaxed text-amber-800/80 dark:text-amber-300/70">
-                            {isDE ? mistake.contentDe : mistake.contentEn}
+                          <p className="mt-0.5 text-xs text-slate-400 leading-relaxed">
+                            {isDE ? step.descriptionDe : step.descriptionEn}
                           </p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      {/* Tips Section */}
-      {lesson.tips && lesson.tips.length > 0 && (
-        <div className="mt-4 space-y-3">
-          <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-            {t.curriculum.instructorTips}
-          </h4>
-          {lesson.tips.map((tip) => (
-            <div
-              key={tip.id}
-              className={cn(
-                'rounded-xl p-4',
-                tip.type === 'warning'
-                  ? 'bg-red-50 dark:bg-red-900/20'
-                  : tip.type === 'success'
-                  ? 'bg-green-50 dark:bg-green-900/20'
-                  : 'bg-blue-50 dark:bg-blue-900/20'
-              )}
-            >
-              <div className="flex items-start gap-3">
-                {tip.type === 'warning' ? (
-                  <AlertTriangle className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
-                ) : tip.type === 'success' ? (
-                  <CheckCircle className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
-                ) : (
-                  <Info className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
-                )}
-                <div>
-                  <p
-                    className={cn(
-                      'font-medium',
-                      tip.type === 'warning'
-                        ? 'text-red-800 dark:text-red-300'
-                        : tip.type === 'success'
-                        ? 'text-green-800 dark:text-green-300'
-                        : 'text-blue-800 dark:text-blue-300'
-                    )}
-                  >
-                    {isDE ? tip.titleDe : tip.titleEn}
-                  </p>
-                  <p
-                    className={cn(
-                      'mt-1 text-sm',
-                      tip.type === 'warning'
-                        ? 'text-red-700 dark:text-red-400'
-                        : tip.type === 'success'
-                        ? 'text-green-700 dark:text-green-400'
-                        : 'text-blue-700 dark:text-blue-400'
-                    )}
-                  >
-                    {isDE ? tip.contentDe : tip.contentEn}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 
-      {/* Complete Button for lessons without steps */}
-      {(!lesson.steps || lesson.steps.length === 0) && !isCompleted && (
-        <button
-          onClick={handleFinish}
-          className="mt-6 w-full rounded-xl bg-gradient-to-r from-green-500 to-green-600 py-3 font-semibold text-white transition-all hover:from-green-600 hover:to-green-700"
-        >
-          {lesson.quiz && lesson.quiz.length > 0 
-            ? t.curriculum.goToQuiz 
-            : t.curriculum.markAsLearned}
-        </button>
+      {/* --- TAB 3: KNOWLEDGE QUIZ --- */}
+      {activeLessonTab === 'quiz' && hasQuizTab && lesson.quiz && lesson.quiz.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+          {(() => {
+            const currentQuiz = lesson.quiz[0];
+            return (
+              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                    {t.curriculum.quiz}
+                  </span>
+                </div>
+
+                <h3 className="text-base sm:text-lg font-extrabold text-white leading-tight">
+                  {isDE ? currentQuiz.questionDe : currentQuiz.questionEn}
+                </h3>
+
+                <div className="space-y-2.5 pt-2">
+                  {currentQuiz.options.map((option) => (
+                    <button
+                      key={option.id}
+                      onClick={() => !showExplanation && handleQuizAnswer(option.id)}
+                      disabled={showExplanation}
+                      className={cn(
+                        'flex w-full items-center gap-3 rounded-2xl p-4 text-left transition-all border',
+                        showExplanation
+                          ? option.id === currentQuiz.correctOptionId
+                            ? 'bg-emerald-950/60 border-emerald-500/60 text-white'
+                            : option.id === selectedAnswer
+                            ? 'bg-red-950/60 border-red-500/60 text-white'
+                            : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                          : 'bg-slate-950 border-slate-800 hover:border-blue-500/40 text-slate-200'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black',
+                          showExplanation && option.id === currentQuiz.correctOptionId
+                            ? 'bg-emerald-500 text-white'
+                            : showExplanation && option.id === selectedAnswer
+                            ? 'bg-red-500 text-white'
+                            : 'bg-slate-800 text-slate-300'
+                        )}
+                      >
+                        {option.id.toUpperCase()}
+                      </div>
+                      <span className="text-xs sm:text-sm font-semibold flex-1">
+                        {isDE ? option.textDe : option.textEn}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {showExplanation && (
+                  <div
+                    className={cn(
+                      'rounded-2xl p-4 border space-y-2',
+                      selectedAnswer === currentQuiz.correctOptionId
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
+                        : 'bg-red-950/40 border-red-500/40 text-red-200'
+                    )}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
+                      {selectedAnswer === currentQuiz.correctOptionId ? (
+                        <>
+                          <CheckCircle className="h-4 w-4 text-emerald-400" />
+                          <span>{t.curriculum.correct}</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle className="h-4 w-4 text-red-400" />
+                          <span>{t.curriculum.incorrect}</span>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-xs sm:text-sm leading-relaxed text-slate-300">
+                      {isDE ? currentQuiz.explanationDe : currentQuiz.explanationEn}
+                    </p>
+                  </div>
+                )}
+
+                {showExplanation && (
+                  <button
+                    onClick={handleFinish}
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 font-bold text-sm text-white shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    <span>{t.curriculum.completeLesson}</span>
+                  </button>
+                )}
+              </div>
+            );
+          })()}
+        </motion.div>
       )}
     </div>
   );
