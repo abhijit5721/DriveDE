@@ -523,10 +523,11 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full p-6 overflow-y-auto flex flex-col justify-between shadow-2xl"
+              className="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col justify-between overflow-hidden shadow-2xl"
             >
-              <div>
-                <div className="flex items-center justify-between mb-6">
+              {/* Scrollable Content Body */}
+              <div className="flex-1 p-5 sm:p-6 overflow-y-auto space-y-5">
+                <div className="flex items-center justify-between">
                   <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
                     {isDe ? 'Lektionsübersicht' : 'Lesson Overview'}
                   </span>
@@ -538,15 +539,17 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   </button>
                 </div>
 
-                <h2 className="text-xl font-extrabold text-white mb-2">
-                  {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
-                </h2>
-                <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                  {isDe ? selectedLessonForDrawer.descriptionDe : selectedLessonForDrawer.descriptionEn}
-                </p>
+                <div>
+                  <h2 className="text-xl font-extrabold text-white mb-2 leading-tight">
+                    {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
+                  </h2>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    {isDe ? selectedLessonForDrawer.descriptionDe : selectedLessonForDrawer.descriptionEn}
+                  </p>
+                </div>
 
                 {/* Key Metrics */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
                     <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
                       <Clock className="w-3.5 h-3.5 text-blue-400" />
@@ -565,25 +568,26 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                 {/* German Rules Highlights */}
                 {GERMAN_RULE_BADGES[selectedLessonForDrawer.id] && (
-                  <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-500/20 mb-6">
+                  <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-500/20">
                     <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1.5">
                       {isDe ? '🇩🇪 Deutsche Straßenregel' : '🇩🇪 German Road Rule'}
                     </p>
-                    <p className="text-xs font-bold text-white">
+                    <p className="text-xs font-bold text-white notranslate" translate="no">
                       {isDe ? GERMAN_RULE_BADGES[selectedLessonForDrawer.id].labelDe : GERMAN_RULE_BADGES[selectedLessonForDrawer.id].labelEn}
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className="pt-6 border-t border-slate-800">
+              {/* Fixed / Sticky CTA Footer Action Bar */}
+              <div className="p-5 sm:p-6 bg-slate-900 border-t border-slate-800 shrink-0">
                 <button
                   onClick={() => {
                     const l = selectedLessonForDrawer;
                     setSelectedLessonForDrawer(null);
                     onLessonSelect(l);
                   }}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>{isDe ? 'Lektion jetzt starten' : 'Start Lesson Now'}</span>
                   <ArrowRight className="w-4 h-4" />
