@@ -539,6 +539,49 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             </div>
           )}
 
+          {/* Instructor Tips & Practical How-To Instructions */}
+          {lesson.tips && lesson.tips.length > 0 && (
+            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 font-bold">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-base font-extrabold text-white">
+                    {isDE ? '💡 Experten-Tipps & Praxishinweise' : '💡 Expert Tips & Instructions'}
+                  </h4>
+                  <p className="text-xs text-slate-400">
+                    {isDE ? 'Wichtige Ratschläge vom Fahrlehrer für die Praxis' : 'Key practical advice from driving instructors'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {lesson.tips.map((tip) => (
+                  <div
+                    key={tip.id}
+                    className={cn(
+                      'rounded-2xl p-4 border space-y-1.5 shadow-md',
+                      tip.type === 'warning'
+                        ? 'bg-amber-950/30 border-amber-500/30 text-amber-200'
+                        : tip.type === 'success'
+                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                        : 'bg-slate-950/80 border-slate-800 text-slate-300'
+                    )}
+                  >
+                    <p className="text-sm font-extrabold text-white flex items-center gap-2">
+                      <span>{tip.type === 'warning' ? '⚠️' : tip.type === 'success' ? '✅' : '💡'}</span>
+                      <span>{isDE ? tip.titleDe : tip.titleEn}</span>
+                    </p>
+                    <p className="text-xs leading-relaxed text-slate-300">
+                      {isDE ? tip.contentDe : tip.contentEn}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Step Guided Walkthrough */}
           {lesson.steps && lesson.steps.length > 0 && (
             <div className="space-y-4">
