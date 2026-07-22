@@ -135,13 +135,21 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   }, [activeChapterId]);
 
   const drawerContentRef = useRef<HTMLDivElement | null>(null);
-  const drawerBodyRef = useRef<HTMLDivElement | null>(null);
   const activeNodeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (selectedLessonForDrawer && drawerBodyRef.current) {
-      drawerBodyRef.current.scrollTop = 0;
+    if (selectedLessonForDrawer && drawerContentRef.current) {
+      drawerContentRef.current.scrollTop = 0;
     }
+  }, [selectedLessonForDrawer]);
+
+  useEffect(() => {
+    if (selectedLessonForDrawer) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
   }, [selectedLessonForDrawer]);
 
   useEffect(() => {
@@ -535,7 +543,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]"
+              className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-xl overflow-y-auto flex flex-col max-h-[85vh]"
             >
               {/* Drag handle for mobile sheet */}
               <div className="w-12 h-1 rounded-full bg-slate-700 mx-auto mt-3 shrink-0 sm:hidden" />
@@ -556,7 +564,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               </div>
 
               {/* Scrollable Content Body */}
-              <div ref={drawerBodyRef} className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6 space-y-5">
+              <div className="p-5 sm:p-6 space-y-5">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-white mb-2 leading-tight">
                     {isDe ? selectedLessonForDrawer.titleDe : selectedLessonForDrawer.titleEn}
