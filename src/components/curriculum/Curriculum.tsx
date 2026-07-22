@@ -160,7 +160,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       return (
         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
           <Crown className="h-3 w-3" />
-          <span>Pro</span>
+          <span className="notranslate">Pro</span>
         </span>
       );
     }

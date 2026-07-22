@@ -95,7 +95,7 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           {proActive ? (
             <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
               <Crown className="h-4 w-4" />
-              DriveDE Pro Member
+              DriveDE <span className="notranslate">Pro</span> Member
             </div>
           ) : null}
 
