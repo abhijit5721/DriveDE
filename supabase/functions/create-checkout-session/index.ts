@@ -41,11 +41,11 @@ Deno.serve(async (req) => {
     const { tier, language } = await req.json();
     const user_id = user.id; // Use verified ID from JWT
 
-    // NOTE: Real Stripe Price IDs from Dashboard
+    // NOTE: Live Stripe Price IDs
     const pricing: Record<string, string> = {
-      '30-days': 'price_1TNAE6KdwMS8radbvJpYwVL8',
-      '90-days': 'price_1TNAFgKdwMS8radbknDRyljk',
-      'lifetime': 'price_1TNAH6KdwMS8radb1ijnRNsP',
+      '30-days': 'price_1TzONa402FITjleyF9Z3ME1Y',
+      '90-days': 'price_1TzOOG402FITjleyFOJuwW9V',
+      'lifetime': 'price_1TzOOQ402FITjley54Hz788h',
     };
 
     const priceId = pricing[tier];
