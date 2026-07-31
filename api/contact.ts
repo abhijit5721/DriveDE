@@ -21,7 +21,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const data = await resend.emails.send({
-      from: 'DriveDE Feedback <onboarding@resend.dev>',
+      from: 'DriveDE Feedback <hello@drivede.app>',
       to: [contactEmail],
       replyTo: email,
       subject: `New Feedback: ${subject || 'General Inquiry'}`,
