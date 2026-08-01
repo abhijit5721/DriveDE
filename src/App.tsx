@@ -20,6 +20,7 @@ import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { checkAndUnlockAchievements } from './utils/achievements';
 import { signOut, subscribeToAuthChanges } from './services/auth';
+import { analyticsService } from './services/AnalyticsService';
 import { chapters } from './data/curriculum';
 import { Header } from './components/layout/Header';
 import { BottomNav } from './components/layout/BottomNav';
@@ -262,6 +263,8 @@ export default function App() {
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
           setAuthState(user.email || null, 'signed_in', displayName, user.id);
           setShowAuthModal(false); // Close modal on success
+          // Identify user in PostHog so sessions are linked to their account
+          analyticsService.identifyUser(user.id, user.email || '');
           
           // Fetch remote data to hydrate the UI quickly
           const remoteData = await hydrateFromSupabase().catch(err => {
@@ -571,6 +574,7 @@ export default function App() {
   };
 
   const handleSignOut = async () => {
+    analyticsService.resetUser(); // Clear PostHog identity before logging out
     await signOut();
     logoutCleanup();
     setHasVisited(false);
