@@ -3,6 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
+import * as Sentry from '@sentry/react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
 
@@ -31,6 +32,8 @@ export class ErrorBoundary extends Component<Props, State> {
       return;
     }
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
+    // Report to Sentry with React component stack context
+    Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
   }
 
   private handleReset = () => {
