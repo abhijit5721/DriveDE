@@ -323,19 +323,19 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 group-hover:scale-110 transition-transform">
-              <Globe className="h-6 w-6 text-blue-400" />
+              <Globe className="h-6 w-6 text-blue-500 dark:text-blue-400" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {language === 'de' ? 'Umschreibungs-Guide nach Land' : 'Conversion Guide by Country'}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                 {language === 'de'
                   ? 'Welche Tests brauchst du? Wähle dein Heimatland.'
                   : 'Which tests do you need? Select your home country.'}
               </p>
             </div>
-            <ChevronRight className="h-5 w-5 text-blue-400 group-hover:translate-x-1 transition-transform shrink-0" />
+            <ChevronRight className="h-5 w-5 text-blue-500 dark:text-blue-400 group-hover:translate-x-1 transition-transform shrink-0" />
           </div>
         </button>
       )}
