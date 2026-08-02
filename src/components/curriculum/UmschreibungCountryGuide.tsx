@@ -97,7 +97,7 @@ export function UmschreibungCountryGuide({ onClose, standalone = false }: Umschr
 
   const wrapper = standalone
     ? 'min-h-screen bg-slate-50 dark:bg-slate-900 px-4 py-8 md:px-8'
-    : 'fixed inset-0 z-[110] flex items-center justify-center overflow-y-auto bg-slate-950/70 p-4 pt-16 backdrop-blur-md';
+    : 'fixed inset-0 z-[110] flex items-center justify-center overflow-y-auto bg-slate-400/50 backdrop-blur-md dark:bg-slate-950/70 p-4 pt-16';
 
   const card = standalone
     ? 'mx-auto w-full max-w-2xl'
