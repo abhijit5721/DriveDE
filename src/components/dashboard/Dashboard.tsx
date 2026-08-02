@@ -3,7 +3,9 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud } from 'lucide-react';
+import { useState } from 'react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud, Globe } from 'lucide-react';
+import { UmschreibungCountryGuide } from '../curriculum/UmschreibungCountryGuide';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
 import { cn } from '../../utils/cn';
@@ -33,6 +35,7 @@ interface DashboardProps {
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness, onOpenHotspots, userLat = 52.52, userLng = 13.405 }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, isProActive, authStatus } = useAppStore();
   const proActive = isProActive();
+  const [showCountryGuide, setShowCountryGuide] = useState(false);
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -309,6 +312,37 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             </div>
           </div>
         </button>
+      )}
+
+      {/* Country Guide — shown only for Umschreibung users */}
+      {isUmschreibung && (
+        <button
+          onClick={() => setShowCountryGuide(true)}
+          className="w-full rounded-3xl border border-blue-500/20 bg-blue-500/5 p-5 text-left transition-all hover:border-blue-500/40 hover:bg-blue-500/10 hover:translate-y-[-2px] group animate-fade-in-up"
+          style={{ animationDelay: '450ms' }}
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 group-hover:scale-110 transition-transform">
+              <Globe className="h-6 w-6 text-blue-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-bold text-white">
+                {language === 'de' ? 'Umschreibungs-Guide nach Land' : 'Conversion Guide by Country'}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {language === 'de'
+                  ? 'Welche Tests brauchst du? Wähle dein Heimatland.'
+                  : 'Which tests do you need? Select your home country.'}
+              </p>
+            </div>
+            <ChevronRight className="h-5 w-5 text-blue-400 group-hover:translate-x-1 transition-transform shrink-0" />
+          </div>
+        </button>
+      )}
+
+      {/* Country Guide Modal */}
+      {showCountryGuide && (
+        <UmschreibungCountryGuide onClose={() => setShowCountryGuide(false)} />
       )}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
