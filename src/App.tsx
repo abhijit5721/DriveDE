@@ -60,6 +60,7 @@ import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 import { TRANSLATIONS } from './data/translations';
 import { HotspotMap } from './components/dashboard/HotspotMap';
 import { OnboardingTour } from './components/onboarding/OnboardingTour';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 export default function App() {
@@ -825,6 +826,7 @@ export default function App() {
       {!Capacitor.isNativePlatform() && <CookieConsent />}
       <AchievementOverlay />
       {hasVisited && !hasCompletedOnboarding && <OnboardingTour />}
+      <SpeedInsights />
     </>
   );
 }
