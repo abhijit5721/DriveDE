@@ -5,6 +5,7 @@
 
 import * as Sentry from '@sentry/react';
 import { createRoot } from 'react-dom/client';
+import { inject } from '@vercel/analytics';
 import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -35,6 +36,9 @@ window.addEventListener('vite:preloadError', () => {
 });
 
 analyticsService.init();
+
+// Initialize Vercel Web Analytics
+inject();
 
 // Safeguard against Google Translate / browser extension DOM mutations breaking React DOM reconciliation
 if (typeof window !== 'undefined' && typeof Node !== 'undefined' && Node.prototype) {
