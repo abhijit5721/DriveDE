@@ -296,6 +296,13 @@ export function Welcome() {
             <span>
               <strong>4.9/5</strong> {isDe ? 'Bewertung von 1.200+ Fahrschülern in Deutschland' : 'Rating from 1,200+ Students in Germany'}
             </span>
+            {/* Urgency Badge (DRI-8) — static count for now; consider wiring to a real weekly signup count later */}
+            <span
+              data-testid="urgency-badge"
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-bold text-emerald-300 backdrop-blur-md"
+            >
+              🎉 {isDe ? '47 Fahrschüler diese Woche beigetreten' : '47 students joined this week'}
+            </span>
           </div>
         </div>
 
