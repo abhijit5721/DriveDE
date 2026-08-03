@@ -3,8 +3,8 @@ import postgres from 'postgres';
 import {
   UMSCHREIBUNG_COUNTRIES,
   TIER_CONFIG,
-} from './_lib/umschreibungCountries';
-import type { UmschreibungCountry, UmschreibungTier } from './_lib/umschreibungCountries';
+} from './_lib/umschreibungCountries.js';
+import type { UmschreibungCountry, UmschreibungTier } from './_lib/umschreibungCountries.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
