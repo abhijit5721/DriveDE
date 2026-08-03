@@ -7,12 +7,12 @@ import { useState } from 'react';
 import { Mail, Download, CheckCircle2, AlertCircle, FileText, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { cn } from '../../utils/cn';
 
 /**
  * DRI-7: Lead magnet form — collects emails into the `marketing_leads` table
- * in exchange for the Free German Driving Exam Checklist.
+ * (via /api/lead, which also emails the checklist) in exchange for the
+ * Free German Driving Exam Checklist.
  * Mounted just above the footer on the landing page.
  */
 export function LeadCaptureSection() {
@@ -28,20 +28,13 @@ export function LeadCaptureSection() {
     setStatus('submitting');
 
     try {
-      if (!isSupabaseConfigured || !supabase) {
-        throw new Error('Supabase not configured');
-      }
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), language }),
+      });
 
-      const { error } = await supabase
-        .from('marketing_leads')
-        .insert({
-          email: email.trim().toLowerCase(),
-          source: 'landing_lead_magnet',
-          language,
-        });
-
-      // 23505 = unique_violation → email already registered; treat as success
-      if (error && error.code !== '23505') throw error;
+      if (!response.ok) throw new Error(`Lead API failed with ${response.status}`);
 
       setStatus('success');
       setEmail('');
@@ -102,8 +95,8 @@ export function LeadCaptureSection() {
                 </h2>
                 <p className="mt-4 text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
                   {isDe
-                    ? 'Alle Prüfungspunkte, häufige Fehler und Umschreibungs-Dokumente — kompakt als PDF direkt in dein Postfach.'
-                    : 'Every exam checkpoint, common mistakes, and Umschreibung documents — as a compact PDF straight to your inbox.'
+                    ? 'Alle Prüfungspunkte, häufige Fehler und Umschreibungs-Dokumente — kompakt direkt in dein Postfach.'
+                    : 'Every exam checkpoint, common mistakes, and Umschreibung documents — straight to your inbox.'
                   }
                 </p>
 
