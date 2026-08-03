@@ -17,6 +17,8 @@ import { TRANSLATIONS } from '../../data/translations';
 import { ContactForm } from '../common/ContactForm';
 import { Logo } from '../common/Logo';
 import { PlanPickerScreen } from './PlanPickerScreen';
+import { TestimonialsSection } from './TestimonialsSection';
+import { LeadCaptureSection } from './LeadCaptureSection';
 
 export function Welcome() {
   const { 
@@ -459,6 +461,9 @@ export function Welcome() {
         </div>
       </section>
 
+      {/* 🌍 Expat / Umschreibung Social Proof (DRI-5) */}
+      <TestimonialsSection />
+
       {/* 🚀 How It Works Section */}
       <section id="how-it-works" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
         <div className="mx-auto max-w-7xl">
@@ -515,6 +520,21 @@ export function Welcome() {
               </div>
             ))}
           </div>
+
+          {/* Mid-Page CTA (DRI-6) */}
+          <div className="mt-14 text-center">
+            <button
+              onClick={() => handleStart()}
+              data-testid="cta-how-it-works"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+            >
+              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Start Free Today')}
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </button>
+            <p className="mt-3 text-xs text-slate-500">
+              {isDe ? '7 Tage Pro Testversion • Keine Kreditkarte nötig' : '7-Day Free Pro Trial • No Credit Card Required'}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -540,6 +560,21 @@ export function Welcome() {
                 <p className="text-slate-400 leading-relaxed text-sm">{f.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Mid-Page CTA (DRI-6) */}
+          <div className="mt-14 text-center">
+            <button
+              onClick={() => handleStart()}
+              data-testid="cta-features"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+            >
+              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Alle Funktionen freischalten' : 'Unlock All Features')}
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </button>
+            <p className="mt-3 text-xs text-slate-500">
+              {isDe ? '7 Tage Pro Testversion • Keine Kreditkarte nötig' : '7-Day Free Pro Trial • No Credit Card Required'}
+            </p>
           </div>
         </div>
       </section>
@@ -1011,6 +1046,9 @@ export function Welcome() {
           </div>
         </div>
       </section>
+
+      {/* 📥 Lead Magnet — Free Exam Checklist (DRI-7) */}
+      <LeadCaptureSection />
 
       {/* 🏢 Tech-Company 4-Column Footer */}
       <footer className="relative z-10 border-t border-slate-800 bg-slate-950 px-6 py-16 text-left">
