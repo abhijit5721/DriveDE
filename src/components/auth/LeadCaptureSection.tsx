@@ -3,10 +3,11 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState } from 'react';
-import { Mail, Download, CheckCircle2, AlertCircle, FileText, ShieldCheck } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Mail, Download, CheckCircle2, AlertCircle, FileText, ShieldCheck, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
+import { UMSCHREIBUNG_COUNTRIES } from '../../data/umschreibungCountries';
 import { cn } from '../../utils/cn';
 
 /**
@@ -20,7 +21,16 @@ export function LeadCaptureSection() {
   const isDe = language === 'de';
 
   const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const sortedCountries = useMemo(
+    () =>
+      [...UMSCHREIBUNG_COUNTRIES].sort((a, b) =>
+        isDe ? a.nameDe.localeCompare(b.nameDe, 'de') : a.nameEn.localeCompare(b.nameEn, 'en')
+      ),
+    [isDe]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +41,7 @@ export function LeadCaptureSection() {
       const response = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), language }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), language, country: country || null }),
       });
 
       if (!response.ok) throw new Error(`Lead API failed with ${response.status}`);
@@ -100,7 +110,37 @@ export function LeadCaptureSection() {
                   }
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3 items-center">
+                  {/* Country selector — tailors the checklist to the Umschreibung tier */}
+                  <div className="relative group w-full sm:max-w-md text-left">
+                    <label className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-widest text-slate-500">
+                      {isDe ? 'Woher stammt dein aktueller Führerschein? (optional)' : 'Where is your current license from? (optional)'}
+                    </label>
+                    <div className="relative">
+                      <Globe className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
+                      <select
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        data-testid="lead-country-select"
+                        className="w-full appearance-none rounded-2xl bg-slate-900/60 border border-white/10 py-4 pl-12 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all [&>option]:bg-slate-900"
+                      >
+                        <option value="">
+                          {isDe ? '🆕 Ich mache meinen ersten Führerschein' : '🆕 I\'m getting my first license'}
+                        </option>
+                        {sortedCountries.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.flag} {isDe ? c.nameDe : c.nameEn}
+                          </option>
+                        ))}
+                        <option value="XX">
+                          {isDe ? '🌐 Anderes Land' : '🌐 Other country'}
+                        </option>
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                    </div>
+                  </div>
+
+                  <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
                   <div className="relative group flex-1 sm:max-w-md">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
                     <input
@@ -131,6 +171,7 @@ export function LeadCaptureSection() {
                       </>
                     )}
                   </button>
+                  </div>
                 </form>
 
                 {status === 'error' && (
