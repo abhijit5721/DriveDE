@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://drivede.app/sitemap.xml
+Sitemap: https://www.drivede.app/sitemap.xml
 
 # Keep crawlers away from serverless endpoints (incl. unsubscribe links) and auth flows
 Disallow: /api/
