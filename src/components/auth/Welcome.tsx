@@ -465,6 +465,28 @@ export function Welcome() {
               </div>
             </div>
           </div>
+
+          {/* 📚 "More than a theory app" — intercepts Theorie-App search intent and reframes it */}
+          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-blue-500/20 bg-blue-950/20 p-8 text-center backdrop-blur-xl">
+            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+              {isDe ? 'Mehr als eine Theorie-App' : 'More Than a Theory App'}
+            </span>
+            <h3 className="mt-4 text-2xl font-bold text-white sm:text-3xl">
+              {isDe
+                ? 'Führerschein Theorie-Apps bringen dich nur bis zur Theorieprüfung'
+                : 'Theory apps only get you through the theory exam'}
+            </h3>
+            <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+              {isDe
+                ? 'Der wirklich teure Teil beginnt danach: die praktischen Fahrstunden. Was dein Fahrlehrer dir beibringt — Schulterblick, Einparken, Auffahren auf die Autobahn — findest du in keiner Theorie-App und kaum im Internet erklärt.'
+                : 'The truly expensive part starts after: your practical driving lessons. What your instructor teaches you — Schulterblick, parking maneuvers, Autobahn merging — isn\'t in any theory app, and searching the internet for it lesson by lesson gets you nowhere.'}
+            </p>
+            <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed font-semibold">
+              {isDe
+                ? 'DriveDE bringt genau dieses Wissen auf dein Handy: Theorie lernen und die praktische Fahrprüfung meistern — alles in einer App.'
+                : 'DriveDE puts exactly that knowledge at your fingertips: learn theory and master the practical exam — everything in one app.'}
+            </p>
+          </div>
         </div>
       </section>
 
