@@ -4,20 +4,15 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://drivede.app/</loc>
-    <lastmod>2026-07-17</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="de" href="https://drivede.app/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://drivede.app/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://drivede.app/" />
     <image:image>
       <image:loc>https://drivede.app/icons/icon-512.png</image:loc>
-      <image:title>DriveDE - Fahrschule App</image:title>
+      <image:title>DriveDE – Führerschein &amp; Fahrschule App</image:title>
     </image:image>
-  </url>
-  <url>
-    <loc>https://drivede.app/?report=</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <description>Öffentlicher Fahrbericht für Fahrschüler</description>
   </url>
 </urlset>

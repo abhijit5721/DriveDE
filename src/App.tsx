@@ -119,6 +119,19 @@ export default function App() {
     return null;
   });
 
+  // ?lang=en|de overrides the stored language (hreflang alternate URLs + shareable English links).
+  // Applied both immediately and after persist rehydration, which would otherwise
+  // asynchronously restore the previously stored language and win the race.
+  useEffect(() => {
+    const langParam = new URLSearchParams(window.location.search).get('lang');
+    if (langParam !== 'en' && langParam !== 'de') return;
+    useAppStore.setState({ language: langParam });
+    const unsub = useAppStore.persist?.onFinishHydration?.(() => {
+      useAppStore.setState({ language: langParam });
+    });
+    return unsub;
+  }, []);
+
   useEffect(() => {
     const handleOnline = () => {
       console.log('[Network] App is back online, processing sync queue...');
