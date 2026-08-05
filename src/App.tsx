@@ -132,6 +132,23 @@ export default function App() {
     return unsub;
   }, []);
 
+  // Keep document title, meta description, and <html lang> in sync with the app
+  // language — the static index.html defaults are German; English visitors (and
+  // Google crawling the ?lang=en alternate) get the English versions.
+  useEffect(() => {
+    const isDe = language === 'de';
+    document.title = isDe
+      ? 'Führerschein App kostenlos – Fahrschule, Theorie & Fahrprüfung | DriveDE'
+      : 'Free German Driving License App – Theory, Practical Exam & Umschreibung | DriveDE';
+    document.documentElement.lang = isDe ? 'de' : 'en';
+    document.querySelector('meta[name="description"]')?.setAttribute(
+      'content',
+      isDe
+        ? 'Die kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS tracken und die Fahrprüfung im 1. Versuch bestehen. Auch auf Englisch.'
+        : 'The free app for your German driving license: learn theory, track driving lessons via GPS, and pass your Fahrprüfung on the first try. Includes Umschreibung guidance for foreign licenses.'
+    );
+  }, [language]);
+
   useEffect(() => {
     const handleOnline = () => {
       console.log('[Network] App is back online, processing sync queue...');
