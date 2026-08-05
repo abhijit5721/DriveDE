@@ -102,6 +102,9 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
+  // ?dryRun=1 reports campaign candidates without claiming or sending anything
+  const dryRun = req.query?.dryRun === '1';
+
   const sql = postgres(connectionString, { max: 1, prepare: false });
   const results: Record<string, { sent: number; failed: number }> = {};
 
@@ -133,6 +136,18 @@ export default async function handler(req: any, res: any) {
       LIMIT ${BATCH_LIMIT}
     `;
     campaigns.push({ name: 'day7_upsell', candidates: day7, build: day7Email });
+
+    if (dryRun) {
+      const preview = Object.fromEntries(campaigns.map((c) => [
+        c.name,
+        {
+          candidates: c.candidates.length,
+          // mask addresses: ab***@domain.com
+          emails: c.candidates.map((u) => u.email.replace(/^(.{2}).*(@.*)$/, '$1***$2')),
+        },
+      ]));
+      return res.status(200).json({ success: true, dryRun: true, preview });
+    }
 
     for (const c of campaigns) {
       results[c.name] = { sent: 0, failed: 0 };
