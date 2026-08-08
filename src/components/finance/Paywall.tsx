@@ -8,6 +8,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { Check, X, Clock, Calendar, Crown, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { startCheckout } from '../../services/checkout';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TRANSLATIONS } from '../../data/translations';
@@ -46,31 +47,15 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
 
     setIsLoading(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
+    const result = await startCheckout(selectedTier, language);
+    if (!result.ok) {
+      if (result.reason === 'no-user') {
         toast.error(language === 'de' ? 'Bitte erstelle ein Konto, um Pro freizuschalten.' : 'Please create an account to unlock Pro.');
-        return;
+      } else {
+        toast.error(language === 'de' ? 'Zahlungsfehler. Bitte versuche es später erneut.' : 'Payment error. Please try again later.');
       }
-
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { 
-          tier: selectedTier, 
-          language
-        }
-      });
-
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (err) {
-      console.error('Payment error:', err);
-      toast.error(language === 'de' ? 'Zahlungsfehler. Bitte versuche es später erneut.' : 'Payment error. Please try again later.');
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (

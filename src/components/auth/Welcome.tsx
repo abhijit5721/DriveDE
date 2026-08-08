@@ -17,6 +17,7 @@ import { TRANSLATIONS } from '../../data/translations';
 import { ContactForm } from '../common/ContactForm';
 import { Logo } from '../common/Logo';
 import { PlanPickerScreen } from './PlanPickerScreen';
+import { startCheckout } from '../../services/checkout';
 import { TestimonialsSection } from './TestimonialsSection';
 import { LeadCaptureSection } from './LeadCaptureSection';
 
@@ -33,6 +34,8 @@ export function Welcome() {
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
   const [pickerInitialStep, setPickerInitialStep] = useState<'plan' | 'signup'>('plan');
   const [pickerInitialIsExistingUser, setPickerInitialIsExistingUser] = useState(false);
+  // Set when the user arrived from a pricing CTA — they intend to buy that tier now
+  const [purchaseIntent, setPurchaseIntent] = useState<'30-days' | '90-days' | 'lifetime' | null>(null);
   
   const t = TRANSLATIONS[language];
   const isDe = language === 'de';
@@ -47,7 +50,12 @@ export function Welcome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStart = (plan?: '30-days' | '90-days' | 'lifetime', step: 'plan' | 'signup' = 'plan', isExistingUser = false) => {
+  const handleStart = (
+    plan?: '30-days' | '90-days' | 'lifetime',
+    step: 'plan' | 'signup' = 'plan',
+    isExistingUser = false,
+    intent: 'trial' | 'buy' = 'trial'
+  ) => {
     if (isReturningUser) {
       setHasVisited(true);
       return;
@@ -55,6 +63,7 @@ export function Welcome() {
     if (plan) {
       setSelectedPlanForPicker(plan);
     }
+    setPurchaseIntent(intent === 'buy' && plan ? plan : null);
     setPickerInitialStep(step);
     setPickerInitialIsExistingUser(isExistingUser);
     setShowPlanPicker(true);
@@ -66,10 +75,16 @@ export function Welcome() {
     handleStart('90-days', 'signup', true);
   };
 
-  const handlePlanPickerComplete = () => {
-    // Trial has been started by PlanPickerScreen — now enter the app
+  const handlePlanPickerComplete = async () => {
+    // Someone who clicked a pricing CTA meant to buy, not to start a trial.
+    // The trial is started regardless, so abandoning Stripe still leaves them
+    // with the full 7 days rather than nothing.
+    if (purchaseIntent) {
+      const result = await startCheckout(purchaseIntent, language);
+      if (result.ok) return; // browser is navigating to Stripe
+      console.warn('[Welcome] Direct checkout unavailable, entering app on trial:', result.reason);
+    }
     setHasVisited(true);
-    console.log('[Welcome] Trial started, entering app');
   };
 
   const navLinks = useMemo(() => [
@@ -774,7 +789,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('30-days', 'signup')} 
+                onClick={() => handleStart('30-days', 'signup', false, 'buy')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
               >
                 {isDe ? '30-Tage Pass wählen' : 'Get 30-Day Pass'}
@@ -804,7 +819,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('90-days', 'signup')} 
+                onClick={() => handleStart('90-days', 'signup', false, 'buy')} 
                 className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
               >
                 {isDe ? '90-Tage Pass wählen' : 'Get 90-Day Pass'}
@@ -836,7 +851,7 @@ export function Welcome() {
                 </div>
               </div>
               <button 
-                onClick={() => handleStart('lifetime', 'signup')} 
+                onClick={() => handleStart('lifetime', 'signup', false, 'buy')} 
                 className="mt-10 w-full rounded-2xl bg-slate-800 border border-purple-500/30 py-4 text-sm font-bold text-white transition hover:bg-purple-900/40"
               >
                 {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}

@@ -630,7 +630,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white">{activePlan.label} ({activePlan.price})</p>
-                    <p className="text-[10px] text-blue-300 font-medium">7 Tage kostenlos freigeschaltet</p>
+                    <p className="text-[10px] text-blue-300 font-medium">
+                      {language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days'}
+                    </p>
                   </div>
                 </div>
                 <button
