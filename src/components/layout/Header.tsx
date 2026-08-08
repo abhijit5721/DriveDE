@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Moon, Sun, Globe, Crown, LogOut } from 'lucide-react';
+import { Moon, Sun, Globe, Crown, LogOut, Clock } from 'lucide-react';
 import { Logo } from '../common/Logo';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
@@ -16,11 +16,15 @@ interface HeaderProps {
 export function Header({ onSignOut, onTabChange }: HeaderProps) {
   const { 
     language, darkMode, setLanguage, toggleDarkMode, authStatus,
-    isProActive
+    isProActive, isOnTrial, getRemainingTrialDays
   } = useAppStore();
   const t = TRANSLATIONS[language].common;
 
   const proActive = isProActive();
+  // Trial users get a countdown instead of the crown — a PRO badge would imply
+  // they own something they don't, and hides that access is running out.
+  const onTrial = isOnTrial();
+  const trialDaysLeft = getRemainingTrialDays();
 
   return (
     <header className="sticky top-0 z-40 glass pt-safe border-b border-white/10 dark:border-white/5 lg:hidden">
@@ -35,7 +39,17 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
-                {proActive ? (
+                {onTrial ? (
+                  <span
+                    data-testid="trial-badge"
+                    className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm"
+                  >
+                    <Clock className="h-2.5 w-2.5" />
+                    <span className="notranslate">
+                      {language === 'de' ? `TEST · ${trialDaysLeft}T` : `TRIAL · ${trialDaysLeft}d`}
+                    </span>
+                  </span>
+                ) : proActive ? (
                   <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                     <Crown className="h-2.5 w-2.5" />
                     <span className="notranslate">PRO</span>

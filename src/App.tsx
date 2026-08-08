@@ -51,6 +51,7 @@ const LegalPage = lazy(() => import('./components/legal/LegalPage').then(m => ({
 const Account = lazy(() => import('./components/auth/Account').then(m => ({ default: m.Account })));
 const BudgetEstimator = lazy(() => import('./components/finance/BudgetEstimator').then(m => ({ default: m.BudgetEstimator })));
 const Paywall = lazy(() => import('./components/finance/Paywall').then(m => ({ default: m.Paywall })));
+const TrialEndedModal = lazy(() => import('./components/finance/TrialEndedModal').then(m => ({ default: m.TrialEndedModal })));
 import { Skeleton } from './components/common/Skeleton';
 import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
@@ -83,6 +84,7 @@ export default function App() {
     transmissionType,
     setAcceptedPrivacy,
     isProActive,
+    isPremium,
     authStatus,
     setAuthState,
     setHasVisited,
@@ -91,7 +93,20 @@ export default function App() {
     setActiveTab,
     language,
     hasCompletedOnboarding,
+    trialStartedAt,
+    trialEndsAt,
+    trialEndedAcknowledged,
+    acknowledgeTrialEnded,
   } = useAppStore();
+
+  // The trial ran out, the user didn't buy, and they haven't been told yet.
+  const showTrialEnded =
+    hasVisited &&
+    !isPremium &&
+    !trialEndedAcknowledged &&
+    !!trialStartedAt &&
+    !!trialEndsAt &&
+    new Date(trialEndsAt) <= new Date();
 
   // Use isProActive() which accounts for both paid premium AND active trial
   const proActive = isProActive();
@@ -832,6 +847,17 @@ export default function App() {
         {showPaywall && !proActive && (
           <Suspense fallback={null}>
             <Paywall onClose={() => setShowPaywall(false)} />
+          </Suspense>
+        )}
+
+        {/* One explicit "your trial ended" moment — otherwise Pro just stops
+            working and the user is left guessing why things are locked. */}
+        {showTrialEnded && (
+          <Suspense fallback={null}>
+            <TrialEndedModal
+              onUpgrade={() => { acknowledgeTrialEnded(); setShowPaywall(true); }}
+              onDismiss={acknowledgeTrialEnded}
+            />
           </Suspense>
         )}
 

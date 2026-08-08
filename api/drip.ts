@@ -87,6 +87,36 @@ function day7Email(name: string, isDe: boolean): { subject: string; html: string
   return { subject, html };
 }
 
+function trialEndingEmail(name: string, isDe: boolean): { subject: string; html: string } {
+  const subject = isDe
+    ? 'Deine Pro-Testphase endet in 2 Tagen ⏳'
+    : 'Your Pro trial ends in 2 days ⏳';
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1e293b;">
+      <h1 style="color: #3b82f6; font-size: 26px; font-weight: 900;">${isDe ? `${name}, noch 2 Tage Pro` : `${name}, 2 days of Pro left`}</h1>
+      <p style="font-size: 16px; line-height: 1.6;">
+        ${isDe
+          ? 'Deine kostenlose 7-Tage-Testphase läuft bald ab. Danach verlierst du den Zugang zu den Funktionen, die dir Fahrstunden sparen:'
+          : 'Your free 7-day trial is almost over. After that you lose access to the features that save you driving lessons:'}
+      </p>
+      <div style="background-color: #f8fafc; border-radius: 16px; padding: 24px; margin: 20px 0; border: 1px solid #e2e8f0;">
+        <ul style="padding-left: 20px; margin: 0; line-height: 1.9;">
+          <li>${isDe ? 'Unbegrenztes GPS-Fahrtenbuch mit Tempolimit-Warnungen' : 'Unlimited GPS drive tracking with speed-limit warnings'}</li>
+          <li>${isDe ? 'KI-Fahrlehrer-Auswertung nach jeder Fahrt' : 'AI instructor debriefing after every drive'}</li>
+          <li>${isDe ? '3D-Manöversimulationen' : '3D maneuver simulations'}</li>
+          <li>${isDe ? 'Deine Prüfungsreife-Anzeige' : 'Your exam readiness score'}</li>
+        </ul>
+      </div>
+      <p style="font-size: 15px; line-height: 1.6;">
+        ${isDe
+          ? 'Weitermachen kostet einmalig 19,99 € für 90 Tage — weniger als 15 Minuten einer einzigen Fahrstunde.'
+          : 'Keeping it costs a one-time €19.99 for 90 days — less than 15 minutes of a single driving lesson.'}
+      </p>
+      <a href="${APP_URL}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; font-weight: 800; padding: 14px 28px; border-radius: 12px; text-decoration: none;">${isDe ? 'Pro behalten' : 'Keep Pro'}</a>
+    </div>`;
+  return { subject, html };
+}
+
 type Candidate = { email: string; display_name: string | null; language: string };
 
 // NOTE: these queries read public.profiles_secure, NOT the public.profiles view.
@@ -147,6 +177,21 @@ export default async function handler(req: any, res: any) {
       LIMIT ${BATCH_LIMIT}
     `;
     campaigns.push({ name: 'day7_upsell', candidates: day7, build: day7Email });
+
+    // Trial ending: trial expires within the next 2 days, user hasn't paid.
+    // Reads the account-level trial columns added in migration 021.
+    const trialEnding = await sql<Candidate[]>`
+      SELECT p.email, p.display_name, p.language::text AS language
+      FROM public.profiles_secure p
+      WHERE p.email IS NOT NULL
+        AND p.is_premium = false
+        AND p.trial_ends_at IS NOT NULL
+        AND p.trial_ends_at BETWEEN now() AND now() + interval '2 days'
+        AND NOT EXISTS (SELECT 1 FROM public.subscriptions s WHERE s.user_id = p.id AND s.status = 'active')
+        AND NOT EXISTS (SELECT 1 FROM public.email_log el WHERE el.email = p.email AND el.campaign IN ('trial_ending', 'unsubscribed'))
+      LIMIT ${BATCH_LIMIT}
+    `;
+    campaigns.push({ name: 'trial_ending', candidates: trialEnding, build: trialEndingEmail });
 
     if (dryRun) {
       const totalProfiles = await sql<Array<{ n: number }>>`SELECT count(*)::int AS n FROM public.profiles_secure`;

@@ -206,6 +206,16 @@ export const useAppStore = create<AppState>()(
         return new Date(state.trialEndsAt) > new Date();
       },
 
+      trialEndedAcknowledged: false,
+      acknowledgeTrialEnded: () => set({ trialEndedAcknowledged: true }),
+
+      isOnTrial: () => {
+        const state = get();
+        if (state.isPremium) return false; // paid access, not a trial
+        if (!state.trialEndsAt) return false;
+        return new Date(state.trialEndsAt) > new Date();
+      },
+
       getRemainingTrialDays: () => {
         const state = get();
         if (state.isPremium) return 999;
@@ -844,6 +854,7 @@ export const useAppStore = create<AppState>()(
           trialStartedAt: state.trialStartedAt,
           trialEndsAt: state.trialEndsAt,
           intendedPlan: state.intendedPlan,
+        trialEndedAcknowledged: state.trialEndedAcknowledged,
           authEmail: state.authEmail,
           authDisplayName: state.authDisplayName,
           authUserId: state.authUserId,

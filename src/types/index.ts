@@ -321,7 +321,12 @@ export interface AppState {
   startFreeTrial: (plan: '30-days' | '90-days' | 'lifetime') => void;
   setIntendedPlan: (plan: '30-days' | '90-days' | 'lifetime') => void;
   isProActive: () => boolean;
+  /** True while Pro access comes from the free trial rather than a purchase */
+  isOnTrial: () => boolean;
   getRemainingTrialDays: () => number;
+  /** Set once the user has seen the "trial ended" moment, so it shows only once */
+  trialEndedAcknowledged: boolean;
+  acknowledgeTrialEnded: () => void;
 
   // Hydration state
   isHydrated: boolean;

@@ -33,8 +33,10 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness, onOpenHotspots, userLat = 52.52, userLng = 13.405 }: DashboardProps) {
-  const { language, userProgress, licenseType, isPremium, isProActive, authStatus } = useAppStore();
+  const { language, userProgress, licenseType, isPremium, isProActive, isOnTrial, getRemainingTrialDays, authStatus } = useAppStore();
   const proActive = isProActive();
+  const onTrial = isOnTrial();
+  const trialDaysLeft = getRemainingTrialDays();
   const [showCountryGuide, setShowCountryGuide] = useState(false);
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
@@ -147,6 +149,41 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           </div>
         </div>
         
+        {/* Trial users: show what's left and how to keep it, rather than nothing */}
+        {onTrial && (
+          <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
+            <button
+              onClick={onOpenPaywall}
+              data-testid="trial-banner"
+              className={cn(
+                'flex w-full items-center justify-between rounded-2xl p-5 text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]',
+                trialDaysLeft <= 2
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-orange-500/20'
+                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-blue-500/20'
+              )}
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md border border-white/20">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <div className="text-left">
+                  <p className="text-base font-bold tracking-tight">
+                    {language === 'de'
+                      ? (trialDaysLeft === 1 ? 'Letzter Tag deiner Pro-Testphase' : `Noch ${trialDaysLeft} Tage Pro-Testphase`)
+                      : (trialDaysLeft === 1 ? 'Last day of your Pro trial' : `${trialDaysLeft} days left in your Pro trial`)}
+                  </p>
+                  <p className="text-xs font-medium text-white/80">
+                    {language === 'de'
+                      ? 'GPS-Tracking & KI-Coaching dauerhaft behalten'
+                      : 'Keep GPS tracking & AI coaching for good'}
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="h-6 w-6 text-white/70" />
+            </button>
+          </div>
+        )}
+
         {!proActive && (
           <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
             <button

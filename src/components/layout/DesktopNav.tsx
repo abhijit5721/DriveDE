@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, Wallet, LogOut } from 'lucide-react';
+import { Home, BookOpen, Wrench, ClipboardList, User, Trophy, Sun, Moon, Crown, Wallet, LogOut, Clock } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import type { TabType } from '../../types';
 import { TRANSLATIONS } from '../../data/translations';
@@ -18,11 +18,13 @@ interface DesktopNavProps {
 export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProps) {
   const { 
     language, setLanguage, darkMode, toggleDarkMode, authStatus,
-    isProActive
+    isProActive, isOnTrial, getRemainingTrialDays
   } = useAppStore();
   const t = TRANSLATIONS[language as 'de' | 'en'];
 
   const proActive = isProActive();
+  const onTrial = isOnTrial();
+  const trialDaysLeft = getRemainingTrialDays();
 
   const navItems = [
     { id: 'home', label: t.common.nav.home, icon: Home },
@@ -50,7 +52,12 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
-              {proActive ? (
+              {onTrial ? (
+                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                  <Clock className="h-2.5 w-2.5" />
+                  <span className="notranslate">{language === 'de' ? `TEST · ${trialDaysLeft}T` : `TRIAL · ${trialDaysLeft}d`}</span>
+                </span>
+              ) : proActive ? (
                 <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
@@ -92,7 +99,14 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
 
       <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
         <div className="flex flex-col gap-3">
-          {proActive ? (
+          {onTrial ? (
+            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-blue-500/20">
+              <Clock className="h-4 w-4" />
+              {language === 'de'
+                ? `Noch ${trialDaysLeft} ${trialDaysLeft === 1 ? 'Tag' : 'Tage'} Pro-Test`
+                : `${trialDaysLeft} ${trialDaysLeft === 1 ? 'day' : 'days'} left of Pro trial`}
+            </div>
+          ) : proActive ? (
             <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
               <Crown className="h-4 w-4" />
               DriveDE <span className="notranslate">Pro</span> Member
