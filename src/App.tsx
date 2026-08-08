@@ -19,6 +19,7 @@ import { useAppStore } from './store/useAppStore';
 import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { checkAndUnlockAchievements } from './utils/achievements';
+import { resolveTrial } from './utils/trialSync';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { analyticsService } from './services/AnalyticsService';
 import { chapters } from './data/curriculum';
@@ -385,10 +386,27 @@ export default function App() {
                     ]));
                 }
 
+                // The account's trial record wins over the device's, so clearing
+                // storage or switching devices can't mint a fresh 7-day trial.
+                const { effective: trial, needsPush } = resolveTrial(
+                    remoteData.serverTrial ?? null,
+                    { trialStartedAt: state.trialStartedAt, trialEndsAt: state.trialEndsAt, intendedPlan: state.intendedPlan }
+                );
+                if (needsPush && !isPremium) {
+                    import('./services/supabaseSync').then(m => m.pushTrialToSupabase(trial));
+                }
+
                 return {
                     isPremium,
-                    // Clear stale trial data when DB confirms paid Pro
-                    ...(isPremium ? { trialStartedAt: null, trialEndsAt: null } : {}),
+                    // Clear stale trial data when DB confirms paid Pro, otherwise
+                    // adopt the reconciled (account-level) trial.
+                    ...(isPremium
+                        ? { trialStartedAt: null, trialEndsAt: null }
+                        : {
+                            trialStartedAt: trial.trialStartedAt,
+                            trialEndsAt: trial.trialEndsAt,
+                            intendedPlan: (trial.intendedPlan ?? state.intendedPlan) as typeof state.intendedPlan,
+                          }),
                     isPublicReportEnabled: remoteData.isPublicReportEnabled,
                     licenseType: remoteData.licenseType || state.licenseType,
                     learningPath: remoteData.learningPath || state.learningPath,

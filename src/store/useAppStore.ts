@@ -183,11 +183,17 @@ export const useAppStore = create<AppState>()(
         if (state.trialStartedAt) return state; // Already started
         const now = new Date();
         const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-        return {
+        const trial = {
           trialStartedAt: now.toISOString(),
           trialEndsAt: end.toISOString(),
           intendedPlan: plan,
         };
+        // Anchor the trial to the account so wiping storage or switching
+        // devices can't start a second one. Server keeps the earliest start.
+        import('../services/supabaseSync')
+          .then(m => m.pushTrialToSupabase(trial))
+          .catch(err => console.error('[Store] Trial push failed:', err));
+        return trial;
       }),
 
       setIntendedPlan: (plan) => set({ intendedPlan: plan }),

@@ -434,7 +434,40 @@ export async function hydrateFromSupabase() {
       visionTest: 7,
     },
     isPublicReportEnabled: profile?.is_public_report_enabled ?? true,
+    // Server-side trial record (migration 021). Reconciled with the local copy
+    // by resolveTrial() so a wiped device cannot mint a fresh trial.
+    serverTrial: {
+      trialStartedAt: profile?.trial_started_at ?? null,
+      trialEndsAt: profile?.trial_ends_at ?? null,
+      intendedPlan: profile?.intended_plan ?? null,
+    },
   };
+}
+
+/**
+ * Records the trial against the account so it survives storage wipes and
+ * follows the user across devices. Never overwrites an existing earlier start.
+ */
+export async function pushTrialToSupabase(trial: {
+  trialStartedAt: string | null;
+  trialEndsAt: string | null;
+  intendedPlan?: string | null;
+}): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      trial_started_at: trial.trialStartedAt,
+      trial_ends_at: trial.trialEndsAt,
+      intended_plan: trial.intendedPlan ?? null,
+    })
+    .eq('id', user.id);
+
+  if (error) console.error('[DB-Sync] Failed to record trial:', error.message);
+  else console.log('[DB-Sync] Trial recorded on account');
 }
 
 export async function syncAllData(state: AppState) {
