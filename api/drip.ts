@@ -89,6 +89,10 @@ function day7Email(name: string, isDe: boolean): { subject: string; html: string
 
 type Candidate = { email: string; display_name: string | null; language: string };
 
+// NOTE: these queries read public.profiles_secure, NOT the public.profiles view.
+// The view masks email as NULL unless auth.uid() = id, and this job connects
+// directly via DATABASE_URL (no JWT), so every email would come back NULL.
+
 export default async function handler(req: any, res: any) {
   // Vercel Cron sends GET with Authorization: Bearer <CRON_SECRET> when configured
   const expected = process.env.CRON_SECRET;
@@ -109,12 +113,19 @@ export default async function handler(req: any, res: any) {
   const results: Record<string, { sent: number; failed: number }> = {};
 
   try {
+    // Expire lapsed passes before selecting campaign candidates, so users whose
+    // 30/90-day pass just ran out are correctly seen as free again.
+    const [sweep] = await sql<Array<{ expired_subscriptions: number; downgraded_profiles: number }>>`
+      SELECT * FROM public.expire_stale_subscriptions()
+    `;
+    console.log('[Drip] Subscription sweep:', sweep);
+
     const campaigns: Array<{ name: string; candidates: Candidate[]; build: typeof day3Email }> = [];
 
     // Day 3 nudge: 3-14 days old, zero activity, not yet contacted, not suppressed
     const day3 = await sql<Candidate[]>`
       SELECT p.email, p.display_name, p.language::text AS language
-      FROM public.profiles p
+      FROM public.profiles_secure p
       WHERE p.email IS NOT NULL
         AND p.created_at BETWEEN now() - interval '14 days' AND now() - interval '3 days'
         AND NOT EXISTS (SELECT 1 FROM public.lesson_progress lp WHERE lp.user_id = p.id AND lp.status = 'completed')
@@ -127,7 +138,7 @@ export default async function handler(req: any, res: any) {
     // Day 7 upsell: 7-28 days old, still free, not yet contacted, not suppressed
     const day7 = await sql<Candidate[]>`
       SELECT p.email, p.display_name, p.language::text AS language
-      FROM public.profiles p
+      FROM public.profiles_secure p
       WHERE p.email IS NOT NULL
         AND p.created_at BETWEEN now() - interval '28 days' AND now() - interval '7 days'
         AND p.is_premium = false
@@ -138,6 +149,7 @@ export default async function handler(req: any, res: any) {
     campaigns.push({ name: 'day7_upsell', candidates: day7, build: day7Email });
 
     if (dryRun) {
+      const totalProfiles = await sql<Array<{ n: number }>>`SELECT count(*)::int AS n FROM public.profiles_secure`;
       const preview = Object.fromEntries(campaigns.map((c) => [
         c.name,
         {
@@ -146,7 +158,13 @@ export default async function handler(req: any, res: any) {
           emails: c.candidates.map((u) => u.email.replace(/^(.{2}).*(@.*)$/, '$1***$2')),
         },
       ]));
-      return res.status(200).json({ success: true, dryRun: true, preview });
+      return res.status(200).json({
+        success: true,
+        dryRun: true,
+        totalProfiles: totalProfiles[0]?.n ?? 0,
+        sweep,
+        preview,
+      });
     }
 
     for (const c of campaigns) {

@@ -358,27 +358,36 @@ export async function hydrateFromSupabase() {
     console.log('[DB-Sync] Profile found, is_premium:', profile.is_premium);
   }
 
-  // 2. Fetch Subscription (fallback)
-  const { data: subscription, error: subError } = await supabase
+  // 2. Fetch purchases. A user can buy more than once, so read all rows —
+  // `.maybeSingle()` would error out for repeat customers.
+  const { data: subscriptions, error: subError } = await supabase
     .from('subscriptions')
     .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .maybeSingle();
+    .eq('user_id', userId);
 
   if (subError) {
     console.error('[DB-Sync] Subscription query error:', subError.message);
   }
-  
-  const hasActiveSubscription = subscription && (!subscription.expires_at || new Date(subscription.expires_at) > new Date());
-  console.log('[DB-Sync] Subscription check:', { 
-    found: !!subscription, 
-    hasActive: !!hasActiveSubscription,
-    expires_at: subscription?.expires_at 
-  });
 
-  const isPremium = !!(profile?.is_premium || hasActiveSubscription);
-  console.log('[DB-Sync] FINAL isPremium status:', isPremium);
+  const now = new Date();
+  // expires_at === null means lifetime
+  const hasActiveSubscription = (subscriptions || []).some(
+    (s) => s.status === 'active' && (!s.expires_at || new Date(s.expires_at) > now)
+  );
+
+  // Entitlement rule: once a user has purchase history, that history is the
+  // source of truth — otherwise an expired 30/90-day pass stays premium forever
+  // because profiles.is_premium is never set back to false. Users with no
+  // purchase rows fall back to is_premium so manual/legacy grants still work.
+  const hasPurchaseHistory = (subscriptions || []).length > 0;
+  const isPremium = hasPurchaseHistory ? hasActiveSubscription : !!profile?.is_premium;
+
+  console.log('[DB-Sync] Entitlement:', {
+    purchases: subscriptions?.length || 0,
+    hasActiveSubscription,
+    profileFlag: !!profile?.is_premium,
+    FINAL_isPremium: isPremium,
+  });
 
   const lessons = lessonsResult.data;
   const sessions = sessionsResult.data;

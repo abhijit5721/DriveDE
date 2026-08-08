@@ -1120,8 +1120,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         }, 10000);
 
         const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-        const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
-        const canTrackLive = isPremium || hasTrial;
+        const hasTrial = !proActive && liveSessionCount < TRIAL_LIMIT;
+        const canTrackLive = proActive || hasTrial;
 
         if (canTrackLive) {
           const handlePosition = (position: any) => {
@@ -1249,8 +1249,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
       const handleMotion = (event: DeviceMotionEvent) => {
         const liveSessionCount = userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length;
-        const hasTrial = !isPremium && liveSessionCount < TRIAL_LIMIT;
-        const canDetectMotion = isPremium || hasTrial;
+        const hasTrial = !proActive && liveSessionCount < TRIAL_LIMIT;
+        const canDetectMotion = proActive || hasTrial;
         
         if (!isAutoDetectEnabled || !canDetectMotion || isSimulationMode) return;
         
@@ -1338,7 +1338,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, isPremium, t, logRoutePoint, logMistake, currentSpeed, userProgress.drivingSessions, TRIAL_LIMIT]);
+  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, proActive, t, logRoutePoint, logMistake, currentSpeed, userProgress.drivingSessions, TRIAL_LIMIT]);
 
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
