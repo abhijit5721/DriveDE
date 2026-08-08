@@ -57,6 +57,11 @@ async function saveQueue(queue: SyncTask[]) {
 }
 
 async function addToQueue(type: SyncTaskType, payload: Record<string, unknown>) {
+  // Payloads must survive IndexedDB's structured clone. The profile task queues
+  // the whole store state — including its action functions, which structured
+  // clone rejects (DataCloneError) and which have no business being persisted.
+  // A JSON round-trip strips functions and anything else unserializable.
+  payload = JSON.parse(JSON.stringify(payload));
   let queue = await getQueue();
 
   if (type === 'profile') {
