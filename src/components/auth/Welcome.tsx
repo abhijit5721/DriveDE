@@ -130,6 +130,20 @@ export function Welcome() {
     }
   ];
 
+  // Every paid pass unlocks the identical feature set — the tiers differ only in
+  // how long that access lasts. Keep this list single-sourced so the pricing
+  // table can never drift from what the app actually gates.
+  const proFeatures = [
+    isDe ? 'Unbegrenztes GPS Live Fahrtenbuch' : 'Unlimited GPS Live Driving Tracker',
+    isDe ? 'OpenStreetMap Tempolimit-Warnungen' : 'OpenStreetMap Speed Limit Warnings',
+    isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
+    isDe ? '3D Manöversimulationen (Einparken, Autobahn)' : '3D Maneuver Simulations (Einparken, Autobahn)',
+    isDe ? 'Prüfungsreife-Anzeige & Fehleranalyse' : 'Exam Readiness Score & Mistake Analysis',
+    isDe ? 'Fahrlehrer PDF Berichtsexport' : 'Fahrlehrer PDF Report Exports',
+    isDe ? 'Kostenrechner & Gefahren-Hotspots' : 'Budget Estimator & Mistake Hotspots',
+    isDe ? 'Vollständiger Theorie-Lehrplan' : 'Full Theory Curriculum',
+  ];
+
   return (
     <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30 text-slate-100">
       {/* Plan Picker Overlay — shown after "Get Started" click */}
@@ -726,9 +740,15 @@ export function Welcome() {
             </span>
             <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
             <p className="mt-4 text-slate-400 max-w-xl mx-auto">
-              {isDe 
+              {isDe
                 ? 'Starte heute kostenlos. Schalte Pro frei, wenn du bereit für GPS-Tracking & KI-Coaching bist.'
                 : 'Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.'
+              }
+            </p>
+            <p className="mt-3 text-sm font-semibold text-emerald-400 max-w-xl mx-auto">
+              {isDe
+                ? 'Jeder Pass enthält alle Pro-Funktionen — du wählst nur, wie lange du Zugang brauchst.'
+                : 'Every pass includes all Pro features — you only choose how long you need access.'
               }
             </p>
           </div>
@@ -743,14 +763,9 @@ export function Welcome() {
                   <span className="text-slate-500 text-sm">{isDe ? '/ 30 Tage' : '/ 30 days'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-400">{isDe ? 'Ideal für die gezielte Prüfungsvorbereitung in den letzten Wochen.' : 'Great for quick exam prep in your final driving weeks.'}</p>
-                <div className="mt-8 space-y-4">
-                  {[
-                    isDe ? 'Vollständiges GPS Live Fahrtenbuch' : 'Full GPS Live Driving Tracker',
-                    isDe ? 'OpenStreetMap Tempolimit Abgleich' : 'OpenStreetMap Speed Limit Warnings',
-                    isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
-                    isDe ? '3D Manöversimulationen (Einparken)' : '3D Maneuver Simulations (Einparken)',
-                    isDe ? 'Offizieller Theorie-Lehrplan' : 'Official Theory Curriculum'
-                  ].map((feat, i) => (
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Voller Pro-Zugang, 30 Tage lang' : 'Full Pro access, for 30 days'}</p>
+                <div className="mt-4 space-y-4">
+                  {proFeatures.map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
                       <Check className="h-4 w-4 text-slate-400 shrink-0" />
                       {feat}
@@ -778,15 +793,9 @@ export function Welcome() {
                   <span className="text-slate-400 text-sm">{isDe ? '/ 90 Tage' : '/ 90 days'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-300">{isDe ? 'Deckt deine gesamte Fahrschulausbildung von der 1. Stunde bis zur Prüfung ab.' : 'Covers your complete driving school journey from day 1 to exam.'}</p>
-                <div className="mt-8 space-y-4">
-                  {[
-                    isDe ? 'Unbegrenztes GPS Fahrtenbuch' : 'Unlimited GPS Live Driving Tracker',
-                    isDe ? 'OpenStreetMap Tempolimit Warnungen' : 'OpenStreetMap Speed Limit Warnings',
-                    isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
-                    isDe ? '3D Manöversimulationen (Einparken)' : '3D Maneuver Simulations (Einparken)',
-                    isDe ? 'Fahrlehrer PDF Berichtsexport' : 'Fahrlehrer PDF Report Exports',
-                    isDe ? 'Umschreibungs-Modus inklusive' : 'Foreign License Umschreibung Mode'
-                  ].map((feat, i) => (
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-blue-400">{isDe ? 'Voller Pro-Zugang, 90 Tage lang' : 'Full Pro access, for 90 days'}</p>
+                <div className="mt-4 space-y-4">
+                  {proFeatures.map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-white">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                       {feat}
@@ -811,13 +820,13 @@ export function Welcome() {
                   <span className="text-slate-500 text-sm">{isDe ? '/ einmalig' : '/ one-time'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-400">{isDe ? 'Dauerhafter Zugang zu allen aktuellen & zukünftigen DriveDE Updates.' : 'Lifetime access to all current & future DriveDE updates.'}</p>
-                <div className="mt-8 space-y-4">
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-purple-400">{isDe ? 'Voller Pro-Zugang, ohne Ablaufdatum' : 'Full Pro access, never expires'}</p>
+                <div className="mt-4 space-y-4">
                   {[
-                    isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in 90-Day Pass',
-                    isDe ? 'Lebenslanger Zugang (kein Ablauf)' : 'Lifetime Access (No Expiry)',
-                    isDe ? 'Alle zukünftigen KI-Funktionen' : 'All Future AI & Features',
-                    isDe ? 'Priorisierter Kundensupport' : 'Priority Student Support',
-                    isDe ? 'Geräteübergreifende Synchronisation' : 'Multi-Device Sync'
+                    isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in the 90-Day Pass',
+                    isDe ? 'Kein Ablaufdatum — auch bei Nachprüfung' : 'No expiry — even if you need a re-test',
+                    isDe ? 'Alle zukünftigen Funktionen inklusive' : 'All future features included',
+                    isDe ? 'Priorisierter Support' : 'Priority support'
                   ].map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
                       <Check className="h-4 w-4 text-purple-400 shrink-0" />
