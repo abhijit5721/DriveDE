@@ -453,7 +453,8 @@ export async function pushTrialToSupabase(trial: {
   trialEndsAt: string | null;
   intendedPlan?: string | null;
 }): Promise<void> {
-  if (!isSupabaseConfigured || !supabase) return;
+  // Guard defensively: under test/offline the client can be a stub without .auth
+  if (!isSupabaseConfigured || !supabase?.auth?.getUser) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 

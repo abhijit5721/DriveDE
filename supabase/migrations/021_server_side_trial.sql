@@ -15,7 +15,9 @@ ALTER TABLE public.profiles_secure ADD CONSTRAINT valid_intended_plan
   CHECK (intended_plan IS NULL OR intended_plan IN ('30-days', '90-days', 'lifetime'));
 
 -- Recreate the public view so clients can read their own trial state.
--- (Same column list as migration 009 plus the trial columns.)
+-- CREATE OR REPLACE VIEW can only APPEND columns — reordering or renaming an
+-- existing one fails ("cannot change name of view column"). So this repeats
+-- migration 014's column list verbatim and adds the trial columns at the end.
 CREATE OR REPLACE VIEW public.profiles AS
 SELECT
   id,
@@ -35,6 +37,7 @@ SELECT
   incorrect_questions,
   hourly_rate_45,
   fixed_costs,
+  has_completed_onboarding,
   trial_started_at,
   trial_ends_at,
   intended_plan
