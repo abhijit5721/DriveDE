@@ -20,6 +20,7 @@ import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { checkAndUnlockAchievements } from './utils/achievements';
 import { resolveTrial } from './utils/trialSync';
+import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { analyticsService } from './services/AnalyticsService';
 import { chapters } from './data/curriculum';
@@ -98,6 +99,19 @@ export default function App() {
     trialEndedAcknowledged,
     acknowledgeTrialEnded,
   } = useAppStore();
+
+  // Google sign-in redirects the page away and back, so a purchase intent that
+  // started on the landing page can only be resumed here, once the session
+  // exists again. Runs once per sign-in; consuming the token prevents repeats.
+  useEffect(() => {
+    if (authStatus !== 'signed_in' || isPremium) return;
+    const tier = consumePendingPurchase();
+    if (!tier) return;
+    console.log('[App] Resuming checkout after OAuth redirect:', tier);
+    startCheckout(tier, language).then(result => {
+      if (!result.ok) console.warn('[App] Could not resume checkout:', result.reason);
+    });
+  }, [authStatus, isPremium, language]);
 
   // The trial ran out, the user didn't buy, and they haven't been told yet.
   const showTrialEnded =

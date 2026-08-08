@@ -15,6 +15,32 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export type Tier = '30-days' | '90-days' | 'lifetime';
 
+/**
+ * Google sign-in redirects the whole page away and back, which destroys any
+ * React state holding the user's intent to buy. Parking it in sessionStorage
+ * lets the app resume checkout once the OAuth round-trip completes. Per-tab
+ * and cleared on consumption, so it can't fire twice or leak to a new session.
+ */
+const PENDING_PURCHASE_KEY = 'drivede-pending-purchase';
+
+export function setPendingPurchase(tier: Tier): void {
+  try { sessionStorage.setItem(PENDING_PURCHASE_KEY, tier); } catch { /* private mode */ }
+}
+
+export function consumePendingPurchase(): Tier | null {
+  try {
+    const tier = sessionStorage.getItem(PENDING_PURCHASE_KEY);
+    if (tier) sessionStorage.removeItem(PENDING_PURCHASE_KEY);
+    return (tier as Tier) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingPurchase(): void {
+  try { sessionStorage.removeItem(PENDING_PURCHASE_KEY); } catch { /* ignore */ }
+}
+
 export type CheckoutResult =
   | { ok: true }
   | { ok: false; reason: 'not-configured' | 'no-user' | 'no-url' | 'error'; error?: unknown };

@@ -17,7 +17,7 @@ import { TRANSLATIONS } from '../../data/translations';
 import { ContactForm } from '../common/ContactForm';
 import { Logo } from '../common/Logo';
 import { PlanPickerScreen } from './PlanPickerScreen';
-import { startCheckout } from '../../services/checkout';
+import { startCheckout, setPendingPurchase, clearPendingPurchase, consumePendingPurchase } from '../../services/checkout';
 import { TestimonialsSection } from './TestimonialsSection';
 import { LeadCaptureSection } from './LeadCaptureSection';
 
@@ -63,7 +63,11 @@ export function Welcome() {
     if (plan) {
       setSelectedPlanForPicker(plan);
     }
-    setPurchaseIntent(intent === 'buy' && plan ? plan : null);
+    const buying = intent === 'buy' && plan ? plan : null;
+    setPurchaseIntent(buying);
+    // Also park it in sessionStorage: Google sign-in reloads the whole page,
+    // which would otherwise wipe the intent before checkout can start.
+    if (buying) setPendingPurchase(buying); else clearPendingPurchase();
     setPickerInitialStep(step);
     setPickerInitialIsExistingUser(isExistingUser);
     setShowPlanPicker(true);
@@ -79,8 +83,10 @@ export function Welcome() {
     // Someone who clicked a pricing CTA meant to buy, not to start a trial.
     // The trial is started regardless, so abandoning Stripe still leaves them
     // with the full 7 days rather than nothing.
-    if (purchaseIntent) {
-      const result = await startCheckout(purchaseIntent, language);
+    const tier = purchaseIntent ?? consumePendingPurchase();
+    if (tier) {
+      clearPendingPurchase();
+      const result = await startCheckout(tier, language);
       if (result.ok) return; // browser is navigating to Stripe
       console.warn('[Welcome] Direct checkout unavailable, entering app on trial:', result.reason);
     }
