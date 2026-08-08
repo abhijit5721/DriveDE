@@ -27,6 +27,8 @@ interface PlanPickerScreenProps {
   initialPlan?: Plan;
   initialStep?: ScreenStep;
   initialIsExistingUser?: boolean;
+  /** 'buy' when the user arrived from a pricing CTA and goes to Stripe after signup */
+  intent?: 'trial' | 'buy';
   onComplete: () => void;
   onCancel?: () => void;
 }
@@ -207,7 +209,7 @@ const planIcons = {
   'lifetime': Crown,
 };
 
-export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signup', initialIsExistingUser = false, onComplete, onCancel }: PlanPickerScreenProps) {
+export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signup', initialIsExistingUser = false, intent = 'trial', onComplete, onCancel }: PlanPickerScreenProps) {
   const { language, startFreeTrial, setAuthState, setIntendedPlan } = useAppStore();
   const [step, setStep] = useState<ScreenStep>(initialStep);
   const [selected, setSelected] = useState<Plan>(initialPlan);
@@ -631,7 +633,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   <div>
                     <p className="text-xs font-bold text-white">{activePlan.label} ({activePlan.price})</p>
                     <p className="text-[10px] text-blue-300 font-medium">
-                      {language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days'}
+                      {intent === 'buy'
+                        ? (language === 'de' ? 'Einmalzahlung — inkl. 7 Tage Pro ab sofort' : 'One-time payment — includes Pro from day one')
+                        : (language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days')}
                     </p>
                   </div>
                 </div>
@@ -648,7 +652,13 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <h2 className="text-2xl font-bold text-white tracking-tight">
                   {isExistingUser ? (language === 'de' ? 'Anmelden' : 'Sign In') : t.signupHeadline}
                 </h2>
-                <p className="text-xs text-slate-400 mt-1 font-medium">{t.signupSubline}</p>
+                <p className="text-xs text-slate-400 mt-1 font-medium">
+                  {intent === 'buy'
+                    ? (language === 'de'
+                        ? 'Erstelle dein Konto — danach geht es direkt zur sicheren Zahlung.'
+                        : 'Create your account — then you go straight to secure checkout.')
+                    : t.signupSubline}
+                </p>
               </div>
 
               {error && (
@@ -721,7 +731,13 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      <span>{isExistingUser ? (language === 'de' ? 'Anmelden & Trial starten' : 'Sign In & Start Trial') : t.ctaSignup}</span>
+                      <span>
+                        {intent === 'buy'
+                          ? (language === 'de' ? 'Konto erstellen & zur Zahlung' : 'Create Account & Continue to Payment')
+                          : isExistingUser
+                            ? (language === 'de' ? 'Anmelden & Trial starten' : 'Sign In & Start Trial')
+                            : t.ctaSignup}
+                      </span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}

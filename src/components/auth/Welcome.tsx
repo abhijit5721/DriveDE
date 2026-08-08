@@ -168,7 +168,8 @@ export function Welcome() {
             initialPlan={selectedPlanForPicker} 
             initialStep={pickerInitialStep}
             initialIsExistingUser={pickerInitialIsExistingUser}
-            onComplete={handlePlanPickerComplete} 
+            intent={purchaseIntent ? 'buy' : 'trial'}
+            onComplete={handlePlanPickerComplete}
             onCancel={() => setShowPlanPicker(false)} 
           />
         </div>
