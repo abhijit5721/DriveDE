@@ -47,6 +47,33 @@ describe('resolveTrial', () => {
     expect(resolveTrial(server, local).effective.intendedPlan).toBe('lifetime');
   });
 
+  it("THE SHARED-DEVICE CASE: a previous account's expired trial in local storage is NOT inherited by a new account", () => {
+    // Old account's trial: started 7 days ago, expired today. New account: created 1 hour ago.
+    const local = { trialStartedAt: iso(7), trialEndsAt: iso(0) };
+    const { effective, needsPush } = resolveTrial(null, local, iso(1 / 24));
+    expect(effective.trialStartedAt).toBeNull();
+    expect(needsPush).toBe(false);
+  });
+
+  it('residue already pushed to the server is also discarded on the next hydration', () => {
+    const server = { trialStartedAt: iso(7), trialEndsAt: iso(0), intendedPlan: '90-days' };
+    const { effective } = resolveTrial(server, null, iso(1 / 24));
+    expect(effective.trialStartedAt).toBeNull();
+  });
+
+  it("the account's own trial survives the creation-time check (trial written moments before the auth row)", () => {
+    const createdAt = iso(2);
+    const local = { trialStartedAt: new Date(new Date(createdAt).getTime() - 2 * 60 * 1000).toISOString(), trialEndsAt: iso(-5) };
+    const { effective, needsPush } = resolveTrial(null, local, createdAt);
+    expect(effective.trialStartedAt).toBe(local.trialStartedAt);
+    expect(needsPush).toBe(true);
+  });
+
+  it('without a creation timestamp the old behavior is unchanged', () => {
+    const local = { trialStartedAt: iso(7), trialEndsAt: iso(0) };
+    expect(resolveTrial(null, local).effective.trialStartedAt).toBe(local.trialStartedAt);
+  });
+
   it('ignores malformed timestamps rather than trusting them', () => {
     const server = { trialStartedAt: 'garbage', trialEndsAt: 'garbage' };
     const local = { trialStartedAt: iso(2), trialEndsAt: iso(-5) };

@@ -419,7 +419,8 @@ export default function App() {
                 // storage or switching devices can't mint a fresh 7-day trial.
                 const { effective: trial, needsPush } = resolveTrial(
                     remoteData.serverTrial ?? null,
-                    { trialStartedAt: state.trialStartedAt, trialEndsAt: state.trialEndsAt, intendedPlan: state.intendedPlan }
+                    { trialStartedAt: state.trialStartedAt, trialEndsAt: state.trialEndsAt, intendedPlan: state.intendedPlan },
+                    remoteData.profile?.created_at ?? null
                 );
                 if (needsPush && !isPremium) {
                     import('./services/supabaseSync').then(m => m.pushTrialToSupabase(trial));

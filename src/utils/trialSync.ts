@@ -34,7 +34,31 @@ const time = (iso: string | null | undefined): number | null => {
   return Number.isNaN(t) ? null : t;
 };
 
-export function resolveTrial(server: TrialState | null, local: TrialState | null): TrialResolution {
+/**
+ * A trial cannot have started before the account it belongs to existed.
+ * Anything older is residue from a previous account on the same device
+ * (shared computer, dev testing) and must not be inherited — otherwise a
+ * brand-new user opens the app to "your trial has ended".
+ * The skew allows for the trial being written moments before the auth row.
+ */
+const CREATION_SKEW_MS = 60 * 60 * 1000;
+
+export function resolveTrial(
+  server: TrialState | null,
+  local: TrialState | null,
+  accountCreatedAt?: string | null
+): TrialResolution {
+  const createdAt = time(accountCreatedAt);
+  const sanitize = (t: TrialState | null): TrialState | null => {
+    const start = time(t?.trialStartedAt);
+    if (start === null) return null;
+    if (createdAt !== null && start < createdAt - CREATION_SKEW_MS) return null;
+    return t;
+  };
+  // Server rows written before this guard existed can carry residue too
+  server = sanitize(server);
+  local = sanitize(local);
+
   const serverStart = time(server?.trialStartedAt);
   const localStart = time(local?.trialStartedAt);
 
