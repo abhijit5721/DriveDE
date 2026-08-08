@@ -12,6 +12,7 @@
 
 import type { LicenseType, AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { deriveIsPremium } from '../utils/entitlement';
 import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 
 // --- SYNC QUEUE TYPES ---
@@ -369,22 +370,12 @@ export async function hydrateFromSupabase() {
     console.error('[DB-Sync] Subscription query error:', subError.message);
   }
 
-  const now = new Date();
-  // expires_at === null means lifetime
-  const hasActiveSubscription = (subscriptions || []).some(
-    (s) => s.status === 'active' && (!s.expires_at || new Date(s.expires_at) > now)
-  );
-
-  // Entitlement rule: once a user has purchase history, that history is the
-  // source of truth — otherwise an expired 30/90-day pass stays premium forever
-  // because profiles.is_premium is never set back to false. Users with no
-  // purchase rows fall back to is_premium so manual/legacy grants still work.
-  const hasPurchaseHistory = (subscriptions || []).length > 0;
-  const isPremium = hasPurchaseHistory ? hasActiveSubscription : !!profile?.is_premium;
+  // Entitlement rule lives in utils/entitlement.ts (unit-tested there):
+  // purchase history wins when it exists, is_premium is the fallback.
+  const isPremium = deriveIsPremium(profile?.is_premium, subscriptions);
 
   console.log('[DB-Sync] Entitlement:', {
     purchases: subscriptions?.length || 0,
-    hasActiveSubscription,
     profileFlag: !!profile?.is_premium,
     FINAL_isPremium: isPremium,
   });
