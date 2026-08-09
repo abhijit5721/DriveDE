@@ -176,13 +176,32 @@ export default async function handler(req: any, res: any) {
   const sql = postgres(connectionString, { max: 1, prepare: false });
 
   try {
-    // Store the lead; re-submissions update language/country and re-send the checklist
+    // Store the lead; re-submissions update language/country
     await sql`
       INSERT INTO public.marketing_leads (email, source, language, country)
       VALUES (${normalizedEmail}, 'landing_lead_magnet', ${lang}, ${countryCode})
       ON CONFLICT (email, source)
       DO UPDATE SET language = EXCLUDED.language, country = EXCLUDED.country
     `;
+
+    // Abuse guard: this endpoint is unauthenticated and sends an email, which
+    // makes it an email-bombing / quota-burning vector if resends are free.
+    // At most one checklist email per address per 24h — the claim is atomic
+    // (row inserted/updated before sending), so parallel requests can't race
+    // past it. Repeat requests inside the window still return success: the
+    // legitimate "I lost the email" case just resent recently by definition.
+    const claimed = await sql`
+      INSERT INTO public.email_log (email, campaign)
+      VALUES (${normalizedEmail}, 'lead_checklist')
+      ON CONFLICT (email, campaign)
+      DO UPDATE SET sent_at = now()
+      WHERE public.email_log.sent_at < now() - interval '24 hours'
+      RETURNING id
+    `;
+    if (claimed.length === 0) {
+      console.log('[Lead] Cooldown active, not resending');
+      return res.status(200).json({ success: true });
+    }
 
     const countryEntry = UMSCHREIBUNG_COUNTRIES.find((c) => c.code === countryCode) ?? null;
     const { subject, html } = buildEmail(lang === 'de', countryEntry, countryCode);
