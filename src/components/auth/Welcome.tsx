@@ -349,8 +349,11 @@ export function Welcome() {
           </div>
         </div>
 
-        {/* Real app screenshot — the actual dashboard, not a mockup */}
-        <div className="mt-16 w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
+        {/* Real app screenshots — the actual product, not a mockup.
+            Desktop gets the dashboard in a browser frame; phones get the
+            mobile app view in a phone frame (a scaled desktop shot would be
+            unreadable at 390px). */}
+        <div className="mt-16 hidden w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:block">
           <div className="flex items-center gap-2 border-b border-white/10 px-4 pb-3 pt-1 text-left">
             <div className="h-3 w-3 rounded-full bg-slate-600" />
             <div className="h-3 w-3 rounded-full bg-slate-600" />
@@ -363,6 +366,17 @@ export function Welcome() {
             className="w-full rounded-b-2xl"
             width="1600"
             height="1059"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+        <div className="mx-auto mt-14 w-full max-w-[300px] overflow-hidden rounded-[2rem] border-4 border-slate-700/80 bg-slate-900 shadow-[0_25px_60px_rgba(0,0,0,0.6)] sm:hidden">
+          <img
+            src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
+            alt={isDe ? 'DriveDE App auf dem Smartphone mit Prüfungsreife-Anzeige' : 'DriveDE app on a phone with exam readiness score'}
+            className="w-full"
+            width="780"
+            height="1328"
             loading="eager"
             decoding="async"
           />
