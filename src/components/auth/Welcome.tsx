@@ -22,6 +22,8 @@ import { TestimonialsSection } from './TestimonialsSection';
 import { LeadCaptureSection } from './LeadCaptureSection';
 import { PwaInstallHint } from '../common/PwaInstallHint';
 import { PhoneFrame, MonitorFrame } from '../common/DeviceFrames';
+import { LegalPage } from '../legal/LegalPage';
+import type { LegalPageType } from '../../types';
 
 export function Welcome() {
   const { 
@@ -36,6 +38,7 @@ export function Welcome() {
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
   const [pickerInitialStep, setPickerInitialStep] = useState<'plan' | 'signup'>('plan');
   const [pickerInitialIsExistingUser, setPickerInitialIsExistingUser] = useState(false);
+  const [legalPage, setLegalPage] = useState<LegalPageType | null>(null);
   // Set when the user arrived from a pricing CTA — they intend to buy that tier now
   const [purchaseIntent, setPurchaseIntent] = useState<'30-days' | '90-days' | 'lifetime' | null>(null);
   
@@ -1027,9 +1030,9 @@ export function Welcome() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#feedback" className="hover:text-white transition">Impressum</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">Datenschutz</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">AGB</a></li>
+              <li><button onClick={() => setLegalPage('impressum')} className="hover:text-white transition">Impressum</button></li>
+              <li><button onClick={() => setLegalPage('privacy')} className="hover:text-white transition">{isDe ? 'Datenschutz' : 'Privacy Policy'}</button></li>
+              <li><button onClick={() => setLegalPage('terms')} className="hover:text-white transition">{isDe ? 'AGB' : 'Terms'}</button></li>
               <li><a href="#faq" className="hover:text-white transition">FAQ</a></li>
             </ul>
           </div>
@@ -1044,6 +1047,14 @@ export function Welcome() {
           </div>
         </div>
       </footer>
+
+      {legalPage && (
+        <div className="fixed inset-0 z-[110] overflow-y-auto bg-slate-100 dark:bg-slate-950">
+          <div className="mx-auto max-w-3xl px-4 py-8">
+            <LegalPage page={legalPage} onBack={() => setLegalPage(null)} />
+          </div>
+        </div>
+      )}
 
       <PwaInstallHint />
 

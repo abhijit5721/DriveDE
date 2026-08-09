@@ -142,7 +142,11 @@ export const useAppStore = create<AppState>()(
   subscribeWithSelector(
     persist(
     (set, get) => ({
-      language: 'de' as Language,
+      // First visit: follow the browser language (expats get English instead of
+      // hunting for the toggle). Persisted choices and ?lang= override this.
+      language: (typeof navigator !== 'undefined' && !navigator.language?.toLowerCase().startsWith('de')
+        ? 'en'
+        : 'de') as Language,
       darkMode: false,
       isPublicReportEnabled: true,
       licenseType: null,
