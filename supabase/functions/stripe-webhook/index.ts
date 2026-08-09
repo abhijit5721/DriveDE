@@ -55,15 +55,27 @@ Deno.serve(async (req) => {
         // 2. Log subscription details
         const started_at = new Date().toISOString();
         let expires_at = null;
-        
-        if (tier === '30-days') {
-          const d = new Date();
-          d.setDate(d.getDate() + 30);
+
+        if (tier === '30-days' || tier === '90-days') {
+          const days = tier === '30-days' ? 30 : 90;
+          // Stack on top of any still-active pass: buying again before expiry
+          // EXTENDS access instead of silently overlapping (and wasting) the
+          // remainder the user already paid for.
+          let base = new Date();
+          const { data: activeSubs } = await supabase
+            .from('subscriptions')
+            .select('expires_at')
+            .eq('user_id', userId)
+            .eq('status', 'active');
+          for (const s of activeSubs ?? []) {
+            if (s.expires_at && new Date(s.expires_at) > base) {
+              base = new Date(s.expires_at);
+            }
+          }
+          const d = new Date(base);
+          d.setDate(d.getDate() + days);
           expires_at = d.toISOString();
-        } else if (tier === '90-days') {
-          const d = new Date();
-          d.setDate(d.getDate() + 90);
-          expires_at = d.toISOString();
+          console.log(`[Webhook] ${tier} pass expires ${expires_at} (stacked on ${activeSubs?.length ?? 0} active subs)`);
         }
 
         console.log(`[Webhook] Upserting subscription record for ${userId}...`);

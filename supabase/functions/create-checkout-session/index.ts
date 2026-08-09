@@ -41,6 +41,19 @@ Deno.serve(async (req) => {
     const { tier, language } = await req.json();
     const user_id = user.id; // Use verified ID from JWT
 
+    // A user with lifetime access has nothing left to buy — block the charge
+    // server-side (a stale tab can still show a paywall after purchase).
+    // RLS lets users read their own subscription rows; if that read fails we
+    // fall through rather than blocking a legitimate purchase.
+    const { data: activeSubs } = await supabaseClient
+      .from('subscriptions')
+      .select('expires_at')
+      .eq('user_id', user_id)
+      .eq('status', 'active');
+    if ((activeSubs ?? []).some((s) => !s.expires_at)) {
+      throw new Error('You already have lifetime access');
+    }
+
     // Price IDs are env-configurable so staging can use Stripe test mode.
     // The fallbacks are the LIVE price IDs (production's current behavior).
     const pricing: Record<string, string> = {
