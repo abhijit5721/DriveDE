@@ -35,8 +35,20 @@ describe('useAppStore', () => {
   it('should initialize with default values', () => {
     const state = useAppStore.getState();
     expect(state.activeTab).toBe('home');
-    expect(state.language).toBe('de');
+    // The initial language follows the browser locale (DRI-14 persona fix):
+    // German browsers get 'de', everything else 'en'. jsdom reports en-US.
+    const expected = navigator.language?.toLowerCase().startsWith('de') ? 'de' : 'en';
+    expect(state.language).toBe(expected);
     expect(state.userProgress.hourlyRate45).toBe(60);
+  });
+
+  it('derives the initial language from the browser locale rule', () => {
+    const rule = (locale: string) => (locale.toLowerCase().startsWith('de') ? 'de' : 'en');
+    expect(rule('de-DE')).toBe('de');
+    expect(rule('de-AT')).toBe('de');
+    expect(rule('en-US')).toBe('en');
+    expect(rule('hi-IN')).toBe('en');
+    expect(rule('tr-TR')).toBe('en');
   });
 
   it('should initialize with default cookie settings', () => {
