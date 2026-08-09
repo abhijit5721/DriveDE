@@ -21,6 +21,7 @@ import { startCheckout, setPendingPurchase, clearPendingPurchase, consumePending
 import { TestimonialsSection } from './TestimonialsSection';
 import { LeadCaptureSection } from './LeadCaptureSection';
 import { PwaInstallHint } from '../common/PwaInstallHint';
+import { PhoneFrame, MonitorFrame } from '../common/DeviceFrames';
 
 export function Welcome() {
   const { 
@@ -354,27 +355,21 @@ export function Welcome() {
             Desktop gets the dashboard in a browser frame; phones get the
             mobile app view in a phone frame (a scaled desktop shot would be
             unreadable at 390px). */}
-        <div className="relative mt-16 mb-10 hidden w-full max-w-5xl sm:block">
-          {/* Desktop in a browser frame */}
-          <div className="overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
-            <div className="flex items-center gap-2 border-b border-white/10 px-4 pb-3 pt-1 text-left">
-              <div className="h-3 w-3 rounded-full bg-slate-600" />
-              <div className="h-3 w-3 rounded-full bg-slate-600" />
-              <div className="h-3 w-3 rounded-full bg-slate-600" />
-              <span className="ml-4 text-xs font-mono text-slate-400">drivede.app/dashboard</span>
-            </div>
+        <div className="relative mt-16 mb-10 hidden w-full max-w-5xl px-8 sm:block">
+          {/* Desktop in a monitor */}
+          <MonitorFrame>
             <img
               src={isDe ? '/screenshots/app-dashboard-de.webp' : '/screenshots/app-dashboard-en.webp'}
               alt={isDe ? 'DriveDE Dashboard mit Prüfungsreife-Anzeige und Wochen-Analyse' : 'DriveDE dashboard with exam readiness score and weekly analysis'}
-              className="w-full rounded-b-2xl"
+              className="w-full"
               width="1600"
               height="1059"
               loading="eager"
               decoding="async"
             />
-          </div>
-          {/* Phone overlapping the corner — same app on mobile (PWA) */}
-          <div className="absolute -bottom-10 -right-2 w-[170px] rotate-3 overflow-hidden rounded-[1.6rem] border-4 border-slate-700/90 bg-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.7)] md:-right-8 md:w-[200px]">
+          </MonitorFrame>
+          {/* Phone overlapping the corner — same app, same state, on mobile */}
+          <PhoneFrame className="absolute -bottom-6 right-0 w-[170px] rotate-3 md:-right-4 md:w-[200px]">
             <img
               src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
               alt={isDe ? 'DriveDE App auf dem Smartphone' : 'DriveDE app on a phone'}
@@ -384,9 +379,9 @@ export function Welcome() {
               loading="eager"
               decoding="async"
             />
-          </div>
+          </PhoneFrame>
         </div>
-        <div className="mx-auto mt-14 w-full max-w-[300px] overflow-hidden rounded-[2rem] border-4 border-slate-700/80 bg-slate-900 shadow-[0_25px_60px_rgba(0,0,0,0.6)] sm:hidden">
+        <PhoneFrame className="mx-auto mt-14 w-full max-w-[280px] sm:hidden">
           <img
             src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
             alt={isDe ? 'DriveDE App auf dem Smartphone mit Prüfungsreife-Anzeige' : 'DriveDE app on a phone with exam readiness score'}
@@ -396,7 +391,7 @@ export function Welcome() {
             loading="eager"
             decoding="async"
           />
-        </div>
+        </PhoneFrame>
       </main>
 
       {/* 💡 Problem vs Solution: Why Driving in Germany Costs €3,000+ */}
@@ -636,7 +631,7 @@ export function Welcome() {
               },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center text-center">
-                <div className="w-full max-w-[240px] overflow-hidden rounded-[1.75rem] border-4 border-slate-700/80 bg-slate-900 shadow-2xl">
+                <PhoneFrame className="w-full max-w-[240px]">
                   <img
                     src={`/screenshots/shot-${item.shot}-${isDe ? 'de' : 'en'}.webp`}
                     alt={item.title}
@@ -646,7 +641,7 @@ export function Welcome() {
                     loading="lazy"
                     decoding="async"
                   />
-                </div>
+                </PhoneFrame>
                 <h3 className="mt-5 text-base font-bold text-white">{item.title}</h3>
                 <p className="mt-1 max-w-[260px] text-sm text-slate-400">{item.desc}</p>
               </div>
