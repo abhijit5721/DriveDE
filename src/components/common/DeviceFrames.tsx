@@ -8,24 +8,32 @@ import { cn } from '../../utils/cn';
 
 /**
  * Pure-CSS device mockups (DRI-14): screenshots read as hardware, not as
- * bordered rectangles. No image assets — bezels, stand, notch and buttons are
- * all elements, so they stay crisp at any size and cost zero bytes.
+ * bordered rectangles. The phone gets a chamfered metallic edge (gradient
+ * catching light top-left), a black bezel, dynamic island and side buttons —
+ * the "3D render" look without a single image asset.
  */
 
 export function PhoneFrame({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn('relative', className)}>
-      {/* Body */}
-      <div className="relative overflow-hidden rounded-[2.2rem] border-[6px] border-slate-950 bg-slate-950 shadow-[0_25px_60px_rgba(0,0,0,0.65)] ring-1 ring-slate-700/60">
-        {/* Dynamic island — kept small so it sits in the header's empty middle
-            instead of covering the app's own wordmark */}
-        <div className="absolute left-1/2 top-1.5 z-10 h-[10px] w-12 -translate-x-1/2 rounded-full bg-black/90" />
-        {children}
+      {/* Metallic chamfer — the light-catching outer edge */}
+      <div className="rounded-[2.9rem] bg-gradient-to-br from-slate-400/90 via-slate-700 to-slate-950 p-[3px] shadow-[0_35px_70px_-15px_rgba(0,0,0,0.8)]">
+        {/* Black bezel body */}
+        <div className="relative overflow-hidden rounded-[2.7rem] bg-slate-950 p-[7px]">
+          {/* Screen */}
+          <div className="relative overflow-hidden rounded-[2.15rem]">
+            {/* Dynamic island — small so it sits in the header's empty middle */}
+            <div className="absolute left-1/2 top-2 z-10 h-[12px] w-14 -translate-x-1/2 rounded-full bg-black" />
+            {children}
+            {/* Subtle screen glass reflection */}
+            <div className="pointer-events-none absolute inset-0 rounded-[2.15rem] bg-gradient-to-tr from-transparent via-transparent to-white/[0.045]" />
+          </div>
+        </div>
       </div>
-      {/* Side buttons */}
-      <div className="absolute -left-[2px] top-[18%] h-8 w-[3px] rounded-l-md bg-slate-700" />
-      <div className="absolute -left-[2px] top-[30%] h-12 w-[3px] rounded-l-md bg-slate-700" />
-      <div className="absolute -right-[2px] top-[22%] h-16 w-[3px] rounded-r-md bg-slate-700" />
+      {/* Side buttons sitting on the metallic edge */}
+      <div className="absolute -left-[2px] top-[17%] h-7 w-[3px] rounded-l-md bg-slate-500/80" />
+      <div className="absolute -left-[2px] top-[26%] h-11 w-[3px] rounded-l-md bg-slate-500/80" />
+      <div className="absolute -right-[2px] top-[21%] h-14 w-[3px] rounded-r-md bg-slate-500/80" />
     </div>
   );
 }
@@ -33,13 +41,15 @@ export function PhoneFrame({ children, className }: { children: ReactNode; class
 export function MonitorFrame({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn('flex flex-col items-center', className)}>
-      {/* Screen with bezel */}
-      <div className="w-full overflow-hidden rounded-2xl border-[10px] border-slate-950 bg-slate-950 shadow-[0_25px_60px_rgba(0,0,0,0.65)] ring-1 ring-slate-700/60">
-        {children}
+      {/* Screen: thin metallic edge, then bezel */}
+      <div className="w-full rounded-2xl bg-gradient-to-b from-slate-600 via-slate-800 to-slate-900 p-[2px] shadow-[0_35px_70px_-15px_rgba(0,0,0,0.8)]">
+        <div className="overflow-hidden rounded-[calc(1rem-2px)] border-[9px] border-slate-950 bg-slate-950">
+          {children}
+        </div>
       </div>
       {/* Stand */}
-      <div className="h-9 w-24 bg-gradient-to-b from-slate-800 to-slate-900 [clip-path:polygon(18%_0,82%_0,100%_100%,0_100%)]" />
-      <div className="h-2 w-44 rounded-full bg-slate-800" />
+      <div className="h-9 w-24 bg-gradient-to-b from-slate-700 to-slate-900 [clip-path:polygon(18%_0,82%_0,100%_100%,0_100%)]" />
+      <div className="h-2.5 w-48 rounded-full bg-gradient-to-b from-slate-700 to-slate-900" />
     </div>
   );
 }

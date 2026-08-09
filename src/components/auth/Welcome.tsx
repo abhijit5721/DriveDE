@@ -374,8 +374,8 @@ export function Welcome() {
               src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
               alt={isDe ? 'DriveDE App auf dem Smartphone' : 'DriveDE app on a phone'}
               className="w-full"
-              width="780"
-              height="1328"
+              width="680"
+              height="1472"
               loading="eager"
               decoding="async"
             />
@@ -386,8 +386,8 @@ export function Welcome() {
             src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
             alt={isDe ? 'DriveDE App auf dem Smartphone mit Prüfungsreife-Anzeige' : 'DriveDE app on a phone with exam readiness score'}
             className="w-full"
-            width="780"
-            height="1328"
+            width="680"
+            height="1472"
             loading="eager"
             decoding="async"
           />
@@ -637,7 +637,7 @@ export function Welcome() {
                     alt={item.title}
                     className="w-full"
                     width="680"
-                    height="1158"
+                    height="1472"
                     loading="lazy"
                     decoding="async"
                   />
