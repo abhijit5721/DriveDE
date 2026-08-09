@@ -20,6 +20,7 @@ import { PlanPickerScreen } from './PlanPickerScreen';
 import { startCheckout, setPendingPurchase, clearPendingPurchase, consumePendingPurchase } from '../../services/checkout';
 import { TestimonialsSection } from './TestimonialsSection';
 import { LeadCaptureSection } from './LeadCaptureSection';
+import { PwaInstallHint } from '../common/PwaInstallHint';
 
 export function Welcome() {
   const { 
@@ -590,6 +591,55 @@ export function Welcome() {
         </div>
       </section>
 
+      {/* 📱 Inside the app — three real screens (DRI-14: show, don't tell) */}
+      <section id="app-preview" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+              {isDe ? 'Ein Blick in die App' : 'A look inside the app'}
+            </span>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">
+              {isDe ? 'Echte Screenshots, echte App' : 'Real screenshots, real app'}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6">
+            {[
+              {
+                shot: 'tracker',
+                title: isDe ? 'GPS Live-Tracking' : 'Live GPS tracking',
+                desc: isDe ? 'Route, Tempolimits und Fehler während jeder Fahrstunde.' : 'Route, speed limits and mistakes during every lesson.',
+              },
+              {
+                shot: 'dashboard',
+                title: isDe ? 'Prüfungsreife auf einen Blick' : 'Exam readiness at a glance',
+                desc: isDe ? 'Wisse genau, wann du bereit für die Fahrprüfung bist.' : 'Know exactly when you are ready for the exam.',
+              },
+              {
+                shot: 'curriculum',
+                title: isDe ? 'Interaktiver Lehrplan' : 'Interactive curriculum',
+                desc: isDe ? 'Lektionen aus echten Fahrstunden — nicht nur Theoriefragen.' : 'Lessons built from real driving lessons — not just theory quizzes.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center text-center">
+                <div className="w-full max-w-[240px] overflow-hidden rounded-[1.75rem] border-4 border-slate-700/80 bg-slate-900 shadow-2xl">
+                  <img
+                    src={`/screenshots/shot-${item.shot}-${isDe ? 'de' : 'en'}.webp`}
+                    alt={item.title}
+                    className="w-full"
+                    width="680"
+                    height="1158"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <h3 className="mt-5 text-base font-bold text-white">{item.title}</h3>
+                <p className="mt-1 max-w-[260px] text-sm text-slate-400">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
         <div className="mx-auto max-w-7xl">
@@ -984,6 +1034,8 @@ export function Welcome() {
           </div>
         </div>
       </footer>
+
+      <PwaInstallHint />
 
       {/* Demo Modal */}
       {showDemo && (

@@ -419,7 +419,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [isEditingRate, setIsEditingRate] = useState(false);
-  const [tempRate, setTempRate] = useState(userProgress.hourlyRate45.toString());
+  // Persisted state from before this field existed has no hourlyRate45 (there
+  // are no zustand persist migrations) — crash-proof the read.
+  const [tempRate, setTempRate] = useState((userProgress.hourlyRate45 ?? 60).toString());
   const [newSession, setNewSession] = useState<Partial<DrivingSession>>({
     date: new Date().toISOString().split('T')[0],
     duration: 45,
