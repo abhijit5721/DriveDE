@@ -27,6 +27,19 @@ Sentry.init({
   // Session Replay
   replaysSessionSampleRate: 0.1, // Sample 10% of sessions
   replaysOnErrorSampleRate: 1.0, // Always replay sessions where an error occurred
+  // Environmental noise, not product bugs: some browsers (private mode,
+  // storage restrictions, extensions) reject service-worker registration with
+  // a bare "Rejected" from the generated registerSW.js. Nothing we can act on.
+  ignoreErrors: [
+    /^Rejected$/,
+  ],
+  beforeSend(event) {
+    const frames = event.exception?.values?.[0]?.stacktrace?.frames;
+    if (frames?.some((f) => f.filename?.includes('registerSW.js'))) {
+      return null; // drop anything originating in the SW registration shim
+    }
+    return event;
+  },
 });
 
 // Handle chunk load errors (e.g. when a new version is deployed while user has app open)
