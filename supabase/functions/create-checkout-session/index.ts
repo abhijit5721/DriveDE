@@ -41,11 +41,12 @@ Deno.serve(async (req) => {
     const { tier, language } = await req.json();
     const user_id = user.id; // Use verified ID from JWT
 
-    // NOTE: Live Stripe Price IDs
+    // Price IDs are env-configurable so staging can use Stripe test mode.
+    // The fallbacks are the LIVE price IDs (production's current behavior).
     const pricing: Record<string, string> = {
-      '30-days': 'price_1TzONa402FITjleyF9Z3ME1Y',
-      '90-days': 'price_1TzOOG402FITjleyFOJuwW9V',
-      'lifetime': 'price_1TzOOQ402FITjley54Hz788h',
+      '30-days': Deno.env.get('STRIPE_PRICE_30_DAYS') || 'price_1TzONa402FITjleyF9Z3ME1Y',
+      '90-days': Deno.env.get('STRIPE_PRICE_90_DAYS') || 'price_1TzOOG402FITjleyFOJuwW9V',
+      'lifetime': Deno.env.get('STRIPE_PRICE_LIFETIME') || 'price_1TzOOQ402FITjley54Hz788h',
     };
 
     const priceId = pricing[tier];
