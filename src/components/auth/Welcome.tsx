@@ -354,22 +354,37 @@ export function Welcome() {
             Desktop gets the dashboard in a browser frame; phones get the
             mobile app view in a phone frame (a scaled desktop shot would be
             unreadable at 390px). */}
-        <div className="mt-16 hidden w-full max-w-5xl overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl sm:block">
-          <div className="flex items-center gap-2 border-b border-white/10 px-4 pb-3 pt-1 text-left">
-            <div className="h-3 w-3 rounded-full bg-slate-600" />
-            <div className="h-3 w-3 rounded-full bg-slate-600" />
-            <div className="h-3 w-3 rounded-full bg-slate-600" />
-            <span className="ml-4 text-xs font-mono text-slate-400">drivede.app/dashboard</span>
+        <div className="relative mt-16 mb-10 hidden w-full max-w-5xl sm:block">
+          {/* Desktop in a browser frame */}
+          <div className="overflow-hidden rounded-3xl border border-white/15 bg-slate-900/90 p-3 shadow-[0_25px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
+            <div className="flex items-center gap-2 border-b border-white/10 px-4 pb-3 pt-1 text-left">
+              <div className="h-3 w-3 rounded-full bg-slate-600" />
+              <div className="h-3 w-3 rounded-full bg-slate-600" />
+              <div className="h-3 w-3 rounded-full bg-slate-600" />
+              <span className="ml-4 text-xs font-mono text-slate-400">drivede.app/dashboard</span>
+            </div>
+            <img
+              src={isDe ? '/screenshots/app-dashboard-de.webp' : '/screenshots/app-dashboard-en.webp'}
+              alt={isDe ? 'DriveDE Dashboard mit Prüfungsreife-Anzeige und Wochen-Analyse' : 'DriveDE dashboard with exam readiness score and weekly analysis'}
+              className="w-full rounded-b-2xl"
+              width="1600"
+              height="1059"
+              loading="eager"
+              decoding="async"
+            />
           </div>
-          <img
-            src={isDe ? '/screenshots/app-dashboard-de.webp' : '/screenshots/app-dashboard-en.webp'}
-            alt={isDe ? 'DriveDE Dashboard mit Prüfungsreife-Anzeige und Wochen-Analyse' : 'DriveDE dashboard with exam readiness score and weekly analysis'}
-            className="w-full rounded-b-2xl"
-            width="1600"
-            height="1059"
-            loading="eager"
-            decoding="async"
-          />
+          {/* Phone overlapping the corner — same app on mobile (PWA) */}
+          <div className="absolute -bottom-10 -right-2 w-[170px] rotate-3 overflow-hidden rounded-[1.6rem] border-4 border-slate-700/90 bg-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.7)] md:-right-8 md:w-[200px]">
+            <img
+              src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
+              alt={isDe ? 'DriveDE App auf dem Smartphone' : 'DriveDE app on a phone'}
+              className="w-full"
+              width="780"
+              height="1328"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </div>
         <div className="mx-auto mt-14 w-full max-w-[300px] overflow-hidden rounded-[2rem] border-4 border-slate-700/80 bg-slate-900 shadow-[0_25px_60px_rgba(0,0,0,0.6)] sm:hidden">
           <img
