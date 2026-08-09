@@ -21,6 +21,7 @@ import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensurePro
 import { checkAndUnlockAchievements } from './utils/achievements';
 import { resolveTrial } from './utils/trialSync';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
+import { syncStructuredData } from './utils/seoSchema';
 import { signOut, subscribeToAuthChanges } from './services/auth';
 import { analyticsService } from './services/AnalyticsService';
 import { chapters } from './data/curriculum';
@@ -177,6 +178,7 @@ export default function App() {
         ? 'Die kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS tracken und die Fahrprüfung im 1. Versuch bestehen. Auch auf Englisch.'
         : 'The free app for your German driving license: learn theory, track driving lessons via GPS, and pass your Fahrprüfung on the first try. Includes Umschreibung guidance for foreign licenses.'
     );
+    syncStructuredData(language);
   }, [language]);
 
   useEffect(() => {
