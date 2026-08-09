@@ -115,7 +115,7 @@ const PLAN_CONFIG = {
     resendLink: 'Bestätigungslink erneut senden',
     resendSuccess: 'Bestätigungslink wurde erneut gesendet.',
     changeEmail: 'E-Mail-Adresse ändern',
-    ratingText: '⭐️ 4.9/5 von 12.000+ Fahrschülern in Deutschland',
+    ratingText: '🔒 Sichere Zahlung via Stripe · 100% DSGVO-konform',
   },
   'en': {
     badge: '✨ 7-DAY TRIAL • 100% FREE',
@@ -198,7 +198,7 @@ const PLAN_CONFIG = {
     resendLink: 'Resend confirmation link',
     resendSuccess: 'Confirmation link has been resent.',
     changeEmail: 'Change email address',
-    ratingText: '⭐️ 4.9/5 from 12,000+ driving students in Germany',
+    ratingText: '🔒 Secure payment via Stripe · 100% GDPR compliant',
   },
 };
 
