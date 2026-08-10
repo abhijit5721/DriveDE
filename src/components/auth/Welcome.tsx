@@ -999,8 +999,8 @@ export function Welcome() {
             </div>
             <div className="relative min-h-[280px] md:min-h-[380px]">
               <img
-                src="https://images.unsplash.com/photo-1527593167147-e9c94a5883e6?q=80&w=1200&auto=format&fit=crop"
-                alt={isDe ? 'Fahrschülerin am Steuer bei Tageslicht' : 'Learner driver at the wheel in daylight'}
+                src="https://images.unsplash.com/photo-1553782097-130fef5d3e27?q=80&w=1200&auto=format&fit=crop"
+                alt={isDe ? 'Fahrstunde: Fahrschüler und Fahrlehrer im Auto bei Tageslicht' : 'Driving lesson: student and instructor in the car in daylight'}
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
               />
