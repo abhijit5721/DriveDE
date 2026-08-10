@@ -56,7 +56,7 @@ const PLAN_CONFIG = {
       '90-days': {
         label: '90-Tage-Pass',
         tag: '🔥 BELIEBTESTE WAHL',
-        tagColor: 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black',
+        tagColor: 'bg-blue-600 text-white font-black',
         price: '€19.99',
         dailyPrice: '€0.22 / Tag',
         saveBadge: '33% SPAREN',
@@ -69,7 +69,7 @@ const PLAN_CONFIG = {
       'lifetime': {
         label: 'Lifetime-Zugang',
         tag: '👑 BESTES ANGEBOT',
-        tagColor: 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black',
+        tagColor: 'bg-emerald-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'Einmalig · Für immer',
         saveBadge: 'MAXIMALER WERT',
@@ -139,7 +139,7 @@ const PLAN_CONFIG = {
       '90-days': {
         label: '90-Day Pass',
         tag: '🔥 MOST POPULAR',
-        tagColor: 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black',
+        tagColor: 'bg-blue-600 text-white font-black',
         price: '€19.99',
         dailyPrice: '€0.22 / day',
         saveBadge: 'SAVE 33%',
@@ -152,7 +152,7 @@ const PLAN_CONFIG = {
       'lifetime': {
         label: 'Lifetime Access',
         tag: '👑 BEST VALUE',
-        tagColor: 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black',
+        tagColor: 'bg-emerald-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'One-time · Forever',
         saveBadge: 'MAX VALUE',
@@ -593,7 +593,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   onClick={handleGoToSignup}
                   className={cn(
-                    'group relative w-full h-16 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-2xl shadow-2xl shadow-blue-600/30',
+                    'group relative w-full h-16 bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-2xl shadow-blue-600/30',
                     'text-white font-black text-base sm:text-lg tracking-tight transition-all duration-300',
                     'flex items-center justify-center gap-3 overflow-hidden transform hover:scale-[1.02] active:scale-[0.98]'
                   )}
@@ -628,7 +628,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-blue-50 border border-blue-200">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
-                    <Crown className="w-4 h-4 text-amber-300" />
+                    <Crown className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900">{activePlan.label} ({activePlan.price})</p>
@@ -725,7 +725,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 active:scale-[0.98]"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 active:scale-[0.98]"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -832,7 +832,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       setIsExistingUser(true);
                       setStep('signup');
                     }}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
                   >
                     <span>{t.confirmDoneBtn}</span>
                     <ArrowRight className="w-4 h-4" />

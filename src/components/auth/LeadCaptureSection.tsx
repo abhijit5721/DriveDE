@@ -175,7 +175,7 @@ export function LeadCaptureSection() {
                 </form>
 
                 {status === 'error' && (
-                  <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-rose-400">
+                  <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-red-600">
                     <AlertCircle className="h-4 w-4" />
                     {isDe
                       ? 'Etwas ist schiefgelaufen. Bitte versuche es später erneut.'

@@ -172,12 +172,12 @@ export function CookieConsent() {
                     onClick={() => setTempSettings(s => ({ ...s, marketing: !s.marketing }))}
                     className={cn(
                       'flex items-start gap-4 rounded-2xl border p-4 transition cursor-pointer',
-                      tempSettings.marketing ? 'border-purple-300 bg-purple-50 dark:border-purple-500/30 dark:bg-purple-500/10' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10'
+                      tempSettings.marketing ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-500/10' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10'
                     )}
                   >
                     <div className={cn(
                       'mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                      tempSettings.marketing ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
+                      tempSettings.marketing ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                     )}>
                       <Check className={cn('h-5 w-5 transition', tempSettings.marketing ? 'opacity-100 scale-100' : 'opacity-0 scale-50')} />
                     </div>
@@ -186,7 +186,7 @@ export function CookieConsent() {
                         <span className="font-bold text-slate-900 dark:text-white">{t.marketing.title}</span>
                         <div className={cn(
                           'w-10 h-5 rounded-full relative transition-colors duration-200',
-                          tempSettings.marketing ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'
+                          tempSettings.marketing ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-700'
                         )}>
                           <div className={cn(
                             'absolute top-1 left-1 w-3 h-3 rounded-full bg-white transition-transform duration-200',

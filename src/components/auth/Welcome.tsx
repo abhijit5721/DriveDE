@@ -449,7 +449,7 @@ export function Welcome() {
 
             {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
             <div className="relative rounded-3xl border-2 border-emerald-300 bg-emerald-50 p-8 text-left shadow-xl shadow-emerald-500/10 flex flex-col justify-between">
-              <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-1 text-xs font-bold text-slate-950 shadow-md">
+              <span className="absolute -top-4 right-8 rounded-full bg-emerald-600 px-4 py-1 text-xs font-bold text-white shadow-md">
                 {isDe ? 'DER DRIVEDE VORTEIL' : 'THE DRIVEDE ADVANTAGE'}
               </span>
 
@@ -545,7 +545,7 @@ export function Welcome() {
                   ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet Route, Tempolimits und Fehler auf.'
                   : 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
                 icon: MapPin,
-                color: 'from-blue-500 to-indigo-600'
+                color: 'from-blue-500 to-blue-600'
               },
               {
                 step: '02',
@@ -554,7 +554,7 @@ export function Welcome() {
                   ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
                   : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
                 icon: Zap,
-                color: 'from-blue-600 to-indigo-600'
+                color: 'from-blue-600 to-blue-700'
               },
               {
                 step: '03',
@@ -563,7 +563,7 @@ export function Welcome() {
                   ? 'Verfolge deine Prüfungsreife bis 100% und gehe voller Selbstvertrauen in die Fahrprüfung.'
                   : 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
                 icon: Award,
-                color: 'from-emerald-500 to-teal-600'
+                color: 'from-emerald-500 to-emerald-600'
               }
             ].map((s, i) => (
               <div key={i} className="relative rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left transition hover:border-blue-300 hover:scale-[1.02]">
@@ -736,7 +736,7 @@ export function Welcome() {
 
             {/* 90 Days Pass (Most Popular) */}
             <div className="relative rounded-3xl border-2 border-blue-500 bg-white p-8 text-left shadow-xl shadow-blue-500/10 flex flex-col justify-between">
-              <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 text-xs font-bold text-white shadow-md">
+              <span className="absolute -top-4 right-8 rounded-full bg-blue-600 px-4 py-1 text-xs font-bold text-white shadow-md">
                 {isDe ? 'BELIEBTESTE WAHL' : 'MOST POPULAR'}
               </span>
               <div>
@@ -934,7 +934,7 @@ export function Welcome() {
                       data-testid="manual-btn"
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-slate-100 p-6 transition-all hover:bg-slate-200 active:scale-95 border border-slate-200 hover:border-slate-300"
                     >
-                      <Cog className="h-6 w-6 text-orange-400 transition-transform group-hover/btn:rotate-12" />
+                      <Cog className="h-6 w-6 text-slate-500 transition-transform group-hover/btn:rotate-12" />
                       <span className="text-xs font-bold uppercase tracking-widest text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.manual}</span>
                     </button>
 

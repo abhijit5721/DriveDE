@@ -71,7 +71,7 @@ export function ContactForm({ className }: ContactFormProps) {
               exit={{ opacity: 0, scale: 0.9 }}
               className='flex flex-col items-center justify-center py-12 text-center'
             >
-              <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-rose-100 text-rose-600'>
+              <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-600'>
                 <AlertCircle className='h-12 w-12' />
               </div>
               <h3 className='text-3xl font-bold text-slate-900 mb-2'>Something went wrong</h3>
