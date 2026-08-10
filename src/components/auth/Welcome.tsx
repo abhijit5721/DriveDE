@@ -290,6 +290,17 @@ export function Welcome() {
         )}
       </nav>
 
+      {/* Washed driving-photo backdrop — hero only, fades to white (Option 2 preview) */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-screen overflow-hidden" data-testid="hero-photo-backdrop">
+        <img
+          src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop"
+          alt=""
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-white/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/60 to-white" />
+      </div>
+
       {/* Hero Section */}
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
@@ -971,6 +982,39 @@ export function Welcome() {
               {t.common.getStarted}
               <ArrowRight className="h-6 w-6" />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 🚗 CTA photo banner — the driving shot, contained (Option 1 preview) */}
+      <section className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl shadow-slate-900/20">
+            <img
+              src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop"
+              alt={isDe ? 'Fahrt auf einer offenen Landstraße' : 'Driving on an open road'}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-slate-950/60" />
+            <div className="relative z-10 px-8 py-20 sm:px-16 sm:py-24 text-center">
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
+                {isDe ? 'Bereit für deine Fahrprüfung?' : 'Ready for your Fahrprüfung?'}
+              </h2>
+              <p className="mx-auto max-w-xl text-slate-200 text-sm sm:text-base mb-8">
+                {isDe
+                  ? 'Starte heute deine 7-Tage Pro Testversion — keine Kreditkarte nötig.'
+                  : 'Start your 7-day free Pro trial today — no credit card required.'}
+              </p>
+              <button
+                onClick={() => handleStart()}
+                data-testid="cta-photo-banner"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              >
+                {isDe ? 'Jetzt kostenlos starten' : 'Get Started Free'}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
