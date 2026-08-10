@@ -602,8 +602,11 @@ export function Welcome() {
               {isDe ? 'Ein Blick in die App' : 'A look inside the app'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">
-              {isDe ? 'Echte Screenshots, echte App' : 'Real screenshots, real app'}
+              {isDe ? 'Die App in Aktion' : 'See the app in action'}
             </h2>
+            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
+              {isDe ? 'Echte Screenshots — genau so sieht die App nach der Anmeldung aus.' : 'Actual screenshots — exactly what you\'ll see after signing up.'}
+            </p>
           </div>
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6">
             {[
@@ -639,6 +642,40 @@ export function Welcome() {
                 <p className="mt-1 max-w-[260px] text-sm text-slate-500">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 🚗 CTA split banner — bright daylight driving photo, no scrim (light-theme treatment) */}
+      <section className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-900/10 md:grid-cols-2">
+            <div className="flex flex-col items-start justify-center px-8 py-14 text-left sm:px-12 lg:px-16">
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-4">
+                {isDe ? 'Bereit für deine Fahrprüfung?' : 'Ready for your Fahrprüfung?'}
+              </h2>
+              <p className="max-w-md text-slate-500 text-sm sm:text-base mb-8">
+                {isDe
+                  ? 'Starte heute deine 7-Tage Pro Testversion — keine Kreditkarte nötig.'
+                  : 'Start your 7-day free Pro trial today — no credit card required.'}
+              </p>
+              <button
+                onClick={() => handleStart()}
+                data-testid="cta-photo-banner"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              >
+                {isDe ? 'Jetzt kostenlos starten' : 'Get Started Free'}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+            <div className="relative min-h-[280px] md:min-h-[380px]">
+              <img
+                src="https://images.unsplash.com/photo-1553782097-130fef5d3e27?q=80&w=1200&auto=format&fit=crop"
+                alt={isDe ? 'Fahrstunde: Fahrschüler und Fahrlehrer im Auto bei Tageslicht' : 'Driving lesson: student and instructor in the car in daylight'}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -831,23 +868,6 @@ export function Welcome() {
         </div>
       </section>
 
-      {/* Feedback & Support Section */}
-      <section id="feedback" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
-            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-              {isDe 
-                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht – wir freuen uns von dir zu hören.'
-                : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
-              }
-            </p>
-          </div>
-          
-          <ContactForm />
-        </div>
-      </section>
-
       {/* Path Info Area */}
       <section id="paths" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-4xl">
@@ -975,37 +995,20 @@ export function Welcome() {
         </div>
       </section>
 
-      {/* 🚗 CTA split banner — bright daylight driving photo, no scrim (light-theme treatment) */}
-      <section className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-900/10 md:grid-cols-2">
-            <div className="flex flex-col items-start justify-center px-8 py-14 text-left sm:px-12 lg:px-16">
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-4">
-                {isDe ? 'Bereit für deine Fahrprüfung?' : 'Ready for your Fahrprüfung?'}
-              </h2>
-              <p className="max-w-md text-slate-500 text-sm sm:text-base mb-8">
-                {isDe
-                  ? 'Starte heute deine 7-Tage Pro Testversion — keine Kreditkarte nötig.'
-                  : 'Start your 7-day free Pro trial today — no credit card required.'}
-              </p>
-              <button
-                onClick={() => handleStart()}
-                data-testid="cta-photo-banner"
-                className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
-              >
-                {isDe ? 'Jetzt kostenlos starten' : 'Get Started Free'}
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </button>
-            </div>
-            <div className="relative min-h-[280px] md:min-h-[380px]">
-              <img
-                src="https://images.unsplash.com/photo-1553782097-130fef5d3e27?q=80&w=1200&auto=format&fit=crop"
-                alt={isDe ? 'Fahrstunde: Fahrschüler und Fahrlehrer im Auto bei Tageslicht' : 'Driving lesson: student and instructor in the car in daylight'}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
+      {/* Feedback & Support Section */}
+      <section id="feedback" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
+            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
+              {isDe 
+                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht – wir freuen uns von dir zu hören.'
+                : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
+              }
+            </p>
           </div>
+          
+          <ContactForm />
         </div>
       </section>
 
