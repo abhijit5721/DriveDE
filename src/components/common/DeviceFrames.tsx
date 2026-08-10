@@ -17,7 +17,7 @@ export function PhoneFrame({ children, className }: { children: ReactNode; class
   return (
     <div className={cn('relative', className)}>
       {/* Metallic chamfer — the light-catching outer edge */}
-      <div className="rounded-[2.9rem] bg-gradient-to-br from-slate-400/90 via-slate-700 to-slate-950 p-[3px] shadow-[0_35px_70px_-15px_rgba(0,0,0,0.8)]">
+      <div className="rounded-[2.9rem] bg-gradient-to-br from-slate-400/90 via-slate-700 to-slate-950 p-[3px] shadow-[0_30px_60px_-15px_rgba(15,23,42,0.35)]">
         {/* Black bezel body */}
         <div className="relative overflow-hidden rounded-[2.7rem] bg-slate-950 p-[7px]">
           {/* Screen */}
@@ -42,7 +42,7 @@ export function MonitorFrame({ children, className }: { children: ReactNode; cla
   return (
     <div className={cn('flex flex-col items-center', className)}>
       {/* Screen: thin metallic edge, then bezel */}
-      <div className="w-full rounded-2xl bg-gradient-to-b from-slate-600 via-slate-800 to-slate-900 p-[2px] shadow-[0_35px_70px_-15px_rgba(0,0,0,0.8)]">
+      <div className="w-full rounded-2xl bg-gradient-to-b from-slate-600 via-slate-800 to-slate-900 p-[2px] shadow-[0_30px_60px_-15px_rgba(15,23,42,0.35)]">
         <div className="overflow-hidden rounded-[calc(1rem-2px)] border-[9px] border-slate-950 bg-slate-950">
           {children}
         </div>

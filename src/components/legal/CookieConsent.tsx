@@ -57,20 +57,20 @@ export function CookieConsent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="mx-auto max-w-4xl w-full pointer-events-auto"
         >
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/90 p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
+          <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 p-6 md:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/90 dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             {/* Background Glow */}
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-            <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl dark:bg-blue-500/10" />
+            <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-emerald-100/60 blur-3xl dark:bg-emerald-500/10" />
 
             {!showDetails ? (
               <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-400">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
                   <Cookie className="h-8 w-8" />
                 </div>
                 
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-bold text-white mb-2">{t.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed max-w-2xl">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t.title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed max-w-2xl dark:text-slate-400">
                     {t.description}
                   </p>
                 </div>
@@ -79,7 +79,7 @@ export function CookieConsent() {
                     <button
                       onClick={() => setShowDetails(true)}
                       data-testid="cookie-customize"
-                      className="flex items-center gap-2 px-5 py-3 text-sm font-bold text-slate-400 transition hover:text-white"
+                      className="flex items-center gap-2 px-5 py-3 text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                     >
                       <Settings className="h-4 w-4" />
                       {t.customize}
@@ -87,7 +87,7 @@ export function CookieConsent() {
                     <button
                       onClick={handleRejectAll}
                       data-testid="cookie-reject-non-essential"
-                      className="px-6 py-3 text-sm font-bold text-white transition rounded-xl bg-white/5 hover:bg-white/10"
+                      className="px-6 py-3 text-sm font-bold text-slate-900 transition rounded-xl bg-slate-100 hover:bg-slate-200 dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
                     >
                       {t.rejectNonEssential}
                     </button>
@@ -110,29 +110,29 @@ export function CookieConsent() {
                   <div className="flex items-center gap-3">
                     <button 
                       onClick={() => setShowDetails(false)}
-                      className="p-2 -ml-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition"
+                      className="p-2 -ml-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition dark:hover:bg-white/5 dark:text-slate-400 dark:hover:text-white"
                     >
                       <X className="h-6 w-6" />
                     </button>
-                    <h3 className="text-xl font-bold text-white">{t.customize}</h3>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">{t.customize}</h3>
                   </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
                     <Shield className="h-5 w-5" />
                   </div>
                 </div>
 
                 <div className="space-y-4 mb-8">
                   {/* Essential */}
-                  <div className="flex items-start gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition hover:bg-white/10">
-                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-emerald-400">
+                  <div className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10">
+                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-emerald-600 dark:bg-slate-800 dark:text-emerald-400">
                       <Check className="h-5 w-5" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-white">{t.essential.title}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{t.essential.title}</span>
                         <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">{t.alwaysOn}</span>
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">{t.essential.desc}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed dark:text-slate-400">{t.essential.desc}</p>
                     </div>
                   </div>
 
@@ -141,21 +141,21 @@ export function CookieConsent() {
                     onClick={() => setTempSettings(s => ({ ...s, analytics: !s.analytics }))}
                     className={cn(
                       'flex items-start gap-4 rounded-2xl border p-4 transition cursor-pointer',
-                      tempSettings.analytics ? 'border-blue-500/30 bg-blue-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                      tempSettings.analytics ? 'border-blue-300 bg-blue-50 dark:border-blue-500/30 dark:bg-blue-500/10' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10'
                     )}
                   >
                     <div className={cn(
                       'mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                      tempSettings.analytics ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-500'
+                      tempSettings.analytics ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                     )}>
                       <Check className={cn('h-5 w-5 transition', tempSettings.analytics ? 'opacity-100 scale-100' : 'opacity-0 scale-50')} />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-white">{t.analytics.title}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{t.analytics.title}</span>
                         <div className={cn(
                           'w-10 h-5 rounded-full relative transition-colors duration-200',
-                          tempSettings.analytics ? 'bg-blue-600' : 'bg-slate-700'
+                          tempSettings.analytics ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'
                         )}>
                           <div className={cn(
                             'absolute top-1 left-1 w-3 h-3 rounded-full bg-white transition-transform duration-200',
@@ -163,7 +163,7 @@ export function CookieConsent() {
                           )} />
                         </div>
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">{t.analytics.desc}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed dark:text-slate-400">{t.analytics.desc}</p>
                     </div>
                   </div>
 
@@ -172,21 +172,21 @@ export function CookieConsent() {
                     onClick={() => setTempSettings(s => ({ ...s, marketing: !s.marketing }))}
                     className={cn(
                       'flex items-start gap-4 rounded-2xl border p-4 transition cursor-pointer',
-                      tempSettings.marketing ? 'border-purple-500/30 bg-purple-500/10' : 'border-white/5 bg-white/5 hover:bg-white/10'
+                      tempSettings.marketing ? 'border-purple-300 bg-purple-50 dark:border-purple-500/30 dark:bg-purple-500/10' : 'border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10'
                     )}
                   >
                     <div className={cn(
                       'mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                      tempSettings.marketing ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-500'
+                      tempSettings.marketing ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                     )}>
                       <Check className={cn('h-5 w-5 transition', tempSettings.marketing ? 'opacity-100 scale-100' : 'opacity-0 scale-50')} />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-white">{t.marketing.title}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{t.marketing.title}</span>
                         <div className={cn(
                           'w-10 h-5 rounded-full relative transition-colors duration-200',
-                          tempSettings.marketing ? 'bg-purple-600' : 'bg-slate-700'
+                          tempSettings.marketing ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'
                         )}>
                           <div className={cn(
                             'absolute top-1 left-1 w-3 h-3 rounded-full bg-white transition-transform duration-200',
@@ -194,7 +194,7 @@ export function CookieConsent() {
                           )} />
                         </div>
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">{t.marketing.desc}</p>
+                      <p className="text-xs text-slate-600 leading-relaxed dark:text-slate-400">{t.marketing.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -202,7 +202,7 @@ export function CookieConsent() {
                 <div className="flex gap-4">
                   <button
                     onClick={() => setShowDetails(false)}
-                    className="flex-1 px-6 py-4 text-sm font-bold text-slate-400 transition hover:text-white bg-white/5 rounded-2xl"
+                    className="flex-1 px-6 py-4 text-sm font-bold text-slate-600 transition hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-2xl dark:text-slate-400 dark:hover:text-white dark:bg-white/5"
                   >
                     {t.back}
                   </button>

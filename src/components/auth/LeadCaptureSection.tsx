@@ -56,12 +56,12 @@ export function LeadCaptureSection() {
   };
 
   return (
-    <section id="lead-magnet" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+    <section id="lead-magnet" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
       <div className="mx-auto max-w-3xl">
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-emerald-500/30 bg-gradient-to-b from-emerald-950/40 via-slate-900/95 to-slate-900 p-8 md:p-12 shadow-2xl shadow-emerald-500/10">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-emerald-200 bg-white p-8 md:p-12 shadow-xl shadow-emerald-500/10">
           {/* Background glow */}
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
-          <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-blue-600/10 blur-3xl" />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/60 blur-3xl" />
+          <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl" />
 
           <AnimatePresence mode="wait">
             {status === 'success' ? (
@@ -72,13 +72,13 @@ export function LeadCaptureSection() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="relative z-10 flex flex-col items-center justify-center py-8 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
                   {isDe ? 'Fast geschafft!' : 'You\'re almost there!'}
                 </h3>
-                <p className="text-slate-400 max-w-md">
+                <p className="text-slate-500 max-w-md">
                   {isDe
                     ? 'Wir senden dir die kostenlose Prüfungs-Checkliste in Kürze per E-Mail zu. Prüfe auch deinen Spam-Ordner.'
                     : 'Your free exam checklist is on its way to your inbox. Don\'t forget to check your spam folder.'
@@ -93,17 +93,17 @@ export function LeadCaptureSection() {
                 exit={{ opacity: 0 }}
                 className="relative z-10 text-center"
               >
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
                   <FileText className="h-8 w-8" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white sm:text-4xl leading-tight">
+                <h2 className="text-2xl font-bold text-slate-900 sm:text-4xl leading-tight">
                   {isDe
                     ? 'Hol dir deine kostenlose Checkliste für die deutsche Fahrprüfung'
                     : 'Get Your Free German Driving Exam Checklist'
                   }
                 </h2>
-                <p className="mt-4 text-slate-400 max-w-xl mx-auto text-sm sm:text-base">
+                <p className="mt-4 text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
                   {isDe
                     ? 'Alle Prüfungspunkte, häufige Fehler und Umschreibungs-Dokumente — kompakt direkt in dein Postfach.'
                     : 'Every exam checkpoint, common mistakes, and Umschreibung documents — straight to your inbox.'
@@ -117,12 +117,12 @@ export function LeadCaptureSection() {
                       {isDe ? 'Woher stammt dein aktueller Führerschein? (optional)' : 'Where is your current license from? (optional)'}
                     </label>
                     <div className="relative">
-                      <Globe className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
+                      <Globe className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-600" />
                       <select
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         data-testid="lead-country-select"
-                        className="w-full appearance-none rounded-2xl bg-slate-900/60 border border-white/10 py-4 pl-12 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all [&>option]:bg-slate-900"
+                        className="w-full appearance-none rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-10 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
                       >
                         <option value="">
                           {isDe ? '🆕 Ich mache meinen ersten Führerschein' : '🆕 I\'m getting my first license'}
@@ -142,7 +142,7 @@ export function LeadCaptureSection() {
 
                   <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
                   <div className="relative group flex-1 sm:max-w-md">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-600" />
                     <input
                       required
                       type="email"
@@ -150,7 +150,7 @@ export function LeadCaptureSection() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       data-testid="lead-email-input"
-                      className="w-full rounded-2xl bg-slate-900/60 border border-white/10 py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                      className="w-full rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-4 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
                     />
                   </div>
                   <button

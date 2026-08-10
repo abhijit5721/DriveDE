@@ -71,22 +71,22 @@ export function PwaInstallHint() {
   return (
     <div
       data-testid="pwa-install-hint"
-      className="fixed inset-x-3 bottom-3 z-[90] flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900/95 p-4 shadow-2xl backdrop-blur-xl sm:hidden"
+      className="fixed inset-x-3 bottom-3 z-[90] flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-2xl backdrop-blur-xl sm:hidden"
     >
       <img src="/icons/icon-192.png" alt="" className="h-10 w-10 shrink-0 rounded-xl" />
       <div className="min-w-0 flex-1 text-left">
-        <p className="text-sm font-bold text-white">
+        <p className="text-sm font-bold text-slate-900">
           {isDe ? 'DriveDE als App installieren' : 'Install DriveDE as an app'}
         </p>
         {isIos ? (
-          <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-slate-400">
-            <Share className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+          <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-slate-500">
+            <Share className="h-3.5 w-3.5 shrink-0 text-blue-600" />
             {isDe ? 'Teilen antippen, dann' : 'Tap Share, then'}
-            <PlusSquare className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+            <PlusSquare className="h-3.5 w-3.5 shrink-0 text-blue-600" />
             {isDe ? '„Zum Home-Bildschirm"' : '"Add to Home Screen"'}
           </p>
         ) : (
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p className="mt-0.5 text-xs text-slate-500">
             {isDe ? 'Schneller Zugriff, offline nutzbar' : 'Quick access, works offline'}
           </p>
         )}
@@ -103,7 +103,7 @@ export function PwaInstallHint() {
       <button
         onClick={dismiss}
         aria-label={isDe ? 'Hinweis schließen' : 'Dismiss'}
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-500 hover:text-white"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-500 hover:text-slate-900"
       >
         <X className="h-4 w-4" />
       </button>

@@ -50,17 +50,17 @@ export function TestimonialsSection() {
   ];
 
   return (
-    <section id="expat-stories" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
+    <section id="expat-stories" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
-          <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+          <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
             {isDe ? 'Für internationale Fahrer' : 'For international drivers'}
           </span>
-          <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl leading-tight">
+          <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
             {isDe ? 'Ausländischer Führerschein? ' : 'Foreign licence? '}
-            <span className="text-blue-400">{isDe ? 'So läuft die Umschreibung.' : 'Here is how conversion works.'}</span>
+            <span className="text-blue-600">{isDe ? 'So läuft die Umschreibung.' : 'Here is how conversion works.'}</span>
           </h2>
-          <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+          <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
             {isDe
               ? 'Was du tun musst, hängt von deinem Herkunftsland ab (Anlage 11 FeV). DriveDE kennt die Regeln für über 100 Länder.'
               : 'What you need to do depends on your country of origin (Anlage 11 FeV). DriveDE knows the rules for 100+ countries.'
@@ -76,18 +76,18 @@ export function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex flex-col rounded-3xl border border-slate-800 bg-slate-800/20 p-6 text-left transition hover:border-blue-500/30"
+              className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm p-6 text-left transition hover:border-blue-300"
             >
               <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                   <tier.icon className="h-6 w-6" />
                 </div>
-                <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                <span className="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
                   {tier.badge}
                 </span>
               </div>
-              <h3 className="mb-2 text-base font-bold text-white leading-snug">{tier.title}</h3>
-              <p className="text-sm leading-relaxed text-slate-400">{tier.text}</p>
+              <h3 className="mb-2 text-base font-bold text-slate-900 leading-snug">{tier.title}</h3>
+              <p className="text-sm leading-relaxed text-slate-500">{tier.text}</p>
             </motion.div>
           ))}
         </div>
@@ -96,9 +96,9 @@ export function TestimonialsSection() {
           {trustBadges.map((badge, i) => (
             <div
               key={i}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-800/40 px-5 py-2.5 text-sm font-bold text-slate-300"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-bold text-slate-600"
             >
-              <badge.icon className="h-4 w-4 text-blue-400" />
+              <badge.icon className="h-4 w-4 text-blue-600" />
               {badge.label}
             </div>
           ))}

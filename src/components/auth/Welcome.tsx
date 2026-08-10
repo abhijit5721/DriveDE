@@ -181,7 +181,7 @@ export function Welcome() {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-900 selection:bg-blue-500/30 text-slate-100">
+    <div className="relative min-h-screen w-full bg-gradient-to-b from-blue-50/80 via-white to-white selection:bg-blue-500/30 text-slate-900">
       {/* Plan Picker Overlay — shown after "Get Started" click */}
       {showPlanPicker && (
         <div className="fixed inset-0 z-[100] animate-fade-in overflow-hidden">
@@ -195,20 +195,10 @@ export function Welcome() {
           />
         </div>
       )}
-      {/* Background with Overlay */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop"
-          alt="Driving Background"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-900/65 to-slate-950/95" />
-      </div>
-
       {/* Navigation */}
       <nav className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled ? 'bg-slate-900/90 backdrop-blur-md py-3 shadow-xl border-b border-white/10' : 'bg-transparent py-6'
+        scrolled ? 'bg-white/90 backdrop-blur-md py-3 shadow-sm border-b border-slate-200' : 'bg-transparent py-6'
       )}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
           <button 
@@ -216,7 +206,7 @@ export function Welcome() {
             className="flex items-center gap-2 transition hover:opacity-80 active:scale-95"
           >
             <Logo className="h-10 w-10 select-none drop-shadow-[0_4px_8px_rgba(59,130,246,0.3)]" />
-            <span className="text-xl font-bold tracking-tighter text-white">
+            <span className="text-xl font-bold tracking-tighter text-slate-900">
               Drive<span className="text-blue-500">DE</span>
             </span>
           </button>
@@ -228,7 +218,7 @@ export function Welcome() {
                 key={link.name} 
                 href={link.href}
                 onClick={(e) => handleNavLinkClick(e, link.href)}
-                className="text-sm font-semibold text-slate-300 transition hover:text-white"
+                className="text-sm font-semibold text-slate-600 transition hover:text-slate-900"
               >
                 {link.name}
               </a>
@@ -244,7 +234,7 @@ export function Welcome() {
               <div className="flex items-center gap-3">
                 <button 
                   onClick={handleSignInClick}
-                  className="px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition"
+                  className="px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition"
                 >
                   {isDe ? 'Anmelden' : 'Sign In'}
                 </button>
@@ -258,28 +248,28 @@ export function Welcome() {
             )}
 
             {/* Language Switcher Desktop */}
-            <div className="flex items-center gap-1 ml-2 border-l border-slate-700/50 pl-4">
-              <button onClick={() => setLanguage('de')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'de' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:text-white')}>DE</button>
-              <button onClick={() => setLanguage('en')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'en' ? 'bg-blue-500 text-white shadow-md' : 'text-slate-400 hover:text-white')}>EN</button>
+            <div className="flex items-center gap-1 ml-2 border-l border-slate-200 pl-4">
+              <button onClick={() => setLanguage('de')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'de' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900')}>DE</button>
+              <button onClick={() => setLanguage('en')} className={cn('px-2.5 py-1 text-xs font-bold rounded-lg transition-all', language === 'en' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900')}>EN</button>
             </div>
           </div>
 
-          <button className="text-white md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button className="text-slate-900 md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-slate-900 p-6 shadow-2xl md:hidden border-b border-slate-800">
+          <div className="absolute top-full left-0 right-0 bg-white p-6 shadow-2xl md:hidden border-b border-slate-200">
             <div className="flex flex-col gap-5">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href} onClick={(e) => handleNavLinkClick(e, link.href)} className="text-lg font-bold text-white">{link.name}</a>
+                <a key={link.name} href={link.href} onClick={(e) => handleNavLinkClick(e, link.href)} className="text-lg font-bold text-slate-900">{link.name}</a>
               ))}
-              <div className="flex items-center gap-2 border-t border-slate-800 pt-4">
-                <span className="text-xs font-bold text-slate-400">Language:</span>
-                <button onClick={() => setLanguage('de')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'de' ? 'bg-blue-500 text-white' : 'text-slate-400')}>DE</button>
-                <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-500 text-white' : 'text-slate-400')}>EN</button>
+              <div className="flex items-center gap-2 border-t border-slate-200 pt-4">
+                <span className="text-xs font-bold text-slate-500">Language:</span>
+                <button onClick={() => setLanguage('de')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'de' ? 'bg-blue-600 text-white' : 'text-slate-500')}>DE</button>
+                <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-600 text-white' : 'text-slate-500')}>EN</button>
               </div>
               {isReturningUser ? (
                 <button onClick={() => handleStart()} className="rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white">
@@ -287,7 +277,7 @@ export function Welcome() {
                 </button>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <button onClick={handleSignInClick} className="rounded-xl bg-slate-800 py-3 text-base font-bold text-white border border-slate-700">
+                  <button onClick={handleSignInClick} className="rounded-xl bg-slate-900 py-3 text-base font-bold text-white">
                     {isDe ? 'Anmelden' : 'Sign In'}
                   </button>
                   <button onClick={() => handleStart('90-days', 'plan')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
@@ -303,19 +293,19 @@ export function Welcome() {
       {/* Hero Section */}
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400 backdrop-blur-md">
-            <Zap className="h-3.5 w-3.5 text-emerald-400 animate-pulse fill-emerald-400" />
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-emerald-700">
+            <Zap className="h-3.5 w-3.5 text-emerald-600 animate-pulse fill-emerald-400" />
             {isDe ? '7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : 'Includes 7-Day Free Pro Trial • No Credit Card Required'}
           </div>
 
-          <h1 className="mt-8 text-4xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl leading-tight">
+          <h1 className="mt-8 text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl md:text-7xl leading-tight">
             {t.welcome.hero.titlePrefix}
-            <span className="block mt-2 text-blue-400">
+            <span className="block mt-2 text-blue-600">
               {t.welcome.hero.titleHighlight}
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 sm:text-xl font-normal leading-relaxed">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 sm:text-xl font-normal leading-relaxed">
             {t.welcome.hero.subtitle}
           </p>
 
@@ -330,25 +320,25 @@ export function Welcome() {
             </button>
             <button 
               onClick={() => setShowDemo(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-8 py-5 text-lg font-bold text-white backdrop-blur-md transition hover:bg-white/20 border border-white/10"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-5 text-lg font-bold text-slate-900 transition hover:bg-slate-50 border border-slate-200 shadow-sm"
             >
-              <Play className="h-5 w-5 text-blue-400" />
+              <Play className="h-5 w-5 text-blue-600" />
               {t.common.watchDemo}
             </button>
           </div>
 
           {/* Trust strip — only claims that are verifiably true */}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-400 text-sm font-medium">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
               {isDe ? '100% DSGVO-konform' : '100% GDPR compliant'}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-blue-400" />
+              <MapPin className="h-4 w-4 text-blue-600" />
               {isDe ? 'Entwickelt in Hamburg' : 'Built in Hamburg'}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Globe className="h-4 w-4 text-blue-400" />
+              <Globe className="h-4 w-4 text-blue-600" />
               {isDe ? 'Deutsch & Englisch' : 'German & English'}
             </span>
           </div>
@@ -398,16 +388,16 @@ export function Welcome() {
       </main>
 
       {/* 💡 Problem vs Solution: Why Driving in Germany Costs €3,000+ */}
-      <section id="problem-solution" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+      <section id="problem-solution" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl text-left">
           <div className="text-center mb-16">
-            <span className="rounded-full bg-slate-500/10 border border-slate-500/20 px-4 py-1.5 text-xs font-bold text-slate-300 uppercase tracking-widest">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
               {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ Driving School Problem'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl leading-tight">
-              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span className="text-emerald-400">{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
+            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
+              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span className="text-emerald-600">{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
             </h2>
-            <p className="mt-4 text-slate-300 max-w-2xl mx-auto text-base">
+            <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-base">
               {isDe 
                 ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Die meisten Fahrschüler brauchen 35–45+ Stunden, weil sie rein nach Versuch und Irrtum lernen.'
                 : 'In Germany, driving lessons (Fahrstunden) cost up to €95 per hour. Most students take 35–45+ hours because they learn purely by trial and error.'
@@ -417,40 +407,40 @@ export function Welcome() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
             {/* Old Way (Expensive & Slow) */}
-            <div className="rounded-3xl border border-red-500/30 bg-red-950/20 p-8 text-left backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+            <div className="rounded-3xl border border-red-200 bg-red-50 p-8 text-left backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/20 text-red-400 font-black text-xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 font-black text-xl">
                     ✕
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">{isDe ? 'Der alte teure Weg' : 'The Old Expensive Way'}</h3>
-                    <p className="text-xs text-red-400 font-semibold">{isDe ? 'Ohne DriveDE' : 'Without DriveDE'}</p>
+                    <h3 className="text-xl font-bold text-slate-900">{isDe ? 'Der alte teure Weg' : 'The Old Expensive Way'}</h3>
+                    <p className="text-xs text-red-600 font-semibold">{isDe ? 'Ohne DriveDE' : 'Without DriveDE'}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
-                    <Coins className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                    <Coins className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€–95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€–95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
-                    <Clock className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                    <Clock className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? '38% Durchfallquote beim 1. Versuch' : '38% First-Time Failure Rate'}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Durchfallen kostet 600€+ für Pflicht-Zusatzstunden und Prüfungsgebühren.' : 'Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? '38% Durchfallquote beim 1. Versuch' : '38% First-Time Failure Rate'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchfallen kostet 600€+ für Pflicht-Zusatzstunden und Prüfungsgebühren.' : 'Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-red-950/40 p-4 border border-red-500/20">
-                    <Shield className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                    <Shield className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready — leaving you dependent on guesswork.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready — leaving you dependent on guesswork.'}</p>
                     </div>
                   </div>
                 </div>
@@ -458,44 +448,44 @@ export function Welcome() {
             </div>
 
             {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
-            <div className="relative rounded-3xl border-2 border-emerald-500/50 bg-gradient-to-b from-emerald-950/40 via-slate-900/95 to-slate-900 p-8 text-left shadow-2xl shadow-emerald-500/15 backdrop-blur-xl flex flex-col justify-between">
+            <div className="relative rounded-3xl border-2 border-emerald-300 bg-emerald-50 p-8 text-left shadow-xl shadow-emerald-500/10 flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 px-4 py-1 text-xs font-bold text-slate-950 shadow-md">
                 {isDe ? 'DER DRIVEDE VORTEIL' : 'THE DRIVEDE ADVANTAGE'}
               </span>
 
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 font-black text-xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 font-black text-xl">
                     ✓
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">{isDe ? 'Der smarte DriveDE Weg' : 'The DriveDE Smart Way'}</h3>
-                    <p className="text-xs text-emerald-400 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
+                    <h3 className="text-xl font-bold text-slate-900">{isDe ? 'Der smarte DriveDE Weg' : 'The DriveDE Smart Way'}</h3>
+                    <p className="text-xs text-emerald-600 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
-                    <Coins className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
+                    <Coins className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? '800€ – 1.200€ an Fahrstunden sparen' : 'Save €800 – €1,200 in Driving Hours'}</p>
-                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? '800€ – 1.200€ an Fahrstunden sparen' : 'Save €800 – €1,200 in Driving Hours'}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? 'Kein Durchfallen wegen Tempolimit' : 'Zero Speed Limit Exam Failures'}</p>
-                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Echtzeit OpenStreetMap GPS-Warnungen verhindern die häufigste Ursache für Prüfungsausfälle.' : 'Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? 'Kein Durchfallen wegen Tempolimit' : 'Zero Speed Limit Exam Failures'}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Echtzeit OpenStreetMap GPS-Warnungen verhindern die häufigste Ursache für Prüfungsausfälle.' : 'Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-emerald-950/40 p-4 border border-emerald-500/30">
-                    <Award className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
+                    <Award className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-white">{isDe ? '100% objektive Prüfungsreife' : '100% Objective Exam Readiness Score'}</p>
-                      <p className="text-xs text-slate-300 mt-0.5">{isDe ? 'Erkenne genau den Tag, an dem du 90%+ Prüfungsreife erreichst.' : 'Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? '100% objektive Prüfungsreife' : '100% Objective Exam Readiness Score'}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Erkenne genau den Tag, an dem du 90%+ Prüfungsreife erreichst.' : 'Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.'}</p>
                     </div>
                   </div>
                 </div>
@@ -504,21 +494,21 @@ export function Welcome() {
           </div>
 
           {/* 📚 "More than a theory app" — intercepts Theorie-App search intent and reframes it */}
-          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-blue-500/20 bg-blue-950/20 p-8 text-center backdrop-blur-xl">
-            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-blue-200 bg-blue-50 p-8 text-center">
+            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
               {isDe ? 'Mehr als eine Theorie-App' : 'More Than a Theory App'}
             </span>
-            <h3 className="mt-4 text-2xl font-bold text-white sm:text-3xl">
+            <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">
               {isDe
                 ? 'Führerschein Theorie-Apps bringen dich nur bis zur Theorieprüfung'
                 : 'Theory apps only get you through the theory exam'}
             </h3>
-            <p className="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {isDe
                 ? 'Der wirklich teure Teil beginnt danach: die praktischen Fahrstunden. Was dein Fahrlehrer dir beibringt — Schulterblick, Einparken, Auffahren auf die Autobahn — findest du in keiner Theorie-App und kaum im Internet erklärt.'
                 : 'The truly expensive part starts after: your practical driving lessons. What your instructor teaches you — Schulterblick, parking maneuvers, Autobahn merging — isn\'t in any theory app, and searching the internet for it lesson by lesson gets you nowhere.'}
             </p>
-            <p className="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed font-semibold">
+            <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed font-semibold">
               {isDe
                 ? 'DriveDE bringt genau dieses Wissen auf dein Handy: Theorie lernen und die praktische Fahrprüfung meistern — alles in einer App.'
                 : 'DriveDE puts exactly that knowledge at your fingertips: learn theory and master the practical exam — everything in one app.'}
@@ -531,14 +521,14 @@ export function Welcome() {
       <TestimonialsSection />
 
       {/* 🚀 How It Works Section */}
-      <section id="how-it-works" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+      <section id="how-it-works" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
               {isDe ? 'Einfacher 3-Schritte Ablauf' : 'Simple 3-Step Process'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
-            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
+            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
               {isDe 
                 ? 'Von deiner ersten Fahrstunde bis zum Erhalt deines Führerscheins.'
                 : 'From your very first Fahrstunde to receiving your official Führerschein.'
@@ -576,13 +566,13 @@ export function Welcome() {
                 color: 'from-emerald-500 to-teal-600'
               }
             ].map((s, i) => (
-              <div key={i} className="relative rounded-3xl border border-slate-800 bg-slate-900/60 p-8 text-left transition hover:border-blue-500/40 hover:scale-[1.02]">
+              <div key={i} className="relative rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left transition hover:border-blue-300 hover:scale-[1.02]">
                 <div className={cn('mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-xl', s.color)}>
                   <s.icon className="h-7 w-7" />
                 </div>
-                <span className="absolute top-8 right-8 text-4xl font-black text-slate-800">{s.step}</span>
-                <h3 className="mb-3 text-xl font-bold text-white">{s.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-sm">{s.desc}</p>
+                <span className="absolute top-8 right-8 text-4xl font-black text-slate-200">{s.step}</span>
+                <h3 className="mb-3 text-xl font-bold text-slate-900">{s.title}</h3>
+                <p className="text-slate-500 leading-relaxed text-sm">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -605,13 +595,13 @@ export function Welcome() {
       </section>
 
       {/* 📱 Inside the app — three real screens (DRI-14: show, don't tell) */}
-      <section id="app-preview" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-white/10">
+      <section id="app-preview" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-14 text-center">
-            <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 text-xs font-bold text-blue-400 uppercase tracking-widest">
+            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
               {isDe ? 'Ein Blick in die App' : 'A look inside the app'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">
+            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">
               {isDe ? 'Echte Screenshots, echte App' : 'Real screenshots, real app'}
             </h2>
           </div>
@@ -645,8 +635,8 @@ export function Welcome() {
                     decoding="async"
                   />
                 </PhoneFrame>
-                <h3 className="mt-5 text-base font-bold text-white">{item.title}</h3>
-                <p className="mt-1 max-w-[260px] text-sm text-slate-400">{item.desc}</p>
+                <h3 className="mt-5 text-base font-bold text-slate-900">{item.title}</h3>
+                <p className="mt-1 max-w-[260px] text-sm text-slate-500">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -654,11 +644,11 @@ export function Welcome() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
+      <section id="features" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">{t.welcome.features.title}</h2>
-            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">{t.welcome.features.subtitle}</p>
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{t.welcome.features.title}</h2>
+            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">{t.welcome.features.subtitle}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -667,12 +657,12 @@ export function Welcome() {
               { icon: BadgeCheck, title: t.welcome.features.maneuverReplay.title, desc: t.welcome.features.maneuverReplay.desc },
               { icon: Users, title: t.welcome.features.instructorSync.title, desc: t.welcome.features.instructorSync.desc }
             ].map((f, i) => (
-              <div key={i} className="group rounded-3xl border border-slate-800 bg-slate-800/20 p-8 transition hover:border-blue-500/30">
+              <div key={i} className="group rounded-3xl border border-slate-200 bg-white shadow-sm p-8 transition hover:border-blue-300">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-500">
                   <f.icon className="h-8 w-8" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-white">{f.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-sm">{f.desc}</p>
+                <h3 className="mb-3 text-xl font-bold text-slate-900">{f.title}</h3>
+                <p className="text-slate-500 leading-relaxed text-sm">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -695,20 +685,20 @@ export function Welcome() {
       </section>
 
       {/* 💳 Transparent Pricing Comparison Section */}
-      <section id="pricing" className="relative z-10 bg-slate-950/90 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+      <section id="pricing" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-bold text-emerald-400 uppercase tracking-widest">
+            <span className="rounded-full bg-emerald-50 border border-emerald-200 px-4 py-1.5 text-xs font-bold text-emerald-600 uppercase tracking-widest">
               {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
-            <p className="mt-4 text-slate-400 max-w-xl mx-auto">
+            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
+            <p className="mt-4 text-slate-500 max-w-xl mx-auto">
               {isDe
                 ? 'Starte heute kostenlos. Schalte Pro frei, wenn du bereit für GPS-Tracking & KI-Coaching bist.'
                 : 'Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.'
               }
             </p>
-            <p className="mt-3 text-sm font-semibold text-emerald-400 max-w-xl mx-auto">
+            <p className="mt-3 text-sm font-semibold text-emerald-600 max-w-xl mx-auto">
               {isDe
                 ? 'Jeder Pass enthält alle Pro-Funktionen — du wählst nur, wie lange du Zugang brauchst.'
                 : 'Every pass includes all Pro features — you only choose how long you need access.'
@@ -718,19 +708,19 @@ export function Welcome() {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3 items-stretch">
             {/* 30 Days Pass */}
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{isDe ? '30-Tage Pass' : '30-Day Pass'}</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? '30-Tage Pass' : '30-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">€9.99</span>
+                  <span className="text-4xl font-black text-slate-900">€9.99</span>
                   <span className="text-slate-500 text-sm">{isDe ? '/ 30 Tage' : '/ 30 days'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-400">{isDe ? 'Ideal für die gezielte Prüfungsvorbereitung in den letzten Wochen.' : 'Great for quick exam prep in your final driving weeks.'}</p>
+                <p className="mt-3 text-sm text-slate-500">{isDe ? 'Ideal für die gezielte Prüfungsvorbereitung in den letzten Wochen.' : 'Great for quick exam prep in your final driving weeks.'}</p>
                 <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Voller Pro-Zugang, 30 Tage lang' : 'Full Pro access, for 30 days'}</p>
                 <div className="mt-4 space-y-4">
                   {proFeatures.map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
-                      <Check className="h-4 w-4 text-slate-400 shrink-0" />
+                    <div key={i} className="flex items-center gap-3 text-xs text-slate-600">
+                      <Check className="h-4 w-4 text-slate-500 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -738,29 +728,29 @@ export function Welcome() {
               </div>
               <button 
                 onClick={() => handleStart('30-days', 'signup', false, 'buy')} 
-                className="mt-10 w-full rounded-2xl bg-slate-800 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
+                className="mt-10 w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white transition hover:bg-slate-800"
               >
                 {isDe ? '30-Tage Pass wählen' : 'Get 30-Day Pass'}
               </button>
             </div>
 
             {/* 90 Days Pass (Most Popular) */}
-            <div className="relative rounded-3xl border-2 border-blue-500 bg-gradient-to-b from-blue-950/40 via-slate-900/90 to-slate-900 p-8 text-left shadow-2xl shadow-blue-500/20 flex flex-col justify-between">
+            <div className="relative rounded-3xl border-2 border-blue-500 bg-white p-8 text-left shadow-xl shadow-blue-500/10 flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 text-xs font-bold text-white shadow-md">
                 {isDe ? 'BELIEBTESTE WAHL' : 'MOST POPULAR'}
               </span>
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">{isDe ? '90-Tage Pass' : '90-Day Pass'}</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-blue-600">{isDe ? '90-Tage Pass' : '90-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">€19.99</span>
-                  <span className="text-slate-400 text-sm">{isDe ? '/ 90 Tage' : '/ 90 days'}</span>
+                  <span className="text-4xl font-black text-slate-900">€19.99</span>
+                  <span className="text-slate-500 text-sm">{isDe ? '/ 90 Tage' : '/ 90 days'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-300">{isDe ? 'Deckt deine gesamte Fahrschulausbildung von der 1. Stunde bis zur Prüfung ab.' : 'Covers your complete driving school journey from day 1 to exam.'}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-blue-400">{isDe ? 'Voller Pro-Zugang, 90 Tage lang' : 'Full Pro access, for 90 days'}</p>
+                <p className="mt-3 text-sm text-slate-600">{isDe ? 'Deckt deine gesamte Fahrschulausbildung von der 1. Stunde bis zur Prüfung ab.' : 'Covers your complete driving school journey from day 1 to exam.'}</p>
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-blue-600">{isDe ? 'Voller Pro-Zugang, 90 Tage lang' : 'Full Pro access, for 90 days'}</p>
                 <div className="mt-4 space-y-4">
                   {proFeatures.map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-xs text-white">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <div key={i} className="flex items-center gap-3 text-xs text-slate-900">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -775,15 +765,15 @@ export function Welcome() {
             </div>
 
             {/* Lifetime Access */}
-            <div className="rounded-3xl border border-slate-700 bg-slate-900/50 p-8 text-left backdrop-blur-xl flex flex-col justify-between">
+            <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{isDe ? 'Lebenslanger Zugang' : 'Lifetime Access'}</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Lebenslanger Zugang' : 'Lifetime Access'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">€29.99</span>
+                  <span className="text-4xl font-black text-slate-900">€29.99</span>
                   <span className="text-slate-500 text-sm">{isDe ? '/ einmalig' : '/ one-time'}</span>
                 </div>
-                <p className="mt-3 text-sm text-slate-400">{isDe ? 'Dauerhafter Zugang zu allen aktuellen & zukünftigen DriveDE Updates.' : 'Lifetime access to all current & future DriveDE updates.'}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-400">{isDe ? 'Voller Pro-Zugang, ohne Ablaufdatum' : 'Full Pro access, never expires'}</p>
+                <p className="mt-3 text-sm text-slate-500">{isDe ? 'Dauerhafter Zugang zu allen aktuellen & zukünftigen DriveDE Updates.' : 'Lifetime access to all current & future DriveDE updates.'}</p>
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Voller Pro-Zugang, ohne Ablaufdatum' : 'Full Pro access, never expires'}</p>
                 <div className="mt-4 space-y-4">
                   {[
                     isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in the 90-Day Pass',
@@ -791,8 +781,8 @@ export function Welcome() {
                     isDe ? 'Alle zukünftigen Funktionen inklusive' : 'All future features included',
                     isDe ? 'Priorisierter Support' : 'Priority support'
                   ].map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
-                      <Check className="h-4 w-4 text-slate-400 shrink-0" />
+                    <div key={i} className="flex items-center gap-3 text-xs text-slate-600">
+                      <Check className="h-4 w-4 text-slate-500 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -800,7 +790,7 @@ export function Welcome() {
               </div>
               <button 
                 onClick={() => handleStart('lifetime', 'signup', false, 'buy')} 
-                className="mt-10 w-full rounded-2xl bg-slate-800 border border-slate-600 py-4 text-sm font-bold text-white transition hover:bg-slate-700"
+                className="mt-10 w-full rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white transition hover:bg-slate-800"
               >
                 {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}
               </button>
@@ -810,28 +800,28 @@ export function Welcome() {
       </section>
 
       {/* ❓ Interactive FAQ Accordion Section */}
-      <section id="faq" className="relative z-10 bg-slate-950/80 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+      <section id="faq" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-4xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Häufig gestellte Fragen (FAQ)' : 'Frequently Asked Questions'}</h2>
-            <p className="mt-4 text-slate-400">{isDe ? 'Alles was du über die Vorbereitung mit DriveDE wissen musst.' : 'Everything you need to know about preparing with DriveDE.'}</p>
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Häufig gestellte Fragen (FAQ)' : 'Frequently Asked Questions'}</h2>
+            <p className="mt-4 text-slate-500">{isDe ? 'Alles was du über die Vorbereitung mit DriveDE wissen musst.' : 'Everything you need to know about preparing with DriveDE.'}</p>
           </div>
 
           <div className="space-y-4">
             {faqs.map((faq, i) => (
               <div 
                 key={i} 
-                className="rounded-2xl border border-slate-800 bg-slate-900/60 text-left overflow-hidden transition"
+                className="rounded-2xl border border-slate-200 bg-white shadow-sm text-left overflow-hidden transition"
               >
                 <button 
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="flex w-full items-center justify-between p-6 text-lg font-bold text-white hover:text-blue-400 transition"
+                  className="flex w-full items-center justify-between p-6 text-lg font-bold text-slate-900 hover:text-blue-600 transition"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={cn('h-5 w-5 text-slate-400 transition-transform duration-200', openFaq === i && 'rotate-180 text-blue-400')} />
+                  <ChevronDown className={cn('h-5 w-5 text-slate-500 transition-transform duration-200', openFaq === i && 'rotate-180 text-blue-600')} />
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-6 text-sm text-slate-400 leading-relaxed border-t border-slate-800/50 pt-4">
+                  <div className="px-6 pb-6 text-sm text-slate-500 leading-relaxed border-t border-slate-100/50 pt-4">
                     {faq.a}
                   </div>
                 )}
@@ -842,11 +832,11 @@ export function Welcome() {
       </section>
 
       {/* Feedback & Support Section */}
-      <section id="feedback" className="relative z-10 bg-slate-900 px-6 py-24 border-t border-slate-800">
+      <section id="feedback" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
-            <p className="mt-4 text-slate-400 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
+            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
               {isDe 
                 ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht – wir freuen uns von dir zu hören.'
                 : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
@@ -859,11 +849,11 @@ export function Welcome() {
       </section>
 
       {/* Path Info Area */}
-      <section id="paths" className="relative z-10 bg-slate-900/80 px-6 py-24 backdrop-blur-xl border-t border-slate-800">
+      <section id="paths" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">{t.common.selectGoal}</h2>
-            <p className="mt-4 text-slate-400">{t.common.startPersonalized}</p>
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">{t.common.selectGoal}</h2>
+            <p className="mt-4 text-slate-500">{t.common.startPersonalized}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -899,8 +889,8 @@ export function Welcome() {
                   });
                 }}
                 className={cn(
-                  'group relative flex flex-col items-start rounded-[2.5rem] border border-white/10 bg-slate-800/40 p-10 text-left transition-all hover:border-white/20 hover:bg-slate-800/60 overflow-hidden cursor-pointer',
-                  'shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl'
+                  'group relative flex flex-col items-start rounded-[2.5rem] border border-slate-200 bg-white p-10 text-left transition-all hover:border-slate-300 overflow-hidden cursor-pointer',
+                  'shadow-xl shadow-slate-900/5'
                 )}
                 data-testid={path.id === 'conversion' ? 'path-umschreibung' : 'path-standard'}
               >
@@ -910,19 +900,19 @@ export function Welcome() {
                 )} />
 
                 <div className={cn('flex h-16 w-16 items-center justify-center rounded-2xl mb-8 shadow-2xl relative z-10', 
-                  'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  'bg-blue-500/20 text-blue-600 border border-blue-500/30'
                 )}>
                   <path.icon className="h-9 w-9" />
                 </div>
 
                 <div className="flex-1 w-full relative z-10">
-                  <h3 className="text-3xl font-bold text-white mb-4 tracking-tight">{path.title}</h3>
-                  <p className="text-base text-slate-400 leading-relaxed mb-8">{path.desc}</p>
+                  <h3 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">{path.title}</h3>
+                  <p className="text-base text-slate-500 leading-relaxed mb-8">{path.desc}</p>
                   
                   <div className="space-y-4 mb-10">
                     {path.features.slice(0, 3).map((feature: string, fIdx: number) => (
-                      <div key={fIdx} className="flex items-center gap-3 text-sm text-slate-300">
-                        <CheckCircle2 className={cn('h-4 w-4', 'text-blue-400')} />
+                      <div key={fIdx} className="flex items-center gap-3 text-sm text-slate-600">
+                        <CheckCircle2 className={cn('h-4 w-4', 'text-blue-600')} />
                         {feature}
                       </div>
                     ))}
@@ -942,10 +932,10 @@ export function Welcome() {
                         });
                       }}
                       data-testid="manual-btn"
-                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
+                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-slate-100 p-6 transition-all hover:bg-slate-200 active:scale-95 border border-slate-200 hover:border-slate-300"
                     >
                       <Cog className="h-6 w-6 text-orange-400 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.manual}</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.manual}</span>
                     </button>
 
                     <button
@@ -961,10 +951,10 @@ export function Welcome() {
                         });
                       }}
                       data-testid="automatic-btn"
-                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-white/5 p-6 transition-all hover:bg-white/10 active:scale-95 border border-white/5 hover:border-white/20"
+                      className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-slate-100 p-6 transition-all hover:bg-slate-200 active:scale-95 border border-slate-200 hover:border-slate-300"
                     >
-                      <Zap className="h-6 w-6 text-blue-400 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-white/70 group-hover/btn:text-white">{t.common.transmissions.automatic}</span>
+                      <Zap className="h-6 w-6 text-blue-600 transition-transform group-hover/btn:rotate-12" />
+                      <span className="text-xs font-bold uppercase tracking-widest text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.automatic}</span>
                     </button>
                   </div>
                 </div>
@@ -989,15 +979,15 @@ export function Welcome() {
       <LeadCaptureSection />
 
       {/* 🏢 Tech-Company 4-Column Footer */}
-      <footer className="relative z-10 border-t border-slate-800 bg-slate-950 px-6 py-16 text-left">
+      <footer className="relative z-10 border-t border-slate-200 bg-slate-50 px-6 py-16 text-left">
         <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Col 1: Brand Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Logo className="h-7 w-7" />
-              <span className="text-xl font-bold tracking-tighter text-white">DriveDE</span>
+              <span className="text-xl font-bold tracking-tighter text-slate-900">DriveDE</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               {isDe 
                 ? 'DriveDE ist Deutschlands führende KI-gestützte Plattform zur Vorbereitung auf die Fahrprüfung. Fahrstunden per GPS aufzeichnen, Manöver meistern & im 1. Versuch bestehen.'
                 : 'DriveDE is Germany\'s premier AI-powered driving preparation platform. Track driving lessons, master maneuvers, and ace your Fahrprüfung on the first try.'
@@ -1008,37 +998,37 @@ export function Welcome() {
 
           {/* Col 2: Product */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Produkt' : 'Product'}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#how-it-works" className="hover:text-white transition">{isDe ? 'So funktioniert\'s' : 'How It Works'}</a></li>
-              <li><a href="#features" className="hover:text-white transition">{isDe ? 'Funktionen & GPS-Tracker' : 'Features & GPS Tracker'}</a></li>
-              <li><a href="#pricing" className="hover:text-white transition">{isDe ? 'DriveDE Pro Preise' : 'DriveDE Pro Pricing'}</a></li>
-              <li><a href="#paths" className="hover:text-white transition">{isDe ? 'Umschreibungs-Modus' : 'Umschreibung Mode'}</a></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Produkt' : 'Product'}</h4>
+            <ul className="space-y-2.5 text-xs text-slate-500">
+              <li><a href="#how-it-works" className="hover:text-slate-900 transition">{isDe ? 'So funktioniert\'s' : 'How It Works'}</a></li>
+              <li><a href="#features" className="hover:text-slate-900 transition">{isDe ? 'Funktionen & GPS-Tracker' : 'Features & GPS Tracker'}</a></li>
+              <li><a href="#pricing" className="hover:text-slate-900 transition">{isDe ? 'DriveDE Pro Preise' : 'DriveDE Pro Pricing'}</a></li>
+              <li><a href="#paths" className="hover:text-slate-900 transition">{isDe ? 'Umschreibungs-Modus' : 'Umschreibung Mode'}</a></li>
             </ul>
           </div>
 
           {/* Col 3: Company */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Unternehmen' : 'Company'}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><a href="#expat-stories" className="hover:text-white transition">{isDe ? 'Für Expats & Umschreibung' : 'For Expats & Umschreibung'}</a></li>
-              <li><a href="#feedback" className="hover:text-white transition">{isDe ? 'Kontakt & Support' : 'Contact & Support'}</a></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Unternehmen' : 'Company'}</h4>
+            <ul className="space-y-2.5 text-xs text-slate-500">
+              <li><a href="#expat-stories" className="hover:text-slate-900 transition">{isDe ? 'Für Expats & Umschreibung' : 'For Expats & Umschreibung'}</a></li>
+              <li><a href="#feedback" className="hover:text-slate-900 transition">{isDe ? 'Kontakt & Support' : 'Contact & Support'}</a></li>
             </ul>
           </div>
 
           {/* Col 4: Legal & Compliance */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-white mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><button onClick={() => setLegalPage('impressum')} className="hover:text-white transition">Impressum</button></li>
-              <li><button onClick={() => setLegalPage('privacy')} className="hover:text-white transition">{isDe ? 'Datenschutz' : 'Privacy Policy'}</button></li>
-              <li><button onClick={() => setLegalPage('terms')} className="hover:text-white transition">{isDe ? 'AGB' : 'Terms'}</button></li>
-              <li><a href="#faq" className="hover:text-white transition">FAQ</a></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h4>
+            <ul className="space-y-2.5 text-xs text-slate-500">
+              <li><button onClick={() => setLegalPage('impressum')} className="hover:text-slate-900 transition">Impressum</button></li>
+              <li><button onClick={() => setLegalPage('privacy')} className="hover:text-slate-900 transition">{isDe ? 'Datenschutz' : 'Privacy Policy'}</button></li>
+              <li><button onClick={() => setLegalPage('terms')} className="hover:text-slate-900 transition">{isDe ? 'AGB' : 'Terms'}</button></li>
+              <li><a href="#faq" className="hover:text-slate-900 transition">FAQ</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="mx-auto max-w-7xl mt-12 border-t border-slate-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="mx-auto max-w-7xl mt-12 border-t border-slate-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© 2026 DriveDE. {t.common.allRightsReserved}</p>
           <div className="flex items-center gap-4">
             <span>Made with ❤️ in Hamburg, Germany</span>
@@ -1049,7 +1039,7 @@ export function Welcome() {
       </footer>
 
       {legalPage && (
-        <div className="fixed inset-0 z-[110] overflow-y-auto bg-slate-100 dark:bg-slate-950">
+        <div className="fixed inset-0 z-[110] overflow-y-auto bg-slate-100">
           <div className="mx-auto max-w-3xl px-4 py-8">
             <LegalPage page={legalPage} onBack={() => setLegalPage(null)} />
           </div>

@@ -789,7 +789,7 @@ export default function App() {
     
     if (!hasVisited && !isNative) {
       return (
-        <Suspense fallback={<div className="h-screen bg-slate-900" />}>
+        <Suspense fallback={<div className="h-screen bg-slate-50" />}>
           <Welcome />
         </Suspense>
       );
