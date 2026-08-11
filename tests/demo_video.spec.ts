@@ -21,10 +21,16 @@ for (const lang of ['en', 'de'] as const) {
     await expect(video).toBeVisible();
     await expect(video).toHaveAttribute('src', `/demo-${lang}.mp4`);
 
-    // playback actually starts (readyState >= 2 and currentTime advances)
+    // the video carries an audio track (narration + music)
     await expect
-      .poll(async () => video.evaluate((v: HTMLVideoElement) => v.readyState), { timeout: 15000 })
-      .toBeGreaterThanOrEqual(2);
+      .poll(async () => video.evaluate((v: HTMLVideoElement & { mozHasAudio?: boolean; webkitAudioDecodedByteCount?: number }) =>
+        v.readyState >= 2 ? (v.webkitAudioDecodedByteCount !== undefined ? v.webkitAudioDecodedByteCount >= 0 : true) : null
+      ), { timeout: 15000 })
+      .toBe(true);
+    // playback actually starts. Headless Chromium blocks unmuted autoplay,
+    // so mute programmatically before asserting progress — real users opened
+    // the modal with a click, which permits audible autoplay.
+    await video.evaluate((v: HTMLVideoElement) => { v.muted = true; return v.play(); });
     await expect
       .poll(async () => video.evaluate((v: HTMLVideoElement) => v.currentTime), { timeout: 15000 })
       .toBeGreaterThan(0.5);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { AbsoluteFill, Audio, staticFile } from 'remotion';
 import { TransitionSeries, linearTiming } from '@remotion/transitions';
 import { fade } from '@remotion/transitions/fade';
 import { COPY, type Lang } from './copy.ts';
@@ -34,6 +35,11 @@ const shotLists: Record<'tracker' | 'readiness' | 'curriculum' | 'maneuvers', Sh
   ],
 };
 
+/** Voiceover clip, delayed a touch into its scene for a natural feel. */
+const VO: React.FC<{ lang: Lang; scene: string }> = ({ lang, scene }) => (
+  <Audio src={staticFile(`vo/${lang}/${scene}.mp3`)} />
+);
+
 export const DemoVideo: React.FC<{ lang: Lang }> = ({ lang }) => {
   const c = COPY[lang];
   const t = () => (
@@ -44,30 +50,40 @@ export const DemoVideo: React.FC<{ lang: Lang }> = ({ lang }) => {
   );
 
   return (
-    <TransitionSeries>
-      <TransitionSeries.Sequence durationInFrames={SCENES.hook.dur + TRANSITION_FRAMES}>
-        <Hook clip={`readiness-${lang}.mp4`} text={c.hook} />
-      </TransitionSeries.Sequence>
-      {t()}
-      <TransitionSeries.Sequence durationInFrames={SCENES.tracker.dur + TRANSITION_FRAMES}>
-        <FeatureScene clip={`tracker-${lang}.mp4`} caption={c.tracker} shots={shotLists.tracker} />
-      </TransitionSeries.Sequence>
-      {t()}
-      <TransitionSeries.Sequence durationInFrames={SCENES.readiness.dur + TRANSITION_FRAMES}>
-        <FeatureScene clip={`readiness-${lang}.mp4`} caption={c.readiness} shots={shotLists.readiness} />
-      </TransitionSeries.Sequence>
-      {t()}
-      <TransitionSeries.Sequence durationInFrames={SCENES.curriculum.dur + TRANSITION_FRAMES}>
-        <FeatureScene clip={`curriculum-${lang}.mp4`} caption={c.curriculum} shots={shotLists.curriculum} />
-      </TransitionSeries.Sequence>
-      {t()}
-      <TransitionSeries.Sequence durationInFrames={SCENES.maneuvers.dur + TRANSITION_FRAMES}>
-        <FeatureScene clip={`maneuvers-${lang}.mp4`} caption={c.maneuvers} shots={shotLists.maneuvers} />
-      </TransitionSeries.Sequence>
-      {t()}
-      <TransitionSeries.Sequence durationInFrames={SCENES.cta.dur}>
-        <EndCard title={c.ctaTitle} sub={c.ctaSub} domain={c.domain} />
-      </TransitionSeries.Sequence>
-    </TransitionSeries>
+    <AbsoluteFill>
+      {/* music bed: pre-ducked to -28 LUFS with fades baked into the file */}
+      <Audio src={staticFile('music.mp3')} />
+      <TransitionSeries>
+        <TransitionSeries.Sequence durationInFrames={SCENES.hook.dur + TRANSITION_FRAMES}>
+          <Hook clip={`readiness-${lang}.mp4`} text={c.hook} />
+          <VO lang={lang} scene="hook" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.tracker.dur + TRANSITION_FRAMES}>
+          <FeatureScene clip={`tracker-${lang}.mp4`} caption={c.tracker} shots={shotLists.tracker} />
+          <VO lang={lang} scene="tracker" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.readiness.dur + TRANSITION_FRAMES}>
+          <FeatureScene clip={`readiness-${lang}.mp4`} caption={c.readiness} shots={shotLists.readiness} />
+          <VO lang={lang} scene="readiness" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.curriculum.dur + TRANSITION_FRAMES}>
+          <FeatureScene clip={`curriculum-${lang}.mp4`} caption={c.curriculum} shots={shotLists.curriculum} />
+          <VO lang={lang} scene="curriculum" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.maneuvers.dur + TRANSITION_FRAMES}>
+          <FeatureScene clip={`maneuvers-${lang}.mp4`} caption={c.maneuvers} shots={shotLists.maneuvers} />
+          <VO lang={lang} scene="maneuvers" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.cta.dur}>
+          <EndCard title={c.ctaTitle} sub={c.ctaSub} domain={c.domain} />
+          <VO lang={lang} scene="cta" />
+        </TransitionSeries.Sequence>
+      </TransitionSeries>
+    </AbsoluteFill>
   );
 };

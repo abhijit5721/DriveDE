@@ -1112,7 +1112,6 @@ export function Welcome() {
               poster={isDe ? '/demo-poster-de.webp' : '/demo-poster-en.webp'}
               controls
               autoPlay
-              muted
               playsInline
               preload="none"
               className="h-full w-full object-contain"
