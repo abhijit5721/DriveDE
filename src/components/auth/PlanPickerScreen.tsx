@@ -49,9 +49,6 @@ const PLAN_CONFIG = {
         dailyPrice: '€0.33 / Tag',
         period: 'nach 7 Tagen Testphase',
         highlight: 'Perfekt für die letzten Wochen vor der Fahrprüfung',
-        color: 'from-slate-100 via-white to-slate-50',
-        borderSelected: 'border-slate-400 shadow-slate-500/10',
-        accentGlow: 'from-slate-500/10 to-transparent',
       },
       '90-days': {
         label: '90-Tage-Pass',
@@ -62,22 +59,16 @@ const PLAN_CONFIG = {
         saveBadge: '33% SPAREN',
         period: 'nach 7 Tagen Testphase',
         highlight: 'Deckt deine gesamte Fahrschulausbildung ab',
-        color: 'from-blue-50 via-white to-blue-100/60',
-        borderSelected: 'border-blue-500 shadow-blue-500/25',
-        accentGlow: 'from-blue-500/10 to-transparent',
       },
       'lifetime': {
         label: 'Lifetime-Zugang',
         tag: '👑 BESTES ANGEBOT',
-        tagColor: 'bg-emerald-600 text-white font-black',
+        tagColor: 'bg-blue-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'Einmalig · Für immer',
         saveBadge: 'MAXIMALER WERT',
         period: 'einmalig, kein Abo',
         highlight: 'Einmal zahlen, für immer auf allen Geräten nutzen',
-        color: 'from-emerald-50 via-white to-emerald-100/60',
-        borderSelected: 'border-emerald-500 shadow-emerald-500/25',
-        accentGlow: 'from-emerald-500/10 to-transparent',
       },
     },
     features: [
@@ -132,9 +123,6 @@ const PLAN_CONFIG = {
         dailyPrice: '€0.33 / day',
         period: 'after 7-day trial',
         highlight: 'Perfect for quick prep in your final driving weeks',
-        color: 'from-slate-100 via-white to-slate-50',
-        borderSelected: 'border-slate-400 shadow-slate-500/10',
-        accentGlow: 'from-slate-500/10 to-transparent',
       },
       '90-days': {
         label: '90-Day Pass',
@@ -145,22 +133,16 @@ const PLAN_CONFIG = {
         saveBadge: 'SAVE 33%',
         period: 'after 7-day trial',
         highlight: 'Covers your entire driving school course',
-        color: 'from-blue-50 via-white to-blue-100/60',
-        borderSelected: 'border-blue-500 shadow-blue-500/25',
-        accentGlow: 'from-blue-500/10 to-transparent',
       },
       'lifetime': {
         label: 'Lifetime Access',
         tag: '👑 BEST VALUE',
-        tagColor: 'bg-emerald-600 text-white font-black',
+        tagColor: 'bg-blue-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'One-time · Forever',
         saveBadge: 'MAX VALUE',
         period: 'one-time, no subscription',
         highlight: 'Pay once, use forever across all your devices',
-        color: 'from-emerald-50 via-white to-emerald-100/60',
-        borderSelected: 'border-emerald-500 shadow-emerald-500/25',
-        accentGlow: 'from-emerald-500/10 to-transparent',
       },
     },
     features: [
@@ -402,12 +384,6 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
 
   return (
     <div className="h-full w-full bg-slate-50 flex flex-col overflow-y-auto selection:bg-blue-500/30">
-      {/* Ambient background glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-blue-200/50 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-200/50 rounded-full blur-[120px]" />
-      </div>
-
       {/* Header */}
       <div className="relative flex items-center justify-between px-4 sm:px-8 py-5 shrink-0 z-10">
         <Logo size="sm" />
@@ -447,9 +423,9 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
             >
               {/* Hero text */}
               <div className="text-center mb-6 sm:mb-8 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 mb-3 sm:mb-4">
-                  <Zap className="w-3.5 h-3.5 text-blue-600 fill-blue-600 animate-pulse" />
-                  <span className="text-[10px] sm:text-xs font-black text-blue-700 tracking-wider uppercase">{t.badge}</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 mb-3 sm:mb-4">
+                  <Zap className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="text-[10px] sm:text-xs font-black text-slate-600 tracking-wider uppercase">{t.badge}</span>
                 </div>
                 <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2 sm:mb-3">
                   {t.headline}
@@ -474,15 +450,10 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       className={cn(
                         'relative w-full flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 text-left overflow-hidden group transform active:scale-[0.99]',
                         isSelected
-                          ? `bg-gradient-to-r ${cfg.color} ${cfg.borderSelected} scale-[1.01]`
+                          ? 'bg-white border-blue-600 scale-[1.01] shadow-md'
                           : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
                       )}
                     >
-                      {/* Selection Glow Sheen */}
-                      {isSelected && (
-                        <div className={cn('absolute inset-0 bg-gradient-to-r opacity-50 pointer-events-none', cfg.accentGlow)} />
-                      )}
-
                       {/* Radio Selector */}
                       <div className={cn(
                         'relative shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300',
@@ -539,7 +510,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                         </div>
                         <div className={cn(
                           'text-[10px] sm:text-xs font-bold transition-colors',
-                          isSelected ? 'text-emerald-600' : 'text-slate-500'
+                          isSelected ? 'text-blue-600' : 'text-slate-500'
                         )}>
                           {cfg.dailyPrice}
                         </div>
@@ -558,7 +529,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <div className="grid grid-cols-3 gap-2 text-center">
                   {t.timelineSteps.map((s, idx) => (
                     <div key={idx} className="flex flex-col items-center">
-                      <div className="w-7 h-7 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-black text-xs flex items-center justify-center mb-1.5 shadow-sm">
+                      <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-black text-xs flex items-center justify-center mb-1.5 shadow-sm">
                         {s.step}
                       </div>
                       <p className="text-xs font-bold text-slate-900 mb-0.5">{s.title}</p>
@@ -576,11 +547,11 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {t.features.map((f, i) => (
                     <div key={i} className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200">
-                      <div className="shrink-0 w-5 h-5 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-                        <Check className="w-3 h-3 text-emerald-600 stroke-[3px]" />
+                      <div className="shrink-0 w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-blue-600 stroke-[3px]" />
                       </div>
                       <span className="text-xs font-medium text-slate-700 flex-1">{f.text}</span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 uppercase tracking-wider shrink-0">
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 uppercase tracking-wider shrink-0">
                         {f.badge}
                       </span>
                     </div>
@@ -593,7 +564,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   onClick={handleGoToSignup}
                   className={cn(
-                    'group relative w-full h-16 bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-2xl shadow-blue-600/30',
+                    'group relative w-full h-16 bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-lg shadow-slate-900/10',
                     'text-white font-black text-base sm:text-lg tracking-tight transition-all duration-300',
                     'flex items-center justify-center gap-3 overflow-hidden transform hover:scale-[1.02] active:scale-[0.98]'
                   )}
@@ -605,7 +576,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 </button>
 
                 <p className="text-center text-[11px] text-slate-600 font-medium flex items-center justify-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
                   <span>{t.ctaSub}</span>
                 </p>
 
@@ -625,14 +596,14 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl"
             >
               {/* Plan badge summary */}
-              <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-blue-50 border border-blue-200">
+              <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
                     <Crown className="w-4 h-4 text-white" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900">{activePlan.label} ({activePlan.price})</p>
-                    <p className="text-[10px] text-blue-700 font-medium">
+                    <p className="text-[10px] text-slate-600 font-medium">
                       {intent === 'buy'
                         ? (language === 'de' ? 'Einmalzahlung — inkl. 7 Tage Pro ab sofort' : 'One-time payment — includes Pro from day one')
                         : (language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days')}
@@ -712,7 +683,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                           { ok: validatePassword(password).hasNumber, label: isDe ? 'Zahl (0-9)' : 'Number (0-9)' },
                           { ok: validatePassword(password).hasSpecial, label: isDe ? 'Sonderzeichen (!@#$)' : 'Special char (!@#$)' },
                         ].map((item, idx) => (
-                          <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'text-emerald-600 font-bold' : 'text-slate-500')}>
+                          <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'text-blue-600 font-bold' : 'text-slate-500')}>
                             <span className="text-xs">{item.ok ? '✓' : '•'}</span>
                             <span>{item.label}</span>
                           </div>
@@ -725,7 +696,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 active:scale-[0.98]"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70 active:scale-[0.98]"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -790,7 +761,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl text-center"
             >
               {/* Mail Icon */}
-              <div className="w-16 h-16 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-5 text-blue-600">
+              <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto mb-5 text-blue-600">
                 <Mail className="w-8 h-8 animate-pulse" />
               </div>
 
@@ -802,7 +773,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 {t.confirmSubline}
               </p>
 
-              <div className="inline-block px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs mb-5 break-all">
+              <div className="inline-block px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-bold text-xs mb-5 break-all">
                 {pendingConfirmEmail || email}
               </div>
 
@@ -811,7 +782,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               </p>
 
               {infoMessage && (
-                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-700">
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-slate-100 border border-slate-200 p-3 text-xs text-slate-600">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{infoMessage}</span>
                 </div>
@@ -832,7 +803,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       setIsExistingUser(true);
                       setStep('signup');
                     }}
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                   >
                     <span>{t.confirmDoneBtn}</span>
                     <ArrowRight className="w-4 h-4" />
@@ -841,7 +812,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   <button
                     type="button"
                     onClick={handleSimulateLocalConfirmation}
-                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                   >
                     <span>{t.confirmSimulateBtn}</span>
                     <ArrowRight className="w-4 h-4" />

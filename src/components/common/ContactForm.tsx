@@ -46,7 +46,6 @@ export function ContactForm({ className }: ContactFormProps) {
         className='relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 md:p-12 shadow-xl shadow-slate-900/5'
       >
         {/* Background glow */}
-        <div className='absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl' />
         
         <AnimatePresence mode='wait'>
           {status === 'success' ? (
@@ -57,7 +56,7 @@ export function ContactForm({ className }: ContactFormProps) {
               exit={{ opacity: 0, scale: 0.9 }}
               className='flex flex-col items-center justify-center py-12 text-center'
             >
-              <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600'>
+              <div className='mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-blue-600'>
                 <CheckCircle2 className='h-12 w-12' />
               </div>
               <h3 className='text-3xl font-bold text-slate-900 mb-2'>Message Sent!</h3>
@@ -143,7 +142,7 @@ export function ContactForm({ className }: ContactFormProps) {
                 disabled={status === 'submitting'}
                 className={cn(
                   'w-full flex items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-lg font-bold text-white shadow-2xl transition-all active:scale-[0.98]',
-                  status === 'submitting' ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700 hover:shadow-blue-500/20'
+                  status === 'submitting' ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
                 )}
               >
                 {status === 'submitting' ? (

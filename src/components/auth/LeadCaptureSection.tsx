@@ -58,10 +58,8 @@ export function LeadCaptureSection() {
   return (
     <section id="lead-magnet" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
       <div className="mx-auto max-w-3xl">
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-emerald-200 bg-white p-8 md:p-12 shadow-xl shadow-emerald-500/10">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 md:p-12 shadow-sm">
           {/* Background glow */}
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-100/60 blur-3xl" />
-          <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl" />
 
           <AnimatePresence mode="wait">
             {status === 'success' ? (
@@ -72,7 +70,7 @@ export function LeadCaptureSection() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="relative z-10 flex flex-col items-center justify-center py-8 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-blue-600">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
@@ -93,7 +91,7 @@ export function LeadCaptureSection() {
                 exit={{ opacity: 0 }}
                 className="relative z-10 text-center"
               >
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-blue-600 border border-slate-200">
                   <FileText className="h-8 w-8" />
                 </div>
 
@@ -117,12 +115,12 @@ export function LeadCaptureSection() {
                       {isDe ? 'Woher stammt dein aktueller Führerschein? (optional)' : 'Where is your current license from? (optional)'}
                     </label>
                     <div className="relative">
-                      <Globe className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-600" />
+                      <Globe className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-blue-600" />
                       <select
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         data-testid="lead-country-select"
-                        className="w-full appearance-none rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-10 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                        className="w-full appearance-none rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-10 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                       >
                         <option value="">
                           {isDe ? '🆕 Ich mache meinen ersten Führerschein' : '🆕 I\'m getting my first license'}
@@ -142,7 +140,7 @@ export function LeadCaptureSection() {
 
                   <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
                   <div className="relative group flex-1 sm:max-w-md">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-emerald-600" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 transition-colors group-focus-within:text-blue-600" />
                     <input
                       required
                       type="email"
@@ -150,7 +148,7 @@ export function LeadCaptureSection() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       data-testid="lead-email-input"
-                      className="w-full rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-4 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                      className="w-full rounded-2xl bg-white border border-slate-300 py-4 pl-12 pr-4 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                     />
                   </div>
                   <button
@@ -158,8 +156,8 @@ export function LeadCaptureSection() {
                     disabled={status === 'submitting'}
                     data-testid="lead-submit-btn"
                     className={cn(
-                      'flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-emerald-600/30 transition-all active:scale-95',
-                      status === 'submitting' ? 'opacity-70 cursor-not-allowed' : 'hover:bg-emerald-500 hover:scale-105'
+                      'flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-md transition-all active:scale-95',
+                      status === 'submitting' ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-500 hover:scale-105'
                     )}
                   >
                     {status === 'submitting' ? (
@@ -185,7 +183,7 @@ export function LeadCaptureSection() {
                 )}
 
                 <p className="mt-6 inline-flex items-center gap-1.5 text-xs text-slate-500">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-slate-500" />
                   {isDe
                     ? '100% DSGVO-konform. Kein Spam, jederzeit abmeldbar.'
                     : '100% GDPR compliant. No spam, unsubscribe anytime.'

@@ -53,12 +53,12 @@ export function TestimonialsSection() {
     <section id="expat-stories" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
-          <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
+          <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
             {isDe ? 'Für internationale Fahrer' : 'For international drivers'}
           </span>
           <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
             {isDe ? 'Ausländischer Führerschein? ' : 'Foreign licence? '}
-            <span className="text-blue-600">{isDe ? 'So läuft die Umschreibung.' : 'Here is how conversion works.'}</span>
+            <span>{isDe ? 'So läuft die Umschreibung.' : 'Here is how conversion works.'}</span>
           </h2>
           <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
             {isDe
@@ -76,13 +76,13 @@ export function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm p-6 text-left transition hover:border-blue-300"
+              className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-sm p-6 text-left transition hover:border-slate-300"
             >
               <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-blue-600">
                   <tier.icon className="h-6 w-6" />
                 </div>
-                <span className="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                <span className="rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   {tier.badge}
                 </span>
               </div>

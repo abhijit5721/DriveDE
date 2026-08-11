@@ -201,7 +201,7 @@ export function Welcome() {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-b from-blue-50/80 via-white to-white selection:bg-blue-500/30 text-slate-900">
+    <div className="relative min-h-screen w-full bg-white selection:bg-blue-500/30 text-slate-900">
       {/* Plan Picker Overlay — shown after "Get Started" click */}
       {showPlanPicker && (
         <div className="fixed inset-0 z-[100] animate-fade-in overflow-hidden">
@@ -246,7 +246,7 @@ export function Welcome() {
             {isReturningUser ? (
               <button 
                 onClick={() => handleStart()}
-                className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700 active:scale-95 shadow-lg shadow-emerald-600/20"
+                className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500 active:scale-95 shadow-md"
               >
                 {t.common.backToDashboard}
               </button>
@@ -260,7 +260,7 @@ export function Welcome() {
                 </button>
                 <button 
                   onClick={() => handleStart('90-days', 'plan')}
-                  className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/20"
+                  className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-md"
                 >
                   {t.common.startNow}
                 </button>
@@ -292,7 +292,7 @@ export function Welcome() {
                 <button onClick={() => setLanguage('en')} className={cn('px-3 py-1 text-xs font-bold rounded-lg', language === 'en' ? 'bg-blue-600 text-white' : 'text-slate-500')}>EN</button>
               </div>
               {isReturningUser ? (
-                <button onClick={() => handleStart()} className="rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white">
+                <button onClick={() => handleStart()} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                   {t.common.backToDashboard}
                 </button>
               ) : (
@@ -313,8 +313,8 @@ export function Welcome() {
       {/* Hero Section */}
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-emerald-700">
-            <Zap className="h-3.5 w-3.5 text-emerald-600 animate-pulse fill-emerald-400" />
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-600">
+            <Zap className="h-3.5 w-3.5 text-blue-600" />
             {isDe ? '7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : 'Includes 7-Day Free Pro Trial • No Credit Card Required'}
           </div>
 
@@ -333,7 +333,7 @@ export function Welcome() {
             <button 
               onClick={() => handleStart()}
               data-testid="welcome-start-btn"
-              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
               {isReturningUser ? t.common.backToDashboard : t.common.getStartedFree}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -350,15 +350,15 @@ export function Welcome() {
           {/* Trust strip — only claims that are verifiably true */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <ShieldCheck className="h-4 w-4 text-slate-500" />
               {isDe ? '100% DSGVO-konform' : '100% GDPR compliant'}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-blue-600" />
+              <MapPin className="h-4 w-4 text-slate-500" />
               {isDe ? 'Entwickelt in Hamburg' : 'Built in Hamburg'}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Globe className="h-4 w-4 text-blue-600" />
+              <Globe className="h-4 w-4 text-slate-500" />
               {isDe ? 'Deutsch & Englisch' : 'German & English'}
             </span>
           </div>
@@ -415,7 +415,7 @@ export function Welcome() {
               {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ Driving School Problem'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
-              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span className="text-emerald-600">{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
+              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span>{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
             </h2>
             <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-base">
               {isDe 
@@ -427,10 +427,10 @@ export function Welcome() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
             {/* Old Way (Expensive & Slow) */}
-            <div className="rounded-3xl border border-red-200 bg-red-50 p-8 text-left backdrop-blur-xl relative overflow-hidden flex flex-col justify-between">
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 text-left relative overflow-hidden flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600 font-black text-xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-red-600 font-black text-xl">
                     ✕
                   </div>
                   <div>
@@ -440,7 +440,7 @@ export function Welcome() {
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
                     <Coins className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
@@ -448,7 +448,7 @@ export function Welcome() {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
                     <Clock className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? '38% Durchfallquote beim 1. Versuch' : '38% First-Time Failure Rate'}</p>
@@ -456,7 +456,7 @@ export function Welcome() {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-red-200">
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
                     <Shield className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
@@ -468,41 +468,41 @@ export function Welcome() {
             </div>
 
             {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
-            <div className="relative rounded-3xl border-2 border-emerald-300 bg-emerald-50 p-8 text-left shadow-xl shadow-emerald-500/10 flex flex-col justify-between">
-              <span className="absolute -top-4 right-8 rounded-full bg-emerald-600 px-4 py-1 text-xs font-bold text-white shadow-md">
+            <div className="relative rounded-3xl border border-slate-200 bg-white p-8 text-left shadow-sm flex flex-col justify-between">
+              <span className="absolute -top-4 right-8 rounded-full bg-blue-600 px-4 py-1 text-xs font-bold text-white shadow-md">
                 {isDe ? 'DER DRIVEDE VORTEIL' : 'THE DRIVEDE ADVANTAGE'}
               </span>
 
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 font-black text-xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-blue-600 font-black text-xl">
                     ✓
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-slate-900">{isDe ? 'Der smarte DriveDE Weg' : 'The DriveDE Smart Way'}</h3>
-                    <p className="text-xs text-emerald-600 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
+                    <p className="text-xs text-blue-600 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
-                    <Coins className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <Coins className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? '800€ – 1.200€ an Fahrstunden sparen' : 'Save €800 – €1,200 in Driving Hours'}</p>
                       <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <CheckCircle2 className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? 'Kein Durchfallen wegen Tempolimit' : 'Zero Speed Limit Exam Failures'}</p>
                       <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Echtzeit OpenStreetMap GPS-Warnungen verhindern die häufigste Ursache für Prüfungsausfälle.' : 'Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 rounded-2xl bg-white p-4 border border-emerald-200">
-                    <Award className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
+                    <Award className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? '100% objektive Prüfungsreife' : '100% Objective Exam Readiness Score'}</p>
                       <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Erkenne genau den Tag, an dem du 90%+ Prüfungsreife erreichst.' : 'Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.'}</p>
@@ -514,8 +514,8 @@ export function Welcome() {
           </div>
 
           {/* 📚 "More than a theory app" — intercepts Theorie-App search intent and reframes it */}
-          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-blue-200 bg-blue-50 p-8 text-center">
-            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
+          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
               {isDe ? 'Mehr als eine Theorie-App' : 'More Than a Theory App'}
             </span>
             <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">
@@ -544,7 +544,7 @@ export function Welcome() {
       <section id="how-it-works" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
               {isDe ? 'Einfacher 3-Schritte Ablauf' : 'Simple 3-Step Process'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
@@ -564,8 +564,7 @@ export function Welcome() {
                 desc: isDe 
                   ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet Route, Tempolimits und Fehler auf.'
                   : 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
-                icon: MapPin,
-                color: 'from-blue-500 to-blue-600'
+                icon: MapPin
               },
               {
                 step: '02',
@@ -573,8 +572,7 @@ export function Welcome() {
                 desc: isDe 
                   ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
                   : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
-                icon: Zap,
-                color: 'from-blue-600 to-blue-700'
+                icon: Zap
               },
               {
                 step: '03',
@@ -582,12 +580,11 @@ export function Welcome() {
                 desc: isDe 
                   ? 'Verfolge deine Prüfungsreife bis 100% und gehe voller Selbstvertrauen in die Fahrprüfung.'
                   : 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
-                icon: Award,
-                color: 'from-emerald-500 to-emerald-600'
+                icon: Award
               }
             ].map((s, i) => (
-              <div key={i} className="relative rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left transition hover:border-blue-300 hover:scale-[1.02]">
-                <div className={cn('mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-xl', s.color)}>
+              <div key={i} className="relative rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left transition hover:border-slate-300 hover:scale-[1.02]">
+                <div className={'mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md'}>
                   <s.icon className="h-7 w-7" />
                 </div>
                 <span className="absolute top-8 right-8 text-4xl font-black text-slate-200">{s.step}</span>
@@ -602,7 +599,7 @@ export function Welcome() {
             <button
               onClick={() => handleStart()}
               data-testid="cta-how-it-works"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
               {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Start Free Today')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -618,7 +615,7 @@ export function Welcome() {
       <section id="app-preview" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-14 text-center">
-            <span className="rounded-full bg-blue-50 border border-blue-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
               {isDe ? 'Ein Blick in die App' : 'A look inside the app'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">
@@ -668,9 +665,9 @@ export function Welcome() {
             <button
               onClick={() => setShowDemo(true)}
               data-testid="watch-demo-inline"
-              className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600"
+              className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-sm transition hover:border-slate-300 hover:text-blue-600"
             >
-              <Play className="h-4 w-4 text-blue-600" />
+              <Play className="h-4 w-4 text-slate-500" />
               {isDe ? 'Demo ansehen — 49 Sekunden' : 'Watch the demo — 49 seconds'}
             </button>
           </div>
@@ -693,7 +690,7 @@ export function Welcome() {
               <button
                 onClick={() => handleStart()}
                 data-testid="cta-photo-banner"
-                className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-md transition hover:bg-blue-500 hover:scale-105 active:scale-95"
               >
                 {isDe ? 'Jetzt kostenlos starten' : 'Get Started Free'}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -725,8 +722,8 @@ export function Welcome() {
               { icon: BadgeCheck, title: t.welcome.features.maneuverReplay.title, desc: t.welcome.features.maneuverReplay.desc },
               { icon: Users, title: t.welcome.features.instructorSync.title, desc: t.welcome.features.instructorSync.desc }
             ].map((f, i) => (
-              <div key={i} className="group rounded-3xl border border-slate-200 bg-white shadow-sm p-8 transition hover:border-blue-300">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600/10 text-blue-500">
+              <div key={i} className="group rounded-3xl border border-slate-200 bg-white shadow-sm p-8 transition hover:border-slate-300">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-blue-600">
                   <f.icon className="h-8 w-8" />
                 </div>
                 <h3 className="mb-3 text-xl font-bold text-slate-900">{f.title}</h3>
@@ -740,7 +737,7 @@ export function Welcome() {
             <button
               onClick={() => handleStart()}
               data-testid="cta-features"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
               {isReturningUser ? t.common.backToDashboard : (isDe ? 'Alle Funktionen freischalten' : 'Unlock All Features')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -756,7 +753,7 @@ export function Welcome() {
       <section id="pricing" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-emerald-50 border border-emerald-200 px-4 py-1.5 text-xs font-bold text-emerald-600 uppercase tracking-widest">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
               {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
@@ -766,7 +763,7 @@ export function Welcome() {
                 : 'Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.'
               }
             </p>
-            <p className="mt-3 text-sm font-semibold text-emerald-600 max-w-xl mx-auto">
+            <p className="mt-3 text-sm font-semibold text-blue-600 max-w-xl mx-auto">
               {isDe
                 ? 'Jeder Pass enthält alle Pro-Funktionen — du wählst nur, wie lange du Zugang brauchst.'
                 : 'Every pass includes all Pro features — you only choose how long you need access.'
@@ -803,7 +800,7 @@ export function Welcome() {
             </div>
 
             {/* 90 Days Pass (Most Popular) */}
-            <div className="relative rounded-3xl border-2 border-blue-500 bg-white p-8 text-left shadow-xl shadow-blue-500/10 flex flex-col justify-between">
+            <div className="relative rounded-3xl border-2 border-blue-500 bg-white p-8 text-left shadow-sm flex flex-col justify-between">
               <span className="absolute -top-4 right-8 rounded-full bg-blue-600 px-4 py-1 text-xs font-bold text-white shadow-md">
                 {isDe ? 'BELIEBTESTE WAHL' : 'MOST POPULAR'}
               </span>
@@ -818,7 +815,7 @@ export function Welcome() {
                 <div className="mt-4 space-y-4">
                   {proFeatures.map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-900">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-blue-600 shrink-0" />
                       {feat}
                     </div>
                   ))}
@@ -826,7 +823,7 @@ export function Welcome() {
               </div>
               <button 
                 onClick={() => handleStart('90-days', 'signup', false, 'buy')} 
-                className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/30 transition hover:bg-blue-500 hover:scale-[1.02]"
+                className="mt-10 w-full rounded-2xl bg-blue-600 py-4 text-sm font-bold text-white shadow-md transition hover:bg-blue-500 hover:scale-[1.02]"
               >
                 {isDe ? '90-Tage Pass wählen' : 'Get 90-Day Pass'}
               </button>
@@ -886,7 +883,7 @@ export function Welcome() {
                   className="flex w-full items-center justify-between p-6 text-lg font-bold text-slate-900 hover:text-blue-600 transition"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={cn('h-5 w-5 text-slate-500 transition-transform duration-200', openFaq === i && 'rotate-180 text-blue-600')} />
+                  <ChevronDown className={cn('h-5 w-5 text-slate-500 transition-transform duration-200', openFaq === i && 'rotate-180 text-slate-500')} />
                 </button>
                 {openFaq === i && (
                   <div className="px-6 pb-6 text-sm text-slate-500 leading-relaxed border-t border-slate-100/50 pt-4">
@@ -945,13 +942,9 @@ export function Welcome() {
                 )}
                 data-testid={path.id === 'conversion' ? 'path-umschreibung' : 'path-standard'}
               >
-                {/* Decorative Gradient Background */}
-                <div className={cn('absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl opacity-20 transition-all group-hover:opacity-30', 
-                  'bg-blue-500'
-                )} />
 
-                <div className={cn('flex h-16 w-16 items-center justify-center rounded-2xl mb-8 shadow-2xl relative z-10', 
-                  'bg-blue-500/20 text-blue-600 border border-blue-500/30'
+                <div className={cn('flex h-16 w-16 items-center justify-center rounded-2xl mb-8 relative z-10', 
+                  'bg-slate-100 text-blue-600 border border-slate-200'
                 )}>
                   <path.icon className="h-9 w-9" />
                 </div>
@@ -1147,7 +1140,7 @@ export function Welcome() {
                 <button
                   onClick={() => { setShowDemo(false); handleStart(); }}
                   data-testid="demo-cta"
-                  className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+                  className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
                 >
                   {isDe ? 'Jetzt kostenlos starten' : 'Start Free Trial'}
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
