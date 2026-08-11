@@ -22,8 +22,8 @@ export function TestimonialsSection() {
       title: isDe ? 'EU / EWR Führerschein' : 'EU / EEA licence',
       badge: isDe ? 'Keine Prüfungen' : 'No exams',
       text: isDe
-        ? 'Einfacher Kartentausch bei der Führerscheinstelle — keine Theorie- oder Praxisprüfung nötig. DriveDE führt dich durch die Unterlagen.'
-        : 'A simple card exchange at the licensing office — no theory or practical exam required. DriveDE walks you through the paperwork.',
+        ? 'Einfacher Kartentausch bei der Führerscheinstelle, keine Theorie- oder Praxisprüfung nötig. DriveDE führt dich durch die Unterlagen.'
+        : 'A simple card exchange at the licensing office, no theory or practical exam required. DriveDE walks you through the paperwork.',
     },
     {
       icon: FileCheck,
@@ -38,8 +38,8 @@ export function TestimonialsSection() {
       title: isDe ? 'Alle anderen Länder (Indien, Brasilien, China …)' : 'All other countries (India, Brazil, China …)',
       badge: isDe ? 'Theorie + Praxis' : 'Theory + practical',
       text: isDe
-        ? 'Beide Prüfungen sind nötig — aber ohne Pflichtstunden. Genau hier hilft DriveDE: GPS-Tracking, KI-Auswertungen und Prüfungsreife auf Englisch.'
-        : 'Both exams are required — but with no mandatory lesson hours. That is exactly where DriveDE helps: GPS tracking, AI debriefings and exam readiness, in English.',
+        ? 'Beide Prüfungen sind nötig, aber ohne Pflichtstunden. Genau hier hilft DriveDE: GPS-Tracking, KI-Auswertungen und Prüfungsreife auf Englisch.'
+        : 'Both exams are required, but with no mandatory lesson hours. That is exactly where DriveDE helps: GPS tracking, AI debriefings and exam readiness, in English.',
     },
   ];
 

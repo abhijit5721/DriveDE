@@ -460,7 +460,7 @@ export function Welcome() {
                     <Shield className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready — leaving you dependent on guesswork.'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready, leaving you dependent on guesswork.'}</p>
                     </div>
                   </div>
                 </div>
@@ -525,13 +525,13 @@ export function Welcome() {
             </h3>
             <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {isDe
-                ? 'Der wirklich teure Teil beginnt danach: die praktischen Fahrstunden. Was dein Fahrlehrer dir beibringt — Schulterblick, Einparken, Auffahren auf die Autobahn — findest du in keiner Theorie-App und kaum im Internet erklärt.'
-                : 'The truly expensive part starts after: your practical driving lessons. What your instructor teaches you — Schulterblick, parking maneuvers, Autobahn merging — isn\'t in any theory app, and searching the internet for it lesson by lesson gets you nowhere.'}
+                ? 'Der wirklich teure Teil beginnt danach: die praktischen Fahrstunden. Was dein Fahrlehrer dir beibringt (Schulterblick, Einparken, Auffahren auf die Autobahn) findest du in keiner Theorie-App und kaum im Internet erklärt.'
+                : 'The truly expensive part starts after: your practical driving lessons. What your instructor teaches you (Schulterblick, parking maneuvers, Autobahn merging) isn\'t in any theory app, and searching the internet for it lesson by lesson gets you nowhere.'}
             </p>
             <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed font-semibold">
               {isDe
-                ? 'DriveDE bringt genau dieses Wissen auf dein Handy: Theorie lernen und die praktische Fahrprüfung meistern — alles in einer App.'
-                : 'DriveDE puts exactly that knowledge at your fingertips: learn theory and master the practical exam — everything in one app.'}
+                ? 'DriveDE bringt genau dieses Wissen auf dein Handy: Theorie lernen und die praktische Fahrprüfung meistern. Alles in einer App.'
+                : 'DriveDE puts exactly that knowledge at your fingertips: learn theory and master the practical exam. Everything in one app.'}
             </p>
           </div>
         </div>
@@ -622,7 +622,7 @@ export function Welcome() {
               {isDe ? 'Die App in Aktion' : 'See the app in action'}
             </h2>
             <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-              {isDe ? 'Echte Screenshots — genau so sieht die App nach der Anmeldung aus.' : 'Actual screenshots — exactly what you\'ll see after signing up.'}
+              {isDe ? 'Echte Screenshots: genau so sieht die App nach der Anmeldung aus.' : 'Actual screenshots: exactly what you\'ll see after signing up.'}
             </p>
           </div>
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6">
@@ -640,7 +640,7 @@ export function Welcome() {
               {
                 shot: 'curriculum',
                 title: isDe ? 'Interaktiver Lehrplan' : 'Interactive curriculum',
-                desc: isDe ? 'Lektionen aus echten Fahrstunden — nicht nur Theoriefragen.' : 'Lessons built from real driving lessons — not just theory quizzes.',
+                desc: isDe ? 'Lektionen aus echten Fahrstunden, nicht nur Theoriefragen.' : 'Lessons built from real driving lessons, not just theory quizzes.',
               },
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center text-center">
@@ -668,7 +668,7 @@ export function Welcome() {
               className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-sm transition hover:border-slate-300 hover:text-blue-600"
             >
               <Play className="h-4 w-4 text-slate-500" />
-              {isDe ? 'Demo ansehen — 49 Sekunden' : 'Watch the demo — 49 seconds'}
+              {isDe ? 'Demo ansehen (49 Sekunden)' : 'Watch the demo (49 seconds)'}
             </button>
           </div>
         </div>
@@ -684,8 +684,8 @@ export function Welcome() {
               </h2>
               <p className="max-w-md text-slate-500 text-sm sm:text-base mb-8">
                 {isDe
-                  ? 'Starte heute deine 7-Tage Pro Testversion — keine Kreditkarte nötig.'
-                  : 'Start your 7-day free Pro trial today — no credit card required.'}
+                  ? 'Starte heute deine 7-Tage Pro Testversion. Keine Kreditkarte nötig.'
+                  : 'Start your 7-day free Pro trial today. No credit card required.'}
               </p>
               <button
                 onClick={() => handleStart()}
@@ -765,8 +765,8 @@ export function Welcome() {
             </p>
             <p className="mt-3 text-sm font-semibold text-blue-600 max-w-xl mx-auto">
               {isDe
-                ? 'Jeder Pass enthält alle Pro-Funktionen — du wählst nur, wie lange du Zugang brauchst.'
-                : 'Every pass includes all Pro features — you only choose how long you need access.'
+                ? 'Jeder Pass enthält alle Pro-Funktionen. Du wählst nur, wie lange du Zugang brauchst.'
+                : 'Every pass includes all Pro features. You only choose how long you need access.'
               }
             </p>
           </div>
@@ -842,7 +842,7 @@ export function Welcome() {
                 <div className="mt-4 space-y-4">
                   {[
                     isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in the 90-Day Pass',
-                    isDe ? 'Kein Ablaufdatum — auch bei Nachprüfung' : 'No expiry — even if you need a re-test',
+                    isDe ? 'Kein Ablaufdatum, auch bei Nachprüfung' : 'No expiry, even if you need a re-test',
                     isDe ? 'Alle zukünftigen Funktionen inklusive' : 'All future features included',
                     isDe ? 'Priorisierter Support' : 'Priority support'
                   ].map((feat, i) => (

@@ -103,8 +103,8 @@ export function LeadCaptureSection() {
                 </h2>
                 <p className="mt-4 text-slate-500 max-w-xl mx-auto text-sm sm:text-base">
                   {isDe
-                    ? 'Alle Prüfungspunkte, häufige Fehler und Umschreibungs-Dokumente — kompakt direkt in dein Postfach.'
-                    : 'Every exam checkpoint, common mistakes, and Umschreibung documents — straight to your inbox.'
+                    ? 'Alle Prüfungspunkte, häufige Fehler und Umschreibungs-Dokumente, kompakt direkt in dein Postfach.'
+                    : 'Every exam checkpoint, common mistakes, and Umschreibung documents, straight to your inbox.'
                   }
                 </p>
 
