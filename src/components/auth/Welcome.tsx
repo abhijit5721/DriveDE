@@ -671,7 +671,7 @@ export function Welcome() {
               className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600"
             >
               <Play className="h-4 w-4 text-blue-600" />
-              {isDe ? 'Demo ansehen — 45 Sekunden' : 'Watch the demo — 45 seconds'}
+              {isDe ? 'Demo ansehen — 49 Sekunden' : 'Watch the demo — 49 seconds'}
             </button>
           </div>
         </div>

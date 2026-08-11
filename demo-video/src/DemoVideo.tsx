@@ -6,6 +6,7 @@ import { COPY, type Lang } from './copy.ts';
 import { SCENES, TRANSITION_FRAMES } from './timings.ts';
 import { Hook } from './scenes/Hook.tsx';
 import { FeatureScene, appPoint } from './scenes/FeatureScene.tsx';
+import { DevicesScene } from './scenes/DevicesScene.tsx';
 import { EndCard } from './scenes/EndCard.tsx';
 import type { Shot } from './components/CameraRig.tsx';
 
@@ -77,6 +78,11 @@ export const DemoVideo: React.FC<{ lang: Lang }> = ({ lang }) => {
         <TransitionSeries.Sequence durationInFrames={SCENES.maneuvers.dur + TRANSITION_FRAMES}>
           <FeatureScene clip={`maneuvers-${lang}.mp4`} caption={c.maneuvers} shots={shotLists.maneuvers} />
           <VO lang={lang} scene="maneuvers" />
+        </TransitionSeries.Sequence>
+        {t()}
+        <TransitionSeries.Sequence durationInFrames={SCENES.devices.dur + TRANSITION_FRAMES}>
+          <DevicesScene lang={lang} caption={c.devices} />
+          <VO lang={lang} scene="devices" />
         </TransitionSeries.Sequence>
         {t()}
         <TransitionSeries.Sequence durationInFrames={SCENES.cta.dur}>

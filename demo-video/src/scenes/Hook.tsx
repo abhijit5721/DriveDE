@@ -19,12 +19,27 @@ export const Hook: React.FC<{ clip: string; text: string }> = ({ clip, text }) =
   return (
     <AbsoluteFill>
       <Background />
-      <AbsoluteFill style={{ transform: `scale(${0.72 * drift})`, transformOrigin: '50% 42%', opacity: 0.45, filter: 'blur(1px)' }}>
+      <AbsoluteFill style={{ transform: `scale(${0.72 * drift})`, transformOrigin: '50% 42%', opacity: 0.22, filter: 'blur(2px)' }}>
         <PhoneFrame x={PHONE_X} y={PHONE_Y}>
           <OffthreadVideo src={staticFile(clip)} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </PhoneFrame>
       </AbsoluteFill>
-      <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', gap: 40 }}>
+        {/* wordmark so "Meet DriveDE" has a face */}
+        <div
+          style={{
+            fontFamily,
+            fontSize: 64,
+            fontWeight: 900,
+            letterSpacing: -1,
+            transform: `translateY(${y}px)`,
+            opacity,
+            textShadow: '0 8px 40px rgba(2,6,23,0.9)',
+          }}
+        >
+          <span style={{ color: '#f8fafc' }}>Drive</span>
+          <span style={{ color: '#3b82f6' }}>DE</span>
+        </div>
         <h1
           style={{
             fontFamily,
@@ -34,6 +49,7 @@ export const Hook: React.FC<{ clip: string; text: string }> = ({ clip, text }) =
             color: '#f8fafc',
             maxWidth: 1400,
             textAlign: 'center',
+            margin: 0,
             transform: `translateY(${y}px)`,
             opacity,
             textShadow: '0 8px 40px rgba(2,6,23,0.9)',

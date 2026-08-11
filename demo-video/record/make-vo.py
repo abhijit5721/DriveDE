@@ -18,6 +18,7 @@ LINES = {
         "readiness": "After each drive, your exam readiness score updates — so you know exactly when you're ready. No gut feeling.",
         "curriculum": "Follow a structured path through every chapter, every Sonderfahrt, and every maneuver.",
         "maneuvers": "And practice parking in 3D — before you're in the real car.",
+        "devices": "One account — phone, tablet, and desktop.",
         "cta": "DriveDE saves you 800 to 1200 euros on lessons. Start your free 7 day trial at drive dee ee dot app.",
     },
     "de": {
@@ -26,11 +27,12 @@ LINES = {
         "readiness": "Nach jeder Fahrt aktualisiert sich dein Prüfungs-Score — du weißt genau, wann du bereit bist. Kein Bauchgefühl.",
         "curriculum": "Folge einem klaren Weg durch alle Kapitel, Sonderfahrten und Manöver.",
         "maneuvers": "Und übe das Einparken in 3D — bevor du im echten Auto sitzt.",
+        "devices": "Ein Konto — Handy, Tablet und Desktop.",
         "cta": "DriveDE spart dir 800 bis 1200 Euro an Fahrstunden. Teste Pro 7 Tage kostenlos — auf drive dee eeh punkt app.",
     },
 }
 
-WINDOWS = {"hook": 5.0, "tracker": 8.0, "readiness": 8.0, "curriculum": 8.0, "maneuvers": 7.0, "cta": 9.0}
+WINDOWS = {"hook": 5.0, "tracker": 8.0, "readiness": 8.0, "curriculum": 8.0, "maneuvers": 7.0, "devices": 4.0, "cta": 9.0}
 
 async def gen(lang: str, scene: str, text: str) -> None:
     dest = OUT / lang / f"{scene}.mp3"

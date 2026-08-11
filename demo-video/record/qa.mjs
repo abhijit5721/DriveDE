@@ -20,9 +20,10 @@ const SCENES = {
   readiness: { from: 390, dur: 240 },
   curriculum: { from: 630, dur: 240 },
   maneuvers: { from: 870, dur: 210 },
-  cta: { from: 1080, dur: 270 },
+  devices: { from: 1080, dur: 120 },
+  cta: { from: 1200, dur: 270 },
 };
-const EXPECTED_DURATION = 1350 / FPS;
+const EXPECTED_DURATION = 1470 / FPS;
 
 let failed = 0;
 const check = (name, ok, detail = '') => {

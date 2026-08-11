@@ -7,6 +7,7 @@ export const COPY: Record<Lang, {
   readiness: string;
   curriculum: string;
   maneuvers: string;
+  devices: string;
   ctaTitle: string;
   ctaSub: string;
   domain: string;
@@ -17,6 +18,7 @@ export const COPY: Record<Lang, {
     readiness: 'An objective exam-readiness score. Not a gut feeling.',
     curriculum: 'A structured path through every Sonderfahrt & maneuver',
     maneuvers: 'Practice Einparken in 3D — before the real car',
+    devices: 'Everything syncs — Web, iOS & Android',
     ctaTitle: 'Save €800–€1,200 on driving lessons.',
     ctaSub: '7-day free Pro trial · No credit card required',
     domain: 'drivede.app',
@@ -27,6 +29,7 @@ export const COPY: Record<Lang, {
     readiness: 'Objektiver Prüfungs-Score. Kein Bauchgefühl.',
     curriculum: 'Strukturierter Weg durch alle Sonderfahrten & Manöver',
     maneuvers: 'Einparken in 3D üben — vor dem echten Auto',
+    devices: 'Alles synchron — Web, iOS & Android',
     ctaTitle: 'Spare 800–1.200 € an Fahrstunden.',
     ctaSub: '7 Tage Pro gratis testen · Keine Kreditkarte nötig',
     domain: 'drivede.app',
