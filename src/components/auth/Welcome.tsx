@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Car, BadgeCheck, Zap, Users, Shield,
   Menu, X, ArrowRight, Play, CheckCircle2, Cog,
@@ -33,6 +33,8 @@ export function Welcome() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [demoEnded, setDemoEnded] = useState(false);
+  const demoVideoRef = useRef<HTMLVideoElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
@@ -57,7 +59,10 @@ export function Welcome() {
 
   // Demo modal: Escape closes, body scroll locks while open
   useEffect(() => {
-    if (!showDemo) return;
+    if (!showDemo) {
+      setDemoEnded(false);
+      return;
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setShowDemo(false);
     };
@@ -658,6 +663,17 @@ export function Welcome() {
               </div>
             ))}
           </div>
+          {/* second entry point to the demo video for readers below the fold */}
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => setShowDemo(true)}
+              data-testid="watch-demo-inline"
+              className="group inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600"
+            >
+              <Play className="h-4 w-4 text-blue-600" />
+              {isDe ? 'Demo ansehen — 45 Sekunden' : 'Watch the demo — 45 seconds'}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -1107,6 +1123,7 @@ export function Welcome() {
           <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl">
             <button onClick={() => setShowDemo(false)} aria-label={isDe ? 'Schließen' : 'Close'} className="absolute top-4 right-4 z-[110] flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white"><X className="h-6 w-6" /></button>
             <video
+              ref={demoVideoRef}
               key={isDe ? 'de' : 'en'}
               src={isDe ? '/demo-de.mp4' : '/demo-en.mp4'}
               poster={isDe ? '/demo-poster-de.webp' : '/demo-poster-en.webp'}
@@ -1116,9 +1133,34 @@ export function Welcome() {
               preload="none"
               className="h-full w-full object-contain"
               data-testid="demo-video"
+              onEnded={() => setDemoEnded(true)}
+              onPlay={() => setDemoEnded(false)}
             >
               {isDe ? 'Dein Browser kann dieses Video nicht abspielen.' : 'Your browser cannot play this video.'}
             </video>
+            {/* end-of-video CTA — the moment of highest intent */}
+            {demoEnded && (
+              <div className="absolute inset-0 z-[106] flex flex-col items-center justify-center gap-5 bg-slate-950/85 backdrop-blur-sm">
+                <p className="max-w-md px-6 text-center text-xl font-bold text-white sm:text-2xl">
+                  {isDe ? 'Bereit, es selbst auszuprobieren?' : 'Ready to try it yourself?'}
+                </p>
+                <button
+                  onClick={() => { setShowDemo(false); handleStart(); }}
+                  data-testid="demo-cta"
+                  className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-600/40 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+                >
+                  {isDe ? 'Jetzt kostenlos starten' : 'Start Free Trial'}
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+                <button
+                  onClick={() => { setDemoEnded(false); demoVideoRef.current?.play(); }}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-300 transition hover:text-white"
+                >
+                  <Play className="h-4 w-4" />
+                  {isDe ? 'Nochmal ansehen' : 'Watch again'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

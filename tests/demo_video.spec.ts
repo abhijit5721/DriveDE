@@ -11,7 +11,7 @@ async function openDemo(page: Page, lang: 'de' | 'en') {
   if (await cookie.isVisible({ timeout: 4000 }).catch(() => false)) {
     await cookie.click();
   }
-  await page.getByRole('button', { name: lang === 'de' ? 'Demo ansehen' : 'Watch Demo' }).click();
+  await page.getByRole('button', { name: lang === 'de' ? 'Demo ansehen' : 'Watch Demo', exact: true }).click();
   return page.getByTestId('demo-video');
 }
 
@@ -36,6 +36,36 @@ for (const lang of ['en', 'de'] as const) {
       .toBeGreaterThan(0.5);
   });
 }
+
+test('video end shows CTA overlay; CTA opens the plan picker', async ({ page }) => {
+  const video = await openDemo(page, 'en');
+  await expect(video).toBeVisible();
+  // fast-forward to just before the end instead of watching 45s
+  await video.evaluate((v: HTMLVideoElement) => {
+    v.muted = true;
+    const seek = () => { v.currentTime = Math.max(0, v.duration - 0.3); };
+    if (Number.isFinite(v.duration) && v.duration > 0) seek();
+    else v.addEventListener('loadedmetadata', seek, { once: true });
+    return v.play();
+  });
+  const cta = page.getByTestId('demo-cta');
+  await expect(cta).toBeVisible({ timeout: 15000 });
+  await cta.click();
+  await expect(video).not.toBeVisible();
+  await expect(page.getByText(/Choose your perfect Pro plan/i)).toBeVisible({ timeout: 10000 });
+});
+
+test('inline demo link in the screenshots section opens the modal', async ({ page }) => {
+  await page.goto('/?lang=en');
+  const cookie = page.getByTestId('cookie-accept-all');
+  if (await cookie.isVisible({ timeout: 4000 }).catch(() => false)) {
+    await cookie.click();
+  }
+  const inline = page.getByTestId('watch-demo-inline');
+  await inline.scrollIntoViewIfNeeded();
+  await inline.click();
+  await expect(page.getByTestId('demo-video')).toBeVisible();
+});
 
 test('Escape closes the demo modal and restores scroll', async ({ page }) => {
   const video = await openDemo(page, 'en');
