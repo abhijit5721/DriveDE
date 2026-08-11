@@ -55,6 +55,21 @@ export function Welcome() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Demo modal: Escape closes, body scroll locks while open
+  useEffect(() => {
+    if (!showDemo) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowDemo(false);
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [showDemo]);
+
   const handleStart = (
     plan?: '30-days' | '90-days' | 'lifetime',
     step: 'plan' | 'signup' = 'plan',
@@ -1087,11 +1102,24 @@ export function Welcome() {
 
       {/* Demo Modal */}
       {showDemo && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" onClick={() => setShowDemo(false)} />
           <div className="relative w-full max-w-5xl aspect-video rounded-3xl overflow-hidden border border-slate-700 bg-slate-900 shadow-2xl">
-            <button onClick={() => setShowDemo(false)} className="absolute top-4 right-4 z-[110] flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white"><X className="h-6 w-6" /></button>
-            <img src="/demo-video-final-v12.webp" className="h-full w-full object-contain" alt="Demo" loading="lazy" decoding="async" />
+            <button onClick={() => setShowDemo(false)} aria-label={isDe ? 'Schließen' : 'Close'} className="absolute top-4 right-4 z-[110] flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white"><X className="h-6 w-6" /></button>
+            <video
+              key={isDe ? 'de' : 'en'}
+              src={isDe ? '/demo-de.mp4' : '/demo-en.mp4'}
+              poster={isDe ? '/demo-poster-de.webp' : '/demo-poster-en.webp'}
+              controls
+              autoPlay
+              muted
+              playsInline
+              preload="none"
+              className="h-full w-full object-contain"
+              data-testid="demo-video"
+            >
+              {isDe ? 'Dein Browser kann dieses Video nicht abspielen.' : 'Your browser cannot play this video.'}
+            </video>
           </div>
         </div>
       )}

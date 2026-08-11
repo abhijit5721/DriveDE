@@ -1,0 +1,28 @@
+{
+  "name": "drivede-demo-video",
+  "private": true,
+  "description": "Isolated Remotion pipeline for the landing-page demo video. Never imported by the app build.",
+  "scripts": {
+    "dump-state": "node --experimental-strip-types record/dump-state.ts",
+    "record": "node --experimental-strip-types record/record.ts",
+    "assemble": "node record/assemble.mjs",
+    "studio": "remotion studio",
+    "render:de": "remotion render demo-de ../public/demo-de.mp4 --codec=h264 --crf=25 --color-space=bt709",
+    "render:en": "remotion render demo-en ../public/demo-en.mp4 --codec=h264 --crf=25 --color-space=bt709",
+    "posters": "remotion still demo-de ../public/demo-poster-de.webp --frame=140 && remotion still demo-en ../public/demo-poster-en.webp --frame=140",
+    "qa": "node record/qa.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.239",
+    "@remotion/google-fonts": "4.0.239",
+    "@remotion/transitions": "4.0.239",
+    "playwright": "^1.59.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.239"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.9.3"
+  }
+}

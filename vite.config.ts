@@ -97,6 +97,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.tsx',
     testTimeout: 15000,
-    exclude: ['**/node_modules/**', '**/dist/**', '**/tests/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/tests/**', '**/demo-video/**'],
   },
 });

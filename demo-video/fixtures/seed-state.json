@@ -1,0 +1,136 @@
+{
+  "state": {
+    "language": "en",
+    "darkMode": true,
+    "authStatus": "guest",
+    "hasCompletedOnboarding": true,
+    "activeTab": "finance",
+    "curriculumViewMode": "quest",
+    "licenseType": "manual",
+    "learningPath": "standard",
+    "transmissionType": "manual",
+    "isPremium": true,
+    "trialStartedAt": null,
+    "trialEndsAt": null,
+    "intendedPlan": null,
+    "trialEndedAcknowledged": false,
+    "authEmail": null,
+    "authDisplayName": null,
+    "authUserId": null,
+    "activeSession": null,
+    "isPublicReportEnabled": false,
+    "cookieSettings": {
+      "essential": true,
+      "analytics": false,
+      "marketing": false,
+      "hasSet": true
+    },
+    "userProgress": {
+      "completedLessons": [
+        "basics-0",
+        "basics-1",
+        "basics-1a",
+        "basics-1b",
+        "basics-2",
+        "basics-2a",
+        "basics-3"
+      ],
+      "drivingSessions": [
+        {
+          "id": "session-fixture-6",
+          "date": "2026-08-08T15:30:00.000Z",
+          "duration": 90,
+          "type": "normal",
+          "notes": "City practice: roundabouts and right-before-left.",
+          "instructorName": "M. Weber",
+          "totalDistance": 32.4,
+          "mistakes": [
+            { "type": "speeding", "speed": 42, "limit": 30, "timestamp": 1786462200000, "status": "confirmed", "source": "auto" }
+          ],
+          "syncStatus": "local"
+        },
+        {
+          "id": "session-fixture-5",
+          "date": "2026-08-05T14:00:00.000Z",
+          "duration": 90,
+          "type": "ueberland",
+          "notes": "Überlandfahrt with overtaking practice.",
+          "instructorName": "M. Weber",
+          "totalDistance": 58.1,
+          "mistakes": [
+            { "type": "speeding", "speed": 108, "limit": 100, "timestamp": 1786197600000, "status": "confirmed", "source": "auto" }
+          ],
+          "syncStatus": "local"
+        },
+        {
+          "id": "session-fixture-4",
+          "date": "2026-08-01T16:15:00.000Z",
+          "duration": 90,
+          "type": "autobahn",
+          "notes": "Autobahn merging and lane discipline.",
+          "instructorName": "M. Weber",
+          "totalDistance": 74.9,
+          "mistakes": [
+            { "type": "speeding", "speed": 135, "limit": 120, "timestamp": 1785860100000, "status": "confirmed", "source": "auto" }
+          ],
+          "syncStatus": "local"
+        },
+        {
+          "id": "session-fixture-3",
+          "date": "2026-07-28T19:45:00.000Z",
+          "duration": 90,
+          "type": "nacht",
+          "notes": "Night drive: lighting and unlit crossings.",
+          "instructorName": "M. Weber",
+          "totalDistance": 41.7,
+          "mistakes": [
+            { "type": "speeding", "speed": 58, "limit": 50, "timestamp": 1785527100000, "status": "confirmed", "source": "auto" }
+          ],
+          "syncStatus": "local"
+        },
+        {
+          "id": "session-fixture-2",
+          "date": "2026-07-24T15:00:00.000Z",
+          "duration": 90,
+          "type": "normal",
+          "notes": "Parking and hill starts around Prenzlauer Berg.",
+          "instructorName": "M. Weber",
+          "totalDistance": 28.3,
+          "mistakes": [
+            { "type": "speeding", "speed": 44, "limit": 30, "timestamp": 1785165600000, "status": "confirmed", "source": "auto" }
+          ],
+          "syncStatus": "local"
+        },
+        {
+          "id": "session-fixture-1",
+          "date": "2026-07-20T14:30:00.000Z",
+          "duration": 90,
+          "type": "normal",
+          "notes": "First lesson: vehicle controls and moving off.",
+          "instructorName": "M. Weber",
+          "totalDistance": 18.6,
+          "mistakes": [],
+          "syncStatus": "local"
+        }
+      ],
+      "quizScores": { "basics-1": 90, "basics-2": 85, "basics-3": 95 },
+      "totalDrivingMinutes": 540,
+      "specialDrivingMinutes": { "ueberland": 90, "autobahn": 90, "nacht": 90 },
+      "unlockedAchievements": ["first-lesson", "first-drive"],
+      "currentStreak": 4,
+      "lastActivityDate": "2026-08-08T15:30:00.000Z",
+      "incorrectQuestions": [],
+      "hourlyRate45": 60,
+      "hasAcceptedPrivacy": true,
+      "fixedCosts": {
+        "registration": 350,
+        "theoryExam": 25,
+        "practicalExam": 116,
+        "learningMaterial": 50,
+        "firstAid": 40,
+        "visionTest": 7
+      }
+    }
+  },
+  "version": 0
+}
