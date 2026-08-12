@@ -104,12 +104,16 @@ ${head}
 <body>
 <header><nav class="nav">
   <a class="brand" href="/">Drive<span>DE</span></a>
-  <div><a href="/blog/" style="margin-right:20px;font-weight:600;color:#334155">Blog</a><a class="btn" href="/?lang=en">Try DriveDE free</a></div>
+  <div>
+    <a href="${lang === 'de' ? '/blog/' : '/blog/en/'}" style="margin-right:14px;font-weight:600;color:#334155">Blog</a>
+    <span style="margin-right:14px;font-size:13px;color:#94a3b8"><a href="/blog/"${lang === 'de' ? ' style="font-weight:700;color:#0f172a"' : ''}>DE</a> | <a href="/blog/en/"${lang !== 'de' ? ' style="font-weight:700;color:#0f172a"' : ''}>EN</a></span>
+    <a class="btn" href="${lang === 'de' ? '/' : '/?lang=en'}">${lang === 'de' ? 'Gratis testen' : 'Try DriveDE free'}</a>
+  </div>
 </nav></header>
 <main>${body}</main>
 <footer><div class="inner">
   <span>© ${new Date().getFullYear()} DriveDE · Hamburg, Germany</span>
-  <span><a href="/">Home</a> · <a href="/blog/">Blog</a> · <a href="/">Impressum &amp; Datenschutz</a></span>
+  <span><a href="/">Home</a> · <a href="${lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a> · <a href="/">Impressum &amp; Datenschutz</a></span>
 </div></footer>
 </body>
 </html>`;
@@ -122,6 +126,7 @@ const posts = readdirSync(CONTENT).filter((f) => f.endsWith('.md')).map(parsePos
 const slugs = new Set();
 for (const p of posts) {
   if (slugs.has(p.slug)) throw new Error(`duplicate slug: ${p.slug}`);
+  if (p.slug === 'en') throw new Error('slug "en" is reserved for the English index');
   slugs.add(p.slug);
 }
 
@@ -184,7 +189,7 @@ for (const post of posts) {
       `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>`,
     ].filter(Boolean).join('\n'),
     body: `
-<div class="crumbs"><a href="/">Home</a> › <a href="/blog/">Blog</a> › ${esc(post.title)}</div>
+<div class="crumbs"><a href="/">Home</a> › <a href="${post.lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a> › ${esc(post.title)}</div>
 <h1>${post.flag ? post.flag + ' ' : ''}${esc(post.title)}</h1>
 <p class="meta">${post.lang === 'de' ? 'Aktualisiert' : 'Updated'}: ${post.updated || post.date} · DriveDE</p>
 <article>${bodyHtml}</article>
@@ -196,13 +201,15 @@ ${relatedHtml}`,
   writeFileSync(path.join(OUT, post.slug, 'index.html'), html);
 }
 
-// ---------- index ----------
+// ---------- per-language indexes ----------
+// /blog/ = German (site default), /blog/en/ = English, cross-linked via
+// the DE|EN toggle in the header plus hreflang alternates.
 // news block: headlines fetched client-side from /api/news (progressive
 // enhancement — the section stays hidden if the endpoint is unreachable)
-const newsBlock = `
+const newsBlock = (lang) => `
 <section id="news" hidden>
-  <h2 style="font-size:22px;margin:40px 0 4px;letter-spacing:-.3px">Aktuelles rund ums Fahren</h2>
-  <p class="meta" style="margin-bottom:16px">Schlagzeilen aus deutschen Verkehrs-Medien, verlinkt zur Quelle.</p>
+  <h2 style="font-size:22px;margin:40px 0 4px;letter-spacing:-.3px">${lang === 'de' ? 'Aktuelles rund ums Fahren' : 'Driving news from Germany'}</h2>
+  <p class="meta" style="margin-bottom:16px">${lang === 'de' ? 'Schlagzeilen aus deutschen Verkehrs-Medien, verlinkt zur Quelle.' : 'Headlines from German traffic media (in German), linked to the source.'}</p>
   <ul id="news-list" class="postlist"></ul>
 </section>
 <script>
@@ -221,20 +228,51 @@ fetch('/api/news').then(function(r){return r.json()}).then(function(d){
 }).catch(function(){});
 </script>`;
 
-const indexHtml = shell({
-  lang: 'en',
-  title: 'DriveDE Blog – German driving licence guides',
-  description: 'Practical guides for getting and converting a driving licence in Germany: Umschreibung country guides, exam preparation and driving-school know-how.',
-  canonical: `${SITE}/blog/`,
-  body: `
-<h1>DriveDE Blog</h1>
-<p class="meta">Practical guides for the German driving licence — written from real Anlage 11 FeV rules.</p>
-<ul class="postlist">${posts
-    .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a><p>${esc(p.description)}</p></li>`)
-    .join('\n')}</ul>
-${newsBlock}`,
-});
-writeFileSync(path.join(OUT, 'index.html'), indexHtml);
+const INDEXES = [
+  {
+    lang: 'de',
+    dir: OUT,
+    canonical: `${SITE}/blog/`,
+    title: 'DriveDE Blog – Führerschein-Guides auf Deutsch',
+    description: 'Praktische Guides rund um den Führerschein in Deutschland: Kosten, Fahrstunden, praktische Prüfung und Fahrschul-Wissen.',
+    heading: 'DriveDE Blog',
+    sub: 'Praktische Guides rund um Führerschein und Fahrprüfung in Deutschland.',
+  },
+  {
+    lang: 'en',
+    dir: path.join(OUT, 'en'),
+    canonical: `${SITE}/blog/en/`,
+    title: 'DriveDE Blog – German driving licence guides in English',
+    description: 'Practical guides for getting and converting a driving licence in Germany: Umschreibung country guides, exam preparation and costs, in English.',
+    heading: 'DriveDE Blog (English)',
+    sub: 'Practical guides for the German driving licence, written from real Anlage 11 FeV rules.',
+  },
+];
+
+const indexHreflang = `
+<link rel="alternate" hreflang="de" href="${SITE}/blog/">
+<link rel="alternate" hreflang="en" href="${SITE}/blog/en/">
+<link rel="alternate" hreflang="x-default" href="${SITE}/blog/">`;
+
+for (const idx of INDEXES) {
+  const langPosts = posts.filter((p) => p.lang === idx.lang);
+  const html = shell({
+    lang: idx.lang,
+    title: idx.title,
+    description: idx.description,
+    canonical: idx.canonical,
+    head: indexHreflang,
+    body: `
+<h1>${idx.heading}</h1>
+<p class="meta">${idx.sub}</p>
+<ul class="postlist">${langPosts
+      .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a><p>${esc(p.description)}</p></li>`)
+      .join('\n')}</ul>
+${newsBlock(idx.lang)}`,
+  });
+  mkdirSync(idx.dir, { recursive: true });
+  writeFileSync(path.join(idx.dir, 'index.html'), html);
+}
 
 // ---------- sitemap ----------
 const today = new Date().toISOString().slice(0, 10);
@@ -257,6 +295,16 @@ const urls = [
     <lastmod>${posts[0]?.updated || posts[0]?.date || today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="${SITE}/blog/" />
+    <xhtml:link rel="alternate" hreflang="en" href="${SITE}/blog/en/" />
+  </url>`,
+  `  <url>
+    <loc>${SITE}/blog/en/</loc>
+    <lastmod>${posts[0]?.updated || posts[0]?.date || today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="${SITE}/blog/" />
+    <xhtml:link rel="alternate" hreflang="en" href="${SITE}/blog/en/" />
   </url>`,
   ...posts.map((p) => `  <url>
     <loc>${SITE}/blog/${p.slug}/</loc>

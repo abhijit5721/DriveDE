@@ -1065,7 +1065,7 @@ export function Welcome() {
               <li><a href="#features" className="hover:text-slate-900 transition">{isDe ? 'Funktionen & GPS-Tracker' : 'Features & GPS Tracker'}</a></li>
               <li><a href="#pricing" className="hover:text-slate-900 transition">{isDe ? 'DriveDE Pro Preise' : 'DriveDE Pro Pricing'}</a></li>
               <li><a href="#paths" className="hover:text-slate-900 transition">{isDe ? 'Umschreibungs-Modus' : 'Umschreibung Mode'}</a></li>
-              <li><a href="/blog/" className="hover:text-slate-900 transition">{isDe ? 'Blog & Guides' : 'Blog & Guides'}</a></li>
+              <li><a href={isDe ? '/blog/' : '/blog/en/'} className="hover:text-slate-900 transition">Blog & Guides</a></li>
             </ul>
           </div>
 
