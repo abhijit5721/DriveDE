@@ -103,6 +103,34 @@ export function TestimonialsSection() {
             </div>
           ))}
         </div>
+
+        {/* Country-guide links: strongest internal-link signal for blog indexing (GRO-9) */}
+        <div className="mt-8 text-center text-sm text-slate-500">
+          <p className="mb-2 font-semibold text-slate-600">
+            {isDe ? 'Detaillierte Länder-Guides (Englisch):' : 'Detailed country guides:'}
+          </p>
+          <p className="leading-relaxed">
+            <a href="/blog/convert-indian-driving-licence-germany/" className="text-blue-600 hover:underline">🇮🇳 India</a>
+            {' · '}
+            <a href="/blog/convert-turkish-driving-licence-germany/" className="text-blue-600 hover:underline">🇹🇷 Turkey</a>
+            {' · '}
+            <a href="/blog/convert-us-drivers-license-germany/" className="text-blue-600 hover:underline">🇺🇸 US</a>
+            {' · '}
+            <a href="/blog/convert-uk-driving-licence-germany/" className="text-blue-600 hover:underline">🇬🇧 UK</a>
+            {' · '}
+            <a href="/blog/convert-ukrainian-driving-licence-germany/" className="text-blue-600 hover:underline">🇺🇦 Ukraine</a>
+            {' · '}
+            <a href="/blog/convert-japanese-driving-licence-germany/" className="text-blue-600 hover:underline">🇯🇵 Japan</a>
+            {' · '}
+            <a href="/blog/convert-brazilian-driving-licence-germany/" className="text-blue-600 hover:underline">🇧🇷 Brazil</a>
+            {' · '}
+            <a href="/blog/convert-chinese-driving-licence-germany/" className="text-blue-600 hover:underline">🇨🇳 China</a>
+            {' · '}
+            <a href="/blog/convert-foreign-licence-germany-overview/" className="font-semibold text-blue-600 hover:underline">
+              {isDe ? 'Alle Länder →' : 'All countries →'}
+            </a>
+          </p>
+        </div>
       </div>
     </section>
   );
