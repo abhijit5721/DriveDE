@@ -197,6 +197,30 @@ ${relatedHtml}`,
 }
 
 // ---------- index ----------
+// news block: headlines fetched client-side from /api/news (progressive
+// enhancement — the section stays hidden if the endpoint is unreachable)
+const newsBlock = `
+<section id="news" hidden>
+  <h2 style="font-size:22px;margin:40px 0 4px;letter-spacing:-.3px">Aktuelles rund ums Fahren</h2>
+  <p class="meta" style="margin-bottom:16px">Schlagzeilen aus deutschen Verkehrs-Medien, verlinkt zur Quelle.</p>
+  <ul id="news-list" class="postlist"></ul>
+</section>
+<script>
+fetch('/api/news').then(function(r){return r.json()}).then(function(d){
+  if(!d.items||!d.items.length)return;
+  var ul=document.getElementById('news-list');
+  d.items.forEach(function(i){
+    var li=document.createElement('li');
+    var a=document.createElement('a');
+    a.href=i.link;a.rel='noopener nofollow';a.target='_blank';a.textContent=i.title;
+    var p=document.createElement('p');
+    p.textContent=i.source+' · '+new Date(i.date).toLocaleDateString('de-DE');
+    li.appendChild(a);li.appendChild(p);ul.appendChild(li);
+  });
+  document.getElementById('news').hidden=false;
+}).catch(function(){});
+</script>`;
+
 const indexHtml = shell({
   lang: 'en',
   title: 'DriveDE Blog – German driving licence guides',
@@ -207,7 +231,8 @@ const indexHtml = shell({
 <p class="meta">Practical guides for the German driving licence — written from real Anlage 11 FeV rules.</p>
 <ul class="postlist">${posts
     .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a><p>${esc(p.description)}</p></li>`)
-    .join('\n')}</ul>`,
+    .join('\n')}</ul>
+${newsBlock}`,
 });
 writeFileSync(path.join(OUT, 'index.html'), indexHtml);
 
