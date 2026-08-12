@@ -49,6 +49,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg,woff2}'],
+        // static blog pages are server-rendered HTML, not SPA routes:
+        // keep them out of the precache and out of the SPA navigation fallback
+        globIgnores: ['blog/**'],
+        navigateFallbackDenylist: [/^\/blog(\/|$)/, /^\/sitemap\.xml$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
