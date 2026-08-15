@@ -10,9 +10,10 @@
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Power, AlertTriangle, Cog, Zap, RotateCcw } from 'lucide-react';
+import { Check, Power, AlertTriangle, Cog, Zap, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
+import { engineSound, haptic } from '../../utils/cockpitFeedback';
 import {
   STEPS,
   GEAR_TOP_SPEED,
@@ -173,6 +174,7 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   const [message, setMessage] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const scoreSent = useRef(false);
   const pedalRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
@@ -196,6 +198,18 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   }, [sim.gear, mode]);
 
   useEffect(() => () => knobTimers.current.forEach(clearTimeout), []);
+
+  // sound follows engine state + RPM; engine stops on unmount
+  useEffect(() => {
+    engineSound.setMuted(!soundOn);
+  }, [soundOn]);
+  useEffect(() => {
+    if (!sim.engineOn) engineSound.stopEngine();
+  }, [sim.engineOn]);
+  useEffect(() => {
+    if (sim.engineOn) engineSound.setRpm(sim.rpm);
+  }, [sim.rpm, sim.engineOn]);
+  useEffect(() => () => engineSound.stopEngine(true), []);
 
   const steps = STEPS[mode];
   const step = steps[stepIndex];
@@ -279,6 +293,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   useEffect(() => {
     if (sim.stalled && !prevStalled.current) {
       flash(tc.msgs.stall, true);
+      engineSound.stall();
+      haptic.stall();
     }
     prevStalled.current = sim.stalled;
   }, [sim.stalled, flash, tc.msgs.stall]);
@@ -313,6 +329,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         return s;
       }
       setMessage(null);
+      engineSound.startEngine();
+      haptic.start();
       return { ...s, engineOn: true, stalled: false, rpm: IDLE_RPM };
     });
   };
@@ -322,9 +340,13 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       if (s.gear === gear) return s;
       if (s.engineOn && s.clutch < 90) {
         flash(tc.msgs.grind, true);
+        engineSound.grind();
+        haptic.grind();
         return s;
       }
       setMessage(null);
+      engineSound.click();
+      haptic.tick();
       return { ...s, gear };
     });
   };
@@ -337,6 +359,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         return s;
       }
       setMessage(null);
+      engineSound.click();
+      haptic.tick();
       return { ...s, autoGear };
     });
   };
@@ -374,6 +398,7 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   // Toggle, not press-and-hold: a single mouse cursor cannot hold the brake
   // while clicking the engine button (real-world bug found in preview).
   const togglePedal = (key: 'brake' | 'gas') => {
+    haptic.tick();
     setSim((s) => ({ ...s, [key]: !s[key] }));
   };
 
@@ -438,6 +463,18 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       <div className="p-4 border-b border-slate-100 dark:border-slate-800">
         <div className="mb-3 flex items-center justify-between">
           <h4 className="font-bold text-slate-900 dark:text-white">{tc.title}</h4>
+          <div className="flex items-center gap-2">
+          <button
+            data-testid="cockpit-sound"
+            onClick={() => setSoundOn((v) => !v)}
+            aria-pressed={soundOn}
+            className={cn(
+              'flex h-7 w-7 items-center justify-center rounded-lg transition',
+              soundOn ? 'bg-blue-600/10 text-blue-600 dark:text-cyan-300' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'
+            )}
+          >
+            {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+          </button>
           <div className="flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
             {(['manual', 'automatic'] as const).map((m) => (
               <button
@@ -452,6 +489,7 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
                 {m === 'manual' ? tc.modeManual : tc.modeAutomatic}
               </button>
             ))}
+          </div>
           </div>
         </div>
 
