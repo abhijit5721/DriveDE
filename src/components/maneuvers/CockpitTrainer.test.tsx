@@ -125,6 +125,10 @@ describe('CockpitTrainer', () => {
     expect(onScore).toHaveBeenCalledWith(expect.any(Number));
     expect(onScore.mock.calls[0][0]).toBeGreaterThanOrEqual(80);
 
+    // the windshield scene travelled while driving (DRI-13)
+    const offset = Number(screen.getByTestId('cockpit-windshield').getAttribute('data-offset'));
+    expect(offset).toBeGreaterThan(0);
+
     fireEvent.click(screen.getByTestId('cockpit-continue'));
     expect(onComplete).toHaveBeenCalled();
   });

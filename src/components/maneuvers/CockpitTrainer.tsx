@@ -14,6 +14,7 @@ import { Check, Power, AlertTriangle, Cog, Zap, RotateCcw, Volume2, VolumeX } fr
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { engineSound, haptic } from '../../utils/cockpitFeedback';
+import { CockpitWindshield } from './SimulatorComponents';
 import {
   STEPS,
   GEAR_TOP_SPEED,
@@ -45,6 +46,7 @@ const INITIAL_STATE: CockpitSimState = {
   clutch: 0,
   brake: false,
   gas: false,
+  distance: 0,
 };
 
 const MANUAL_GEARS: Array<{ gear: ManualGear; col: number; row: number }> = [
@@ -242,8 +244,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       setSim((s) => {
         if (!s.engineOn) {
           // engine off: coast down
-          const speed = Math.max(0, s.speed - (s.brake ? 4 : 0.5));
-          return { ...s, rpm: 0, speed: Math.round(speed * 10) / 10 };
+          const speed = Math.round(Math.max(0, s.speed - (s.brake ? 4 : 0.5)) * 10) / 10;
+          return { ...s, rpm: 0, speed, distance: s.distance + speed * 0.004 };
         }
 
         let rpm = s.rpm;
@@ -282,7 +284,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
           rpm = rpm + ((s.gas && drive ? 2600 : IDLE_RPM) - rpm) * 0.25;
         }
 
-        return { ...s, rpm: Math.round(rpm), speed: Math.round(Math.max(0, speed) * 10) / 10 };
+        const nextSpeed = Math.round(Math.max(0, speed) * 10) / 10;
+        return { ...s, rpm: Math.round(rpm), speed: nextSpeed, distance: s.distance + nextSpeed * 0.004 };
       });
     }, TICK_MS);
     return () => clearInterval(timer);
@@ -532,6 +535,11 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* windshield: first-person road view driven by the sim (DRI-13) */}
+      <div className="mx-4 h-28 overflow-hidden rounded-xl border border-slate-200 shadow-inner dark:border-slate-700">
+        <CockpitWindshield distance={sim.distance} speed={sim.speed} engineOn={sim.engineOn} />
+      </div>
 
       {/* readout row */}
       <div className="mx-4 grid grid-cols-4 gap-2">

@@ -291,3 +291,88 @@ export const SideViewTree: React.FC = () => (
     <circle cx="15" cy="15" r="10" fill="#166534" />
   </g>
 );
+
+/**
+ * CockpitWindshield (DRI-13): first-person road view for the cockpit trainer.
+ * Purely prop-driven (no internal timers): `distance` moves the lane dashes
+ * and roadside objects toward the viewer with perspective scaling, `speed`
+ * only tints the motion blur. Exported standalone for reuse in other sims.
+ */
+export const CockpitWindshield: React.FC<{ distance: number; speed: number; engineOn: boolean }> = ({
+  distance,
+  speed,
+  engineOn,
+}) => {
+  const HORIZON = 34;
+  const BOTTOM = 100;
+  // perspective helper: t in [0,1) -> y position + scale (near = big)
+  const persp = (t: number) => {
+    const p = t * t; // ease toward viewer
+    return { y: HORIZON + (BOTTOM - HORIZON) * p, s: 0.15 + 1.6 * p };
+  };
+  const DASHES = 6;
+  const TREES = 4;
+  const cycle = (i: number, n: number, speedFactor: number) =>
+    ((i / n + (distance * speedFactor) % 1) % 1 + 1) % 1;
+
+  return (
+    <svg
+      viewBox="0 0 200 100"
+      preserveAspectRatio="xMidYMid slice"
+      className="h-full w-full"
+      data-testid="cockpit-windshield"
+      data-offset={Math.round(distance * 100)}
+    >
+      <defs>
+        <linearGradient id="ws-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#0c4a6e" />
+          <stop offset="1" stopColor="#38bdf8" />
+        </linearGradient>
+        <linearGradient id="ws-road" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#475569" />
+          <stop offset="1" stopColor="#1e293b" />
+        </linearGradient>
+      </defs>
+      {/* sky + horizon strip */}
+      <rect x="0" y="0" width="200" height={HORIZON} fill="url(#ws-sky)" />
+      <rect x="0" y={HORIZON - 6} width="200" height="6" fill="#0f172a" opacity="0.55" />
+      {/* grass */}
+      <rect x="0" y={HORIZON} width="200" height={BOTTOM - HORIZON} fill="#14532d" />
+      {/* road */}
+      <path d={`M92 ${HORIZON} L108 ${HORIZON} L170 ${BOTTOM} L30 ${BOTTOM} Z`} fill="url(#ws-road)" />
+      {/* road edges */}
+      <path d={`M92 ${HORIZON} L30 ${BOTTOM}`} stroke="#f8fafc" strokeWidth="1" opacity="0.7" />
+      <path d={`M108 ${HORIZON} L170 ${BOTTOM}`} stroke="#f8fafc" strokeWidth="1" opacity="0.7" />
+      {/* centre dashes flowing toward the viewer */}
+      {Array.from({ length: DASHES }, (_, i) => {
+        const t = cycle(i, DASHES, 0.9);
+        const { y, s } = persp(t);
+        const h = 3.5 * s;
+        return <rect key={i} x={100 - 0.9 * s} y={y} width={1.8 * s} height={h} fill="#facc15" opacity={t < 0.06 ? t * 12 : 0.95} />;
+      })}
+      {/* roadside trees, both sides */}
+      {Array.from({ length: TREES }, (_, i) => {
+        const t = cycle(i, TREES, 0.45);
+        const { y, s } = persp(t);
+        const spread = 12 + 78 * (t * t);
+        return (
+          <g key={i} opacity={t < 0.08 ? t * 10 : 0.95}>
+            <g transform={`translate(${100 - spread} ${y}) scale(${s * 0.28})`}>
+              <rect x="-2" y="-8" width="4" height="10" fill="#78350f" />
+              <circle cx="0" cy="-12" r="8" fill="#16a34a" />
+            </g>
+            <g transform={`translate(${100 + spread} ${y}) scale(${s * 0.28})`}>
+              <rect x="-2" y="-8" width="4" height="10" fill="#78350f" />
+              <circle cx="0" cy="-12" r="8" fill="#15803d" />
+            </g>
+          </g>
+        );
+      })}
+      {/* speed haze at the edges when moving fast */}
+      <rect x="0" y={HORIZON} width="200" height={BOTTOM - HORIZON} fill="#0f172a" opacity={engineOn ? Math.min(0.25, speed / 260) : 0.45} />
+      {/* rear-view mirror */}
+      <rect x="78" y="2.5" width="44" height="11" rx="3.5" fill="#0f172a" stroke="#334155" strokeWidth="1" />
+      <rect x="80.5" y="4.5" width="39" height="7" rx="2" fill="#1e3a5f" opacity="0.9" />
+    </svg>
+  );
+};

@@ -23,6 +23,8 @@ export interface CockpitSimState {
   clutch: number;   // 0-100, 100 = pedal fully pressed (disengaged)
   brake: boolean;
   gas: boolean;
+  /** distance travelled (arbitrary units) — drives the windshield scene */
+  distance: number;
 }
 
 export interface TrainerStep {
