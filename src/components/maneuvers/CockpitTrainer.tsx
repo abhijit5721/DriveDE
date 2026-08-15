@@ -201,6 +201,12 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
 
   useEffect(() => () => knobTimers.current.forEach(clearTimeout), []);
 
+  // decode the engine samples while the user reads the first step, so the
+  // very first ignition press plays the real recording
+  useEffect(() => {
+    engineSound.warmup();
+  }, []);
+
   // sound follows engine state + RPM; engine stops on unmount
   useEffect(() => {
     engineSound.setMuted(!soundOn);

@@ -65,10 +65,6 @@ class EngineSound {
       .then(([loop, start]) => {
         if (loop.status === 'fulfilled') this.loopBuffer = loop.value;
         if (start.status === 'fulfilled') this.startBuffer = start.value;
-        if (this.osc && this.loopBuffer) {
-          this.stopEngine(true);
-          this.startLoop(ctx);
-        }
       })
       .finally(() => {
         this.loopLoading = false;
@@ -87,8 +83,8 @@ class EngineSound {
     this.loopSource.loopEnd = this.loopBuffer.duration - 0.3;
     this.loopSource.playbackRate.value = 0.85;
     this.loopGain = ctx.createGain();
-    this.loopGain.gain.setValueAtTime(0.0001, t0);
-    this.loopGain.gain.linearRampToValueAtTime(0.5, t0 + 0.6);
+    this.loopGain.gain.value = 0.0001;
+    this.loopGain.gain.setTargetAtTime(0.5, t0, 0.2);
     this.loopSource.connect(this.loopGain).connect(ctx.destination);
     this.loopSource.start(t0, 0.3);
   }
@@ -137,6 +133,19 @@ class EngineSound {
     }
     this.loopSource = null;
     this.loopGain = null;
+  }
+
+  /** Preload + decode samples before the first gesture. Creating an
+   *  AudioContext without a gesture is allowed (it starts suspended) and
+   *  decodeAudioData works while suspended - so the very first engine
+   *  start can play the real ignition instead of a synth fallback. */
+  warmup() {
+    if (typeof window === 'undefined' || !('AudioContext' in window || 'webkitAudioContext' in window)) return;
+    if (!this.ctx) {
+      const Ctor = (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext);
+      this.ctx = new Ctor();
+    }
+    this.loadSamples(this.ctx);
   }
 
   /** must be called from a user gesture (autoplay policy) */
