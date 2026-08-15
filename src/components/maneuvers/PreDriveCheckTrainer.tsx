@@ -84,16 +84,58 @@ function LampGlyph({ id, className }: { id: string; className?: string }) {
   );
 }
 
-/** clickable regions on the cockpit interior */
+const polar = (cx: number, cy: number, r: number, deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+};
+
+/** analogue dial: 240° sweep from 150° (min) clockwise to 390° (max) */
+function Gauge({ cx, cy, r, values, labelEvery, needleAt, redFrom, caption }: {
+  cx: number; cy: number; r: number; values: number[]; labelEvery: number;
+  needleAt: number; redFrom?: number; caption: string;
+}) {
+  const maxV = values[values.length - 1];
+  const angle = (v: number) => 150 + (v / maxV) * 240;
+  const needle = polar(cx, cy, r - 9, angle(needleAt));
+  const red = redFrom !== undefined
+    ? { a: polar(cx, cy, r - 4, angle(redFrom)), b: polar(cx, cy, r - 4, angle(maxV)) }
+    : null;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={r} fill="url(#pdDial)" stroke="#475569" strokeWidth="1.5" />
+      {values.map((v, i) => {
+        const outer = polar(cx, cy, r - 3, angle(v));
+        const inner = polar(cx, cy, r - (i % labelEvery === 0 ? 8 : 6), angle(v));
+        const tPos = polar(cx, cy, r - 13, angle(v));
+        return (
+          <g key={v}>
+            <line x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} stroke="#94a3b8" strokeWidth={i % labelEvery === 0 ? 1.6 : 0.8} />
+            {i % labelEvery === 0 && (
+              <text x={tPos.x} y={tPos.y + 1.8} textAnchor="middle" fontSize="5" fontWeight="700" fill="#cbd5e1">{v}</text>
+            )}
+          </g>
+        );
+      })}
+      {red && (
+        <path d={`M${red.a.x} ${red.a.y} A${r - 4} ${r - 4} 0 0 1 ${red.b.x} ${red.b.y}`} fill="none" stroke="#ef4444" strokeWidth="2.5" />
+      )}
+      <line x1={cx} y1={cy} x2={needle.x} y2={needle.y} stroke="#f87171" strokeWidth="2" strokeLinecap="round" />
+      <circle cx={cx} cy={cy} r="3.5" fill="#334155" stroke="#64748b" strokeWidth="1" />
+      <text x={cx} y={cy + r - 6} textAnchor="middle" fontSize="4.5" fill="#64748b">{caption}</text>
+    </g>
+  );
+}
+
+/** clickable regions on the cockpit interior (viewBox 400x300) */
 const CONTROL_POS: Record<string, { x: number; y: number; w: number; h: number }> = {
-  indicatorStalk: { x: 60, y: 108, w: 52, h: 18 },
-  wiperStalk: { x: 208, y: 108, w: 52, h: 18 },
-  lightSwitch: { x: 24, y: 156, w: 40, h: 40 },
-  fogRear: { x: 30, y: 200, w: 28, h: 16 },
-  hazard: { x: 300, y: 96, w: 36, h: 26 },
-  horn: { x: 138, y: 128, w: 44, h: 30 },
-  defrostRear: { x: 300, y: 132, w: 36, h: 26 },
-  handbrake: { x: 322, y: 186, w: 56, h: 24 },
+  indicatorStalk: { x: 52, y: 180, w: 46, h: 13 },
+  wiperStalk: { x: 222, y: 180, w: 46, h: 13 },
+  lightSwitch: { x: 16, y: 150, w: 42, h: 42 },
+  fogRear: { x: 22, y: 202, w: 30, h: 18 },
+  hazard: { x: 300, y: 142, w: 38, h: 28 },
+  horn: { x: 128, y: 190, w: 64, h: 44 },
+  defrostRear: { x: 344, y: 142, w: 38, h: 28 },
+  handbrake: { x: 328, y: 252, w: 58, h: 28 },
 };
 
 export default function PreDriveCheckTrainer({ onComplete, onScore, language }: Props) {
@@ -219,47 +261,141 @@ export default function PreDriveCheckTrainer({ onComplete, onScore, language }: 
             )}
           </div>
 
-          {/* cockpit interior */}
+          {/* cockpit interior: LHD driver's view */}
           <div className="mx-4 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-            <svg viewBox="0 0 400 230" className="w-full bg-gradient-to-b from-slate-700 to-slate-900">
-              {/* windshield sliver + dash top */}
-              <rect x="0" y="0" width="400" height="34" fill="#38bdf8" opacity="0.25" />
-              <path d="M0 34 L400 34 L400 74 Q200 96 0 74 Z" fill="#1e293b" />
-              {/* instrument cluster */}
-              <rect x="92" y="52" width="136" height="34" rx="10" fill="#0f172a" stroke="#334155" />
-              <circle cx="118" cy="69" r="12" fill="#020617" stroke="#475569" />
-              <circle cx="160" cy="69" r="12" fill="#020617" stroke="#475569" />
-              <circle cx="202" cy="69" r="12" fill="#020617" stroke="#475569" />
-              {/* steering column + wheel */}
-              <rect x="120" y="86" width="80" height="80" rx="38" fill="none" stroke="#0f172a" strokeWidth="16" />
-              <rect x="120" y="86" width="80" height="80" rx="38" fill="none" stroke="#334155" strokeWidth="12" />
-              {/* stalks */}
+            <svg viewBox="0 0 400 300" className="w-full">
+              <defs>
+                <linearGradient id="pdSky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#7dd3fc" />
+                  <stop offset="1" stopColor="#e0f2fe" />
+                </linearGradient>
+                <linearGradient id="pdDash" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#334155" />
+                  <stop offset="0.25" stopColor="#1e293b" />
+                  <stop offset="1" stopColor="#0b1220" />
+                </linearGradient>
+                <radialGradient id="pdDial">
+                  <stop offset="0.6" stopColor="#0b1220" />
+                  <stop offset="1" stopColor="#1e293b" />
+                </radialGradient>
+                <linearGradient id="pdRim" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#475569" />
+                  <stop offset="1" stopColor="#1e293b" />
+                </linearGradient>
+              </defs>
+
+              {/* windshield: sky, fields, road ahead */}
+              <rect width="400" height="58" fill="url(#pdSky)" />
+              <rect y="38" width="400" height="20" fill="#86efac" opacity="0.55" />
+              <path d="M172 58 L196 38 L206 38 L248 58 Z" fill="#94a3b8" />
+              <path d="M200.5 41 l1 4 M204 48 l1.5 6" stroke="#f8fafc" strokeWidth="1.5" />
+              {/* A-pillars + rear-view mirror */}
+              <path d="M0 0 L30 0 L6 58 L0 58 Z" fill="#0f172a" />
+              <path d="M400 0 L370 0 L394 58 L400 58 Z" fill="#0f172a" />
+              <rect x="178" y="3" width="44" height="13" rx="4" fill="#0f172a" stroke="#334155" />
+              <rect x="181" y="6" width="38" height="7" rx="2" fill="#38bdf8" opacity="0.5" />
+
+              {/* dashboard body + defroster vents */}
+              <path d="M0 58 Q200 86 400 58 L400 300 L0 300 Z" fill="url(#pdDash)" />
+              {[70, 250].map((vx) => (
+                <g key={vx} fill="#0b1220" opacity="0.8">
+                  {[0, 1, 2, 3].map((i) => (
+                    <rect key={i} x={vx + i * 18} y={67 + i * 0.6} width="12" height="4" rx="2" />
+                  ))}
+                </g>
+              ))}
+
+              {/* instrument binnacle: tacho, LCD, speedo, warning-lamp strip */}
+              <path d="M68 96 Q160 62 252 96 L252 152 Q160 172 68 152 Z" fill="#0b1220" stroke="#334155" strokeWidth="1.5" />
+              <Gauge cx={113} cy={120} r={28} values={[0, 1, 2, 3, 4, 5, 6, 7, 8]} labelEvery={2} needleAt={0.9} redFrom={6.5} caption="x1000/min" />
+              <Gauge cx={207} cy={120} r={28} values={[0, 30, 60, 90, 120, 150, 180, 210, 240]} labelEvery={2} needleAt={0} caption="km/h" />
+              {(['#ef4444', '#ef4444', '#f59e0b', '#f59e0b', '#10b981'] as const).map((c, i) => (
+                <circle key={i} cx={148 + i * 6} cy={96} r="2.2" fill={c} opacity="0.9" />
+              ))}
+              <rect x="146" y="102" width="28" height="28" rx="3" fill="#020617" stroke="#1e293b" />
+              <text x="160" y="114" textAnchor="middle" fontSize="7" fontWeight="700" fill="#38bdf8">P</text>
+              <text x="160" y="125" textAnchor="middle" fontSize="5" fill="#64748b">84210 km</text>
+
+              {/* stalks (behind the wheel) */}
               <g>
-                <rect x={CONTROL_POS.indicatorStalk.x} y={CONTROL_POS.indicatorStalk.y} width={CONTROL_POS.indicatorStalk.w} height="10" rx="5" fill="#475569" />
-                <circle cx={CONTROL_POS.indicatorStalk.x + 6} cy={CONTROL_POS.indicatorStalk.y + 5} r="7" fill="#334155" />
+                <rect x={CONTROL_POS.indicatorStalk.x} y={CONTROL_POS.indicatorStalk.y + 2} width={CONTROL_POS.indicatorStalk.w} height="9" rx="4.5" fill="#475569" />
+                <rect x={CONTROL_POS.indicatorStalk.x} y={CONTROL_POS.indicatorStalk.y + 2} width="12" height="9" rx="4.5" fill="#334155" />
+                <path d={`M${CONTROL_POS.indicatorStalk.x + 22} ${CONTROL_POS.indicatorStalk.y - 3} l-5 3 l5 3 Z`} fill="#4ade80" />
+                <path d={`M${CONTROL_POS.indicatorStalk.x + 28} ${CONTROL_POS.indicatorStalk.y - 3} l5 3 l-5 3 Z`} fill="#4ade80" />
               </g>
               <g>
-                <rect x={CONTROL_POS.wiperStalk.x} y={CONTROL_POS.wiperStalk.y} width={CONTROL_POS.wiperStalk.w} height="10" rx="5" fill="#475569" />
-                <circle cx={CONTROL_POS.wiperStalk.x + CONTROL_POS.wiperStalk.w - 6} cy={CONTROL_POS.wiperStalk.y + 5} r="7" fill="#334155" />
+                <rect x={CONTROL_POS.wiperStalk.x} y={CONTROL_POS.wiperStalk.y + 2} width={CONTROL_POS.wiperStalk.w} height="9" rx="4.5" fill="#475569" />
+                <rect x={CONTROL_POS.wiperStalk.x + CONTROL_POS.wiperStalk.w - 12} y={CONTROL_POS.wiperStalk.y + 2} width="12" height="9" rx="4.5" fill="#334155" />
+                <path d={`M${CONTROL_POS.wiperStalk.x + 16} ${CONTROL_POS.wiperStalk.y - 1} a8 8 0 0 1 14 0`} fill="none" stroke="#94a3b8" strokeWidth="1.2" />
               </g>
-              {/* horn pad */}
-              <ellipse cx="160" cy="143" rx="24" ry="16" fill="#1e293b" stroke="#475569" />
-              <text x="160" y="147" textAnchor="middle" fontSize="9" fontWeight="700" fill="#94a3b8">PUSH</text>
-              {/* light switch dial + fog button */}
-              <circle cx="44" cy="176" r="20" fill="#1e293b" stroke="#475569" strokeWidth="2" />
-              <rect x="41" y="160" width="6" height="14" rx="3" fill="#94a3b8" />
-              <circle cx="44" cy="176" r="26" fill="none" stroke="#334155" strokeDasharray="3 5" />
-              <rect x={CONTROL_POS.fogRear.x} y={CONTROL_POS.fogRear.y} width={CONTROL_POS.fogRear.w} height={CONTROL_POS.fogRear.h} rx="4" fill="#0f172a" stroke="#475569" />
-              <text x={CONTROL_POS.fogRear.x + 14} y={CONTROL_POS.fogRear.y + 12} textAnchor="middle" fontSize="9" fill="#f59e0b">≡O</text>
-              {/* centre console buttons */}
-              <rect x="288" y="86" width="60" height="130" rx="10" fill="#111c2e" stroke="#334155" />
-              <rect x={CONTROL_POS.hazard.x} y={CONTROL_POS.hazard.y} width={CONTROL_POS.hazard.w} height={CONTROL_POS.hazard.h} rx="5" fill="#1e293b" stroke="#ef4444" />
-              <path d={`M${CONTROL_POS.hazard.x + 18} ${CONTROL_POS.hazard.y + 6} l8 14 h-16 Z`} fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinejoin="round" />
-              <rect x={CONTROL_POS.defrostRear.x} y={CONTROL_POS.defrostRear.y} width={CONTROL_POS.defrostRear.w} height={CONTROL_POS.defrostRear.h} rx="5" fill="#1e293b" stroke="#475569" />
-              <text x={CONTROL_POS.defrostRear.x + 18} y={CONTROL_POS.defrostRear.y + 18} textAnchor="middle" fontSize="12" fill="#f59e0b">♨</text>
+
+              {/* steering wheel: rim, three spokes, horn hub */}
+              <g>
+                <circle cx="160" cy="212" r="72" fill="none" stroke="#0b1220" strokeWidth="17" />
+                <circle cx="160" cy="212" r="72" fill="none" stroke="url(#pdRim)" strokeWidth="12" />
+                <circle cx="160" cy="212" r="78" fill="none" stroke="#020617" strokeWidth="1.5" opacity="0.6" />
+                <path d="M94 220 L134 217 M226 220 L186 217 M160 277 L160 236" stroke="#0b1220" strokeWidth="14" strokeLinecap="round" />
+                <path d="M94 220 L134 217 M226 220 L186 217 M160 277 L160 236" stroke="#334155" strokeWidth="9" strokeLinecap="round" />
+                <ellipse cx="160" cy="212" rx="33" ry="23" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+                <ellipse cx="160" cy="212" rx="21" ry="14" fill="#0f172a" />
+                <path d="M151 212 l8 -5 v10 Z" fill="#94a3b8" />
+                <path d="M162 206 a8 8 0 0 1 0 12 M166 203 a12 12 0 0 1 0 18" fill="none" stroke="#64748b" strokeWidth="1.5" />
+              </g>
+
+              {/* light switch dial + rear fog button (left of column) */}
+              <g>
+                <circle cx="37" cy="170" r="19" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+                <circle cx="37" cy="170" r="24" fill="none" stroke="#334155" strokeDasharray="2 4" />
+                <rect x="34.5" y="154" width="5" height="12" rx="2.5" fill="#94a3b8" />
+                <text x="16" y="152" fontSize="6" fontWeight="700" fill="#94a3b8">0</text>
+                <path d="M52 146 a6 6 0 0 0 0 12" fill="none" stroke="#94a3b8" strokeWidth="1.3" />
+                <path d="M54 148 h6 M54 152 h6 M54 156 h6" stroke="#94a3b8" strokeWidth="1.3" />
+              </g>
+              <g>
+                <rect x={CONTROL_POS.fogRear.x} y={CONTROL_POS.fogRear.y} width={CONTROL_POS.fogRear.w} height={CONTROL_POS.fogRear.h} rx="4" fill="#0f172a" stroke="#475569" />
+                <path d={`M${CONTROL_POS.fogRear.x + 9} ${CONTROL_POS.fogRear.y + 4} a7 7 0 0 0 0 11`} fill="none" stroke="#f59e0b" strokeWidth="1.4" />
+                <path d={`M${CONTROL_POS.fogRear.x + 12} ${CONTROL_POS.fogRear.y + 6} h9 M${CONTROL_POS.fogRear.x + 12} ${CONTROL_POS.fogRear.y + 9} h9 M${CONTROL_POS.fogRear.x + 12} ${CONTROL_POS.fogRear.y + 12} h9`} stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="2 1.5" />
+              </g>
+
+              {/* centre console: vents, screen, buttons, climate, gear, handbrake */}
+              <rect x="292" y="72" width="96" height="222" rx="12" fill="#0d1626" stroke="#334155" strokeWidth="1.5" />
+              {[300, 346].map((vx) => (
+                <g key={vx}>
+                  <rect x={vx} y={80} width={34} height={13} rx={3} fill="#020617" stroke="#1e293b" />
+                  <path d={`M${vx + 4} 86.5 h26`} stroke="#334155" strokeWidth="1.5" />
+                </g>
+              ))}
+              <rect x="300" y="100" width="80" height="36" rx="4" fill="#020617" stroke="#1e293b" />
+              <path d="M306 130 q16 -18 34 -10 t 36 -14" stroke="#38bdf8" strokeWidth="2" fill="none" />
+              <circle cx="354" cy="114" r="2.5" fill="#38bdf8" />
+              <rect x={CONTROL_POS.hazard.x} y={CONTROL_POS.hazard.y} width={CONTROL_POS.hazard.w} height={CONTROL_POS.hazard.h} rx="5" fill="#1e293b" stroke="#ef4444" strokeWidth="1.5" />
+              <path d={`M${CONTROL_POS.hazard.x + 19} ${CONTROL_POS.hazard.y + 6} l9 15 h-18 Z`} fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinejoin="round" />
+              <path d={`M${CONTROL_POS.hazard.x + 19} ${CONTROL_POS.hazard.y + 10} l5.5 9 h-11 Z`} fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinejoin="round" />
+              <rect x={CONTROL_POS.defrostRear.x} y={CONTROL_POS.defrostRear.y} width={CONTROL_POS.defrostRear.w} height={CONTROL_POS.defrostRear.h} rx="5" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+              <rect x={CONTROL_POS.defrostRear.x + 8} y={CONTROL_POS.defrostRear.y + 8} width={22} height={13} rx="4" fill="none" stroke="#f59e0b" strokeWidth="1.3" />
+              <path d={`M${CONTROL_POS.defrostRear.x + 13} ${CONTROL_POS.defrostRear.y + 18} q2 -3 0 -6 M${CONTROL_POS.defrostRear.x + 19} ${CONTROL_POS.defrostRear.y + 18} q2 -3 0 -6 M${CONTROL_POS.defrostRear.x + 25} ${CONTROL_POS.defrostRear.y + 18} q2 -3 0 -6`} fill="none" stroke="#f59e0b" strokeWidth="1.3" />
+              {[318, 364].map((kx, i) => (
+                <g key={kx}>
+                  <circle cx={kx} cy={200} r="13" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
+                  <rect x={kx - 2} y={189} width="4" height="9" rx="2" fill="#94a3b8" />
+                  {i === 0 && (
+                    <>
+                      <path d={`M${kx - 15} 208 a16 16 0 0 1 5 -11`} fill="none" stroke="#3b82f6" strokeWidth="2" />
+                      <path d={`M${kx + 15} 208 a16 16 0 0 0 -5 -11`} fill="none" stroke="#ef4444" strokeWidth="2" />
+                    </>
+                  )}
+                </g>
+              ))}
+              {/* gear lever + boot */}
+              <path d="M302 274 l10 -14 h10 l10 14 Z" fill="#0b1220" stroke="#1e293b" />
+              <rect x="315" y="242" width="4" height="20" fill="#334155" />
+              <circle cx="317" cy="240" r="8" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
               {/* handbrake lever */}
-              <rect x={CONTROL_POS.handbrake.x} y={CONTROL_POS.handbrake.y + 8} width={CONTROL_POS.handbrake.w} height="10" rx="5" fill="#334155" transform={`rotate(-12 ${CONTROL_POS.handbrake.x} ${CONTROL_POS.handbrake.y + 12})`} />
-              <circle cx={CONTROL_POS.handbrake.x + 52} cy={CONTROL_POS.handbrake.y + 2} r="8" fill="#1e293b" stroke="#475569" />
+              <g transform="rotate(-12 336 272)">
+                <rect x="336" y="266" width="48" height="9" rx="4.5" fill="#334155" />
+                <rect x="336" y="266" width="18" height="9" rx="4.5" fill="#1e293b" />
+                <circle cx="382" cy="270.5" r="4" fill="#94a3b8" />
+              </g>
               {/* invisible tap targets + found markers */}
               {CONTROL_ORDER.map((id) => {
                 const p = CONTROL_POS[id];
