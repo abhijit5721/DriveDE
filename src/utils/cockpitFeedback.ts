@@ -205,22 +205,28 @@ class EngineSound {
     this.osc2.start(ctx.currentTime + 0.3);
   }
 
-  /** call every sim tick; pitch (and loudness) track RPM */
+  /** call every sim tick; pitch (and loudness) track RPM.
+   *  setTargetAtTime instead of ramp-events: no automation pileup, no
+   *  ordering fights with the start fade. Self-heals a dropped loop. */
   setRpm(rpm: number) {
     if (!this.ctx || this.muted) return;
+    // engine is supposed to be running: if every source is gone, restart the loop
+    if (!this.loopSource && !this.osc && this.loopBuffer) {
+      this.startLoop(this.ctx);
+    }
     const t = this.ctx.currentTime;
     if (this.loopSource && this.loopGain) {
       // idle recorded ~800rpm; scale playback rate with RPM for the rev sound
-      const rate = 0.8 + (Math.max(0, rpm - 700) / 4000) * 1.3; // 0.8x idle .. ~2x redline
-      this.loopSource.playbackRate.linearRampToValueAtTime(Math.min(2.2, rate), t + 0.12);
-      this.loopGain.gain.linearRampToValueAtTime(0.42 + (rpm / 4500) * 0.35, t + 0.12);
+      const rate = Math.min(2.2, Math.max(0.75, 0.8 + (Math.max(0, rpm - 700) / 4000) * 1.3));
+      this.loopSource.playbackRate.setTargetAtTime(rate, t, 0.08);
+      this.loopGain.gain.setTargetAtTime(Math.min(0.8, 0.42 + (rpm / 4500) * 0.35), t, 0.1);
       return;
     }
     if (!this.osc || !this.osc2 || !this.filter) return;
     const f = 40 + (rpm / 4500) * 140;
-    this.osc.frequency.linearRampToValueAtTime(f, t + 0.1);
-    this.osc2.frequency.linearRampToValueAtTime(f * 0.5, t + 0.1);
-    this.filter.frequency.linearRampToValueAtTime(180 + (rpm / 4500) * 700, t + 0.1);
+    this.osc.frequency.setTargetAtTime(f, t, 0.08);
+    this.osc2.frequency.setTargetAtTime(f * 0.5, t, 0.08);
+    this.filter.frequency.setTargetAtTime(180 + (rpm / 4500) * 700, t, 0.08);
   }
 
   stopEngine(immediate = false) {

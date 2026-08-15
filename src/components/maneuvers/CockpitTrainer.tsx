@@ -205,8 +205,17 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   useEffect(() => {
     engineSound.setMuted(!soundOn);
   }, [soundOn]);
+  // edge-triggered engine sound: React may re-run state updaters, so side
+  // effects live here, firing exactly once per actual state transition
+  const prevEngineOn = useRef(false);
   useEffect(() => {
-    if (!sim.engineOn) engineSound.stopEngine();
+    if (sim.engineOn && !prevEngineOn.current) {
+      engineSound.startEngine();
+      haptic.start();
+    } else if (!sim.engineOn && prevEngineOn.current) {
+      engineSound.stopEngine();
+    }
+    prevEngineOn.current = sim.engineOn;
   }, [sim.engineOn]);
   useEffect(() => {
     if (sim.engineOn) engineSound.setRpm(sim.rpm);
@@ -332,8 +341,6 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         return s;
       }
       setMessage(null);
-      engineSound.startEngine();
-      haptic.start();
       return { ...s, engineOn: true, stalled: false, rpm: IDLE_RPM };
     });
   };
