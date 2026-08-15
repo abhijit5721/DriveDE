@@ -55,6 +55,7 @@ import InteractiveParking from '../maneuvers/InteractiveParking';
 import InteractiveTechCheck from '../maneuvers/InteractiveTechCheck';
 import InteractiveExamSimulation from '../maneuvers/InteractiveExamSimulation';
 import CockpitTrainer from '../maneuvers/CockpitTrainer';
+import PreDriveCheckTrainer from '../maneuvers/PreDriveCheckTrainer';
 import type { Lesson } from '../../types';
 
 interface LessonDetailProps {
@@ -516,6 +517,32 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
               <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
                 <InteractiveTechCheck onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Pre-drive Cockpit Check: controls + warning lamps (DRI-12) */}
+          {isTechLesson && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                  <Gauge className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.preDriveTrainer}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.preDriveTrainerSub}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <PreDriveCheckTrainer
+                  onComplete={handleFinish}
+                  onScore={(pct) => setQuizScore('predrive-check', pct)}
+                  language={language}
+                />
               </div>
             </div>
           )}

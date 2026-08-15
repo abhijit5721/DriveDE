@@ -39,4 +39,12 @@ export const examCommands: ExamCommand[] = [
   { de: 'Die Prüfung ist jetzt beendet. Fahren Sie bitte zurück zum Ausgangspunkt.', en: 'The exam is now over. Please drive back to the starting point.' },
   { de: 'Halten Sie bitte am rechten Fahrbahnrand an.', en: 'Please pull over to the right curb.' },
   { de: 'Fahren Sie bei der nächsten Möglichkeit wieder los.', en: 'Start driving again when possible.' },
+
+  // Abfahrtkontrolle / technical questions (DRI-12)
+  { de: 'Zeigen Sie mir bitte die Nebelschlussleuchte.', en: 'Please show me the rear fog light.' },
+  { de: 'Schalten Sie die Warnblinkanlage ein.', en: 'Switch on the hazard lights.' },
+  { de: 'Wie prüfen Sie den Ölstand?', en: 'How do you check the oil level?' },
+  { de: 'Zeigen Sie mir, wie Sie die Beleuchtung prüfen.', en: 'Show me how you check the lights.' },
+  { de: 'Was bedeutet die rote Warnleuchte mit der Ölkanne?', en: 'What does the red warning lamp with the oil can mean?' },
+  { de: 'Schalten Sie die Heckscheibenheizung ein.', en: 'Switch on the rear window defroster.' },
 ];
