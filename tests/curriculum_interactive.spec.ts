@@ -83,12 +83,10 @@ test.describe('Curriculum Interactive Simulator', () => {
       await page.mouse.up();
       await expect(page.getByTestId('cockpit-clutch-value')).toHaveText(/9[0-9]|100/);
 
-      // DOM dispatch to hold the brake while clicking the engine button —
-      // a real mouse press releases via onPointerLeave when it travels away.
-      await page.getByTestId('cockpit-brake').dispatchEvent('pointerdown');
+      // pedals are toggles: one click latches the brake
+      await page.getByTestId('cockpit-brake').dispatchEvent('click');
       await page.getByTestId('cockpit-engine').dispatchEvent('click');
       await expect(page.getByTestId('cockpit-step')).toContainText('2/6', { timeout: 5000 });
-      await page.getByTestId('cockpit-brake').dispatchEvent('pointerup');
     });
 
     await test.step('Select 1st gear with clutch pressed', async () => {

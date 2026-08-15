@@ -45,7 +45,7 @@ describe('CockpitTrainer', () => {
     expect(screen.getByTestId('cockpit-message')).toHaveTextContent(/press the clutch fully/i);
 
     pressClutchFully();
-    fireEvent.pointerDown(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     fireEvent.click(screen.getByTestId('cockpit-engine'));
     act(() => {
       vi.advanceTimersByTime(300);
@@ -57,7 +57,7 @@ describe('CockpitTrainer', () => {
   it('grinds the gearbox when shifting without the clutch pressed', () => {
     render(<CockpitTrainer onComplete={vi.fn()} language="en" mode="manual" />);
     pressClutchFully();
-    fireEvent.pointerDown(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     fireEvent.click(screen.getByTestId('cockpit-engine'));
     releaseClutchTo(20); // clutch mostly released
     fireEvent.click(screen.getByTestId('cockpit-gear-1'));
@@ -68,9 +68,9 @@ describe('CockpitTrainer', () => {
   it('stalls when the clutch is dumped without gas', () => {
     render(<CockpitTrainer onComplete={vi.fn()} language="en" mode="manual" />);
     pressClutchFully();
-    fireEvent.pointerDown(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     fireEvent.click(screen.getByTestId('cockpit-engine'));
-    fireEvent.pointerUp(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     fireEvent.click(screen.getByTestId('cockpit-gear-1'));
     releaseClutchTo(0); // dump the clutch, no gas
     act(() => {
@@ -79,25 +79,42 @@ describe('CockpitTrainer', () => {
     expect(screen.getByTestId('cockpit-message')).toHaveTextContent(/stalled/i);
   });
 
+  it('supports keyboard controls: B holds brake, arrows move clutch, E starts engine', () => {
+    render(<CockpitTrainer onComplete={vi.fn()} language="en" mode="manual" />);
+    // clutch fully down via arrow key repeats
+    for (let i = 0; i < 14; i++) fireEvent.keyDown(window, { key: 'ArrowDown' });
+    expect(screen.getByTestId('cockpit-clutch-value')).toHaveTextContent('100%');
+    // hold brake with B, start engine with E
+    fireEvent.keyDown(window, { key: 'b' });
+    fireEvent.keyDown(window, { key: 'e' });
+    act(() => vi.advanceTimersByTime(300));
+    expect(screen.getByTestId('cockpit-step')).toHaveTextContent('Step 2/6');
+    // select 1st gear with the 1 key
+    fireEvent.keyDown(window, { key: '1' });
+    expect(screen.getByTestId('cockpit-gear-display')).toHaveTextContent('1');
+    // releasing B releases the brake
+    fireEvent.keyUp(window, { key: 'b' });
+  });
+
   it('completes the automatic flow and reports a score', () => {
     const onComplete = vi.fn();
     const onScore = vi.fn();
     render(<CockpitTrainer onComplete={onComplete} onScore={onScore} language="en" mode="automatic" />);
 
     // step 1: brake + start
-    fireEvent.pointerDown(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     fireEvent.click(screen.getByTestId('cockpit-engine'));
     act(() => vi.advanceTimersByTime(200));
     // step 2: D with brake held
     fireEvent.click(screen.getByTestId('cockpit-gear-D'));
     act(() => vi.advanceTimersByTime(200));
     // step 3: release brake, gas to 10 km/h
-    fireEvent.pointerUp(screen.getByTestId('cockpit-brake'));
-    fireEvent.pointerDown(screen.getByTestId('cockpit-gas'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-gas'));
     act(() => vi.advanceTimersByTime(3000));
     // step 4: stop with brake
-    fireEvent.pointerUp(screen.getByTestId('cockpit-gas'));
-    fireEvent.pointerDown(screen.getByTestId('cockpit-brake'));
+    fireEvent.click(screen.getByTestId('cockpit-gas'));
+    fireEvent.click(screen.getByTestId('cockpit-brake'));
     act(() => vi.advanceTimersByTime(5000));
     // step 5: P + engine off
     fireEvent.click(screen.getByTestId('cockpit-gear-P'));

@@ -215,6 +215,14 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
     });
   };
 
+  // stable refs so the keyboard effect never captures stale handlers
+  const handleEngineRef = useRef(handleEngine);
+  handleEngineRef.current = handleEngine;
+  const handleManualGearRef = useRef(handleManualGear);
+  handleManualGearRef.current = handleManualGear;
+  const handleAutoGearRef = useRef(handleAutoGear);
+  handleAutoGearRef.current = handleAutoGear;
+
   const setClutchFromPointer = useCallback((clientY: number) => {
     const el = pedalRef.current;
     if (!el) return;
@@ -237,11 +245,58 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
     draggingRef.current = false;
   };
 
-  const holdProps = (key: 'brake' | 'gas') => ({
-    onPointerDown: () => setSim((s) => ({ ...s, [key]: true })),
-    onPointerUp: () => setSim((s) => ({ ...s, [key]: false })),
-    onPointerLeave: () => setSim((s) => ({ ...s, [key]: false })),
-  });
+  // Toggle, not press-and-hold: a single mouse cursor cannot hold the brake
+  // while clicking the engine button (real-world bug found in preview).
+  const togglePedal = (key: 'brake' | 'gas') => {
+    setSim((s) => ({ ...s, [key]: !s[key] }));
+  };
+
+  // Keyboard controls (desktop): keys give real hold semantics that a single
+  // mouse cursor cannot. B=brake, Space=gas, arrows=clutch, E=engine,
+  // 1-6/N/R (manual) or P/R/N/D (automatic) = gears.
+  useEffect(() => {
+    if (finished) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.tagName === 'INPUT' || (e.target as HTMLElement)?.tagName === 'TEXTAREA') return;
+      const k = e.key.toLowerCase();
+      if (k === 'b') {
+        setSim((s) => (s.brake ? s : { ...s, brake: true }));
+      } else if (k === ' ') {
+        e.preventDefault();
+        setSim((s) => (s.gas ? s : { ...s, gas: true }));
+      } else if (k === 'e' && !e.repeat) {
+        handleEngineRef.current();
+      } else if (k === 'arrowdown' && mode === 'manual') {
+        e.preventDefault();
+        setSim((s) => ({ ...s, clutch: Math.min(100, s.clutch + 8) }));
+      } else if (k === 'arrowup' && mode === 'manual') {
+        e.preventDefault();
+        setSim((s) => ({ ...s, clutch: Math.max(0, s.clutch - 8) }));
+      } else if (!e.repeat) {
+        if (mode === 'manual') {
+          if (/^[1-6]$/.test(k)) handleManualGearRef.current(Number(k) as ManualGear);
+          else if (k === 'n') handleManualGearRef.current('N');
+          else if (k === 'r') handleManualGearRef.current('R');
+        } else {
+          if (k === 'p') handleAutoGearRef.current('P');
+          else if (k === 'r') handleAutoGearRef.current('R');
+          else if (k === 'n') handleAutoGearRef.current('N');
+          else if (k === 'd') handleAutoGearRef.current('D');
+        }
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if (k === 'b') setSim((s) => ({ ...s, brake: false }));
+      if (k === ' ') setSim((s) => ({ ...s, gas: false }));
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [mode, finished]);
 
   const pf = mode === 'manual' ? powerFactor(sim.clutch, sim.gear) : sim.autoGear === 'D' || sim.autoGear === 'R' ? 1 : 0;
   const powerPct = sim.engineOn ? Math.round(pf * 100) : 0;
@@ -334,8 +389,19 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
           { label: tc.readouts.rpm, value: sim.rpm, testid: 'cockpit-rpm' },
           { label: tc.readouts.gear, value: mode === 'manual' ? String(sim.gear) : sim.autoGear, testid: 'cockpit-gear-display' },
         ].map((r) => (
-          <div key={r.label} className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-800">
-            <span data-testid={r.testid} className="text-lg font-black tabular-nums text-slate-900 dark:text-white">{r.value}</span>
+          <div
+            key={r.label}
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 p-2 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)] dark:border-slate-700 dark:from-slate-800 dark:to-slate-900 dark:shadow-[inset_0_2px_6px_rgba(0,0,0,0.5)]"
+          >
+            <span
+              data-testid={r.testid}
+              className={cn(
+                'text-lg font-black tabular-nums transition-colors',
+                sim.engineOn ? 'text-blue-600 dark:text-cyan-300 dark:[text-shadow:0_0_10px_rgba(103,232,249,0.5)]' : 'text-slate-400 dark:text-slate-500'
+              )}
+            >
+              {r.value}
+            </span>
             <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{r.label}</span>
           </div>
         ))}
@@ -351,17 +417,17 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
           {[{ icon: Power, label: tc.power.engine }, { icon: Cog, label: tc.power.clutch }, { icon: Zap, label: tc.power.gearbox }].map((n, i) => (
             <div key={n.label} className="flex flex-1 items-center gap-1">
               <div className={cn(
-                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2',
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300',
                 sim.engineOn && (i === 0 || powerPct > 0)
-                  ? 'border-blue-500 bg-blue-500/10 text-blue-500'
+                  ? 'border-cyan-400 bg-cyan-400/10 text-cyan-500 shadow-[0_0_12px_rgba(34,211,238,0.45)] dark:text-cyan-300'
                   : 'border-slate-300 text-slate-400 dark:border-slate-600'
               )}>
-                <n.icon className="h-4 w-4" />
+                <n.icon className={cn('h-4 w-4', i === 0 && sim.engineOn && 'animate-pulse')} />
               </div>
               {i < 2 && (
-                <div className="relative h-1 flex-1 overflow-hidden rounded bg-slate-200 dark:bg-slate-700">
+                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 shadow-inner dark:bg-slate-950">
                   <div
-                    className="h-full bg-blue-500 transition-all duration-200"
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_8px_rgba(34,211,238,0.6)] transition-all duration-200"
                     style={{ width: `${sim.engineOn ? (i === 0 ? 100 : powerPct) : 0}%` }}
                   />
                 </div>
@@ -374,7 +440,7 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       {/* controls: clutch pedal (manual) + gear selector */}
       <div className="mx-4 grid grid-cols-[96px_1fr] gap-3">
         {mode === 'manual' ? (
-          <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 p-2 dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
             <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{tc.controls.clutch}</span>
             <div
               ref={pedalRef}
@@ -382,18 +448,43 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
               onPointerDown={onPedalPointerDown}
               onPointerMove={onPedalPointerMove}
               onPointerUp={onPedalPointerUp}
-              className="relative mt-2 h-36 w-10 cursor-grab touch-none rounded-full bg-slate-200 dark:bg-slate-700"
+              className="relative mt-2 h-36 w-16 cursor-grab touch-none select-none"
             >
-              <div
-                className="absolute inset-x-0 bottom-0 rounded-full bg-blue-500/30 transition-[height] duration-75"
-                style={{ height: `${sim.clutch}%` }}
-              />
-              <div
-                className="absolute left-1/2 h-6 w-12 -translate-x-1/2 rounded-lg border-2 border-white bg-blue-600 shadow-md transition-[top] duration-75"
-                style={{ top: `calc(${sim.clutch}% - 12px)` }}
-              />
+              {/* travel track */}
+              <div className="absolute left-1 top-0 h-full w-1.5 rounded-full bg-slate-200 shadow-inner dark:bg-slate-950">
+                <div
+                  className="absolute inset-x-0 top-0 rounded-full bg-gradient-to-b from-cyan-400 to-blue-500 transition-[height] duration-75"
+                  style={{ height: `${sim.clutch}%` }}
+                />
+              </div>
+              {/* side-view pedal: arm + pad tilt with travel */}
+              <svg viewBox="0 0 64 144" className="pointer-events-none absolute inset-0 h-full w-full">
+                <defs>
+                  <linearGradient id="pedalArm" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stopColor="#94a3b8" />
+                    <stop offset="0.5" stopColor="#475569" />
+                    <stop offset="1" stopColor="#1e293b" />
+                  </linearGradient>
+                  <linearGradient id="pedalPad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#64748b" />
+                    <stop offset="0.5" stopColor="#334155" />
+                    <stop offset="1" stopColor="#0f172a" />
+                  </linearGradient>
+                </defs>
+                {/* pivot at bottom; arm rotates toward the floor as clutch is pressed */}
+                <g transform={`rotate(${sim.clutch * 0.28}, 30, 138)`}>
+                  <rect x="27" y="34" width="7" height="104" rx="3" fill="url(#pedalArm)" />
+                  {/* pedal pad, tilts with the arm */}
+                  <g transform={`rotate(${-sim.clutch * 0.12}, 30, 34)`}>
+                    <rect x="12" y="20" width="37" height="20" rx="5" fill="url(#pedalPad)" stroke="#0ea5e9" strokeWidth="1.5" />
+                    <line x1="17" y1="26" x2="44" y2="26" stroke="#64748b" strokeWidth="1.5" />
+                    <line x1="17" y1="31" x2="44" y2="31" stroke="#64748b" strokeWidth="1.5" />
+                  </g>
+                </g>
+                <circle cx="30" cy="138" r="5" fill="#1e293b" stroke="#475569" strokeWidth="2" />
+              </svg>
             </div>
-            <span data-testid="cockpit-clutch-value" className="mt-2 text-xs font-black tabular-nums text-slate-900 dark:text-white">{sim.clutch}%</span>
+            <span data-testid="cockpit-clutch-value" className="mt-2 text-xs font-black tabular-nums text-slate-900 dark:text-cyan-300">{sim.clutch}%</span>
             <span className="text-[9px] text-slate-400">{tc.controls.pedalTravel}</span>
           </div>
         ) : (
@@ -418,9 +509,16 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
           <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{tc.controls.gearLabel}</span>
           {mode === 'manual' ? (
-            <div className="relative mt-2 grid grid-cols-4 grid-rows-3 place-items-center gap-y-0">
-              {/* H-pattern rails */}
-              <div className="pointer-events-none absolute inset-x-4 top-1/2 h-0.5 -translate-y-1/2 bg-slate-300 dark:bg-slate-600" />
+            <div className="relative mt-2 grid grid-cols-4 grid-rows-3 place-items-center gap-y-0 rounded-xl bg-slate-100 p-2 shadow-[inset_0_2px_8px_rgba(0,0,0,0.08)] dark:bg-slate-950 dark:shadow-[inset_0_2px_10px_rgba(0,0,0,0.6)]">
+              {/* H-gate: horizontal middle slot + vertical slots per column */}
+              <div className="pointer-events-none absolute inset-x-5 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800" />
+              {[0, 1, 2, 3].map((col) => (
+                <div
+                  key={col}
+                  className="pointer-events-none absolute inset-y-3 w-1.5 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800"
+                  style={{ left: `calc(${(col + 0.5) * 25}% - 3px)` }}
+                />
+              ))}
               {MANUAL_GEARS.map(({ gear, col, row }) => (
                 <button
                   key={String(gear)}
@@ -428,8 +526,10 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
                   onClick={() => handleManualGear(gear)}
                   style={{ gridColumn: col + 1, gridRow: row + 1 }}
                   className={cn(
-                    'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition',
-                    sim.gear === gear ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-white text-slate-500 shadow dark:bg-slate-700 dark:text-slate-300'
+                    'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition-all',
+                    sim.gear === gear
+                      ? 'scale-110 bg-[radial-gradient(circle_at_35%_30%,#60a5fa,#2563eb_60%,#1e3a8a)] text-white shadow-[0_4px_10px_rgba(37,99,235,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)]'
+                      : 'bg-[radial-gradient(circle_at_35%_30%,#f8fafc,#cbd5e1_70%,#94a3b8)] text-slate-600 shadow-[0_3px_6px_rgba(0,0,0,0.25)] dark:bg-[radial-gradient(circle_at_35%_30%,#64748b,#334155_65%,#0f172a)] dark:text-slate-200'
                   )}
                 >
                   {gear}
@@ -440,8 +540,10 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
                 onClick={() => handleManualGear('N')}
                 style={{ gridColumn: 2, gridRow: 2 }}
                 className={cn(
-                  'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition',
-                  sim.gear === 'N' ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-white text-blue-500 shadow dark:bg-slate-700'
+                  'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition-all',
+                  sim.gear === 'N'
+                    ? 'scale-110 bg-[radial-gradient(circle_at_35%_30%,#60a5fa,#2563eb_60%,#1e3a8a)] text-white shadow-[0_4px_10px_rgba(37,99,235,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)]'
+                    : 'bg-[radial-gradient(circle_at_35%_30%,#f8fafc,#cbd5e1_70%,#94a3b8)] text-blue-600 shadow-[0_3px_6px_rgba(0,0,0,0.25)] dark:bg-[radial-gradient(circle_at_35%_30%,#64748b,#334155_65%,#0f172a)] dark:text-cyan-300'
                 )}
               >
                 N
@@ -455,33 +557,40 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         </div>
       </div>
 
-      {/* brake / gas */}
+      {/* brake / gas — toggle pedals (latched visual state) */}
       <div className="mx-4 mb-1 grid grid-cols-2 gap-3">
         <button
           data-testid="cockpit-brake"
-          {...holdProps('brake')}
+          onClick={() => togglePedal('brake')}
+          aria-pressed={sim.brake}
           className={cn(
-            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition',
+            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition-all',
             sim.brake
-              ? 'border-red-300 bg-red-100 text-red-700 dark:border-red-500/40 dark:bg-red-500/20 dark:text-red-300'
-              : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'
+              ? 'translate-y-0.5 border-red-400 bg-gradient-to-b from-red-500 to-red-700 text-white shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)]'
+              : 'border-slate-200 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-500 shadow-[0_3px_0_rgba(100,116,139,0.35)] dark:border-slate-600 dark:from-slate-700 dark:to-slate-800 dark:text-slate-300 dark:shadow-[0_3px_0_rgba(0,0,0,0.5)]'
           )}
         >
           {tc.controls.brake}
         </button>
         <button
           data-testid="cockpit-gas"
-          {...holdProps('gas')}
+          onClick={() => togglePedal('gas')}
+          aria-pressed={sim.gas}
           className={cn(
-            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition',
+            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition-all',
             sim.gas
-              ? 'border-emerald-300 bg-emerald-100 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-300'
-              : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'
+              ? 'translate-y-0.5 border-emerald-400 bg-gradient-to-b from-emerald-500 to-emerald-700 text-white shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)]'
+              : 'border-slate-200 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-500 shadow-[0_3px_0_rgba(100,116,139,0.35)] dark:border-slate-600 dark:from-slate-700 dark:to-slate-800 dark:text-slate-300 dark:shadow-[0_3px_0_rgba(0,0,0,0.5)]'
           )}
         >
           {tc.controls.gas}
         </button>
       </div>
+
+      {/* keyboard hint (desktop only) */}
+      <p className="mx-4 mb-3 hidden text-center text-[10px] leading-relaxed text-slate-400 dark:text-slate-500 sm:block">
+        {mode === 'manual' ? tc.keysHintManual : tc.keysHintAutomatic}
+      </p>
 
       {/* completion */}
       {finished && (
