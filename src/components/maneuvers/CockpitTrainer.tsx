@@ -56,6 +56,29 @@ const MANUAL_GEARS: Array<{ gear: ManualGear; col: number; row: number }> = [
   { gear: 'R', col: 3, row: 0 },
 ];
 
+/** slot position (%) inside the gate box; N sits on the middle rail */
+const GATE_POS: Record<string, { x: number; y: number }> = {
+  1: { x: 12.5, y: 18 },
+  2: { x: 12.5, y: 82 },
+  3: { x: 37.5, y: 18 },
+  4: { x: 37.5, y: 82 },
+  5: { x: 62.5, y: 18 },
+  6: { x: 62.5, y: 82 },
+  R: { x: 87.5, y: 18 },
+  N: { x: 37.5, y: 50 },
+};
+
+/** real H-shifter path: vertical to the middle rail, across, then into the slot */
+function gatePath(from: ManualGear, to: ManualGear): Array<{ x: number; y: number }> {
+  const a = GATE_POS[String(from)];
+  const b = GATE_POS[String(to)];
+  const path: Array<{ x: number; y: number }> = [];
+  if (a.y !== 50) path.push({ x: a.x, y: 50 });
+  if (a.x !== b.x) path.push({ x: b.x, y: 50 });
+  if (b.y !== 50) path.push({ x: b.x, y: b.y });
+  return path.length ? path : [b];
+}
+
 const AUTO_GEARS: AutoGear[] = ['P', 'R', 'N', 'D'];
 
 export default function CockpitTrainer({ onComplete, onScore, language, mode: initialMode = 'manual' }: Props) {
@@ -72,6 +95,26 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   const scoreSent = useRef(false);
   const pedalRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  // gear-knob animation: knob travels through the gate like a real shifter
+  const [knobPos, setKnobPos] = useState(GATE_POS.N);
+  const knobTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const prevGearRef = useRef<ManualGear>('N');
+
+  useEffect(() => {
+    if (mode !== 'manual') return;
+    const from = prevGearRef.current;
+    const to = sim.gear;
+    if (from === to) return;
+    prevGearRef.current = to;
+    knobTimers.current.forEach(clearTimeout);
+    knobTimers.current = [];
+    const waypoints = gatePath(from, to);
+    waypoints.forEach((p, i) => {
+      knobTimers.current.push(setTimeout(() => setKnobPos(p), i * 110));
+    });
+  }, [sim.gear, mode]);
+
+  useEffect(() => () => knobTimers.current.forEach(clearTimeout), []);
 
   const steps = STEPS[mode];
   const step = steps[stepIndex];
@@ -93,6 +136,8 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
     setMessage(null);
     setFinished(false);
     scoreSent.current = false;
+    setKnobPos(GATE_POS.N);
+    prevGearRef.current = 'N';
   }, []);
 
   // ---- simulation tick ----
@@ -549,45 +594,48 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
           <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{tc.controls.gearLabel}</span>
           {mode === 'manual' ? (
-            <div className="relative mt-2 grid grid-cols-4 grid-rows-3 place-items-center gap-y-0 rounded-xl bg-slate-100 p-2 shadow-[inset_0_2px_8px_rgba(0,0,0,0.08)] dark:bg-slate-950 dark:shadow-[inset_0_2px_10px_rgba(0,0,0,0.6)]">
-              {/* H-gate: horizontal middle slot + vertical slots per column */}
-              <div className="pointer-events-none absolute inset-x-5 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800" />
-              {[0, 1, 2, 3].map((col) => (
+            <div className="relative mt-2 h-32 rounded-xl bg-slate-100 shadow-[inset_0_2px_8px_rgba(0,0,0,0.08)] dark:bg-slate-950 dark:shadow-[inset_0_2px_10px_rgba(0,0,0,0.6)]">
+              {/* H-gate slots: middle rail + one vertical slot per column */}
+              <div className="pointer-events-none absolute inset-x-[8%] top-1/2 h-2 -translate-y-1/2 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800" />
+              {[12.5, 37.5, 62.5, 87.5].map((x) => (
                 <div
-                  key={col}
-                  className="pointer-events-none absolute inset-y-3 w-1.5 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800"
-                  style={{ left: `calc(${(col + 0.5) * 25}% - 3px)` }}
+                  key={x}
+                  className="pointer-events-none absolute inset-y-[14%] w-2 rounded-full bg-slate-300 shadow-inner dark:bg-slate-800"
+                  style={{ left: `calc(${x}% - 4px)` }}
                 />
               ))}
-              {MANUAL_GEARS.map(({ gear, col, row }) => (
-                <button
-                  key={String(gear)}
-                  data-testid={`cockpit-gear-${gear}`}
-                  onClick={() => handleManualGear(gear)}
-                  style={{ gridColumn: col + 1, gridRow: row + 1 }}
-                  className={cn(
-                    'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition-all',
-                    sim.gear === gear
-                      ? 'scale-110 bg-[radial-gradient(circle_at_35%_30%,#60a5fa,#2563eb_60%,#1e3a8a)] text-white shadow-[0_4px_10px_rgba(37,99,235,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)]'
-                      : 'bg-[radial-gradient(circle_at_35%_30%,#f8fafc,#cbd5e1_70%,#94a3b8)] text-slate-600 shadow-[0_3px_6px_rgba(0,0,0,0.25)] dark:bg-[radial-gradient(circle_at_35%_30%,#64748b,#334155_65%,#0f172a)] dark:text-slate-200'
-                  )}
-                >
-                  {gear}
-                </button>
-              ))}
-              <button
-                data-testid="cockpit-gear-N"
-                onClick={() => handleManualGear('N')}
-                style={{ gridColumn: 2, gridRow: 2 }}
-                className={cn(
-                  'z-10 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black transition-all',
-                  sim.gear === 'N'
-                    ? 'scale-110 bg-[radial-gradient(circle_at_35%_30%,#60a5fa,#2563eb_60%,#1e3a8a)] text-white shadow-[0_4px_10px_rgba(37,99,235,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)]'
-                    : 'bg-[radial-gradient(circle_at_35%_30%,#f8fafc,#cbd5e1_70%,#94a3b8)] text-blue-600 shadow-[0_3px_6px_rgba(0,0,0,0.25)] dark:bg-[radial-gradient(circle_at_35%_30%,#64748b,#334155_65%,#0f172a)] dark:text-cyan-300'
-                )}
+              {/* slot tap targets with position labels */}
+              {[...MANUAL_GEARS, { gear: 'N' as ManualGear, col: 1, row: 1 }].map(({ gear }) => {
+                const pos = GATE_POS[String(gear)];
+                const isCurrent = sim.gear === gear;
+                return (
+                  <button
+                    key={String(gear)}
+                    data-testid={`cockpit-gear-${gear}`}
+                    onClick={() => handleManualGear(gear)}
+                    aria-label={`${tc.controls.gearLabel}: ${gear}`}
+                    className="absolute z-10 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full"
+                    style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                  >
+                    <span
+                      className={cn(
+                        'text-xs font-black transition-colors',
+                        isCurrent ? 'text-transparent' : 'text-slate-400 dark:text-slate-500'
+                      )}
+                    >
+                      {gear}
+                    </span>
+                  </button>
+                );
+              })}
+              {/* THE shift knob: one physical knob travelling through the gate */}
+              <div
+                data-testid="cockpit-knob"
+                className="pointer-events-none absolute z-20 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_28%,#e2e8f0,#64748b_45%,#1e293b_80%,#0f172a)] text-xs font-black text-white shadow-[0_6px_14px_rgba(0,0,0,0.5),inset_0_2px_3px_rgba(255,255,255,0.5)] transition-[left,top] duration-100 ease-linear"
+                style={{ left: `${knobPos.x}%`, top: `${knobPos.y}%` }}
               >
-                N
-              </button>
+                <span className="[text-shadow:0_1px_2px_rgba(0,0,0,0.8)]">{String(sim.gear)}</span>
+              </div>
             </div>
           ) : (
             <p className="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
