@@ -10,8 +10,9 @@
  */
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-// real recorded idle loop (Mixkit free license), pitch-shifted live with RPM
+// real recordings (Mixkit free license): ignition + engine hum loop
 import engineLoopUrl from '../assets/sounds/engine-loop.mp3';
+import engineStartUrl from '../assets/sounds/engine-start.mp3';
 
 // ---------- haptics ----------
 
@@ -44,38 +45,40 @@ class EngineSound {
   private osc2: OscillatorNode | null = null;
   private gain: GainNode | null = null;
   private filter: BiquadFilterNode | null = null;
-  // sample-based engine (preferred): looped recording, playbackRate follows RPM
+  // sample-based engine (preferred): real recordings, playbackRate follows RPM
   private loopBuffer: AudioBuffer | null = null;
+  private startBuffer: AudioBuffer | null = null;
   private loopLoading = false;
   private loopSource: AudioBufferSourceNode | null = null;
   private loopGain: GainNode | null = null;
+  private squealSource: AudioBufferSourceNode | null = null;
+  private squealGain: GainNode | null = null;
   muted = false;
 
-  private loadLoop(ctx: AudioContext) {
-    if (this.loopBuffer || this.loopLoading) return;
+  /** decode both samples once; swap the running synth fallback when ready */
+  private loadSamples(ctx: AudioContext) {
+    if ((this.loopBuffer && this.startBuffer) || this.loopLoading) return;
     this.loopLoading = true;
-    fetch(engineLoopUrl)
-      .then((r) => r.arrayBuffer())
-      .then((buf) => ctx.decodeAudioData(buf))
-      .then((decoded) => {
-        this.loopBuffer = decoded;
-        // engine is already running on the synth fallback: swap over seamlessly
-        if (this.osc) {
+    const decode = (url: string) =>
+      fetch(url).then((r) => r.arrayBuffer()).then((buf) => ctx.decodeAudioData(buf));
+    Promise.allSettled([decode(engineLoopUrl), decode(engineStartUrl)])
+      .then(([loop, start]) => {
+        if (loop.status === 'fulfilled') this.loopBuffer = loop.value;
+        if (start.status === 'fulfilled') this.startBuffer = start.value;
+        if (this.osc && this.loopBuffer) {
           this.stopEngine(true);
           this.startLoop(ctx);
         }
-      })
-      .catch(() => {
-        /* keep the synth fallback */
       })
       .finally(() => {
         this.loopLoading = false;
       });
   }
 
-  private startLoop(ctx: AudioContext) {
+  private startLoop(ctx: AudioContext, delaySec = 0) {
     if (!this.loopBuffer) return;
     this.stopLoop(true);
+    const t0 = ctx.currentTime + delaySec;
     this.loopSource = ctx.createBufferSource();
     this.loopSource.buffer = this.loopBuffer;
     this.loopSource.loop = true;
@@ -84,10 +87,43 @@ class EngineSound {
     this.loopSource.loopEnd = this.loopBuffer.duration - 0.3;
     this.loopSource.playbackRate.value = 0.85;
     this.loopGain = ctx.createGain();
-    this.loopGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    this.loopGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.4);
+    this.loopGain.gain.setValueAtTime(0.0001, t0);
+    this.loopGain.gain.linearRampToValueAtTime(0.5, t0 + 0.6);
     this.loopSource.connect(this.loopGain).connect(ctx.destination);
-    this.loopSource.start(0, 0.3);
+    this.loopSource.start(t0, 0.3);
+  }
+
+  /** brake friction squeal: resonant filtered noise, intensity follows speed */
+  brakeSqueal(speed: number) {
+    if (this.muted || speed < 15) return;
+    const ctx = this.ensureContext();
+    if (!ctx) return;
+    this.stopSqueal();
+    const dur = Math.min(1.4, 0.4 + speed / 60);
+    const buffer = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    this.squealSource = ctx.createBufferSource();
+    this.squealSource.buffer = buffer;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(2600, ctx.currentTime);
+    bp.frequency.linearRampToValueAtTime(1900, ctx.currentTime + dur);
+    bp.Q.value = 9;
+    this.squealGain = ctx.createGain();
+    const vol = Math.min(0.09, 0.02 + speed / 900);
+    this.squealGain.gain.setValueAtTime(vol, ctx.currentTime);
+    this.squealGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + dur);
+    this.squealSource.connect(bp).connect(this.squealGain).connect(ctx.destination);
+    this.squealSource.start();
+  }
+
+  stopSqueal() {
+    try {
+      this.squealSource?.stop();
+    } catch { /* already stopped */ }
+    this.squealSource = null;
+    this.squealGain = null;
   }
 
   private stopLoop(immediate = false) {
@@ -119,23 +155,33 @@ class EngineSound {
     const ctx = this.ensureContext();
     if (!ctx) return;
     this.stopEngine(true);
-    this.loadLoop(ctx);
+    this.loadSamples(ctx);
 
-    // starter whirr: quick upward sweep before idle settles
-    const starter = ctx.createOscillator();
-    const starterGain = ctx.createGain();
-    starter.type = 'sawtooth';
-    starter.frequency.setValueAtTime(35, ctx.currentTime);
-    starter.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.45);
-    starterGain.gain.setValueAtTime(0.12, ctx.currentTime);
-    starterGain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-    starter.connect(starterGain).connect(ctx.destination);
-    starter.start();
-    starter.stop(ctx.currentTime + 0.55);
+    if (this.startBuffer) {
+      // real ignition recording
+      const src = ctx.createBufferSource();
+      const g = ctx.createGain();
+      src.buffer = this.startBuffer;
+      g.gain.value = 0.7;
+      src.connect(g).connect(ctx.destination);
+      src.start();
+    } else {
+      // synth starter whirr fallback
+      const starter = ctx.createOscillator();
+      const starterGain = ctx.createGain();
+      starter.type = 'sawtooth';
+      starter.frequency.setValueAtTime(35, ctx.currentTime);
+      starter.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.45);
+      starterGain.gain.setValueAtTime(0.12, ctx.currentTime);
+      starterGain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      starter.connect(starterGain).connect(ctx.destination);
+      starter.start();
+      starter.stop(ctx.currentTime + 0.55);
+    }
 
     if (this.loopBuffer) {
-      // real recorded idle, pitch-shifted with RPM
-      this.startLoop(ctx);
+      // real engine hum, pitch-shifted with RPM; ease in under the ignition tail
+      this.startLoop(ctx, this.startBuffer ? 1.1 : 0);
       return;
     }
 

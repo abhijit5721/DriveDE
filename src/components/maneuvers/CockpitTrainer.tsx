@@ -402,7 +402,14 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
   // while clicking the engine button (real-world bug found in preview).
   const togglePedal = (key: 'brake' | 'gas') => {
     haptic.tick();
-    setSim((s) => ({ ...s, [key]: !s[key] }));
+    setSim((s) => {
+      const next = !s[key];
+      // brake friction sound when braking from speed (games-style squeal)
+      if (key === 'brake' && next && s.engineOn && s.speed > 15) {
+        engineSound.brakeSqueal(s.speed);
+      }
+      return { ...s, [key]: next };
+    });
   };
 
   // Keyboard controls (desktop): keys give real hold semantics that a single
@@ -414,7 +421,11 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       if ((e.target as HTMLElement)?.tagName === 'INPUT' || (e.target as HTMLElement)?.tagName === 'TEXTAREA') return;
       const k = e.key.toLowerCase();
       if (k === 'b') {
-        setSim((s) => (s.brake ? s : { ...s, brake: true }));
+        setSim((s) => {
+          if (s.brake) return s;
+          if (s.engineOn && s.speed > 15) engineSound.brakeSqueal(s.speed);
+          return { ...s, brake: true };
+        });
       } else if (k === ' ') {
         e.preventDefault();
         setSim((s) => (s.gas ? s : { ...s, gas: true }));
