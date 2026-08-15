@@ -81,6 +81,87 @@ function gatePath(from: ManualGear, to: ManualGear): Array<{ x: number; y: numbe
 
 const AUTO_GEARS: AutoGear[] = ['P', 'R', 'N', 'D'];
 
+/** Footwell-style 3D pedal (racing-game look): pad + stem that visibly
+ *  depresses when pressed. Used for brake (wide pad) and accelerator (tall). */
+function FootPedal({ id, label, pressed, accent, wide, onClick, testid }: {
+  id: string;
+  label: string;
+  pressed: boolean;
+  accent: 'red' | 'teal';
+  wide?: boolean;
+  onClick: () => void;
+  testid: string;
+}) {
+  const depth = pressed ? 14 : 0;
+  const glow = accent === 'red' ? 'rgba(248,113,113,0.55)' : 'rgba(45,212,191,0.55)';
+  const stroke = accent === 'red' ? '#f87171' : '#2dd4bf';
+  const padW = wide ? 56 : 38;
+  const padH = wide ? 40 : 60;
+  const padX = 40 - padW / 2;
+  const padY = 16 + depth;
+  return (
+    <button
+      data-testid={testid}
+      onClick={onClick}
+      aria-pressed={pressed}
+      className={cn(
+        'flex flex-col items-center rounded-xl border p-2 transition-all',
+        pressed
+          ? 'border-transparent bg-slate-100 dark:bg-slate-950'
+          : 'border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 dark:border-slate-700 dark:from-slate-800 dark:to-slate-950'
+      )}
+      style={pressed ? { boxShadow: `inset 0 2px 10px rgba(0,0,0,0.35), 0 0 14px ${glow}` } : undefined}
+    >
+      <svg viewBox="0 0 80 120" className="h-24 w-16">
+        <defs>
+          <linearGradient id={`${id}-face`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#475569" />
+            <stop offset="0.35" stopColor="#1e293b" />
+            <stop offset="1" stopColor="#0f172a" />
+          </linearGradient>
+          <linearGradient id={`${id}-top`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#94a3b8" />
+            <stop offset="1" stopColor="#475569" />
+          </linearGradient>
+          <linearGradient id={`${id}-stem`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#64748b" />
+            <stop offset="0.5" stopColor="#cbd5e1" />
+            <stop offset="1" stopColor="#334155" />
+          </linearGradient>
+        </defs>
+        {/* stem + floor shadow */}
+        <rect x="36" y={padY + padH} width="8" height={Math.max(6, 106 - (padY + padH))} rx="3" fill={`url(#${id}-stem)`} />
+        <ellipse cx="40" cy="112" rx={wide ? 20 : 14} ry="5" fill="#020617" opacity="0.55" />
+        {/* pad with depth cue */}
+        <g transform={`scale(${pressed ? 0.96 : 1})`} style={{ transformOrigin: '40px 60px', transition: 'transform 0.1s' }}>
+          <path d={`M${padX + 3} ${padY} L${padX + padW - 3} ${padY} L${padX + padW - 6} ${padY + 7} L${padX + 6} ${padY + 7} Z`} fill={`url(#${id}-top)`} />
+          <rect x={padX} y={padY + 5} width={padW} height={padH} rx="7" fill={`url(#${id}-face)`} stroke={pressed ? stroke : '#475569'} strokeWidth="1.5" />
+          {[0.3, 0.55, 0.8].map((f) => (
+            <line
+              key={f}
+              x1={padX + 7}
+              y1={padY + 5 + padH * f}
+              x2={padX + padW - 7}
+              y2={padY + 5 + padH * f}
+              stroke="#475569"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+          ))}
+        </g>
+      </svg>
+      <span
+        className={cn(
+          'mt-1 text-[9px] font-black uppercase tracking-widest transition-colors',
+          pressed ? (accent === 'red' ? 'text-red-500 dark:text-red-400' : 'text-teal-600 dark:text-teal-300') : 'text-slate-400'
+        )}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
 export default function CockpitTrainer({ onComplete, onScore, language, mode: initialMode = 'manual' }: Props) {
   const t = TRANSLATIONS[language];
   const tc = t.maneuvers.interactive.cockpit;
@@ -645,34 +726,25 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
         </div>
       </div>
 
-      {/* brake / gas — toggle pedals (latched visual state) */}
+      {/* brake / gas — footwell 3D pedals, click-to-latch */}
       <div className="mx-4 mb-1 grid grid-cols-2 gap-3">
-        <button
-          data-testid="cockpit-brake"
+        <FootPedal
+          id="brakePedal"
+          testid="cockpit-brake"
+          label={tc.controls.brake}
+          pressed={sim.brake}
+          accent="red"
+          wide
           onClick={() => togglePedal('brake')}
-          aria-pressed={sim.brake}
-          className={cn(
-            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition-all',
-            sim.brake
-              ? 'translate-y-0.5 border-red-400 bg-gradient-to-b from-red-500 to-red-700 text-white shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)]'
-              : 'border-slate-200 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-500 shadow-[0_3px_0_rgba(100,116,139,0.35)] dark:border-slate-600 dark:from-slate-700 dark:to-slate-800 dark:text-slate-300 dark:shadow-[0_3px_0_rgba(0,0,0,0.5)]'
-          )}
-        >
-          {tc.controls.brake}
-        </button>
-        <button
-          data-testid="cockpit-gas"
+        />
+        <FootPedal
+          id="gasPedal"
+          testid="cockpit-gas"
+          label={tc.controls.gas}
+          pressed={sim.gas}
+          accent="teal"
           onClick={() => togglePedal('gas')}
-          aria-pressed={sim.gas}
-          className={cn(
-            'select-none rounded-xl border py-4 text-sm font-black uppercase tracking-widest transition-all',
-            sim.gas
-              ? 'translate-y-0.5 border-emerald-400 bg-gradient-to-b from-emerald-500 to-emerald-700 text-white shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)]'
-              : 'border-slate-200 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-500 shadow-[0_3px_0_rgba(100,116,139,0.35)] dark:border-slate-600 dark:from-slate-700 dark:to-slate-800 dark:text-slate-300 dark:shadow-[0_3px_0_rgba(0,0,0,0.5)]'
-          )}
-        >
-          {tc.controls.gas}
-        </button>
+        />
       </div>
 
       {/* keyboard hint (desktop only) */}
