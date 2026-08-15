@@ -211,6 +211,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
         <div className="flex items-center gap-2">
           <div className="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <button
+              data-testid="view-quest"
               onClick={() => setCurriculumViewMode('quest')}
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
@@ -223,6 +224,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               <span>{isDe ? 'Quest Map' : 'Quest Map'}</span>
             </button>
             <button
+              data-testid="view-list"
               onClick={() => setCurriculumViewMode('list')}
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
@@ -446,6 +448,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             return (
               <div key={chapter.id} className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
                 <button
+                  data-testid={`chapter-${chapter.id}`}
                   onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
                   className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-850 transition"
                 >
@@ -479,6 +482,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                       return (
                         <button
                           key={lesson.id}
+                          data-testid={`lesson-${lesson.id}`}
                           onClick={() => onLessonSelect(lesson)}
                           className={cn(
                             'w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all',

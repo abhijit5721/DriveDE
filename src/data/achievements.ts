@@ -61,4 +61,11 @@ export const achievements: Achievement[] = [
     icon: '🛤️',
     criteria: (progress) => progress.drivingSessions.some((s) => s.type === 'autobahn'),
   },
+  {
+    id: 'clutch_master',
+    title: 'Clutch Master',
+    description: 'Finish the cockpit trainer with a smoothness score of 80% or higher.',
+    icon: '🕹️',
+    criteria: (progress) => (progress.quizScores['cockpit-trainer'] ?? 0) >= 80,
+  },
 ];

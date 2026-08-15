@@ -54,6 +54,7 @@ import InteractiveEmergencyBrake from '../maneuvers/InteractiveEmergencyBrake';
 import InteractiveParking from '../maneuvers/InteractiveParking';
 import InteractiveTechCheck from '../maneuvers/InteractiveTechCheck';
 import InteractiveExamSimulation from '../maneuvers/InteractiveExamSimulation';
+import CockpitTrainer from '../maneuvers/CockpitTrainer';
 import type { Lesson } from '../../types';
 
 interface LessonDetailProps {
@@ -76,7 +77,7 @@ const getAnimationType = (lessonId: string): AnimationType | null => {
 };
 
 export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
-  const { language, completeLesson, userProgress } = useAppStore();
+  const { language, completeLesson, userProgress, setQuizScore } = useAppStore();
   const isDE = language === 'de';
   const [activeLessonTab, setActiveLessonTab] = useState<'learn' | 'rules' | 'quiz'>('learn');
   const [currentStep, setCurrentStep] = useState(0);
@@ -190,6 +191,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
   const isParkingLesson = lesson.id === 'maneuver-1';
   const isTechLesson = lesson.id === 'basics-1a';
+  const isCockpitManual = ['basics-2', 'basics-3'].includes(lesson.id);
+  const isCockpitAutomatic = ['basics-2a', 'basics-3a'].includes(lesson.id);
   const isExamSim = lesson.id === 'exam-sim';
 
   if (showQuiz && lesson.quiz && lesson.quiz.length > 0) {
@@ -513,6 +516,33 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
               <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
                 <InteractiveTechCheck onComplete={handleFinish} language={language} />
+              </div>
+            </div>
+          )}
+
+          {/* Cockpit Trainer: moving off & shifting (DRI-11) */}
+          {(isCockpitManual || isCockpitAutomatic) && (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                  <Gauge className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {t.curriculum.cockpitTrainer}
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    {t.curriculum.cockpitTrainerSub}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+                <CockpitTrainer
+                  onComplete={handleFinish}
+                  onScore={(pct) => setQuizScore('cockpit-trainer', pct)}
+                  language={language}
+                  mode={isCockpitAutomatic ? 'automatic' : 'manual'}
+                />
               </div>
             </div>
           )}

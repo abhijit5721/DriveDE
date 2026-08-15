@@ -264,6 +264,7 @@ export function OnboardingTour() {
 
                 <button
                   onClick={handleFinish}
+                  data-testid="tour-skip"
                   className="mt-4 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500 hover:text-slate-300 transition-colors"
                 >
                   {t.onboarding.skip}

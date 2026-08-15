@@ -5,18 +5,97 @@ test.describe('Curriculum Interactive Simulator', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.context().grantPermissions(['geolocation']);
+
+    // Seed the persisted store BEFORE the app boots: onboarding done, cookies
+    // accepted, license selected. This removes the cookie banner and the
+    // onboarding tour deterministically (they otherwise appear at
+    // unpredictable times and swallow coordinate-based clicks).
+    const seeded = JSON.stringify({
+      state: {
+        language: 'en',
+        hasCompletedOnboarding: true,
+        licenseType: 'manual',
+        learningPath: 'standard',
+        transmissionType: 'manual',
+        cookieSettings: { essential: true, analytics: false, marketing: false, hasSet: true },
+        // full shape: the persist merge is shallow, a partial object would
+        // clobber the defaults. basics-0 completed => returning-user shortcut.
+        userProgress: {
+          completedLessons: ['basics-0'],
+          drivingSessions: [],
+          quizScores: {},
+          totalDrivingMinutes: 0,
+          specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 },
+          unlockedAchievements: [],
+          currentStreak: 0,
+          lastActivityDate: null,
+          incorrectQuestions: [],
+          hourlyRate45: 60,
+          hasAcceptedPrivacy: true,
+          fixedCosts: { registration: 350, theoryExam: 25, practicalExam: 116, learningMaterial: 50, firstAid: 40, visionTest: 7 },
+        },
+      },
+      version: 0,
+    });
+    await page.goto('/robots.txt');
+    await page.evaluate((val) => {
+      return new Promise<void>((resolve, reject) => {
+        const open = indexedDB.open('keyval-store');
+        open.onupgradeneeded = () => open.result.createObjectStore('keyval');
+        open.onsuccess = () => {
+          const tx = open.result.transaction('keyval', 'readwrite');
+          tx.objectStore('keyval').put(val, 'drivede-storage');
+          tx.oncomplete = () => { open.result.close(); resolve(); };
+          tx.onerror = () => reject(tx.error);
+        };
+        open.onerror = () => reject(open.error);
+      });
+    }, seeded);
+
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+  });
 
-    // Handle GDPR
-    // Handle GDPR and Splash
-    const cookieAccept = page.getByTestId('cookie-accept-all');
-    if (await cookieAccept.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await cookieAccept.click({ force: true }).catch(() => {});
-    }
+  test('cockpit trainer: guards, clutch drag, gear selection (basics-2)', async ({ page }) => {
+    await test.step('Onboarding', async () => {
+      await completeOnboarding(page);
+    });
 
-    // Wait for splash to disappear if it exists
-    await page.locator('.animate-pulse').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+    await test.step('Open basics-2 lesson', async () => {
+      await page.keyboard.press('Escape').catch(() => {});
+      await openLessonViaList(page, 'chapter-1', 'basics-2');
+      await expect(page.getByTestId('cockpit-step')).toBeVisible({ timeout: 15000 });
+    });
+
+    await test.step('Engine refuses to start without clutch + brake', async () => {
+      await page.getByTestId('cockpit-engine').click({ force: true });
+      await expect(page.getByTestId('cockpit-message')).toBeVisible();
+    });
+
+    await test.step('Drag clutch fully down, hold brake, start engine', async () => {
+      const pedal = page.getByTestId('cockpit-clutch');
+      await pedal.scrollIntoViewIfNeeded();
+      const box = await pedal.boundingBox();
+      if (!box) throw new Error('pedal has no bounding box');
+      await page.mouse.move(box.x + box.width / 2, box.y + 4);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height - 2, { steps: 8 });
+      await page.mouse.up();
+      await expect(page.getByTestId('cockpit-clutch-value')).toHaveText(/9[0-9]|100/);
+
+      // DOM dispatch to hold the brake while clicking the engine button —
+      // a real mouse press releases via onPointerLeave when it travels away.
+      await page.getByTestId('cockpit-brake').dispatchEvent('pointerdown');
+      await page.getByTestId('cockpit-engine').dispatchEvent('click');
+      await expect(page.getByTestId('cockpit-step')).toContainText('2/6', { timeout: 5000 });
+      await page.getByTestId('cockpit-brake').dispatchEvent('pointerup');
+    });
+
+    await test.step('Select 1st gear with clutch pressed', async () => {
+      await page.getByTestId('cockpit-gear-1').click({ force: true });
+      await expect(page.getByTestId('cockpit-gear-display')).toHaveText('1');
+      await expect(page.getByTestId('cockpit-step')).toContainText('3/6');
+    });
   });
 
   test('should navigate to city-12 and complete all scenarios', async ({ page }) => {
@@ -24,29 +103,10 @@ test.describe('Curriculum Interactive Simulator', () => {
       await completeOnboarding(page);
     });
 
-    await test.step('Navigate to Curriculum', async () => {
+    await test.step('Open Chapter 3 and Lesson city-12', async () => {
       // Ensure we are not blocked by any modals
       await page.keyboard.press('Escape').catch(() => {});
-      
-      const navCurriculum = page.getByTestId('nav-curriculum').filter({ visible: true }).first();
-      await navCurriculum.waitFor({ state: 'visible', timeout: 10000 });
-      await navCurriculum.click({ force: true });
-      
-      // Wait for curriculum page to load
-      await expect(page.getByTestId('chapter-chapter-1')).toBeVisible({ timeout: 15000 });
-    });
-
-    await test.step('Open Chapter 3 and Lesson city-12', async () => {
-      // Open Chapter 3 (City Driving)
-      const chapter3 = page.getByTestId('chapter-chapter-3');
-      await chapter3.scrollIntoViewIfNeeded();
-      await chapter3.click({ force: true });
-      
-      // Select city-12 lesson
-      const lesson12 = page.getByTestId('lesson-city-12');
-      await lesson12.scrollIntoViewIfNeeded();
-      await lesson12.click({ force: true });
-      
+      await openLessonViaList(page, 'chapter-3', 'city-12');
       await expect(page.getByTestId('page-header-title')).toBeVisible({ timeout: 10000 });
       // Wait for modal transition
       await page.waitForTimeout(2000);
@@ -80,8 +140,8 @@ test.describe('Curriculum Interactive Simulator', () => {
       // Success screen should appear
       await expect(page.getByTestId('simulator-continue-btn')).toBeVisible({ timeout: 10000 });
       
-      // Reset for next test
-      await page.getByTestId('simulator-reset-btn').click({ force: true });
+      // Reset for next test (DOM dispatch: success overlay can cover the header)
+      await page.getByTestId('simulator-reset-btn').dispatchEvent('click');
       await expect(page.getByTestId('simulator-continue-btn')).toBeHidden();
     });
 
@@ -120,22 +180,35 @@ test.describe('Curriculum Interactive Simulator', () => {
   });
 
   async function completeOnboarding(page: Page) {
+    // State is pre-seeded (license selected), so the hero button takes the
+    // returning-user shortcut straight into the app. DOM dispatch: coordinate
+    // clicks can land on the fixed PWA-install banner.
     const startBtn = page.getByTestId('welcome-start-btn');
     if (await startBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await startBtn.click({ force: true });
-      await page.waitForTimeout(1000);
-      
-      const manualBtn = page.getByTestId('manual-btn').first();
-      await manualBtn.waitFor({ state: 'visible', timeout: 5000 });
-      await manualBtn.click({ force: true });
-      
-      const getStarted = page.getByTestId('welcome-get-started');
-      if (await getStarted.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await getStarted.click({ force: true });
-      }
+      await startBtn.dispatchEvent('click');
     }
     // Wait for the tracker nav to be visible as a sign we're in the app
     await page.getByTestId('nav-tracker').filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 20000 });
+  }
+
+  /** Chapter/lesson testids live in the Classic List view. */
+  async function openLessonViaList(page: Page, chapterId: string, lessonId: string) {
+    const navCurriculum = page.getByTestId('nav-curriculum').filter({ visible: true }).first();
+    await navCurriculum.click({ force: true });
+    const listBtn = page.getByTestId('view-list');
+    await listBtn.waitFor({ state: 'visible', timeout: 15000 });
+    await listBtn.click({ force: true });
+    const chapter = page.getByTestId(`chapter-${chapterId}`);
+    await chapter.waitFor({ state: 'visible', timeout: 15000 });
+    await chapter.scrollIntoViewIfNeeded();
+    const lesson = page.getByTestId(`lesson-${lessonId}`);
+    // chapters can start expanded — clicking then would collapse them
+    if (!(await lesson.isVisible().catch(() => false))) {
+      await chapter.dispatchEvent('click');
+    }
+    await lesson.waitFor({ state: 'visible', timeout: 10000 });
+    await lesson.dispatchEvent('click');
+    await page.waitForTimeout(1000);
   }
 });
 
