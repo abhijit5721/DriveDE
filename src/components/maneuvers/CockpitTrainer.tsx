@@ -371,19 +371,35 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
 
       {/* readout row */}
       <div className="mx-4 grid grid-cols-4 gap-2">
-        <button
-          data-testid="cockpit-engine"
-          onClick={handleEngine}
-          className={cn(
-            'flex flex-col items-center justify-center rounded-xl border p-2 transition',
-            sim.engineOn
-              ? 'border-emerald-300 bg-emerald-50 text-emerald-600 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-400'
-              : 'border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'
-          )}
-        >
-          <Power className="h-5 w-5" />
-          <span className="mt-1 text-[9px] font-bold uppercase tracking-wider">{tc.controls.engineBtn}</span>
-        </button>
+        {/* push-start button, like a real car */}
+        <div className="flex items-center justify-center">
+          <button
+            data-testid="cockpit-engine"
+            onClick={handleEngine}
+            aria-pressed={sim.engineOn}
+            className={cn(
+              'relative h-16 w-16 rounded-full p-[3px] transition-all active:scale-95',
+              'bg-[conic-gradient(from_210deg,#94a3b8,#334155,#64748b,#1e293b,#94a3b8)]',
+              sim.engineOn
+                ? 'shadow-[0_0_18px_rgba(45,212,191,0.55)]'
+                : 'shadow-[0_4px_10px_rgba(0,0,0,0.35)]'
+            )}
+          >
+            <span
+              className={cn(
+                'flex h-full w-full flex-col items-center justify-center rounded-full leading-none transition-colors',
+                'bg-[radial-gradient(circle_at_35%_28%,#334155,#0f172a_60%,#020617)]',
+                sim.engineOn ? 'ring-2 ring-inset ring-teal-400/70' : 'ring-1 ring-inset ring-slate-600/60'
+              )}
+            >
+              <span className="text-[6px] font-bold tracking-[0.15em] text-slate-400">ENGINE</span>
+              <span className={cn('my-0.5 text-[9px] font-black tracking-widest', sim.engineOn ? 'text-teal-300 [text-shadow:0_0_8px_rgba(45,212,191,0.8)]' : 'text-slate-200')}>
+                START
+              </span>
+              <span className="text-[6px] font-bold tracking-[0.15em] text-slate-400">STOP</span>
+            </span>
+          </button>
+        </div>
         {[
           { label: tc.readouts.speed, value: Math.round(sim.speed), testid: 'cockpit-speed' },
           { label: tc.readouts.rpm, value: sim.rpm, testid: 'cockpit-rpm' },
@@ -440,52 +456,76 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
       {/* controls: clutch pedal (manual) + gear selector */}
       <div className="mx-4 grid grid-cols-[96px_1fr] gap-3">
         {mode === 'manual' ? (
-          <div className="flex flex-col items-center rounded-xl border border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 p-2 dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{tc.controls.clutch}</span>
+          <div className="rounded-xl border border-cyan-500/25 bg-gradient-to-b from-slate-50 to-slate-100 p-2 shadow-[0_0_0_1px_rgba(34,211,238,0.08)] dark:border-cyan-400/25 dark:from-slate-800 dark:to-slate-950">
+            <div className="flex items-baseline justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{tc.controls.pedalTravel}</span>
+              <span data-testid="cockpit-clutch-value" className="text-xs font-black tabular-nums text-cyan-600 dark:text-cyan-300">{sim.clutch}%</span>
+            </div>
             <div
               ref={pedalRef}
               data-testid="cockpit-clutch"
               onPointerDown={onPedalPointerDown}
               onPointerMove={onPedalPointerMove}
               onPointerUp={onPedalPointerUp}
-              className="relative mt-2 h-36 w-16 cursor-grab touch-none select-none"
+              className="relative mt-1 h-36 cursor-grab touch-none select-none"
             >
-              {/* travel track */}
-              <div className="absolute left-1 top-0 h-full w-1.5 rounded-full bg-slate-200 shadow-inner dark:bg-slate-950">
+              {/* front-perspective pedal (reference style): pad depresses away as travel grows */}
+              <svg viewBox="0 0 80 150" className="pointer-events-none absolute inset-y-0 left-0 h-full w-[70%]">
+                <defs>
+                  <linearGradient id="padFace" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#475569" />
+                    <stop offset="0.35" stopColor="#1e293b" />
+                    <stop offset="1" stopColor="#0f172a" />
+                  </linearGradient>
+                  <linearGradient id="padTop" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#94a3b8" />
+                    <stop offset="1" stopColor="#475569" />
+                  </linearGradient>
+                  <linearGradient id="stem" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stopColor="#64748b" />
+                    <stop offset="0.5" stopColor="#cbd5e1" />
+                    <stop offset="1" stopColor="#334155" />
+                  </linearGradient>
+                </defs>
+                {(() => {
+                  const depth = sim.clutch * 0.32; // pad sinks up to ~32px
+                  const shrink = 1 - sim.clutch * 0.0016; // and recedes slightly
+                  const padY = 14 + depth;
+                  return (
+                    <g>
+                      {/* stem from pad bottom to floor pivot */}
+                      <rect x="36" y={padY + 58} width="8" height={Math.max(6, 134 - (padY + 58))} rx="3" fill="url(#stem)" />
+                      <ellipse cx="40" cy="138" rx="14" ry="5" fill="#020617" opacity="0.6" />
+                      <g transform={`translate(40 ${padY}) scale(${shrink}) translate(-40 ${-padY})`}>
+                        {/* top face (depth cue) */}
+                        <path d={`M18 ${padY} L62 ${padY} L58 ${padY + 8} L22 ${padY + 8} Z`} fill="url(#padTop)" />
+                        {/* front face */}
+                        <rect x="16" y={padY + 6} width="48" height="52" rx="8" fill="url(#padFace)" stroke="#0ea5e9" strokeWidth="1.5" />
+                        {/* grip ribs */}
+                        <line x1="24" y1={padY + 18} x2="56" y2={padY + 18} stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="24" y1={padY + 48} x2="56" y2={padY + 48} stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+                        <text x="40" y={padY + 37} textAnchor="middle" fontSize="8" fontWeight="800" letterSpacing="1.5" fill="#e2e8f0">
+                          {tc.controls.clutch.toUpperCase()}
+                        </text>
+                      </g>
+                    </g>
+                  );
+                })()}
+              </svg>
+              {/* travel track with thumb (right side, like the reference) */}
+              <div className="absolute right-2 top-1 bottom-1 w-1.5 rounded-full bg-slate-200 shadow-inner dark:bg-slate-950">
+                <span className="absolute -top-0.5 -left-4 text-[7px] font-bold text-slate-400">0</span>
+                <span className="absolute -bottom-0.5 -left-6 text-[7px] font-bold text-slate-400">100</span>
                 <div
                   className="absolute inset-x-0 top-0 rounded-full bg-gradient-to-b from-cyan-400 to-blue-500 transition-[height] duration-75"
                   style={{ height: `${sim.clutch}%` }}
                 />
+                <div
+                  className="absolute left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)] ring-2 ring-white/80 transition-[top] duration-75 dark:ring-slate-900"
+                  style={{ top: `calc(${sim.clutch}% - 7px)` }}
+                />
               </div>
-              {/* side-view pedal: arm + pad tilt with travel */}
-              <svg viewBox="0 0 64 144" className="pointer-events-none absolute inset-0 h-full w-full">
-                <defs>
-                  <linearGradient id="pedalArm" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0" stopColor="#94a3b8" />
-                    <stop offset="0.5" stopColor="#475569" />
-                    <stop offset="1" stopColor="#1e293b" />
-                  </linearGradient>
-                  <linearGradient id="pedalPad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#64748b" />
-                    <stop offset="0.5" stopColor="#334155" />
-                    <stop offset="1" stopColor="#0f172a" />
-                  </linearGradient>
-                </defs>
-                {/* pivot at bottom; arm rotates toward the floor as clutch is pressed */}
-                <g transform={`rotate(${sim.clutch * 0.28}, 30, 138)`}>
-                  <rect x="27" y="34" width="7" height="104" rx="3" fill="url(#pedalArm)" />
-                  {/* pedal pad, tilts with the arm */}
-                  <g transform={`rotate(${-sim.clutch * 0.12}, 30, 34)`}>
-                    <rect x="12" y="20" width="37" height="20" rx="5" fill="url(#pedalPad)" stroke="#0ea5e9" strokeWidth="1.5" />
-                    <line x1="17" y1="26" x2="44" y2="26" stroke="#64748b" strokeWidth="1.5" />
-                    <line x1="17" y1="31" x2="44" y2="31" stroke="#64748b" strokeWidth="1.5" />
-                  </g>
-                </g>
-                <circle cx="30" cy="138" r="5" fill="#1e293b" stroke="#475569" strokeWidth="2" />
-              </svg>
             </div>
-            <span data-testid="cockpit-clutch-value" className="mt-2 text-xs font-black tabular-nums text-slate-900 dark:text-cyan-300">{sim.clutch}%</span>
-            <span className="text-[9px] text-slate-400">{tc.controls.pedalTravel}</span>
           </div>
         ) : (
           <div className="flex flex-col gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-800">
