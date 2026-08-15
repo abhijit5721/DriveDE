@@ -10,6 +10,8 @@
  */
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+// real recorded idle loop (Mixkit free license), pitch-shifted live with RPM
+import engineLoopUrl from '../assets/sounds/engine-loop.mp3';
 
 // ---------- haptics ----------
 
@@ -42,7 +44,64 @@ class EngineSound {
   private osc2: OscillatorNode | null = null;
   private gain: GainNode | null = null;
   private filter: BiquadFilterNode | null = null;
+  // sample-based engine (preferred): looped recording, playbackRate follows RPM
+  private loopBuffer: AudioBuffer | null = null;
+  private loopLoading = false;
+  private loopSource: AudioBufferSourceNode | null = null;
+  private loopGain: GainNode | null = null;
   muted = false;
+
+  private loadLoop(ctx: AudioContext) {
+    if (this.loopBuffer || this.loopLoading) return;
+    this.loopLoading = true;
+    fetch(engineLoopUrl)
+      .then((r) => r.arrayBuffer())
+      .then((buf) => ctx.decodeAudioData(buf))
+      .then((decoded) => {
+        this.loopBuffer = decoded;
+        // engine is already running on the synth fallback: swap over seamlessly
+        if (this.osc) {
+          this.stopEngine(true);
+          this.startLoop(ctx);
+        }
+      })
+      .catch(() => {
+        /* keep the synth fallback */
+      })
+      .finally(() => {
+        this.loopLoading = false;
+      });
+  }
+
+  private startLoop(ctx: AudioContext) {
+    if (!this.loopBuffer) return;
+    this.stopLoop(true);
+    this.loopSource = ctx.createBufferSource();
+    this.loopSource.buffer = this.loopBuffer;
+    this.loopSource.loop = true;
+    // loop inside the steady middle of the clip to avoid the edge fades
+    this.loopSource.loopStart = 0.3;
+    this.loopSource.loopEnd = this.loopBuffer.duration - 0.3;
+    this.loopSource.playbackRate.value = 0.85;
+    this.loopGain = ctx.createGain();
+    this.loopGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    this.loopGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.4);
+    this.loopSource.connect(this.loopGain).connect(ctx.destination);
+    this.loopSource.start(0, 0.3);
+  }
+
+  private stopLoop(immediate = false) {
+    if (!this.ctx || !this.loopSource) return;
+    const t = this.ctx.currentTime;
+    try {
+      if (this.loopGain && !immediate) this.loopGain.gain.linearRampToValueAtTime(0.0001, t + 0.25);
+      this.loopSource.stop(immediate ? t : t + 0.3);
+    } catch {
+      /* already stopped */
+    }
+    this.loopSource = null;
+    this.loopGain = null;
+  }
 
   /** must be called from a user gesture (autoplay policy) */
   private ensureContext(): AudioContext | null {
@@ -60,6 +119,7 @@ class EngineSound {
     const ctx = this.ensureContext();
     if (!ctx) return;
     this.stopEngine(true);
+    this.loadLoop(ctx);
 
     // starter whirr: quick upward sweep before idle settles
     const starter = ctx.createOscillator();
@@ -73,7 +133,13 @@ class EngineSound {
     starter.start();
     starter.stop(ctx.currentTime + 0.55);
 
-    // sustained engine: two detuned saws through a lowpass = rumble
+    if (this.loopBuffer) {
+      // real recorded idle, pitch-shifted with RPM
+      this.startLoop(ctx);
+      return;
+    }
+
+    // synth fallback while the sample decodes (or if it fails)
     this.osc = ctx.createOscillator();
     this.osc2 = ctx.createOscillator();
     this.gain = ctx.createGain();
@@ -85,7 +151,7 @@ class EngineSound {
     this.filter.type = 'lowpass';
     this.filter.frequency.value = 240;
     this.gain.gain.setValueAtTime(0.0001, ctx.currentTime + 0.3);
-    this.gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.6);
+    this.gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.6);
     this.osc.connect(this.filter);
     this.osc2.connect(this.filter);
     this.filter.connect(this.gain).connect(ctx.destination);
@@ -93,11 +159,19 @@ class EngineSound {
     this.osc2.start(ctx.currentTime + 0.3);
   }
 
-  /** call every sim tick; pitch and brightness track RPM */
+  /** call every sim tick; pitch (and loudness) track RPM */
   setRpm(rpm: number) {
-    if (!this.ctx || !this.osc || !this.osc2 || !this.filter || this.muted) return;
+    if (!this.ctx || this.muted) return;
     const t = this.ctx.currentTime;
-    const f = 40 + (rpm / 4500) * 140; // 40Hz idle-ish .. 180Hz redline
+    if (this.loopSource && this.loopGain) {
+      // idle recorded ~800rpm; scale playback rate with RPM for the rev sound
+      const rate = 0.8 + (Math.max(0, rpm - 700) / 4000) * 1.3; // 0.8x idle .. ~2x redline
+      this.loopSource.playbackRate.linearRampToValueAtTime(Math.min(2.2, rate), t + 0.12);
+      this.loopGain.gain.linearRampToValueAtTime(0.42 + (rpm / 4500) * 0.35, t + 0.12);
+      return;
+    }
+    if (!this.osc || !this.osc2 || !this.filter) return;
+    const f = 40 + (rpm / 4500) * 140;
     this.osc.frequency.linearRampToValueAtTime(f, t + 0.1);
     this.osc2.frequency.linearRampToValueAtTime(f * 0.5, t + 0.1);
     this.filter.frequency.linearRampToValueAtTime(180 + (rpm / 4500) * 700, t + 0.1);
@@ -105,6 +179,7 @@ class EngineSound {
 
   stopEngine(immediate = false) {
     if (!this.ctx) return;
+    this.stopLoop(immediate);
     const t = this.ctx.currentTime;
     try {
       if (this.gain && !immediate) this.gain.gain.linearRampToValueAtTime(0.0001, t + 0.25);
@@ -122,9 +197,20 @@ class EngineSound {
     if (this.muted) return;
     const ctx = this.ensureContext();
     if (!ctx) return;
-    // dying sputter: fast downward sweep + noise thud
-    if (this.osc && this.filter) {
-      const t = ctx.currentTime;
+    const t = ctx.currentTime;
+    // dying sputter: pitch drops away before the engine falls silent
+    if (this.loopSource && this.loopGain) {
+      this.loopSource.playbackRate.cancelScheduledValues(t);
+      this.loopSource.playbackRate.linearRampToValueAtTime(0.25, t + 0.45);
+      this.loopGain.gain.linearRampToValueAtTime(0.0001, t + 0.5);
+      try {
+        this.loopSource.stop(t + 0.55);
+      } catch {
+        /* already stopped */
+      }
+      this.loopSource = null;
+      this.loopGain = null;
+    } else if (this.osc && this.filter) {
       this.osc.frequency.cancelScheduledValues(t);
       this.osc.frequency.linearRampToValueAtTime(18, t + 0.35);
       this.gain?.gain.linearRampToValueAtTime(0.0001, t + 0.4);
