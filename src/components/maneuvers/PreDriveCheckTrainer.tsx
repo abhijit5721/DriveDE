@@ -329,17 +329,34 @@ export default function PreDriveCheckTrainer({ onComplete, onScore, language }: 
                 <path d={`M${CONTROL_POS.wiperStalk.x + 16} ${CONTROL_POS.wiperStalk.y - 1} a8 8 0 0 1 14 0`} fill="none" stroke="#94a3b8" strokeWidth="1.2" />
               </g>
 
-              {/* steering wheel: rim, three spokes, horn hub */}
+              {/* steering wheel: flat-bottom rim, sculpted spokes with button
+                  pods, squarish airbag pad with badge (modern Audi/BMW style) */}
               <g>
-                <circle cx="160" cy="212" r="72" fill="none" stroke="#0b1220" strokeWidth="17" />
-                <circle cx="160" cy="212" r="72" fill="none" stroke="url(#pdRim)" strokeWidth="12" />
-                <circle cx="160" cy="212" r="78" fill="none" stroke="#020617" strokeWidth="1.5" opacity="0.6" />
-                <path d="M94 220 L134 217 M226 220 L186 217 M160 277 L160 236" stroke="#0b1220" strokeWidth="14" strokeLinecap="round" />
-                <path d="M94 220 L134 217 M226 220 L186 217 M160 277 L160 236" stroke="#334155" strokeWidth="9" strokeLinecap="round" />
-                <ellipse cx="160" cy="212" rx="33" ry="23" fill="#1e293b" stroke="#475569" strokeWidth="1.5" />
-                <ellipse cx="160" cy="212" rx="21" ry="14" fill="#0f172a" />
-                <path d="M151 212 l8 -5 v10 Z" fill="#94a3b8" />
-                <path d="M162 206 a8 8 0 0 1 0 12 M166 203 a12 12 0 0 1 0 18" fill="none" stroke="#64748b" strokeWidth="1.5" />
+                {/* rim: 240° arc through the top + flat bottom chord */}
+                <path d="M201.3 271 A72 72 0 1 0 118.7 271 Z" fill="none" stroke="#0b1220" strokeWidth="17" strokeLinejoin="round" />
+                <path d="M201.3 271 A72 72 0 1 0 118.7 271 Z" fill="none" stroke="url(#pdRim)" strokeWidth="11" strokeLinejoin="round" />
+                {/* stitching hint on the upper rim */}
+                <path d="M104 178 A72 72 0 0 1 216 178" fill="none" stroke="#64748b" strokeWidth="1" strokeDasharray="2 3" opacity="0.7" />
+                {/* horizontal spokes, tapered toward the rim */}
+                <path d="M92 206 L134 199 L134 227 L92 225 Z" fill="#1e293b" stroke="#0b1220" strokeWidth="1.5" />
+                <path d="M228 206 L186 199 L186 227 L228 225 Z" fill="#1e293b" stroke="#0b1220" strokeWidth="1.5" />
+                {/* bottom spoke into the flat section, with metallic trim */}
+                <path d="M150 234 L170 234 L167 268 L153 268 Z" fill="#1e293b" stroke="#0b1220" strokeWidth="1.5" />
+                <rect x="152" y="256" width="16" height="4" rx="2" fill="#64748b" />
+                {/* multifunction button pods */}
+                {[118, 176].map((px) => (
+                  <g key={px}>
+                    <rect x={px} y="197" width="26" height="32" rx="7" fill="#0b1220" stroke="#334155" strokeWidth="1" />
+                    <circle cx={px + 13} cy={205} r="3" fill="#334155" />
+                    <rect x={px + 7} y={211} width="12" height="4" rx="2" fill="#334155" />
+                    <rect x={px + 7} y={218} width="12" height="4" rx="2" fill="#334155" />
+                  </g>
+                ))}
+                {/* airbag pad (horn) with metallic badge */}
+                <rect x="134" y="191" width="52" height="46" rx="15" fill="#1e293b" stroke="#0f172a" strokeWidth="2" />
+                <path d="M140 196 q20 -6 40 0" fill="none" stroke="#475569" strokeWidth="1.2" opacity="0.8" />
+                <circle cx="160" cy="212" r="9" fill="#0f172a" stroke="#cbd5e1" strokeWidth="2" />
+                <text x="160" y="215.5" textAnchor="middle" fontSize="9" fontWeight="800" fill="#cbd5e1">D</text>
               </g>
 
               {/* light switch dial + rear fog button (left of column) */}
