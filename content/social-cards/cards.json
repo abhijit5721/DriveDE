@@ -1,0 +1,109 @@
+[
+  {
+    "id": "vocab-schulterblick",
+    "type": "vocab",
+    "term": "der Schulterblick",
+    "pron": "SHOOL-ter-blick",
+    "meaning": "The over-the-shoulder check before turning, changing lanes or opening your door.",
+    "example": "Skip it in your Fahrprüfung and you fail instantly. Examiners watch for the head movement."
+  },
+  {
+    "id": "vocab-sonderfahrten",
+    "type": "vocab",
+    "term": "die Sonderfahrten",
+    "pron": "ZON-der-far-ten",
+    "meaning": "The 12 mandatory special drives: 5 Überland (country roads), 4 Autobahn, 3 night drives.",
+    "example": "No German license without all 12 — no matter how well you drive."
+  },
+  {
+    "id": "vocab-anlage11",
+    "type": "vocab",
+    "term": "Anlage 11",
+    "pron": "AHN-lah-geh elf",
+    "meaning": "The official list deciding whether your foreign license converts with no exam, theory only, or both exams.",
+    "example": "EU/EEA: no exam. Japan, South Korea: no exam. India, Brazil, most others: both exams."
+  },
+  {
+    "id": "stat-cost",
+    "type": "stat",
+    "big": "€3.800",
+    "label": "Average total cost of a German driving license",
+    "sub": "Driving schools advertise €1.500 — the real number after average lesson counts, exam fees and materials lands between €3.000 and €4.500."
+  },
+  {
+    "id": "stat-fail",
+    "type": "stat",
+    "big": "38%",
+    "label": "fail the practical exam on the first try",
+    "sub": "And one failed attempt costs €600+ in re-exam fees and warm-up lessons, plus weeks of waiting for a new slot."
+  },
+  {
+    "id": "stat-lesson",
+    "type": "stat",
+    "big": "€95",
+    "label": "for one 45-minute driving lesson",
+    "sub": "That is what unprepared practice costs per hour in most German cities. Preparation between lessons is the cheapest driving instructor there is."
+  },
+  {
+    "id": "lamp-oil",
+    "type": "lamp",
+    "lampId": "oil",
+    "severity": "red",
+    "question": "This light comes on while driving. What is it?",
+    "name": "Oil pressure warning",
+    "answer": "Engine oil pressure is too low — the engine can be destroyed within minutes.",
+    "action": "Stop safely, engine off, check oil. Do NOT keep driving. Also a favorite Abfahrtkontrolle exam question."
+  },
+  {
+    "id": "lamp-coolant",
+    "type": "lamp",
+    "lampId": "coolant",
+    "severity": "red",
+    "question": "Red light with a thermometer symbol. What now?",
+    "name": "Coolant temperature",
+    "answer": "The engine is overheating.",
+    "action": "Pull over, engine off, let it cool. Never open a hot radiator cap."
+  },
+  {
+    "id": "lamp-abs",
+    "type": "lamp",
+    "lampId": "abs",
+    "severity": "amber",
+    "question": "This amber light stays on. Can you keep driving?",
+    "name": "ABS warning",
+    "answer": "Yes — normal brakes still work, but the anti-lock system is offline.",
+    "action": "Drive carefully to a workshop. In the exam: amber = check soon, red = stop now."
+  },
+  {
+    "id": "rule-rechts-vor-links",
+    "type": "rule",
+    "question": "At an unmarked intersection, the car coming from the RIGHT always has priority.",
+    "answer": true,
+    "explanation": "Rechts vor links — the default rule wherever no signs, lights or priority road markings say otherwise. Most common in residential areas, and one of the most common exam-fail moments."
+  },
+  {
+    "id": "rule-green-arrow",
+    "type": "rule",
+    "question": "With the green arrow sign (Grünpfeil), you may turn right on red without stopping.",
+    "answer": false,
+    "explanation": "You MUST come to a full stop at the line first, then turn right only if nobody is endangered. Rolling through is a fail in the exam and a fine on the road."
+  },
+  {
+    "id": "country-india",
+    "type": "country",
+    "country": "India",
+    "flag": "🇮🇳",
+    "tier": "Full conversion: theory exam + practical exam required",
+    "tierColor": "#f59e0b",
+    "note": "Your Indian license counts for your first 6 months in Germany. After that you need the Umschreibung — but you skip the first-aid course requirement debate and can shorten driving school significantly with good preparation."
+  },
+  {
+    "id": "country-usa",
+    "type": "country",
+    "country": "the USA",
+    "flag": "🇺🇸",
+    "tier": "Depends on your state — some swap license-for-license, some need exams",
+    "tierColor": "#3b82f6",
+    "note": "Washington, Texas, Michigan and ~25 more states: direct swap. California, New York, Florida: theory exam. A few states: both exams. Check your state before booking anything."
+  }
+]

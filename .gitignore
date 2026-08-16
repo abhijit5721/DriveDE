@@ -441,3 +441,4 @@ public/sitemap.xml
 # local agent tooling (skills packs), not app code
 .agents/
 .claude/settings.local.json
+social-cards-out/

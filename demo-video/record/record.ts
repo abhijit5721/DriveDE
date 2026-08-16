@@ -22,7 +22,7 @@ const FRAMES_DIR = path.join(ROOT, '..', 'frames');
 const FIXTURE = path.join(ROOT, '..', 'fixtures', 'seed-state.json');
 
 type Lang = 'de' | 'en';
-type SceneName = 'tracker' | 'readiness' | 'curriculum' | 'maneuvers';
+type SceneName = 'tracker' | 'readiness' | 'curriculum' | 'maneuvers' | 'cockpit';
 
 // ---------- helpers ----------
 
@@ -111,6 +111,7 @@ async function captureFrames(
   budgetMs: number,
   policy: VtPolicy = 'advance',
   perFrame?: (frame: number) => Promise<void>,
+  freshWaitMs = 300,
 ) {
   await mkdir(dir, { recursive: true });
 
@@ -145,7 +146,7 @@ async function captureFrames(
       if (perFrame) await perFrame(i);
       const before = frameSeq;
       await stepVirtualTime(cdp, budgetMs, policy);
-      await waitForNewFrame(before, 300);
+      await waitForNewFrame(before, freshWaitMs);
       if (!latest) throw new Error('screencast produced no frames');
       await writeFile(path.join(dir, `frame_${String(i).padStart(4, '0')}.png`), latest);
       if (i % 60 === 0) console.log(`  frame ${i}/${count}`);
@@ -153,6 +154,49 @@ async function captureFrames(
   } finally {
     cdp.off('Page.screencastFrame', onFrame);
     await cdp.send('Page.stopScreencast').catch(() => {});
+  }
+}
+
+/** Exact-sync variant for gameplay scenes: after each virtual-time step the
+ *  frame is fetched with Page.captureScreenshot (1:1 with DOM state). The
+ *  screencast stays on purely as a fallback source if a screenshot call
+ *  hangs (it can, under persistent rAF — not the case on the trainer page,
+ *  but never block the run on that assumption). */
+async function captureFramesExact(
+  page: Page,
+  cdp: CDPSession,
+  dir: string,
+  count: number,
+  budgetMs: number,
+  perFrame?: (frame: number) => Promise<void>,
+) {
+  await mkdir(dir, { recursive: true });
+  let latest: Buffer | null = null;
+  const onFrame = (e: { data: string; sessionId: number }) => {
+    latest = Buffer.from(e.data, 'base64');
+    cdp.send('Page.screencastFrameAck', { sessionId: e.sessionId }).catch(() => {});
+  };
+  cdp.on('Page.screencastFrame', onFrame);
+  await cdp.send('Page.startScreencast', { format: 'png', maxWidth: 1170, maxHeight: 2532, everyNthFrame: 1 });
+  let fallbacks = 0;
+  try {
+    for (let i = 0; i < count; i++) {
+      if (perFrame) await perFrame(i);
+      await stepVirtualTime(cdp, budgetMs, 'advance');
+      const shot = await Promise.race([
+        cdp.send('Page.captureScreenshot', { format: 'png' }).then((r) => Buffer.from(r.data, 'base64')),
+        new Promise<null>((res) => setTimeout(() => res(null), 1500)),
+      ]);
+      const buf = shot ?? latest;
+      if (!buf) throw new Error('no frame available');
+      if (!shot) fallbacks++;
+      await writeFile(path.join(dir, `frame_${String(i).padStart(4, '0')}.png`), buf);
+      if (i % 60 === 0) console.log(`  frame ${i}/${count}`);
+    }
+  } finally {
+    cdp.off('Page.screencastFrame', onFrame);
+    await cdp.send('Page.stopScreencast').catch(() => {});
+    if (fallbacks) console.warn(`  [warn] ${fallbacks}/${count} frames used stale screencast fallback`);
   }
 }
 
@@ -207,6 +251,136 @@ const scenes: Record<SceneName, (page: Page, cdp: CDPSession, dir: string) => Pr
     });
   },
 
+  /** Cockpit trainer gameplay for the vertical Short (GRO-5 video #11):
+   *  attempt 1 dumps the clutch and stalls, attempt 2 moves off cleanly and
+   *  shifts to 2nd. Driven entirely by synthetic keyboard events at scripted
+   *  frame numbers, so the stall lands at a deterministic timestamp for the
+   *  Remotion caption/SFX timeline. ~23s at true speed. */
+  async cockpit(page, cdp, dir) {
+    // navigate: curriculum -> list view -> chapter 1 -> basics-2 (manual)
+    await evalClick(page, 'nav-curriculum');
+    await page.waitForTimeout(1500);
+    await evalClick(page, 'view-list');
+    await page.waitForTimeout(600);
+    const lessonVisible = await page.evaluate(() => !!document.querySelector('[data-testid="lesson-basics-2"]'));
+    if (!lessonVisible) {
+      await evalClick(page, 'chapter-chapter-1');
+      await page.waitForTimeout(400);
+    }
+    await evalClick(page, 'lesson-basics-2');
+    await page.waitForTimeout(1800);
+    await page.evaluate(() => {
+      const el = document.querySelector('[data-testid="cockpit-step"]');
+      if (!el) throw new Error('cockpit trainer not mounted');
+      el.scrollIntoView({ block: 'start' });
+    });
+    await page.waitForTimeout(600);
+
+    const key = (k: string, type: 'keydown' | 'keyup' = 'keydown') =>
+      page.evaluate(([kk, tt]) => {
+        window.dispatchEvent(new KeyboardEvent(tt as string, { key: kk as string, bubbles: true }));
+      }, [k, type]);
+
+    // frame-indexed action script (30fps, real-time budgets)
+    const actions = new Map<number, Array<() => Promise<unknown>>>();
+    const at = (frame: number, fn: () => Promise<unknown>) => {
+      const list = actions.get(frame) ?? [];
+      list.push(fn);
+      actions.set(frame, list);
+    };
+    const rapid = (from: number, count: number, k: string) => {
+      for (let i = 0; i < count; i++) at(from + i, () => key(k));
+    };
+
+    // --- attempt 1: stall ---
+    rapid(30, 13, 'ArrowDown');            // clutch to the floor
+    at(48, () => key('b'));                 // hold brake
+    at(56, () => key('e'));                 // ignition
+    at(96, () => key('1'));                 // 1st gear
+    at(104, () => key('b', 'keyup'));       // brake off
+    rapid(112, 13, 'ArrowUp');              // dump the clutch, no gas -> stall
+    // ~frame 130-190: stall shake + message holds on screen
+    // --- attempt 2: clean move-off ---
+    rapid(196, 13, 'ArrowDown');            // clutch back down
+    at(212, () => key('b'));
+    at(220, () => key('e'));                // restart
+    at(230, () => key('1'));                // back into 1st (no-op if kept)
+    at(238, () => key('b', 'keyup'));
+    at(244, () => key(' '));                // gas on (held from here)
+    // ease the clutch through the bite point
+    rapid(252, 5, 'ArrowUp');               // 100 -> 60 (bite)
+    rapid(290, 4, 'ArrowUp');               // 60 -> 28, car creeps
+    rapid(320, 4, 'ArrowUp');               // fully out, accelerating
+    // shift to 2nd once 1st tops out
+    rapid(430, 13, 'ArrowDown');
+    at(446, () => key('2'));
+    // ease the clutch back out over ~a second — dumping it at 2nd-gear rpm
+    // occasionally stalls the sim (a checkpoint once caught exactly that)
+    for (let i = 0; i < 13; i++) at(452 + i * 2, () => key('ArrowUp'));
+    // cruise in 2nd to the end; release gas late so speed holds
+    at(676, () => key(' ', 'keyup'));
+    // beat assertions woven into the timeline
+    at(80, async () => {
+      const st = await readState();
+      if (!st.includes('2/6') && !st.includes('3/6')) throw new Error(`beat: engine not running at f80: ${st.slice(0, 100)}`);
+    });
+    at(165, async () => {
+      const st = await readState();
+      if (!/stalled|abgew/i.test(st)) throw new Error(`beat: stall missing at f165: ${st.slice(0, 100)}`);
+    });
+    at(560, async () => {
+      const speed = Number(await page.evaluate(() => document.querySelector('[data-testid="cockpit-speed"]')?.textContent ?? 0));
+      if (speed < 15) throw new Error(`beat: not driving at f560 (speed ${speed})`);
+    });
+
+    const readState = () =>
+      page.evaluate(() => {
+        const g = (id: string) => document.querySelector(`[data-testid="${id}"]`)?.textContent ?? '';
+        return `${g('cockpit-step')} | msg=${g('cockpit-message')} | speed=${g('cockpit-speed')}`;
+      });
+
+    // REAL-TIME capture: the frozen-clock technique desyncs badly on this
+    // interactive scene (renderer stalls; >50% stale frames). The sim runs on
+    // real timers anyway, so record live: schedule the key script on the
+    // wallclock, stream screencast frames with timestamps, resample to 30fps
+    // in assemble via the frames.json timing manifest.
+    await mkdir(dir, { recursive: true });
+    const frames: Array<{ file: string; ts: number }> = [];
+    let seq = 0;
+    const onFrame = async (e: { data: string; metadata: { timestamp?: number }; sessionId: number }) => {
+      const file = `frame_${String(seq++).padStart(4, '0')}.png`;
+      frames.push({ file, ts: e.metadata.timestamp ?? Date.now() / 1000 });
+      await writeFile(path.join(dir, file), Buffer.from(e.data, 'base64'));
+      cdp.send('Page.screencastFrameAck', { sessionId: e.sessionId }).catch(() => {});
+    };
+    cdp.on('Page.screencastFrame', onFrame);
+    await cdp.send('Page.startScreencast', { format: 'png', maxWidth: 1170, maxHeight: 2532, everyNthFrame: 1 });
+
+    const t0 = Date.now();
+    const frameMs = 1000 / FPS;
+    const sorted = [...actions.entries()].sort((a, b) => a[0] - b[0]);
+    for (const [frame, fns] of sorted) {
+      const due = t0 + frame * frameMs;
+      const wait = due - Date.now();
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      for (const fn of fns) await fn();
+    }
+    // mid-run beat assertions (never trust a silent take)
+    // run out the clip to 700 frames of wallclock
+    const endWait = t0 + 700 * frameMs - Date.now();
+    if (endWait > 0) await new Promise((r) => setTimeout(r, endWait));
+    cdp.off('Page.screencastFrame', onFrame);
+    await cdp.send('Page.stopScreencast').catch(() => {});
+    await writeFile(path.join(dir, 'frames.json'), JSON.stringify({ t0: t0 / 1000, fps: FPS, frames }));
+
+    // validate the story beats from sim state AFTER the drive
+    const st = await readState();
+    console.log(`  final: ${st.slice(0, 140)}`);
+    const final = await page.evaluate(() => Number(document.querySelector('[data-testid="cockpit-speed"]')?.textContent ?? 0));
+    if (final < 15) throw new Error(`cockpit final speed ${final} — attempt 2 never got moving`);
+    if (frames.length < 200) throw new Error(`only ${frames.length} screencast frames captured`);
+  },
+
   /** 3D maneuver animation (parallel parking) playing. */
   async maneuvers(page, cdp, dir) {
     await evalClick(page, 'nav-maneuvers');
@@ -251,7 +425,7 @@ for (const lang of argLangs) {
     console.log(`\n=== recording ${label} ===`);
     const context = await browser.newContext({
       viewport: { width: 390, height: 844 },
-      deviceScaleFactor: 3,
+      deviceScaleFactor: sceneName === 'cockpit' ? 2 : 3,
       isMobile: true,
       hasTouch: true,
       locale: lang === 'de' ? 'de-DE' : 'en-US',
