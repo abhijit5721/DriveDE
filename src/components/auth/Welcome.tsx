@@ -1055,6 +1055,43 @@ export function Welcome() {
               }
             </p>
             <p className="text-[11px] text-slate-500">Hamburg, Germany</p>
+            <div className="flex items-center gap-3 pt-1">
+              <a
+                href="https://www.tiktok.com/@drivede20"
+                target="_blank"
+                rel="me noopener"
+                aria-label="DriveDE on TikTok"
+                className="text-slate-400 transition hover:text-slate-900"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .595.047.88.14V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z" />
+                </svg>
+              </a>
+              <a
+                href="https://www.instagram.com/drivedeapp/"
+                target="_blank"
+                rel="me noopener"
+                aria-label="DriveDE on Instagram"
+                className="text-slate-400 transition hover:text-slate-900"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5" aria-hidden="true">
+                  <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+                  <circle cx="12" cy="12" r="4.5" />
+                  <circle cx="17.6" cy="6.4" r="1.3" fill="currentColor" stroke="none" />
+                </svg>
+              </a>
+              <a
+                href="https://www.youtube.com/@drivedeapp"
+                target="_blank"
+                rel="me noopener"
+                aria-label="DriveDE on YouTube"
+                className="text-slate-400 transition hover:text-slate-900"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                  <path d="M23.5 6.2a3 3 0 0 0-2.12-2.13C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.52A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.12 2.13c1.88.52 9.38.52 9.38.52s7.5 0 9.38-.52a3 3 0 0 0 2.12-2.13A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8zM9.6 15.6V8.4l6.27 3.6-6.27 3.6z" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           {/* Col 2: Product */}

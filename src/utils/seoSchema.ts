@@ -27,7 +27,17 @@ const BASE = {
     offerCount: '4',
   },
   screenshot: 'https://www.drivede.app/icons/icon-512.png',
-  author: { '@type': 'Organization', name: 'DriveDE' },
+  author: {
+    '@type': 'Organization',
+    name: 'DriveDE',
+    url: 'https://www.drivede.app',
+    // ties the social profiles to the brand for knowledge-panel/entity SEO
+    sameAs: [
+      'https://www.tiktok.com/@drivede20',
+      'https://www.instagram.com/drivedeapp/',
+      'https://www.youtube.com/@drivedeapp',
+    ],
+  },
 };
 
 const SCHEMA_DE = {
