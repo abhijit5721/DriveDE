@@ -14,16 +14,16 @@ VOICES = {"en": "en-US-AndrewNeural", "de": "de-DE-FlorianMultilingualNeural"}
 LINES = {
     "en": {
         "hook": "Meet DriveDE — the fastest way to your German driving license.",
-        "tracker": "Track every real driving lesson with GPS: live speed limits, and every mistake caught automatically.",
+        "tracker": "Track every real driving lesson with GPS, and log mistakes with a single tap for your review afterwards.",
         "readiness": "After each drive, your exam readiness score updates — so you know exactly when you're ready. No gut feeling.",
         "curriculum": "Follow a structured path through every chapter, every Sonderfahrt, and every maneuver.",
         "maneuvers": "And practice parking in 3D — before you're in the real car.",
         "devices": "One account — phone, tablet, and desktop.",
-        "cta": "DriveDE saves you 800 to 1200 euros on lessons. Start your free 7 day trial at drive dee ee dot app.",
+        "cta": "DriveDE saves you up to 1200 euros on lessons. Start your free 7 day trial at drive dee ee dot app.",
     },
     "de": {
         "hook": "Das ist DriveDE — der schnellste Weg zum deutschen Führerschein.",
-        "tracker": "Tracke jede echte Fahrstunde per GPS: Tempolimits in Echtzeit und automatische Fehlererkennung.",
+        "tracker": "Tracke jede echte Fahrstunde per GPS und halte Fehler mit einem Tipp für die Auswertung fest.",
         "readiness": "Nach jeder Fahrt aktualisiert sich dein Prüfungs-Score — du weißt genau, wann du bereit bist. Kein Bauchgefühl.",
         "curriculum": "Folge einem klaren Weg durch alle Kapitel, Sonderfahrten und Manöver.",
         "maneuvers": "Und übe das Einparken in 3D — bevor du im echten Auto sitzt.",

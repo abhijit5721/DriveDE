@@ -205,6 +205,10 @@ async function captureFramesExact(
 const scenes: Record<SceneName, (page: Page, cdp: CDPSession, dir: string) => Promise<void>> = {
   /** Live GPS tracking in sim mode: moving map, speed HUD, mistake toasts. */
   async tracker(page, cdp, dir) {
+    // automatic mistake detection is not enabled in production: hide the
+    // sim's detection UI (toasts + speed-limit sign) so the demo only shows
+    // shipped behavior (route recording + speed readout)
+    await page.addStyleTag({ content: '#_rht_toaster{display:none!important} [data-testid="hud-speed-sign"]{display:none!important}' });
     await evalClick(page, 'nav-tracker');
     await page.waitForTimeout(1200);
     await evalClick(page, 'sim-toggle');

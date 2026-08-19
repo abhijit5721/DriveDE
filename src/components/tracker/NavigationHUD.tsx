@@ -169,7 +169,7 @@ function SpeedometerGauge({ speed, limit, isSpeeding }: { speed: number; limit: 
 function SpeedSign({ limit, speeding, currentSpeed }: { limit: number; speeding: boolean; currentSpeed: number }) {
   const delta = currentSpeed - limit;
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2" data-testid="hud-speed-sign">
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.5, opacity: 0 }}
