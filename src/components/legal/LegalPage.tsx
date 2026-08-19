@@ -3,10 +3,28 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Mail, MapPin, Phone, Shield, FileText, Scale, Building2, AlertTriangle } from 'lucide-react';
+import { Mail, MapPin, Shield, FileText, Scale, Building2, AlertTriangle } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { PageHeader } from '../layout/PageHeader';
 import { TRANSLATIONS } from '../../data/translations';
+import { LEGAL_IDENTITY } from '../../data/legalIdentity';
+
+/** the operator identity block shown in the Impressum and as GDPR controller */
+function IdentityBlock({ isDe }: { isDe: boolean }) {
+  return (
+    <div className="space-y-0.5 font-medium text-slate-800 dark:text-slate-200">
+      <p>{LEGAL_IDENTITY.brand}</p>
+      <p>
+        {isDe ? 'Inhaber: ' : 'Operated by: '}
+        {LEGAL_IDENTITY.operator}
+      </p>
+      <p>{LEGAL_IDENTITY.street}</p>
+      <p>{LEGAL_IDENTITY.city}</p>
+      <p>{isDe ? LEGAL_IDENTITY.country.de : LEGAL_IDENTITY.country.en}</p>
+      {LEGAL_IDENTITY.vatId && <p>{LEGAL_IDENTITY.vatId}</p>}
+    </div>
+  );
+}
 
 interface LegalPageProps {
   page: 'privacy' | 'terms' | 'gdpr' | 'impressum' | 'disclaimer';
@@ -26,6 +44,7 @@ export function LegalPage({ page, onBack }: LegalPageProps) {
   const language = useAppStore((state) => state.language);
   const t = TRANSLATIONS[language];
   const lc = t.legal.legalContent;
+  const isDe = language === 'de';
 
   const pageMeta = {
     privacy: {
@@ -64,6 +83,8 @@ export function LegalPage({ page, onBack }: LegalPageProps) {
           <div className="space-y-4">
             <Section title={t.legal.sections.controller}>
               <p>{t.legal.placeholders.controller}</p>
+              <IdentityBlock isDe={isDe} />
+              <div className="flex items-center gap-2"><Mail className="h-4 w-4" />{LEGAL_IDENTITY.email}</div>
             </Section>
             <Section title={t.legal.sections.processedData}>
               <ul className="list-disc space-y-2 pl-5">
@@ -77,6 +98,13 @@ export function LegalPage({ page, onBack }: LegalPageProps) {
             </Section>
             <Section title={t.legal.sections.storage}>
               <p>{lc.privacy.storage}</p>
+            </Section>
+            <Section title={t.legal.sections.recipients}>
+              <ul className="list-disc space-y-2 pl-5">
+                {lc.privacy.recipients.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
             </Section>
             <Section title={t.legal.sections.legalBases}>
               <ul className="list-disc space-y-2 pl-5">
@@ -130,12 +158,18 @@ export function LegalPage({ page, onBack }: LegalPageProps) {
           <div className="space-y-4">
             <Section title={t.legal.sections.provider}>
               <p>{t.legal.placeholders.imprint}</p>
+              <IdentityBlock isDe={isDe} />
+              <p>
+                {isDe
+                  ? 'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: '
+                  : 'Responsible for content pursuant to Section 18 (2) MStV: '}
+                {LEGAL_IDENTITY.responsible}
+              </p>
             </Section>
             <Section title={t.legal.sections.contact}>
               <div className="space-y-2">
-                <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />Musterstraße 1, 10115 Berlin</div>
-                <div className="flex items-center gap-2"><Mail className="h-4 w-4" />hello@drivede.app</div>
-                <div className="flex items-center gap-2"><Phone className="h-4 w-4" />+49 30 00000000</div>
+                <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{LEGAL_IDENTITY.street}, {LEGAL_IDENTITY.city}</div>
+                <div className="flex items-center gap-2"><Mail className="h-4 w-4" />{LEGAL_IDENTITY.email}</div>
               </div>
             </Section>
             <Section title={t.legal.sections.notice}>

@@ -586,7 +586,8 @@ export const TRANSLATIONS = {
         controller: '1. Verantwortlicher',
         processedData: '2. Welche Daten verarbeitet werden',
         purpose: '3. Zweck der Verarbeitung',
-        storage: '4. Speicherung und Empfänger',
+        storage: '4. Speicherdauer und Speicherort',
+        recipients: 'Empfänger und Auftragsverarbeiter',
         legalBases: '5. Rechtsgrundlagen',
         scope: '1. Geltungsbereich',
         noSubstitute: '2. Kein Ersatz für Fahrlehrer oder amtliche Quellen',
@@ -604,14 +605,14 @@ export const TRANSLATIONS = {
         sources: 'Maßgebliche Quellen',
       },
       placeholders: {
-        controller: 'Bitte ersetze vor Launch diese Platzhalterdaten durch deine echten Daten: DriveDE, Musterstraße 1, 10115 Berlin, E-Mail: privacy@drivede.app.',
-        imprint: 'Bitte ersetze diese Platzhalterangaben vor Veröffentlichung vollständig durch die echten Angaben des Betreibers. Beispiel: DriveDE GmbH, Musterstraße 1, 10115 Berlin, Deutschland.',
-        notice: 'Je nach Rechtsform und Tätigkeit können weitere Pflichtangaben erforderlich sein, z. B. Handelsregister, Umsatzsteuer-ID, vertretungsberechtigte Person oder Berufsangaben. Bitte rechtlich prüfen lassen.',
-        launchReady: 'Diese Inhalte sind eine Startvorlage für den Launch. Vor Veröffentlichung bitte alle Platzhalter, Unternehmensdaten und rechtlichen Details final prüfen und anpassen.',
+        controller: 'Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:',
+        imprint: 'Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG):',
+        notice: 'Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG). Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links; für die Inhalte verlinkter Seiten sind ausschließlich deren Betreiber verantwortlich.',
+        launchReady: 'Fragen zu diesen Angaben? Schreib uns an hello@drivede.app – wir antworten in der Regel innerhalb weniger Tage.',
       },
       hub: {
         title: 'Rechtliches & Datenschutz',
-        desc: 'Diese Seite bündelt die wichtigsten rechtlichen Informationen, die für den Beta- oder Launch-Betrieb in Deutschland und der EU benötigt werden. Bitte ersetze vor der Veröffentlichung alle Platzhalter durch deine echten Kontakt- und Unternehmensdaten.',
+        desc: 'Hier findest du alle rechtlichen Informationen zu DriveDE: Datenschutz, Nutzungsbedingungen, Impressum, deine DSGVO-Rechte und wichtige Sicherheitshinweise.',
         items: {
           privacy: 'Wie Daten verarbeitet, gespeichert und geschützt werden',
           terms: 'Regeln für Nutzung, Haftung und Inhalte',
@@ -623,12 +624,25 @@ export const TRANSLATIONS = {
       legalContent: {
         privacy: {
           processedData: [
+            'Kontodaten bei Registrierung: E-Mail-Adresse und Anmeldeinformationen',
             'App-Einstellungen wie Sprache, Dark Mode, Lernpfad und Getriebetyp',
-            'Lokaler Lernfortschritt, absolvierte Lektionen, Quizstände und Fahrtenbuchdaten',
-            'Optionale Kontakt- oder Feedbackdaten, wenn Nutzer aktiv eine Anfrage senden'
+            'Lernfortschritt, absolvierte Lektionen, Quizstände und Fahrtenbuchdaten (lokal, mit Konto zusätzlich synchronisiert)',
+            'GPS-Positionsdaten während einer aktiv gestarteten Fahrten-Aufzeichnung; die Auswertung erfolgt auf dem Gerät',
+            'Zahlungsbezogene Daten bei Pro-Käufen; die Zahlungsabwicklung erfolgt vollständig durch Stripe – Kartendaten erreichen unsere Systeme nicht',
+            'Nutzungs- und Fehlerdaten zur Verbesserung der App – Analytik nur nach Einwilligung über die Cookie-Einstellungen',
+            'Optionale Kontakt- oder Feedbackdaten, wenn du aktiv eine Anfrage sendest'
           ],
-          purpose: 'Die Daten werden zur Bereitstellung der App-Funktionen, zur Speicherung des Lernfortschritts, zur Verbesserung der Nutzererfahrung sowie – falls später aktiviert – zur Synchronisierung über mehrere Geräte verwendet.',
-          storage: 'In der aktuellen Beta-Version werden die meisten Daten lokal auf dem Gerät gespeichert. Falls später Cloud-Dienste, Analytik oder Zahlungsdienste eingesetzt werden, müssen diese hier einzeln benannt werden.',
+          recipients: [
+            'Supabase – Datenbank, Konten und Synchronisierung',
+            'Stripe – Zahlungsabwicklung',
+            'Vercel – Hosting und Auslieferung der App',
+            'Resend – Transaktions-E-Mails (z. B. Willkommensmail)',
+            'PostHog und Google Analytics – Nutzungsanalyse, nur nach Einwilligung',
+            'Sentry – Fehlerdiagnose und Stabilität',
+            'OpenStreetMap – Kartendarstellung beim GPS-Tracking'
+          ],
+          purpose: 'Die Daten werden zur Bereitstellung der App-Funktionen, zur Speicherung des Lernfortschritts, zur Verbesserung der Nutzererfahrung sowie – mit einem Konto – zur Synchronisierung über mehrere Geräte verwendet.',
+          storage: 'Lernfortschritt und Einstellungen werden primär lokal auf deinem Gerät gespeichert. Mit einem Konto werden Fortschrittsdaten zusätzlich in unserer Datenbank (Supabase) gespeichert, um die Synchronisierung über mehrere Geräte zu ermöglichen. Daten werden gelöscht, sobald sie für die genannten Zwecke nicht mehr erforderlich sind oder du die Löschung deines Kontos verlangst.',
           legalBases: [
             'Art. 6 Abs. 1 lit. b DSGVO – Vertragserfüllung bzw. Bereitstellung der App',
             'Art. 6 Abs. 1 lit. f DSGVO – berechtigte Interessen an sicherem und stabilem App-Betrieb',
@@ -652,7 +666,7 @@ export const TRANSLATIONS = {
             'Widerspruch gegen bestimmte Verarbeitungen',
             'Widerruf einer Einwilligung mit Wirkung für die Zukunft'
           ],
-          howToExercise: 'Sende eine Anfrage an privacy@drivede.app. Vor Launch müssen hier die echten Kontaktdaten hinterlegt werden. In der aktuellen lokalen App-Version können Nutzer viele Daten direkt durch Zurücksetzen der App oder Löschen der Browser-/Gerätespeicherung entfernen.',
+          howToExercise: 'Sende deine Anfrage an hello@drivede.app. Wir antworten innerhalb der gesetzlichen Fristen, in der Regel innerhalb eines Monats. Viele lokal gespeicherte Daten kannst du außerdem selbst entfernen, indem du die App zurücksetzt oder den Browser-/Gerätespeicher löschst.',
           complaint: 'Du hast das Recht, dich bei einer Datenschutzaufsichtsbehörde zu beschweren, wenn du der Ansicht bist, dass die Verarbeitung deiner Daten gegen die DSGVO verstößt.'
         },
         disclaimer: {
@@ -2907,7 +2921,8 @@ export const TRANSLATIONS = {
         controller: '1. Controller',
         processedData: '2. What data is processed',
         purpose: '3. Purpose of processing',
-        storage: '4. Storage and recipients',
+        storage: '4. Storage duration and location',
+        recipients: 'Recipients and processors',
         legalBases: '5. Legal bases',
         scope: '1. Scope',
         noSubstitute: '2. No substitute for instructors or official sources',
@@ -2925,14 +2940,14 @@ export const TRANSLATIONS = {
         sources: 'Controlling Sources',
       },
       placeholders: {
-        controller: 'Before launch, replace these placeholder details with your real company data: DriveDE, Musterstraße 1, 10115 Berlin, Email: privacy@drivede.app.',
-        imprint: 'Before publication, replace these placeholder details fully with the real operator details. Example: DriveDE GmbH, Musterstraße 1, 10115 Berlin, Germany.',
-        notice: 'Depending on your legal entity and business activity, additional mandatory disclosures may be required, such as commercial register details, VAT ID, authorized representative, or professional information. Please have this reviewed legally.',
-        launchReady: 'These contents are a launch-ready starting template. Before publishing, please review and replace all placeholders, company details, and legal specifics.',
+        controller: 'The controller within the meaning of the General Data Protection Regulation (GDPR) is:',
+        imprint: 'Information in accordance with Section 5 of the German Digital Services Act (DDG):',
+        notice: 'We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board (Section 36 VSBG). Despite careful review, we accept no liability for the content of external links; the operators of linked pages are solely responsible for their content.',
+        launchReady: 'Questions about this information? Write to hello@drivede.app – we usually reply within a few days.',
       },
       hub: {
         title: 'Legal & Privacy',
-        desc: 'This page bundles the key legal information needed for beta or launch operation in Germany and the EU. Before publishing, replace placeholders with your real contact and company details.',
+        desc: 'All legal information about DriveDE in one place: privacy, terms of use, legal notice (Impressum), your GDPR rights, and important safety notes.',
         items: {
           privacy: 'How data is processed, stored, and protected',
           terms: 'Rules for usage, liability, and content',
@@ -2944,12 +2959,25 @@ export const TRANSLATIONS = {
       legalContent: {
         privacy: {
           processedData: [
+            'Account data upon registration: email address and login credentials',
             'App settings such as language, dark mode, learning path, and transmission type',
-            'Local learning progress, completed lessons, quiz results, and tracker/logbook data',
-            'Optional contact or feedback data when a user actively sends an inquiry'
+            'Learning progress, completed lessons, quiz results, and tracker/logbook data (local; additionally synced with an account)',
+            'GPS position data during an actively started drive recording; analysis happens on the device',
+            'Payment-related data for Pro purchases; payment processing is handled entirely by Stripe – card details never reach our systems',
+            'Usage and error data to improve the app – analytics only after consent via the cookie settings',
+            'Optional contact or feedback data when you actively send an inquiry'
           ],
-          purpose: 'Data is used to provide app functionality, save study progress, improve user experience, and—if enabled later—to synchronize progress across devices.',
-          storage: 'In the current beta version, most data is stored locally on the device. If cloud services, analytics, or payment providers are added later, they must be listed here individually.',
+          recipients: [
+            'Supabase – database, accounts, and synchronization',
+            'Stripe – payment processing',
+            'Vercel – hosting and app delivery',
+            'Resend – transactional emails (e.g. welcome email)',
+            'PostHog and Google Analytics – usage analytics, only after consent',
+            'Sentry – error diagnostics and stability',
+            'OpenStreetMap – map rendering during GPS tracking'
+          ],
+          purpose: 'Data is used to provide app functionality, save study progress, improve user experience, and—with an account—to synchronize progress across devices.',
+          storage: 'Learning progress and settings are primarily stored locally on your device. With an account, progress data is additionally stored in our database (Supabase) to enable synchronization across devices. Data is deleted once it is no longer required for the stated purposes or when you request deletion of your account.',
           legalBases: [
             'Art. 6(1)(b) GDPR – performance of a contract / app provision',
             'Art. 6(1)(f) GDPR – legitimate interests in secure and stable app operation',
@@ -2973,7 +3001,7 @@ export const TRANSLATIONS = {
             'Right to object to certain processing activities',
             'Right to withdraw consent with effect for the future'
           ],
-          howToExercise: 'Send a request to privacy@drivede.app. Before launch, replace this with your real contact details. In the current local app version, many data points can also be removed directly by resetting the app or clearing browser/device storage.',
+          howToExercise: 'Send your request to hello@drivede.app. We respond within the statutory deadlines, usually within one month. You can also remove many locally stored data points yourself by resetting the app or clearing browser/device storage.',
           complaint: 'You have the right to lodge a complaint with a data protection supervisory authority if you believe your data is processed in violation of the GDPR.'
         },
         disclaimer: {
