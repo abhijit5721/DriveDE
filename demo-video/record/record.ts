@@ -222,8 +222,17 @@ const scenes: Record<SceneName, (page: Page, cdp: CDPSession, dir: string) => Pr
     // HUD + Leaflet: let tiles load and the sim take its first steps in REAL time
     await page.waitForTimeout(6000);
     await freeze(cdp);
-    // 3x time compression: 300 frames x 100ms = 30s of sim (~20 mock points, 4 scripted mistakes)
-    await captureFrames(page, cdp, dir, FRAMES_PER_SCENE, 100, 'pauseIfNetworkFetchesPending');
+    // 3x time compression: 300 frames x 100ms = 30s of sim. Mid-scene the
+    // manual mistake log is demonstrated: open the sheet, pick "shoulder
+    // check", confirmation flashes green - the shipped feature, shown live.
+    const trackerActions = new Map<number, string>([
+      [90, 'problem-btn'],
+      [165, 'manual-mistake-shoulder_check'],
+    ]);
+    await captureFrames(page, cdp, dir, FRAMES_PER_SCENE, 100, 'pauseIfNetworkFetchesPending', async (i) => {
+      const id = trackerActions.get(i);
+      if (id) await evalClick(page, id);
+    });
   },
 
   /** Exam-readiness gauge sweeping to 74% — captured from frame 0. */
