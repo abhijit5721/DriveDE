@@ -120,8 +120,8 @@ export function UmschreibungCountryGuide({ onClose, standalone = false }: Umschr
             </h2>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
               {isDe
-                ? 'Wähle dein Land — wir zeigen dir genau, was du tun musst.'
-                : 'Select your country — we\'ll show you exactly what you need to do.'}
+                ? 'Wähle dein Land: wir zeigen dir genau, was du tun musst.'
+                : 'Select your country: we\'ll show you exactly what you need to do.'}
             </p>
           </div>
           {onClose && (
@@ -196,7 +196,7 @@ export function UmschreibungCountryGuide({ onClose, standalone = false }: Umschr
                 {!query && (
                   <div className="border-t border-slate-200 dark:border-slate-700 px-4 py-2">
                     <p className="text-[11px] text-slate-500 dark:text-slate-500">
-                      {isDe ? `${UMSCHREIBUNG_COUNTRIES.length} Länder verfügbar — tippe zum Suchen` : `${UMSCHREIBUNG_COUNTRIES.length} countries available — type to search`}
+                      {isDe ? `${UMSCHREIBUNG_COUNTRIES.length} Länder verfügbar, tippe zum Suchen` : `${UMSCHREIBUNG_COUNTRIES.length} countries available, type to search`}
                     </p>
                   </div>
                 )}

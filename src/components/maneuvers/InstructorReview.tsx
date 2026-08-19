@@ -271,12 +271,12 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
     chapters.forEach((chapter) => {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(12);
-      addBody(`${chapter.id} – ${language === 'de' ? chapter.titleDe : chapter.titleEn}`);
+      addBody(`${chapter.id}, ${language === 'de' ? chapter.titleDe : chapter.titleEn}`);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(11);
       addBody(language === 'de' ? chapter.descriptionDe : chapter.descriptionEn, 4);
       chapter.lessons.forEach((lesson) => {
-        addBody(`• ${lesson.id} — ${language === 'de' ? lesson.titleDe : lesson.titleEn}`, 6);
+        addBody(`• ${lesson.id}, ${language === 'de' ? lesson.titleDe : lesson.titleEn}`, 6);
       });
       addSpacer(3);
     });
@@ -304,7 +304,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
         addBody(`${xt.stepByStep}:`, 4);
         pdf.setFont('helvetica', 'normal');
         lesson.steps.forEach((step) => {
-          addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn} — ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
+          addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn}, ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
         });
       }
 
@@ -339,7 +339,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
       pdf.setFontSize(11);
       addBody(language === 'de' ? lesson.descriptionDe : lesson.descriptionEn, 4);
       lesson.steps?.forEach((step) => {
-        addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn} — ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
+        addBody(`${step.id}. ${language === 'de' ? step.titleDe : step.titleEn}, ${language === 'de' ? step.descriptionDe : step.descriptionEn}`, 8);
       });
       addSpacer(3);
     });
@@ -608,7 +608,7 @@ export function InstructorReview({ onBack, onOpenPaywall }: InstructorReviewProp
                   {chapter.lessons.map((lesson) => (
                     <li key={lesson.id} className="flex gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-blue-500" />
-                      <span><strong>{lesson.id}</strong> — {language === 'de' ? lesson.titleDe : lesson.titleEn}</span>
+                      <span><strong>{lesson.id}</strong>, {language === 'de' ? lesson.titleDe : lesson.titleEn}</span>
                     </li>
                   ))}
                 </ul>

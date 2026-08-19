@@ -14,15 +14,15 @@ Short answer: a first car licence (Klasse B) in Germany realistically costs **�
 
 | Item | Typical cost |
 |---|---|
-| Driving school base fee (incl. theory classes) | €350–600 |
-| Learning materials / theory app | €60–120 |
+| Driving school base fee (incl. theory classes) | €350-600 |
+| Learning materials / theory app | €60-120 |
 | Eye test | ~€7 |
-| First-aid course | €40–60 |
-| Licence application (city office) + photo | €50–80 |
-| Practice lessons (45 min each) | €70–95 per lesson |
-| 12 mandatory special drives (Sonderfahrten) | €90–115 per lesson |
-| Theory exam presentation (TÜV/DEKRA + school fee) | €60–110 |
-| Practical exam presentation | €230–320 |
+| First-aid course | €40-60 |
+| Licence application (city office) + photo | €50-80 |
+| Practice lessons (45 min each) | €70-95 per lesson |
+| 12 mandatory special drives (Sonderfahrten) | €90-115 per lesson |
+| Theory exam presentation (TÜV/DEKRA + school fee) | €60-110 |
+| Practical exam presentation | €230-320 |
 
 ## Why totals vary by €2,000
 
@@ -32,7 +32,7 @@ The main driver is retention: what you learn in a Thursday lesson has half evapo
 
 ## The most expensive event: failing
 
-Roughly **one in three** candidates fails the practical exam. A failed attempt means a new exam fee plus the school's presentation fee (together €250–350), extra lessons until the retake (typically €300–500), and at least two weeks of waiting. Call it **€600+ per failure**. Going into the exam objectively ready, not optimistically ready, is the single best financial decision in the whole process.
+Roughly **one in three** candidates fails the practical exam. A failed attempt means a new exam fee plus the school's presentation fee (together €250-350), extra lessons until the retake (typically €300-500), and at least two weeks of waiting. Call it **€600+ per failure**. Going into the exam objectively ready, not optimistically ready, is the single best financial decision in the whole process.
 
 ## If English is your language
 

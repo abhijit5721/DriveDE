@@ -34,12 +34,12 @@ After registering your residence (Anmeldung), your Turkish licence stays valid i
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120–180 |
-| Theory exam fee + materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 5–15) | €350–1,400 |
-| Practical exam fee | €230–320 |
-| Total | **€850–2,250** |
+| Application, translation, eye test, first aid | €120-180 |
+| Theory exam fee + materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 5-15) | €350-1,400 |
+| Practical exam fee | €230-320 |
+| Total | **€850-2,250** |
 
 Experienced drivers who prepare in a structured way often stay near the bottom of that range; the expensive path is drifting through open-ended lessons without measuring progress.
 

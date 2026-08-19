@@ -37,12 +37,12 @@ UK drivers bring years of left-hand-traffic instinct. The mechanical part adapts
 
 | Item | Typical cost |
 |---|---|
-| Application, eye test, first aid | €90–120 |
-| Theory exam fee + materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 5–12) | €350–1,150 |
-| Practical exam fee | €230–320 |
-| Total | **€830–1,950** |
+| Application, eye test, first aid | €90-120 |
+| Theory exam fee + materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 5-12) | €350-1,150 |
+| Practical exam fee | €230-320 |
+| Total | **€830-1,950** |
 
 If your licence qualifies for administrative exchange instead, the total drops to roughly €50 to €130 in fees.
 

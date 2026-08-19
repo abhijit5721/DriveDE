@@ -36,12 +36,12 @@ If you live in Germany on a regular residence permit, the normal rules apply: yo
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120–180 |
-| Theory exam fee + materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 5–15) | €350–1,400 |
-| Practical exam fee | €230–320 |
-| Total | **€850–2,250** |
+| Application, translation, eye test, first aid | €120-180 |
+| Theory exam fee + materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 5-15) | €350-1,400 |
+| Practical exam fee | €230-320 |
+| Total | **€850-2,250** |
 
 ## Use your experience, respect the format
 

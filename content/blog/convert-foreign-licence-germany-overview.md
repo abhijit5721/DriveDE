@@ -38,7 +38,7 @@ Country guides: [India](/blog/convert-indian-driving-licence-germany/) · [Turke
 
 1. **The 6-month rule**: after registering residence (Anmeldung), your foreign licence stays valid for 6 months. Apply well before the window closes; the process takes weeks to months.
 2. **The paperwork**: passport, Anmeldebestätigung, biometric photo, your licence, usually a certified translation (ADAC or sworn translator).
-3. **For the exam tier additionally**: eye test (~€7), first-aid course (€40–60), registration with a driving school to book the exams via TÜV/DEKRA.
+3. **For the exam tier additionally**: eye test (~€7), first-aid course (€40-60), registration with a driving school to book the exams via TÜV/DEKRA.
 4. **Theory exam in your language**: the official exam is offered in 12 languages including English, Turkish, Russian, Arabic, Portuguese and Mandarin.
 5. **The practical exam is in German**: learn the standard examiner commands regardless of what language you learned in.
 

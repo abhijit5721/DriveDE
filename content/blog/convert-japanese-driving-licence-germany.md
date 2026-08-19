@@ -39,10 +39,10 @@ From the day you register your residence in Germany (Anmeldung), your Japanese l
 
 | Item | Typical cost |
 |---|---|
-| Application fee | €35–45 |
-| Translation | €30–80 |
+| Application fee | €35-45 |
+| Translation | €30-80 |
 | Biometric photo | €10 |
-| Total | **€75–135** |
+| Total | **€75-135** |
 
 Processing typically takes 3 to 8 weeks.
 

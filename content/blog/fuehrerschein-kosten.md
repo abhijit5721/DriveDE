@@ -14,15 +14,15 @@ Kurze Antwort: Für den Autoführerschein (Klasse B) zahlst du 2026 realistisch 
 
 | Posten | Typische Kosten |
 |---|---|
-| Grundbetrag Fahrschule (inkl. Theorieunterricht) | 350–600 € |
-| Lernmaterial / Theorie-App | 60–120 € |
+| Grundbetrag Fahrschule (inkl. Theorieunterricht) | 350-600 € |
+| Lernmaterial / Theorie-App | 60-120 € |
 | Sehtest | ca. 7 € |
-| Erste-Hilfe-Kurs | 40–60 € |
-| Führerscheinantrag (Amt) + Passbild | 50–80 € |
-| Übungsstunden (à 45 Min) | 70–95 € pro Stunde |
-| 12 Sonderfahrten (Pflicht) | 90–115 € pro Stunde |
-| Vorstellung zur Theorieprüfung (TÜV/DEKRA + Fahrschule) | 60–110 € |
-| Vorstellung zur praktischen Prüfung | 230–320 € |
+| Erste-Hilfe-Kurs | 40-60 € |
+| Führerscheinantrag (Amt) + Passbild | 50-80 € |
+| Übungsstunden (à 45 Min) | 70-95 € pro Stunde |
+| 12 Sonderfahrten (Pflicht) | 90-115 € pro Stunde |
+| Vorstellung zur Theorieprüfung (TÜV/DEKRA + Fahrschule) | 60-110 € |
+| Vorstellung zur praktischen Prüfung | 230-320 € |
 
 Der Unterschied zwischen 2.500 und 4.500 Euro entsteht fast vollständig bei einem einzigen Posten: den **Übungsstunden**.
 
@@ -36,8 +36,8 @@ Warum brauchen viele so viele Stunden? Weil zwischen den Fahrstunden nichts pass
 
 Rund **jeder Dritte** fällt bei der praktischen Prüfung durch. Das kostet dann richtig:
 
-- Neue Prüfungsgebühr TÜV/DEKRA plus erneutes Vorstellungsentgelt der Fahrschule: zusammen meist **250–350 €**
-- Zusätzliche Übungsstunden bis zum nächsten Termin: oft **300–500 €**
+- Neue Prüfungsgebühr TÜV/DEKRA plus erneutes Vorstellungsentgelt der Fahrschule: zusammen meist **250-350 €**
+- Zusätzliche Übungsstunden bis zum nächsten Termin: oft **300-500 €**
 - Wartezeit: mehrere Wochen bis zum nächsten freien Prüfungstermin
 
 Ein einziger Fehlversuch kostet also schnell **600 Euro und mehr**. Die günstigste Strategie ist deshalb nicht, möglichst früh in die Prüfung zu gehen, sondern objektiv prüfungsreif hineinzugehen.

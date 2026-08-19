@@ -42,7 +42,7 @@ const BASE = {
 
 const SCHEMA_DE = {
   ...BASE,
-  name: 'DriveDE – Führerschein & Fahrschule App',
+  name: 'DriveDE: Führerschein & Fahrschule App',
   description:
     'Kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS aufzeichnen, KI-Auswertungen erhalten und die Fahrprüfung im ersten Versuch bestehen. Inklusive Umschreibungs-Modus für ausländische Führerscheine.',
   featureList: [
@@ -57,7 +57,7 @@ const SCHEMA_DE = {
 
 const SCHEMA_EN = {
   ...BASE,
-  name: 'DriveDE – German Driving License App',
+  name: 'DriveDE: German Driving License App',
   description:
     'The free app for your German driving license: learn theory, track driving lessons via GPS, get AI instructor debriefings, and pass your Fahrprüfung on the first try. Includes an Umschreibung mode that guides foreign license holders through conversion, country by country.',
   featureList: [

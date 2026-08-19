@@ -608,7 +608,7 @@ export const TRANSLATIONS = {
         controller: 'Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:',
         imprint: 'Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG):',
         notice: 'Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG). Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links; für die Inhalte verlinkter Seiten sind ausschließlich deren Betreiber verantwortlich.',
-        launchReady: 'Fragen zu diesen Angaben? Schreib uns an hello@drivede.app – wir antworten in der Regel innerhalb weniger Tage.',
+        launchReady: 'Fragen zu diesen Angaben? Schreib uns an hello@drivede.app, wir antworten in der Regel innerhalb weniger Tage.',
       },
       hub: {
         title: 'Rechtliches & Datenschutz',
@@ -628,25 +628,25 @@ export const TRANSLATIONS = {
             'App-Einstellungen wie Sprache, Dark Mode, Lernpfad und Getriebetyp',
             'Lernfortschritt, absolvierte Lektionen, Quizstände und Fahrtenbuchdaten (lokal, mit Konto zusätzlich synchronisiert)',
             'GPS-Positionsdaten während einer aktiv gestarteten Fahrten-Aufzeichnung; die Auswertung erfolgt auf dem Gerät',
-            'Zahlungsbezogene Daten bei Pro-Käufen; die Zahlungsabwicklung erfolgt vollständig durch Stripe – Kartendaten erreichen unsere Systeme nicht',
-            'Nutzungs- und Fehlerdaten zur Verbesserung der App – Analytik nur nach Einwilligung über die Cookie-Einstellungen',
+            'Zahlungsbezogene Daten bei Pro-Käufen; die Zahlungsabwicklung erfolgt vollständig durch Stripe; Kartendaten erreichen unsere Systeme nicht',
+            'Nutzungs- und Fehlerdaten zur Verbesserung der App, Analytik nur nach Einwilligung über die Cookie-Einstellungen',
             'Optionale Kontakt- oder Feedbackdaten, wenn du aktiv eine Anfrage sendest'
           ],
           recipients: [
-            'Supabase – Datenbank, Konten und Synchronisierung',
-            'Stripe – Zahlungsabwicklung',
-            'Vercel – Hosting und Auslieferung der App',
-            'Resend – Transaktions-E-Mails (z. B. Willkommensmail)',
-            'PostHog und Google Analytics – Nutzungsanalyse, nur nach Einwilligung',
-            'Sentry – Fehlerdiagnose und Stabilität',
-            'OpenStreetMap – Kartendarstellung beim GPS-Tracking'
+            'Supabase: Datenbank, Konten und Synchronisierung',
+            'Stripe: Zahlungsabwicklung',
+            'Vercel: Hosting und Auslieferung der App',
+            'Resend: Transaktions-E-Mails (z. B. Willkommensmail)',
+            'PostHog und Google Analytics: Nutzungsanalyse, nur nach Einwilligung',
+            'Sentry: Fehlerdiagnose und Stabilität',
+            'OpenStreetMap: Kartendarstellung beim GPS-Tracking'
           ],
-          purpose: 'Die Daten werden zur Bereitstellung der App-Funktionen, zur Speicherung des Lernfortschritts, zur Verbesserung der Nutzererfahrung sowie – mit einem Konto – zur Synchronisierung über mehrere Geräte verwendet.',
+          purpose: 'Die Daten werden zur Bereitstellung der App-Funktionen, zur Speicherung des Lernfortschritts, zur Verbesserung der Nutzererfahrung sowie (mit einem Konto) zur Synchronisierung über mehrere Geräte verwendet.',
           storage: 'Lernfortschritt und Einstellungen werden primär lokal auf deinem Gerät gespeichert. Mit einem Konto werden Fortschrittsdaten zusätzlich in unserer Datenbank (Supabase) gespeichert, um die Synchronisierung über mehrere Geräte zu ermöglichen. Daten werden gelöscht, sobald sie für die genannten Zwecke nicht mehr erforderlich sind oder du die Löschung deines Kontos verlangst.',
           legalBases: [
-            'Art. 6 Abs. 1 lit. b DSGVO – Vertragserfüllung bzw. Bereitstellung der App',
-            'Art. 6 Abs. 1 lit. f DSGVO – berechtigte Interessen an sicherem und stabilem App-Betrieb',
-            'Art. 6 Abs. 1 lit. a DSGVO – Einwilligung, falls optionale Analytik oder Marketing aktiviert werden'
+            'Art. 6 Abs. 1 lit. b DSGVO: Vertragserfüllung bzw. Bereitstellung der App',
+            'Art. 6 Abs. 1 lit. f DSGVO: berechtigte Interessen an sicherem und stabilem App-Betrieb',
+            'Art. 6 Abs. 1 lit. a DSGVO: Einwilligung, falls optionale Analytik oder Marketing aktiviert werden'
           ]
         },
         terms: {
@@ -858,7 +858,7 @@ export const TRANSLATIONS = {
               park: { title: 'Parken & Abstellen', hint: 'Wählhebel auf P und den Motor ausschalten.' },
             },
           },
-          keysHintManual: 'Tastatur: B = Bremse halten · Leertaste = Gas · Pfeil hoch/runter = Kupplung · 1–6, N, R = Gang · E = Motor',
+          keysHintManual: 'Tastatur: B = Bremse halten · Leertaste = Gas · Pfeil hoch/runter = Kupplung · 1-6, N, R = Gang · E = Motor',
           keysHintAutomatic: 'Tastatur: B = Bremse halten · Leertaste = Gas · P, R, N, D = Fahrstufe · E = Motor',
           completed: 'Übung abgeschlossen!',
           scoreLabel: 'Sauberkeit',
@@ -1007,7 +1007,7 @@ export const TRANSLATIONS = {
           downloadPdf: 'PDF laden',
           generating: 'Wird erstellt…',
           packTitle: 'Fahrlehrer-Review-Paket',
-          packSubtitle: 'DriveDE – Unterlagen zur fachlichen Prüfung',
+          packSubtitle: 'DriveDE: Unterlagen zur fachlichen Prüfung',
           packDesc: 'Diese Zusammenstellung bündelt genau die Unterlagen, die ein deutscher Fahrlehrer typischerweise für eine fachliche Beurteilung braucht: Lehrplan, Beispiellektionen, Manöver-Anleitungen, Bewertungsraster, UX-Beschreibung und Quizfragen.',
           activeSelection: 'Aktive Auswahl',
           mistakeReview: 'Meine Fehler-Korrektur',
@@ -1019,7 +1019,7 @@ export const TRANSLATIONS = {
           shareDesc: 'Direkt aus der App druckbar oder als PDF speicherbar.',
           shareItems: [
             '1. Dieses Review-Paket als PDF exportieren',
-            '2. Den App-Link plus 3–5 Screenshots mitschicken',
+            '2. Den App-Link plus 3-5 Screenshots mitschicken',
             '3. Fahrlehrer gezielt um StVO-, Didaktik- und Prüfungsfeedback bitten',
             '4. Korrekturen nach Priorität 1 → 2 → 3 einarbeiten',
           ],
@@ -1035,7 +1035,7 @@ export const TRANSLATIONS = {
           section5Desc: 'Zur Bewertung von UX, Klarheit und pädagogischer Führung.',
           section6Title: '6. Quiz- / Testfragen',
           section6Desc: 'Zur Prüfung juristischer und technischer Korrektheit.',
-          pdfTitle: 'DriveDE – Fahrlehrer-Review-Paket',
+          pdfTitle: 'DriveDE: Fahrlehrer-Review-Paket',
           pdfActiveSelection: 'Aktive Auswahl',
           pdfIntro: 'Diese PDF bündelt Lehrplan, Beispiellektionen, Manöver-Anleitungen, Bewertungsraster, UX-Beschreibung und Quizfragen für die fachliche Prüfung durch einen deutschen Fahrlehrer.',
           pdfSection1: '1. Modulübersicht / Table of Contents',
@@ -1367,7 +1367,7 @@ export const TRANSLATIONS = {
                 title: 'Verkehrsberuhigter Bereich & Zone 30',
                 description: 'Die oft verwechselten Unterschiede zwischen Spielstraße/verkehrsberuhigtem Bereich und 30er-Zone.',
                 guidedPoints: [
-                  { id: 'vb-gp1', title: 'Schrittgeschwindigkeit im VBB', content: 'In einem verkehrsberuhigten Bereich (Zeichen 325.1) gilt Schrittgeschwindigkeit für alle – auch für Radfahrer.' },
+                  { id: 'vb-gp1', title: 'Schrittgeschwindigkeit im VBB', content: 'In einem verkehrsberuhigten Bereich (Zeichen 325.1) gilt Schrittgeschwindigkeit für alle, auch für Radfahrer.' },
                   { id: 'vb-gp2', title: 'Vorfahrt beim Verlassen', content: 'Wer aus einem verkehrsberuhigten Bereich herausfährt, muss allen anderen Verkehrsteilnehmern Vorrang gewähren (§ 10 StVO). In der 30er-Zone gilt meist Rechts-vor-Links.' },
                   { id: 'vb-gp3', title: 'Engstelle vor T-Kreuzung richtig lösen', content: 'In 30er-Zonen gibt es häufig parkende Fahrzeuge direkt vor oder nach einer Kreuzung. Dann geht es nicht nur um Rechts-vor-Links, sondern auch um Raum schaffen, Blickführung und korrekte Blinker.' }
                 ],
@@ -1378,7 +1378,7 @@ export const TRANSLATIONS = {
                     situation: 'Ein parkendes Fahrzeug blockiert Ihre Spur kurz vor einer T-Kreuzung. Von rechts kommt eine Seitenstraße. Direkt nach der Kreuzung blockiert ein weiteres Fahrzeug Ihre Spur und es kommt Gegenverkehr. Viele Fahrschüler blinken hier falsch oder blockieren die Kreuzung.',
                     steps: [
                       { id: 1, title: 'Links blinken für erste Engstelle', description: 'Links blinken, Innen- und Außenspiegel prüfen, Schulterblick links und am ersten parkenden Fahrzeug vorbeifahren. Das zeigt klar: Ich weiche wegen des Hindernisses zur Fahrbahnmitte aus.', icon: 'ArrowLeft' },
-                      { id: 2, title: 'In die Kreuzungstasche einfahren – OHNE Rechtsblinker', description: 'An der T-Kreuzung angekommen, ziehen Sie leicht nach rechts in die Mündung der Seitenstraße, um Raum zu schaffen. Beachten Sie Rechts-vor-Links. Blinken Sie NICHT rechts, da Sie nicht abbiegen. Ein falscher Rechtsblinker könnte den Verkehr von rechts täuschen.', icon: 'ArrowRight' },
+                      { id: 2, title: 'In die Kreuzungstasche einfahren: OHNE Rechtsblinker', description: 'An der T-Kreuzung angekommen, ziehen Sie leicht nach rechts in die Mündung der Seitenstraße, um Raum zu schaffen. Beachten Sie Rechts-vor-Links. Blinken Sie NICHT rechts, da Sie nicht abbiegen. Ein falscher Rechtsblinker könnte den Verkehr von rechts täuschen.', icon: 'ArrowRight' },
                       { id: 3, title: 'Fahrzeug von rechts herauslassen', description: 'Warten Sie ruhig in Ihrer Ausweichposition und lassen Sie das Fahrzeug von rechts abbiegen oder einfädeln. Sie blockieren nicht die Kreuzung, sondern schaffen bewusst Platz für den Verkehrsfluss.', icon: 'Shield' },
                       { id: 4, title: 'Auf zweite Engstelle mit Linksblinker vorbereiten', description: 'Wenn das Fahrzeug von rechts weg ist, schauen Sie nach vorn: Wenn direkt nach der Kreuzung wieder ein Hindernis auf Ihrer Seite steht und Gegenverkehr kommt, setzen Sie den Linksblinker. Das sagt dem Gegenverkehr: Ich habe dich gesehen und warte, bis ich am zweiten Hindernis vorbeifahren darf.', icon: 'ArrowLeft' },
                       { id: 5, title: 'Gegenverkehr durchlassen, dann sauber vorbeifahren', description: 'Da das zweite parkende Fahrzeug auf Ihrer Seite steht, hat der Gegenverkehr Vorrang. Warten Sie, bis die Straße frei ist, dann prüfen Sie erneut Spiegel und linken Schulterblick und fahren kontrolliert am zweiten Hindernis vorbei.', icon: 'Eye' }
@@ -1396,7 +1396,7 @@ export const TRANSLATIONS = {
                 description: 'Einfädeln bei Fahrstreifenreduzierung (§ 7 StVO)',
                 guidedPoints: [
                   { id: 'zip-gp1', title: 'Bis zum Ende mitfahren', content: 'Nicht schon 100 Meter vorher panisch wechseln. Die endende Spur wird bis kurz vor das Hindernis genutzt.' },
-                  { id: 'zip-gp2', title: 'Abwechselnd einfädeln', content: 'Ein Fahrzeug aus der weiterführenden Spur, dann ein Fahrzeug aus der endenden Spur – wie ein Reißverschluss.' }
+                  { id: 'zip-gp2', title: 'Abwechselnd einfädeln', content: 'Ein Fahrzeug aus der weiterführenden Spur, dann ein Fahrzeug aus der endenden Spur, wie ein Reißverschluss.' }
                 ],
                 tips: [
                   { id: 'zip-tip1', title: 'Nicht zu früh wechseln', content: 'Zu frühes Wechseln stört den Verkehrsfluss und ist genau das, was viele Prüfer bei Umschreibern kritisieren.', type: 'warning' }
@@ -1463,7 +1463,7 @@ export const TRANSLATIONS = {
                 title: 'Stoppschild & Vorfahrtzeichen',
                 description: 'Verhalten an Stoppschildern (§ 8 StVO) und Vorfahrtregelungen.',
                 guidedPoints: [
-                  { id: 'stop-gp1', title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen – auch wenn kein anderes Auto kommt.' },
+                  { id: 'stop-gp1', title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen, auch wenn kein anderes Auto kommt.' },
                   { id: 'stop-gp2', title: 'Die 21-22-23-Regel', content: 'Zählen Sie im Geiste "21, 22, 23", wenn Sie stehen. Das stellt sicher, dass der Prüfer den Stillstand als solchen erkennt.' },
                   { id: 'stop-gp3', title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' }
                 ],
@@ -1507,10 +1507,10 @@ export const TRANSLATIONS = {
                 description: 'Rettungsgasse, Beschleunigungsstreifen und typische Autobahn-Fehler in der Prüfung.',
                 glossary: [
                   { id: 'motorway-ret', term: 'Rettungsgasse', note: 'Bei Stau: linke Spur nach links, alle anderen nach rechts.' },
-                  { id: 'motorway-acc', term: 'Beschleunigungsstreifen', note: 'Zum Angleichen an die Geschwindigkeit des fließenden Verkehrs nutzen – nicht zum frühzeitigen Bremsen.' }
+                  { id: 'motorway-acc', term: 'Beschleunigungsstreifen', note: 'Zum Angleichen an die Geschwindigkeit des fließenden Verkehrs nutzen, nicht zum frühzeitigen Bremsen.' }
                 ],
                 guidedPoints: [
-                  { id: 'motorway-gp1', title: 'Rettungsgasse sofort bilden', content: 'Sobald der Verkehr stockt, bilden Sie die Gasse – nicht erst, wenn das Blaulicht sichtbar ist.' },
+                  { id: 'motorway-gp1', title: 'Rettungsgasse sofort bilden', content: 'Sobald der Verkehr stockt, bilden Sie die Gasse, nicht erst, wenn das Blaulicht sichtbar ist.' },
                   { id: 'motorway-gp2', title: 'Am Ende des Beschleunigungsstreifens nicht unnötig bremsen', content: 'Auf dem Beschleunigungsstreifen aktiv beschleunigen, Lücke suchen und entschlossen einfädeln. Bremsen am Ende ist ein häufiger Prüfungsfehler.' }
                 ],
                 tips: [
@@ -1616,13 +1616,13 @@ export const TRANSLATIONS = {
               { title: 'Rundum-Blick vor dem ersten Rückwärtsweg', description: 'Vor dem ersten Rückwärtsrollen den Verkehrsraum vollständig sichern: links prüfen, Spiegel kontrollieren, rechts prüfen und den Heckraum durch Seiten- und Heckscheiben absichern.' },
               { title: 'Mit rechtem Schulterblick in die Lücke einlenken', description: 'Langsam rückwärts rollen. Unmittelbar vor dem Einschlagen den rechten Schulterblick klar zeigen, um Radfahrer und Fußgänger auf der Bordsteinseite zu sichern. Dann voll nach rechts einschlagen. Ein fahrzeugnaher Referenzpunkt kann mit dem Fahrlehrer kalibriert werden, zum Beispiel wenn das vordere Fahrzeug im rechten Spiegel eine bestimmte Position erreicht.' },
               { title: 'Gegenlenkpunkt aus Fahrerperspektive nutzen', description: 'Wenn der Einlenkwinkel erreicht ist und Sie im Spiegel bzw. Seitenfenster den passenden Gegenlenkpunkt erkennen, voll nach links gegenlenken. Typische Referenzen sind immer fahrzeugabhängig und müssen im Fahrschulauto geübt werden.' },
-              { title: 'Parallel ausrichten und Bordsteinabstand prüfen', description: 'Richten Sie das Fahrzeug parallel zum Bordstein aus. Prüfen Sie über Spiegel und Sicht nach vorne/hinten den Abstand – Ziel in der Prüfung: sauber parallel und höchstens etwa 30 cm vom Bordstein entfernt.' },
+              { title: 'Parallel ausrichten und Bordsteinabstand prüfen', description: 'Richten Sie das Fahrzeug parallel zum Bordstein aus. Prüfen Sie über Spiegel und Sicht nach vorne/hinten den Abstand, Ziel in der Prüfung: sauber parallel und höchstens etwa 30 cm vom Bordstein entfernt.' },
               { title: 'Bei Vorwärtskorrektur linken Schulterblick', description: 'Wenn Sie zur Korrektur wieder vorwärts fahren müssen, sichern Sie die Fahrbahnseite mit Spiegeln und linkem Schulterblick, bevor Sie nach vorne ziehen. Danach bei weiterem Rückwärtsweg erneut rundum sichern.' }
             ],
             reverseParkingSteps: [
               { title: 'Startposition sauber vorbereiten', description: 'Fahren Sie an der Ziel-Parkbox vorbei und stellen Sie Ihr Fahrzeug parallel mit etwa 0,8 bis 1,0 m Abstand auf. Die genaue Startposition und Referenzpunkte müssen mit dem Fahrschulauto geübt werden.' },
               { title: 'Rundum-Blick vor dem Rückwärtsfahren', description: 'Vor dem Rückwärtsweg alle Spiegel prüfen und mit Rundum-Blick beide Seiten sowie den Bereich hinter dem Fahrzeug absichern.' },
-              { title: 'Am fahrzeugbezogenen Punkt einlenken', description: 'Rollen Sie sehr langsam rückwärts. Sobald Ihr im Fahrschulauto geübter Einlenkpunkt erreicht ist – zum Beispiel Schulter, Spiegel oder hintere Seitenscheibe auf Höhe einer Parklinien-Markierung – lenken Sie zügig ein.' },
+              { title: 'Am fahrzeugbezogenen Punkt einlenken', description: 'Rollen Sie sehr langsam rückwärts. Sobald Ihr im Fahrschulauto geübter Einlenkpunkt erreicht ist, zum Beispiel Schulter, Spiegel oder hintere Seitenscheibe auf Höhe einer Parklinien-Markierung, lenken Sie zügig ein.' },
               { title: 'Linien in beiden Spiegeln kontrollieren', description: 'Beobachten Sie beide Seitenlinien in den Außenspiegeln. Das Fahrzeug soll gleichmäßig in die Box laufen und nicht eine Linie schneiden.' },
               { title: 'Zum richtigen Zeitpunkt gerade stellen', description: 'Wenn das Fahrzeug nahezu parallel zu den Parklinien steht, das Lenkrad zügig gerade stellen und weiter langsam zurücksetzen.' },
               { title: 'Endposition prüfen und zentrieren', description: 'Endkontrolle: Fahrzeug gerade, mittig in der Parkbox, mit ähnlichem Abstand zu beiden Linien und ohne vorne oder hinten herauszuragen.' }
@@ -1647,7 +1647,7 @@ export const TRANSLATIONS = {
             emergencyBrakingStepsAutomatic: [
               { title: 'Geschwindigkeit: ca. 30 km/h', description: 'Die Gefahrenbremsung wird aus ca. 30 km/h durchgeführt. Der Fahrlehrer gibt das Kommando.' },
               { title: 'Kein Schulterblick vor der Bremsung', description: 'WICHTIG: Bei der Gefahrenbremsung sichert der Fahrlehrer den rückwärtigen Verkehr. Sie reagieren sofort nach vorn.' },
-              { title: 'Nur Bremse – volle Kraft', description: 'Bei Automatik sofort mit voller Kraft auf das Bremspedal. Kein Kupplungsvorgang nötig.' },
+              { title: 'Nur Bremse: volle Kraft', description: 'Bei Automatik sofort mit voller Kraft auf das Bremspedal. Kein Kupplungsvorgang nötig.' },
               { title: 'Lenkrad fest und gerade halten', description: 'Mit beiden Händen festhalten, gerade bleiben und nicht hektisch ausweichen.' },
               { title: 'ABS-Pulsieren akzeptieren', description: 'Wenn das Pedal pulsiert, arbeitet das ABS. Den Bremsdruck nicht wieder lösen.' },
               { title: 'Vor erneutem Anfahren absichern', description: 'Nach dem Stillstand Fahrzeug sichern und vor dem erneuten Anfahren Spiegel und linken Schulterblick durchführen.' }
@@ -1680,7 +1680,7 @@ export const TRANSLATIONS = {
             examinerCommands: [
               { command: 'Fahren Sie bitte rechts ran.', note: 'Ruhig geeignete Stelle suchen, Spiegel, blinken, Schulterblick, dann anhalten.' },
               { command: 'An der nächsten Kreuzung bitte links.', note: 'Frühzeitig einordnen und Verkehrsraum links/rechts/vorne beobachten.' },
-              { command: 'Wir folgen der abknickenden Vorfahrtstraße.', note: 'Blinken und beobachten – Vorrangregeln gegenüber Abbiegern beachten.' },
+              { command: 'Wir folgen der abknickenden Vorfahrtstraße.', note: 'Blinken und beobachten: Vorrangregeln gegenüber Abbiegern beachten.' },
               { command: 'Fahren Sie in Richtung Autobahn.', note: 'Ausschilderung beachten, rechtzeitig einordnen und Abbiege-Routine (Spiegel, Blinken, Schulterblick).' },
               { command: 'Wir machen jetzt eine Gefahrenbremsung.', note: 'Sofort auf das Kommando reagieren, nicht vorher Schulterblick machen.' },
               { command: 'Bitte zeigen Sie mir die Warnblinkanlage.', note: 'Im Technikteil ruhig zeigen und kurz erklären, statt auswendig aufzusagen.' }
@@ -1716,7 +1716,7 @@ export const TRANSLATIONS = {
               rightBeforeLeft: [
                 { title: 'Früh vom Gas', content: 'Bei unübersichtlichen Kreuzungen frühzeitig Geschwindigkeit abbauen und bremsbereit bleiben.' },
                 { title: 'Rechts aktiv suchen', content: 'Der Prüfungsfehler ist oft nicht die Regel selbst, sondern dass der Blick nach rechts zu spät kommt.' },
-                { title: '§ 10 StVO verstehen – nicht nur den Bordstein', content: 'Rechts-vor-links gilt nicht für Fahrzeuge, die aus Grundstücken, Fußgängerzonen, verkehrsberuhigten Bereichen, Feld-/Waldwegen oder über einen abgesenkten Bordstein auf die Fahrbahn einfahren. Diese müssen allen anderen Vorrang gewähren.' }
+                { title: '§ 10 StVO verstehen, nicht nur den Bordstein', content: 'Rechts-vor-links gilt nicht für Fahrzeuge, die aus Grundstücken, Fußgängerzonen, verkehrsberuhigten Bereichen, Feld-/Waldwegen oder über einen abgesenkten Bordstein auf die Fahrbahn einfahren. Diese müssen allen anderen Vorrang gewähren.' }
               ],
               roundabout: [
                 { title: 'Vor dem Einfahren Zeichen prüfen', content: 'Achten Sie vor dem Kreisverkehr auf Zeichen 205 und 215. Mit beiden Schildern hat der Verkehr IM Kreisverkehr Vorfahrt.' },
@@ -1726,11 +1726,11 @@ export const TRANSLATIONS = {
               ],
               zebra: [
                 { title: 'Früh erkennen und bremsbereit werden', content: 'Vor Zebrastreifen rechtzeitig Tempo reduzieren und den Bereich links und rechts aktiv absuchen.' },
-                { title: 'Vorrang für Fußgänger', content: 'Schon erkennbar querungsbereite Fußgänger haben Vorrang – nicht erst, wenn sie mitten auf dem Streifen stehen.' },
+                { title: 'Vorrang für Fußgänger', content: 'Schon erkennbar querungsbereite Fußgänger haben Vorrang, nicht erst, wenn sie mitten auf dem Streifen stehen.' },
                 { title: 'Radfahrer und verdeckte Personen beachten', content: 'Besondere Vorsicht bei Kindern, E-Scootern, parkenden Autos und Bushaltestellen nahe am Zebrastreifen.' }
               ],
               priority: [
-                { title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen – auch wenn kein anderes Auto kommt.' },
+                { title: 'Das achteckige Stoppschild', content: 'An einem Stoppschild müssen Sie das Fahrzeug zum vollständigen Stillstand bringen, auch wenn kein anderes Auto kommt.' },
                 { title: 'Die 21-22-23-Regel', content: 'Zählen Sie im Geiste "21, 22, 23", wenn Sie stehen. Das stellt sicher, dass der Prüfer den Stillstand als solchen erkennt.' },
                 { title: 'Abknickende Vorfahrt verstehen', content: 'Folgen Sie der dicken Linie, müssen Sie blinken. Fahren Sie geradeaus (verlassen die Vorfahrt), dürfen Sie nicht blinken. Achten Sie auf Vorrang gegenüber anderen Abbiegern.' },
                 { title: 'Haltlinie vs. Sichtlinie', content: 'Zuerst an der Haltlinie stoppen. Wenn man dort nichts sieht, muss man sich vorsichtig zur Sichtlinie vortasten und ggf. erneut stoppen.' },
@@ -1763,21 +1763,21 @@ export const TRANSLATIONS = {
                 { title: 'Fehler abhaken', content: 'Ein kleiner Fehler bedeutet nicht automatisch durchgefallen. Konzentrieren Sie sich sofort auf die nächste Situation.' }
               ],
               vehicleCheck: [
-                { title: 'Motorraum ruhig und systematisch erklären', content: 'In der Prüfung reicht meist kein bloßes Zeigen. Benennen Sie Bauteile sauber: Motoröl, Kühlmittel, Scheibenwaschwasser, Batterie, Bremsflüssigkeit – soweit im Fahrzeug sichtbar und zugänglich.' },
+                { title: 'Motorraum ruhig und systematisch erklären', content: 'In der Prüfung reicht meist kein bloßes Zeigen. Benennen Sie Bauteile sauber: Motoröl, Kühlmittel, Scheibenwaschwasser, Batterie, Bremsflüssigkeit, soweit im Fahrzeug sichtbar und zugänglich.' },
                 { title: 'Ölstand mit dem Peilstab prüfen', content: 'Fahrzeug auf möglichst ebener Fläche abstellen, Motor aus, kurz warten, Peilstab herausziehen, abwischen, erneut einstecken, wieder herausziehen und den Stand zwischen Min und Max ablesen.' },
                 { title: 'Reifen: Profil, Schäden, Luftdruck', content: 'Prüfen Sie Profil, sichtbare Beschädigungen, Fremdkörper und den allgemeinen Zustand. Gesetzlich sind mindestens 1,6 mm vorgeschrieben, sicherheitsrelevant empfohlen sind deutlich mehr.' },
-                { title: 'Beleuchtung vollständig prüfen', content: 'Abblendlicht, Fernlicht, Blinker, Warnblinkanlage, Bremslicht, Rücklicht, Rückfahrlicht, Kennzeichenbeleuchtung und – soweit vorhanden – Nebelschlussleuchte kennen und erklären können.' },
+                { title: 'Beleuchtung vollständig prüfen', content: 'Abblendlicht, Fernlicht, Blinker, Warnblinkanlage, Bremslicht, Rücklicht, Rückfahrlicht, Kennzeichenbeleuchtung und (soweit vorhanden) Nebelschlussleuchte kennen und erklären können.' },
                 { title: 'Warnleuchten im Cockpit einordnen', content: 'Grün/Blau bedeutet meist Funktion aktiv, Gelb warnt, Rot bedeutet: sofort aufmerksam werden und je nach Symbol anhalten bzw. nicht weiterfahren.' },
                 { title: 'Bremsen, Lenkung und Sichtfelder erklären', content: 'Prüfer fragen oft nicht nur nach Flüssigkeiten. Auch Reifenalter, Scheibenwischer, freie Sicht, Hupe, Feststellbremse und die Wirkung der Fußbremse können Thema sein.' },
                 { title: 'Warndreieck, Warnweste und Verbandskasten kennen', content: 'Typische Prüfungsfrage: Wo befinden sich Warndreieck, Warnweste und Verbandskasten? Sie sollten den Ort im Fahrzeug zeigen oder wenigstens plausibel benennen können.' }
               ],
               zipper: [
                 { title: 'Bis zum Ende mitfahren', content: 'Nicht schon 100 Meter vorher panisch wechseln. Die endende Spur wird bis kurz vor das Hindernis genutzt.' },
-                { title: 'Abwechselnd einfädeln', content: 'Ein Fahrzeug aus der weiterführenden Spur, dann ein Fahrzeug aus der endenden Spur – wie ein Reißverschluss.' }
+                { title: 'Abwechselnd einfädeln', content: 'Ein Fahrzeug aus der weiterführenden Spur, dann ein Fahrzeug aus der endenden Spur, wie ein Reißverschluss.' }
               ],
               trafficCalmed: [
                 { title: 'Schrittgeschwindigkeit einhalten', content: 'In verkehrsberuhigten Bereichen (Spielstraße) gilt: Schrittgeschwindigkeit (ca. 4-7 km/h), nicht schneller.' },
-                { title: 'In die Kreuzungstasche einrollen – OHNE Rechtsblinker', content: 'Wenn Sie die T-Kreuzung erreichen, lenken Sie leicht nach rechts in den Einmündungsbereich, um Platz zu schaffen. Rechts vor Links beachten! Benutzen Sie dabei KEINEN rechten Blinker.' },
+                { title: 'In die Kreuzungstasche einrollen: OHNE Rechtsblinker', content: 'Wenn Sie die T-Kreuzung erreichen, lenken Sie leicht nach rechts in den Einmündungsbereich, um Platz zu schaffen. Rechts vor Links beachten! Benutzen Sie dabei KEINEN rechten Blinker.' },
                 { title: 'Fahrzeug von rechts ausfahren lassen', content: 'Bleiben Sie ruhig in Ihrer Ausweichposition und ermöglichen Sie dem Fahrzeug von rechts, links abzubiegen.' },
                 { title: 'Zweite Engstelle mit Blinker links vorbereiten', content: 'Sobald das Fahrzeug von rechts passiert hat, schauen Sie nach vorne auf weitere Hindernisse.' },
                 { title: 'Gegenverkehr durchlassen, dann sauber vorbeifahren', content: 'Da das zweite parkende Fahrzeug auf Ihrer Seite steht, hat der Gegenverkehr Vorrang.' }
@@ -1805,7 +1805,7 @@ export const TRANSLATIONS = {
                 { title: 'Mindestabstand einhalten', content: 'Innerorts mindestens 1,5 m, außerorts mindestens 2,0 m Seitenabstand. Reicht der Platz nicht, wird nicht überholt.' }
               ],
               motorway: [
-                { title: 'Rettungsgasse sofort bilden', content: 'Sobald der Verkehr stockt, bilden Sie die Gasse – nicht erst, wenn das Blaulicht sichtbar ist.' },
+                { title: 'Rettungsgasse sofort bilden', content: 'Sobald der Verkehr stockt, bilden Sie die Gasse, nicht erst, wenn das Blaulicht sichtbar ist.' },
                 { title: 'Am Ende des Beschleunigungsstreifens nicht unnötig bremsen', content: 'Auf dem Beschleunigungsstreifen aktiv beschleunigen, Lücke suchen und entschlossen einfädeln. Bremsen am Ende ist ein häufiger Prüfungsfehler.' }
               ],
               hazards: [
@@ -2285,7 +2285,7 @@ export const TRANSLATIONS = {
               {
                 id: 'vehicle-check-lights',
                 title: 'Prüfer fragt: „Wie prüfen Sie die Beleuchtung?“',
-                situation: 'Sie sollen beschreiben, wie Sie die Beleuchtung kontrollieren – auch wenn Sie allein sind.',
+                situation: 'Sie sollen beschreiben, wie Sie die Beleuchtung kontrollieren, auch wenn Sie allein sind.',
                 steps: [
                   { title: 'Bedienelemente kennen', description: 'Zeigen Sie, wo Lichtschalter, Nebelschlussleuchte, Warnblinker und ggf. Leuchtweitenregulierung bedient werden.' },
                   { title: 'Außenkontrolle erklären', description: 'Abblendlicht, Blinker, Bremslicht und Rücklicht kann man mit Helfer oder durch Spiegelung an einer Wand/Schaufenster kontrollieren.' },
@@ -2943,7 +2943,7 @@ export const TRANSLATIONS = {
         controller: 'The controller within the meaning of the General Data Protection Regulation (GDPR) is:',
         imprint: 'Information in accordance with Section 5 of the German Digital Services Act (DDG):',
         notice: 'We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board (Section 36 VSBG). Despite careful review, we accept no liability for the content of external links; the operators of linked pages are solely responsible for their content.',
-        launchReady: 'Questions about this information? Write to hello@drivede.app – we usually reply within a few days.',
+        launchReady: 'Questions about this information? Write to hello@drivede.app, we usually reply within a few days.',
       },
       hub: {
         title: 'Legal & Privacy',
@@ -2963,25 +2963,25 @@ export const TRANSLATIONS = {
             'App settings such as language, dark mode, learning path, and transmission type',
             'Learning progress, completed lessons, quiz results, and tracker/logbook data (local; additionally synced with an account)',
             'GPS position data during an actively started drive recording; analysis happens on the device',
-            'Payment-related data for Pro purchases; payment processing is handled entirely by Stripe – card details never reach our systems',
-            'Usage and error data to improve the app – analytics only after consent via the cookie settings',
+            'Payment-related data for Pro purchases; payment processing is handled entirely by Stripe; card details never reach our systems',
+            'Usage and error data to improve the app: analytics only after consent via the cookie settings',
             'Optional contact or feedback data when you actively send an inquiry'
           ],
           recipients: [
-            'Supabase – database, accounts, and synchronization',
-            'Stripe – payment processing',
-            'Vercel – hosting and app delivery',
-            'Resend – transactional emails (e.g. welcome email)',
-            'PostHog and Google Analytics – usage analytics, only after consent',
-            'Sentry – error diagnostics and stability',
-            'OpenStreetMap – map rendering during GPS tracking'
+            'Supabase: database, accounts, and synchronization',
+            'Stripe: payment processing',
+            'Vercel: hosting and app delivery',
+            'Resend: transactional emails (e.g. welcome email)',
+            'PostHog and Google Analytics: usage analytics, only after consent',
+            'Sentry: error diagnostics and stability',
+            'OpenStreetMap: map rendering during GPS tracking'
           ],
-          purpose: 'Data is used to provide app functionality, save study progress, improve user experience, and—with an account—to synchronize progress across devices.',
+          purpose: 'Data is used to provide app functionality, save study progress, improve user experience, and, with an account, to synchronize progress across devices.',
           storage: 'Learning progress and settings are primarily stored locally on your device. With an account, progress data is additionally stored in our database (Supabase) to enable synchronization across devices. Data is deleted once it is no longer required for the stated purposes or when you request deletion of your account.',
           legalBases: [
-            'Art. 6(1)(b) GDPR – performance of a contract / app provision',
-            'Art. 6(1)(f) GDPR – legitimate interests in secure and stable app operation',
-            'Art. 6(1)(a) GDPR – consent, if optional analytics or marketing is enabled'
+            'Art. 6(1)(b) GDPR: performance of a contract / app provision',
+            'Art. 6(1)(f) GDPR: legitimate interests in secure and stable app operation',
+            'Art. 6(1)(a) GDPR: consent, if optional analytics or marketing is enabled'
           ]
         },
         terms: {
@@ -3342,7 +3342,7 @@ export const TRANSLATIONS = {
           downloadPdf: 'Download PDF',
           generating: 'Generating…',
           packTitle: 'Instructor review pack',
-          packSubtitle: 'DriveDE – materials for professional review',
+          packSubtitle: 'DriveDE: materials for professional review',
           packDesc: 'This package bundles exactly the materials a German driving instructor typically needs for a professional review: curriculum, sample lessons, maneuver instructions, assessment rubric, UX descriptions, and quiz questions.',
           activeSelection: 'Active selection',
           mistakeReview: 'My Mistake Review',
@@ -3354,7 +3354,7 @@ export const TRANSLATIONS = {
           shareDesc: 'Can be printed directly from the app or saved as a PDF.',
           shareItems: [
             '1. Export this review pack as PDF',
-            '2. Send the app link plus 3–5 screenshots',
+            '2. Send the app link plus 3-5 screenshots',
             '3. Ask for focused feedback on StVO accuracy, didactics, and exam realism',
             '4. Implement changes in priority order 1 → 2 → 3',
           ],
@@ -3370,7 +3370,7 @@ export const TRANSLATIONS = {
           section5Desc: 'For evaluating UX clarity and pedagogical quality.',
           section6Title: '6. Quiz / test questions',
           section6Desc: 'For verifying legal and technical correctness.',
-          pdfTitle: 'DriveDE – Instructor Review Pack',
+          pdfTitle: 'DriveDE: Instructor Review Pack',
           pdfActiveSelection: 'Active selection',
           pdfIntro: 'This PDF bundles curriculum, sample lessons, maneuver instructions, assessment rubric, UX descriptions, and quiz questions for professional review by a German driving instructor.',
           pdfSection1: '1. Module list / table of contents',
@@ -3704,7 +3704,7 @@ export const TRANSLATIONS = {
                 title: 'Traffic-Calmed Area & Zone 30',
                 description: 'The often-confused differences between a traffic-calmed area and a 30-zone.',
                 guidedPoints: [
-                  { id: 'vb-gp1', title: 'Walking speed in TCA', content: 'In a traffic-calmed area (Sign 325.1), walking speed applies to everyone – including cyclists.' },
+                  { id: 'vb-gp1', title: 'Walking speed in TCA', content: 'In a traffic-calmed area (Sign 325.1), walking speed applies to everyone, including cyclists.' },
                   { id: 'vb-gp2', title: 'Priority when leaving', content: 'When leaving a traffic-calmed area, you must yield to all other traffic (§ 10 StVO). In a 30-zone, right-before-left usually applies.' },
                   { id: 'vb-gp3', title: 'Handle a bottleneck before a T-junction correctly', content: 'In 30-zones, parked vehicles often create bottlenecks directly before or after an intersection. Then it is not only about right-before-left, but also about creating space, scanning correctly, and using indicators properly.' }
                 ],
@@ -3715,7 +3715,7 @@ export const TRANSLATIONS = {
                     situation: 'A parked vehicle blocks your lane just before a T-junction. A side street enters from the right. Immediately after the junction, another parked vehicle blocks your lane and oncoming traffic approaches. Many learners use the wrong indicators here or block the junction.',
                     steps: [
                       { id: 1, title: 'Signal left for the first bottleneck', description: 'Signal left, check interior and exterior mirrors, do a left shoulder check, and pass the first parked vehicle. This clearly shows that you are moving toward the middle of the road because of the obstacle.', icon: 'ArrowLeft' },
-                      { id: 2, title: 'Move into the intersection pocket – WITHOUT a right indicator', description: 'When you reach the T-junction, steer slightly right into the mouth of the side street to create space. Observe right-before-left. Do NOT use the right indicator, because you are not actually turning right. A false right signal could mislead traffic coming from the right.', icon: 'ArrowRight' },
+                      { id: 2, title: 'Move into the intersection pocket: WITHOUT a right indicator', description: 'When you reach the T-junction, steer slightly right into the mouth of the side street to create space. Observe right-before-left. Do NOT use the right indicator, because you are not actually turning right. A false right signal could mislead traffic coming from the right.', icon: 'ArrowRight' },
                       { id: 3, title: 'Let the vehicle from the right come out', description: 'Wait calmly in your refuge position and allow the vehicle from the right to turn left or join the road. You are not blocking the junction; you are deliberately creating space for traffic flow.', icon: 'Shield' },
                       { id: 4, title: 'Prepare for the second bottleneck with a left indicator', description: 'Once the vehicle from the right has passed, look ahead: if another obstacle blocks your side immediately after the junction and oncoming traffic is coming, use the left indicator. This tells oncoming traffic: I have seen you and I am waiting until I may move out past the second obstacle.', icon: 'ArrowLeft' },
                       { id: 5, title: 'Let oncoming traffic pass, then move out cleanly', description: 'Because the second parked vehicle is on your side, oncoming traffic has priority. Wait until the road is clear, then check mirrors and the left shoulder again and pass the second obstacle in a controlled way.', icon: 'Eye' }
@@ -3733,7 +3733,7 @@ export const TRANSLATIONS = {
                 description: 'Merging where lanes are reduced (§ 7 StVO)',
                 guidedPoints: [
                   { id: 'zip-gp1', title: 'Use the lane until the end', content: 'Do not panic and merge far too early. The ending lane is used until shortly before the obstacle.' },
-                  { id: 'zip-gp2', title: 'Merge one by one', content: 'One vehicle from the continuing lane, then one from the ending lane – like a zipper.' }
+                  { id: 'zip-gp2', title: 'Merge one by one', content: 'One vehicle from the continuing lane, then one from the ending lane, like a zipper.' }
                 ],
                 tips: [
                   { id: 'zip-tip1', title: 'Do not merge too early', content: 'Merging too early disturbs traffic flow and is exactly what many examiners criticize in conversion candidates.', type: 'warning' }
@@ -3802,7 +3802,7 @@ export const TRANSLATIONS = {
                 title: 'Stop Sign & Priority Signs',
                 description: 'Behavior at stop signs (§ 8 StVO) and priority regulations.',
                 guidedPoints: [
-                  { id: 'stop-gp1', title: 'The octagonal Stop sign', content: 'At a Stop sign, you must bring the vehicle to a complete standstill – even if no other car is coming.' },
+                  { id: 'stop-gp1', title: 'The octagonal Stop sign', content: 'At a Stop sign, you must bring the vehicle to a complete standstill, even if no other car is coming.' },
                   { id: 'stop-gp2', title: 'The 21-22-23 rule', content: 'Count "21, 22, 23" in your head when you have stopped. This ensures the examiner recognizes the standstill as such.' },
                   { id: 'stop-gp3', title: 'Stop line vs. Line of sight', content: 'First stop at the stop line. If you can\'t see anything from there, you must creep forward to the line of sight and stop again if necessary.' }
                 ],
@@ -3846,10 +3846,10 @@ export const TRANSLATIONS = {
                 description: 'Emergency corridor, acceleration lane use, and typical motorway mistakes in the exam.',
                 glossary: [
                   { id: 'motorway-ret', term: 'Emergency corridor', note: 'In stop-and-go traffic: the far-left lane moves left, all others move right.' },
-                  { id: 'motorway-acc', term: 'Acceleration lane', note: 'Use it to match the speed of flowing traffic – not to brake too early.' }
+                  { id: 'motorway-acc', term: 'Acceleration lane', note: 'Use it to match the speed of flowing traffic, not to brake too early.' }
                 ],
                 guidedPoints: [
-                  { id: 'motorway-gp1', title: 'Create emergency corridor immediately', content: 'As soon as traffic slows down, form the corridor – don\'t wait until sirens are audible.' },
+                  { id: 'motorway-gp1', title: 'Create emergency corridor immediately', content: 'As soon as traffic slows down, form the corridor, don\'t wait until sirens are audible.' },
                   { id: 'motorway-gp2', title: 'Do not brake unnecessarily at the end of the acceleration lane', content: 'Accelerate actively on the ramp, look for a gap, and merge decisively. Braking at the end is a common exam mistake.' }
                 ],
                 tips: [
@@ -3955,13 +3955,13 @@ export const TRANSLATIONS = {
               { title: '360° check before the first reverse movement', description: 'Before the first reverse movement, fully secure the traffic space: check left, use the mirrors, check right, and secure the rear area through the side and rear windows.' },
               { title: 'Steer in with a right shoulder check', description: 'Reverse very slowly. Immediately before steering in, show a clear right shoulder check to secure cyclists and pedestrians on the curb side. Then steer fully right. A vehicle-specific reference point should be calibrated with your instructor, for example when the front vehicle reaches a certain position in the right mirror.' },
               { title: 'Use a driver-perspective counter-steer point', description: 'When the turn-in angle is established and you recognise the counter-steer point in the mirror or side window, steer fully left. Typical references always depend on the vehicle and must be calibrated in the driving school car.' },
-              { title: 'Straighten parallel and check curb distance', description: 'Straighten the vehicle parallel to the curb. Use mirrors and your view front and rear to check the distance – the exam target is cleanly parallel and no more than about 30 cm from the curb.' },
+              { title: 'Straighten parallel and check curb distance', description: 'Straighten the vehicle parallel to the curb. Use mirrors and your view front and rear to check the distance, the exam target is cleanly parallel and no more than about 30 cm from the curb.' },
               { title: 'Use a left shoulder check before any forward correction', description: 'If you need to move forward for a correction, secure the traffic side with mirrors and a left shoulder check before pulling forward. Before reversing again, secure the area all around once more.' }
             ],
             reverseParkingSteps: [
               { title: 'Set up a clean starting position', description: 'Drive past the target bay and position your vehicle parallel with about 0.8 to 1.0 m lateral distance. The exact starting position and reference points must be calibrated in the driving school car.' },
               { title: '360° check before reversing', description: 'Before reversing, check all mirrors and secure both sides plus the area behind the vehicle with a full 360° observation.' },
-              { title: 'Begin steering at the vehicle-specific reference point', description: 'Reverse very slowly. As soon as you reach the steering reference point practised in your driving school car – for example shoulder, mirror, or rear side window aligned with a bay marking – steer in promptly.' },
+              { title: 'Begin steering at the vehicle-specific reference point', description: 'Reverse very slowly. As soon as you reach the steering reference point practised in your driving school car, for example shoulder, mirror, or rear side window aligned with a bay marking, steer in promptly.' },
               { title: 'Check both lines in the mirrors', description: 'Watch both side lines in the wing mirrors. The vehicle should move into the bay evenly and not cut across one of the lines.' },
               { title: 'Straighten at the right moment', description: 'When the vehicle is nearly parallel to the parking lines, straighten the wheel promptly and continue reversing slowly.' },
               { title: 'Check final position and center the car', description: 'Final check: vehicle straight, centered in the bay, with similar distance to both lines and without protruding at the front or rear.' }
@@ -3986,7 +3986,7 @@ export const TRANSLATIONS = {
             emergencyBrakingStepsAutomatic: [
               { title: 'Speed: approx. 30 km/h', description: 'Emergency braking is performed from approx. 30 km/h. The instructor gives the command.' },
               { title: 'No shoulder check before braking', description: 'IMPORTANT: During emergency braking, the instructor secures the traffic behind. You react immediately to the front.' },
-              { title: 'Brake only – full force', description: 'With automatic, press the brake pedal immediately with full force. No clutch action is needed.' },
+              { title: 'Brake only: full force', description: 'With automatic, press the brake pedal immediately with full force. No clutch action is needed.' },
               { title: 'Hold the wheel firmly and straight', description: 'Hold the wheel firmly with both hands, stay straight, and do not swerve in panic.' },
               { title: 'Accept ABS pulsing', description: 'If the pedal pulses, ABS is working. Do not reduce the braking pressure.' },
               { title: 'Secure the situation before moving off again', description: 'After the stop, secure the vehicle and before moving off again, check mirrors and perform a left shoulder check.' }
@@ -4019,7 +4019,7 @@ export const TRANSLATIONS = {
             examinerCommands: [
               { command: 'Please pull over on the right.', note: 'Find a suitable place calmly, use mirrors, signal, shoulder check, then stop.' },
               { command: 'At the next intersection, please turn left.', note: 'Position early and observe left, right, and ahead in good time.' },
-              { command: 'We follow the bending priority road.', note: 'Signal and observe – respect priority rules against other turners.' },
+              { command: 'We follow the bending priority road.', note: 'Signal and observe: respect priority rules against other turners.' },
               { command: 'Drive towards the motorway.', note: 'Watch the signs, position early, and follow turning routine (mirrors, signal, shoulder check).' }
             ],
             trafficSigns: {
@@ -4053,7 +4053,7 @@ export const TRANSLATIONS = {
               rightBeforeLeft: [
                 { title: 'Ease off early', content: 'Reduce speed early at unclear intersections and stay ready to brake.' },
                 { title: 'Actively look to the right', content: 'A common exam mistake is not the rule itself, but looking right too late.' },
-                { title: 'Understand § 10 StVO – not only the curb shape', content: 'Right-before-left does not apply to vehicles entering the carriageway from properties, pedestrian zones, traffic-calmed areas, field/forest tracks, or over a lowered curb. They must yield to all other traffic.' }
+                { title: 'Understand § 10 StVO: not only the curb shape', content: 'Right-before-left does not apply to vehicles entering the carriageway from properties, pedestrian zones, traffic-calmed areas, field/forest tracks, or over a lowered curb. They must yield to all other traffic.' }
               ],
               roundabout: [
                 { title: 'Check the signs before entering', content: 'Check for signs 205 and 215 before the roundabout. With both signs, traffic already in the roundabout has priority.' },
@@ -4067,7 +4067,7 @@ export const TRANSLATIONS = {
                 { title: 'Watch cyclists and hidden people', content: 'Take extra care with children, e-scooters, parked cars, and bus stops near the crossing.' }
               ],
               priority: [
-                { title: 'The Octagonal Stop Sign', content: 'At a stop sign, you must come to a complete standstill – even if no other car is coming.' },
+                { title: 'The Octagonal Stop Sign', content: 'At a stop sign, you must come to a complete standstill, even if no other car is coming.' },
                 { title: 'The 21-22-23 Rule', content: 'Count "21, 22, 23" in your head when stopped. This ensures the examiner recognizes the standstill as such.' },
                 { title: 'Understand Bending Priority', content: 'If you follow the thick line, you must signal. If you go straight (leaving the priority road), you must not signal. Watch for priority over other turners.' },
                 { title: 'Stop Line vs. Sight Line', content: 'First stop at the stop line. If you cannot see from there, creep forward to the line of sight and stop again if necessary.' }
@@ -4099,21 +4099,21 @@ export const TRANSLATIONS = {
                 { title: 'Move on from mistakes', content: 'A small error does not automatically mean failure. Focus immediately on the next situation.' }
               ],
               vehicleCheck: [
-                { title: 'Explain the engine bay calmly and systematically', content: 'In the exam, simply pointing is often not enough. Name the parts clearly: engine oil, coolant, washer fluid, battery, brake fluid – as far as visible and accessible in the vehicle.' },
+                { title: 'Explain the engine bay calmly and systematically', content: 'In the exam, simply pointing is often not enough. Name the parts clearly: engine oil, coolant, washer fluid, battery, brake fluid, as far as visible and accessible in the vehicle.' },
                 { title: 'Check engine oil with the dipstick', content: 'Park on level ground if possible, switch the engine off, wait briefly, pull out the dipstick, wipe it, reinsert it, pull it out again, and read the level between min and max.' },
                 { title: 'Tyres: tread, damage, air pressure', content: 'Check the tread depth, visible damage, foreign objects, and general condition. The legal minimum is 1.6 mm, but significantly more is recommended for safety.' },
-                { title: 'Check all lights completely', content: 'Know and be able to explain dipped beam, high beam, indicators, hazard lights, brake lights, tail lights, reversing lights, number-plate lighting, and – where fitted – the rear fog light.' },
-                { title: 'Understand dashboard warning lights', content: 'Green/blue usually means the function is active, yellow is a warning, red means act immediately – depending on the symbol, stop or do not continue driving.' },
+                { title: 'Check all lights completely', content: 'Know and be able to explain dipped beam, high beam, indicators, hazard lights, brake lights, tail lights, reversing lights, number-plate lighting, and (where fitted) the rear fog light.' },
+                { title: 'Understand dashboard warning lights', content: 'Green/blue usually means the function is active, yellow is a warning, red means act immediately, depending on the symbol, stop or do not continue driving.' },
                 { title: 'Explain brakes, steering, and visibility areas', content: 'Examiners often ask about more than just fluids. Tyre age, wiper blades, clear visibility, horn, handbrake, and the effect of the foot brake can all come up.' },
                 { title: 'Know the warning triangle, high-vis vest, and first-aid kit', content: 'A typical exam question: Where are the warning triangle, high-vis vest, and first-aid kit? You should be able to show or at least plausibly name their location in the vehicle.' }
               ],
               zipper: [
                 { title: 'Use the lane until the end', content: 'Do not panic and merge far too early. The ending lane is used until shortly before the obstacle.' },
-                { title: 'Merge one by one', content: 'One vehicle from the continuing lane, then one from the ending lane – like a zipper.' }
+                { title: 'Merge one by one', content: 'One vehicle from the continuing lane, then one from the ending lane, like a zipper.' }
               ],
               trafficCalmed: [
                 { title: 'Maintain walking speed', content: 'In traffic-calmed areas (play streets), walking speed (approx. 4-7 km/h) applies, no faster.' },
-                { title: 'Roll into the intersection pocket – WITHOUT right indicator', content: 'When you reach the T-junction, steer slightly right into the side street mouth to create space. Observe right-before-left. Do NOT signal right.' },
+                { title: 'Roll into the intersection pocket: WITHOUT right indicator', content: 'When you reach the T-junction, steer slightly right into the side street mouth to create space. Observe right-before-left. Do NOT signal right.' },
                 { title: 'Let the vehicle from the right exit', content: 'Stay calm in your refuge position and allow the vehicle from the right to turn left.' },
                 { title: 'Prepare for the second bottleneck with a left indicator', content: 'Once the vehicle from the right has passed, check ahead for further obstacles.' },
                 { title: 'Let oncoming traffic pass, then move out cleanly', content: 'Since the second parked vehicle is on your side, oncoming traffic has priority.' }
@@ -4141,7 +4141,7 @@ export const TRANSLATIONS = {
                 { title: 'Keep the minimum distance', content: 'Keep at least 1.5 m in built-up areas and 2.0 m outside built-up areas. If there is not enough room, do not overtake.' }
               ],
               motorway: [
-                { title: 'Create the emergency corridor immediately', content: 'As soon as traffic slows to a crawl, create the corridor – not only when you see blue lights.' },
+                { title: 'Create the emergency corridor immediately', content: 'As soon as traffic slows to a crawl, create the corridor, not only when you see blue lights.' },
                 { title: 'Do not brake unnecessarily at the end of the acceleration lane', content: 'Accelerate actively on the ramp, find a gap, and merge decisively. Braking at the end is a common exam error.' }
               ],
               hazards: [
@@ -4256,7 +4256,7 @@ export const TRANSLATIONS = {
                 ],
                 mistakes: [
                   { title: 'Cutting across too early', content: 'Do not cut the corner too early. It endangers oncoming traffic and often leads to the wrong lane choice.' },
-                  { title: 'Waiting with wheels already turned', content: 'If you are waiting in the intersection, keep the wheels straight—otherwise a rear-end impact may push you into oncoming traffic.' }
+                  { title: 'Waiting with wheels already turned', content: 'If you are waiting in the intersection, keep the wheels straight, otherwise a rear-end impact may push you into oncoming traffic.' }
                 ]
               },
               {

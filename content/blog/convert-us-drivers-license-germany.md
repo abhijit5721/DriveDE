@@ -40,10 +40,10 @@ After you register your residence in Germany (Anmeldung), you may keep driving o
 
 | Item | Typical cost |
 |---|---|
-| Application fee | €35–45 |
-| Certified translation | €30–80 (sometimes waived) |
+| Application fee | €35-45 |
+| Certified translation | €30-80 (sometimes waived) |
 | Biometric photo | €10 |
-| Total | **€75–135** |
+| Total | **€75-135** |
 
 Processing takes 3 to 8 weeks depending on the office. You keep driving on your US license in the meantime, as long as you are within the 6-month window.
 

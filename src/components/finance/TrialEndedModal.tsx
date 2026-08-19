@@ -51,8 +51,8 @@ export function TrialEndedModal({ onUpgrade, onDismiss }: TrialEndedModalProps) 
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
           {isDe
-            ? 'Dein Fortschritt bleibt gespeichert — nur die Pro-Funktionen sind jetzt gesperrt.'
-            : 'Your progress is safe — only the Pro features are locked now.'}
+            ? 'Dein Fortschritt bleibt gespeichert: nur die Pro-Funktionen sind jetzt gesperrt.'
+            : 'Your progress is safe: only the Pro features are locked now.'}
         </p>
 
         {(drives > 0 || lessons > 0) && (

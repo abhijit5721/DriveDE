@@ -419,8 +419,8 @@ export function Welcome() {
             </h2>
             <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-base">
               {isDe 
-                ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Die meisten Fahrschüler brauchen 35–45+ Stunden, weil sie rein nach Versuch und Irrtum lernen.'
-                : 'In Germany, driving lessons (Fahrstunden) cost up to €95 per hour. Most students take 35–45+ hours because they learn purely by trial and error.'
+                ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Die meisten Fahrschüler brauchen 35-45+ Stunden, weil sie rein nach Versuch und Irrtum lernen.'
+                : 'In Germany, driving lessons (Fahrstunden) cost up to €95 per hour. Most students take 35-45+ hours because they learn purely by trial and error.'
               }
             </p>
           </div>
@@ -444,7 +444,7 @@ export function Welcome() {
                     <Coins className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold text-slate-900">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€–95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75–€95 per hour.'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€-95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75-€95 per hour.'}</p>
                     </div>
                   </div>
 
@@ -488,7 +488,7 @@ export function Welcome() {
                   <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
                     <Coins className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-slate-900">{isDe ? '800€ – 1.200€ an Fahrstunden sparen' : 'Save €800 – €1,200 in Driving Hours'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? '800€-1.200€ an Fahrstunden sparen' : 'Save €800-€1,200 in Driving Hours'}</p>
                       <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
                     </div>
                   </div>
@@ -1026,7 +1026,7 @@ export function Welcome() {
             <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
             <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
               {isDe 
-                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht – wir freuen uns von dir zu hören.'
+                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht, wir freuen uns von dir zu hören.'
                 : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
               }
             </p>

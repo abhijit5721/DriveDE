@@ -605,7 +605,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                     <p className="text-xs font-bold text-slate-900">{activePlan.label} ({activePlan.price})</p>
                     <p className="text-[10px] text-slate-600 font-medium">
                       {intent === 'buy'
-                        ? (language === 'de' ? 'Einmalzahlung — inkl. 7 Tage Pro ab sofort' : 'One-time payment — includes Pro from day one')
+                        ? (language === 'de' ? 'Einmalzahlung: inkl. 7 Tage Pro ab sofort' : 'One-time payment: includes Pro from day one')
                         : (language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days')}
                     </p>
                   </div>
@@ -626,8 +626,8 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <p className="text-xs text-slate-500 mt-1 font-medium">
                   {intent === 'buy'
                     ? (language === 'de'
-                        ? 'Erstelle dein Konto — danach geht es direkt zur sicheren Zahlung.'
-                        : 'Create your account — then you go straight to secure checkout.')
+                        ? 'Erstelle dein Konto: danach geht es direkt zur sicheren Zahlung.'
+                        : 'Create your account: then you go straight to secure checkout.')
                     : t.signupSubline}
                 </p>
               </div>

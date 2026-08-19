@@ -33,12 +33,12 @@ China is not a party to the international driving permit conventions that German
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120–180 |
-| Theory exam fee + materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 6–18) | €420–1,700 |
-| Practical exam fee | €230–320 |
-| Total | **€930–2,550** |
+| Application, translation, eye test, first aid | €120-180 |
+| Theory exam fee + materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 6-18) | €420-1,700 |
+| Practical exam fee | €230-320 |
+| Total | **€930-2,550** |
 
 Because Chinese training rarely includes open-road routine, converters from China often need a few more lessons than other groups. That makes structured practice between paid lessons the biggest cost lever of all.
 

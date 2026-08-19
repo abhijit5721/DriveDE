@@ -32,12 +32,12 @@ You may drive on your Indian licence (with an International Driving Permit or a 
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120–180 |
-| Theory exam fee + learning materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 5–15) | €350–1,400 |
-| Practical exam fee (TÜV/DEKRA + school) | €230–320 |
-| Total | **€850–2,250** |
+| Application, translation, eye test, first aid | €120-180 |
+| Theory exam fee + learning materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 5-15) | €350-1,400 |
+| Practical exam fee (TÜV/DEKRA + school) | €230-320 |
+| Total | **€850-2,250** |
 
 The single biggest lever is how many paid lessons you need before the school lets you book the exam. Structured self-preparation between lessons (knowing the exam routes, the maneuvers, the examiner commands) is what keeps you at the bottom of that range.
 

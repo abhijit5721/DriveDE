@@ -33,12 +33,12 @@ After registering residence in Germany, your CNH (together with a translation or
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120–180 |
-| Theory exam fee + materials | €60–110 |
-| Driving school admin fee | €100–250 |
-| Driving lessons (typical converter: 5–15) | €350–1,400 |
-| Practical exam fee | €230–320 |
-| Total | **€850–2,250** |
+| Application, translation, eye test, first aid | €120-180 |
+| Theory exam fee + materials | €60-110 |
+| Driving school admin fee | €100-250 |
+| Driving lessons (typical converter: 5-15) | €350-1,400 |
+| Practical exam fee | €230-320 |
+| Total | **€850-2,250** |
 
 Your years behind the wheel are an asset, but only disciplined preparation converts them into a first-attempt pass. Every failed practical costs €600 or more in re-test fees and mandatory extra lessons, so the cheapest strategy is to go in objectively ready.
 

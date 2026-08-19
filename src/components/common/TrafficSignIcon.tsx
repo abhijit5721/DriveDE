@@ -253,13 +253,13 @@ function CyclistsAllowedSign() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   Zusatzzeichen 1002 — Verlauf der Vorfahrtstraße (Bending Priority Sub-Sign)
+   Zusatzzeichen 1002, Verlauf der Vorfahrtstraße (Bending Priority Sub-Sign)
 
    Based on official Bildtafel reference images (Wikipedia):
    - White square plate, thin black border
    - Priority road = VERY THICK black lines (pw), squared ends
    - Secondary roads = THIN black lines (sw), squared ends  
-   - Right-angle corners — NOT smooth curves
+   - Right-angle corners, NOT smooth curves
    - ClipPath prevents strokes from bleeding outside sign boundary
    ══════════════════════════════════════════════════════════════════════════════ */
 function BendingSubSign({ variant, uid = '0' }: { variant?: string; uid?: string }) {

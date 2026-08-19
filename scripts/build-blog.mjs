@@ -233,7 +233,7 @@ const INDEXES = [
     lang: 'de',
     dir: OUT,
     canonical: `${SITE}/blog/`,
-    title: 'DriveDE Blog – Führerschein-Guides auf Deutsch',
+    title: 'DriveDE Blog: Führerschein-Guides auf Deutsch',
     description: 'Praktische Guides rund um den Führerschein in Deutschland: Kosten, Fahrstunden, praktische Prüfung und Fahrschul-Wissen.',
     heading: 'DriveDE Blog',
     sub: 'Praktische Guides rund um Führerschein und Fahrprüfung in Deutschland.',
@@ -242,7 +242,7 @@ const INDEXES = [
     lang: 'en',
     dir: path.join(OUT, 'en'),
     canonical: `${SITE}/blog/en/`,
-    title: 'DriveDE Blog – German driving licence guides in English',
+    title: 'DriveDE Blog: German driving licence guides in English',
     description: 'Practical guides for getting and converting a driving licence in Germany: Umschreibung country guides, exam preparation and costs, in English.',
     heading: 'DriveDE Blog (English)',
     sub: 'Practical guides for the German driving licence, written from real Anlage 11 FeV rules.',
@@ -287,7 +287,7 @@ const urls = [
     <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/" />
     <image:image>
       <image:loc>${SITE}/icons/icon-512.png</image:loc>
-      <image:title>DriveDE – Führerschein &amp; Fahrschule App</image:title>
+      <image:title>DriveDE: Führerschein &amp; Fahrschule App</image:title>
     </image:image>
   </url>`,
   `  <url>

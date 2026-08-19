@@ -377,7 +377,7 @@ const signGreenArrowSignal: TrafficSign = {
   descriptionDe: TRANSLATIONS.de.curriculumData.trafficSigns.greenArrowSignal.description,
   descriptionEn: TRANSLATIONS.en.curriculumData.trafficSigns.greenArrowSignal.description,
   category: 'traffic-light',
-  variant: 'left', // Protected left-turn arrow signal — matches "Turning (Left)" lesson context
+  variant: 'left', // Protected left-turn arrow signal, matches "Turning (Left)" lesson context
 };
 
 const leftTurnScenarios: LessonScenario[] = TRANSLATIONS.de.curriculumData.scenarios
@@ -444,7 +444,7 @@ const signPriorityRoadBending: TrafficSign = {
   descriptionDe: 'Die dicke Linie zeigt, wie die Vorfahrtstraße verläuft. Beim Verlassen oder Folgen gelten Blink- und Wartepflichten je nach Fahrtrichtung.',
   descriptionEn: 'The thick line shows how the priority road bends. Depending on your route, signaling and yielding duties apply.',
   category: 'priority',
-  variant: 'bottom-left', // Priority road bends left — matches "Turning (Left)" lesson context
+  variant: 'bottom-left', // Priority road bends left, matches "Turning (Left)" lesson context
 };
 
 const signYieldBending: TrafficSign = {
@@ -1390,8 +1390,8 @@ export const chapters: Chapter[] = [
     id: 'chapter-1',
     titleDe: 'Grundstufe',
     titleEn: 'Basics',
-    descriptionDe: 'Deutschland-Schnellstart, Schulterblick, Fahrzeugcheck und – je nach Pfad – Fahrzeugbedienung',
-    descriptionEn: 'Germany quick start, shoulder checks, vehicle check, and—depending on the path—vehicle operation',
+    descriptionDe: 'Deutschland-Schnellstart, Schulterblick, Fahrzeugcheck und (je nach Pfad) Fahrzeugbedienung',
+    descriptionEn: 'Germany quick start, shoulder checks, vehicle check, and, depending on the path, vehicle operation',
     icon: 'Car',
     lessons: basicsLessons,
     progress: 0,
