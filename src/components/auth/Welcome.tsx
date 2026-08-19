@@ -157,8 +157,8 @@ export function Welcome() {
     {
       q: isDe ? 'Wie hilft mir DriveDE Geld zu sparen?' : 'How does DriveDE help me save money?',
       a: isDe
-        ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Indem du Manöver (wie Einparken) in der 3D-Simulation vorbereitest und deine Fahrfehler per GPS analysierst, brauchst du weniger Fahrstunden und bestehst im ersten Anlauf.'
-        : 'In Germany, driving lessons cost up to €95/hour. By mentally mastering maneuvers via 3D simulations and reviewing GPS mistake telemetry, students take fewer extra hours and pass on their 1st attempt.'
+        ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Indem du Manöver (wie Einparken) in der 3D-Simulation vorbereitest und jede Fahrstunde im GPS-Fahrtenbuch nachbereitest, brauchst du weniger Fahrstunden und bestehst im ersten Anlauf.'
+        : 'In Germany, driving lessons cost up to €95/hour. By mentally mastering maneuvers via 3D simulations and reviewing every logged lesson afterwards, students take fewer extra hours and pass on their 1st attempt.'
     },
     {
       q: isDe ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
@@ -173,10 +173,10 @@ export function Welcome() {
         : 'Yes! DriveDE features a dedicated Umschreibung mode tailored specifically for foreign license holders converting to a German driving license.'
     },
     {
-      q: isDe ? 'Funktioniert die Ortung und Geschwindigkeitswarnung automatisch?' : 'Does GPS tracking and speed limit detection work automatically?',
+      q: isDe ? 'Wie funktioniert das GPS-Fahrtenbuch?' : 'How does the GPS driving log work?',
       a: isDe 
-        ? 'Ja. Sobald du vor deiner Fahrstunde auf "Start" tippst, erfasst DriveDE deine Route, erkennt Geschwindigkeitsbegrenzungen und warnt dich bei Fehlern.' 
-        : 'Yes. Once you tap "Start" before your drive, DriveDE automatically logs your route, matches OpenStreetMap speed limits, and warns you of potential mistakes.'
+        ? 'Sobald du vor deiner Fahrstunde auf "Start" tippst, zeichnet DriveDE Route und Fahrzeit automatisch auf. Fehler hältst du unterwegs mit einem Tipp fest und wertest sie nach der Fahrt in der Analyse aus.' 
+        : 'Once you tap "Start" before your drive, DriveDE records your route and driving time automatically. You log mistakes with a single tap and review them in your post-drive analysis.'
     },
     {
       q: isDe ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
@@ -191,7 +191,7 @@ export function Welcome() {
   // table can never drift from what the app actually gates.
   const proFeatures = [
     isDe ? 'Unbegrenztes GPS Live Fahrtenbuch' : 'Unlimited GPS Live Driving Tracker',
-    isDe ? 'OpenStreetMap Tempolimit-Warnungen' : 'OpenStreetMap Speed Limit Warnings',
+    isDe ? 'Ein-Tipp Fehlerprotokoll während der Fahrt' : 'One-Tap Mistake Logging During Drives',
     isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
     isDe ? '3D Manöversimulationen (Einparken, Autobahn)' : '3D Maneuver Simulations (Einparken, Autobahn)',
     isDe ? 'Prüfungsreife-Anzeige & Fehleranalyse' : 'Exam Readiness Score & Mistake Analysis',
@@ -496,8 +496,8 @@ export function Welcome() {
                   <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
                     <CheckCircle2 className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold text-slate-900">{isDe ? 'Kein Durchfallen wegen Tempolimit' : 'Zero Speed Limit Exam Failures'}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Echtzeit OpenStreetMap GPS-Warnungen verhindern die häufigste Ursache für Prüfungsausfälle.' : 'Real-time OpenStreetMap GPS limit matching prevents the #1 cause of practical test disqualification.'}</p>
+                      <p className="font-bold text-slate-900">{isDe ? 'Aus jeder Fahrstunde lernen' : 'Learn From Every Lesson'}</p>
+                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Route und Fehler-Protokoll machen aus jeder Stunde messbaren Fortschritt statt Bauchgefühl.' : 'Your route and mistake log turn every hour into measurable progress instead of gut feeling.'}</p>
                     </div>
                   </div>
 
@@ -562,8 +562,8 @@ export function Welcome() {
                 step: '01',
                 title: isDe ? 'Fahrstunden aufzeichnen' : 'Track Driving Lessons',
                 desc: isDe 
-                  ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet Route, Tempolimits und Fehler auf.'
-                  : 'Tap Start during your Fahrstunde. GPS logs route, speed limits, and traffic signs in real time.',
+                  ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet deine Route auf, Fehler hältst du mit einem Tipp fest.'
+                  : 'Tap Start during your Fahrstunde. GPS records your route; you log mistakes with a single tap.',
                 icon: MapPin
               },
               {
@@ -630,7 +630,7 @@ export function Welcome() {
               {
                 shot: 'tracker',
                 title: isDe ? 'GPS Live-Tracking' : 'Live GPS tracking',
-                desc: isDe ? 'Route, Tempolimits und Fehler während jeder Fahrstunde.' : 'Route, speed limits and mistakes during every lesson.',
+                desc: isDe ? 'Route und Fehler-Protokoll für jede Fahrstunde.' : 'Route and one-tap mistake log for every lesson.',
               },
               {
                 shot: 'dashboard',

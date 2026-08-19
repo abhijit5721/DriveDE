@@ -116,7 +116,7 @@ export const TRANSLATIONS = {
         subtitle: 'Alles was du brauchst um deine Prüfung im ersten Anlauf zu bestehen.',
         aiCoaching: {
           title: 'Smart Coaching',
-          desc: 'Erhalte Echtzeit-Feedback zu deinem Fahrstil und erkenne Fehler bevor sie teuer werden.',
+          desc: 'Erhalte nach jeder Fahrt strukturiertes Feedback zu deinem Fahrstil und erkenne Muster bevor sie teuer werden.',
         },
         maneuverReplay: {
           title: 'Manöver-Wiederholung',
@@ -2450,7 +2450,7 @@ export const TRANSLATIONS = {
         subtitle: 'Everything you need to pass your exam on the first attempt.',
         aiCoaching: {
           title: 'Smart Coaching',
-          desc: 'Get real-time feedback on your driving style and spot mistakes before they become costly.',
+          desc: 'Get structured feedback after every drive and spot patterns in your mistakes before they become costly.',
         },
         maneuverReplay: {
           title: 'Maneuver Replay',

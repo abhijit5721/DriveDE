@@ -73,7 +73,7 @@ const PLAN_CONFIG = {
     },
     features: [
       { text: 'GPS Live-Fahrtracking & Fahrtenbuch', badge: 'GPS' },
-      { text: 'Echtzeit-Tempolimit-Warnungen (OpenStreetMap)', badge: 'Echtzeit' },
+      { text: 'Ein-Tipp Fehlerprotokoll & Auswertung', badge: 'Analyse' },
       { text: 'KI-Fahrlehrer Auswertungen nach jeder Fahrt', badge: 'KI' },
       { text: '3D-Einparktrainer & Prüfungs-Simulationen', badge: '3D' },
       { text: 'Fahrbereitschafts- & Fortschritts-Score', badge: 'Score' },
@@ -147,7 +147,7 @@ const PLAN_CONFIG = {
     },
     features: [
       { text: 'GPS Live Driving Tracker & Logbook', badge: 'GPS' },
-      { text: 'Real-Time Speed Limit Alerts (OpenStreetMap)', badge: 'Live' },
+      { text: 'One-Tap Mistake Log & Analysis', badge: 'Log' },
       { text: 'AI Instructor Debriefing After Every Drive', badge: 'AI' },
       { text: '3D Parking Simulator & Exam Scenarios', badge: '3D' },
       { text: 'Exam Readiness & Progress Analytics', badge: 'Score' },

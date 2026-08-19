@@ -46,7 +46,7 @@ const SCHEMA_DE = {
   description:
     'Kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS aufzeichnen, KI-Auswertungen erhalten und die Fahrprüfung im ersten Versuch bestehen. Inklusive Umschreibungs-Modus für ausländische Führerscheine.',
   featureList: [
-    'GPS Fahrstunden-Tracking mit Tempolimit-Warnungen',
+    'GPS Fahrstunden-Tracking mit digitalem Fahrtenbuch',
     'KI-Fahrlehrer Auswertungen nach jeder Fahrt',
     '3D Manöversimulationen (Einparken, Autobahn)',
     'Objektive Prüfungsreife-Anzeige',
@@ -61,7 +61,7 @@ const SCHEMA_EN = {
   description:
     'The free app for your German driving license: learn theory, track driving lessons via GPS, get AI instructor debriefings, and pass your Fahrprüfung on the first try. Includes an Umschreibung mode that guides foreign license holders through conversion, country by country.',
   featureList: [
-    'GPS driving lesson tracking with speed limit warnings',
+    'GPS driving lesson tracking with a digital logbook',
     'AI instructor debriefings after every drive',
     '3D maneuver simulations (parking, Autobahn)',
     'Objective exam readiness score',
