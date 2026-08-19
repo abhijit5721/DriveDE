@@ -1006,32 +1006,23 @@ export function Welcome() {
             ))}
           </div>
 
-          <div className="mt-16 text-center">
-            <button 
-              onClick={() => handleStart()} 
-              data-testid="welcome-get-started"
-              className="inline-flex items-center gap-3 rounded-full bg-blue-600 px-10 py-5 text-xl font-bold text-white shadow-2xl transition hover:bg-blue-700 hover:scale-105"
-            >
-              {t.common.getStarted}
-              <ArrowRight className="h-6 w-6" />
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* Feedback & Support Section */}
-      <section id="feedback" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
+      {/* Feedback & Support Section (compact: the path cards above are the
+          conversion moment, this is just a support outlet) */}
+      <section id="feedback" className="relative z-10 bg-white px-6 py-14 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Deine Meinung zählt' : 'Your Experience Matters'}</h2>
-            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-              {isDe 
-                ? 'Hilf uns, DriveDE noch besser zu machen. Ob Frage, Feedback oder Erfolgsbericht, wir freuen uns von dir zu hören.'
-                : 'Help us make DriveDE even better. Whether you have a question, found a bug, or just want to share your success, we\'re all ears.'
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{isDe ? 'Fragen oder Feedback?' : 'Questions or Feedback?'}</h2>
+            <p className="mt-3 text-sm text-slate-500 max-w-2xl mx-auto">
+              {isDe
+                ? 'Wir freuen uns von dir zu hören und antworten in der Regel innerhalb weniger Tage.'
+                : 'We read everything and usually reply within a few days.'
               }
             </p>
           </div>
-          
+
           <ContactForm />
         </div>
       </section>

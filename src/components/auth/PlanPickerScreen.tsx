@@ -401,6 +401,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
             onClick={onCancel || onComplete}
+            data-testid="plan-picker-back"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 shadow-sm"
           >
             <X className="w-3.5 h-3.5" />

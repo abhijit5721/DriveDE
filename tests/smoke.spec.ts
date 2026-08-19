@@ -261,25 +261,20 @@ test.describe('DriveDE Golden Path', () => {
     const startBtn = page.getByTestId('welcome-start-btn');
     if (await startBtn.isVisible()) {
       await startBtn.click();
-      await page.waitForTimeout(1000); // Wait for scroll animation
-      
-      // Select Transmission (Manual) - In Welcome.tsx, this is enough to set path
+      await page.waitForTimeout(1000);
+
+      // New users get the Plan Picker overlay (DRI-14). Close it via BACK:
+      // the realistic "looked at plans, entered via the goal cards" path.
+      const pickerBack = page.getByTestId('plan-picker-back');
+      if (await pickerBack.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await pickerBack.click();
+        await page.waitForTimeout(600);
+      }
+
+      // Select Transmission (Manual) on the path cards - sets path + enters app
       const manualBtn = page.getByTestId('manual-btn').first();
       await manualBtn.scrollIntoViewIfNeeded();
       await manualBtn.click({ force: true });
-      
-      // Check if we already reached the dashboard (some paths set hasVisited immediately)
-      const navTracker = page.getByTestId('nav-tracker').first();
-      if (await navTracker.isVisible({ timeout: 2000 }).catch(() => false)) {
-        return;
-      }
-
-      // Click Get Started at bottom if still on welcome page
-      const getStarted = page.getByTestId('welcome-get-started');
-      if (await getStarted.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await getStarted.scrollIntoViewIfNeeded();
-        await getStarted.click({ force: true });
-      }
     } else {
       // Fallback for standalone LicenseSelector
       const standardPath = page.getByTestId('path-standard');

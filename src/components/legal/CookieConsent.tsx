@@ -57,44 +57,44 @@ export function CookieConsent() {
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
           className="mx-auto max-w-4xl w-full pointer-events-auto"
         >
-          <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white/95 p-6 md:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/90 dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-            {/* Background Glow */}
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full hidden" />
-            <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full hidden" />
-
+          <div className="relative overflow-hidden rounded-2xl md:rounded-[2rem] border border-slate-200 bg-white/95 p-4 md:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/90 dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            {/* compact sheet: on mobile this must never grow past ~1/4 of the
+                viewport — social traffic lands here and should see the hero,
+                not a cookie card */}
             {!showDetails ? (
-              <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+                <div className="hidden md:flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
                   <Cookie className="h-8 w-8" />
                 </div>
-                
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed max-w-2xl dark:text-slate-400">
+
+                <div className="flex-1 text-left">
+                  <h3 className="text-sm md:text-xl font-bold text-slate-900 dark:text-white mb-0.5 md:mb-2">{t.title}</h3>
+                  <p className="text-xs md:text-sm text-slate-600 leading-relaxed max-w-2xl dark:text-slate-400">
                     {t.description}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-3 w-full md:w-auto">
+                <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
                     <button
                       onClick={() => setShowDetails(true)}
                       data-testid="cookie-customize"
-                      className="flex items-center gap-2 px-5 py-3 text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                      aria-label={t.customize}
+                      className="flex items-center gap-2 px-3 py-2.5 md:px-5 md:py-3 text-sm font-bold text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                     >
                       <Settings className="h-4 w-4" />
-                      {t.customize}
+                      <span className="hidden md:inline">{t.customize}</span>
                     </button>
                     <button
                       onClick={handleRejectAll}
                       data-testid="cookie-reject-non-essential"
-                      className="px-6 py-3 text-sm font-bold text-slate-900 transition rounded-xl bg-slate-100 hover:bg-slate-200 dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
+                      className="flex-1 md:flex-none px-3 py-2.5 md:px-6 md:py-3 text-xs md:text-sm font-bold text-slate-900 transition rounded-xl bg-slate-100 hover:bg-slate-200 dark:text-white dark:bg-white/5 dark:hover:bg-white/10"
                     >
                       {t.rejectNonEssential}
                     </button>
                     <button
                       onClick={handleAcceptAll}
                       data-testid="cookie-accept-all"
-                      className="px-8 py-3 text-sm font-bold text-white transition rounded-xl bg-blue-600 hover:bg-blue-500 shadow-md active:scale-95"
+                      className="flex-1 md:flex-none px-4 py-2.5 md:px-8 md:py-3 text-xs md:text-sm font-bold text-white transition rounded-xl bg-blue-600 hover:bg-blue-500 shadow-md active:scale-95"
                     >
                       {t.acceptAll}
                     </button>
