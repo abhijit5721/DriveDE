@@ -23,7 +23,7 @@ const only = onlyArg ? process.argv[process.argv.indexOf(onlyArg) + 1]?.split(',
 const LAMPS = {
   oil: `<path d="M10 28 h18 l6 -8 M14 28 v-6 h8"/><path d="M8 34 c0 -3 3 -6 3 -6 s3 3 3 6 a3 3 0 0 1 -6 0Z" fill="currentColor"/><path d="M12 28 a10 8 0 0 0 20 6"/>`,
   battery: `<rect x="10" y="16" width="28" height="20" rx="2"/><path d="M16 12 v4 M32 12 v4 M16 26 h6 M29 26 h6 M32 23 v6"/>`,
-  coolant: `<path d="M24 10 v16 M24 26 a5 5 0 1 0 0.01 0"/><path d="M8 38 q4 -4 8 0 t8 0 t8 0 t8 0"/>`,
+  coolant: `<path d="M24 8 v14 M24 22 a4.5 4.5 0 1 0 0.01 0"/><path d="M10 34 q3.5 -3.5 7 0 t7 0 t7 0 t7 0"/><path d="M10 40 q3.5 -3.5 7 0 t7 0 t7 0 t7 0"/>`,
   brake: `<circle cx="24" cy="24" r="12"/><path d="M8 14 a20 20 0 0 0 0 20 M40 14 a20 20 0 0 1 0 20"/><path d="M24 17 v9 M24 30 v1.5" stroke-width="3"/>`,
   abs: `<circle cx="24" cy="24" r="12"/><path d="M8 14 a20 20 0 0 0 0 20 M40 14 a20 20 0 0 1 0 20"/><text x="24" y="28" text-anchor="middle" font-size="10" font-weight="800" fill="currentColor" stroke="none">ABS</text>`,
   engine: `<path d="M14 20 h6 v-4 h10 l4 4 h4 v12 h-4 l-4 4 H18 l-4 -4 h-4 v-8 h4Z"/>`,

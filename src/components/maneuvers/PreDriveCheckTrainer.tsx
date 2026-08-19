@@ -44,8 +44,9 @@ function LampGlyph({ id, className }: { id: string; className?: string }) {
       )}
       {id === 'coolant' && (
         <g {...common}>
-          <path d="M24 10 v16 M24 26 a5 5 0 1 0 0.01 0" />
-          <path d="M8 38 q4 -4 8 0 t8 0 t8 0 t8 0" />
+          <path d="M24 8 v14 M24 22 a4.5 4.5 0 1 0 0.01 0" />
+          <path d="M10 34 q3.5 -3.5 7 0 t7 0 t7 0 t7 0" />
+          <path d="M10 40 q3.5 -3.5 7 0 t7 0 t7 0 t7 0" />
         </g>
       )}
       {id === 'brake' && (
@@ -76,8 +77,9 @@ function LampGlyph({ id, className }: { id: string; className?: string }) {
       )}
       {id === 'fogRearLamp' && (
         <g {...common}>
-          <path d="M16 14 a12 12 0 0 0 0 20" />
-          <path d="M22 16 h14 M22 24 h14 M22 32 h14" strokeDasharray="3 3" />
+          <path d="M16 12 a12 12 0 0 1 0 24" />
+          <path d="M22 17 h16 M22 24 h16 M22 31 h16" />
+          <path d="M31 12 q-3 4 0 8 t0 8 t0 8" />
         </g>
       )}
     </svg>
