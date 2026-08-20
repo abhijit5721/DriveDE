@@ -16,7 +16,7 @@ export const TRANSLATIONS = {
       feedback: 'Feedback',
       about: 'Über uns',
       backToDashboard: 'Zum Dashboard',
-      startNow: 'Pfad wählen',
+      startNow: 'Jetzt kostenlos starten',
       getStartedFree: 'Jetzt kostenlos starten',
       watchDemo: 'Demo ansehen',
       language: 'Sprache',
@@ -650,7 +650,7 @@ export const TRANSLATIONS = {
           ]
         },
         terms: {
-          scope: 'Diese Nutzungsbedingungen regeln die Nutzung der App DriveDE. Die App dient der Unterstützung bei der Vorbereitung auf praktische Fahrstunden und Fahrprüfungen in Deutschland.',
+          scope: 'Diese Nutzungsbedingungen regeln die Nutzung der App DriveDE. Die App dient der Unterstützung bei der Vorbereitung auf praktische Fahrstunden und Fahrprüfungen in Deutschland. Pro-Pässe erstatten wir auf Anfrage innerhalb von 14 Tagen nach Kauf vollständig: kurze E-Mail an hello@drivede.app genügt.',
           noSubstitute: 'Die App ersetzt keine Fahrschule, keinen Fahrlehrer, keine amtliche Rechtsberatung und keine offiziellen Informationen von Behörden, TÜV oder DEKRA. Maßgeblich sind stets die geltenden Gesetze, Verordnungen und die konkrete Anweisung des Fahrlehrers oder Prüfers.',
           useOfContent: 'Die Inhalte dürfen ausschließlich für den persönlichen, nicht übertragbaren Lerngebrauch genutzt werden. Eine gewerbliche Weitergabe, systematische Vervielfältigung oder Weiterveröffentlichung ist ohne schriftliche Zustimmung unzulässig.',
           availability: 'Die App kann fortlaufend angepasst, verbessert oder in einzelnen Funktionen eingeschränkt werden. Es besteht kein Anspruch auf dauerhafte Verfügbarkeit einzelner Inhalte oder Funktionen.',
@@ -2350,7 +2350,7 @@ export const TRANSLATIONS = {
       feedback: 'Feedback',
       about: 'About',
       backToDashboard: 'Back to Dashboard',
-      startNow: 'Start Now',
+      startNow: 'Get Started Free',
       getStartedFree: 'Get Started Free',
       watchDemo: 'Watch Demo',
       language: 'Language',
@@ -2985,7 +2985,7 @@ export const TRANSLATIONS = {
           ]
         },
         terms: {
-          scope: 'These terms govern the use of the DriveDE app. The app is designed to support preparation for practical driving lessons and practical exams in Germany.',
+          scope: 'These terms govern the use of the DriveDE app. The app is designed to support preparation for practical driving lessons and practical exams in Germany. Pro passes are fully refunded on request within 14 days of purchase: a short email to hello@drivede.app is enough.',
           noSubstitute: 'The app does not replace a driving school, a driving instructor, official legal advice, or official information from authorities, TÜV, or DEKRA. Applicable law and the concrete instructions of the instructor or examiner always prevail.',
           useOfContent: 'Content may only be used for personal, non-transferable learning purposes. Commercial redistribution, systematic copying, or republishing is not permitted without written approval.',
           availability: 'The app may be changed, improved, or have individual features limited over time. There is no claim to permanent availability of any specific content or feature.',

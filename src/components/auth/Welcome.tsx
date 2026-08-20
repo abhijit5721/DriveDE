@@ -5,12 +5,12 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  Car, BadgeCheck, Zap, Users, Shield,
+  Car, BadgeCheck, Zap, Shield,
   Menu, X, ArrowRight, Play, CheckCircle2, Cog,
   ChevronDown, Check, MapPin, Award,
-  Globe, ShieldCheck, Coins, Clock
-} from 'lucide-react';
+  Globe, ShieldCheck, Coins, Clock, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
@@ -128,6 +128,12 @@ export function Welcome() {
       const result = await startCheckout(tier, language);
       if (result.ok) return; // browser is navigating to Stripe
       console.warn('[Welcome] Direct checkout unavailable, entering app on trial:', result.reason);
+      toast.error(
+        language === 'de'
+          ? 'Die Zahlung konnte nicht gestartet werden. Du nutzt jetzt die kostenlose Testversion. Den Kauf kannst du jederzeit im Konto abschließen.'
+          : 'Checkout could not start. You are on the free trial for now. You can complete the purchase anytime from your Account.',
+        { duration: 10000, position: 'top-center' }
+      );
     }
     setHasVisited(true);
   };
@@ -601,7 +607,7 @@ export function Welcome() {
               data-testid="cta-how-it-works"
               className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
-              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Start Free Today')}
+              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Get Started Free')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
             <p className="mt-3 text-xs text-slate-500">
@@ -612,7 +618,7 @@ export function Welcome() {
       </section>
 
       {/* 📱 Inside the app — three real screens (DRI-14: show, don't tell) */}
-      <section id="app-preview" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
+      <section id="features" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-14 text-center">
             <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
@@ -635,7 +641,7 @@ export function Welcome() {
               {
                 shot: 'dashboard',
                 title: isDe ? 'Prüfungsreife auf einen Blick' : 'Exam readiness at a glance',
-                desc: isDe ? 'Wisse genau, wann du bereit für die Fahrprüfung bist.' : 'Know exactly when you are ready for the exam.',
+                desc: isDe ? 'Wisse genau, wann du bereit bist, mit PDF-Berichten für deinen Fahrlehrer.' : 'Know exactly when you are ready, with PDF reports for your instructor.',
               },
               {
                 shot: 'curriculum',
@@ -704,47 +710,6 @@ export function Welcome() {
                 loading="lazy"
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">{t.welcome.features.title}</h2>
-            <p className="mt-4 text-slate-500 max-w-2xl mx-auto">{t.welcome.features.subtitle}</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {[
-              { icon: Zap, title: t.welcome.features.aiCoaching.title, desc: t.welcome.features.aiCoaching.desc },
-              { icon: BadgeCheck, title: t.welcome.features.maneuverReplay.title, desc: t.welcome.features.maneuverReplay.desc },
-              { icon: Users, title: t.welcome.features.instructorSync.title, desc: t.welcome.features.instructorSync.desc }
-            ].map((f, i) => (
-              <div key={i} className="group rounded-3xl border border-slate-200 bg-white shadow-sm p-8 transition hover:border-slate-300">
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-blue-600">
-                  <f.icon className="h-8 w-8" />
-                </div>
-                <h3 className="mb-3 text-xl font-bold text-slate-900">{f.title}</h3>
-                <p className="text-slate-500 leading-relaxed text-sm">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Mid-Page CTA (DRI-6) */}
-          <div className="mt-14 text-center">
-            <button
-              onClick={() => handleStart()}
-              data-testid="cta-features"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
-            >
-              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Alle Funktionen freischalten' : 'Unlock All Features')}
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </button>
-            <p className="mt-3 text-xs text-slate-500">
-              {isDe ? '7 Tage Pro Testversion • Keine Kreditkarte nötig' : '7-Day Free Pro Trial • No Credit Card Required'}
-            </p>
           </div>
         </div>
       </section>
@@ -859,6 +824,22 @@ export function Welcome() {
               >
                 {isDe ? 'Lebenslangen Zugang wählen' : 'Get Lifetime Access'}
               </button>
+            </div>
+          </div>
+
+          {/* Proof band: only claims we can honestly keep (impeccable critique P1) */}
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-semibold text-slate-700">
+              <ShieldCheck className="h-5 w-5 shrink-0 text-emerald-600" />
+              {isDe ? '14 Tage Geld-zurück, ohne Fragen' : '14-day money-back, no questions asked'}
+            </div>
+            <div className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-semibold text-slate-700">
+              <Lock className="h-5 w-5 shrink-0 text-blue-600" />
+              {isDe ? 'Sichere Zahlung über Stripe' : 'Secure payment via Stripe'}
+            </div>
+            <div className="flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-semibold text-slate-700">
+              <BadgeCheck className="h-5 w-5 shrink-0 text-blue-600" />
+              {isDe ? 'Einmalzahlung, kein Abo' : 'One-time payment, no subscription'}
             </div>
           </div>
         </div>
@@ -1087,7 +1068,7 @@ export function Welcome() {
 
           {/* Col 2: Product */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Produkt' : 'Product'}</h4>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Produkt' : 'Product'}</h3>
             <ul className="space-y-2.5 text-xs text-slate-500">
               <li><a href="#how-it-works" className="hover:text-slate-900 transition">{isDe ? 'So funktioniert\'s' : 'How It Works'}</a></li>
               <li><a href="#features" className="hover:text-slate-900 transition">{isDe ? 'Funktionen & GPS-Tracker' : 'Features & GPS Tracker'}</a></li>
@@ -1099,7 +1080,7 @@ export function Welcome() {
 
           {/* Col 3: Company */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Unternehmen' : 'Company'}</h4>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Unternehmen' : 'Company'}</h3>
             <ul className="space-y-2.5 text-xs text-slate-500">
               <li><a href="#expat-stories" className="hover:text-slate-900 transition">{isDe ? 'Für Expats & Umschreibung' : 'For Expats & Umschreibung'}</a></li>
               <li><a href="#feedback" className="hover:text-slate-900 transition">{isDe ? 'Kontakt & Support' : 'Contact & Support'}</a></li>
@@ -1108,7 +1089,7 @@ export function Welcome() {
 
           {/* Col 4: Legal & Compliance */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h4>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Rechtliches' : 'Legal & Privacy'}</h3>
             <ul className="space-y-2.5 text-xs text-slate-500">
               <li><button onClick={() => setLegalPage('impressum')} className="hover:text-slate-900 transition">Impressum</button></li>
               <li><button onClick={() => setLegalPage('privacy')} className="hover:text-slate-900 transition">{isDe ? 'Datenschutz' : 'Privacy Policy'}</button></li>

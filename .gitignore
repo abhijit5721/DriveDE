@@ -442,3 +442,4 @@ public/sitemap.xml
 .agents/
 .claude/settings.local.json
 social-cards-out/
+.impeccable/
