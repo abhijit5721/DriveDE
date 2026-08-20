@@ -70,8 +70,8 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
   const getManeuverColor = (lessonId: string) => {
     switch (lessonId) {
       case 'maneuver-1': return 'from-blue-500 to-blue-600';
-      case 'maneuver-2': return 'from-purple-500 to-purple-600';
-      case 'maneuver-3': return 'from-orange-500 to-orange-600';
+      case 'maneuver-2': return 'from-emerald-500 to-emerald-600';
+      case 'maneuver-3': return 'from-blue-700 to-blue-800';
       case 'maneuver-4': return 'from-red-500 to-red-600';
       default: return 'from-slate-500 to-slate-600';
     }

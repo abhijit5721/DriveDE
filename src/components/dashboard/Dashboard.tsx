@@ -430,7 +430,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               )}>
                 <card.icon className="h-7 w-7" />
                 {card.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-bounce">
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-pulse">
                     {mistakesCount}
                   </span>
                 )}

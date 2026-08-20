@@ -390,7 +390,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                           {/* Active "Start Here" Floating Badge */}
                           {isCurrentActive && (
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[8px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap animate-bounce">
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[8px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap animate-pulse">
                               🎯 {isDe ? 'Start' : 'Start'}
                             </div>
                           )}

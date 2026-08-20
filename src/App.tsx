@@ -169,8 +169,8 @@ export default function App() {
   useEffect(() => {
     const isDe = language === 'de';
     document.title = isDe
-      ? 'Führerschein App kostenlos – Fahrschule, Theorie & Fahrprüfung | DriveDE'
-      : 'Free German Driving License App – Theory, Practical Exam & Umschreibung | DriveDE';
+      ? 'Führerschein App kostenlos: Fahrschule, Theorie & Fahrprüfung | DriveDE'
+      : 'Free German Driving License App: Theory, Practical Exam & Umschreibung | DriveDE';
     document.documentElement.lang = isDe ? 'de' : 'en';
     document.querySelector('meta[name="description"]')?.setAttribute(
       'content',

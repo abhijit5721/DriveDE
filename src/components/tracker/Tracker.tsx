@@ -773,16 +773,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       className: 'flag-marker-icon',
       html: `
         <div style="display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));">
-          <div style="background: white; border: 3px solid #1e293b; border-radius: 12px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 20px; animation: bounce-flag 2s infinite ease-in-out;">
+          <div style="background: white; border: 3px solid #1e293b; border-radius: 12px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
             🏁
           </div>
         </div>
         <style>
-          @keyframes bounce-flag {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-          }
-        </style>
+          </style>
       `,
       iconSize: [36, 36],
       iconAnchor: [18, 18]
