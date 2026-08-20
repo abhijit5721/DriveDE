@@ -371,7 +371,7 @@ export const TRANSLATIONS = {
     },
     dashboard: {
       examReadiness: 'Prüfungsreife',
-      examChance: 'Prüfungschance',
+      examChance: 'Prüfungsreife',
       examScore: 'Prüfungsscore',
       combinedScore: 'Fahrpraxis',
       unlockPro: 'Alle Funktionen freischalten',
@@ -2706,7 +2706,7 @@ export const TRANSLATIONS = {
     },
     dashboard: {
       examReadiness: 'Exam Readiness',
-      examChance: 'Exam Chance',
+      examChance: 'Exam Readiness',
       examScore: 'Exam Score',
       combinedScore: 'Driving Practice',
       unlockPro: 'Unlock all premium features',

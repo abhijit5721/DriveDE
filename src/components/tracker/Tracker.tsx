@@ -166,16 +166,16 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
   };
 
   const getMistakeIcon = (type: DrivingMistake['type']) => {
-    let color = '#ef4444'; // default red
-    if (type === 'harsh_braking') color = '#f97316'; // orange
-    if (type === 'rapid_acceleration') color = '#3b82f6'; // blue
-    if (type === 'wrong_way') color = '#c026d3'; // vivid magenta
-    if (type === 'roundabout_signal') color = '#3b82f6'; // blue
-    if (type === 'curve_speeding') color = '#ea580c'; // orange
-    if (type === 'aggressive_cornering') color = '#e11d48'; // rose
-    if (type === 'right_before_left') color = '#4f46e5'; // indigo
-    if (type === 'school_zone_speeding') color = '#d97706'; // amber
-    if (type === 'speeding') color = '#dc2626'; // strong red
+    let color = '#ef4444'; // default red-500
+    if (type === 'harsh_braking') color = '#b45309'; // amber-700
+    if (type === 'rapid_acceleration') color = '#3b82f6'; // blue-500
+    if (type === 'wrong_way') color = '#b91c1c'; // red-700
+    if (type === 'roundabout_signal') color = '#3b82f6'; // blue-500
+    if (type === 'curve_speeding') color = '#f59e0b'; // amber-500
+    if (type === 'aggressive_cornering') color = '#ef4444'; // red-500
+    if (type === 'right_before_left') color = '#2563eb'; // blue-600
+    if (type === 'school_zone_speeding') color = '#d97706'; // amber-600
+    if (type === 'speeding') color = '#dc2626'; // red-600
     
     return L.divIcon({
       className: 'custom-div-icon',
@@ -208,13 +208,13 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-slate-800">
       <div className="flex items-center justify-between bg-slate-50 px-3 py-2 dark:bg-slate-900/80">
-        <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+        <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-slate-500">
           <MapPin className="h-3 w-3" />
           {t.tracker.liveRouteTrace}
         </span>
-        <button 
+        <button
           onClick={handleTogglePlayback}
-          className="flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-[9px] font-bold text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
+          className="flex min-h-9 items-center gap-1 rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
         >
             {isPlaying ? (
               <><Pause className="h-3 w-3" /> {t.common.pause}</>
@@ -321,12 +321,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
   const t = TRANSLATIONS[language as 'de' | 'en'];
   
-  // Navigation HUD Mock State
-  const [nextInstruction, setNextInstruction] = useState<string>('Head North');
-  const [distanceToNextTurn, setDistanceToNextTurn] = useState<string>('200 m');
-  const [nextRoadName, setNextRoadName] = useState<string>('Alexanderplatz');
-  const [currentRoadName, setCurrentRoadName] = useState<string>('Karl-Liebknecht-Str.');
-  const [eta, setEta] = useState<string>('12:45');
+  // Navigation HUD state. Empty until real data arrives (simulation mode is
+  // the only source today); the HUD hides any element whose value is empty,
+  // so no fabricated street or instruction can ever render.
+  const [nextInstruction, setNextInstruction] = useState<string>('');
+  const [distanceToNextTurn, setDistanceToNextTurn] = useState<string>('');
+  const [nextRoadName, setNextRoadName] = useState<string>('');
+  const [currentRoadName, setCurrentRoadName] = useState<string>('');
+  const [eta, setEta] = useState<string>('');
 
 
   const getMistakeLabel = useCallback((type: string) => {
@@ -342,18 +344,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       case 'stop_sign':           return <Square className="h-3.5 w-3.5 text-red-600" />;
       case 'right_before_left':   return <CornerUpRight className="h-3.5 w-3.5 text-amber-500" />;
       case 'wrong_way':           return <Ban className="h-3.5 w-3.5 text-red-700" />;
-      case 'shoulder_check':      return <Eye className="h-3.5 w-3.5 text-blue-400" />;
-      case 'mirror_check':        return <View className="h-3.5 w-3.5 text-slate-400" />;
-      case 'signal':              return <Signal className="h-3.5 w-3.5 text-amber-400" />;
-      case 'pedestrian_safety':   return <Footprints className="h-3.5 w-3.5 text-purple-400" />;
-      case 'speeding':            return <Gauge className="h-3.5 w-3.5 text-red-400" />;
-      case 'harsh_braking':       return <TrendingDown className="h-3.5 w-3.5 text-orange-500" />;
-      case 'roundabout_signal':   return <RotateCcw className="h-3.5 w-3.5 text-blue-400" />;
-      case 'curve_speeding':      return <Navigation className="h-3.5 w-3.5 text-yellow-500" />;
-      case 'aggressive_cornering':return <Repeat2 className="h-3.5 w-3.5 text-pink-500" />;
-      case 'idling':              return <Flame className="h-3.5 w-3.5 text-green-500" />;
+      case 'shoulder_check':      return <Eye className="h-3.5 w-3.5 text-blue-500" />;
+      case 'mirror_check':        return <View className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />;
+      case 'signal':              return <Signal className="h-3.5 w-3.5 text-amber-500" />;
+      case 'pedestrian_safety':   return <Footprints className="h-3.5 w-3.5 text-amber-600" />;
+      case 'speeding':            return <Gauge className="h-3.5 w-3.5 text-red-500" />;
+      case 'harsh_braking':       return <TrendingDown className="h-3.5 w-3.5 text-amber-600" />;
+      case 'roundabout_signal':   return <RotateCcw className="h-3.5 w-3.5 text-blue-500" />;
+      case 'curve_speeding':      return <Navigation className="h-3.5 w-3.5 text-amber-500" />;
+      case 'aggressive_cornering':return <Repeat2 className="h-3.5 w-3.5 text-red-500" />;
+      case 'idling':              return <Flame className="h-3.5 w-3.5 text-emerald-500" />;
       case 'illegal_turn':        return <Ban className="h-3.5 w-3.5 text-red-500" />;
-      case 'school_zone_speeding':return <GraduationCap className="h-3.5 w-3.5 text-indigo-400" />;
+      case 'school_zone_speeding':return <GraduationCap className="h-3.5 w-3.5 text-amber-600" />;
       default:                    return <MoreHorizontal className="h-3.5 w-3.5 text-slate-500" />;
     }
   };
@@ -408,10 +410,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
   const getTypeColor = (type: DrivingSession['type']) => {
     switch (type) {
-      case 'nacht': return 'text-purple-600 bg-purple-50 dark:bg-purple-900/20 dark:text-purple-400';
-      case 'autobahn': return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-400';
-      case 'ueberland': return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
-      default: return 'text-blue-600 bg-blue-50 dark:blue-900/20 dark:text-blue-400';
+      case 'nacht': return 'text-slate-700 bg-slate-100 dark:bg-slate-700/40 dark:text-slate-300';
+      case 'autobahn': return 'text-blue-700 bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300';
+      case 'ueberland': return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400';
+      default: return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
     }
   };
 
@@ -1644,25 +1646,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     }
   };
 
-  // Voice Guidance Simulation
+  // Voice Guidance Simulation.
+  // Offset below the HUD's top instruction banner (~180px tall) so the toast
+  // can never overlap the next-road heading; the banner stays the single
+  // navigation source, this toast only announces voice guidance.
   useEffect(() => {
     if (isTimerRunning && nextInstruction) {
-      toast.custom((t) => (
+      toast.custom((toastState) => (
         <div className={cn(
-          'flex items-center gap-3 rounded-2xl bg-slate-900/90 px-6 py-4 text-white shadow-2xl backdrop-blur-xl border border-white/10 transition-all',
-          t.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+          'mt-48 flex items-center gap-3 rounded-2xl bg-slate-900 px-6 py-4 text-white shadow-2xl border border-white/10 transition-all',
+          toastState.visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         )}>
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 shadow-lg shadow-blue-500/40">
             <Wind className="h-5 w-5 animate-pulse" />
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-400">Voice Guidance</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-400">
+              {language === 'de' ? 'Sprachansage' : 'Voice guidance'}
+            </p>
             <p className="text-sm font-bold">{nextInstruction}</p>
           </div>
         </div>
       ), { duration: 3000, position: 'top-center' });
     }
-  }, [nextInstruction, isTimerRunning]);
+  }, [nextInstruction, isTimerRunning, language]);
 
   const handlePauseTimer = () => {
     setIsTimerRunning(false);
@@ -1861,6 +1868,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               saved:           t.common.saved  || 'Saved',
               safetyScore:     t.tracker.safetyScore,
               yourDestination: t.tracker.yourDestination,
+              stopAndSave:     t.common.stopAndSave || 'Stop & Save',
+              logMistake:      language === 'de' ? 'Fehler loggen' : 'Log mistake',
+              exitNav:         language === 'de' ? 'Navigation verlassen' : 'Exit navigation',
+              recenter:        language === 'de' ? 'Karte zentrieren' : 'Recenter map',
+              nextRoad:        language === 'de' ? 'Nächste Straße' : 'Next road',
+              score:           'Score',
+              duration:        language === 'de' ? 'Dauer' : 'Duration',
+              etaLabel:        language === 'de' ? 'Ankunft' : 'ETA',
             }}
           />
         </AnimatePresence>,
@@ -1872,7 +1887,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-700/50 dark:bg-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
                   <span className="text-xl font-bold">€</span>
                 </div>
                 <div>
@@ -1889,9 +1904,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                       />
                       <span className="text-sm font-bold text-slate-400">/ 45 min</span>
-                      <button 
+                      <button
                         onClick={handleSaveRate}
-                        className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-bold text-white hover:bg-blue-600"
+                        className="min-h-9 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-700"
                       >
                         {t.common.ok}
                       </button>
@@ -1909,48 +1924,57 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-xl dark:border-slate-800 dark:bg-slate-900 dark:text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-slate-300" />
+                <Clock className="h-5 w-5 text-slate-500 dark:text-slate-300" />
                 <h3 className="font-semibold">{t.tracker.liveTimerTitle}</h3>
               </div>
               <div className="flex items-center gap-3">
-                 <div className="flex items-center gap-2 mr-2">
+                 <div className="flex items-center gap-1 mr-2">
                    <button
                      onClick={() => setShowPrivacyInfo(true)}
-                     className="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-700/50 text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
-                     title="Privacy & Data Transparency"
+                     aria-label={language === 'de' ? 'Datenschutz und Datentransparenz' : 'Privacy and data transparency'}
+                     className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
+                     title={language === 'de' ? 'Datenschutz und Datentransparenz' : 'Privacy and data transparency'}
                    >
-                     <ShieldCheck className="h-3.5 w-3.5" />
+                     <ShieldCheck className="h-4 w-4" />
                    </button>
-                   <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                   <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
                     {t.tracker.simulationMode}
                    </span>
-                   <button 
+                   <button
                      onClick={() => !isTimerRunning && setIsSimulationMode(!isSimulationMode)}
                      disabled={isTimerRunning}
                      data-testid="sim-toggle"
+                     role="switch"
+                     aria-checked={isSimulationMode}
+                     aria-label={language === 'de' ? 'Simulationsmodus' : 'Simulation mode'}
                      className={cn(
-                       'relative h-4 w-8 rounded-full transition-colors',
-                       isSimulationMode ? 'bg-indigo-600' : 'bg-slate-700',
+                       'flex h-11 w-11 items-center justify-center rounded-full transition-colors',
                        isTimerRunning && 'opacity-50 cursor-not-allowed'
                      )}
                    >
-                     <div className={cn(
-                       'absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all',
-                       isSimulationMode ? 'left-4.5' : 'left-0.5'
-                     )} />
+                     <span className={cn(
+                       'relative block h-5 w-9 rounded-full transition-colors',
+                       isSimulationMode ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'
+                     )}>
+                       <span className={cn(
+                         'absolute top-1 h-3 w-3 rounded-full bg-white transition-all',
+                         isSimulationMode ? 'left-5' : 'left-1'
+                       )} />
+                     </span>
                    </button>
                  </div>
                  {isTimerRunning && (
-                   <button 
+                   <button
                      onClick={() => setShowManualLog(true)}
+                     aria-label={language === 'de' ? 'Fehler loggen' : 'Log mistake'}
                      className={cn(
-                       'flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-bold uppercase tracking-widest border transition-all',
-                       showMistakeSuccess 
-                         ? 'bg-green-500/20 text-green-400 border-green-500/30' 
-                         : 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30'
+                       'flex h-11 items-center gap-1.5 rounded-full px-4 text-xs font-bold uppercase tracking-widest border transition-all',
+                       showMistakeSuccess
+                         ? 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400'
+                         : 'bg-red-500/10 text-red-600 border-red-500/30 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30'
                      )}
                    >
                      {showMistakeSuccess ? (
@@ -1971,9 +1995,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
             {/* Map Preview / Live Map */}
             {(isTimerRunning && gpsPoints.length > 0) ? (
-              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner">
-                <MapContainer 
-                  center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]} 
+              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner dark:border-white/10 dark:ring-1 dark:ring-white/10">
+                <MapContainer
+                  center={[gpsPoints[gpsPoints.length-1].lat, gpsPoints[gpsPoints.length-1].lng]}
                   zoom={17} 
                   zoomControl={false}
                   attributionControl={false}
@@ -2005,17 +2029,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 {!showNavigationHUD && (
                   <button 
                     onClick={() => setShowNavigationHUD(true)}
-                    className="absolute bottom-4 right-4 z-[400] flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-xl hover:bg-indigo-500 active:scale-95 transition-all animate-in fade-in slide-in-from-right-4"
+                    className="absolute bottom-4 right-4 z-[400] flex min-h-11 items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xl hover:bg-blue-500 active:scale-95 transition-all animate-in fade-in slide-in-from-right-4"
                   >
                     <Navigation className="h-3.5 w-3.5" />
-                    Resume Navigation
+                    {language === 'de' ? 'Navigation fortsetzen' : 'Resume navigation'}
                   </button>
                 )}
               </div>
             ) : (!isTimerRunning && currentLocation && (
-              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-white/10 ring-1 ring-white/10 shadow-inner group">
-                <MapContainer 
-                  center={[currentLocation.lat, currentLocation.lng]} 
+              <div className="relative z-0 mt-3 h-56 w-full overflow-hidden rounded-xl border border-slate-200 shadow-inner group dark:border-white/10 dark:ring-1 dark:ring-white/10">
+                <MapContainer
+                  center={[currentLocation.lat, currentLocation.lng]}
                   zoom={15} 
                   zoomControl={false}
                   attributionControl={false}
@@ -2026,9 +2050,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
                   <Marker position={[currentLocation.lat, currentLocation.lng]} icon={getCarMarkerIcon(0)} />
                 </MapContainer>
-                <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">Live Preview Active</span>
+                <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs font-bold text-white uppercase tracking-widest">
+                    {language === 'de' ? 'Live-Vorschau aktiv' : 'Live preview active'}
+                  </span>
                 </div>
               </div>
             ))}
@@ -2042,13 +2068,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     value={targetDestination}
                     onChange={(e) => setTargetDestination(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearchDestination()}
-                    className="w-full rounded-xl bg-white/5 border border-white/10 pl-10 pr-28 py-2.5 text-sm text-white placeholder:text-slate-400/60 focus:bg-white/10 focus:border-indigo-500/50 outline-none transition-all placeholder:text-[10px] sm:placeholder:text-sm"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-28 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:border-blue-500/50 focus:bg-white outline-none transition-all placeholder:text-xs sm:placeholder:text-sm dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400 dark:focus:bg-white/10"
                   />
-                  <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 group-hover:text-indigo-400 transition-colors" />
-                  <button 
+                  <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-hover:text-blue-500 transition-colors dark:group-hover:text-blue-400" />
+                  <button
                     onClick={handleSearchDestination}
                     disabled={isSearchingDestination}
-                    className="absolute right-2 top-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-[10px] font-bold text-white hover:bg-indigo-500 transition-all border border-indigo-400/20 shadow-lg shadow-indigo-500/20"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20"
                   >
                     {isSearchingDestination ? '...' : t.common.search}
                   </button>
@@ -2059,7 +2085,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-white/20 bg-slate-900/90 backdrop-blur-md shadow-2xl"
+                        className="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-white/20 dark:bg-slate-900"
                       >
                         {suggestions.map((feature, idx) => (
                           <button
@@ -2079,12 +2105,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               setShowSuggestions(false);
                               setSuggestions([]);
                             }}
-                            className="flex w-full flex-col px-4 py-3 text-left transition-colors hover:bg-white/10 border-b border-white/5 last:border-0"
+                            className="flex w-full flex-col px-4 py-3 text-left transition-colors hover:bg-slate-50 border-b border-slate-100 last:border-0 dark:hover:bg-white/10 dark:border-white/5"
                           >
-                            <span className="text-sm font-bold text-white">
+                            <span className="text-sm font-bold text-slate-900 dark:text-white">
                               {feature.properties.name}
                             </span>
-                            <span className="text-[10px] text-slate-400">
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {[
                                 feature.properties.city,
                                 feature.properties.state,
@@ -2106,16 +2132,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
               {isTimerRunning && (
                 <div className="mt-2 w-full max-w-[200px]">
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-xs uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400 mb-1">
                     <span>{t.tracker.safetyScore}</span>
                     <span>{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
-                    <motion.div 
+                  <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <motion.div
                       className={cn(
                         'h-full rounded-full transition-all duration-1000',
-                        currentMistakes.length < 2 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
-                        currentMistakes.length < 5 ? 'bg-yellow-500' : 'bg-red-500'
+                        currentMistakes.length < 2 ? 'bg-emerald-500' :
+                        currentMistakes.length < 5 ? 'bg-amber-500' : 'bg-red-500'
                       )}
                       initial={{ width: '100%' }}
                       animate={{ width: `${Math.max(0, 100 - (currentMistakes.length * 10))}%` }}
@@ -2126,26 +2152,26 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             </div>
 
             {!isTimerRunning && (
-              <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-white/10 pt-4">
+              <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-slate-200 pt-4 dark:border-white/10">
                 <div className="text-center">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                     {t.tracker.distance}
                   </p>
                   <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
                 </div>
-                <div className="text-center border-l border-white/10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <div className="text-center border-l border-slate-200 dark:border-white/10">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                     {t.tracker.speed}
                   </p>
                   <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
                 </div>
-                <div className="text-center border-l border-white/10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                <div className="text-center border-l border-slate-200 dark:border-white/10">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                     {t.tracker.limit}
                   </p>
                   <div className={cn(
                     'text-lg font-bold flex items-center justify-center gap-1',
-                    currentLimit && currentSpeed > currentLimit ? 'text-red-400' : 'text-white'
+                    currentLimit && currentSpeed > currentLimit ? 'text-red-500 dark:text-red-400' : 'text-slate-900 dark:text-white'
                   )}>
                     {currentLimit || '--'}
                     {currentLimit && (
@@ -2162,10 +2188,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {currentMistakes.length > 0 && (
               <div className="mt-6 w-full animate-in fade-in slide-in-from-top-2 duration-500">
                 <div className="flex items-center justify-between mb-3 px-1">
-                   <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                   <h5 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                      {t.tracker.mistakeLog}
                    </h5>
-                   <span className="text-[10px] font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full border border-red-400/20">
+                   <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200 dark:text-red-400 dark:bg-red-400/10 dark:border-red-400/20">
                      {currentMistakes.length} {t.tracker.mistakesCount}
                    </span>
                 </div>
@@ -2182,14 +2208,14 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     return Object.values(groups).map((group, idx) => (
                       <div 
                         key={idx} 
-                        className="group flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 pl-2 pr-3 py-1.5 text-[10px] font-bold text-white shadow-sm transition-all hover:bg-white/10"
+                        className="group flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 pl-2 pr-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-100 dark:bg-white/5 dark:border-white/10 dark:text-white dark:hover:bg-white/10"
                       >
-                        <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white shadow-sm transition-colors dark:bg-white/5 dark:shadow-none dark:group-hover:bg-white/10">
                           {getMistakeIconComponent(group.type)}
                         </div>
                         <span>{getMistakeLabel(group.type)}</span>
                         {group.count > 1 && (
-                          <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500/20 px-1 text-[9px] font-bold text-red-400">
+                          <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500/10 px-1 text-xs font-bold text-red-600 dark:bg-red-500/20 dark:text-red-400">
                             ×{group.count}
                           </span>
                         )}
@@ -2204,7 +2230,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               {isTimerRunning ? (
                 <button
                   onClick={handlePauseTimer}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
                 >
                   <Pause className="h-4 w-4" />
                   <span>{t.common.pause}</span>
@@ -2225,10 +2251,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   }}
                   data-testid={(activeSession && activeSession.isPaused) ? 'resume-tracking-btn' : 'start-tracking-btn'}
                   className={cn(
-                    'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
+                    'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
                     (!proActive && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
-                      ? 'bg-amber-500/90 hover:bg-amber-600 shadow-amber-500/20'
-                      : (activeSession && activeSession.isPaused) ? 'bg-indigo-500/90 hover:bg-indigo-600 shadow-indigo-500/20' : 'bg-green-500/90 hover:bg-green-600 shadow-green-500/20'
+                      ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'
+                      : (activeSession && activeSession.isPaused) ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20' : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20'
                   )}
                 >
                   {(activeSession && activeSession.isPaused) ? (
@@ -2257,7 +2283,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleStopTimer}
                 disabled={elapsedTime === 0 && !isTimerRunning}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500/90 backdrop-blur-md px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
               >
                 <Square className="h-4 w-4" />
                 {t.common.stopAndSave}
@@ -2285,7 +2311,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       });
                     });
                   }}
-                  className="flex items-center gap-1.5 rounded-lg bg-blue-50 px-2 py-1 text-[9px] font-bold uppercase tracking-tight text-blue-600 transition hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"
+                  className="flex min-h-9 items-center gap-1.5 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-bold uppercase tracking-tight text-blue-600 transition hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400"
                 >
                   <CheckCircle2 className="h-3 w-3" />
                   {language === 'de' ? 'ALLE OK' : 'ALL OK'}
@@ -2306,7 +2332,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     }
                   }}
                   disabled={syncing}
-                  className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-2 py-1 text-[9px] font-bold text-slate-600 transition hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+                  className="flex min-h-9 items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-slate-600 transition hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                 >
                   <RefreshCcw className={cn('h-3 w-3', syncing && 'animate-spin')} />
                   {syncing ? '...' : 'Sync'}
@@ -2316,7 +2342,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleExportData}
                 data-testid="export-history-btn"
-                className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+                className="flex min-h-9 items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
               >
                 <Database className="h-3 w-3" />
                 Export JSON
@@ -2324,7 +2350,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleClearHistory}
                 data-testid="purge-data-btn"
-                className="flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-bold text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
+                className="flex min-h-9 items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
               >
                 <Trash2 className="h-3 w-3" />
                 Purge All
@@ -2342,7 +2368,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 key={filter.id}
                 onClick={() => setFaultSourceFilter(filter.id as any)}
                 className={cn(
-                  'flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-bold transition-all',
+                  'flex min-h-9 items-center gap-2 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold transition-all',
                   faultSourceFilter === filter.id 
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
                     : 'bg-white text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700/50'
@@ -2355,7 +2381,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </div>
 
           {syncError && (
-            <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-[10px] font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
+            <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
               <AlertCircle className="h-3 w-3" />
               {syncError}
             </div>
@@ -2396,17 +2422,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {getTypeLabel(session.type)}
                               </h4>
                               {session.syncStatus === 'synced' ? (
-                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
+                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
                                   <Cloud className="h-2 w-2" />
                                   {t.tracker.published || 'Published'}
                                 </span>
                               ) : (
-                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
+                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
                                   {t.tracker.pendingSync || 'Syncing...'}
                                 </span>
                               )}
                               {session.isSimulation && (
-                                <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
+                                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                                   SIM
                                 </span>
                               )}
@@ -2419,19 +2445,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                         <div className="flex items-center gap-3">
                           <div className="text-right mr-2">
                             <p className="text-sm font-bold text-slate-900 dark:text-white">
-                              {session.duration} <span className="text-[10px] font-bold text-slate-400">min</span>
+                              {session.duration} <span className="text-xs font-bold text-slate-400">min</span>
                             </p>
                             <div className="flex items-center justify-end gap-2">
                               {session.mistakes && session.mistakes.length > 0 && (
                                 <div className="flex h-4 items-center gap-1 rounded bg-red-50 px-1 dark:bg-red-900/20">
                                   <AlertTriangle className="h-2.5 w-2.5 text-red-500" />
-                                  <span className="text-[8px] font-bold text-red-600 dark:text-red-400">
+                                  <span className="text-xs font-bold text-red-600 dark:text-red-400">
                                     {session.mistakes.length}
                                   </span>
                                 </div>
                               )}
                               {session.totalDistance !== undefined && (
-                                <p className="text-[10px] font-bold text-slate-500">
+                                <p className="text-xs font-bold text-slate-500">
                                   {session.totalDistance.toFixed(1)} km
                                 </p>
                               )}
@@ -2442,7 +2468,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       </div>
 
                       {session.locationSummary && (
-                        <div className="mt-3 flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
+                        <div className="mt-3 flex items-center gap-1.5 text-xs font-medium text-slate-500">
                           <MapPin className="h-3 w-3" />
                           {session.locationSummary}
                         </div>
@@ -2460,7 +2486,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Stats Grid */}
                           <div className="grid grid-cols-2 gap-4 mb-4">
                             <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-                              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
                                 {t.tracker.cost || 'Cost'}
                               </p>
                               <p className="text-lg font-bold text-slate-900 dark:text-white">
@@ -2468,12 +2494,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               </p>
                             </div>
                             <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-                              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
                                 {t.tracker.mistakesCount || 'Mistakes'}
                               </p>
                               <p className={cn(
                                 'text-lg font-bold',
-                                (session.mistakes?.length || 0) === 0 ? 'text-green-500' : 'text-red-500'
+                                (session.mistakes?.length || 0) === 0 ? 'text-emerald-500' : 'text-red-500'
                               )}>
                                 {session.mistakes?.length || 0}
                               </p>
@@ -2500,7 +2526,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                   </p>
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
-                                    className="rounded-full bg-blue-600 px-4 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-blue-600/20 active:scale-95"
+                                    className="rounded-full bg-blue-600 px-4 py-1.5 text-xs font-bold text-white shadow-lg shadow-blue-600/20 active:scale-95"
                                   >
                                     {t.tracker.unlockPro}
                                   </button>
@@ -2513,11 +2539,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {session.mistakes && session.mistakes.length > 0 && (
                             <div className="mt-4">
                               <div className="mb-3 flex items-center justify-between">
-                                <h5 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                <h5 className="text-xs font-bold uppercase tracking-widest text-slate-400">
                                   {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
                                 </h5>
                                 {!proActive && (
-                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
                                     PRO Analysis
                                   </span>
                                 )}
@@ -2553,7 +2579,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                           <div className="space-y-2">
                                             <div className="flex items-center gap-2">
                                               <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-                                              <span className="text-[9px] font-bold uppercase tracking-tighter text-amber-600 dark:text-amber-400">
+                                              <span className="text-xs font-bold uppercase tracking-tighter text-amber-600 dark:text-amber-400">
                                                 {language === 'de' ? 'ÜBERPRÜFUNG ERFORDERLICH' : 'NEEDS REVIEW'}
                                               </span>
                                             </div>
@@ -2568,31 +2594,33 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                       <div className="flex items-center gap-2">
                                                         <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
                                                         <span className={cn(
-                                                          'rounded px-1 py-0.5 text-[7px] font-bold uppercase tracking-widest',
-                                                          (m.source === 'manual') 
-                                                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
-                                                            : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                          'rounded px-1 py-0.5 text-xs font-bold uppercase tracking-widest',
+                                                          (m.source === 'manual')
+                                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/50 dark:border-blue-500/20'
+                                                            : 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300'
                                                         )}>
-                                                          {m.source === 'manual' ? 'Manual' : 'Auto'}
+                                                          {m.source === 'manual' ? (language === 'de' ? 'Manuell' : 'Manual') : 'Auto'}
                                                         </span>
                                                       </div>
-                                                      <span className="text-[8px] font-medium text-slate-400">
+                                                      <span className="text-xs font-medium text-slate-400">
                                                         {new Date(m.timestamp).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                       </span>
                                                     </div>
                                                   </div>
                                                   <div className="flex items-center gap-1">
-                                                    <button 
+                                                    <button
                                                       onClick={(e) => { e.stopPropagation(); updateMistakeStatus(session.id, m.timestamp, 'rejected'); }}
-                                                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-400 shadow-sm transition hover:bg-red-50 hover:text-red-500 dark:bg-slate-800 dark:hover:bg-red-900/20"
+                                                      className="flex h-11 w-11 items-center justify-center rounded-lg bg-white text-slate-500 shadow-sm transition hover:bg-red-50 hover:text-red-500 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-red-900/20"
                                                       title={t.common.reject}
+                                                      aria-label={t.common.reject}
                                                     >
                                                       <X className="h-4 w-4" />
                                                     </button>
-                                                    <button 
+                                                    <button
                                                       onClick={(e) => { e.stopPropagation(); updateMistakeStatus(session.id, m.timestamp, 'confirmed'); }}
-                                                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95"
+                                                      className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-600 text-white shadow-md shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95"
                                                       title={t.common.approve}
+                                                      aria-label={t.common.approve}
                                                     >
                                                       <Check className="h-4 w-4" />
                                                     </button>
@@ -2606,7 +2634,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                         {Object.keys(groups).length > 0 && (
                                           <div className="space-y-2">
                                             {pendingMistakes.length > 0 && (
-                                              <span className="text-[9px] font-bold uppercase tracking-tighter text-slate-400">
+                                              <span className="text-xs font-bold uppercase tracking-tighter text-slate-400">
                                                 {language === 'de' ? 'BESTÄTIGTES PROTOKOLL' : 'VERIFIED LOG'}
                                               </span>
                                             )}
@@ -2628,15 +2656,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                             {getMistakeLabel(group.type)}
                                                           </span>
                                                           <span className={cn(
-                                                            'rounded px-1 py-0.5 text-[7px] font-bold uppercase tracking-widest',
-                                                            (group.source === 'manual') 
-                                                              ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-500/20'
-                                                              : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                            'rounded px-1 py-0.5 text-xs font-bold uppercase tracking-widest',
+                                                            (group.source === 'manual')
+                                                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/50 dark:border-blue-500/20'
+                                                              : 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300'
                                                           )}>
-                                                            {group.source === 'manual' ? 'Manual' : 'Auto'}
+                                                            {group.source === 'manual' ? (language === 'de' ? 'Manuell' : 'Manual') : 'Auto'}
                                                           </span>
                                                         </div>
-                                                        <span className="text-[9px] font-medium text-slate-400">
+                                                        <span className="text-xs font-medium text-slate-400">
                                                           {group.count > 1 ? `${group.count}x · ` : ''} 
                                                           {new Date(group.latest).toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
@@ -2644,7 +2672,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                     </div>
                                                     {group.count > 1 && (
                                                       <div className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-50 px-2 dark:bg-slate-900/50">
-                                                        <span className="text-[10px] font-bold text-slate-400">
+                                                        <span className="text-xs font-bold text-slate-400">
                                                           ×{group.count}
                                                         </span>
                                                       </div>
@@ -2660,12 +2688,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 </div>
                               ) : (
                                 <div className="rounded-xl border border-dashed border-slate-200 p-4 text-center dark:border-slate-700">
-                                  <p className="mb-2 text-[10px] font-medium text-slate-500 italic">
+                                  <p className="mb-2 text-xs font-medium text-slate-500 italic">
                                     {t.tracker.faultAnalysisUpgradeNote}
                                   </p>
                                   <button 
                                     onClick={(e) => { e.stopPropagation(); onOpenPaywall?.(); }}
-                                    className="text-[10px] font-bold text-blue-600 hover:underline dark:text-blue-400"
+                                    className="text-xs font-bold text-blue-600 hover:underline dark:text-blue-400"
                                   >
                                     {t.tracker.seeDetails}
                                   </button>
@@ -2677,7 +2705,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Notes */}
                           {session.notes && (
                             <div className="mt-4">
-                              <h5 className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                              <h5 className="mb-1 text-xs font-bold uppercase tracking-widest text-slate-400">
                                 {((t.tracker as any).notes as string) || 'Notes'}
                               </h5>
                               <p className="text-xs text-slate-600 dark:text-slate-400 italic">
@@ -2690,13 +2718,15 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
                             <button
                               onClick={() => handleRemoveSession(session.id)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
+                              aria-label={language === 'de' ? 'Fahrt löschen' : 'Delete session'}
+                              className="flex h-11 w-11 items-center justify-center rounded-lg bg-red-50 text-red-600 transition-all hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleEditOpen(session)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400"
+                              aria-label={language === 'de' ? 'Fahrt bearbeiten' : 'Edit session'}
+                              className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400"
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
@@ -2839,8 +2869,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"
           >
-            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
-              Safe Driving Mode Active
+            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
+              {language === 'de' ? 'Sicherer Fahrmodus aktiv' : 'Safe driving mode active'}
             </div>
           </motion.div>
         )}
@@ -2873,7 +2903,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleCloseForm}
                 data-testid="close-add-session-btn"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                aria-label={language === 'de' ? 'Schließen' : 'Close'}
+                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -2989,7 +3020,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleAddSession}
                 data-testid="save-session-btn"
-                className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:from-blue-600 hover:to-blue-700 active:scale-[0.98]"
+                className="w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-[0.98]"
               >
                 {editingSessionId 
                   ? t.common.saveChanges
@@ -3016,20 +3047,21 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="flex w-full flex-col overflow-hidden rounded-2xl bg-slate-900 border border-white/10 sm:max-w-md shadow-2xl p-6"
+              className="flex w-full flex-col overflow-hidden rounded-2xl bg-white border border-slate-200 sm:max-w-md shadow-2xl p-6 dark:bg-slate-900 dark:border-white/10"
             >
               <div className="mb-6 flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/20 text-red-400">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400">
                     <AlertTriangle className="h-5 w-5" />
                   </div>
-                  <h4 className="text-lg font-bold text-white">
+                  <h4 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.tracker.manualLogTitle}
                   </h4>
                 </div>
-                <button 
-                  onClick={() => setShowManualLog(false)} 
-                  className="rounded-full bg-white/5 p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-all"
+                <button
+                  onClick={() => setShowManualLog(false)}
+                  aria-label={language === 'de' ? 'Schließen' : 'Close'}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-all dark:bg-white/5 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -3039,7 +3071,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <button 
                   onClick={() => handleManualMistake('priority')} 
                   data-testid="manual-mistake-priority"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <AlertTriangle className="h-6 w-6 text-red-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.priority}</span>
@@ -3047,7 +3079,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <button 
                   onClick={() => handleManualMistake('stop_sign')} 
                   data-testid="manual-mistake-stop_sign"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <Square className="h-6 w-6 text-red-600" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.stopSign}</span>
@@ -3055,7 +3087,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <button 
                   onClick={() => handleManualMistake('right_before_left')} 
                   data-testid="manual-mistake-right_before_left"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <CornerUpRight className="h-6 w-6 text-amber-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.rightBeforeLeft}</span>
@@ -3063,7 +3095,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <button 
                   onClick={() => handleManualMistake('wrong_way')} 
                   data-testid="manual-mistake-wrong_way"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <Ban className="h-6 w-6 text-red-700" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.wrongWay}</span>
@@ -3072,56 +3104,56 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 <button 
                   onClick={() => handleManualMistake('shoulder_check')} 
                   data-testid="manual-mistake-shoulder_check"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                  <Eye className="h-6 w-6 text-blue-400" />
+                  <Eye className="h-6 w-6 text-blue-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.shoulderCheck}</span>
                 </button>
                 <button 
                   onClick={() => handleManualMistake('mirror_check')} 
                   data-testid="manual-mistake-mirror_check"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                   <View className="h-6 w-6 text-slate-400" />
+                   <View className="h-6 w-6 text-slate-500 dark:text-slate-400" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.mirrorCheck}</span>
                 </button>
                 <button 
                   onClick={() => handleManualMistake('signal')} 
                   data-testid="manual-mistake-signal"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                  <Signal className="h-6 w-6 text-amber-400" />
+                  <Signal className="h-6 w-6 text-amber-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.signal}</span>
                 </button>
                 <button 
                   onClick={() => handleManualMistake('pedestrian_safety')} 
                   data-testid="manual-mistake-pedestrian_safety"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                   <Footprints className="h-6 w-6 text-purple-400" />
+                   <Footprints className="h-6 w-6 text-amber-600" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.pedestrianSafety}</span>
                 </button>
 
                 <button 
                   onClick={() => handleManualMistake('speeding')} 
                   data-testid="manual-mistake-speeding"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                  <Gauge className="h-6 w-6 text-red-400" />
+                  <Gauge className="h-6 w-6 text-red-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.speeding}</span>
                 </button>
                 <button 
                   onClick={() => handleManualMistake('harsh_braking')} 
                   data-testid="manual-mistake-harsh_braking"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
-                   <AlertCircle className="h-6 w-6 text-orange-500" />
+                   <AlertCircle className="h-6 w-6 text-amber-600" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.harshBraking}</span>
                 </button>
                 <button 
                   onClick={() => handleManualMistake('other')} 
                   data-testid="manual-mistake-other"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl bg-white/5 p-4 text-[10px] font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white active:scale-95 border border-white/5"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                 >
                   <MoreHorizontal className="h-6 w-6 text-slate-500" />
                   <span className="text-center leading-tight">{t.tracker.mistakes.other}</span>

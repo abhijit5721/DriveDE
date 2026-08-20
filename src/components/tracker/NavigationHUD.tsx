@@ -60,6 +60,15 @@ export interface NavigationHUDProps {
     saved: string;
     safetyScore: string;
     yourDestination: string;
+    stopAndSave?: string;
+    logMistake?: string;
+    exitNav?: string;
+    recenter?: string;
+    nextRoad?: string;
+    score?: string;
+    duration?: string;
+    etaLabel?: string;
+    moreOptions?: string;
   };
 }
 
@@ -143,7 +152,7 @@ function SpeedometerGauge({ speed, limit, isSpeeding }: { speed: number; limit: 
         <circle
           cx="64" cy="64" r="58"
           stroke="currentColor" strokeWidth="8" fill="transparent"
-          className="text-slate-200 dark:text-slate-800"
+          className="text-slate-200 dark:text-slate-700"
         />
         <motion.circle
           cx="64" cy="64" r="58"
@@ -156,10 +165,10 @@ function SpeedometerGauge({ speed, limit, isSpeeding }: { speed: number; limit: 
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className={cn('text-4xl font-black tracking-tighter', isSpeeding ? 'text-red-500' : 'text-slate-900')}>
+        <span className={cn('text-4xl font-black tracking-tighter', isSpeeding ? 'text-red-500' : 'text-slate-900 dark:text-white')}>
           {speed}
         </span>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">km/h</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">km/h</span>
       </div>
     </div>
   );
@@ -188,7 +197,7 @@ function SpeedSign({ limit, speeding, currentSpeed }: { limit: number; speeding:
           animate={{ y: 0, opacity: 1 }}
           className="rounded-md bg-red-600 px-2 py-0.5 shadow-lg"
         >
-          <span className="text-[10px] font-black text-white">+{delta} km/h</span>
+          <span className="text-sm font-black text-white">+{delta} km/h</span>
         </motion.div>
       )}
     </div>
@@ -200,11 +209,11 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   gpsPoints, currentSpeed, currentLimit, elapsedTime, currentDistance,
   safetyScore, mistakeGroups, isPaused, destinationCoords, destinationLabel,
   onPause, onResume, onStop, onLogProblem, onExit, showMistakeSuccess,
-  nextInstruction = 'Take the exit toward Pacific Blvd East',
-  distanceToNextTurn = '20 m',
-  nextRoadName = 'Cambie St',
-  currentRoadName = 'W 2nd Ave',
-  eta = '22:43',
+  nextInstruction = '',
+  distanceToNextTurn = '',
+  nextRoadName = '',
+  currentRoadName = '',
+  eta = '',
   signalQuality = 'good',
   t
 }) => {
@@ -259,41 +268,29 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex flex-col bg-slate-950 font-sans"
     >
-      {/* ═══════════ TOP INSTRUCTION BAR ═══════════════════════════════ */}
-      <motion.div 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="absolute left-0 right-0 top-0 z-[100] bg-[#00897B] pb-3 pt-10 shadow-lg"
-      >
-        <div className="flex items-start px-6">
-          <div className="mr-5 flex flex-col items-center">
-            {getInstructionIcon(nextInstruction || '')}
-            <span className="mt-1 text-lg font-bold text-white">{distanceToNextTurn}</span>
+      {/* ═══════════ TOP INSTRUCTION BAR (single navigation source) ═══ */}
+      {(nextInstruction || nextRoadName) && (
+        <motion.div
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          className="absolute left-0 right-0 top-0 z-[100] bg-blue-600 pb-3 pt-10 shadow-lg dark:bg-blue-700"
+        >
+          <div className="flex items-start px-6">
+            <div className="mr-5 flex flex-col items-center">
+              {getInstructionIcon(nextInstruction || '')}
+              {distanceToNextTurn && (
+                <span className="mt-1 text-lg font-bold text-white">{distanceToNextTurn}</span>
+              )}
+            </div>
+            <div className="flex-1 pt-1">
+              <span className="text-xs font-bold uppercase tracking-widest text-white/70">{t.nextRoad || 'Next road'}</span>
+              {nextRoadName && (
+                <h1 className="text-2xl font-bold leading-tight text-white">{nextRoadName}</h1>
+              )}
+            </div>
           </div>
-          <div className="flex-1 pt-1">
-            <span className="text-xs font-bold uppercase tracking-widest text-white/70">Next Road</span>
-            <h1 className="text-2xl font-bold leading-tight text-white">{nextRoadName}</h1>
-          </div>
-        </div>
-        
-        {/* Lane indicators */}
-        <div className="mt-4 flex items-center justify-center gap-4 border-t border-white/10 pt-3">
-          <div className="flex flex-col items-center opacity-40">
-             <CornerUpLeft className="h-4 w-4 text-white" />
-          </div>
-          <div className="flex flex-col items-center">
-             <MoveUp className="h-4 w-4 text-white" />
-             <div className="mt-1 h-1 w-4 rounded-full bg-white" />
-          </div>
-          <div className="flex flex-col items-center">
-             <MoveUp className="h-4 w-4 text-white" />
-             <div className="mt-1 h-1 w-4 rounded-full bg-white" />
-          </div>
-          <div className="flex flex-col items-center opacity-40">
-             <CornerUpRight className="h-4 w-4 text-white" />
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      )}
 
       {/* ═══════════ MAP SECTION ═══════════════════════════════════ */}
       <div className="relative flex-1 overflow-hidden">
@@ -349,18 +346,20 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         {/* ── Floating Map Overlays ─────────────────────────────────── */}
         
         {/* Current Road Label */}
-        <div className="absolute bottom-4 left-1/2 z-[110] -translate-x-1/2">
-          <div className="flex items-center gap-2 rounded-full bg-[#3b82f6] px-4 py-1.5 shadow-xl">
-             <Navigation2 className="h-3 w-3 fill-white text-white" />
-             <span className="text-[11px] font-bold uppercase tracking-tight text-white">{currentRoadName}</span>
-          </div>
+        <div className="absolute bottom-4 left-1/2 z-[110] flex -translate-x-1/2 flex-col items-center gap-1.5">
+          {currentRoadName && (
+            <div className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-1.5 shadow-xl">
+               <Navigation2 className="h-3 w-3 fill-white text-white" />
+               <span className="text-sm font-bold uppercase tracking-tight text-white">{currentRoadName}</span>
+            </div>
+          )}
 
           {/* Signal Indicator */}
           <div className={cn(
-            'flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest shadow-lg transition-colors',
-            signalQuality === 'excellent' ? 'bg-emerald-500/90 text-white' :
-            signalQuality === 'good' ? 'bg-amber-500/90 text-white' :
-            'bg-red-500/90 text-white animate-pulse'
+            'flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest shadow-lg transition-colors',
+            signalQuality === 'excellent' ? 'bg-emerald-500 text-white' :
+            signalQuality === 'good' ? 'bg-amber-500 text-white' :
+            'bg-red-500 text-white animate-pulse'
           )}>
             <Signal className="h-3 w-3" />
             {signalQuality}
@@ -380,26 +379,31 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         <div className="absolute top-[350px] right-6 z-[120]">
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#00897B] shadow-2xl transition-all"
+            aria-label={t.recenter || 'Recenter map'}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-blue-600 shadow-2xl transition-all dark:bg-slate-800 dark:text-blue-400"
           >
-            <Navigation className="h-6 w-6 fill-[#00897B]" />
+            <Navigation className="h-6 w-6 fill-current" />
           </motion.button>
         </div>
 
-        {/* Problem Button */}
+        {/* Problem Button (hero action: log a mistake) */}
         <div className="absolute top-[420px] right-6 z-[120]">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onLogProblem}
             data-testid="problem-btn"
+            aria-label={t.logMistake || 'Log mistake'}
             className={cn(
-              'flex h-14 w-14 items-center justify-center rounded-full shadow-2xl backdrop-blur-md transition-all',
+              'flex min-h-14 items-center justify-center gap-2 rounded-full px-5 shadow-2xl transition-all',
               showMistakeSuccess
                 ? 'bg-emerald-500 text-white'
-                : 'bg-red-500 text-white hover:bg-red-600'
+                : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
             )}
           >
             <AlertTriangle className="h-6 w-6" />
+            <span className="text-sm font-bold">
+              {showMistakeSuccess ? t.saved : (t.logMistake || 'Log mistake')}
+            </span>
           </motion.button>
         </div>
       </div>
@@ -408,73 +412,62 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
       <motion.div
         initial={{ y: 300 }}
         animate={{ y: 0 }}
-        className="relative z-[100] flex flex-col rounded-t-[32px] bg-white px-6 pb-10 pt-2 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"
+        className="relative z-[100] flex flex-col rounded-t-[32px] bg-white px-6 pb-10 pt-2 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] dark:bg-slate-900"
       >
         {/* Handle */}
-        <div className="mx-auto mb-4 mt-1 h-1.5 w-12 rounded-full bg-slate-200" />
+        <div className="mx-auto mb-4 mt-1 h-1.5 w-12 rounded-full bg-slate-200 dark:bg-slate-700" />
 
         {/* Stats Section */}
         <div className="flex items-center justify-between pb-6">
-          <button 
+          <button
             onClick={onExit}
             data-testid="minimize-navigation-btn"
-            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm active:scale-95 transition-transform"
-            title="Exit Navigation"
+            aria-label={t.exitNav || 'Exit navigation'}
+            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm active:scale-95 transition-transform dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            title={t.exitNav || 'Exit navigation'}
           >
             <X className="h-6 w-6" />
           </button>
 
           <div className="flex flex-col items-center">
-            <span className="text-3xl font-bold text-[#00897B]">2 min</span>
-            <div className="flex items-center gap-2 text-slate-500">
-              <span className="text-sm font-bold">{(currentDistance/1000).toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></span>
-              <span className="text-slate-300">•</span>
-              <span className="text-sm font-bold">{eta}</span>
-            </div>
+            <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              {(currentDistance/1000).toFixed(1)} <span className="text-lg font-bold">km</span>
+            </span>
+            {eta && (
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <span className="text-sm font-bold uppercase tracking-wider">{t.etaLabel || 'ETA'}</span>
+                <span className="text-sm font-bold">{eta}</span>
+              </div>
+            )}
           </div>
 
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm">
+          <div
+            aria-hidden="true"
+            className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+          >
              <MoreVertical className="h-6 w-6" />
           </div>
         </div>
 
-        {/* Instruction Banner */}
-        <div className="flex items-start gap-5 border-t border-slate-100 pt-6">
-          <div className="mt-1 rounded-xl bg-slate-100 p-2">
-            {getInstructionIcon(nextInstruction || '', 'h-7 w-7 text-[#00897B]')}
-          </div>
-          <div className="flex-1">
-            <p className="text-lg font-bold leading-tight text-slate-900">
-              {nextInstruction}
-            </p>
-            <p className="mt-1 text-sm font-bold text-slate-400">
-              {distanceToNextTurn}
-            </p>
-          </div>
-          <div className="mt-1">
-            <Navigation2 className="h-6 w-6 text-[#00897B] fill-[#00897B]" />
-          </div>
-        </div>
-
         {/* Driving Stats Row (Compact) */}
-        <div className="mt-8 flex items-center justify-around rounded-3xl bg-slate-50 py-6 border border-slate-100">
+        <div className="flex items-center justify-around rounded-3xl border border-slate-100 bg-slate-50 py-6 dark:border-slate-700/60 dark:bg-slate-800/60">
            <div className="flex flex-col items-center">
               <SpeedometerGauge speed={currentSpeed} limit={currentLimit} isSpeeding={isSpeeding} />
            </div>
-           <div className="h-8 w-px bg-slate-200" />
+           <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
             <div className="flex flex-col items-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Score</span>
-              <span 
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t.score || 'Score'}</span>
+              <span
                 data-testid="safety-score-value"
                 className={cn('text-xl font-bold', scoreColor)}
               >
                 {safetyScore}%
               </span>
             </div>
-           <div className="h-8 w-px bg-slate-200" />
+           <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Duration</span>
-              <span className="text-xl font-bold text-slate-900">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{t.duration || 'Duration'}</span>
+              <span className="text-xl font-bold text-slate-900 dark:text-white">
                 {formatTime(elapsedTime)}
               </span>
            </div>
@@ -489,7 +482,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               className="mt-4 flex flex-wrap gap-2 overflow-hidden"
             >
               {mistakeGroups.map((g, i) => (
-                <span key={i} className="flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-[11px] font-bold text-red-600">
+                <span key={i} className="flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600 dark:bg-red-900/20 dark:text-red-400">
                   <AlertTriangle className="h-3 w-3" />
                   {g.label} {g.count > 1 && `×${g.count}`}
                 </span>
@@ -498,36 +491,45 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           )}
         </AnimatePresence>
         
-        {/* Pause/Resume Toggle */}
-        <div className="mt-6 flex gap-3">
-           <button 
-             onClick={isPaused ? onResume : onPause}
-             data-testid="pause-tracking-btn"
+        {/* Actions */}
+        <div className="mt-6 flex flex-col gap-3">
+           {/* Hero action: log a mistake */}
+           <button
+             onClick={onLogProblem}
+             aria-label={t.logMistake || 'Log mistake'}
              className={cn(
-               'flex flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition-all shadow-md',
-               isPaused ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600'
+               'flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold shadow-md transition-all active:scale-[0.98]',
+               showMistakeSuccess
+                 ? 'bg-emerald-500 text-white'
+                 : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
              )}
            >
-             {isPaused ? <Play className="h-4 w-4 fill-white" /> : <Pause className="h-4 w-4 fill-slate-600" />}
-             {isPaused ? 'Resume' : 'Pause'}
-           </button>
-
-           <button 
-             onClick={onStop}
-             data-testid="stop-tracking-btn"
-             className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-bold text-red-600 transition-all shadow-md active:scale-95"
-           >
-             <Square className="h-4 w-4 fill-red-600" />
-             Stop & Save
-           </button>
-
-           <button 
-             onClick={onLogProblem}
-             className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 shadow-md active:scale-95"
-             title="Log Problem"
-           >
              <AlertTriangle className="h-5 w-5" />
+             {showMistakeSuccess ? t.saved : (t.logMistake || 'Log mistake')}
            </button>
+
+           <div className="flex gap-3">
+             <button
+               onClick={isPaused ? onResume : onPause}
+               data-testid="pause-tracking-btn"
+               className={cn(
+                 'flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition-all shadow-md',
+                 isPaused ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+               )}
+             >
+               {isPaused ? <Play className="h-4 w-4 fill-white" /> : <Pause className="h-4 w-4 fill-current" />}
+               {isPaused ? t.resume : t.pause}
+             </button>
+
+             <button
+               onClick={onStop}
+               data-testid="stop-tracking-btn"
+               className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-bold text-red-600 transition-all shadow-md active:scale-95 dark:bg-red-900/20 dark:text-red-400"
+             >
+               <Square className="h-4 w-4 fill-current" />
+               {t.stopAndSave || 'Stop & Save'}
+             </button>
+           </div>
         </div>
       </motion.div>
 
@@ -550,7 +552,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               <div className="text-[160px] font-bold italic leading-none text-white tracking-tighter">
                 {startingPhase === 'finding' ? '...' : startingPhase.toUpperCase()}
               </div>
-              <p className="mt-4 text-2xl font-bold uppercase tracking-[0.4em] text-[#00897B]">
+              <p className="mt-4 text-2xl font-bold uppercase tracking-[0.4em] text-blue-500">
                 {startingPhase === 'finding' ? 'Locating' : 'Ready'}
               </p>
             </motion.div>

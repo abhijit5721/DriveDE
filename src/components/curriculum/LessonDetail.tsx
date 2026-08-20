@@ -38,7 +38,6 @@ import {
   Trophy,
   Wrench,
   Clock,
-  TrendingUp,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -219,7 +218,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   'flex w-full items-center gap-3 rounded-xl p-4 text-left transition-all',
                   showExplanation
                     ? option.id === question.correctOptionId
-                      ? 'bg-green-100 ring-2 ring-green-500 dark:bg-green-900/30'
+                      ? 'bg-emerald-100 ring-2 ring-emerald-500 dark:bg-emerald-900/30'
                       : option.id === selectedAnswer
                       ? 'bg-red-100 ring-2 ring-red-500 dark:bg-red-900/30'
                       : 'bg-slate-100 dark:bg-slate-700'
@@ -230,7 +229,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   className={cn(
                     'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold',
                     showExplanation && option.id === question.correctOptionId
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-emerald-500 text-white'
                       : showExplanation && option.id === selectedAnswer
                       ? 'bg-red-500 text-white'
                       : 'bg-white text-slate-700 dark:bg-slate-600 dark:text-white'
@@ -250,13 +249,13 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               className={cn(
                 'mt-4 rounded-xl p-4',
                 isCorrect
-                  ? 'bg-green-50 dark:bg-green-900/20'
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20'
                   : 'bg-red-50 dark:bg-red-900/20'
               )}
             >
               <div className="flex items-center gap-2">
                 {isCorrect ? (
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 ) : (
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
                 )}
@@ -264,7 +263,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   className={cn(
                     'font-semibold',
                     isCorrect
-                      ? 'text-green-800 dark:text-green-300'
+                      ? 'text-emerald-800 dark:text-emerald-300'
                       : 'text-red-800 dark:text-red-300'
                   )}
                 >
@@ -282,7 +281,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {showExplanation && (
             <button
               onClick={handleFinish}
-              className="mt-4 w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 py-3 font-semibold text-white transition-all hover:from-blue-600 hover:to-blue-700"
+              className="mt-4 w-full rounded-xl bg-blue-600 py-3 min-h-11 font-semibold text-white transition-all hover:bg-blue-700"
             >
               {t.curriculum.completeLesson}
             </button>
@@ -297,30 +296,26 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       {/* 1. Header & Quick Back */}
       <PageHeader title={isDE ? lesson.titleDe : lesson.titleEn} onBack={onBack} />
 
-      {/* 2. Premium Hero Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
-        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
+      {/* 2. Lesson Description Card */}
+      <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
+        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
           {isDE ? lesson.descriptionDe : lesson.descriptionEn}
         </p>
 
         {/* Quick Metrics Bar */}
-        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800/80">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-bold text-slate-200">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
-            ⏱️ ~8 Min
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-bold text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-            +15% {isDE ? 'Prüfungsreife' : 'Exam Score'}
+        <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-line">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-surface-raised border border-line text-xs font-bold text-slate-700 dark:text-slate-200">
+            <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            ~8 Min
           </span>
           {isCompleted && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-bold text-emerald-400">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-bold text-emerald-700 dark:text-emerald-400">
               <CheckCircle className="w-3.5 h-3.5" />
               {isDE ? 'Abgeschlossen' : 'Completed'}
             </span>
           )}
           {lesson.learningPath === 'both' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-bold text-blue-400">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-bold text-blue-700 dark:text-blue-400">
               🇩🇪 {isDE ? 'Umschreibung & Ersterwerb' : 'Conversion & Standard'}
             </span>
           )}
@@ -328,14 +323,14 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
       </div>
 
       {/* 3. Segmented 3-Tab Workspace Switcher */}
-      <div className="flex p-1 rounded-2xl bg-slate-900 border border-slate-800">
+      <div className="flex p-1 rounded-2xl bg-surface-raised border border-line">
         <button
           onClick={() => setActiveLessonTab('learn')}
           className={cn(
-            'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+            'flex-1 py-2.5 px-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
             activeLessonTab === 'learn'
               ? 'bg-blue-600 text-white shadow-md'
-              : 'text-slate-400 hover:text-white'
+              : 'text-muted hover:text-slate-900 dark:hover:text-white'
           )}
         >
           <BookOpen className="w-4 h-4" />
@@ -346,10 +341,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           <button
             onClick={() => setActiveLessonTab('rules')}
             className={cn(
-              'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+              'flex-1 py-2.5 px-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
               activeLessonTab === 'rules'
                 ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                : 'text-muted hover:text-slate-900 dark:hover:text-white'
             )}
           >
             <Shield className="w-4 h-4" />
@@ -361,10 +356,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           <button
             onClick={() => setActiveLessonTab('quiz')}
             className={cn(
-              'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
+              'flex-1 py-2.5 px-3 min-h-11 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5',
               activeLessonTab === 'quiz'
                 ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                : 'text-muted hover:text-slate-900 dark:hover:text-white'
             )}
           >
             <GraduationCap className="w-4 h-4" />
@@ -378,22 +373,22 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
         <div className="space-y-6">
           {/* Interactive Vorfahrt Simulator */}
           {isVorfahrtLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                   <Activity className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.interactiveSimulator}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.masterSituation}
                   </p>
                 </div>
               </div>
               
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveVorfahrt 
                   key={lesson.id}
                   onComplete={handleFinish} 
@@ -407,22 +402,22 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Mirror Check Section */}
           {isMirrorLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                   <Eye className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.shoulderScan}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.scanningSequence}
                   </p>
                 </div>
               </div>
               
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveMirrorCheck 
                   onComplete={handleFinish} 
                   language={language}
@@ -434,22 +429,22 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Roundabout Section */}
           {isRoundaboutLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                   <RotateCcw className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.roundaboutCheck}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.signalingRules}
                   </p>
                 </div>
               </div>
               
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveRoundabout onComplete={handleFinish} language={language} />
               </div>
             </div>
@@ -457,21 +452,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Emergency Brake Section */}
           {isEmergencyBrakeLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20">
                   <Zap className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.emergencyBrakeCheck}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.reactionTimeTraining}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveEmergencyBrake onComplete={handleFinish} language={language} />
               </div>
             </div>
@@ -479,21 +474,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Parking Section */}
           {isParkingLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
                   <Car className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.parkingCheck}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.parallelParkingStep}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveParking onComplete={handleFinish} language={language} />
               </div>
             </div>
@@ -501,21 +496,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Tech Check Section */}
           {isTechLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                   <Activity className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.vehicleCheck}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.techKnowledge}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveTechCheck onComplete={handleFinish} language={language} />
               </div>
             </div>
@@ -523,21 +518,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Pre-drive Cockpit Check: controls + warning lamps (DRI-12) */}
           {isTechLesson && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                   <Gauge className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.preDriveTrainer}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.preDriveTrainerSub}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <PreDriveCheckTrainer
                   onComplete={handleFinish}
                   onScore={(pct) => setQuizScore('predrive-check', pct)}
@@ -549,21 +544,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Cockpit Trainer: moving off & shifting (DRI-11) */}
           {(isCockpitManual || isCockpitAutomatic) && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                   <Gauge className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.cockpitTrainer}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.cockpitTrainerSub}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <CockpitTrainer
                   onComplete={handleFinish}
                   onScore={(pct) => setQuizScore('cockpit-trainer', pct)}
@@ -576,21 +571,21 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Interactive Exam Simulation Section */}
           {isExamSim && (
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                   <Trophy className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t.curriculum.examSimulation}
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.expertFeedback}
                   </p>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
                 <InteractiveExamSimulation onComplete={handleFinish} language={language} />
               </div>
             </div>
@@ -598,16 +593,16 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* Instructor Tips & Practical How-To Instructions */}
           {lesson.tips && lesson.tips.length > 0 && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+            <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 font-bold">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold">
                   <Zap className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-white">
+                  <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
                     {isDE ? '💡 Experten-Tipps & Praxishinweise' : '💡 Expert Tips & Instructions'}
                   </h4>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {isDE ? 'Wichtige Ratschläge vom Fahrlehrer für die Praxis' : 'Key practical advice from driving instructors'}
                   </p>
                 </div>
@@ -618,19 +613,19 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   <div
                     key={tip.id}
                     className={cn(
-                      'rounded-2xl p-4 border space-y-1.5 shadow-md',
+                      'rounded-2xl p-4 border space-y-1.5 shadow-sm',
                       tip.type === 'warning'
-                        ? 'bg-amber-950/30 border-amber-500/30 text-amber-200'
+                        ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-500/30'
                         : tip.type === 'success'
-                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
-                        : 'bg-slate-950/80 border-slate-800 text-slate-300'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-500/30'
+                        : 'bg-surface-raised border-line'
                     )}
                   >
-                    <p className="text-sm font-extrabold text-white flex items-center gap-2">
+                    <p className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{tip.type === 'warning' ? '⚠️' : tip.type === 'success' ? '✅' : '💡'}</span>
                       <span>{isDE ? tip.titleDe : tip.titleEn}</span>
                     </p>
-                    <p className="text-xs leading-relaxed text-slate-300">
+                    <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
                       {isDE ? tip.contentDe : tip.contentEn}
                     </p>
                   </div>
@@ -648,15 +643,20 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   <button
                     key={idx}
                     onClick={() => setCurrentStep(idx)}
-                    className={cn(
-                      'h-2 rounded-full transition-all',
-                      idx === currentStep
-                        ? 'w-8 bg-blue-500'
-                        : idx < currentStep
-                        ? 'w-2 bg-emerald-500'
-                        : 'w-2 bg-slate-800'
-                    )}
-                  />
+                    aria-label={`${t.curriculum.step} ${idx + 1}`}
+                    className="flex min-h-11 items-center"
+                  >
+                    <span
+                      className={cn(
+                        'h-2 rounded-full transition-all',
+                        idx === currentStep
+                          ? 'w-8 bg-blue-500'
+                          : idx < currentStep
+                          ? 'w-2 bg-emerald-500'
+                          : 'w-2 bg-slate-300 dark:bg-slate-700'
+                      )}
+                    />
+                  </button>
                 ))}
               </div>
 
@@ -668,7 +668,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     'flex w-full items-center justify-center gap-2 rounded-2xl py-3 font-bold text-sm transition-all',
                     showAnimation
                       ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                      : 'bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700'
+                      : 'bg-surface text-slate-700 dark:text-slate-300 border border-line hover:border-slate-300 dark:hover:border-slate-600'
                   )}
                 >
                   <Film className="h-4 w-4" />
@@ -680,19 +680,19 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
               {/* Animated Guide */}
               {showAnimation && animationType && (
-                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl">
+                <div className="rounded-3xl border border-line bg-surface p-4 shadow-sm">
                   <AnimatedManeuver type={animationType} language={language} />
                 </div>
               )}
 
               {/* Current Step Card */}
-              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-xl space-y-4">
+              <div className="rounded-3xl bg-surface border border-line p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400">
+                  <span className="text-xs font-bold text-muted">
                     {t.curriculum.step} {currentStep + 1} / {lesson.steps.length}
                   </span>
                   {lesson.steps[currentStep].critical && (
-                    <span className="flex items-center gap-1 rounded-full bg-red-500/15 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400">
+                    <span className="flex items-center gap-1 rounded-full bg-red-500/15 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400">
                       <AlertTriangle className="h-3.5 w-3.5" />
                       {t.curriculum.critical}
                     </span>
@@ -701,7 +701,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
                 {/* Diagram Visualization */}
                 {lesson.id.startsWith('maneuver') && !showAnimation && (
-                  <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3">
+                  <div className="rounded-2xl bg-slate-950 border border-line p-3">
                     <ParkingDiagram
                       type={
                         lesson.id === 'maneuver-1' ? 'parallel' :
@@ -719,35 +719,36 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   className={cn(
                     'mx-auto flex h-20 w-20 items-center justify-center rounded-2xl shadow-lg',
                     lesson.steps[currentStep].critical
-                      ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                      : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                      ? 'bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30'
+                      : 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30'
                   )}
                 >
                   {getStepIcon(lesson.steps[currentStep].icon)}
                 </div>
 
-                <h3 className="text-center text-lg sm:text-xl font-extrabold text-white">
+                <h3 className="text-center text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">
                   {isDE
                     ? lesson.steps[currentStep].titleDe
                     : lesson.steps[currentStep].titleEn}
                 </h3>
 
-                <p className="text-center text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p className="text-center text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                   {isDE
                     ? lesson.steps[currentStep].descriptionDe
                     : lesson.steps[currentStep].descriptionEn}
                 </p>
 
                 {/* Step Navigation Bar */}
-                <div className="flex items-center gap-3 pt-4 border-t border-slate-800/80">
+                <div className="flex items-center gap-3 pt-4 border-t border-line">
                   <button
                     onClick={handlePrevStep}
                     disabled={currentStep === 0}
+                    aria-label={isDE ? 'Vorheriger Schritt' : 'Previous step'}
                     className={cn(
                       'flex h-12 w-12 items-center justify-center rounded-2xl transition-all border',
                       currentStep === 0
-                        ? 'bg-slate-950 border-slate-800/50 text-slate-700'
-                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                        ? 'bg-surface-raised border-line text-slate-300 dark:text-slate-600'
+                        : 'bg-surface-raised border-line text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
                     )}
                   >
                     <ChevronLeft className="h-6 w-6" />
@@ -755,7 +756,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
                   <button
                     onClick={handleNextStep}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-700 py-3.5 font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
                   >
                     {currentStep === lesson.steps.length - 1
                       ? hasQuizTab
@@ -768,8 +769,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
 
               {/* Step Overview List */}
-              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 shadow-xl space-y-3">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <div className="rounded-3xl bg-surface border border-line p-5 shadow-sm space-y-3">
+                <h4 className="text-xs font-bold text-muted uppercase tracking-wider">
                   {t.curriculum.allSteps}
                 </h4>
                 <div className="space-y-2">
@@ -778,10 +779,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                       key={step.id}
                       onClick={() => setCurrentStep(idx)}
                       className={cn(
-                        'flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all border',
+                        'flex w-full items-center gap-3 rounded-2xl p-3 min-h-11 text-left transition-all border',
                         idx === currentStep
-                          ? 'bg-blue-950/40 border-blue-500/40 text-white'
-                          : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:border-slate-700'
+                          ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500/40 text-slate-900 dark:text-white'
+                          : 'bg-surface-raised border-line text-muted hover:border-slate-300 dark:hover:border-slate-600'
                       )}
                     >
                       <div
@@ -791,7 +792,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                             ? 'bg-emerald-600 text-white'
                             : idx === currentStep
                             ? 'bg-blue-600 text-white'
-                            : 'bg-slate-800 text-slate-400'
+                            : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                         )}
                       >
                         {idx < currentStep ? <Check className="h-3.5 w-3.5" /> : idx + 1}
@@ -800,7 +801,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                         {isDE ? step.titleDe : step.titleEn}
                       </span>
                       {step.critical && (
-                        <AlertTriangle className="h-4 w-4 text-red-400 shrink-0" />
+                        <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0" />
                       )}
                     </button>
                   ))}
@@ -813,7 +814,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {(!lesson.steps || lesson.steps.length === 0) && hasQuizTab && (
             <button
               onClick={() => setActiveLessonTab('quiz')}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all"
+              className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all"
             >
               <span>{isDE ? 'Zur Wissensprüfung' : 'Go to Knowledge Quiz'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -823,7 +824,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {(!lesson.steps || lesson.steps.length === 0) && !hasQuizTab && (
             <button
               onClick={handleFinish}
-              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all"
+              className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all"
             >
               <CheckCircle className="w-5 h-5" />
               <span>{isDE ? 'Lektion abschließen' : 'Complete Lesson'}</span>
@@ -840,10 +841,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             <button
               onClick={() => setRulesSubFilter('all')}
               className={cn(
-                'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0',
+                'px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0',
                 rulesSubFilter === 'all'
                   ? 'bg-slate-800 text-white border border-slate-700 shadow'
-                  : 'bg-slate-950 text-slate-400 border border-slate-900 hover:text-slate-200'
+                  : 'bg-surface-raised text-muted border border-line hover:text-slate-900 dark:hover:text-slate-200'
               )}
             >
               {isDE ? 'Alle Inhalte' : 'All Topics'}
@@ -853,14 +854,14 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <button
                 onClick={() => setRulesSubFilter('commands')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  'px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
                   rulesSubFilter === 'commands'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-indigo-950/40 text-indigo-300 border border-indigo-500/20 hover:border-indigo-500/40'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 hover:border-blue-500/40'
                 )}
               >
                 <GraduationCap className="w-3.5 h-3.5" />
-                <span>{isDE ? '🗣️ Prüfer-Befehle' : '🗣️ Examiner Commands'}</span>
+                <span>{isDE ? 'Prüfer-Befehle' : 'Examiner Commands'}</span>
               </button>
             )}
 
@@ -868,14 +869,14 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <button
                 onClick={() => setRulesSubFilter('vocab')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  'px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
                   rulesSubFilter === 'vocab'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-blue-950/40 text-blue-300 border border-blue-500/20 hover:border-blue-500/40'
+                    : 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 hover:border-blue-500/40'
                 )}
               >
                 <Info className="w-3.5 h-3.5" />
-                <span>{isDE ? '💡 Vokabeln' : '💡 Key Vocabulary'}</span>
+                <span>{isDE ? 'Vokabeln' : 'Key Vocabulary'}</span>
               </button>
             )}
 
@@ -883,14 +884,14 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <button
                 onClick={() => setRulesSubFilter('signs')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  'px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
                   rulesSubFilter === 'signs'
-                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
-                    : 'bg-amber-950/40 text-amber-300 border border-amber-500/20 hover:border-amber-500/40'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20 hover:border-blue-500/40'
                 )}
               >
                 <Shield className="w-3.5 h-3.5" />
-                <span>{isDE ? '🛑 Verkehrszeichen' : '🛑 Traffic Signs'}</span>
+                <span>{isDE ? 'Verkehrszeichen' : 'Traffic Signs'}</span>
               </button>
             )}
 
@@ -898,34 +899,34 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               <button
                 onClick={() => setRulesSubFilter('scenarios')}
                 className={cn(
-                  'px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
+                  'px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5',
                   rulesSubFilter === 'scenarios'
                     ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
-                    : 'bg-red-950/40 text-red-300 border border-red-500/20 hover:border-red-500/40'
+                    : 'bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20 hover:border-red-500/40'
                 )}
               >
                 <Target className="w-3.5 h-3.5" />
-                <span>{isDE ? '⚠️ Fallen & Traps' : '⚠️ Traps & Scenarios'}</span>
+                <span>{isDE ? 'Fallen & Traps' : 'Traps & Scenarios'}</span>
               </button>
             )}
           </div>
 
           {/* SECTION 1: EXAMINER VOICE COMMAND AUDIO CARDS */}
           {lesson.examinerCommands && lesson.examinerCommands.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'commands') && (
-            <div className="rounded-3xl bg-gradient-to-br from-indigo-950/50 via-slate-900 to-slate-950 border border-indigo-500/30 p-5 sm:p-6 shadow-xl space-y-4">
+            <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 font-bold">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold">
                     <GraduationCap className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-base font-extrabold text-white flex items-center gap-2">
+                    <h4 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                       <span>{t.curriculum.typicalExaminer}</span>
-                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-wider">
                         TÜV / DEKRA
                       </span>
                     </h4>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-muted">
                       {t.curriculum.examinerSub}
                     </p>
                   </div>
@@ -934,18 +935,18 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
               <div className="space-y-4">
                 {lesson.examinerCommands.map((command) => (
-                  <div key={command.id} className="rounded-2xl border border-indigo-500/25 bg-slate-950/90 p-4.5 space-y-3 shadow-lg">
+                  <div key={command.id} className="rounded-2xl border border-line bg-surface-raised p-4.5 space-y-3 shadow-sm">
                     {/* Header + Speech Audio Play Button */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-2.5">
-                        <span className="mt-0.5 shrink-0 px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-wider">
+                        <span className="mt-0.5 shrink-0 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-wider">
                           🗣️ PRÜFER
                         </span>
                         <div>
-                          <p className="text-base sm:text-lg font-black text-white notranslate leading-snug" translate="no">
+                          <p className="text-base sm:text-lg font-black text-slate-900 dark:text-white notranslate leading-snug" translate="no">
                             "{command.commandDe}"
                           </p>
-                          <p className="text-xs font-semibold text-slate-400 italic mt-0.5">
+                          <p className="text-xs font-semibold text-muted italic mt-0.5">
                             ({command.commandEn})
                           </p>
                         </div>
@@ -955,10 +956,10 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                       <button
                         onClick={() => handleSpeakCommand(command.id, command.commandDe)}
                         className={cn(
-                          'shrink-0 px-3 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 border',
+                          'shrink-0 px-3 py-2 min-h-11 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 border',
                           speakingCommandId === command.id
-                            ? 'bg-indigo-600 text-white border-indigo-400 animate-pulse'
-                            : 'bg-indigo-950/60 border-indigo-500/30 text-indigo-300 hover:bg-indigo-900/60 hover:text-white'
+                            ? 'bg-blue-600 text-white border-blue-400 animate-pulse'
+                            : 'bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300 hover:bg-blue-500/20'
                         )}
                       >
                         <Volume2 className="w-4 h-4" />
@@ -968,12 +969,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
                     {/* Examiner Expectation Action Guide */}
                     {(command.noteDe || command.noteEn) && (
-                      <div className="rounded-xl bg-gradient-to-r from-indigo-950/60 to-slate-900 border border-indigo-500/20 p-3.5 text-xs text-indigo-200 leading-relaxed space-y-1">
-                        <div className="flex items-center gap-1.5 font-extrabold text-indigo-400 uppercase tracking-wider text-[11px]">
+                      <div className="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-500/20 p-3.5 text-xs leading-relaxed space-y-1">
+                        <div className="flex items-center gap-1.5 font-extrabold text-blue-700 dark:text-blue-400 uppercase tracking-wider text-xs">
                           <span>🎯</span>
                           <span>{isDE ? 'WAS DER PRÜFER ZWINGEND ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'}</span>
                         </div>
-                        <p className="text-slate-300 leading-relaxed">
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
                           {isDE ? command.noteDe : command.noteEn}
                         </p>
                       </div>
@@ -986,16 +987,16 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* SECTION 2: GERMAN VOCABULARY FLASHCARDS */}
           {lesson.glossary && lesson.glossary.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'vocab') && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+            <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/30 text-blue-400 font-bold">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold">
                   <Info className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-white">
+                  <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
                     {t.curriculum.keyTerms}
                   </h4>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.glossarySub}
                   </p>
                 </div>
@@ -1003,19 +1004,19 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 {lesson.glossary.map((term) => (
-                  <div key={term.id} className="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 space-y-2.5 hover:border-slate-700 transition-all shadow-md">
-                    <div className="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
-                      <p className="text-base font-extrabold text-blue-400 notranslate" translate="no">
+                  <div key={term.id} className="rounded-2xl border border-line bg-surface-raised p-4 space-y-2.5 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm">
+                    <div className="flex items-center justify-between gap-2 border-b border-line pb-2">
+                      <p className="text-base font-extrabold text-blue-700 dark:text-blue-400 notranslate" translate="no">
                         {term.german}
                       </p>
-                      <span className="px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 text-[10px] font-black uppercase tracking-wider border border-blue-500/20">
+                      <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-wider border border-blue-500/20">
                         DE TERMINOLOGY
                       </span>
                     </div>
-                    <p className="text-xs font-bold text-slate-200">{term.english}</p>
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{term.english}</p>
                     {(term.noteDe || term.noteEn) && (
-                      <div className="pt-2 border-t border-slate-800/80 text-[11px] leading-relaxed text-amber-200/90 flex items-start gap-1.5 bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
-                        <span className="text-amber-400 font-extrabold shrink-0">💡 Examen-Tipp:</span>
+                      <div className="text-xs leading-relaxed text-amber-800 dark:text-amber-200/90 flex items-start gap-1.5 bg-amber-50 dark:bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
+                        <span className="text-amber-700 dark:text-amber-400 font-extrabold shrink-0">💡 Examen-Tipp:</span>
                         <span>{isDE ? term.noteDe : term.noteEn}</span>
                       </div>
                     )}
@@ -1027,16 +1028,16 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* SECTION 2.5: GUIDED POINTS */}
           {lesson.guidedPoints && lesson.guidedPoints.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'vocab') && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 shadow-xl space-y-4">
+            <div className="rounded-3xl bg-surface border border-line p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-400 font-bold">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold">
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                     {t.curriculum.guidedPoints}
                   </h4>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {t.curriculum.guidedPointsSub}
                   </p>
                 </div>
@@ -1046,17 +1047,17 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 {lesson.guidedPoints.map((point) => (
                   <div
                     key={point.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/80 p-4"
+                    className="rounded-2xl border border-line bg-surface-raised p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
                         {getGuidedPointIcon(point.emphasis)}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">
                           {isDE ? point.titleDe : point.titleEn}
                         </p>
-                        <p className="mt-1 text-xs text-slate-400 leading-relaxed">
+                        <p className="mt-1 text-xs text-muted leading-relaxed">
                           {isDE ? point.contentDe : point.contentEn}
                         </p>
                       </div>
@@ -1069,9 +1070,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
           {/* SECTION 3: STVO TRAFFIC SIGNS & TECH INSPECTOR */}
           {lesson.trafficSigns && lesson.trafficSigns.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'signs') && (
-            <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+            <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold border border-blue-500/20">
                   {lesson.trafficSigns[0]?.category === 'vehicle-check' ? (
                     <Wrench className="h-5 w-5" />
                   ) : (
@@ -1079,12 +1080,12 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   )}
                 </div>
                 <div>
-                  <h4 className="text-base font-extrabold text-white">
+                  <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
                     {lesson.trafficSigns[0]?.category === 'vehicle-check'
                       ? (isDE ? 'Fahrzeugkontrolle & Technik' : 'Vehicle Check & Tech')
                       : t.curriculum.importantSigns}
                   </h4>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted">
                     {lesson.trafficSigns[0]?.category === 'vehicle-check'
                       ? (isDE ? 'Wichtige Kontrollen vor der Prüfung' : 'Important pre-drive test checks')
                       : t.curriculum.signsSub}
@@ -1096,22 +1097,22 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 {lesson.trafficSigns.map((sign) => (
                   <div
                     key={sign.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/90 p-4 space-y-3 shadow-md"
+                    className="rounded-2xl border border-line bg-surface-raised p-4 space-y-3 shadow-sm"
                   >
                     <div className="flex items-start gap-3">
                       <TrafficSignIcon sign={sign} />
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-sm font-extrabold text-white leading-tight">
+                          <p className="text-sm font-extrabold text-slate-900 dark:text-white leading-tight">
                             {isDE ? sign.titleDe : sign.titleEn}
                           </p>
                           {sign.code && (
-                            <span className="rounded-md bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-300">
+                            <span className="rounded-md bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-xs font-black uppercase tracking-wide text-blue-700 dark:text-blue-300">
                               {sign.code}
                             </span>
                           )}
                         </div>
-                        <p className="mt-1.5 text-xs leading-relaxed text-slate-300">
+                        <p className="mt-1.5 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
                           {isDE ? sign.descriptionDe : sign.descriptionEn}
                         </p>
                       </div>
@@ -1126,8 +1127,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {lesson.scenarios && lesson.scenarios.length > 0 && (rulesSubFilter === 'all' || rulesSubFilter === 'scenarios') && (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-red-400" />
-                <h4 className="text-base font-extrabold text-white">
+                <Target className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
                   {isDE
                     ? (lesson.scenarioSectionTitleDe || t.curriculum.typicalScenarios)
                     : (lesson.scenarioSectionTitleEn || t.curriculum.typicalScenarios)}
@@ -1135,19 +1136,19 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
               </div>
 
               {lesson.scenarios.map((scenario) => (
-                <div 
-                  key={scenario.id} 
-                  className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl space-y-4 p-5"
+                <div
+                  key={scenario.id}
+                  className="overflow-hidden rounded-3xl border border-line bg-surface shadow-sm space-y-4 p-5"
                 >
-                  <div className="flex items-start gap-3 border-b border-slate-800 pb-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-500/20 text-red-400 font-bold border border-red-500/30">
+                  <div className="flex items-start gap-3 border-b border-line pb-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-red-500/15 text-red-600 dark:text-red-400 font-bold border border-red-500/30">
                       <AlertTriangle className="h-5 w-5" />
                     </div>
                     <div>
-                      <h5 className="text-sm sm:text-base font-extrabold text-white">
+                      <h5 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
                         {isDE ? scenario.titleDe : scenario.titleEn}
                       </h5>
-                      <p className="mt-0.5 text-xs text-slate-300 leading-relaxed">
+                      <p className="mt-0.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                         {isDE ? scenario.situationDe : scenario.situationEn}
                       </p>
                     </div>
@@ -1155,28 +1156,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
 
                   <div className="space-y-3">
                     {scenario.steps.map((step, idx) => (
-                      <div key={`${scenario.id}-${step.id}`} className="flex gap-3 items-start p-3 rounded-2xl bg-slate-950 border border-slate-800/80">
+                      <div key={`${scenario.id}-${step.id}`} className="flex gap-3 items-start p-3 rounded-2xl bg-surface-raised border border-line">
                         <div className={cn(
                           'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-black',
-                          step.critical 
-                            ? 'bg-red-600 text-white shadow-md shadow-red-600/30' 
-                            : 'bg-indigo-600 text-white'
+                          step.critical
+                            ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                            : 'bg-blue-600 text-white'
                         )}>
                           {step.icon ? getStepIcon(step.icon, 'h-4 w-4') : (idx + 1)}
                         </div>
-                        
+
                         <div className="flex-1">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-xs sm:text-sm font-extrabold text-white">
+                            <p className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
                               {isDE ? step.titleDe : step.titleEn}
                             </p>
                             {step.critical && (
-                              <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-wider border border-red-500/30">
+                              <span className="px-2 py-0.5 rounded-md bg-red-500/15 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-wider border border-red-500/30">
                                 ⚠️ EXAM FAIL TRAP
                               </span>
                             )}
                           </div>
-                          <p className="mt-1 text-xs text-slate-300 leading-relaxed">
+                          <p className="mt-1 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                             {isDE ? step.descriptionDe : step.descriptionEn}
                           </p>
                         </div>
@@ -1196,14 +1197,14 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           {(() => {
             const currentQuiz = lesson.quiz[0];
             return (
-              <div className="rounded-3xl bg-slate-900 border border-slate-800 p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-700 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
                     {t.curriculum.quiz}
                   </span>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-extrabold text-white leading-tight">
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
                   {isDE ? currentQuiz.questionDe : currentQuiz.questionEn}
                 </h3>
 
@@ -1217,11 +1218,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                         'flex w-full items-center gap-3 rounded-2xl p-4 text-left transition-all border',
                         showExplanation
                           ? option.id === currentQuiz.correctOptionId
-                            ? 'bg-emerald-950/60 border-emerald-500/60 text-white'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500/60 text-slate-900 dark:text-white'
                             : option.id === selectedAnswer
-                            ? 'bg-red-950/60 border-red-500/60 text-white'
-                            : 'bg-slate-950/60 border-slate-800 text-slate-400'
-                          : 'bg-slate-950 border-slate-800 hover:border-blue-500/40 text-slate-200'
+                            ? 'bg-red-50 dark:bg-red-950/60 border-red-500/60 text-slate-900 dark:text-white'
+                            : 'bg-surface-raised border-line text-muted'
+                          : 'bg-surface-raised border-line hover:border-blue-500/40 text-slate-700 dark:text-slate-200'
                       )}
                     >
                       <div
@@ -1231,7 +1232,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                             ? 'bg-emerald-500 text-white'
                             : showExplanation && option.id === selectedAnswer
                             ? 'bg-red-500 text-white'
-                            : 'bg-slate-800 text-slate-300'
+                            : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                         )}
                       >
                         {option.id.toUpperCase()}
@@ -1248,24 +1249,24 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     className={cn(
                       'rounded-2xl p-4 border space-y-2',
                       selectedAnswer === currentQuiz.correctOptionId
-                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
-                        : 'bg-red-950/40 border-red-500/40 text-red-200'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500/40 text-emerald-800 dark:text-emerald-200'
+                        : 'bg-red-50 dark:bg-red-950/40 border-red-500/40 text-red-800 dark:text-red-200'
                     )}
                   >
                     <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
                       {selectedAnswer === currentQuiz.correctOptionId ? (
                         <>
-                          <CheckCircle className="h-4 w-4 text-emerald-400" />
+                          <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                           <span>{t.curriculum.correct}</span>
                         </>
                       ) : (
                         <>
-                          <AlertTriangle className="h-4 w-4 text-red-400" />
+                          <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
                           <span>{t.curriculum.incorrect}</span>
                         </>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm leading-relaxed text-slate-300">
+                    <p className="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300">
                       {isDE ? currentQuiz.explanationDe : currentQuiz.explanationEn}
                     </p>
                   </div>
@@ -1274,7 +1275,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                 {showExplanation && (
                   <button
                     onClick={handleFinish}
-                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 font-bold text-sm text-white shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                    className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold text-sm text-white shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
                   >
                     <CheckCircle className="w-5 h-5" />
                     <span>{t.curriculum.completeLesson}</span>

@@ -94,7 +94,7 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
             initial={{ d: gridPath(20), opacity: 0 }}
             animate={{ d: pathContent, opacity: 1 }}
             transition={{ duration: 1, ease: 'circOut' }}
-            className="fill-blue-400/20 stroke-blue-400 dark:fill-blue-500/30 dark:stroke-blue-400"
+            className="fill-blue-500/20 stroke-blue-500 dark:fill-blue-500/30 dark:stroke-blue-400"
             strokeWidth="3"
             style={{ filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))' }}
           />
@@ -110,7 +110,7 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
                 r="4"
                 className={cn(
                   'stroke-white dark:stroke-slate-900 transition-colors',
-                  p.value === 100 ? 'fill-emerald-400' : 'fill-blue-400'
+                  p.value === 100 ? 'fill-emerald-500 dark:fill-emerald-400' : 'fill-blue-500 dark:fill-blue-400'
                 )}
                 strokeWidth="2"
               />
@@ -134,13 +134,13 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
             >
               <div className={cn(
                 'flex h-6 w-6 items-center justify-center rounded-lg shadow-sm border',
-                p.value === 100 
-                  ? 'bg-emerald-500 border-emerald-400 text-white' 
-                  : 'bg-white/10 border-white/20 text-blue-200'
+                p.value === 100
+                  ? 'bg-emerald-500 border-emerald-400 text-white'
+                  : 'bg-blue-50 border-blue-100 text-blue-600 dark:bg-white/10 dark:border-white/20 dark:text-blue-200'
               )}>
                 <Icon className="h-3.5 w-3.5" />
               </div>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-white/70">
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-white/70">
                 {p.label}
               </span>
             </div>
@@ -151,13 +151,13 @@ export function SimulatorRadar({ stats, language }: SimulatorRadarProps) {
       <div className="mt-4 flex gap-4">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-emerald-400" />
-          <span className="text-[10px] font-bold text-white/60">
+          <span className="text-xs font-bold text-slate-500 dark:text-white/60">
             {t.tracker.radar.mastered}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-blue-400" />
-          <span className="text-[10px] font-bold text-white/60">
+          <span className="text-xs font-bold text-slate-500 dark:text-white/60">
             {t.tracker.radar.practice}
           </span>
         </div>

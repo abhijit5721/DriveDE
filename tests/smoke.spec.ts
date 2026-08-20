@@ -258,8 +258,15 @@ test.describe('DriveDE Golden Path', () => {
 
   async function completeOnboarding(page: Page) {
     // 1. Click Start Now on Landing Page
+    // isVisible() returns the INSTANT state; right after goto('load') React has
+    // not painted yet and the helper silently fell into the wrong branch. Wait
+    // for the app to actually mount before deciding which entry flow we are in.
     const startBtn = page.getByTestId('welcome-start-btn');
-    if (await startBtn.isVisible()) {
+    const startBtnVisible = await startBtn
+      .waitFor({ state: 'visible', timeout: 15000 })
+      .then(() => true)
+      .catch(() => false);
+    if (startBtnVisible) {
       await startBtn.click();
       await page.waitForTimeout(1000);
 

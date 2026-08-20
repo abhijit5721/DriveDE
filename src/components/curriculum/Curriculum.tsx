@@ -158,7 +158,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
   const getLessonBadge = (lesson: Lesson) => {
     if (lesson.isPremium && !proActive) {
       return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-xs font-bold text-amber-700 dark:text-amber-400">
           <Crown className="h-3 w-3" />
           <span className="notranslate">Pro</span>
         </span>
@@ -166,7 +166,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
     if (lesson.manualOnly) {
       return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-orange-500/15 border border-orange-500/30 px-2 py-0.5 text-[10px] font-bold text-orange-400">
+        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
           <Cog className="h-3 w-3" />
           <span>{t.curriculum.manualBadge}</span>
         </span>
@@ -174,7 +174,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
     if (lesson.automaticOnly) {
       return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 text-[10px] font-bold text-blue-400">
+        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 text-xs font-bold text-blue-700 dark:text-blue-400">
           <Zap className="h-3 w-3" />
           <span>{t.curriculum.autoBadge}</span>
         </span>
@@ -182,7 +182,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
     if (lesson.isInteractive) {
       return (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-bold text-indigo-400">
+        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 text-xs font-bold text-blue-700 dark:text-blue-400">
           <Activity className="h-3 w-3" />
           <span>{t.curriculum.interactiveBadge}</span>
         </span>
@@ -197,10 +197,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-400 uppercase tracking-widest">
+            <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">
               {isDe ? 'Fahrlehrplan 2026' : 'Curriculum 2026'}
             </span>
-            <span className="text-xs font-bold text-slate-400">• {completedCount}/{totalLessons} {isDe ? 'Lektionen' : 'Lessons'}</span>
+            <span className="text-xs font-bold text-muted">• {completedCount}/{totalLessons} {isDe ? 'Lektionen' : 'Lessons'}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {t.curriculum.title}
@@ -214,7 +214,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               data-testid="view-quest"
               onClick={() => setCurriculumViewMode('quest')}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                'flex items-center gap-1.5 px-3 py-1.5 min-h-11 rounded-lg text-xs font-bold transition-all',
                 curriculumViewMode === 'quest'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
@@ -227,7 +227,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               data-testid="view-list"
               onClick={() => setCurriculumViewMode('list')}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                'flex items-center gap-1.5 px-3 py-1.5 min-h-11 rounded-lg text-xs font-bold transition-all',
                 curriculumViewMode === 'list'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
@@ -240,7 +240,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
           <button
             onClick={() => setShowLicenseModal(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+            aria-label={t.curriculum.changeLicense}
+            className="flex items-center gap-2 px-3 py-2 min-h-11 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
           >
             <Settings2 className="w-4 h-4 text-blue-500" />
             <span className="hidden sm:inline">
@@ -251,32 +252,32 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       </div>
 
       {/* Progress Bar Card */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/60 border border-blue-500/20 p-4 sm:p-5 shadow-xl backdrop-blur-xl">
+      <div className="rounded-2xl bg-surface border border-line p-4 sm:p-5 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
               <TrendingUp className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-bold text-white">
+              <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                 {learningPath === 'umschreibung'
                   ? (isDe ? '🇩🇪 Umschreibung ausländischer Führerschein' : '🇩🇪 Foreign License Conversion (Germany)')
                   : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving License Curriculum')}
               </p>
-              <p className="text-[11px] text-slate-400 font-medium">
+              <p className="text-xs text-muted font-medium">
                 {isDe ? 'Gesamtfortschritt & Prüfungsbereitschaft' : 'Overall Progress & Exam Readiness'}
               </p>
             </div>
           </div>
-          <span className="text-xl font-extrabold text-blue-400">{overallProgress}%</span>
+          <span className="text-xl font-extrabold text-blue-600 dark:text-blue-400">{overallProgress}%</span>
         </div>
 
-        <div className="w-full h-3 rounded-full bg-slate-950/80 p-0.5 border border-slate-800">
+        <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 p-0.5 border border-line">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${overallProgress}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400 shadow-md shadow-blue-500/20"
+            className="h-full rounded-full bg-blue-600"
           />
         </div>
       </div>
@@ -303,38 +304,38 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             return (
               <div key={chapter.id} className="relative">
                 {/* Chapter Quest Banner Header */}
-                <div className="sticky top-16 z-20 mb-6 p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-blue-500/30 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+                <div className="sticky top-16 z-20 mb-6 p-4 rounded-2xl bg-surface border border-line shadow-md flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl shadow-inner">
+                    <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl">
                       {getChapterIcon(chapter.id)}
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
+                        <span className="text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">
                           {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
                         </span>
                         {isChapterCompleted && (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs font-extrabold flex items-center gap-1">
                             <Check className="w-3 h-3" />
                             {isDe ? 'ABGESCHLOSSEN' : 'COMPLETED'}
                           </span>
                         )}
                       </div>
-                      <h2 className="text-base sm:text-xl font-extrabold text-white">
+                      <h2 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white">
                         {isDe ? chapter.titleDe : chapter.titleEn}
                       </h2>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-black text-blue-400">{completedInChapter}/{chapter.lessons.length}</span>
-                    <p className="text-[10px] text-slate-400 font-medium">{isDe ? 'Lektionen' : 'Lessons'}</p>
+                    <span className="text-xs font-black text-blue-700 dark:text-blue-400">{completedInChapter}/{chapter.lessons.length}</span>
+                    <p className="text-xs text-muted font-medium">{isDe ? 'Lektionen' : 'Lessons'}</p>
                   </div>
                 </div>
 
                 {/* Chapter Quest Nodes Path (Left-aligned timeline track to avoid text overlays) */}
                 <div className="relative space-y-4 pl-14 py-2">
                   {/* Connecting Line background running strictly behind left milestone circles */}
-                  <div className="absolute top-7 bottom-7 left-6 w-1 bg-gradient-to-b from-blue-500/60 via-indigo-500/40 to-emerald-500/40 rounded-full" />
+                  <div className="absolute top-7 bottom-7 left-6 w-1 bg-slate-200 dark:bg-slate-700 rounded-full" />
 
                   {chapter.lessons.map((lesson, lIdx) => {
                     const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
@@ -364,15 +365,16 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                           <button
                             onClick={() => onLessonSelect(lesson)}
+                            aria-label={isDe ? lesson.titleDe : lesson.titleEn}
                             className={cn(
                               'w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center font-black text-sm transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md',
                               isCurrentActive
-                                ? 'bg-gradient-to-tr from-blue-600 to-indigo-500 text-white ring-4 ring-blue-500/30 shadow-blue-500/30'
+                                ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 shadow-blue-500/30'
                                 : isLessonCompleted
                                 ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/20'
                                 : isLessonUnlocked && !isLockedForFreeUser
-                                ? 'bg-slate-900 border border-slate-800 text-slate-400 hover:border-slate-700'
-                                : 'bg-slate-950 border border-slate-800 text-slate-700'
+                                ? 'bg-surface-raised border border-line text-muted hover:border-slate-300 dark:hover:border-slate-600'
+                                : 'bg-surface-raised border border-line text-slate-400 dark:text-slate-600'
                             )}
                           >
                             {isLessonCompleted ? (
@@ -382,7 +384,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                             ) : isLockedForFreeUser ? (
                               <Crown className="w-4 h-4 text-amber-400" />
                             ) : !isLessonUnlocked ? (
-                              <Lock className="w-4 h-4 text-slate-600" />
+                              <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                             ) : (
                               <span>{lIdx + 1}</span>
                             )}
@@ -390,43 +392,44 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
                           {/* Active "Start Here" Floating Badge */}
                           {isCurrentActive && (
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[8px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap animate-pulse">
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs font-black uppercase tracking-wider shadow-lg whitespace-nowrap">
                               🎯 {isDe ? 'Start' : 'Start'}
                             </div>
                           )}
                         </div>
 
                         {/* Node Card Content (sitting cleanly to the right of node) */}
-                        <div
+                        <button
+                          type="button"
                           onClick={() => onLessonSelect(lesson)}
                           className={cn(
-                            'flex-1 p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left',
+                            'flex-1 w-full p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left',
                             isCurrentActive
-                              ? 'bg-blue-950/40 border-blue-500/40 hover:border-blue-400 shadow-lg shadow-blue-500/10'
+                              ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-500/40 hover:border-blue-400 shadow-sm'
                               : isLessonCompleted
-                              ? 'bg-slate-900/60 border-emerald-500/20 hover:border-emerald-500/40'
-                              : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                              ? 'bg-surface border-emerald-500/30 hover:border-emerald-500/50'
+                              : 'bg-surface border-line hover:border-slate-300 dark:hover:border-slate-600'
                           )}
                         >
                           <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                            <h3 className="text-xs sm:text-sm font-bold text-white">
+                            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                               {isDe ? lesson.titleDe : lesson.titleEn}
                             </h3>
                             {getLessonBadge(lesson)}
                           </div>
 
-                          <p className="text-[11px] text-slate-400 line-clamp-1 mb-2">
+                          <p className="text-xs text-muted line-clamp-1 mb-2">
                             {isDe ? lesson.descriptionDe : lesson.descriptionEn}
                           </p>
 
                           {/* German Rule Pill Badge */}
                           {ruleBadge && (
-                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-slate-300">
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-surface-raised border border-line text-xs font-bold text-slate-600 dark:text-slate-300">
                               <span>{ruleBadge.icon}</span>
                               <span>{isDe ? ruleBadge.labelDe : ruleBadge.labelEn}</span>
                             </div>
                           )}
-                        </div>
+                        </button>
                       </motion.div>
                     );
                   })}
@@ -446,37 +449,37 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             const isExpanded = expandedChapter === chapter.id;
 
             return (
-              <div key={chapter.id} className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
+              <div key={chapter.id} className="rounded-2xl bg-surface border border-line overflow-hidden">
                 <button
                   data-testid={`chapter-${chapter.id}`}
                   onClick={() => setExpandedChapter(isExpanded ? null : chapter.id)}
-                  className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-850 transition"
+                  className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-raised transition"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span className="text-xs font-bold text-muted uppercase tracking-wider">
                           {isDe ? `KAPITEL ${cIdx + 1}` : `CHAPTER ${cIdx + 1}`}
                         </span>
                         {isChapterCompleted && (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs font-extrabold flex items-center gap-1">
                             <Check className="w-3 h-3" />
                             {isDe ? '100% ABGESCHLOSSEN' : '100% COMPLETED'}
                           </span>
                         )}
                       </div>
-                      <h3 className="font-bold text-white text-base">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base">
                         {isDe ? chapter.titleDe : chapter.titleEn}
                       </h3>
-                      <p className="text-xs text-slate-400">{completedInChapter}/{chapter.lessons.length} {isDe ? 'Lektionen' : 'Lessons'}</p>
+                      <p className="text-xs text-muted">{completedInChapter}/{chapter.lessons.length} {isDe ? 'Lektionen' : 'Lessons'}</p>
                     </div>
                   </div>
-                  <ChevronDown className={cn('w-5 h-5 text-slate-400 transition-transform', isExpanded && 'rotate-180')} />
+                  <ChevronDown className={cn('w-5 h-5 text-muted transition-transform', isExpanded && 'rotate-180')} />
                 </button>
 
                 {isExpanded && (
-                  <div className="p-4 pt-0 space-y-2 border-t border-slate-800/80">
+                  <div className="p-4 pt-0 space-y-2 border-t border-line">
                     {chapter.lessons.map((lesson) => {
                       const isLessonCompleted = userProgress.completedLessons.includes(lesson.id);
                       return (
@@ -485,20 +488,20 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                           data-testid={`lesson-${lesson.id}`}
                           onClick={() => onLessonSelect(lesson)}
                           className={cn(
-                            'w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all',
-                            isLessonCompleted 
-                              ? 'bg-slate-950/40 border-emerald-500/20 hover:border-emerald-500/40' 
-                              : 'bg-slate-950/80 border-slate-800 hover:border-blue-500/40'
+                            'w-full p-3 min-h-11 rounded-xl border text-left flex items-center justify-between transition-all',
+                            isLessonCompleted
+                              ? 'bg-surface-raised border-emerald-500/30 hover:border-emerald-500/50'
+                              : 'bg-surface-raised border-line hover:border-blue-500/40'
                           )}
                         >
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="text-xs font-bold text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
-                              {isLessonCompleted && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                              <p className="text-xs font-bold text-slate-900 dark:text-white">{isDe ? lesson.titleDe : lesson.titleEn}</p>
+                              {isLessonCompleted && <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />}
                             </div>
-                            <p className="text-[10px] text-slate-400">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
+                            <p className="text-xs text-muted">{isDe ? lesson.descriptionDe : lesson.descriptionEn}</p>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-slate-500" />
+                          <ArrowRight className="w-4 h-4 text-muted" />
                         </button>
                       );
                     })}
@@ -514,18 +517,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
       <AnimatePresence>
         {showLicenseModal && (
           <motion.div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div 
-              className="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl"
+              className="w-full max-w-sm rounded-3xl bg-surface border border-line p-6 shadow-2xl"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
             >
-              <h3 className="mb-4 text-lg font-bold text-white">
+              <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
                 {t.curriculum.changeLicense}
               </h3>
               
@@ -538,18 +541,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   className={cn(
                     'flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all',
                     isManualSelection
-                      ? 'border-orange-500 bg-orange-950/30'
-                      : 'border-slate-800 hover:border-slate-700 bg-slate-950/50'
+                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
+                      : 'border-line hover:border-slate-300 dark:hover:border-slate-600 bg-surface-raised'
                   )}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
                     <Cog className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">
                       {t.curriculum.manual}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-muted">
                       {t.curriculum.manualDesc}
                     </p>
                   </div>
@@ -563,18 +566,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   className={cn(
                     'flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all',
                     isAutomaticSelection
-                      ? 'border-blue-500 bg-blue-950/30'
-                      : 'border-slate-800 hover:border-slate-700 bg-slate-950/50'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                      : 'border-line hover:border-slate-300 dark:hover:border-slate-600 bg-surface-raised'
                   )}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400">
                     <Zap className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">
                       {t.curriculum.automatic}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-muted">
                       {t.curriculum.automaticDesc}
                     </p>
                   </div>
@@ -588,18 +591,18 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   className={cn(
                     'flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all',
                     isConversionManualSelection || isConversionAutomaticSelection
-                      ? 'border-purple-500 bg-purple-950/30'
-                      : 'border-slate-800 hover:border-slate-700 bg-slate-950/50'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                      : 'border-line hover:border-slate-300 dark:hover:border-slate-600 bg-surface-raised'
                   )}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400">
                     <BadgeCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white text-sm">
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">
                       {t.curriculum.conversionManual}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-muted">
                       {t.curriculum.conversionManualDesc}
                     </p>
                   </div>
@@ -608,7 +611,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
               <button
                 onClick={() => setShowLicenseModal(false)}
-                className="mt-5 w-full rounded-xl bg-slate-800 py-3 text-xs font-bold text-slate-300 hover:bg-slate-700"
+                className="mt-5 w-full rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 py-3 min-h-11 text-xs font-bold text-slate-700 dark:text-slate-300"
               >
                 {t.common.close}
               </button>

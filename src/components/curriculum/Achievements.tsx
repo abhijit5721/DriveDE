@@ -26,7 +26,11 @@ export function Achievements() {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {achievements.map((achievement) => {
-          const isUnlocked = unlockedAchievements.includes(achievement.id);
+          // Derive from live progress as well as the stored unlock events: the
+          // stored array can lag behind reality (e.g. sessions synced from
+          // another device), and a user with logged drives must never see
+          // "First Drive" locked.
+          const isUnlocked = unlockedAchievements.includes(achievement.id) || achievement.criteria(userProgress);
           return (
             <div
               key={achievement.id}
