@@ -79,21 +79,21 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         subtitle: transmissionType === 'manual' 
           ? t.dashboard.conversionPath.subtitleManual 
           : t.dashboard.conversionPath.subtitleAuto,
-        badgeClass: 'bg-purple-100 dark:bg-purple-900/30',
-        iconClass: 'bg-purple-200 dark:bg-purple-800',
-        textClass: 'text-purple-800 dark:text-purple-200',
-        subtextClass: 'text-purple-600 dark:text-purple-400',
-        icon: <BadgeCheck className="h-5 w-5 text-purple-700 dark:text-purple-300" />,
+        badgeClass: 'bg-emerald-100 dark:bg-emerald-900/30',
+        iconClass: 'bg-emerald-200 dark:bg-emerald-800',
+        textClass: 'text-emerald-800 dark:text-emerald-200',
+        subtextClass: 'text-emerald-600 dark:text-emerald-400',
+        icon: <BadgeCheck className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />,
       }
     : transmissionType === 'manual'
       ? {
           title: t.dashboard.manualPath.title,
           subtitle: t.dashboard.manualPath.subtitle,
-          badgeClass: 'bg-orange-100 dark:bg-orange-900/30',
-          iconClass: 'bg-orange-200 dark:bg-orange-800',
-          textClass: 'text-orange-800 dark:text-orange-200',
-          subtextClass: 'text-orange-600 dark:text-orange-400',
-          icon: <Cog className="h-5 w-5 text-orange-700 dark:text-orange-300" />,
+          badgeClass: 'bg-blue-100 dark:bg-blue-900/30',
+          iconClass: 'bg-blue-200 dark:bg-blue-800',
+          textClass: 'text-blue-800 dark:text-blue-200',
+          subtextClass: 'text-blue-600 dark:text-blue-400',
+          icon: <Cog className="h-5 w-5 text-blue-700 dark:text-blue-300" />,
         }
       : {
           title: t.dashboard.automaticPath.title,
@@ -111,9 +111,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
     <div className="space-y-8 pb-10 animate-scale-in">
       {/* Premium Hero Section: Exam Readiness & Path */}
       <div data-tour="readiness" className="overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10 animate-fade-in-up">
-        <div className="bg-premium-blue p-8 text-white relative overflow-hidden">
-          {/* Decorative background element */}
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="bg-blue-600 p-8 text-white relative overflow-hidden">
+          
           
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
@@ -158,8 +157,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               className={cn(
                 'flex w-full items-center justify-between rounded-2xl p-5 text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]',
                 trialDaysLeft <= 2
-                  ? 'bg-gradient-to-r from-orange-500 to-red-500 shadow-orange-500/20'
-                  : 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-blue-500/20'
+                  ? 'bg-red-600 shadow-red-500/20'
+                  : 'bg-blue-600 shadow-blue-500/20'
               )}
             >
               <div className="flex items-center gap-4">
@@ -189,7 +188,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <button
               onClick={onOpenPaywall}
               aria-label={t.dashboard.unlockPro}
-              className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 p-5 text-white shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] animate-pulse-slow"
+              className="flex w-full items-center justify-between rounded-2xl bg-blue-600 p-5 text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="flex items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md border border-white/20">
@@ -197,7 +196,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 </div>
                 <div className="text-left">
                   <p className="text-base font-bold tracking-tight">DriveDE Pro</p>
-                  <p className="text-xs font-medium text-orange-50">
+                  <p className="text-xs font-medium text-blue-100">
                     {t.dashboard.unlockPro}
                   </p>
                 </div>
@@ -212,13 +211,13 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         <button
           onClick={onStartSimulation}
           aria-label={t.dashboard.examSimulation}
-          className="group flex w-full items-center justify-between rounded-2xl bg-premium-dark p-6 text-white shadow-2xl transition-all hover:translate-y-[-2px] hover:shadow-slate-900/30 active:scale-[0.99]"
+          className="group flex w-full items-center justify-between rounded-2xl bg-slate-900 p-6 text-white shadow-2xl transition-all hover:translate-y-[-2px] hover:shadow-slate-900/30 active:scale-[0.99]"
         >
           <div className="flex items-center gap-5 text-left">
             <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:bg-blue-500/20 group-hover:border-blue-500/30 transition-all duration-300">
               <Mic className="h-7 w-7 text-blue-400" />
               {!proActive && (
-                <div className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 shadow-lg border-2 border-slate-900">
+                <div className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 shadow-lg border-2 border-slate-900">
                   <Crown className="h-3.5 w-3.5 text-white" />
                 </div>
               )}
@@ -251,17 +250,17 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             icon: BookOpen, 
             label: t.dashboard.chapters, 
             value: `${visibleChapters.filter((ch) => ch.lessons.some((l) => userProgress.completedLessons.includes(l.id))).length}/${visibleChapters.length}`,
-            color: 'purple',
-            bg: 'bg-purple-50 dark:bg-purple-950/40',
-            text: 'text-purple-600 dark:text-purple-400'
+            color: 'blue',
+            bg: 'bg-blue-50 dark:bg-blue-950/40',
+            text: 'text-blue-600 dark:text-blue-400'
           },
           { 
             icon: Flame, 
             label: t.dashboard.streak, 
             value: userProgress.currentStreak,
-            color: 'orange',
-            bg: 'bg-orange-50 dark:bg-orange-950/40',
-            text: 'text-orange-600 dark:text-orange-400',
+            color: 'emerald',
+            bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+            text: 'text-emerald-600 dark:text-emerald-400',
             disabled: userProgress.currentStreak === 0
           }
         ].map((stat, i) => (
@@ -274,7 +273,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 <stat.icon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-muted mb-1">
                   {stat.label}
                 </p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
@@ -305,12 +304,12 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         <button
           onClick={() => onDirectLessonSelect('basics-0')}
           aria-label={t.dashboard.conversionQuickstart}
-          className="w-full rounded-3xl glass border-purple-500/20 p-6 text-left shadow-xl transition-all hover:translate-y-[-2px] hover:shadow-purple-500/10 group animate-fade-in-up"
+          className="w-full rounded-3xl glass p-6 text-left shadow-sm transition-all hover:translate-y-[-2px] hover:shadow-md group animate-fade-in-up"
           style={{ animationDelay: '400ms' }}
         >
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-purple-100 dark:bg-purple-900/40 group-hover:scale-110 transition-transform">
-              <BadgeCheck className="h-8 w-8 text-purple-700 dark:text-purple-300" />
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 group-hover:scale-110 transition-transform">
+              <BadgeCheck className="h-8 w-8 text-emerald-700 dark:text-emerald-300" />
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -319,11 +318,11 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 </h3>
                 <div className="flex items-center gap-2">
                   {!isPremium && (
-                    <span className="inline-flex rounded-lg bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-amber-500/30">
+                    <span className="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
                       Pro
                     </span>
                   )}
-                  <span className="inline-flex rounded-lg bg-purple-100 dark:bg-purple-900/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                  <span className="inline-flex rounded-lg bg-emerald-100 dark:bg-emerald-900/50 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
                     {t.dashboard.germanyFocus}
                   </span>
                 </div>
@@ -340,7 +339,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 ].map((pill) => (
                   <span
                     key={pill}
-                    className="rounded-lg bg-white/50 dark:bg-slate-800/50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:text-purple-300 border border-purple-500/10 shadow-sm"
+                    className="rounded-lg bg-surface-raised px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-line shadow-sm"
                   >
                     {pill}
                   </span>
@@ -408,7 +407,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             desc: t.dashboard.reviewDesc,
             icon: ClipboardCheck,
             badge: t.dashboard.pdfExport,
-            color: 'indigo',
+            color: 'blue',
             fullWidth: true,
             onClick: () => onNavigate('review')
           }
@@ -424,13 +423,12 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <div className="flex items-start gap-5">
               <div className={cn(
                 'relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110',
-                card.color === 'blue' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
                 card.color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' :
-                'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+                'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
               )}>
                 <card.icon className="h-7 w-7" />
                 {card.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900 animate-pulse">
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
                     {mistakesCount}
                   </span>
                 )}
@@ -442,9 +440,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   </p>
                   <span className={cn(
                     'rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border',
-                    card.color === 'blue' ? 'bg-blue-50/50 text-blue-600 border-blue-500/20' :
                     card.color === 'amber' ? 'bg-amber-50/50 text-amber-600 border-amber-500/20' :
-                    'bg-indigo-50/50 text-indigo-600 border-indigo-500/20'
+                    'bg-blue-50/50 text-blue-600 border-blue-500/20'
                   )}>
                     {card.badge}
                   </span>
@@ -511,10 +508,10 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 <div className="h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900/50 p-0.5 border border-black/5 dark:border-white/5">
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all duration-1000 cubic-bezier(0.16, 1, 0.3, 1)',
+                      'h-full rounded-full transition-all duration-500',
                       specialProgress[item.key as keyof typeof specialProgress] >= 100 
                         ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
-                        : 'bg-premium-blue'
+                        : 'bg-blue-600'
                     )}
                     style={{ width: `${specialProgress[item.key as keyof typeof specialProgress]}%` }}
                   />
@@ -560,7 +557,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 aria-label={`${chapterTitle}: Fortschritt ${chapterProgress}%`}
                 className="group flex w-full items-center gap-5 rounded-3xl glass p-5 text-left transition-all hover:scale-[1.02] active:scale-[0.99] hover:shadow-xl"
               >
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-900 group-hover:bg-premium-blue group-hover:text-white transition-all duration-300 shadow-inner">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-900 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-inner">
                   <Icon className="h-7 w-7" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -569,7 +566,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   </h4>
                   <div className="flex items-center gap-4">
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900 shadow-inner">
-                      <div className="h-full rounded-full bg-premium-blue transition-all duration-1000" style={{ width: `${chapterProgress}%` }} />
+                      <div className="h-full rounded-full bg-blue-600 transition-all duration-500" style={{ width: `${chapterProgress}%` }} />
                     </div>
                     <span className="text-xs font-bold font-mono text-blue-600 dark:text-blue-400 min-w-[3ch]">{chapterProgress}%</span>
                   </div>
@@ -583,8 +580,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
       </div>
 
-      <div className="rounded-3xl bg-premium-indigo p-8 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+      <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden animate-fade-in-up" style={{ animationDelay: '800ms' }}>
         <div className="relative z-10 flex items-start gap-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
             <Target className="h-8 w-8 text-white" />
@@ -593,7 +589,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
             <h4 className="text-xl font-bold tracking-tight mb-2">
               {t.dashboard.proTip}
             </h4>
-            <p className="text-sm font-medium leading-relaxed text-indigo-100/90">
+            <p className="text-sm font-medium leading-relaxed text-blue-100/90">
               {isUmschreibung ? t.dashboard.tips.conversion : t.dashboard.tips.regular}
             </p>
           </div>

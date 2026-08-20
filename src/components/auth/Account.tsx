@@ -4,7 +4,8 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download, Trophy, Wallet } from 'lucide-react';
+import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -21,9 +22,10 @@ interface AccountProps {
   onDeleteAccount: () => Promise<boolean>;
   onChangePath: () => void;
   onOpenLegal: () => void;
+  onNavigate?: (tab: TabType) => void;
 }
 
-export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, onOpenLegal }: AccountProps) {
+export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, onOpenLegal, onNavigate }: AccountProps) {
   const {
     language,
     darkMode,
@@ -493,6 +495,38 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {/* Achievements and Finance moved out of the 5-tab bottom nav; this is
+            their mobile home (desktop sidebar still links them directly). */}
+        <button
+          onClick={() => onNavigate?.('achievements')}
+          className="rounded-xl border border-line bg-surface p-4 text-left shadow-sm transition hover:shadow-md"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
+              <Trophy className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{language === 'de' ? 'Erfolge' : 'Achievements'}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{language === 'de' ? 'Meilensteine und Serien ansehen' : 'View milestones and streaks'}</p>
+            </div>
+          </div>
+        </button>
+
+        <button
+          onClick={() => onNavigate?.('finance')}
+          className="rounded-xl border border-line bg-surface p-4 text-left shadow-sm transition hover:shadow-md"
+        >
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
+              <Wallet className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{language === 'de' ? 'Kosten und Budget' : 'Costs and budget'}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{language === 'de' ? 'Fahrstunden-Budget und Ausgaben' : 'Lesson budget and spending'}</p>
+            </div>
+          </div>
+        </button>
+
         <button
           onClick={onOpenLegal}
           className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-left shadow-sm transition hover:shadow-md dark:border-emerald-900/40 dark:bg-emerald-900/10"

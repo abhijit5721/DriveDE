@@ -40,12 +40,12 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
     <aside 
       role="navigation"
       aria-label={t.common.nav.mainNav}
-      className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 glass sticky top-0"
+      className="hidden lg:flex flex-col h-screen w-64 shrink-0 border-r border-line bg-surface sticky top-0"
     >
       <div className="p-6">
         <button 
           onClick={() => onTabChange('home')}
-          className="group flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none"
+          className="group flex items-center gap-2"
           aria-label="Go to Home"
         >
           <Logo className="h-10 w-10 transition-all" />
@@ -53,12 +53,12 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
               {onTrial ? (
-                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                <span className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                   <Clock className="h-2.5 w-2.5" />
                   <span className="notranslate">{language === 'de' ? `TEST · ${trialDaysLeft}T` : `TRIAL · ${trialDaysLeft}d`}</span>
                 </span>
               ) : proActive ? (
-                <span className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                <span className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
                 </span>
@@ -69,28 +69,24 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
       </div>
       
       <nav className="flex-1 px-4 py-2">
-        <ul className="space-y-1.5" role="tablist">
+        <ul className="space-y-1.5">
           {navItems.map((item, index) => (
             <li key={item.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
               <button
-                role="tab"
-                aria-selected={activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')}
+                aria-current={(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')) ? 'page' : undefined}
                 aria-label={item.label}
                 data-testid={`nav-${item.id}`}
                 onClick={() => onTabChange(item.id)}
                 className={`flex items-center w-full gap-3 rounded-xl px-4 py-2.5 text-left text-sm font-semibold transition-all duration-300 group
                   ${(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history'))
-                    ? 'bg-premium-blue text-white shadow-lg shadow-blue-500/25 scale-[1.02]'
-                    : 'text-slate-600 hover:bg-white/50 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:translate-x-1'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-surface-raised dark:text-slate-400'
                   }`}
               >
                 <div className="relative">
                   <item.icon className={`h-5 w-5 transition-colors duration-300 ${(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')) ? 'text-white' : 'text-slate-400 group-hover:text-blue-500'}`} />
                 </div>
                 <span className="flex-1">{item.label}</span>
-                {(activeTab === item.id || (item.id === 'tracker' && activeTab === 'history')) && (
-                  <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                )}
               </button>
             </li>
           ))}
@@ -100,21 +96,21 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
       <div className="mt-auto border-t border-slate-100 p-4 dark:border-slate-800">
         <div className="flex flex-col gap-3">
           {onTrial ? (
-            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-blue-500/20">
+            <div className="flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-xs font-bold text-white">
               <Clock className="h-4 w-4" />
               {language === 'de'
                 ? `Noch ${trialDaysLeft} ${trialDaysLeft === 1 ? 'Tag' : 'Tage'} Pro-Test`
                 : `${trialDaysLeft} ${trialDaysLeft === 1 ? 'day' : 'days'} left of Pro trial`}
             </div>
           ) : proActive ? (
-            <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg shadow-orange-500/20 animate-pulse-slow">
+            <div className="flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-xs font-bold text-white">
               <Crown className="h-4 w-4" />
               DriveDE <span className="notranslate">Pro</span> Member
             </div>
           ) : null}
 
           <div 
-            className="flex p-1 glass-card rounded-xl"
+            className="flex p-1 bg-surface-raised border border-line rounded-xl"
             role="group"
             aria-label={t.common.nav.languageSelect}
           >

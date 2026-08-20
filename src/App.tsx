@@ -760,6 +760,7 @@ export default function App() {
               onDeleteAccount={handleDeleteAccount}
               onChangePath={handleChangePath}
               onOpenLegal={() => handleOpenLegalPage('privacy')}
+              onNavigate={handleNavigate}
             />
           </Suspense>
         );
