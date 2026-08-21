@@ -265,7 +265,10 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving License Curriculum')}
               </p>
               <p className="text-xs text-muted font-medium">
-                {isDe ? 'Gesamtfortschritt & Prüfungsbereitschaft' : 'Overall Progress & Exam Readiness'}
+                {/* This header shows lesson-completion percent only. Calling it
+                    exam readiness contradicted the dashboard's readiness score
+                    (a different metric from utils/readiness.ts). */}
+                {isDe ? 'Gesamtfortschritt im Lehrplan' : 'Overall curriculum progress'}
               </p>
             </div>
           </div>

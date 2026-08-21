@@ -35,16 +35,16 @@ interface PlanPickerScreenProps {
 
 const PLAN_CONFIG = {
   'de': {
-    badge: '✨ 7 TAGE TESTVERSION • 100% KOSTENLOS',
+    badge: '7 TAGE TESTVERSION • KOSTENLOS',
     headline: 'Wähle deinen passenden Pro-Plan',
-    subline: 'Teste alle KI-Funktionen, 3D-Simulationen & GPS-Tracking 7 Tage lang kostenlos.',
+    subline: 'GPS-Tracking, Ein-Tipp Fehlerprotokoll, 3D-Trainer und Prüfungsreife-Score: 7 Tage kostenlos testen.',
     signupHeadline: 'Erstelle dein Konto',
     signupSubline: 'Melde dich an, um deine 7-Tage Pro Testversion zu aktivieren.',
     plans: {
       '30-days': {
         label: '30-Tage-Pass',
         tag: 'EINSTEIGER',
-        tagColor: 'bg-slate-100 text-slate-600 border border-slate-300',
+        tagColor: 'bg-slate-100 text-slate-600 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600',
         price: '€9.99',
         dailyPrice: '€0.33 / Tag',
         period: 'nach 7 Tagen Testphase',
@@ -52,7 +52,7 @@ const PLAN_CONFIG = {
       },
       '90-days': {
         label: '90-Tage-Pass',
-        tag: '🔥 BELIEBTESTE WAHL',
+        tag: 'BELIEBTESTE WAHL',
         tagColor: 'bg-blue-600 text-white font-black',
         price: '€19.99',
         dailyPrice: '€0.22 / Tag',
@@ -62,7 +62,7 @@ const PLAN_CONFIG = {
       },
       'lifetime': {
         label: 'Lifetime-Zugang',
-        tag: '👑 BESTES ANGEBOT',
+        tag: 'BESTES ANGEBOT',
         tagColor: 'bg-blue-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'Einmalig · Für immer',
@@ -74,14 +74,14 @@ const PLAN_CONFIG = {
     features: [
       { text: 'GPS Live-Fahrtracking & Fahrtenbuch', badge: 'GPS' },
       { text: 'Ein-Tipp Fehlerprotokoll & Auswertung', badge: 'Analyse' },
-      { text: 'KI-Fahrlehrer Auswertungen nach jeder Fahrt', badge: 'KI' },
+      { text: 'Fahrt-Auswertung nach jeder Fahrt', badge: 'Report' },
       { text: '3D-Einparktrainer & Prüfungs-Simulationen', badge: '3D' },
       { text: 'Fahrbereitschafts- & Fortschritts-Score', badge: 'Score' },
     ],
     ctaPlan: (planLabel: string) => `Mit ${planLabel} 7 Tage kostenlos testen →`,
     ctaSignup: 'Konto erstellen & 7 Tage Pro testen',
     ctaSub: 'Keine Kreditkarte erforderlich · Sofortiger Zugriff · Jederzeit kündbar',
-    guarantee: '100% Risikofrei testen',
+    guarantee: 'Risikofrei testen',
     guaranteeDesc: 'Du kannst innerhalb der 7 Tage jederzeit mit einem Klick kündigen.',
     timelineTitle: 'So funktioniert deine Testphase:',
     timelineSteps: [
@@ -106,19 +106,19 @@ const PLAN_CONFIG = {
     resendLink: 'Bestätigungslink erneut senden',
     resendSuccess: 'Bestätigungslink wurde erneut gesendet.',
     changeEmail: 'E-Mail-Adresse ändern',
-    ratingText: '🔒 Sichere Zahlung via Stripe · 100% DSGVO-konform',
+    ratingText: 'Sichere Zahlung via Stripe · DSGVO-konform',
   },
   'en': {
-    badge: '✨ 7-DAY TRIAL • 100% FREE',
+    badge: '7-DAY TRIAL • FREE',
     headline: 'Choose your perfect Pro plan',
-    subline: 'Test all AI features, 3D simulations & GPS tracking free for 7 full days.',
+    subline: 'GPS tracking, one-tap mistake log, 3D trainers and readiness score: free for 7 days.',
     signupHeadline: 'Create your account',
     signupSubline: 'Sign up to activate your 7-day unlimited Pro trial.',
     plans: {
       '30-days': {
         label: '30-Day Pass',
         tag: 'STARTER',
-        tagColor: 'bg-slate-100 text-slate-600 border border-slate-300',
+        tagColor: 'bg-slate-100 text-slate-600 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600',
         price: '€9.99',
         dailyPrice: '€0.33 / day',
         period: 'after 7-day trial',
@@ -126,7 +126,7 @@ const PLAN_CONFIG = {
       },
       '90-days': {
         label: '90-Day Pass',
-        tag: '🔥 MOST POPULAR',
+        tag: 'MOST POPULAR',
         tagColor: 'bg-blue-600 text-white font-black',
         price: '€19.99',
         dailyPrice: '€0.22 / day',
@@ -136,7 +136,7 @@ const PLAN_CONFIG = {
       },
       'lifetime': {
         label: 'Lifetime Access',
-        tag: '👑 BEST VALUE',
+        tag: 'BEST VALUE',
         tagColor: 'bg-blue-600 text-white font-black',
         price: '€29.99',
         dailyPrice: 'One-time · Forever',
@@ -148,14 +148,14 @@ const PLAN_CONFIG = {
     features: [
       { text: 'GPS Live Driving Tracker & Logbook', badge: 'GPS' },
       { text: 'One-Tap Mistake Log & Analysis', badge: 'Log' },
-      { text: 'AI Instructor Debriefing After Every Drive', badge: 'AI' },
+      { text: 'Drive analysis after every drive', badge: 'Report' },
       { text: '3D Parking Simulator & Exam Scenarios', badge: '3D' },
       { text: 'Exam Readiness & Progress Analytics', badge: 'Score' },
     ],
     ctaPlan: (planLabel: string) => `Start 7-Day Free Trial with ${planLabel} →`,
     ctaSignup: 'Create Account & Start 7-Day Trial',
     ctaSub: 'No credit card required · Instant access · Cancel anytime',
-    guarantee: '100% Risk-Free Trial',
+    guarantee: 'Risk-free trial',
     guaranteeDesc: 'Cancel anytime during the 7 days with a single click.',
     timelineTitle: 'How your free trial works:',
     timelineSteps: [
@@ -180,7 +180,7 @@ const PLAN_CONFIG = {
     resendLink: 'Resend confirmation link',
     resendSuccess: 'Confirmation link has been resent.',
     changeEmail: 'Change email address',
-    ratingText: '🔒 Secure payment via Stripe · 100% GDPR compliant',
+    ratingText: 'Secure payment via Stripe · GDPR compliant',
   },
 };
 
@@ -383,14 +383,14 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
   };
 
   return (
-    <div className="h-full w-full bg-slate-50 flex flex-col overflow-y-auto selection:bg-blue-500/30">
+    <div className="h-full w-full bg-slate-50 dark:bg-slate-950 flex flex-col overflow-y-auto selection:bg-blue-500/30">
       {/* Header */}
       <div className="relative flex items-center justify-between px-4 sm:px-8 py-5 shrink-0 z-10">
         <Logo size="sm" />
         {step !== 'plan' ? (
           <button
             onClick={() => setStep('plan')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-line text-muted hover:text-slate-900 dark:hover:text-white text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             {t.changePlan}
@@ -402,7 +402,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
             transition={{ delay: 0.2 }}
             onClick={onCancel || onComplete}
             data-testid="plan-picker-back"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-line text-muted hover:text-slate-900 dark:hover:text-white text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm"
           >
             <X className="w-3.5 h-3.5" />
             {t.back}
@@ -424,14 +424,14 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
             >
               {/* Hero text */}
               <div className="text-center mb-6 sm:mb-8 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 mb-3 sm:mb-4">
-                  <Zap className="w-3.5 h-3.5 text-blue-600" />
-                  <span className="text-[10px] sm:text-xs font-black text-slate-600 tracking-wider uppercase">{t.badge}</span>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mb-3 sm:mb-4">
+                  <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <span className="text-xs font-black text-slate-600 dark:text-slate-300 tracking-wider uppercase">{t.badge}</span>
                 </div>
-                <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2 sm:mb-3">
+                <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2 sm:mb-3">
                   {t.headline}
                 </h1>
-                <p className="text-slate-600 text-xs sm:text-sm font-medium leading-relaxed">{t.subline}</p>
+                <p className="text-muted text-xs sm:text-sm font-medium leading-relaxed">{t.subline}</p>
               </div>
 
               {/* Plan cards */}
@@ -451,14 +451,14 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       className={cn(
                         'relative w-full flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border-2 transition-all duration-300 text-left overflow-hidden group transform active:scale-[0.99]',
                         isSelected
-                          ? 'bg-white border-blue-600 scale-[1.01] shadow-md'
-                          : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
+                          ? 'bg-surface border-blue-600 scale-[1.01] shadow-md'
+                          : 'bg-surface border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'
                       )}
                     >
                       {/* Radio Selector */}
                       <div className={cn(
                         'relative shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300',
-                        isSelected ? 'border-slate-900 bg-slate-900 shadow-md' : 'border-slate-300 bg-white'
+                        isSelected ? 'border-slate-900 bg-slate-900 dark:border-white dark:bg-white shadow-md' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
                       )}>
                         <AnimatePresence>
                           {isSelected && (
@@ -466,7 +466,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
                               exit={{ scale: 0 }}
-                              className="w-2.5 h-2.5 rounded-full bg-white"
+                              className="w-2.5 h-2.5 rounded-full bg-white dark:bg-slate-900"
                             />
                           )}
                         </AnimatePresence>
@@ -475,7 +475,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       {/* Icon */}
                       <div className={cn(
                         'shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-md',
-                        isSelected ? 'bg-slate-900/10 text-slate-900' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                        isSelected ? 'bg-slate-900/10 text-slate-900 dark:bg-white/10 dark:text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:group-hover:bg-slate-700'
                       )}>
                         <Icon className="w-5 h-5" />
                       </div>
@@ -484,18 +484,18 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <span className={cn(
-                            'text-sm sm:text-base font-bold transition-colors truncate',
-                            isSelected ? 'text-slate-900' : 'text-slate-700'
+                            'text-sm sm:text-base font-bold transition-colors',
+                            isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'
                           )}>
                             {cfg.label}
                           </span>
-                          <span className={cn('text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 shadow-sm', cfg.tagColor)}>
+                          <span className={cn('text-xs font-black px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 shadow-sm', cfg.tagColor)}>
                             {cfg.tag}
                           </span>
                         </div>
                         <p className={cn(
-                          'text-[11px] sm:text-xs font-medium transition-colors truncate',
-                          isSelected ? 'text-slate-600' : 'text-slate-500'
+                          'text-xs font-medium transition-colors',
+                          isSelected ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'
                         )}>
                           {cfg.highlight}
                         </p>
@@ -505,13 +505,13 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       <div className="shrink-0 text-right">
                         <div className={cn(
                           'text-xl sm:text-2xl font-black tracking-tight transition-colors',
-                          isSelected ? 'text-slate-900' : 'text-slate-700'
+                          isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'
                         )}>
                           {cfg.price}
                         </div>
                         <div className={cn(
-                          'text-[10px] sm:text-xs font-bold transition-colors',
-                          isSelected ? 'text-blue-600' : 'text-slate-500'
+                          'text-xs font-bold transition-colors',
+                          isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
                         )}>
                           {cfg.dailyPrice}
                         </div>
@@ -522,19 +522,19 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               </div>
 
               {/* Trial Assurance Timeline */}
-              <div className="w-full mb-6 sm:mb-8 rounded-2xl bg-white border border-slate-200 p-4 sm:p-5 shadow-sm">
-                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-3 text-center flex items-center justify-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5 text-blue-600" />
+              <div className="w-full mb-6 sm:mb-8 rounded-2xl bg-surface border border-line p-4 sm:p-5 shadow-sm">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-muted mb-3 text-center flex items-center justify-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                   <span>{t.timelineTitle}</span>
                 </p>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   {t.timelineSteps.map((s, idx) => (
                     <div key={idx} className="flex flex-col items-center">
-                      <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-black text-xs flex items-center justify-center mb-1.5 shadow-sm">
+                      <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-black text-xs flex items-center justify-center mb-1.5 shadow-sm">
                         {s.step}
                       </div>
-                      <p className="text-xs font-bold text-slate-900 mb-0.5">{s.title}</p>
-                      <p className="text-[10px] text-slate-500 leading-tight font-medium hidden sm:block">{s.desc}</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white mb-0.5">{s.title}</p>
+                      <p className="text-xs text-muted leading-tight font-medium hidden sm:block">{s.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -542,17 +542,17 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
 
               {/* Features included */}
               <div className="w-full mb-6 sm:mb-8">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">
+                <p className="text-xs font-bold text-muted uppercase tracking-wider mb-3 text-center">
                   {isDe ? 'In deinem 7-Tage-Testpaket enthalten:' : 'Included in your 7-day trial package:'}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {t.features.map((f, i) => (
-                    <div key={i} className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200">
-                      <div className="shrink-0 w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-                        <Check className="w-3 h-3 text-blue-600 stroke-[3px]" />
+                    <div key={i} className="flex items-center gap-2.5 p-2 rounded-xl bg-surface border border-line">
+                      <div className="shrink-0 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                        <Check className="w-3 h-3 text-blue-600 dark:text-blue-400 stroke-[3px]" />
                       </div>
-                      <span className="text-xs font-medium text-slate-700 flex-1">{f.text}</span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 uppercase tracking-wider shrink-0">
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300 flex-1">{f.text}</span>
+                      <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 uppercase tracking-wider shrink-0">
                         {f.badge}
                       </span>
                     </div>
@@ -576,12 +576,12 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   </div>
                 </button>
 
-                <p className="text-center text-[11px] text-slate-600 font-medium flex items-center justify-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                <p className="text-center text-xs text-muted font-medium flex items-center justify-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                   <span>{t.ctaSub}</span>
                 </p>
 
-                <p className="text-center text-xs text-slate-500 font-semibold pt-1">
+                <p className="text-center text-xs text-muted font-semibold pt-1">
                   {t.ratingText}
                 </p>
               </div>
@@ -594,17 +594,17 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl"
+              className="w-full max-w-md bg-surface border border-line rounded-3xl p-6 sm:p-8 shadow-xl"
             >
               {/* Plan badge summary */}
-              <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-surface-raised border border-line">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
                     <Crown className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-900">{activePlan.label} ({activePlan.price})</p>
-                    <p className="text-[10px] text-slate-600 font-medium">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">{activePlan.label} ({activePlan.price})</p>
+                    <p className="text-xs text-muted font-medium">
                       {intent === 'buy'
                         ? (language === 'de' ? 'Einmalzahlung: inkl. 7 Tage Pro ab sofort' : 'One-time payment: includes Pro from day one')
                         : (language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days')}
@@ -614,17 +614,17 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="button"
                   onClick={() => setStep('plan')}
-                  className="text-[10px] font-bold text-blue-600 hover:underline uppercase"
+                  className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline uppercase"
                 >
                   {t.changePlan}
                 </button>
               </div>
 
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                   {isExistingUser ? (language === 'de' ? 'Anmelden' : 'Sign In') : t.signupHeadline}
                 </h2>
-                <p className="text-xs text-slate-500 mt-1 font-medium">
+                <p className="text-xs text-muted mt-1 font-medium">
                   {intent === 'buy'
                     ? (language === 'de'
                         ? 'Erstelle dein Konto: danach geht es direkt zur sicheren Zahlung.'
@@ -634,7 +634,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               </div>
 
               {error && (
-                <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-600">
+                <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 p-3 text-xs text-red-600 dark:text-red-400">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{error}</span>
                 </div>
@@ -642,24 +642,24 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
 
               <form onSubmit={handleSignupSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1.5">{t.emailLabel}</label>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">{t.emailLabel}</label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
+                    <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-muted" />
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@domain.com"
-                      className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1.5">{t.passwordLabel}</label>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">{t.passwordLabel}</label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-500" />
+                    <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-muted" />
                     <input
                       type="password"
                       required
@@ -667,16 +667,16 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
                   {!isExistingUser && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                    <div className="mt-2.5 p-3 rounded-xl bg-surface-raised border border-line space-y-1.5">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted mb-1">
                         {isDe ? 'Passwortanforderungen:' : 'Password requirements:'}
                       </p>
-                      <div className="grid grid-cols-2 gap-1 text-[11px] font-medium">
+                      <div className="grid grid-cols-2 gap-1 text-xs font-medium">
                         {[
                           { ok: validatePassword(password).hasMinLength, label: isDe ? 'Mind. 8 Zeichen' : 'Min 8 characters' },
                           { ok: validatePassword(password).hasUpper, label: isDe ? 'Großbuchstabe (A-Z)' : 'Uppercase (A-Z)' },
@@ -684,7 +684,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                           { ok: validatePassword(password).hasNumber, label: isDe ? 'Zahl (0-9)' : 'Number (0-9)' },
                           { ok: validatePassword(password).hasSpecial, label: isDe ? 'Sonderzeichen (!@#$)' : 'Special char (!@#$)' },
                         ].map((item, idx) => (
-                          <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'text-blue-600 font-bold' : 'text-slate-500')}>
+                          <div key={idx} className={cn('flex items-center gap-1.5', item.ok ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-muted')}>
                             <span className="text-xs">{item.ok ? '✓' : '•'}</span>
                             <span>{item.label}</span>
                           </div>
@@ -718,16 +718,16 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
 
               {/* Divider */}
               <div className="my-5 flex items-center gap-3">
-                <div className="flex-1 h-px bg-slate-200" />
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{t.divider}</span>
-                <div className="flex-1 h-px bg-slate-200" />
+                <div className="flex-1 h-px bg-line" />
+                <span className="text-xs font-bold text-muted uppercase tracking-wider">{t.divider}</span>
+                <div className="flex-1 h-px bg-line" />
               </div>
 
               {/* Google Button */}
               <button
                 type="button"
                 onClick={handleGoogleAuth}
-                className="w-full py-3.5 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -743,7 +743,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="button"
                   onClick={() => setIsExistingUser(!isExistingUser)}
-                  className="text-xs text-slate-500 hover:text-slate-900 font-medium transition-colors"
+                  className="text-xs text-muted hover:text-slate-900 dark:hover:text-white font-medium transition-colors"
                 >
                   {isExistingUser
                     ? (language === 'de' ? 'Noch kein Konto? Registrieren' : 'Need an account? Sign up')
@@ -759,38 +759,38 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl text-center"
+              className="w-full max-w-md bg-surface border border-line rounded-3xl p-6 sm:p-8 shadow-xl text-center"
             >
               {/* Mail Icon */}
-              <div className="w-16 h-16 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto mb-5 text-blue-600">
+              <div className="w-16 h-16 rounded-full bg-surface-raised border border-line flex items-center justify-center mx-auto mb-5 text-blue-600 dark:text-blue-400">
                 <Mail className="w-8 h-8 animate-pulse" />
               </div>
 
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
                 {t.confirmTitle}
               </h2>
 
-              <p className="text-xs text-slate-500 mb-3 font-medium">
+              <p className="text-xs text-muted mb-3 font-medium">
                 {t.confirmSubline}
               </p>
 
-              <div className="inline-block px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-bold text-xs mb-5 break-all">
+              <div className="inline-block px-4 py-2 rounded-xl bg-surface-raised border border-line text-slate-600 dark:text-slate-300 font-bold text-xs mb-5 break-all">
                 {pendingConfirmEmail || email}
               </div>
 
-              <p className="text-xs text-slate-600 leading-relaxed mb-6">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
                 {t.confirmDesc}
               </p>
 
               {infoMessage && (
-                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-slate-100 border border-slate-200 p-3 text-xs text-slate-600">
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 text-xs text-slate-600 dark:text-slate-300">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{infoMessage}</span>
                 </div>
               )}
 
               {error && (
-                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-red-50 border border-red-200 p-3 text-xs text-red-600">
+                <div className="mb-4 flex items-center justify-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 p-3 text-xs text-red-600 dark:text-red-400">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{error}</span>
                 </div>
@@ -823,7 +823,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="button"
                   onClick={handleResendConfirmation}
-                  className="w-full py-3 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl text-slate-600 text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-300 text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>{t.resendLink}</span>
@@ -832,7 +832,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                 <button
                   type="button"
                   onClick={() => setStep('signup')}
-                  className="text-xs text-slate-500 hover:text-slate-900 font-medium transition-colors pt-2"
+                  className="text-xs text-muted hover:text-slate-900 dark:hover:text-white font-medium transition-colors pt-2"
                 >
                   {t.changeEmail}
                 </button>

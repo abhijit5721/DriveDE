@@ -135,10 +135,12 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
   const activeLessonsPercent = totalLessons > 0 ? (completedLessonsCount / totalLessons) * 100 : 0;
   const mainQuizScore = userProgress.quizScores['main-scenarios'] || 0;
   /**
-   * Calculates a readiness score (0-100) based on curriculum progress and quiz performance.
-   * This is used to weight the financial estimation.
+   * Learning progress (0-100) from curriculum completion and quiz performance,
+   * used to weight the financial estimation. Deliberately NOT called readiness:
+   * the app's single exam-readiness score lives in utils/readiness.ts and is
+   * driving-session based; this is a different, curriculum-based signal.
    */
-  const readiness = Math.round((activeLessonsPercent * 0.7) + (mainQuizScore * 0.3));
+  const learningProgress = Math.round((activeLessonsPercent * 0.7) + (mainQuizScore * 0.3));
 
   /**
    * Estimates the remaining cost until the practical exam.
@@ -162,9 +164,9 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
     const remainingSpecialNacht = Math.max(0, MANDATORY_SPECIAL.nacht - totalNacht);
     
     // Weight the remaining normal sessions by how "unready" the user is
-    const progressFactor = (100 - readiness) / 100;
+    const progressFactor = (100 - learningProgress) / 100;
     const remainingNormal = Math.max(
-      readiness > 80 ? 1 : 3, 
+      learningProgress > 80 ? 1 : 3, 
       Math.round((targetLessons - totalNormalSessions) * (0.4 + progressFactor))
     );
 
@@ -179,18 +181,15 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
       remainingSpecial: remainingSpecialUeberland + remainingSpecialAutobahn + remainingSpecialNacht,
       remainingCost: Math.round(remainingNormalCost + remainingSpecialCost + examFees),
       totalEstimate: Math.round(totalEstimate),
-      isLowReadiness: readiness < 40,
-      isHighReadiness: readiness > 80
+      isLowReadiness: learningProgress < 40,
+      isHighReadiness: learningProgress > 80
     };
-  }, [readiness, totalNormalSessions, totalUeberland, totalAutobahn, totalNacht, currentSpend, hourlyRate45, costs, learningPath]);
+  }, [learningProgress, totalNormalSessions, totalUeberland, totalAutobahn, totalNacht, currentSpend, hourlyRate45, costs, learningPath]);
 
   return (
     <div className="space-y-6 pb-26 px-4 pt-4 max-w-2xl mx-auto">
       {/* Header Card */}
       <div className="relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 text-white shadow-2xl dark:bg-slate-950">
-        <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-blue-600/20 blur-[100px]"></div>
-        <div className="absolute -bottom-10 -left-10 h-64 w-64 rounded-full bg-emerald-600/20 blur-[100px]"></div>
-        
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
@@ -276,17 +275,21 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                 <div className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                  <span className="text-xs text-slate-500">{t.budget.specialDrives}</span>
               </div>
-              <span className="text-xs font-bold text-orange-600">{proActive ? estimation.remainingSpecial : '-'}</span>
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{proActive ? estimation.remainingSpecial : '-'}</span>
             </div>
             
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-500 dark:text-slate-400">{language === 'de' ? 'Lernfortschritt' : 'Learning progress'}</span>
+              <span className="text-xs font-bold tabular-nums">{learningProgress}%</span>
+            </div>
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               <motion.div 
-                className="h-full bg-gradient-to-r from-blue-500 to-blue-400"
+                className="h-full bg-blue-600"
                 initial={{ width: 0 }}
-                animate={{ width: `${readiness}%` }}
+                animate={{ width: `${learningProgress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
               />
             </div>

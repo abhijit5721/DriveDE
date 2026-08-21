@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { User, LogIn, LogOut, Cloud, ShieldCheck, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download, Trophy, Wallet } from 'lucide-react';
+import { User, LogIn, LogOut, Cloud, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download, Trophy, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -166,7 +166,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
 
   return (
     <div className="space-y-6 pb-6">
-      <div data-tour="tour-account" className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white shadow-xl dark:from-slate-800 dark:to-slate-900">
+      <div data-tour="tour-account" className="rounded-2xl bg-slate-900 p-5 text-white shadow-xl dark:bg-slate-800">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
             {authStatus === 'signed_in' ? <Cloud className="h-7 w-7" /> : <User className="h-7 w-7" />}
@@ -180,13 +180,13 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
                  ? authDisplayName
                 : t.guestMode}
               {isPremium && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                   <Crown className="h-3 w-3" />
                   PRO
                 </span>
               )}
             </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300 truncate">
+            <p className="mt-2 text-sm leading-6 text-slate-300 break-words">
               {authStatus === 'signed_in'
                 ? authEmail
                 : t.guestDesc}
@@ -247,25 +247,14 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
                     : t.continueWithGoogle}
                 </button>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <button
-                    onClick={onOpenAuth}
-                    data-testid="account-signin-email"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
-                  >
-                    <LogIn className="h-4 w-4" />
-                    {t.signInEmail}
-                  </button>
-
-                  <button
-                    onClick={onOpenAuth}
-                    data-testid="account-signup-btn"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-                  >
-                    <ShieldCheck className="h-4 w-4" />
-                    {t.continueGuest}
-                  </button>
-                </div>
+                <button
+                  onClick={onOpenAuth}
+                  data-testid="account-signin-email"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                  <LogIn className="h-4 w-4" />
+                  {t.signInEmail}
+                </button>
               </div>
 
               <p className="text-xs text-slate-300">
