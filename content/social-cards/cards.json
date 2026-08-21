@@ -13,7 +13,7 @@
     "term": "die Sonderfahrten",
     "pron": "ZON-der-far-ten",
     "meaning": "The 12 mandatory special drives: 5 Überland (country roads), 4 Autobahn, 3 night drives.",
-    "example": "No German license without all 12 — no matter how well you drive."
+    "example": "No German license without all 12: no matter how well you drive."
   },
   {
     "id": "vocab-anlage11",
@@ -28,7 +28,7 @@
     "type": "stat",
     "big": "€3.800",
     "label": "Average total cost of a German driving license",
-    "sub": "Driving schools advertise €1.500 — the real number after average lesson counts, exam fees and materials lands between €3.000 and €4.500."
+    "sub": "Driving schools advertise €1.500: the real number after average lesson counts, exam fees and materials lands between €3.000 and €4.500."
   },
   {
     "id": "stat-fail",
@@ -51,7 +51,7 @@
     "severity": "red",
     "question": "This light comes on while driving. What is it?",
     "name": "Oil pressure warning",
-    "answer": "Engine oil pressure is too low — the engine can be destroyed within minutes.",
+    "answer": "Engine oil pressure is too low: the engine can be destroyed within minutes.",
     "action": "Stop safely, engine off, check oil. Do NOT keep driving. Also a favorite Abfahrtkontrolle exam question."
   },
   {
@@ -71,7 +71,7 @@
     "severity": "amber",
     "question": "This amber light stays on. Can you keep driving?",
     "name": "ABS warning",
-    "answer": "Yes — normal brakes still work, but the anti-lock system is offline.",
+    "answer": "Yes: normal brakes still work, but the anti-lock system is offline.",
     "action": "Drive carefully to a workshop. In the exam: amber = check soon, red = stop now."
   },
   {
@@ -79,7 +79,7 @@
     "type": "rule",
     "question": "At an unmarked intersection, the car coming from the RIGHT always has priority.",
     "answer": true,
-    "explanation": "Rechts vor links — the default rule wherever no signs, lights or priority road markings say otherwise. Most common in residential areas, and one of the most common exam-fail moments."
+    "explanation": "Rechts vor links: the default rule wherever no signs, lights or priority road markings say otherwise. Most common in residential areas, and one of the most common exam-fail moments."
   },
   {
     "id": "rule-green-arrow",
@@ -95,14 +95,14 @@
     "flag": "🇮🇳",
     "tier": "Full conversion: theory exam + practical exam required",
     "tierColor": "#f59e0b",
-    "note": "Your Indian license counts for your first 6 months in Germany. After that you need the Umschreibung — but you skip the first-aid course requirement debate and can shorten driving school significantly with good preparation."
+    "note": "Your Indian license counts for your first 6 months in Germany. After that you need the full Umschreibung: eye test, first aid course, certified translation, then theory and practical exam. The upside: no minimum lesson count, so good preparation cuts driving school costs."
   },
   {
     "id": "country-usa",
     "type": "country",
     "country": "the USA",
     "flag": "🇺🇸",
-    "tier": "Depends on your state — some swap license-for-license, some need exams",
+    "tier": "Depends on your state: some swap license-for-license, some need exams",
     "tierColor": "#3b82f6",
     "note": "Washington, Texas, Michigan and ~25 more states: direct swap. California, New York, Florida: theory exam. A few states: both exams. Check your state before booking anything."
   }
