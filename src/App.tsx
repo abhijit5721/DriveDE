@@ -95,6 +95,7 @@ export default function App() {
     setActiveTab,
     language,
     hasCompletedOnboarding,
+    activeSession,
     trialStartedAt,
     trialEndsAt,
     trialEndedAcknowledged,
@@ -916,7 +917,10 @@ export default function App() {
 
       {!Capacitor.isNativePlatform() && <CookieConsent />}
       <AchievementOverlay />
-      {hasVisited && !hasCompletedOnboarding && <OnboardingTour />}
+      {/* Never overlay the tour on a live tracking session: its full-screen
+          scrim (z-9998) sits above the driving HUD (z-50) and would block the
+          mistake log mid-drive. The tour resumes after the session ends. */}
+      {hasVisited && !hasCompletedOnboarding && !activeSession && <OnboardingTour />}
     </>
   );
 }

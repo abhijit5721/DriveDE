@@ -48,11 +48,15 @@ export function OnboardingTour() {
   const isWelcome = currentStep === -1;
   const isLastStep = currentStep === totalSteps - 1;
 
-  // Delayed mount to let Dashboard animations finish
+  // Start only from a quiet dashboard: the first step spotlights the readiness
+  // gauge there, and starting anywhere else (mid-tracking, over the post-drive
+  // save modal) buries real UI under the scrim. Once started, tab changes are
+  // the tour's own navigation, so this must not re-run after isVisible is set.
   useEffect(() => {
+    if (isVisible || activeTab !== 'home') return;
     const timer = setTimeout(() => setIsVisible(true), 1200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [activeTab, isVisible]);
 
   // Check if we need to switch tabs before updating the spotlight
   useEffect(() => {
