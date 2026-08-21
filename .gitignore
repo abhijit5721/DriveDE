@@ -443,3 +443,4 @@ public/sitemap.xml
 .claude/settings.local.json
 social-cards-out/
 .impeccable/
+.mcp.json
