@@ -4,11 +4,30 @@ description: A realistic budget for the German driving licence, base fees, lesso
 slug: german-driving-licence-cost
 lang: en
 date: 2026-08-12
-keywords: german driving licence cost, driving license germany price, how much driving licence Germany, Fahrschule cost english
+keywords: german driving licence cost, driving license germany price, how much do driving lessons cost in germany, driving test germany cost, driving lessons germany cost
 flag: 💶
+updated: 2026-08-22
+variants: fuehrerschein-kosten
 ---
 
 Short answer: a first car licence (Klasse B) in Germany realistically costs **€2,500 to €4,500** in 2026, with big cities at the upper end. Here is where the money actually goes, and which parts you can control.
+
+## What it costs by city
+
+Total first-attempt cost for a Class B licence varies a lot by region (2026 real-world ranges):
+
+| Region | Typical total |
+|---|---|
+| Munich | €3,800-5,000 |
+| Stuttgart | €3,500-4,700 |
+| Hamburg | €3,500-4,600 |
+| Frankfurt | €3,400-4,600 |
+| Cologne / Düsseldorf | €3,300-4,500 |
+| Berlin | €3,200-4,400 |
+| Leipzig / Dresden | €2,800-3,800 |
+| Small towns / rural | €2,400-3,400 |
+
+Within the same city, driving schools often differ by 30 percent on lesson price alone, so compare two or three offers before signing.
 
 ## The cost breakdown
 
@@ -49,3 +68,8 @@ If you hold a foreign licence and convert it (Umschreibung), the economics chang
 3. Do structured self-review between lessons: track recurring mistakes and eliminate them deliberately.
 4. Learn the exam area before the exam.
 5. Only book the practical when your recent drives show zero priority or observation errors.
+
+
+## What a failed attempt costs
+
+The practical exam costs about **€130** in TÜV/DEKRA fees plus **€100 to 190** that your driving school charges for the car and instructor, so **€230 to 320 per attempt**. Roughly a third of candidates fail, and a retake typically adds **€600 or more** including extra lessons. We wrote up [exactly what happens after a failed test](/blog/failed-german-driving-test/), and the free budget calculator in the [DriveDE app](https://www.drivede.app) projects your remaining lessons and total cost from your real progress.

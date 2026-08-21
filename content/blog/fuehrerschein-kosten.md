@@ -4,8 +4,10 @@ description: Führerschein Kosten 2026 realistisch gerechnet, Grundbetrag, Fahrs
 slug: fuehrerschein-kosten
 lang: de
 date: 2026-08-12
-keywords: Führerschein Kosten, was kostet der Führerschein, Führerschein Kosten 2026, Fahrschule Kosten, Fahrstunden Preis
+keywords: Führerschein Kosten, was kostet der Führerschein, Führerschein Kosten 2026, Fahrschule Kosten 2026, Fahrstunden Kosten, Fahrschule Kosten pro Stunde, praktische Prüfung Kosten
 flag: 💶
+updated: 2026-08-22
+variants: german-driving-licence-cost
 ---
 
 Kurze Antwort: Für den Autoführerschein (Klasse B) zahlst du 2026 realistisch **2.500 bis 4.500 Euro**, in Großstädten eher am oberen Ende. Die lange Antwort lohnt sich aber, denn die größten Kostenblöcke kannst du aktiv beeinflussen.
@@ -26,11 +28,34 @@ Kurze Antwort: Für den Autoführerschein (Klasse B) zahlst du 2026 realistisch 
 
 Der Unterschied zwischen 2.500 und 4.500 Euro entsteht fast vollständig bei einem einzigen Posten: den **Übungsstunden**.
 
+## Was kostet der Führerschein in deiner Stadt?
+
+Die Preise unterscheiden sich regional stark. Typische Gesamtkosten für Klasse B (erster Versuch, durchschnittliche Stundenzahl), Stand 2026:
+
+| Region | Typische Gesamtkosten |
+|---|---|
+| München | 3.800-5.000 € |
+| Stuttgart | 3.500-4.700 € |
+| Hamburg | 3.500-4.600 € |
+| Frankfurt am Main | 3.400-4.600 € |
+| Köln / Düsseldorf | 3.300-4.500 € |
+| Berlin | 3.200-4.400 € |
+| Leipzig / Dresden | 2.800-3.800 € |
+| Kleinstadt / ländlicher Raum | 2.400-3.400 € |
+
+Das sind Erfahrungswerte, keine Festpreise: Innerhalb derselben Stadt liegen Fahrschulen beim Stundenpreis oft 30 Prozent auseinander. Zwei bis drei Angebote zu vergleichen lohnt sich immer.
+
+## Was kostet die praktische Prüfung selbst?
+
+Die Prüfungsgebühr des TÜV/DEKRA liegt 2026 bei rund **130 Euro**. Dazu kommt das Vorstellungsentgelt deiner Fahrschule (Fahrzeugnutzung und Begleitung durch den Fahrlehrer), meist **100 bis 190 Euro**. Zusammen also **230 bis 320 Euro pro Versuch**, und genau deshalb ist jeder vermiedene Fehlversuch bares Geld. Was nach dem Durchfallen passiert und was es kostet, haben wir [hier ausführlich aufgeschrieben](/blog/fahrpruefung-durchgefallen/).
+
 ## Warum die Übungsstunden entscheiden
 
 Gesetzlich vorgeschrieben sind nur die **12 Sonderfahrten** (5 Überland, 4 Autobahn, 3 Nachtfahrt). Für normale Übungsstunden gibt es keine Mindestanzahl, und trotzdem nimmt der Durchschnitt in Deutschland **25 bis 35 Übungsstunden**. Bei 80 Euro pro Stunde sind zehn Stunden mehr oder weniger schnell 800 Euro Unterschied.
 
 Warum brauchen viele so viele Stunden? Weil zwischen den Fahrstunden nichts passiert. Was in der Stunde gelernt wurde, ist bis zur nächsten Woche wieder weg, und der Fahrlehrer fängt von vorn an. Wer zwischen den Stunden strukturiert nacharbeitet (Fehler notieren, Abläufe wiederholen, Prüfungsstrecken kennen), kommt messbar schneller durch.
+
+Genau dafür gibt es in der [DriveDE App](https://www.drivede.app) einen kostenlosen Kostenrechner: Er rechnet aus deinem tatsächlichen Fortschritt hoch, wie viele Stunden und Euro bis zur Prüfung realistisch noch fehlen.
 
 ## Der teuerste Fehler: Durchfallen
 
