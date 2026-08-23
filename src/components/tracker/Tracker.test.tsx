@@ -180,9 +180,9 @@ describe('Tracker Component', () => {
     const startBtn = await screen.findByRole('button', { name: /Start Live/i });
     fireEvent.click(startBtn);
     
-    // Verify safety modal is visible
-    expect(screen.getByText(/Safety Protocol/i)).toBeInTheDocument();
-    expect(screen.getByText(/StVO § 23 Compliance/i)).toBeInTheDocument();
+    // Verify safety modal is visible with current title
+    expect(screen.getByText(/Phone stays mounted/i)).toBeInTheDocument();
+    expect(screen.getByText(/StVO § 23/i)).toBeInTheDocument();
     
     // Verify "Start Tracking" button in modal is disabled until mounted
     const confirmBtn = screen.getByTestId('confirm-mount-btn');
