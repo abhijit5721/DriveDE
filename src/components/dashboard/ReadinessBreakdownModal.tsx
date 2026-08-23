@@ -133,7 +133,7 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
           </div>
 
           <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
-            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2">
+            <p className="text-xs font-semibold text-blue-400 mb-2">
               {language === 'de' ? 'Empfehlungen' : 'Recommendations'}
             </p>
             <ul className="space-y-1.5">

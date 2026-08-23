@@ -1876,7 +1876,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   <span className="text-xl font-bold">€</span>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                     {t.tracker.drivingSchoolRate}
                   </p>
                   {isEditingRate ? (
@@ -2564,8 +2564,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                           <div className="space-y-2">
                                             <div className="flex items-center gap-2">
                                               <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-                                              <span className="text-xs font-bold uppercase tracking-tighter text-amber-600 dark:text-amber-400">
-                                                {language === 'de' ? 'ÜBERPRÜFUNG ERFORDERLICH' : 'NEEDS REVIEW'}
+                                              <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                                                {language === 'de' ? 'Überprüfung erforderlich' : 'Needs review'}
                                               </span>
                                             </div>
                                             <div className="grid grid-cols-1 gap-2">
@@ -2619,8 +2619,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                         {Object.keys(groups).length > 0 && (
                                           <div className="space-y-2">
                                             {pendingMistakes.length > 0 && (
-                                              <span className="text-xs font-bold uppercase tracking-tighter text-slate-400">
-                                                {language === 'de' ? 'BESTÄTIGTES PROTOKOLL' : 'VERIFIED LOG'}
+                                              <span className="text-xs font-semibold text-slate-400">
+                                                {language === 'de' ? 'Bestätigtes Protokoll' : 'Verified log'}
                                               </span>
                                             )}
                                             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

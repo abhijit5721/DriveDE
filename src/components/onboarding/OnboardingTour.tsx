@@ -245,7 +245,7 @@ export function OnboardingTour() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400 mb-2">
+                  <h3 className="text-xs font-semibold text-blue-400 mb-2">
                     DriveDE Tour
                   </h3>
                   <h2 className="text-2xl font-bold text-white mb-3">
@@ -269,7 +269,7 @@ export function OnboardingTour() {
                 <button
                   onClick={handleFinish}
                   data-testid="tour-skip"
-                  className="mt-4 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500 hover:text-slate-300 transition-colors"
+                  className="mt-4 text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors"
                 >
                   {t.onboarding.skip}
                 </button>

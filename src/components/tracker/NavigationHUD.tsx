@@ -16,6 +16,8 @@ import {
   X, MoreVertical, Navigation2, Square, Signal
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { getTileConfig } from '../../utils/mapTiles';
+import { useAppStore } from '../../store/useAppStore';
 
 /* ── Fix default Leaflet icon URLs for Vite/webpack ──────────────── */
 L.Icon.Default.mergeOptions({
@@ -217,6 +219,8 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   signalQuality = 'good',
   t
 }) => {
+  const darkMode = useAppStore((s) => s.darkMode);
+  const tiles = getTileConfig(darkMode);
   const [isStartingSplash, setIsStartingSplash] = React.useState(true);
   const [startingPhase, setStartingPhase] = React.useState<'finding' | '3' | '2' | '1' | 'go'>('finding');
 
@@ -309,7 +313,9 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                key={tiles.url}
+                attribution={tiles.attribution}
+                url={tiles.url}
                 maxZoom={20}
               />
               <Polyline

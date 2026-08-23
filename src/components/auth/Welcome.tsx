@@ -708,7 +708,7 @@ export function Welcome() {
       <section id="pricing" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-blue-600 uppercase tracking-widest">
+            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-semibold text-blue-600">
               {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
@@ -938,7 +938,7 @@ export function Welcome() {
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-slate-100 p-6 transition-all hover:bg-slate-200 active:scale-95 border border-slate-200 hover:border-slate-300"
                     >
                       <Cog className="h-6 w-6 text-slate-500 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.manual}</span>
+                      <span className="text-xs font-semibold text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.manual}</span>
                     </button>
 
                     <button
@@ -956,7 +956,7 @@ export function Welcome() {
                       className="group/btn relative flex flex-col items-center gap-3 rounded-3xl bg-slate-100 p-6 transition-all hover:bg-slate-200 active:scale-95 border border-slate-200 hover:border-slate-300"
                     >
                       <Zap className="h-6 w-6 text-blue-600 transition-transform group-hover/btn:rotate-12" />
-                      <span className="text-xs font-bold uppercase tracking-widest text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.automatic}</span>
+                      <span className="text-xs font-semibold text-slate-600 group-hover/btn:text-slate-900">{t.common.transmissions.automatic}</span>
                     </button>
                   </div>
                 </div>

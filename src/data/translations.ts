@@ -284,9 +284,9 @@ export const TRANSLATIONS = {
       mistakeAddedManually: 'Fehler manuell hinzugefügt',
       simulateButton: 'Simulation',
       drivingSchoolRate: 'Fahrschul-Tarif',
-      manualLogTitle: 'Fehler manuell erfassen',
+      manualLogTitle: 'Fehler erfassen',
       liveTimerTitle: 'Live-Fahrt-Timer',
-      simulationMode: 'Simulation',
+      simulationMode: 'Übungsfahrt',
       confirmSimulate: 'Möchtest du wirklich eine simulierte Fahrt mit Leaflet-Karte und Fehlverhaltens-Daten hinzufügen?',
       safetyScore: 'Sicherheits-Score',
       distance: 'Strecke',
@@ -1606,7 +1606,7 @@ export const TRANSLATIONS = {
                 ]
               },
               'exam-sim': {
-                title: 'Test-Prüfung: Live-Sim',
+                title: 'Prüfungssimulation',
                 description: 'Realistische Simulation mit Zeitdruck und Feedback.'
               }
             },
@@ -2619,9 +2619,9 @@ export const TRANSLATIONS = {
       mistakeAddedManually: 'Mistake added manually',
       simulateButton: 'Simulate',
       drivingSchoolRate: 'Driving School Rate',
-      manualLogTitle: 'Log Manual Mistake',
+      manualLogTitle: 'Log Fault',
       liveTimerTitle: 'Live Drive Timer',
-      simulationMode: 'Demo Mode',
+      simulationMode: 'Practice Run',
       confirmSimulate: 'Do you want to add a simulated drive with Leaflet Map and mistake data?',
       safetyScore: 'Safety Score',
       distance: 'Dist.',
@@ -3945,7 +3945,7 @@ export const TRANSLATIONS = {
                 ]
               },
               'exam-sim': {
-                title: 'Mock Exam: Live Sim',
+                title: 'Exam Simulation',
                 description: 'Realistic simulation with time pressure and feedback.'
               }
             },

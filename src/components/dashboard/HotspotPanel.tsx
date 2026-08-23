@@ -47,7 +47,7 @@ export function HotspotPanel({ lat = 52.52, lng = 13.405, onOpenMap, onOpenPaywa
               <p className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
                 {t.dashboard.hotspots}
               </p>
-              <span className="rounded-lg bg-amber-50/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+              <span className="rounded-lg bg-amber-50/50 px-2.5 py-1 text-xs font-semibold border border-amber-500/20 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
                 Pro
               </span>
             </div>
@@ -78,7 +78,7 @@ export function HotspotPanel({ lat = 52.52, lng = 13.405, onOpenMap, onOpenPaywa
               <p className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
                 {t.dashboard.hotspots}
               </p>
-              <span className="rounded-lg bg-red-50/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border border-red-500/20 text-red-600 dark:bg-red-900/30 dark:text-red-400">
+              <span className="rounded-lg bg-red-50/50 px-2.5 py-1 text-xs font-semibold border border-red-500/20 text-red-600 dark:bg-red-900/30 dark:text-red-400">
                 Pro
               </span>
             </div>

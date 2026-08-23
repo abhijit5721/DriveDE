@@ -68,7 +68,7 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
           {progress}%
         </span>
         {label && (
-          <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-blue-100/80">
+          <span className="mt-1 text-xs font-semibold text-blue-100/80">
             {label}
           </span>
         )}
