@@ -6,6 +6,8 @@ lang: en
 date: 2026-08-12
 keywords: Führerschein umschreiben, convert foreign licence Germany, Umschreibung countries, Anlage 11 FeV list, exchange driving licence Germany
 flag: 🌍
+updated: 2026-08-22
+variants: fuehrerschein-umschreiben
 ---
 
 Whether your foreign licence swaps for a German one with a form, or requires two exams, depends on exactly one thing: **which list your country is on**. German law (Anlage 11 FeV plus the EU directives) sorts every country into three tiers. Here is the complete picture.
@@ -32,7 +34,7 @@ All other countries (58 in our app's database, including India, Turkey, Ukraine,
 
 The crucial advantage over a first-time learner: **no mandatory lesson hours**. No 12 Sonderfahrten, no minimum practice lessons. A prepared converter often passes with 5 to 15 paid lessons instead of the 40+ hours a beginner buys. That is the difference between roughly €900 and €4,000.
 
-Country guides: [India](/blog/convert-indian-driving-licence-germany/) · [Turkey](/blog/convert-turkish-driving-licence-germany/) · [UK](/blog/convert-uk-driving-licence-germany/) · [Ukraine](/blog/convert-ukrainian-driving-licence-germany/) · [Brazil](/blog/convert-brazilian-driving-licence-germany/) · [China](/blog/convert-chinese-driving-licence-germany/)
+Country guides: [India](/blog/convert-indian-driving-licence-germany/) · [Turkey](/blog/convert-turkish-driving-licence-germany/) · [UK](/blog/convert-uk-driving-licence-germany/) · [Ukraine](/blog/convert-ukrainian-driving-licence-germany/) · [Brazil](/blog/convert-brazilian-driving-licence-germany/) · [China](/blog/convert-chinese-driving-licence-germany/) · [UAE](/blog/convert-uae-driving-licence-germany/)
 
 ## What every conversion has in common
 

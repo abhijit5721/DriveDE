@@ -4,11 +4,19 @@ description: Nur 12 Sonderfahrten sind Pflicht. Wie viele Übungsstunden der Dur
 slug: wie-viele-fahrstunden
 lang: de
 date: 2026-08-12
-keywords: wie viele Fahrstunden, Fahrstunden Anzahl, Pflichtstunden Führerschein, Sonderfahrten Klasse B, Fahrstunden Durchschnitt
+keywords: wie viele Fahrstunden braucht man, wie viele Fahrstunden braucht man durchschnittlich, wie viele Fahrstunden sind Pflicht Klasse B, Pflichtstunden Führerschein, Sonderfahrten Klasse B, Fahrstunden Durchschnitt
 flag: 🚗
+updated: 2026-08-22
 ---
 
-Die gesetzliche Antwort überrascht viele: **Pflicht sind nur die 12 Sonderfahrten.** Für normale Übungsstunden schreibt das Gesetz keine Mindestanzahl vor. Theoretisch könntest du mit 12 Fahrstunden zur Prüfung, praktisch entscheidet dein Fahrlehrer, wann er dich vorstellt.
+Die kurze Antwort: **Pflicht sind nur 12 Fahrstunden (die Sonderfahrten). Im Durchschnitt nehmen Fahrschüler in Deutschland 25 bis 35 Übungsstunden dazu, also 37 bis 47 Stunden insgesamt.** Für Übungsstunden schreibt das Gesetz keine Mindestanzahl vor; praktisch entscheidet dein Fahrlehrer, wann er dich zur Prüfung vorstellt.
+
+| | Stunden à 45 Min |
+|---|---|
+| Pflicht (Sonderfahrten) | 12 |
+| Übungsstunden, Durchschnitt | 25-35 |
+| **Gesamt, Durchschnitt** | **37-47** |
+| Kosten bei 80 €/Übungsstunde | grob 2.500-4.500 € gesamt |
 
 ## Die Pflichtstunden (Sonderfahrten)
 
@@ -46,8 +54,8 @@ Was messbar hilft:
 
 ## Wann bist du prüfungsreif?
 
-Nicht, wenn du dich gut fühlst, sondern wenn deine letzten Fahrten objektiv fehlerarm waren: keine Vorfahrtsfehler, konsequente Spiegel- und Schulterblicke, sicheres Verhalten bei Rechts-vor-links. Jeder Prüfungsversuch kostet 250 bis 350 Euro plus Extrastunden, ein Drittel fällt beim ersten Mal durch. Die billigste Fahrstunde ist die, die einen Fehlversuch verhindert.
+Nicht, wenn du dich gut fühlst, sondern wenn deine letzten Fahrten objektiv fehlerarm waren: keine Vorfahrtsfehler, konsequente Spiegel- und Schulterblicke, sicheres Verhalten bei Rechts-vor-links. Jeder Prüfungsversuch kostet 250 bis 350 Euro plus Extrastunden, ein Drittel fällt beim ersten Mal durch, [was dann passiert, steht hier](/blog/fahrpruefung-durchgefallen/). Die billigste Fahrstunde ist die, die einen Fehlversuch verhindert. Die [DriveDE App](https://www.drivede.app) misst genau das: Fehlerprotokoll pro Fahrt und eine objektive Prüfungsreife-Anzeige, kostenlos.
 
 ## Sonderfall: ausländischer Führerschein
 
-Wer einen Führerschein aus dem Ausland umschreibt, hat **gar keine Pflichtstunden**, auch die 12 Sonderfahrten entfallen. Mehr dazu im [Umschreibungs-Überblick](/blog/convert-foreign-licence-germany-overview/).
+Wer einen Führerschein aus dem Ausland umschreibt, hat **gar keine Pflichtstunden**, auch die 12 Sonderfahrten entfallen. Mehr dazu im [Umschreibungs-Überblick auf Deutsch](/blog/fuehrerschein-umschreiben/).
