@@ -29,6 +29,29 @@ export function ParkingDiagram({ type, step, className }: ParkingDiagramProps) {
   );
 }
 
+/**
+ * Inline eye glyph for use inside the diagram SVGs (lucide Eye path data,
+ * hand-scaled). A lucide React component cannot render inside <svg>/<text>,
+ * so the shoulder-check markers draw the icon directly.
+ */
+function EyeGlyph({ cx, cy, size = 12 }: { cx: number; cy: number; size?: number }) {
+  const s = size / 24;
+  return (
+    <g
+      transform={`translate(${cx - size / 2}, ${cy - size / 2}) scale(${s})`}
+      className="animate-pulse"
+      fill="none"
+      stroke="#ef4444"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </g>
+  );
+}
+
 function ParallelParkingDiagram({ step }: { step: number }) {
   // Calculate car position based on step
   const positions = [
@@ -74,8 +97,9 @@ function ParallelParkingDiagram({ step }: { step: number }) {
       {step === 2 && (
         <>
           <circle cx={pos.x} cy={pos.y} r="25" fill="none" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2" className="animate-pulse" />
-          <text x={pos.x} y={pos.y - 30} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold">
-            👀 Schulterblick!
+          <EyeGlyph cx={pos.x - 42} cy={pos.y - 33} />
+          <text x={pos.x + 8} y={pos.y - 30} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold">
+            Schulterblick!
           </text>
         </>
       )}
@@ -120,9 +144,12 @@ function ReverseParkingDiagram({ step }: { step: number }) {
       
       {/* Check indicator */}
       {step === 1 && (
-        <text x={pos.x + 25} y={pos.y - 30} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold" className="animate-pulse">
-          👀 Check!
-        </text>
+        <>
+          <EyeGlyph cx={pos.x + 3} cy={pos.y - 33} />
+          <text x={pos.x + 30} y={pos.y - 30} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold" className="animate-pulse">
+            Check!
+          </text>
+        </>
       )}
     </>
   );
@@ -190,9 +217,7 @@ function ThreePointTurnDiagram({ step }: { step: number }) {
       
       {/* Check indicators */}
       {(step === 1 || step === 3 || step === 5) && (
-        <text x={pos.x} y={pos.y - 25} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold" className="animate-pulse">
-          👀
-        </text>
+        <EyeGlyph cx={pos.x} cy={pos.y - 28} size={14} />
       )}
     </>
   );

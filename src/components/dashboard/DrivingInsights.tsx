@@ -126,10 +126,10 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        <h3 className="text-xs font-semibold text-muted">
           {t.title}
         </h3>
-        <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
+        <div className="flex items-center gap-1.5 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
           <Star className="h-3 w-3 fill-current" />
           Smart Coach
         </div>
@@ -147,11 +147,11 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                 <p className="text-xs font-bold text-slate-900 dark:text-white">
                   {t.activity}
                 </p>
-                <p className="text-[10px] text-slate-500">{t.last7Days}</p>
+                <p className="text-xs text-slate-500">{t.last7Days}</p>
               </div>
             </div>
             <div className={cn(
-              'flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold',
+              'flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold',
               isUp ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'
             )}>
               <TrendingUp className={cn('h-3 w-3', !isUp && 'rotate-180')} />
@@ -167,29 +167,29 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                 style={{ height: `${Math.max(10, Math.min(100, (val / 120) * 100))}%` }}
               >
                 <div className="absolute inset-x-0 bottom-0 top-0 bg-blue-500 opacity-0 group-hover/bar:opacity-100 transition-opacity rounded-t-sm" />
-                {i === todayIndex && <div className="absolute inset-x-0 bottom-0 top-0 bg-indigo-600 rounded-t-sm" />}
-                
+                {i === todayIndex && <div className="absolute inset-x-0 bottom-0 top-0 bg-blue-600 rounded-t-sm" />}
+
                 {/* TOOLTIP */}
-                <div className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 hidden group-hover/bar:block bg-slate-900 text-white text-[9px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20 shadow-xl font-bold animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 hidden group-hover/bar:block bg-slate-900 text-white text-xs px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20 shadow-xl font-bold animate-in fade-in zoom-in-95 duration-200">
                   {Math.floor(val / 60)}h {val % 60}m
                 </div>
               </div>
             ))}
           </div>
           {!proActive && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-800/40 opacity-0 hover:opacity-100 transition-opacity">
-               <button 
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/40 backdrop-blur-[1px] dark:bg-slate-800/40">
+               <button
                 onClick={onOpenPaywall}
-                className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-lg"
+                className="flex min-h-9 items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-lg"
                >
                  <Crown className="h-3 w-3 text-amber-400" />
                  {t.unlockInsights}
                </button>
             </div>
           )}
-          <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-tighter text-slate-400">
+          <div className="mt-2 flex justify-between text-xs font-semibold text-slate-400">
             {dayNames.map((name, i) => (
-              <span key={i} className={cn(i === todayIndex && 'text-indigo-600 dark:text-indigo-400 font-bold')}>
+              <span key={i} className={cn(i === todayIndex && 'text-blue-600 dark:text-blue-400 font-bold')}>
                 {name}
               </span>
             ))}
@@ -199,14 +199,14 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
         {/* Smart Focus Areas Card */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
               <Target className="h-5 w-5" />
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900 dark:text-white">
                 {t.focusAreas}
               </p>
-              <p className="text-[10px] text-slate-500">
+              <p className="text-xs text-slate-500">
                 {t.basedOnHistory}
               </p>
             </div>
@@ -221,11 +221,11 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                     <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                       {getMistakeLabel(type)}
                     </span>
-                    <span className="text-[10px] text-slate-400">({count}x)</span>
+                    <span className="text-xs text-slate-400">({count}x)</span>
                   </div>
                   <button
                     onClick={() => onDirectLessonSelect(lessonMap[type] || 'basics-0')}
-                    className="group flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+                    className="group flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
                   >
                     {t.reviewLesson}
                     <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
@@ -242,12 +242,12 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
             ) : (
               <div className="flex flex-col items-center justify-center py-4 text-center">
                 <Lock className="h-8 w-8 text-slate-300 mb-2" />
-                <p className="text-[10px] font-medium text-slate-400 px-4">
+                <p className="text-xs font-medium text-slate-400 px-4">
                   {t.aiAnalysisPro}
                 </p>
-                <button 
+                <button
                   onClick={onOpenPaywall}
-                  className="mt-3 text-[10px] font-bold text-indigo-600 underline"
+                  className="mt-3 text-xs font-bold text-blue-600 underline"
                 >
                   {t.unlockPro}
                 </button>
@@ -273,7 +273,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
               </p>
               <button 
                 onClick={() => onDirectLessonSelect('exam-1')}
-                className="mt-3 text-[10px] font-bold uppercase tracking-wider text-emerald-700 underline underline-offset-4 dark:text-emerald-300"
+                className="mt-3 text-xs font-semibold text-emerald-700 underline underline-offset-4 dark:text-emerald-300"
               >
                 {t.ecoCoachLearn}
               </button>
@@ -295,7 +295,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                   <h4 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                     {language === 'de' ? 'Live-Skill-Radar' : 'Live Skill Radar'}
                   </h4>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                  <p className="text-xs font-semibold text-muted">
                     {language === 'de' ? 'Echtzeit-Analyse' : 'Real-time Analysis'}
                   </p>
                 </div>
@@ -312,7 +312,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
                     <span 
                       key={key}
                       className={cn(
-                        'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all',
+                        'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
                         mastered 
                           ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           : 'bg-blue-500/5 border-blue-500/10 text-blue-500/70'
@@ -332,7 +332,7 @@ export function DrivingInsights({ onDirectLessonSelect, onOpenPaywall }: Driving
           
           {/* Decorative glass elements */}
           <div className="absolute -right-16 -top-16 h-32 w-32 rounded-full bg-blue-500/5 blur-3xl" />
-          <div className="absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-indigo-500/5 blur-3xl" />
+          <div className="absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-emerald-500/5 blur-3xl" />
         </div>
       )}
     </div>

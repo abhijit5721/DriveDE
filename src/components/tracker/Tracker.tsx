@@ -10,15 +10,17 @@ import { DrivingSession, DrivingMistake, GPSPoint } from '../../types';
 import toast from 'react-hot-toast';
 import { 
   Trash2, Clock, Car, MapPin, X, Play, 
-  Pause, Square, Crown, Pencil, AlertTriangle, Zap, Footprints, Eye, 
-  Signal, Search, Wind, RefreshCcw, CornerUpRight, 
-  Gauge, ChevronRight, ChevronDown, Info,
-  View, Ban, AlertCircle, MoreHorizontal, ShieldCheck, Database,
+  Pause, Square, Crown, Pencil, AlertTriangle, Zap,
+  Search, Wind, RefreshCcw,
+  ChevronRight, ChevronDown, Info,
+  AlertCircle, ShieldCheck, Database,
   ShieldAlert, Check, Cloud, CheckCircle2,
-  Navigation, TrendingDown, Repeat2, Flame, GraduationCap, RotateCcw
+  Navigation,
 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useAppStore } from '../../store/useAppStore';
+import { getMistakeMeta, MANUAL_MISTAKE_GROUPS } from '../../data/mistakeTypes';
+import { getTileConfig } from '../../utils/mapTiles';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
@@ -126,6 +128,8 @@ const MapBounds = ({ playbackIndex, polyline, route }: {
  * Used in the session history list expanded view.
  */
 const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSession['route']>, mistakes?: DrivingMistake[], language: string }) => {
+  const darkMode = useAppStore((st) => st.darkMode);
+  const tiles = getTileConfig(darkMode);
   const t = TRANSLATIONS[language as 'de' | 'en'];
   
   const [playbackIndex, setPlaybackIndex] = useState<number | null>(null);
@@ -208,7 +212,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-slate-800">
       <div className="flex items-center justify-between bg-slate-50 px-3 py-2 dark:bg-slate-900/80">
-        <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-slate-500">
+        <span className="flex items-center gap-1.5 text-xs font-semibold text-muted">
           <MapPin className="h-3 w-3" />
           {t.tracker.liveRouteTrace}
         </span>
@@ -231,10 +235,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           style={{ height: '100%', width: '100%' }}
           preferCanvas={true}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
           <MapBounds playbackIndex={playbackIndex} polyline={polyline} route={route} />
           <Polyline positions={polyline} color="#3b82f6" weight={4} opacity={0.7} />
           
@@ -294,8 +295,10 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     activeSession, startActiveSession, pauseActiveSession, 
     resumeActiveSession, updateActiveSession, stopActiveSession,
     setAcceptedPrivacy,
-    authStatus, updateMistakeStatus, isHydrated: storeHydrated
+    authStatus, updateMistakeStatus, isHydrated: storeHydrated,
+    darkMode
   } = useAppStore();
+  const tiles = getTileConfig(darkMode);
 
   const proActive = isProActive();
 
@@ -339,25 +342,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   }, [t]);
 
   const getMistakeIconComponent = (type: string) => {
-    switch (type) {
-      case 'priority':            return <AlertTriangle className="h-3.5 w-3.5 text-red-500" />;
-      case 'stop_sign':           return <Square className="h-3.5 w-3.5 text-red-600" />;
-      case 'right_before_left':   return <CornerUpRight className="h-3.5 w-3.5 text-amber-500" />;
-      case 'wrong_way':           return <Ban className="h-3.5 w-3.5 text-red-700" />;
-      case 'shoulder_check':      return <Eye className="h-3.5 w-3.5 text-blue-500" />;
-      case 'mirror_check':        return <View className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />;
-      case 'signal':              return <Signal className="h-3.5 w-3.5 text-amber-500" />;
-      case 'pedestrian_safety':   return <Footprints className="h-3.5 w-3.5 text-amber-600" />;
-      case 'speeding':            return <Gauge className="h-3.5 w-3.5 text-red-500" />;
-      case 'harsh_braking':       return <TrendingDown className="h-3.5 w-3.5 text-amber-600" />;
-      case 'roundabout_signal':   return <RotateCcw className="h-3.5 w-3.5 text-blue-500" />;
-      case 'curve_speeding':      return <Navigation className="h-3.5 w-3.5 text-amber-500" />;
-      case 'aggressive_cornering':return <Repeat2 className="h-3.5 w-3.5 text-red-500" />;
-      case 'idling':              return <Flame className="h-3.5 w-3.5 text-emerald-500" />;
-      case 'illegal_turn':        return <Ban className="h-3.5 w-3.5 text-red-500" />;
-      case 'school_zone_speeding':return <GraduationCap className="h-3.5 w-3.5 text-amber-600" />;
-      default:                    return <MoreHorizontal className="h-3.5 w-3.5 text-slate-500" />;
-    }
+    const { Icon, color } = getMistakeMeta(type);
+    return <Icon className={cn('h-3.5 w-3.5', color)} />;
   };
 
   const getTypeIcon = (type: DrivingSession['type']) => {
@@ -575,7 +561,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       setShowMistakeSuccess(true);
       setTimeout(() => setShowMistakeSuccess(false), 2000);
       
-      toast.success(t.tracker.mistakeAddedManually, { position: 'bottom-center', icon: '📝' });
+      toast.success(t.tracker.mistakeAddedManually, { position: 'bottom-center' });
     } catch (error) {
       console.error('[Tracker] Manual mistake log failed:', error);
     }
@@ -984,7 +970,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           lastSchoolCheckRef.current = Date.now();
           toast.error(
             t.tracker.schoolZoneCaution,
-            { position: 'bottom-center', duration: 7000, icon: '🏫' }
+            { position: 'bottom-center', duration: 7000 }
           );
           logMistake({
             type: 'school_zone_speeding',
@@ -1381,7 +1367,6 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           if (!lastMistake || lastMistake.type !== 'speeding' || timeSinceLast > 45000) {
             toast.error(t.tracker.speedingAlert(currentLimit!), { 
               position: 'bottom-center',
-              icon: '⚠️',
               id: 'speeding-alert' // unique ID to prevent overlapping toasts
             });
             
@@ -1462,7 +1447,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         isSimulationMode 
           ? t.tracker.simulationStarted 
           : t.tracker.sensorsStarted, 
-        { icon: isSimulationMode ? '🎮' : '🚀' }
+        { position: 'bottom-center' }
       );
       
       setShowNavigationHUD(true);
@@ -1553,7 +1538,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             setHasStoppedAtSign(false);
             lastIllegalTurnLogRef.current = 0;
             lastWrongWayLogRef.current = 0;
-            toast(t.tracker.simulationLooping, { icon: '🔄' });
+            toast(t.tracker.simulationLooping);
             return;
           }
 
@@ -1602,12 +1587,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           }
 
           if (currentStep === 25) {
-            toast.error(t.tracker.schoolZoneCaution, { position: 'bottom-center', duration: 8000, icon: '🏫' });
+            toast.error(t.tracker.schoolZoneCaution, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'school_zone_speeding', speed: point.speed, limit: 30, timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
 
           if (currentStep === 19) {
-            toast.error(t.tracker.ecoStopEngine, { position: 'bottom-center', duration: 8000, icon: '🌱' });
+            toast.error(t.tracker.ecoStopEngine, { position: 'bottom-center', duration: 8000 });
             logMistake({ type: 'idling', timestamp: Date.now(), location: { lat: point.lat, lng: point.lng } });
           }
 
@@ -1661,7 +1646,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             <Wind className="h-5 w-5 animate-pulse" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-400">
+            <p className="text-xs font-semibold text-blue-400">
               {language === 'de' ? 'Sprachansage' : 'Voice guidance'}
             </p>
             <p className="text-sm font-bold">{nextInstruction}</p>
@@ -1940,7 +1925,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                    >
                      <ShieldCheck className="h-4 w-4" />
                    </button>
-                   <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                   <span className="text-xs font-semibold text-muted">
                     {t.tracker.simulationMode}
                    </span>
                    <button
@@ -1971,7 +1956,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                      onClick={() => setShowManualLog(true)}
                      aria-label={language === 'de' ? 'Fehler loggen' : 'Log mistake'}
                      className={cn(
-                       'flex h-11 items-center gap-1.5 rounded-full px-4 text-xs font-bold uppercase tracking-widest border transition-all',
+                       'flex h-11 items-center gap-1.5 rounded-full px-4 text-xs font-bold border transition-all',
                        showMistakeSuccess
                          ? 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400'
                          : 'bg-red-500/10 text-red-600 border-red-500/30 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30'
@@ -2004,7 +1989,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   preferCanvas={true}
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                  <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
                   <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#00A0E9" weight={6} opacity={0.9} />
                   
                   {destinationCoords && (
@@ -2047,12 +2032,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   scrollWheelZoom={false}
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                  <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
                   <Marker position={[currentLocation.lat, currentLocation.lng]} icon={getCarMarkerIcon(0)} />
                 </MapContainer>
                 <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5">
                   <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-bold text-white uppercase tracking-widest">
+                  <span className="text-xs font-bold text-white">
                     {language === 'de' ? 'Live-Vorschau aktiv' : 'Live preview active'}
                   </span>
                 </div>
@@ -2132,7 +2117,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
               {isTimerRunning && (
                 <div className="mt-2 w-full max-w-[200px]">
-                  <div className="flex items-center justify-between text-xs uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400 mb-1">
+                  <div className="flex items-center justify-between text-xs font-semibold text-muted mb-1">
                     <span>{t.tracker.safetyScore}</span>
                     <span>{Math.max(0, 100 - (cumulativeMistakesRef.current.length * 10))}%</span>
                   </div>
@@ -2154,19 +2139,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {!isTimerRunning && (
               <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-slate-200 pt-4 dark:border-white/10">
                 <div className="text-center">
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold text-muted">
                     {t.tracker.distance}
                   </p>
                   <p className="text-lg font-bold">{currentDistance.toFixed(1)} <span className="text-xs font-medium opacity-60">km</span></p>
                 </div>
                 <div className="text-center border-l border-slate-200 dark:border-white/10">
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold text-muted">
                     {t.tracker.speed}
                   </p>
                   <p className="text-lg font-bold">{currentSpeed} <span className="text-xs font-medium opacity-60">km/h</span></p>
                 </div>
                 <div className="text-center border-l border-slate-200 dark:border-white/10">
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold text-muted">
                     {t.tracker.limit}
                   </p>
                   <div className={cn(
@@ -2188,7 +2173,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             {currentMistakes.length > 0 && (
               <div className="mt-6 w-full animate-in fade-in slide-in-from-top-2 duration-500">
                 <div className="flex items-center justify-between mb-3 px-1">
-                   <h5 className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                   <h5 className="text-xs font-semibold text-muted">
                      {t.tracker.mistakeLog}
                    </h5>
                    <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-200 dark:text-red-400 dark:bg-red-400/10 dark:border-red-400/20">
@@ -2296,7 +2281,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       {activeTab === 'history' && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="flex items-center justify-between mb-4 px-1">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400">
+            <h3 className="text-sm font-semibold text-muted">
               {t.tracker.historyTitle || 'History'}
             </h3>
             <div className="flex items-center gap-2">
@@ -2381,7 +2366,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           </div>
 
           {syncError && (
-            <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 uppercase tracking-widest animate-in fade-in slide-in-from-top-1 duration-300">
+            <div className="mx-1 mb-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-bold text-red-600 dark:border-red-900/20 dark:bg-red-900/10 dark:text-red-400 animate-in fade-in slide-in-from-top-1 duration-300">
               <AlertCircle className="h-3 w-3" />
               {syncError}
             </div>
@@ -2422,17 +2407,17 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                 {getTypeLabel(session.type)}
                               </h4>
                               {session.syncStatus === 'synced' ? (
-                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
+                                <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-600 dark:bg-emerald-900/10 dark:text-emerald-400 flex items-center gap-1">
                                   <Cloud className="h-2 w-2" />
                                   {t.tracker.published || 'Published'}
                                 </span>
                               ) : (
-                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
+                                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-600 dark:bg-amber-900/10 dark:text-amber-400">
                                   {t.tracker.pendingSync || 'Syncing...'}
                                 </span>
                               )}
                               {session.isSimulation && (
-                                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                                   SIM
                                 </span>
                               )}
@@ -2486,7 +2471,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Stats Grid */}
                           <div className="grid grid-cols-2 gap-4 mb-4">
                             <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-                              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
+                              <p className="text-xs font-semibold text-muted mb-1">
                                 {t.tracker.cost || 'Cost'}
                               </p>
                               <p className="text-lg font-bold text-slate-900 dark:text-white">
@@ -2494,7 +2479,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                               </p>
                             </div>
                             <div className="rounded-xl bg-white p-3 shadow-sm dark:bg-slate-800">
-                              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
+                              <p className="text-xs font-semibold text-muted mb-1">
                                 {t.tracker.mistakesCount || 'Mistakes'}
                               </p>
                               <p className={cn(
@@ -2539,11 +2524,11 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {session.mistakes && session.mistakes.length > 0 && (
                             <div className="mt-4">
                               <div className="mb-3 flex items-center justify-between">
-                                <h5 className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                <h5 className="text-xs font-semibold text-muted">
                                   {((t.tracker as any).mistakeLog as string) || 'Mistake Log'}
                                 </h5>
                                 {!proActive && (
-                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold uppercase tracking-widest text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
                                     PRO Analysis
                                   </span>
                                 )}
@@ -2594,7 +2579,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                       <div className="flex items-center gap-2">
                                                         <span className="font-bold text-slate-700 dark:text-slate-200">{getMistakeLabel(m.type)}</span>
                                                         <span className={cn(
-                                                          'rounded px-1 py-0.5 text-xs font-bold uppercase tracking-widest',
+                                                          'rounded px-1 py-0.5 text-xs font-bold',
                                                           (m.source === 'manual')
                                                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/50 dark:border-blue-500/20'
                                                             : 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300'
@@ -2656,7 +2641,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                                                             {getMistakeLabel(group.type)}
                                                           </span>
                                                           <span className={cn(
-                                                            'rounded px-1 py-0.5 text-xs font-bold uppercase tracking-widest',
+                                                            'rounded px-1 py-0.5 text-xs font-bold',
                                                             (group.source === 'manual')
                                                               ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/50 dark:border-blue-500/20'
                                                               : 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300'
@@ -2705,7 +2690,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                           {/* Notes */}
                           {session.notes && (
                             <div className="mt-4">
-                              <h5 className="mb-1 text-xs font-bold uppercase tracking-widest text-slate-400">
+                              <h5 className="mb-1 text-xs font-semibold text-muted">
                                 {((t.tracker as any).notes as string) || 'Notes'}
                               </h5>
                               <p className="text-xs text-slate-600 dark:text-slate-400 italic">
@@ -2756,7 +2741,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               </div>
               
               <h3 className="mb-2 text-center text-2xl font-bold text-slate-900 dark:text-white">
-                Safety Protocol: StVO § 23 Compliance
+                {language === 'de' ? 'Handy nur in der Halterung (StVO § 23)' : 'Phone stays mounted (StVO § 23)'}
               </h3>
               
               <p className="mb-6 text-center text-sm leading-relaxed text-slate-600 dark:text-slate-400">
@@ -2774,7 +2759,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     onChange={(e) => setIsMountConfirmed(e.target.checked)}
                   />
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    I confirm that my smartphone is secured in a suitable vehicle mount and I will not operate it while driving.
+                    {language === 'de'
+                      ? 'Ich bestätige, dass mein Smartphone in einer geeigneten Halterung befestigt ist und ich es während der Fahrt nicht bediene.'
+                      : 'I confirm that my smartphone is secured in a suitable vehicle mount and I will not operate it while driving.'}
                   </span>
                 </label>
               </div>
@@ -2797,13 +2784,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                       : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
                   )}
                 >
-                  Confirm & Start
+                  {language === 'de' ? 'Bestätigen & starten' : 'Confirm & Start'}
                 </button>
                 <button
                   onClick={() => setShowSafetyWarning(false)}
                   className="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
                 >
-                  Cancel
+                  {language === 'de' ? 'Abbrechen' : 'Cancel'}
                 </button>
               </div>
             </motion.div>
@@ -2869,7 +2856,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] pointer-events-none"
           >
-            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white border border-white/10 shadow-2xl animate-pulse">
+            <div className="rounded-full bg-slate-900/80 px-4 py-2 text-xs font-bold text-white border border-white/10 shadow-2xl animate-pulse">
               {language === 'de' ? 'Sicherer Fahrmodus aktiv' : 'Safe driving mode active'}
             </div>
           </motion.div>
@@ -3067,97 +3054,30 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                 </button>
               </div>
 
-              <div className="grid w-full grid-cols-3 gap-3 overflow-y-auto max-h-[60dvh] pr-1 custom-scrollbar">
-                <button 
-                  onClick={() => handleManualMistake('priority')} 
-                  data-testid="manual-mistake-priority"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <AlertTriangle className="h-6 w-6 text-red-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.priority}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('stop_sign')} 
-                  data-testid="manual-mistake-stop_sign"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <Square className="h-6 w-6 text-red-600" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.stopSign}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('right_before_left')} 
-                  data-testid="manual-mistake-right_before_left"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <CornerUpRight className="h-6 w-6 text-amber-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.rightBeforeLeft}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('wrong_way')} 
-                  data-testid="manual-mistake-wrong_way"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <Ban className="h-6 w-6 text-red-700" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.wrongWay}</span>
-                </button>
-
-                <button 
-                  onClick={() => handleManualMistake('shoulder_check')} 
-                  data-testid="manual-mistake-shoulder_check"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <Eye className="h-6 w-6 text-blue-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.shoulderCheck}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('mirror_check')} 
-                  data-testid="manual-mistake-mirror_check"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                   <View className="h-6 w-6 text-slate-500 dark:text-slate-400" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.mirrorCheck}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('signal')} 
-                  data-testid="manual-mistake-signal"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <Signal className="h-6 w-6 text-amber-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.signal}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('pedestrian_safety')} 
-                  data-testid="manual-mistake-pedestrian_safety"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                   <Footprints className="h-6 w-6 text-amber-600" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.pedestrianSafety}</span>
-                </button>
-
-                <button 
-                  onClick={() => handleManualMistake('speeding')} 
-                  data-testid="manual-mistake-speeding"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <Gauge className="h-6 w-6 text-red-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.speeding}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('harsh_braking')} 
-                  data-testid="manual-mistake-harsh_braking"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                   <AlertCircle className="h-6 w-6 text-amber-600" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.harshBraking}</span>
-                </button>
-                <button 
-                  onClick={() => handleManualMistake('other')} 
-                  data-testid="manual-mistake-other"
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <MoreHorizontal className="h-6 w-6 text-slate-500" />
-                  <span className="text-center leading-tight">{t.tracker.mistakes.other}</span>
-                </button>
+              <div className="w-full space-y-4 overflow-y-auto max-h-[60dvh] pr-1 custom-scrollbar">
+                {MANUAL_MISTAKE_GROUPS.map((group) => (
+                  <div key={group.id}>
+                    <p className="mb-2 text-xs font-semibold text-muted">
+                      {language === 'de' ? group.de : group.en}
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                      {group.types.map((type) => {
+                        const { Icon, color } = getMistakeMeta(type);
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => handleManualMistake(type as DrivingMistake['type'])}
+                            data-testid={`manual-mistake-${type}`}
+                            className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs font-bold text-slate-700 transition-all hover:bg-slate-100 active:scale-95 dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                          >
+                            <Icon className={cn('h-6 w-6', color)} />
+                            <span className="text-center leading-tight">{getMistakeLabel(type)}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </motion.div>

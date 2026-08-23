@@ -211,13 +211,13 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
 
           <div className="mt-12 grid grid-cols-2 gap-8">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{t.budget.spentSoFar}</p>
+              <p className="text-xs font-semibold text-slate-500">{t.budget.spentSoFar}</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-bold text-white">€{currentSpend.toLocaleString()}</span>
               </div>
             </div>
             <div className="relative text-right space-y-1 border-l border-white/5 pl-8">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{t.budget.totalGoal}</p>
+              <p className="text-xs font-semibold text-slate-500">{t.budget.totalGoal}</p>
               {proActive ? (
                 <div className="flex items-baseline justify-end gap-1">
                   <span className="text-4xl font-bold text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
@@ -230,7 +230,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   </span>
                   <button 
                     onClick={onOpenPaywall}
-                    className="text-[10px] font-bold text-indigo-400 underline uppercase tracking-tighter"
+                    className="text-xs font-semibold text-blue-400 underline"
                   >
                     {t.budget.unlockEstimation}
                   </button>
@@ -255,7 +255,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white">{t.budget.nextSteps}</h3>
-                <p className="text-[10px] text-slate-500">{t.budget.estLessonsRemaining}</p>
+                <p className="text-xs text-slate-500">{t.budget.estLessonsRemaining}</p>
               </div>
             </div>
             <div className="flex flex-col items-end">
@@ -319,7 +319,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </div>
             <div>
               <h3 className="font-bold text-slate-900 dark:text-white">{t.budget.remaining}</h3>
-              <p className="text-[10px] text-slate-500">{t.budget.yetToBeInvested}</p>
+              <p className="text-xs text-slate-500">{t.budget.yetToBeInvested}</p>
             </div>
           </div>
           <div className="mt-8">
@@ -328,7 +328,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </p>
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/10">
               <Info className="h-4 w-4 text-blue-500 shrink-0" />
-              <p className="text-[10px] font-medium leading-tight text-blue-600 dark:text-blue-400">
+              <p className="text-xs font-medium leading-tight text-blue-600 dark:text-blue-400">
                 {t.budget.externalFeesNote}
               </p>
             </div>
@@ -369,7 +369,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <h4 className={cn(
-                'font-bold uppercase tracking-widest text-[10px]',
+                'text-xs font-semibold',
                 estimation.isHighReadiness ? 'text-emerald-600' : 'text-amber-600'
               )}>
                 {t.budget.strategyTitle}
@@ -406,7 +406,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 </p>
                 <button 
                   onClick={onOpenPaywall}
-                  className="mt-3 text-[10px] font-bold text-indigo-600 underline"
+                  className="mt-3 text-xs font-semibold text-blue-600 underline"
                 >
                   {t.budget.unlockPro}
                 </button>
@@ -439,7 +439,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
                       <Settings2 className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                       {t.budget.adjustRates}
                     </h3>
                   </div>
@@ -451,7 +451,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                 <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                   {/* Hourly Rate */}
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    <label className="flex items-center gap-2 text-xs font-semibold text-slate-500">
                       <GraduationCap className="h-3 w-3" />
                       {t.budget.hourlyRate}
                     </label>
@@ -469,7 +469,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
 
                   {/* Base Fee */}
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    <label className="flex items-center gap-2 text-xs font-semibold text-slate-500">
                       <CreditCard className="h-3 w-3" />
                       {t.budget.registrationFee}
                     </label>
@@ -488,7 +488,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                   {/* Exams */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.theoryExam}</label>
+                      <label className="text-xs font-semibold text-slate-500">{t.budget.theoryExam}</label>
                       <input 
                         type="number"
                         min="0"
@@ -498,7 +498,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.practicalExam}</label>
+                      <label className="text-xs font-semibold text-slate-500">{t.budget.practicalExam}</label>
                       <input 
                         type="number"
                         min="0"
@@ -512,7 +512,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                    {/* Other */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.materials}</label>
+                      <label className="text-xs font-semibold text-slate-500">{t.budget.materials}</label>
                       <input 
                         type="number"
                         min="0"
@@ -522,7 +522,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.budget.firstAid}</label>
+                      <label className="text-xs font-semibold text-slate-500">{t.budget.firstAid}</label>
                       <input 
                         type="number"
                         min="0"

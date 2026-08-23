@@ -31,7 +31,10 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
-  LayoutDashboard
+  LayoutDashboard,
+  Route,
+  Gauge,
+  Moon
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
@@ -144,7 +147,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           The student <span className="text-amber-400 font-bold">{data.profile.display_name || 'this user'}</span> has disabled public report sharing in their privacy settings.
         </p>
         <div className="p-4 rounded-2xl bg-white/5 border border-white/5 mb-8 text-left max-w-sm">
-          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+          <p className="text-xs font-semibold text-muted mb-2 flex items-center gap-2">
             <Info className="h-3 w-3" /> Information
           </p>
           <p className="text-xs text-slate-400 leading-relaxed">
@@ -173,8 +176,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           The profile for <span className="text-blue-400 font-bold">{data.profile.display_name || 'this student'}</span> is active, but no driving sessions have been published yet.
         </p>
         <div className="p-4 rounded-2xl bg-white/5 border border-white/5 mb-8 text-left max-w-sm">
-          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
-            <Info className="h-3 w-3" /> Student Tip
+          <p className="text-xs font-semibold text-muted mb-2 flex items-center gap-2">
+            <Info className="h-3 w-3" /> Student tip
           </p>
           <p className="text-xs text-slate-400 leading-relaxed">
             Ensure the student has clicked <strong>"Share"</strong> and has a stable connection to sync their local driving log to the cloud.
@@ -323,14 +326,14 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             data-testid="lesson-mode-toggle"
             onClick={() => setLessonMode(!lessonMode)}
             className={cn(
-              'flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border',
-              lessonMode 
-                ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20' 
+              'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border',
+              lessonMode
+                ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
                 : 'bg-white/5 border-white/5 text-slate-400 hover:bg-white/10'
             )}
           >
             {lessonMode ? <Zap className="h-3 w-3" /> : <LayoutDashboard className="h-3 w-3" />}
-            {lessonMode ? 'Lesson Active' : 'Lesson Mode'}
+            {lessonMode ? 'Lesson active' : 'Lesson mode'}
           </button>
           <ShieldCheck className="h-6 w-6 text-emerald-500" />
         </div>
@@ -343,7 +346,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl">
               <div className="flex items-center gap-2 mb-3 opacity-80">
                 <Activity className="h-4 w-4" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">Active Briefing</span>
+                <span className="text-xs font-semibold">Active briefing</span>
               </div>
               <p className="text-lg font-bold leading-tight">
                 {generateBriefing().split('.')[0]}. Focus on {formatFaultName(sortedFaults[0]?.[0] || 'precision')}.
@@ -358,7 +361,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
             {/* Quick Fault Priority */}
             <div className="grid grid-cols-1 gap-4">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">Top Training Priorities</div>
+              <div className="text-xs font-semibold text-muted px-2">Top training priorities</div>
               {sortedFaults.map(([fault, count], i) => (
                 <div key={i} className="rounded-2xl bg-slate-900 border-2 border-orange-500/20 p-5 flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-orange-500/20 relative">
@@ -380,7 +383,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
             {/* Critical Legal Hours - Only for Standard path */}
             {learningPath === 'standard' && (
               <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Required Sonderfahrten</div>
+                <div className="text-xs font-semibold text-muted mb-4">Required Sonderfahrten</div>
                 <div className="grid grid-cols-3 gap-3">
                   {Object.entries(sonderfahrten).map(([key, stats]) => {
                     const progress = (stats.current / stats.target) * 100;
@@ -408,9 +411,9 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
             <button 
               onClick={() => setLessonMode(false)}
-              className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-slate-500 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-colors"
+              className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 text-slate-400 text-xs font-semibold hover:bg-white/10 transition-colors"
             >
-              Exit Lesson Mode
+              Exit lesson mode
             </button>
           </div>
         ) : (
@@ -425,7 +428,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
               <div className="p-1.5 rounded-lg bg-blue-500/20">
                 <Activity className="h-4 w-4 text-blue-400" />
               </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Instructor Briefing</h3>
+              <h3 className="text-xs font-semibold text-muted">Instructor briefing</h3>
             </div>
             <p className="text-sm text-slate-300 leading-relaxed font-medium italic">
               "{generateBriefing()}"
@@ -458,7 +461,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           </div>
 
           <div className="rounded-3xl bg-slate-900 border border-white/5 p-6 flex flex-col justify-center">
-            <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Driving Trend</div>
+            <div className="text-xs font-semibold text-muted mb-4">Driving trend</div>
             {readinessData.trendDirection !== 'stable' || readinessData.recentSessionsAnalyzed >= 4 ? (
               <div className="space-y-2">
                 <div className={cn(
@@ -484,18 +487,18 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         {learningPath === 'standard' && (
           <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <h3 className="text-xs font-semibold text-muted flex items-center gap-2">
                 <Activity className="h-4 w-4 text-blue-500" />
-                Special Driving Hours
+                Special driving hours
               </h3>
-              <span className="text-[10px] text-slate-500 font-bold uppercase">German Requirements</span>
+              <span className="text-xs font-semibold text-muted">German requirements</span>
             </div>
             
             <div className="space-y-6">
               {[
-                { label: 'Überland (Cross-country)', key: 'ueberland', color: 'bg-emerald-500', icon: '🛣️' },
-                { label: 'Autobahn (Highway)', key: 'autobahn', color: 'bg-blue-500', icon: '🏎️' },
-                { label: 'Nachtfahrt (Night)', key: 'nacht', color: 'bg-purple-500', icon: '🌙' },
+                { label: 'Überland (Cross-country)', key: 'ueberland', color: 'bg-emerald-500', icon: Route },
+                { label: 'Autobahn (Highway)', key: 'autobahn', color: 'bg-blue-500', icon: Gauge },
+                { label: 'Nachtfahrt (Night)', key: 'nacht', color: 'bg-purple-500', icon: Moon },
               ].map((item) => {
                 const stats = sonderfahrten[item.key as keyof typeof sonderfahrten];
                 const progress = Math.min(100, (stats.current / stats.target) * 100);
@@ -503,7 +506,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                   <div key={item.key}>
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{item.icon}</span>
+                        <item.icon className="h-4 w-4 text-slate-400" aria-hidden="true" />
                         <span className="text-sm font-semibold text-slate-200">{item.label}</span>
                       </div>
                       <span className="text-xs font-bold text-slate-400">{stats.current} / {stats.target} units</span>
@@ -526,7 +529,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
           <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
             <div className="flex items-center gap-2 mb-4">
               <ShieldAlert className="h-5 w-5 text-orange-500" />
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Practical Skills Focus</h3>
+              <h3 className="text-xs font-semibold text-muted">Practical skills focus</h3>
             </div>
             <div className="space-y-3">
               {sortedFaults.map(([fault, count], i) => (
@@ -549,7 +552,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                   <div className="p-3 rounded-lg bg-slate-800/50 border border-white/5">
                     <div className="flex items-center gap-2 mb-1.5 text-orange-400">
                       <Info className="h-3 w-3" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest">Instructor Focus</span>
+                      <span className="text-xs font-semibold">Instructor focus</span>
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed">
                       {faultAdvice[fault] || 'Review this maneuver in the next lesson. Focus on awareness and early preparation.'}
@@ -563,9 +566,9 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
         {/* Insight Section */}
         <div className="rounded-3xl bg-slate-900 border border-white/5 p-6">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h3 className="text-xs font-semibold text-muted mb-4 flex items-center gap-2">
             <Zap className="h-4 w-4 text-amber-500" />
-            Training Insights
+            Training insights
           </h3>
           <div className="space-y-4">
             {data.sessions.length > 0 ? (
@@ -615,7 +618,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
         {/* Recent Session History */}
         <div>
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Recent Sessions</h3>
+          <h3 className="text-xs font-semibold text-muted mb-4 px-2">Recent sessions</h3>
           <div className="space-y-3">
             {data.sessions.slice(0, 50).map((session) => (
               <div key={session.id} className="space-y-2">
@@ -676,7 +679,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                     <div className="mx-4 p-4 rounded-xl bg-slate-800/30 border-x border-b border-white/5 space-y-2 animate-in slide-in-from-top-2 duration-200">
                       {confirmedMistakes.length > 0 && (
                         <>
-                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Verified Fault Details</p>
+                          <p className="text-xs font-semibold text-muted mb-2">Verified fault details</p>
                           {confirmedMistakes.map((m, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
                               <div className="w-1 h-1 rounded-full bg-red-500" />
@@ -700,7 +703,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
                       )}
                       {session.notes && (
                         <div className={cn('pt-3 border-white/5', confirmedMistakes.length > 0 && 'mt-3 border-t')}>
-                          <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Notes</p>
+                          <p className="text-xs font-semibold text-muted mb-1">Notes</p>
                           <p className="text-xs text-slate-400 italic">{session.notes}</p>
                         </div>
                       )}

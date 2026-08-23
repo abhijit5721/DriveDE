@@ -5,6 +5,8 @@ import { X, MapPin, AlertTriangle } from 'lucide-react';
 import type { MistakeHotspot } from '../../types';
 import { getRiskColor, fetchHotspots } from '../../services/hotspotsService';
 import { TRANSLATIONS } from '../../data/translations';
+import { useAppStore } from '../../store/useAppStore';
+import { getTileConfig } from '../../utils/mapTiles';
 
 interface HotspotMapProps {
   lat?: number;
@@ -12,28 +14,9 @@ interface HotspotMapProps {
   onClose?: () => void;
 }
 
-const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-const mistakeLabels: Record<string, string> = {
-  speeding: '⚡ Speeding',
-  harsh_braking: '🛑 Harsh Braking',
-  rapid_acceleration: '🚀 Rapid Acceleration',
-  signal: '🚦 Missed Signal',
-  priority: '⚠️ Priority Mistake',
-  stop_sign: '🛑 Stop Sign',
-  shoulder_check: '👀 Shoulder Check',
-  mirror_check: '🔍 Mirror Check',
-  wrong_way: '🔄 Wrong Way',
-  illegal_turn: '↪️ Illegal Turn',
-  idling: '⏸️ Idling',
-  roundabout_signal: '🔄 Roundabout Signal',
-  curve_speeding: '🌀 Curve Speeding',
-  aggressive_cornering: '🏎️ Aggressive Cornering',
-  right_before_left: '⚠️ Right-Before-Left',
-  school_zone_speeding: '🏫 School Zone',
-  pedestrian_safety: '🚶 Pedestrian Safety',
-  other: '❓ Other',
-};
+// Labels come from translations (t.tracker.mistakes, camelCase keys); the
+// previous parallel emoji map here drifted from the app's lucide icon system.
+const toCamel = (type: string) => type.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
 
 function MapCenter({ lat, lng }: { lat: number; lng: number }) {
   const map = useMap();
@@ -47,7 +30,13 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
   const [hotspots, setHotspots] = useState<MistakeHotspot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<MistakeHotspot | null>(null);
-  const t = TRANSLATIONS.de;
+  const { language, darkMode } = useAppStore();
+  const t = TRANSLATIONS[language as 'de' | 'en'] ?? TRANSLATIONS.de;
+  const tiles = getTileConfig(darkMode);
+  const mistakeLabel = (type: string) =>
+    (t.tracker.mistakes as Record<string, string>)[toCamel(type)] ||
+    (t.tracker.mistakes as Record<string, string>)[type] ||
+    type;
 
   useEffect(() => {
     setLoading(true);
@@ -118,8 +107,9 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
           preferCanvas={true}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url={TILE_URL}
+            key={tiles.url}
+            attribution={tiles.attribution}
+            url={tiles.url}
           />
           <MapCenter lat={lat} lng={lng} />
 
@@ -142,7 +132,7 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
               >
                 <Popup>
                   <div className="min-w-[160px]">
-                    <p className="font-bold text-sm mb-1">{mistakeLabels[spot.mistake_type] || spot.mistake_type}</p>
+                    <p className="font-bold text-sm mb-1">{mistakeLabel(spot.mistake_type)}</p>
                     <div className="text-xs space-y-0.5 text-slate-600">
                       <p>{spot.total_incidents} {t.dashboard.hotspotsIncidents}</p>
                       <p>{spot.unique_drivers} {t.dashboard.hotspotsDrivers}</p>
@@ -168,7 +158,7 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
               </div>
               <div className="flex-1">
                 <p className="font-bold text-sm text-slate-900 dark:text-white">
-                  {mistakeLabels[selected.mistake_type] || selected.mistake_type}
+                  {mistakeLabel(selected.mistake_type)}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${riskBadgeClass(selected.risk_score)}`}>

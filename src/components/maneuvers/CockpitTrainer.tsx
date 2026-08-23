@@ -495,8 +495,11 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
             data-testid="cockpit-sound"
             onClick={() => setSoundOn((v) => !v)}
             aria-pressed={soundOn}
+            aria-label={language === 'de'
+              ? (soundOn ? 'Ton an' : 'Ton aus')
+              : (soundOn ? 'Sound on' : 'Sound off')}
             className={cn(
-              'flex h-7 w-7 items-center justify-center rounded-lg transition',
+              'flex h-11 w-11 items-center justify-center rounded-lg transition',
               soundOn ? 'bg-blue-600/10 text-blue-600 dark:text-cyan-300' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'
             )}
           >
@@ -522,7 +525,7 @@ export default function CockpitTrainer({ onComplete, onScore, language, mode: in
 
         {!finished && stepStrings && (
           <div data-testid="cockpit-step" className="rounded-xl border border-blue-100 bg-blue-50/50 p-3 dark:border-blue-900/30 dark:bg-blue-900/20">
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-500">
+            <p className="text-xs font-semibold text-muted">
               {tc.stepLabel} {stepIndex + 1}/{steps.length}
             </p>
             <p className="mt-0.5 font-bold text-slate-900 dark:text-white">{stepStrings.title}</p>

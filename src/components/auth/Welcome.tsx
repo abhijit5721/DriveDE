@@ -417,9 +417,9 @@ export function Welcome() {
       <section id="problem-solution" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl text-left">
           <div className="text-center mb-16">
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
-              {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ Driving School Problem'}
-            </span>
+            <p className="text-sm font-semibold text-blue-600">
+              {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ driving school problem'}
+            </p>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
               {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span>{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
             </h2>
@@ -521,10 +521,7 @@ export function Welcome() {
 
           {/* 📚 "More than a theory app" — intercepts Theorie-App search intent and reframes it */}
           <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
-              {isDe ? 'Mehr als eine Theorie-App' : 'More Than a Theory App'}
-            </span>
-            <h3 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">
+            <h3 className="text-2xl font-bold text-slate-900 sm:text-3xl">
               {isDe
                 ? 'Führerschein Theorie-Apps bringen dich nur bis zur Theorieprüfung'
                 : 'Theory apps only get you through the theory exam'}
@@ -550,9 +547,9 @@ export function Welcome() {
       <section id="how-it-works" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 text-center">
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
-              {isDe ? 'Einfacher 3-Schritte Ablauf' : 'Simple 3-Step Process'}
-            </span>
+            <p className="text-sm font-semibold text-blue-600">
+              {isDe ? 'Einfacher Ablauf in 3 Schritten' : 'A simple 3-step process'}
+            </p>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
             <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
               {isDe 
@@ -565,7 +562,6 @@ export function Welcome() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {[
               {
-                step: '01',
                 title: isDe ? 'Fahrstunden aufzeichnen' : 'Track Driving Lessons',
                 desc: isDe 
                   ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet deine Route auf, Fehler hältst du mit einem Tipp fest.'
@@ -573,7 +569,6 @@ export function Welcome() {
                 icon: MapPin
               },
               {
-                step: '02',
                 title: isDe ? 'KI-Fehleranalyse & 3D' : 'AI Mistake Debriefings',
                 desc: isDe 
                   ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
@@ -581,7 +576,6 @@ export function Welcome() {
                 icon: Zap
               },
               {
-                step: '03',
                 title: isDe ? 'Prüfung sicher bestehen' : 'Pass Your Fahrprüfung',
                 desc: isDe 
                   ? 'Verfolge deine Prüfungsreife bis 100% und gehe voller Selbstvertrauen in die Fahrprüfung.'
@@ -593,7 +587,6 @@ export function Welcome() {
                 <div className={'mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md'}>
                   <s.icon className="h-7 w-7" />
                 </div>
-                <span className="absolute top-8 right-8 text-4xl font-black text-slate-200">{s.step}</span>
                 <h3 className="mb-3 text-xl font-bold text-slate-900">{s.title}</h3>
                 <p className="text-slate-500 leading-relaxed text-sm">{s.desc}</p>
               </div>
@@ -621,10 +614,7 @@ export function Welcome() {
       <section id="features" className="relative z-10 bg-slate-50 px-6 py-24 border-t border-slate-100">
         <div className="mx-auto max-w-6xl">
           <div className="mb-14 text-center">
-            <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-bold text-slate-600 uppercase tracking-widest">
-              {isDe ? 'Ein Blick in die App' : 'A look inside the app'}
-            </span>
-            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl">
               {isDe ? 'Die App in Aktion' : 'See the app in action'}
             </h2>
             <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
@@ -704,7 +694,7 @@ export function Welcome() {
             </div>
             <div className="relative min-h-[280px] md:min-h-[380px]">
               <img
-                src="https://images.unsplash.com/photo-1553782097-130fef5d3e27?q=80&w=1200&auto=format&fit=crop"
+                src="/cta-driving.webp"
                 alt={isDe ? 'Fahrstunde: Fahrschüler und Fahrlehrer im Auto bei Tageslicht' : 'Driving lesson: student and instructor in the car in daylight'}
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="lazy"
@@ -740,20 +730,16 @@ export function Welcome() {
             {/* 30 Days Pass */}
             <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? '30-Tage Pass' : '30-Day Pass'}</span>
+                <span className="text-sm font-bold text-slate-500">{isDe ? '30-Tage Pass' : '30-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-slate-900">€9.99</span>
                   <span className="text-slate-500 text-sm">{isDe ? '/ 30 Tage' : '/ 30 days'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-500">{isDe ? 'Ideal für die gezielte Prüfungsvorbereitung in den letzten Wochen.' : 'Great for quick exam prep in your final driving weeks.'}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Voller Pro-Zugang, 30 Tage lang' : 'Full Pro access, for 30 days'}</p>
-                <div className="mt-4 space-y-4">
-                  {proFeatures.map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-xs text-slate-600">
-                      <Check className="h-4 w-4 text-slate-500 shrink-0" />
-                      {feat}
-                    </div>
-                  ))}
+                <p className="mt-4 text-xs text-slate-500">{isDe ? 'Voller Pro-Zugang, 30 Tage lang' : 'Full Pro access, for 30 days'}</p>
+                <div className="mt-4 flex items-center gap-3 text-xs text-slate-600">
+                  <Check className="h-4 w-4 text-slate-500 shrink-0" />
+                  {isDe ? 'Alle Pro-Funktionen, 30 Tage Zugriff' : 'All Pro features, 30 days of access'}
                 </div>
               </div>
               <button 
@@ -770,13 +756,13 @@ export function Welcome() {
                 {isDe ? 'BELIEBTESTE WAHL' : 'MOST POPULAR'}
               </span>
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-blue-600">{isDe ? '90-Tage Pass' : '90-Day Pass'}</span>
+                <span className="text-sm font-bold text-blue-600">{isDe ? '90-Tage Pass' : '90-Day Pass'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-slate-900">€19.99</span>
                   <span className="text-slate-500 text-sm">{isDe ? '/ 90 Tage' : '/ 90 days'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-600">{isDe ? 'Deckt deine gesamte Fahrschulausbildung von der 1. Stunde bis zur Prüfung ab.' : 'Covers your complete driving school journey from day 1 to exam.'}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-blue-600">{isDe ? 'Voller Pro-Zugang, 90 Tage lang' : 'Full Pro access, for 90 days'}</p>
+                <p className="mt-4 text-xs text-slate-500">{isDe ? 'Voller Pro-Zugang, 90 Tage lang' : 'Full Pro access, for 90 days'}</p>
                 <div className="mt-4 space-y-4">
                   {proFeatures.map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs text-slate-900">
@@ -797,13 +783,13 @@ export function Welcome() {
             {/* Lifetime Access */}
             <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 text-left flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Lebenslanger Zugang' : 'Lifetime Access'}</span>
+                <span className="text-sm font-bold text-slate-500">{isDe ? 'Lebenslanger Zugang' : 'Lifetime Access'}</span>
                 <div className="mt-4 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-slate-900">€29.99</span>
                   <span className="text-slate-500 text-sm">{isDe ? '/ einmalig' : '/ one-time'}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-500">{isDe ? 'Dauerhafter Zugang zu allen aktuellen & zukünftigen DriveDE Updates.' : 'Lifetime access to all current & future DriveDE updates.'}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">{isDe ? 'Voller Pro-Zugang, ohne Ablaufdatum' : 'Full Pro access, never expires'}</p>
+                <p className="mt-4 text-xs text-slate-500">{isDe ? 'Voller Pro-Zugang, ohne Ablaufdatum' : 'Full Pro access, never expires'}</p>
                 <div className="mt-4 space-y-4">
                   {[
                     isDe ? 'Alles aus dem 90-Tage Pass' : 'Everything in the 90-Day Pass',
@@ -910,15 +896,8 @@ export function Welcome() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                onClick={() => {
-                  const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
-                  useAppStore.setState({ 
-                    learningPath, 
-                    hasVisited: true
-                  });
-                }}
                 className={cn(
-                  'group relative flex flex-col items-start rounded-[2.5rem] border border-slate-200 bg-white p-10 text-left transition-all hover:border-slate-300 overflow-hidden cursor-pointer',
+                  'group relative flex flex-col items-start rounded-[2.5rem] border border-slate-200 bg-white p-10 text-left transition-all hover:border-slate-300 overflow-hidden',
                   'shadow-xl shadow-slate-900/5'
                 )}
                 data-testid={path.id === 'conversion' ? 'path-umschreibung' : 'path-standard'}
@@ -945,8 +924,7 @@ export function Welcome() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
                         const license = learningPath === 'umschreibung' ? 'umschreibung-manual' : 'manual';
                         useAppStore.setState({ 
@@ -964,8 +942,7 @@ export function Welcome() {
                     </button>
 
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         const learningPath = path.id === 'conversion' ? 'umschreibung' : 'standard';
                         const license = learningPath === 'umschreibung' ? 'umschreibung-automatic' : 'automatic';
                         useAppStore.setState({ 

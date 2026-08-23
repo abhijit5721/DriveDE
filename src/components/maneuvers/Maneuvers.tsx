@@ -3,7 +3,22 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { Play, Film, Wrench, Lock } from 'lucide-react';
+import {
+  Play,
+  Film,
+  Wrench,
+  Lock,
+  ParkingSquare,
+  ArrowDownToLine,
+  RefreshCcw,
+  OctagonX,
+  Car,
+  Circle,
+  Route,
+  Eye,
+  Snail,
+  CheckCircle2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/useAppStore';
@@ -59,11 +74,11 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
 
   const getManeuverIcon = (lessonId: string) => {
     switch (lessonId) {
-      case 'maneuver-1': return '🅿️'; // Parallel parking
-      case 'maneuver-2': return '⬇️'; // Reverse parking
-      case 'maneuver-3': return '🔄'; // Three-point turn
-      case 'maneuver-4': return '🛑'; // Emergency braking
-      default: return '🚗';
+      case 'maneuver-1': return ParkingSquare; // Parallel parking
+      case 'maneuver-2': return ArrowDownToLine; // Reverse parking
+      case 'maneuver-3': return RefreshCcw; // Three-point turn
+      case 'maneuver-4': return OctagonX; // Emergency braking
+      default: return Car;
     }
   };
 
@@ -108,7 +123,9 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
           className="grid grid-cols-2 gap-3"
           variants={containerVariants}
         >
-          {maneuvers.map((maneuver) => (
+          {maneuvers.map((maneuver) => {
+            const ManeuverIcon = getManeuverIcon(maneuver.id);
+            return (
             <motion.button
               key={maneuver.id}
               onClick={() => onLessonSelect(maneuver)}
@@ -126,7 +143,9 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
               )} />
               <div className="relative z-10">
                 <div className="flex items-start justify-between">
-                  <div className="mb-3 text-3xl">{getManeuverIcon(maneuver.id)}</div>
+                  <div className="mb-3">
+                    <ManeuverIcon className="h-8 w-8 text-white" aria-hidden="true" />
+                  </div>
                   {maneuver.isPremium && (
                     <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
                       Pro
@@ -145,7 +164,8 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
                 </div>
               </div>
             </motion.button>
-          ))}
+            );
+          })}
         </motion.div>
       )}
 
@@ -159,37 +179,37 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
         </h3>
         
         <div className="space-y-3">
-          <div className="flex items-start gap-3 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
-            <span className="text-xl">👀</span>
+          <div className="flex items-start gap-3 rounded-lg border border-line bg-surface-raised p-3">
+            <Eye className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
             <div>
-              <p className="text-sm font-medium text-red-800 dark:text-red-300">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                 {t.maneuvers.check360}
               </p>
-              <p className="mt-0.5 text-xs text-red-700 dark:text-red-400">
+              <p className="mt-0.5 text-xs text-muted">
                 {t.maneuvers.check360Desc}
               </p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 rounded-lg bg-amber-50 p-3 dark:bg-amber-900/20">
-            <span className="text-xl">🐌</span>
+          <div className="flex items-start gap-3 rounded-lg border border-line bg-surface-raised p-3">
+            <Snail className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
             <div>
-              <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                 {t.maneuvers.driveSlowly}
               </p>
-              <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
+              <p className="mt-0.5 text-xs text-muted">
                 {t.maneuvers.driveSlowlyDesc}
               </p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
-            <span className="text-xl">✅</span>
+          <div className="flex items-start gap-3 rounded-lg border border-line bg-surface-raised p-3">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
             <div>
-              <p className="text-sm font-medium text-green-800 dark:text-green-300">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                 {t.maneuvers.correctionsAllowed}
               </p>
-              <p className="mt-0.5 text-xs text-green-700 dark:text-green-400">
+              <p className="mt-0.5 text-xs text-muted">
                 {t.maneuvers.correctionsAllowedDesc}
               </p>
             </div>
@@ -226,12 +246,12 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
 
         <div className="grid grid-cols-3 gap-2 mb-4">
           {[
-            { id: 'parallel-parking' as AnimationType, label: t.maneuvers.parking, icon: '🅿️' },
-            { id: 'reverse-parking' as AnimationType, label: t.maneuvers.reverse, icon: '⬇️' },
-            { id: 'three-point-turn' as AnimationType, label: t.maneuvers.threePoint, icon: '🔄' },
-            { id: 'emergency-brake' as AnimationType, label: t.maneuvers.emergency, icon: '🛑' },
-            { id: 'roundabout' as AnimationType, label: t.maneuvers.roundabout, icon: '🔵' },
-            { id: 'highway-merge' as AnimationType, label: t.maneuvers.highway, icon: '🛣️' },
+            { id: 'parallel-parking' as AnimationType, label: t.maneuvers.parking, icon: ParkingSquare },
+            { id: 'reverse-parking' as AnimationType, label: t.maneuvers.reverse, icon: ArrowDownToLine },
+            { id: 'three-point-turn' as AnimationType, label: t.maneuvers.threePoint, icon: RefreshCcw },
+            { id: 'emergency-brake' as AnimationType, label: t.maneuvers.emergency, icon: OctagonX },
+            { id: 'roundabout' as AnimationType, label: t.maneuvers.roundabout, icon: Circle },
+            { id: 'highway-merge' as AnimationType, label: t.maneuvers.highway, icon: Route },
           ].map((anim) => (
             <button
               key={anim.id}
@@ -256,7 +276,7 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
                   <Lock className="h-2.5 w-2.5 text-amber-500" />
                 </div>
               )}
-              <span className="text-xl" aria-hidden="true">{anim.icon}</span>
+              <anim.icon className="h-6 w-6" aria-hidden="true" />
               <span className="text-xs font-semibold">{anim.label}</span>
             </button>
           ))}

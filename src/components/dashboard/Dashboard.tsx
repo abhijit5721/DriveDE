@@ -3,8 +3,8 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState } from 'react';
-import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, LogIn, Flame, Mic, Cloud, Globe } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Car, BookOpen, Clock, ChevronRight, Target, Cog, Zap, Crown, RefreshCcw, BadgeCheck, ClipboardCheck, ClipboardList, LogIn, Flame, Eye, TrafficCone, Cloud, Globe } from 'lucide-react';
 import { UmschreibungCountryGuide } from '../curriculum/UmschreibungCountryGuide';
 import { useAppStore } from '../../store/useAppStore';
 import { chapters, getAllLessons } from '../../data/curriculum';
@@ -32,12 +32,21 @@ interface DashboardProps {
   userLng?: number;
 }
 
+// Entrance animation plays once per session; repeat tab visits render statically.
+let dashboardIntroPlayed = false;
+
 export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimulation, onDirectLessonSelect, onOpenAuth, onOpenReadiness, onOpenHotspots, userLat = 52.52, userLng = 13.405 }: DashboardProps) {
   const { language, userProgress, licenseType, isPremium, isProActive, isOnTrial, getRemainingTrialDays, authStatus } = useAppStore();
   const proActive = isProActive();
   const onTrial = isOnTrial();
   const trialDaysLeft = getRemainingTrialDays();
   const [showCountryGuide, setShowCountryGuide] = useState(false);
+  const [playIntro] = useState(() => !dashboardIntroPlayed);
+  useEffect(() => {
+    dashboardIntroPlayed = true;
+  }, []);
+  const introClass = playIntro ? 'animate-fade-in-up' : '';
+  const introDelay = (ms: number) => (playIntro ? { animationDelay: `${ms}ms` } : undefined);
   const t = TRANSLATIONS[language];
   const learningPath = getLearningPathFromLicenseType(licenseType);
   const transmissionType = getTransmissionFromLicenseType(licenseType);
@@ -108,16 +117,16 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
   const mistakesCount = (userProgress.incorrectQuestions || []).length;
 
   return (
-    <div className="space-y-8 pb-10 animate-scale-in">
+    <div className={cn('space-y-8 pb-10', playIntro && 'animate-scale-in')}>
       {/* Premium Hero Section: Exam Readiness & Path */}
-      <div data-tour="readiness" className="overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10 animate-fade-in-up">
+      <div data-tour="readiness" className={cn('overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10', introClass)}>
         <div className="bg-blue-600 p-8 text-white relative overflow-hidden">
           
           
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <div className="flex flex-col gap-1.5">
-                <span className="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10">
+                <span className="inline-flex items-center rounded-lg bg-white/20 backdrop-blur-md px-3 py-1 text-xs font-bold uppercase tracking-[0.15em] border border-white/10">
                   {pathConfig.title}
                 </span>
                 <p className="text-sm font-medium text-blue-100/90">
@@ -207,7 +216,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         )}
       </div>
 
-      <div data-tour="exam-sim" className="grid grid-cols-1 gap-4 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div data-tour="exam-sim" className={cn('grid grid-cols-1 gap-4', introClass)} style={introDelay(100)}>
         <button
           onClick={onStartSimulation}
           aria-label={t.dashboard.examSimulation}
@@ -215,7 +224,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         >
           <div className="flex items-center gap-5 text-left">
             <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:bg-blue-500/20 group-hover:border-blue-500/30 transition-all duration-300">
-              <Mic className="h-7 w-7 text-blue-400" />
+              <ClipboardCheck className="h-7 w-7 text-blue-400" />
               {!proActive && (
                 <div className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 shadow-lg border-2 border-slate-900">
                   <Crown className="h-3.5 w-3.5 text-white" />
@@ -236,7 +245,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       </div>
 
       {/* Core Stats Grid */}
-      <div data-tour="stats" className="grid grid-cols-2 gap-4 sm:grid-cols-3 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+      <div data-tour="stats" className={cn('grid grid-cols-2 gap-4 sm:grid-cols-3', introClass)} style={introDelay(200)}>
         {[
           { 
             icon: Clock, 
@@ -273,7 +282,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 <stat.icon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-muted mb-1">
+                <p className="text-xs font-semibold text-muted mb-1">
                   {stat.label}
                 </p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
@@ -286,12 +295,12 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       </div>
       
       {/* Driving Insights & Weekly Stats */}
-      <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+      <div className={introClass} style={introDelay(300)}>
         <DrivingInsights onDirectLessonSelect={onDirectLessonSelect} />
       </div>
 
       {/* Mistake Hotspots - Pro feature */}
-      <div className="animate-fade-in-up" style={{ animationDelay: '350ms' }}>
+      <div className={introClass} style={introDelay(350)}>
         <HotspotPanel
           lat={userLat}
           lng={userLng}
@@ -304,8 +313,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         <button
           onClick={() => onDirectLessonSelect('basics-0')}
           aria-label={t.dashboard.conversionQuickstart}
-          className="w-full rounded-3xl glass p-6 text-left shadow-sm transition-all hover:translate-y-[-2px] hover:shadow-md group animate-fade-in-up"
-          style={{ animationDelay: '400ms' }}
+          className={cn('w-full rounded-3xl glass p-6 text-left shadow-sm transition-all hover:translate-y-[-2px] hover:shadow-md group', introClass)}
+          style={introDelay(400)}
         >
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 group-hover:scale-110 transition-transform">
@@ -318,11 +327,11 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 </h3>
                 <div className="flex items-center gap-2">
                   {!isPremium && (
-                    <span className="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                    <span className="inline-flex rounded-lg bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white">
                       Pro
                     </span>
                   )}
-                  <span className="inline-flex rounded-lg bg-emerald-100 dark:bg-emerald-900/50 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                  <span className="inline-flex rounded-lg bg-emerald-100 dark:bg-emerald-900/50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
                     {t.dashboard.germanyFocus}
                   </span>
                 </div>
@@ -354,8 +363,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       {isUmschreibung && (
         <button
           onClick={() => setShowCountryGuide(true)}
-          className="w-full rounded-3xl border border-blue-500/20 bg-blue-500/5 p-5 text-left transition-all hover:border-blue-500/40 hover:bg-blue-500/10 hover:translate-y-[-2px] group animate-fade-in-up"
-          style={{ animationDelay: '450ms' }}
+          className={cn('w-full rounded-3xl border border-blue-500/20 bg-blue-500/5 p-5 text-left transition-all hover:border-blue-500/40 hover:bg-blue-500/10 hover:translate-y-[-2px] group', introClass)}
+          style={introDelay(450)}
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/15 group-hover:scale-110 transition-transform">
@@ -381,7 +390,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         <UmschreibungCountryGuide onClose={() => setShowCountryGuide(false)} />
       )}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+      <div className={cn('grid grid-cols-1 gap-4 lg:grid-cols-2', introClass)} style={introDelay(500)}>
         {[
           {
             id: 'maneuvers',
@@ -428,7 +437,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
               )}>
                 <card.icon className="h-7 w-7" />
                 {card.id === 'review' && mistakesCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                  <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white ring-2 ring-white dark:ring-slate-900">
                     {mistakesCount}
                   </span>
                 )}
@@ -439,7 +448,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                     {card.title}
                   </p>
                   <span className={cn(
-                    'rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border',
+                    'rounded-lg px-2.5 py-1 text-xs font-semibold border',
                     card.color === 'amber' ? 'bg-amber-50/50 text-amber-600 border-amber-500/20' :
                     'bg-blue-50/50 text-blue-600 border-blue-500/20'
                   )}>
@@ -458,12 +467,12 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         ))}
       </div>
 
-      <div data-tour="special-drives" className="rounded-3xl glass p-8 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+      <div data-tour="special-drives" className={cn('rounded-3xl glass p-8', introClass)} style={introDelay(600)}>
         <div className="mb-6">
           <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             {isUmschreibung ? t.dashboard.practiceCheck : t.dashboard.specialDrives}
           </h3>
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500 mt-1">
+          <p className="text-xs font-semibold text-muted mt-1">
             {isUmschreibung ? t.dashboard.focusThemes : t.dashboard.mandatoryHours}
           </p>
         </div>
@@ -471,14 +480,14 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         {isUmschreibung ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
-              { icon: '👀', ...t.dashboard.conversionChecks[0] },
-              { icon: '🚦', ...t.dashboard.conversionChecks[1] },
-              { icon: '📝', ...t.dashboard.conversionChecks[2] },
+              { icon: Eye, ...t.dashboard.conversionChecks[0] },
+              { icon: TrafficCone, ...t.dashboard.conversionChecks[1] },
+              { icon: ClipboardList, ...t.dashboard.conversionChecks[2] },
             ].map((item) => (
               <div key={item.title} className="rounded-2xl glass-card p-5 transition-all hover:scale-[1.02]">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 dark:bg-slate-800/50 text-xl shadow-sm">
-                    {item.icon}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 dark:bg-slate-800/50 shadow-sm">
+                    <item.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{item.title}</p>
                 </div>
@@ -499,7 +508,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                     <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">
                       <item.icon className="h-4 w-4" />
                     </div>
-                    <span className="font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">{item.label}</span>
+                    <span className="font-semibold text-slate-600 dark:text-slate-300">{item.label}</span>
                   </div>
                   <span className="font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
                     {Math.floor(userProgress.specialDrivingMinutes[item.key as keyof typeof userProgress.specialDrivingMinutes] / 45)}/{item.required.split('×')[0]} {t.dashboard.hoursSuffix}
@@ -522,9 +531,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         )}
       </div>
 
-      <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
+      <div className={cn('space-y-6', introClass)} style={introDelay(700)}>
         <div className="flex items-center justify-between">
-          <h3 className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">
+          <h3 className="text-xs font-semibold text-muted">
             {t.dashboard.continueLearning}
           </h3>
           <button
@@ -580,7 +589,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
       </div>
 
-      <div className="rounded-3xl bg-blue-600 p-8 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden animate-fade-in-up" style={{ animationDelay: '800ms' }}>
+      <div className={cn('rounded-3xl bg-blue-600 p-8 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden', introClass)} style={introDelay(800)}>
         <div className="relative z-10 flex items-start gap-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
             <Target className="h-8 w-8 text-white" />
@@ -597,7 +606,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       </div>
 
       {/* Footer Status: Cloud Sync */}
-      <div className="mt-16 flex flex-col items-center gap-6 animate-fade-in-up" style={{ animationDelay: '900ms' }}>
+      <div className={cn('mt-16 flex flex-col items-center gap-6', introClass)} style={introDelay(900)}>
         <button
           onClick={() => {
             if (authStatus !== 'signed_in') {
@@ -606,7 +615,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           }}
           aria-label={t.dashboard.accountSettings}
           className={cn(
-            'flex items-center gap-3 rounded-full px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] transition-all border shadow-sm hover:scale-105 active:scale-95',
+            'flex items-center gap-3 rounded-full px-6 py-3 text-xs font-semibold transition-all border shadow-sm hover:scale-105 active:scale-95',
             authStatus === 'signed_in' 
               ? 'bg-emerald-50/50 text-emerald-700 border-emerald-500/20 dark:bg-emerald-900/10 dark:text-emerald-400' 
               : 'bg-white/50 text-slate-500 border-slate-200 dark:bg-slate-900/50 dark:border-slate-800'
@@ -626,7 +635,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
           )}
         </button>
         <div className="text-center">
-          <p className="text-[10px] font-bold tracking-[0.3em] text-slate-300 dark:text-slate-600 uppercase">
+          <p className="text-xs font-semibold text-slate-300 dark:text-slate-600">
             DriveDE v{packageJson.version} • OTA Verified
           </p>
         </div>

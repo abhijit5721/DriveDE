@@ -38,6 +38,10 @@ import {
   Trophy,
   Wrench,
   Clock,
+  BadgeCheck,
+  Lightbulb,
+  CheckCircle2,
+  MessageSquare,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
@@ -316,7 +320,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
           )}
           {lesson.learningPath === 'both' && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-bold text-blue-700 dark:text-blue-400">
-              🇩🇪 {isDE ? 'Umschreibung & Ersterwerb' : 'Conversion & Standard'}
+              <BadgeCheck className="w-3.5 h-3.5 shrink-0" />
+              {isDE ? 'Umschreibung & Ersterwerb' : 'Conversion & Standard'}
             </span>
           )}
         </div>
@@ -596,11 +601,11 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
             <div className="rounded-3xl bg-surface border border-line p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 font-bold">
-                  <Zap className="h-5 w-5" />
+                  <Lightbulb className="h-5 w-5" />
                 </div>
                 <div>
                   <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
-                    {isDE ? '💡 Experten-Tipps & Praxishinweise' : '💡 Expert Tips & Instructions'}
+                    {isDE ? 'Experten-Tipps & Praxishinweise' : 'Expert Tips & Instructions'}
                   </h4>
                   <p className="text-xs text-muted">
                     {isDE ? 'Wichtige Ratschläge vom Fahrlehrer für die Praxis' : 'Key practical advice from driving instructors'}
@@ -622,7 +627,13 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     )}
                   >
                     <p className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                      <span>{tip.type === 'warning' ? '⚠️' : tip.type === 'success' ? '✅' : '💡'}</span>
+                      {tip.type === 'warning' ? (
+                        <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                      ) : tip.type === 'success' ? (
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <Lightbulb className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" />
+                      )}
                       <span>{isDE ? tip.titleDe : tip.titleEn}</span>
                     </p>
                     <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
@@ -939,8 +950,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     {/* Header + Speech Audio Play Button */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-2.5">
-                        <span className="mt-0.5 shrink-0 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-wider">
-                          🗣️ PRÜFER
+                        <span className="mt-0.5 shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs font-black uppercase tracking-wider">
+                          <MessageSquare className="w-3 h-3 shrink-0" />
+                          PRÜFER
                         </span>
                         <div>
                           <p className="text-base sm:text-lg font-black text-slate-900 dark:text-white notranslate leading-snug" translate="no">
@@ -971,7 +983,7 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     {(command.noteDe || command.noteEn) && (
                       <div className="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-500/20 p-3.5 text-xs leading-relaxed space-y-1">
                         <div className="flex items-center gap-1.5 font-extrabold text-blue-700 dark:text-blue-400 uppercase tracking-wider text-xs">
-                          <span>🎯</span>
+                          <Target className="w-3.5 h-3.5 shrink-0" />
                           <span>{isDE ? 'WAS DER PRÜFER ZWINGEND ERWARTET:' : 'WHAT THE EXAMINER EXPECTS:'}</span>
                         </div>
                         <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -1016,7 +1028,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                     <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{term.english}</p>
                     {(term.noteDe || term.noteEn) && (
                       <div className="text-xs leading-relaxed text-amber-800 dark:text-amber-200/90 flex items-start gap-1.5 bg-amber-50 dark:bg-amber-950/20 p-2.5 rounded-xl border border-amber-500/20">
-                        <span className="text-amber-700 dark:text-amber-400 font-extrabold shrink-0">💡 Examen-Tipp:</span>
+                        <Lightbulb className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-700 dark:text-amber-400" />
+                        <span className="text-amber-700 dark:text-amber-400 font-extrabold shrink-0">Examen-Tipp:</span>
                         <span>{isDE ? term.noteDe : term.noteEn}</span>
                       </div>
                     )}
@@ -1172,8 +1185,9 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                               {isDE ? step.titleDe : step.titleEn}
                             </p>
                             {step.critical && (
-                              <span className="px-2 py-0.5 rounded-md bg-red-500/15 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-wider border border-red-500/30">
-                                ⚠️ EXAM FAIL TRAP
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-500/15 text-red-600 dark:text-red-400 text-xs font-black uppercase tracking-wider border border-red-500/30">
+                                <AlertTriangle className="w-3 h-3 shrink-0" />
+                                {isDE ? 'PRÜFUNGS-KILLER' : 'EXAM FAIL TRAP'}
                               </span>
                             )}
                           </div>

@@ -12,11 +12,17 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronDown, Check, Lock, Cog, Zap, 
+import {
+  ChevronDown, Check, Lock, Cog, Zap,
   Settings2, BadgeCheck, Crown, Activity,
-  Play, ArrowRight, Layers, TrendingUp, Compass
+  Play, ArrowRight, Layers, TrendingUp, Compass,
+  View, Eye, ClipboardCheck, Gauge, Target, Mountain,
+  ParkingSquare, Car, RefreshCcw, RotateCcw, AlertOctagon,
+  AlertTriangle, Ruler, Footprints, Bike, ArrowLeftRight,
+  Route, Ambulance, Siren, MessageSquare, Trophy,
+  Building2, BookOpen
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { chapters } from '../../data/curriculum';
@@ -30,39 +36,39 @@ interface CurriculumProps {
 }
 
 // German rule badges mapped to specific lesson topics across all chapters
-const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; icon: string }> = {
-  'basics-0': { labelDe: 'Umschreibung: Schnellstart & Prüfungsregeln', labelEn: 'Conversion: Germany Quickstart', icon: '🇩🇪' },
-  'basics-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirror Setup', icon: '🪞' },
-  'basics-1b': { labelDe: 'Schulterblick (Pflicht)', labelEn: 'Schulterblick Check', icon: '👀' },
-  'basics-1a': { labelDe: 'Fahrzeug-Sicherheitskontrolle', labelEn: 'Pre-Drive Safety Check', icon: '🔍' },
-  'basics-2': { labelDe: 'Kupplung & Anfahren (Schalter)', labelEn: 'Clutch & Moving Off (Manual)', icon: '⚙️' },
-  'basics-2a': { labelDe: 'Wählhebel & Anfahren (Automatik)', labelEn: 'Gear Selector & Moving Off (Auto)', icon: '⚡' },
-  'basics-3': { labelDe: 'Schaltpraxis & Gänge', labelEn: 'Shifting Technique', icon: '🏎️' },
-  'basics-3a': { labelDe: 'Fahrmodi & Tiptronic', labelEn: 'Drive Modes & Override', icon: '⚡' },
-  'basics-4': { labelDe: 'Lenkradhaltung (9 & 3 Uhr)', labelEn: 'Steering Wheel Control', icon: '🎯' },
-  'basics-5': { labelDe: 'Berganfahren (Handbremse)', labelEn: 'Hill Start (Manual)', icon: '🏔️' },
-  'basics-5a': { labelDe: 'Berganfahren (Hill-Hold)', labelEn: 'Hill Start (Auto)', icon: '🏔️' },
+const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; icon: LucideIcon }> = {
+  'basics-0': { labelDe: 'Umschreibung: Schnellstart & Prüfungsregeln', labelEn: 'Conversion: Germany Quickstart', icon: BadgeCheck },
+  'basics-1': { labelDe: 'Sitzposition & Spiegel', labelEn: 'Seating & Mirror Setup', icon: View },
+  'basics-1b': { labelDe: 'Schulterblick (Pflicht)', labelEn: 'Schulterblick Check', icon: Eye },
+  'basics-1a': { labelDe: 'Fahrzeug-Sicherheitskontrolle', labelEn: 'Pre-Drive Safety Check', icon: ClipboardCheck },
+  'basics-2': { labelDe: 'Kupplung & Anfahren (Schalter)', labelEn: 'Clutch & Moving Off (Manual)', icon: Cog },
+  'basics-2a': { labelDe: 'Wählhebel & Anfahren (Automatik)', labelEn: 'Gear Selector & Moving Off (Auto)', icon: Zap },
+  'basics-3': { labelDe: 'Schaltpraxis & Gänge', labelEn: 'Shifting Technique', icon: Gauge },
+  'basics-3a': { labelDe: 'Fahrmodi & Tiptronic', labelEn: 'Drive Modes & Override', icon: Zap },
+  'basics-4': { labelDe: 'Lenkradhaltung (9 & 3 Uhr)', labelEn: 'Steering Wheel Control', icon: Target },
+  'basics-5': { labelDe: 'Berganfahren (Handbremse)', labelEn: 'Hill Start (Manual)', icon: Mountain },
+  'basics-5a': { labelDe: 'Berganfahren (Hill-Hold)', labelEn: 'Hill Start (Auto)', icon: Mountain },
 
-  'maneuver-1': { labelDe: 'Parallel-Einparken (3D)', labelEn: 'Parallel Parking (3D)', icon: '🅿️' },
-  'maneuver-2': { labelDe: 'Rückwärts-Einparken (3D)', labelEn: 'Reverse Parking (3D)', icon: '🚗' },
-  'maneuver-3': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: '🔄' },
-  'maneuver-4': { labelDe: 'Gefahrenbremsung (Schaltwagen)', labelEn: 'Emergency Stop (Manual)', icon: '⚡' },
-  'maneuver-4a': { labelDe: 'Gefahrenbremsung (Automatik)', labelEn: 'Emergency Stop (Auto)', icon: '⚡' },
+  'maneuver-1': { labelDe: 'Parallel-Einparken (3D)', labelEn: 'Parallel Parking (3D)', icon: ParkingSquare },
+  'maneuver-2': { labelDe: 'Rückwärts-Einparken (3D)', labelEn: 'Reverse Parking (3D)', icon: ParkingSquare },
+  'maneuver-3': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: RefreshCcw },
+  'maneuver-4': { labelDe: 'Gefahrenbremsung (Schaltwagen)', labelEn: 'Emergency Stop (Manual)', icon: AlertOctagon },
+  'maneuver-4a': { labelDe: 'Gefahrenbremsung (Automatik)', labelEn: 'Emergency Stop (Auto)', icon: AlertOctagon },
 
-  'city-1': { labelDe: 'Rechts vor Links (StVO §8)', labelEn: 'Right-Before-Left Priority', icon: '⚠️' },
-  'city-2': { labelDe: 'Abknickende Vorfahrt & Linksabbiegen', labelEn: 'Priority Roads & Left Turns', icon: '📐' },
-  'city-3': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout & Indicators', icon: '🔄' },
-  'city-4': { labelDe: 'Zebrastreifen (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: '🚶' },
-  'city-5': { labelDe: 'Abbiegen & Radweg-Check', labelEn: 'Right Turn Bike Check', icon: '🚴' },
-  'city-6': { labelDe: 'Spurwechsel im Verkehr', labelEn: 'Dense Traffic Lane Change', icon: '↔️' },
+  'city-1': { labelDe: 'Rechts vor Links (StVO §8)', labelEn: 'Right-Before-Left Priority', icon: AlertTriangle },
+  'city-2': { labelDe: 'Abknickende Vorfahrt & Linksabbiegen', labelEn: 'Priority Roads & Left Turns', icon: Ruler },
+  'city-3': { labelDe: 'Kreisverkehr (Zeichen 215)', labelEn: 'Roundabout & Indicators', icon: RotateCcw },
+  'city-4': { labelDe: 'Zebrastreifen (Zeichen 266)', labelEn: 'Zebra Crossing Priority', icon: Footprints },
+  'city-5': { labelDe: 'Abbiegen & Radweg-Check', labelEn: 'Right Turn Bike Check', icon: Bike },
+  'city-6': { labelDe: 'Spurwechsel im Verkehr', labelEn: 'Dense Traffic Lane Change', icon: ArrowLeftRight },
 
-  'hwy-1': { labelDe: 'Einfädelungsstreifen (Autobahn)', labelEn: 'Autobahn Ramp Merging', icon: '🛣️' },
-  'hwy-2': { labelDe: 'Rechtsfahrgebot & Überholen', labelEn: 'Keep-Right Rule & Passing', icon: '🚗' },
-  'hwy-3': { labelDe: 'Rettungsgasse bilden (StVO §11)', labelEn: 'Emergency Corridor', icon: '🚑' },
+  'hwy-1': { labelDe: 'Einfädelungsstreifen (Autobahn)', labelEn: 'Autobahn Ramp Merging', icon: Route },
+  'hwy-2': { labelDe: 'Rechtsfahrgebot & Überholen', labelEn: 'Keep-Right Rule & Passing', icon: Car },
+  'hwy-3': { labelDe: 'Rettungsgasse bilden (StVO §11)', labelEn: 'Emergency Corridor', icon: Ambulance },
 
-  'exam-1': { labelDe: 'Die 5 Häufigsten Durchfallgründe', labelEn: 'Top 5 Exam Fail Traps', icon: '🚨' },
-  'exam-2': { labelDe: 'Prüferanweisung: "Die Nächste Links"', labelEn: 'Examiner Commands', icon: '🗣️' },
-  'exam-3': { labelDe: '100% Praktische Simulation', labelEn: 'Full Exam Simulation', icon: '🏆' },
+  'exam-1': { labelDe: 'Die 5 Häufigsten Durchfallgründe', labelEn: 'Top 5 Exam Fail Traps', icon: Siren },
+  'exam-2': { labelDe: 'Prüferanweisung: "Die Nächste Links"', labelEn: 'Examiner Commands', icon: MessageSquare },
+  'exam-3': { labelDe: '100% Praktische Simulation', labelEn: 'Full Exam Simulation', icon: Trophy },
 };
 
 export function Curriculum({ onLessonSelect }: CurriculumProps) {
@@ -144,14 +150,14 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
     }
   }, [curriculumViewMode, activeLessonId]);
 
-  const getChapterIcon = (chapterId: string) => {
+  const getChapterIcon = (chapterId: string): LucideIcon => {
     switch (chapterId) {
-      case 'chapter-1': return '🇩🇪';
-      case 'chapter-2': return '🅿️';
-      case 'chapter-3': return '🏙️';
-      case 'chapter-4': return '🛣️';
-      case 'chapter-5': return '🏆';
-      default: return '📚';
+      case 'chapter-1': return Car;
+      case 'chapter-2': return ParkingSquare;
+      case 'chapter-3': return Building2;
+      case 'chapter-4': return Route;
+      case 'chapter-5': return Trophy;
+      default: return BookOpen;
     }
   };
 
@@ -261,8 +267,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             <div>
               <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                 {learningPath === 'umschreibung'
-                  ? (isDe ? '🇩🇪 Umschreibung ausländischer Führerschein' : '🇩🇪 Foreign License Conversion (Germany)')
-                  : (isDe ? '🚗 Führerschein Klasse B Ausbildungsplan' : '🚗 Class B Driving License Curriculum')}
+                  ? (isDe ? 'Umschreibung ausländischer Führerschein' : 'Foreign License Conversion (Germany)')
+                  : (isDe ? 'Führerschein Klasse B Ausbildungsplan' : 'Class B Driving License Curriculum')}
               </p>
               <p className="text-xs text-muted font-medium">
                 {/* This header shows lesson-completion percent only. Calling it
@@ -297,6 +303,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
               : 0;
 
             const isChapterCompleted = chapterProgress === 100;
+            const ChapterIcon = getChapterIcon(chapter.id);
             const previousChapter = cIdx > 0 ? filteredChapters[cIdx - 1] : null;
             const hasCompletedInPrevious = previousChapter?.lessons.some(l =>
               userProgress.completedLessons.includes(l.id)
@@ -309,8 +316,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                 {/* Chapter Quest Banner Header */}
                 <div className="sticky top-16 z-20 mb-6 p-4 rounded-2xl bg-surface border border-line shadow-md flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl">
-                      {getChapterIcon(chapter.id)}
+                    <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <ChapterIcon className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
@@ -396,7 +403,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                           {/* Active "Start Here" Floating Badge */}
                           {isCurrentActive && (
                             <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs font-black uppercase tracking-wider shadow-lg whitespace-nowrap">
-                              🎯 {isDe ? 'Start' : 'Start'}
+                              {isDe ? 'Start' : 'Start'}
                             </div>
                           )}
                         </div>
@@ -428,7 +435,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                           {/* German Rule Pill Badge */}
                           {ruleBadge && (
                             <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-surface-raised border border-line text-xs font-bold text-slate-600 dark:text-slate-300">
-                              <span>{ruleBadge.icon}</span>
+                              <ruleBadge.icon className="w-3.5 h-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
                               <span>{isDe ? ruleBadge.labelDe : ruleBadge.labelEn}</span>
                             </div>
                           )}
@@ -450,6 +457,7 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
             ).length;
             const isChapterCompleted = chapter.lessons.length > 0 && completedInChapter === chapter.lessons.length;
             const isExpanded = expandedChapter === chapter.id;
+            const ChapterIcon = getChapterIcon(chapter.id);
 
             return (
               <div key={chapter.id} className="rounded-2xl bg-surface border border-line overflow-hidden">
@@ -459,7 +467,9 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
                   className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-raised transition"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{getChapterIcon(chapter.id)}</span>
+                    <span className="flex w-10 h-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
+                      <ChapterIcon className="w-5 h-5" />
+                    </span>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-xs font-bold text-muted uppercase tracking-wider">
