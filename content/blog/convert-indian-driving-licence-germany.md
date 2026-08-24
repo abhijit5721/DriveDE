@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Indian driving licence Germany, Umschreibung Indien, Indian license Germany, driving licence exchange India Germany
 country: IN
 flag: 🇮🇳
+variants: indischen-fuehrerschein-umschreiben
 ---
 
 India is **not** on Germany's Anlage 11 FeV list. That means converting an Indian driving licence requires passing **both the theory exam and the practical exam** in Germany. Here is the part most people miss, and it changes the economics completely: as a licence converter you have **no mandatory lesson hours**. No 12 Pflichtstunden, no Sonderfahrten. You take exactly as many driving lessons as you actually need, and at €70 to €95 per lesson that difference is worth thousands of euros.

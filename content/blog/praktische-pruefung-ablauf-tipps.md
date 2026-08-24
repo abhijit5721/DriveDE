@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: praktische Prüfung Ablauf, praktische Prüfung Dauer, praktische Prüfung Auto Fragen, praktische Prüfung Auto technische Fragen, Fahrprüfung Tipps, Prüfungsfahrt Klasse B
 flag: 🎓
 updated: 2026-08-22
+variants: german-practical-driving-test-guide
 ---
 
 Die kurze Antwort: Die praktische Prüfung Klasse B dauert **55 Minuten** (davon rund 25 Minuten Fahrzeit), besteht aus **Abfahrtkontrolle, Fahrt im Verkehr und drei Grundfahraufgaben**, und rund **ein Drittel** fällt durch. Wer den Ablauf kennt und die typischen Fehler gezielt trainiert, geht mit einem massiven Vorteil hinein.

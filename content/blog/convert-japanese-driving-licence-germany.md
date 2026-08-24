@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Japanese driving licence Germany, Umschreibung Japan, Japanese license exchange Germany
 country: JP
 flag: 🇯🇵
+variants: japanischen-fuehrerschein-umschreiben
 ---
 
 Japan is on Germany's **Anlage 11 FeV** list, which puts Japanese licence holders in the best possible position: your licence is exchanged for a German one **without any theory or practical exam**. The whole process is administrative.

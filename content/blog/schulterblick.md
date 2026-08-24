@@ -6,6 +6,7 @@ lang: de
 date: 2026-08-22
 keywords: Schulterblick, Schulterblick wann, Schulterblick richtig machen, Schulterblick Fahrprüfung, Schulterblick durch welches Fenster, toter Winkel
 flag: 👀
+variants: shoulder-check-german-driving-test
 ---
 
 Kein einzelner Fehler beendet mehr Fahrprüfungen als der vergessene Schulterblick. Der Grund ist einfach: Er sichert den **toten Winkel**, den Bereich schräg hinter dir, den weder Innen- noch Außenspiegel zeigen, und genau dort fahren Radfahrer und Motorräder. Prüfer bewerten ihn deshalb kompromisslos, und zwar nur, wenn er **sichtbar** ist.

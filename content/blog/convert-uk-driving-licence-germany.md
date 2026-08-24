@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert UK driving licence Germany, Umschreibung UK, British licence Germany after Brexit, exchange UK licence German
 country: GB
 flag: 🇬🇧
+variants: britischen-fuehrerschein-umschreiben
 ---
 
 Before Brexit, a UK licence was an EU licence: no exchange needed at all. That era is over. A UK licence today is a third-country licence, and depending on when and where yours was issued, converting it can require passing the **German theory and practical exams**. The one constant: as a converter you have **no mandatory lesson hours**, so even the exam route is far cheaper than a first licence.

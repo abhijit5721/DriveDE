@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Brazilian driving licence Germany, CNH Germany, Umschreibung Brasilien, carteira de motorista Alemanha
 country: BR
 flag: 🇧🇷
+variants: brasilianischen-fuehrerschein-umschreiben
 ---
 
 Brazil is **not** on Germany's Anlage 11 FeV list. Converting a CNH (Carteira Nacional de Habilitação) therefore requires passing the **German theory exam and practical exam**. The compensation: converters have **no mandatory lesson hours**. The 12 compulsory Sonderfahrten that make a first German licence so expensive simply do not apply to you.

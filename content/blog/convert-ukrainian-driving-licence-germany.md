@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Ukrainian driving licence Germany, Umschreibung Ukraine, ukrainischen Führerschein umschreiben, Ukrainian license Germany
 country: UA
 flag: 🇺🇦
+variants: ukrainischen-fuehrerschein-umschreiben
 ---
 
 Under the standard rules, Ukraine is **not** on Germany's Anlage 11 FeV list: converting a Ukrainian licence means passing the **German theory and practical exams**. But Ukrainian licence holders are a special case in one important way, so read the first section before anything else.

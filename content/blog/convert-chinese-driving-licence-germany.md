@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Chinese driving licence Germany, Umschreibung China, chinesischen Führerschein umschreiben, Chinese license Germany
 country: CN
 flag: 🇨🇳
+variants: chinesischen-fuehrerschein-umschreiben
 ---
 
 China is **not** on Germany's Anlage 11 FeV list, so a Chinese licence cannot be exchanged administratively: you must pass the **German theory and practical exams**. The counterweight that most people learn too late: converters have **no mandatory lesson hours**. First-time learners must buy 12 Sonderfahrten; you buy only the lessons you actually need.

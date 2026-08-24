@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert US drivers license Germany, Umschreibung USA, American license Germany, exchange US license German
 country: US
 flag: 🇺🇸
+variants: amerikanischen-fuehrerschein-umschreiben
 ---
 
 Good news first: the United States is on Germany's **Anlage 11 FeV** list. That means a US driver's license from **any of the 50 states or Washington D.C.** can be exchanged for a German licence **without taking the theory or practical exam**. The process is administrative: paperwork, not tests.

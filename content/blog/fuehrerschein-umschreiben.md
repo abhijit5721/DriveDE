@@ -54,7 +54,7 @@ Die Theorieprüfung gibt es übrigens in **12 Sprachen**, unter anderem Englisch
 
 ## Länder-Guides zum Weiterlesen
 
-Detaillierte Schritt-für-Schritt-Guides (auf Englisch): [Indien](/blog/convert-indian-driving-licence-germany/) · [USA](/blog/convert-us-drivers-license-germany/) · [Türkei](/blog/convert-turkish-driving-licence-germany/) · [Großbritannien](/blog/convert-uk-driving-licence-germany/) · [Ukraine](/blog/convert-ukrainian-driving-licence-germany/) · [Brasilien](/blog/convert-brazilian-driving-licence-germany/) · [China](/blog/convert-chinese-driving-licence-germany/) · [Japan](/blog/convert-japanese-driving-licence-germany/) · [VAE](/blog/convert-uae-driving-licence-germany/)
+Detaillierte Schritt-für-Schritt-Guides: [Indien](/blog/indischen-fuehrerschein-umschreiben/) · [USA](/blog/amerikanischen-fuehrerschein-umschreiben/) · [Türkei](/blog/tuerkischen-fuehrerschein-umschreiben/) · [Großbritannien](/blog/britischen-fuehrerschein-umschreiben/) · [Ukraine](/blog/ukrainischen-fuehrerschein-umschreiben/) · [Brasilien](/blog/brasilianischen-fuehrerschein-umschreiben/) · [China](/blog/chinesischen-fuehrerschein-umschreiben/) · [Japan](/blog/japanischen-fuehrerschein-umschreiben/) · [VAE](/blog/vae-fuehrerschein-umschreiben/)
 
 ## Das ehrliche Fazit
 

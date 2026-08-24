@@ -7,6 +7,7 @@ date: 2026-08-22
 keywords: uae driving license convert to germany, convert UAE driving licence Germany, Emirates driving license Germany, Umschreibung VAE, Dubai driving license in Germany
 country: AE
 flag: 🇦🇪
+variants: vae-fuehrerschein-umschreiben
 ---
 
 The United Arab Emirates is **not** on Germany's Anlage 11 FeV list. Converting a UAE licence therefore requires passing **both the German theory exam and the practical exam**. The good news that changes the whole calculation: as a converter you have **no mandatory lesson hours**. No 12 Pflichtstunden, no Sonderfahrten. You buy exactly as many lessons as you need, and at €70 to €95 per lesson that freedom is worth thousands.

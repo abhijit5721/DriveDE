@@ -6,6 +6,7 @@ lang: de
 date: 2026-08-22
 keywords: Prüfungsangst Fahrprüfung, Prüfungsangst Fahrprüfung was tun, Angst vor Fahrprüfung, nervös vor Fahrprüfung, Prüfungsangst praktische Prüfung
 flag: 🫁
+variants: driving-test-anxiety-germany
 ---
 
 Zuerst die Entlastung: Nervosität vor der Fahrprüfung ist der Normalfall, nicht die Ausnahme. Prüfer wissen das und rechnen sie ein, kleine Anfahr-Wackler aus Aufregung lassen niemanden durchfallen. Problematisch wird Angst erst, wenn sie Beobachtung und Entscheidungen blockiert. Genau dagegen kannst du gezielt arbeiten.

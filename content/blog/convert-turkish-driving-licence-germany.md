@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: convert Turkish driving licence Germany, Umschreibung Türkei, türkischen Führerschein umschreiben, Turkish license Germany
 country: TR
 flag: 🇹🇷
+variants: tuerkischen-fuehrerschein-umschreiben
 ---
 
 Turkey is **not** on Germany's Anlage 11 FeV list, so a Turkish licence cannot simply be swapped: you must pass the German **theory exam and practical exam**. The good news that offsets it: converters have **no mandatory lesson hours**. Unlike a first-time learner, you skip the 12 compulsory Sonderfahrten entirely and only pay for the practice you genuinely need.

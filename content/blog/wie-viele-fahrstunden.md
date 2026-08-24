@@ -7,6 +7,7 @@ date: 2026-08-12
 keywords: wie viele Fahrstunden braucht man, wie viele Fahrstunden braucht man durchschnittlich, wie viele Fahrstunden sind Pflicht Klasse B, Pflichtstunden Führerschein, Sonderfahrten Klasse B, Fahrstunden Durchschnitt
 flag: 🚗
 updated: 2026-08-22
+variants: how-many-driving-lessons-germany
 ---
 
 Die kurze Antwort: **Pflicht sind nur 12 Fahrstunden (die Sonderfahrten). Im Durchschnitt nehmen Fahrschüler in Deutschland 25 bis 35 Übungsstunden dazu, also 37 bis 47 Stunden insgesamt.** Für Übungsstunden schreibt das Gesetz keine Mindestanzahl vor; praktisch entscheidet dein Fahrlehrer, wann er dich zur Prüfung vorstellt.
