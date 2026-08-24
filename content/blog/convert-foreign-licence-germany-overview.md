@@ -1,5 +1,5 @@
 ---
-title: Converting a Foreign Driving Licence in Germany, the Complete Country Overview
+title: Converting a Foreign Licence in Germany
 description: Which countries exchange without exams, which need theory and practical, and what every Umschreibung has in common. All Anlage 11 tiers with country guides.
 slug: convert-foreign-licence-germany-overview
 lang: en

@@ -1,5 +1,5 @@
 ---
-title: Wie viele Fahrstunden braucht man wirklich? (Klasse B, 2026)
+title: Wie viele Fahrstunden braucht man wirklich?
 description: Nur 12 Sonderfahrten sind Pflicht. Wie viele Übungsstunden der Durchschnitt nimmt, wovon deine Zahl abhängt und wie du sie messbar senkst.
 slug: wie-viele-fahrstunden
 lang: de

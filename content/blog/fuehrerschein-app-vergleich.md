@@ -1,6 +1,6 @@
 ---
-title: Führerschein-Apps 2026 im Überblick: Theorie-Apps und was für die Praxis fehlt
-description: Welche Führerschein-App wofür? Theorie-Lern-Apps im Überblick, warum fast alle Apps nur Theorie abdecken und was für Fahrstunden und praktische Prüfung wirklich hilft.
+title: Führerschein-Apps im Vergleich 2026
+description: Welche Führerschein-App wofür? Theorie-Apps im Überblick, warum fast alle nur Theorie abdecken und was für die praktische Prüfung wirklich hilft.
 slug: fuehrerschein-app-vergleich
 lang: de
 date: 2026-08-22

@@ -1,6 +1,6 @@
 ---
-title: Schulterblick: wann er Pflicht ist, wie er richtig geht und warum er Prüfungen beendet
-description: Der Schulterblick ist der häufigste Beobachtungsfehler in der Fahrprüfung. Wann er nötig ist, durch welches Fenster du schaust und wie du ihn zur Gewohnheit machst.
+title: Schulterblick: wann Pflicht, wie richtig?
+description: Der häufigste Beobachtungsfehler in der Fahrprüfung. Wann er nötig ist, durch welches Fenster du schaust und wie er zur Gewohnheit wird.
 slug: schulterblick
 lang: de
 date: 2026-08-22

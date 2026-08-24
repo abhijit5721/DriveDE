@@ -1,5 +1,5 @@
 ---
-title: Praktische Führerscheinprüfung 2026, Ablauf, Dauer und die häufigsten Fehler
+title: Praktische Prüfung: Ablauf und Fehler
 description: So läuft die praktische Prüfung Klasse B ab, 55 Minuten, Grundfahraufgaben, typische Durchfaller-Fehler und was ein Fehlversuch wirklich kostet.
 slug: praktische-pruefung-ablauf-tipps
 lang: de

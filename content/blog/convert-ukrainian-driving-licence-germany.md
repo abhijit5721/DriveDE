@@ -1,6 +1,6 @@
 ---
-title: How to Convert a Ukrainian Driving Licence to a German One (2026 Guide)
-description: The standard Umschreibung for Ukrainian licences requires both German exams, but temporary-protection rules have created special cases. Steps, documents and costs.
+title: Convert a Ukrainian Licence to a German One
+description: The standard Umschreibung for Ukrainian licences requires both German exams, but temporary-protection rules create special cases. Steps and costs.
 slug: convert-ukrainian-driving-licence-germany
 lang: en
 date: 2026-08-12
@@ -46,3 +46,9 @@ If you live in Germany on a regular residence permit, the normal rules apply: yo
 ## Use your experience, respect the format
 
 Most Ukrainian licence holders are experienced drivers. The German exam does not question that; it tests whether you drive by German procedure. Put your preparation effort exactly there: priority rules, maneuvers on command, and consistent checking routines.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

@@ -1,5 +1,5 @@
 ---
-title: Was kostet der Führerschein 2026? Alle Kosten im Überblick
+title: Führerschein Kosten 2026 im Überblick
 description: Führerschein Kosten 2026 realistisch gerechnet, Grundbetrag, Fahrstunden, Sonderfahrten, Prüfungsgebühren, und wo du wirklich sparen kannst.
 slug: fuehrerschein-kosten
 lang: de
@@ -83,4 +83,4 @@ Ein einziger Fehlversuch kostet also schnell **600 Euro und mehr**. Die günstig
 
 ## Umschreiber zahlen deutlich weniger
 
-Wer bereits einen ausländischen Führerschein besitzt und ihn umschreiben lässt, hat **keine Pflichtstunden**, auch keine Sonderfahrten. Je nach Herkunftsland entfallen sogar beide Prüfungen. Details dazu in unserem [Länder-Überblick zur Umschreibung](/blog/convert-foreign-licence-germany-overview/).
+Wer bereits einen ausländischen Führerschein besitzt und ihn umschreiben lässt, hat **keine Pflichtstunden**, auch keine Sonderfahrten. Je nach Herkunftsland entfallen sogar beide Prüfungen. Details dazu in unserem [Umschreibungs-Überblick](/blog/fuehrerschein-umschreiben/).

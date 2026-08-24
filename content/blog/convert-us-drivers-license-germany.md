@@ -1,5 +1,5 @@
 ---
-title: How to Convert a US Driver's License to a German One (2026 Guide)
+title: Convert a US Driver's License to German
 description: US licenses from all 50 states can be exchanged for a German licence without exams. Here is the exact Umschreibung process, documents, costs and deadlines.
 slug: convert-us-drivers-license-germany
 lang: en
@@ -50,3 +50,9 @@ Processing takes 3 to 8 weeks depending on the office. You keep driving on your 
 ## Planning to drive a lot in Germany?
 
 Even though you skip the exams, German traffic rules differ in ways that surprise US drivers: right-before-left priority in residential streets, mandatory Rettungsgasse on the Autobahn, and speed cameras everywhere. A few practice drives with feedback go a long way.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

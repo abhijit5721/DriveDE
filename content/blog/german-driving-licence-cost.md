@@ -1,5 +1,5 @@
 ---
-title: How Much Does a German Driving Licence Cost in 2026?
+title: German Driving Licence Cost in 2026
 description: A realistic budget for the German driving licence, base fees, lesson prices, mandatory Sonderfahrten, exam fees, and why totals range from 2,500 to 4,500 euros.
 slug: german-driving-licence-cost
 lang: en

@@ -1,6 +1,6 @@
 ---
-title: How to Convert a Brazilian Driving Licence (CNH) to a German One (2026 Guide)
-description: Brazil is not on the Anlage 11 list, so the German theory and practical exams are required, but with no mandatory lesson hours. CNH translation, steps and costs.
+title: Convert a Brazilian Licence (CNH) to German
+description: Brazil is not on the Anlage 11 list, so both German exams are required, but with no mandatory lesson hours. CNH translation, steps and costs.
 slug: convert-brazilian-driving-licence-germany
 lang: en
 date: 2026-08-12
@@ -45,3 +45,9 @@ Your years behind the wheel are an asset, but only disciplined preparation conve
 ## One project, two skills
 
 Passing in Germany means two separate things: knowing the German rules (theory) and demonstrating the German procedure (practical). Treat them as separate workstreams with their own practice plans, and track both instead of guessing.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

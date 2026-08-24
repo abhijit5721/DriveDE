@@ -1,6 +1,6 @@
 ---
-title: Ausländischen Führerschein umschreiben: Fristen, Kosten, Anlage 11 (2026)
-description: Führerschein umschreiben in Deutschland, komplett erklärt, die 6-Monats-Frist, welche Länder ohne Prüfung tauschen (Anlage 11), was Drittstaaten brauchen und was alles kostet.
+title: Führerschein umschreiben: Kosten und Fristen
+description: Führerschein umschreiben in Deutschland: die 6-Monats-Frist, welche Länder ohne Prüfung tauschen (Anlage 11), was Drittstaaten brauchen und was es kostet.
 slug: fuehrerschein-umschreiben
 lang: de
 date: 2026-08-22

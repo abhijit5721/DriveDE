@@ -1,5 +1,5 @@
 ---
-title: How to Convert a Chinese Driving Licence to a German One (2026 Guide)
+title: Convert a Chinese Licence to a German One
 description: China is not on the Anlage 11 list, so both German exams are required, but without mandatory lesson hours. Translation requirements, steps, costs and exam tips.
 slug: convert-chinese-driving-licence-germany
 lang: en
@@ -45,3 +45,9 @@ Because Chinese training rarely includes open-road routine, converters from Chin
 ## Plan it like an exam campaign
 
 Two exams, one right-before-left rule, and a road-based test format you have not trained in. None of it is hard with deliberate preparation; all of it is expensive without. Track your readiness objectively and book the practical only when the data says pass.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

@@ -1,6 +1,6 @@
 ---
-title: How to Convert a UK Driving Licence to a German One (2026 Guide)
-description: Since Brexit, UK licences are no longer covered by the EU exchange rules. What that means in practice, when exams apply, and how to get through the Umschreibung.
+title: Convert a UK Licence to a German One
+description: Since Brexit, UK licences are no longer covered by EU exchange rules. What that means, when exams apply, and how to get through the Umschreibung.
 slug: convert-uk-driving-licence-germany
 lang: en
 date: 2026-08-12
@@ -49,3 +49,9 @@ If your licence qualifies for administrative exchange instead, the total drops t
 ## Treat it as a project, not a formality
 
 The paperwork is straightforward. What decides your cost and timeline is how efficiently you convert left-hand-traffic experience into a German exam pass. Measure your practice, target the German-specific rules, and book the exam when your performance says you are ready.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

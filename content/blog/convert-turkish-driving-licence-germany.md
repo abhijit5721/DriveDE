@@ -1,6 +1,6 @@
 ---
-title: How to Convert a Turkish Driving Licence to a German One (2026 Guide)
-description: Turkey is not on the Anlage 11 list, so both German exams are required, but with no mandatory lesson hours. Steps, documents, costs, and taking the theory exam in Turkish.
+title: Convert a Turkish Licence to a German One
+description: Turkey is not on the Anlage 11 list, so both German exams are required, with no mandatory lesson hours. Steps, documents, costs and the theory exam in Turkish.
 slug: convert-turkish-driving-licence-germany
 lang: en
 date: 2026-08-12
@@ -46,3 +46,9 @@ Experienced drivers who prepare in a structured way often stay near the bottom o
 ## Keep your driving experience, replace the habits
 
 You already know how to drive. What the German exam tests is whether you drive the German way: priority rules, procedure and calm predictability. Focus your limited paid lessons on exactly the habits that differ, and use every drive in between to rehearse them deliberately.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

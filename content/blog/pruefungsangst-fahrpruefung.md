@@ -1,6 +1,6 @@
 ---
-title: Prüfungsangst vor der Fahrprüfung: was wirklich hilft
-description: Herzklopfen vor der praktischen Prüfung ist normal. Was gegen Prüfungsangst wirklich hilft, Simulation, Vorbereitung, Prüfungstag-Routine, und was du besser lässt.
+title: Prüfungsangst vor der Fahrprüfung: Was hilft
+description: Herzklopfen vor der Prüfung ist normal. Was gegen Prüfungsangst wirklich hilft: Simulation, Vorbereitung, Prüfungstag-Routine und was du besser lässt.
 slug: pruefungsangst-fahrpruefung
 lang: de
 date: 2026-08-22

@@ -1,5 +1,5 @@
 ---
-title: How to Convert a Japanese Driving Licence to a German One (2026 Guide)
+title: Convert a Japanese Licence to a German One
 description: Japan is an Anlage 11 country: no theory or practical exam needed. The exact steps, the JAF translation question, documents, costs and the 6-month deadline.
 slug: convert-japanese-driving-licence-germany
 lang: en
@@ -49,3 +49,9 @@ Processing typically takes 3 to 8 weeks.
 ## After the exchange
 
 German traffic culture has its own sharp edges: unrestricted Autobahn sections, right-before-left in residential areas, and strict priority rules for trams and cyclists. Even exam-free drivers benefit from a structured refresher before daily driving.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

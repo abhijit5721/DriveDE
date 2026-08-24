@@ -170,8 +170,47 @@ for (const post of posts) {
     },
   };
 
-  // related guides: other posts in the same language, up to 4
-  const related = posts.filter((p) => p.slug !== post.slug && p.lang === post.lang).slice(0, 4);
+  // Breadcrumb schema mirrors the visible .crumbs trail below (Home > Blog > post).
+  const breadcrumbJsonld = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE}${post.lang === 'de' ? '/blog/' : '/blog/en/'}` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
+    ],
+  };
+
+  // Related guides: same-language posts ranked by shared keywords first (so
+  // the widget reflects topical fit), then by recency (updated || date) as
+  // the tiebreaker. A pure date sort here previously meant the same fixed
+  // top-4 newest posts appeared as "related" on nearly every page, while
+  // older-but-relevant posts (and the EN cost hub) never surfaced anywhere.
+  const keywordSet = (p) => new Set(
+    (p.keywords || '').toLowerCase().split(',').map((k) => k.trim()).filter(Boolean)
+  );
+  const postKeywords = keywordSet(post);
+  const sharedScore = (p) => {
+    const pk = keywordSet(p);
+    let score = 0;
+    for (const k of pk) if (postKeywords.has(k)) score += 1;
+    // Country conversion guides (frontmatter `country`) rarely share an exact
+    // keyword phrase with each other (each targets its own nationality), so
+    // exact-phrase matching alone left them permanently unable to surface as
+    // "related" to one another. They are still a genuine reading cluster
+    // (someone reading one Umschreibung guide plausibly wants another), so
+    // give same-cluster country guides a flat bonus on top of keyword overlap.
+    if (post.country && p.country) score += 2;
+    return score;
+  };
+  const related = posts
+    .filter((p) => p.slug !== post.slug && p.lang === post.lang)
+    .sort((a, b) => {
+      const scoreDiff = sharedScore(b) - sharedScore(a);
+      if (scoreDiff !== 0) return scoreDiff;
+      return (b.updated || b.date).localeCompare(a.updated || a.date);
+    })
+    .slice(0, 4);
   const relatedHtml = related.length
     ? `<div class="related"><h2>${post.lang === 'de' ? 'Weitere Guides' : 'More guides'}</h2><ul>${related
         .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a></li>`)
@@ -187,6 +226,7 @@ for (const post of posts) {
       post.keywords ? `<meta name="keywords" content="${esc(post.keywords)}">` : '',
       hreflang,
       `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>`,
+      `<script type="application/ld+json">${JSON.stringify(breadcrumbJsonld)}</script>`,
     ].filter(Boolean).join('\n'),
     body: `
 <div class="crumbs"><a href="/">Home</a> › <a href="${post.lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a> › ${esc(post.title)}</div>

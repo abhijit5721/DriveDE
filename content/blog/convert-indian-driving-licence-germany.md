@@ -1,6 +1,6 @@
 ---
-title: How to Convert an Indian Driving Licence to a German One (2026 Guide)
-description: India is not on the Anlage 11 list, so theory and practical exams are required. But there are no mandatory lesson hours. The full Umschreibung process, costs and tips.
+title: Convert an Indian Licence to a German One
+description: India is not on the Anlage 11 list, so both German exams are required, but with no mandatory lesson hours. The full process, costs and tips.
 slug: convert-indian-driving-licence-germany
 lang: en
 date: 2026-08-12
@@ -44,3 +44,9 @@ The single biggest lever is how many paid lessons you need before the school let
 ## The exams are the hurdle, not the paperwork
 
 For Anlage 11 countries the paperwork is the whole story. For India the paperwork is the easy part; passing two German exams in a right-hand-traffic system is the real project. Treat it like one: track your practice, fix recurring mistakes and go into the exam when you are measurably ready, not when you feel lucky.
+
+## Keep reading
+
+- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
+- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)

@@ -1,6 +1,6 @@
 ---
-title: How to Convert a UAE Driving Licence to a German One (2026 Guide)
-description: The UAE is not on the Anlage 11 list, so both German exams are required, but no mandatory lesson hours. The full process, realistic costs and where UAE drivers struggle.
+title: Convert a UAE Licence to a German One
+description: The UAE is not on the Anlage 11 list, so both German exams apply, but with no mandatory lesson hours. Realistic costs and where UAE drivers struggle.
 slug: convert-uae-driving-licence-germany
 lang: en
 date: 2026-08-22
@@ -42,4 +42,4 @@ After registering residence (Anmeldung) you may drive on your UAE licence for **
 
 The biggest lever is how many paid lessons you need before the school lets you book the exam. Most UAE drivers are technically confident; what needs deliberate practice is German right-of-way habits and procedure. Track your recurring mistakes between lessons and go into the exam when the pattern is measurably clean, not when you feel lucky. That is exactly what the [DriveDE app](https://www.drivede.app) is built for, including a dedicated conversion mode.
 
-For the full country-by-country picture, see the [complete conversion overview](/blog/convert-foreign-licence-germany-overview/).
+What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/). If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/). For the full country-by-country picture, see the [complete conversion overview](/blog/convert-foreign-licence-germany-overview/).

@@ -1,5 +1,5 @@
 ---
-title: Einparken lernen: rückwärts längs und quer, Schritt für Schritt (mit 3D-Simulator)
+title: Einparken lernen: Schritt für Schritt
 description: Rückwärts einparken einfach erklärt, die Referenzpunkte für Längs- und Querparken, die häufigsten Prüfungsfehler und ein kostenloser 3D-Simulator zum Üben.
 slug: einparken-lernen
 lang: de

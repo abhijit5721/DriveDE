@@ -1,6 +1,6 @@
 ---
-title: Failed Your German Driving Test? Here Is Exactly What Happens Next
-description: Failed the practical driving test in Germany? Waiting period, real retake costs, the four mistakes that fail most candidates, and a concrete plan to pass attempt two.
+title: Failed Your German Driving Test? What Now
+description: Failed the practical driving test in Germany? Waiting period, real retake costs, the top mistakes that fail candidates, and a plan to pass attempt two.
 slug: failed-german-driving-test
 lang: en
 date: 2026-08-22

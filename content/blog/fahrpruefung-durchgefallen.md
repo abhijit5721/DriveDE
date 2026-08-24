@@ -1,6 +1,6 @@
 ---
-title: Fahrprüfung durchgefallen? Was jetzt kommt, was es kostet, wie du beim nächsten Mal bestehst
-description: Durchgefallen bei der praktischen Prüfung? So geht es weiter, Wartezeit, Kosten der Wiederholung, die häufigsten Durchfallgründe und ein Plan für den zweiten Versuch.
+title: Fahrprüfung durchgefallen? Was jetzt zählt
+description: Durchgefallen bei der praktischen Prüfung? Wartezeit, Kosten der Wiederholung, die häufigsten Gründe und ein Plan für den zweiten Versuch.
 slug: fahrpruefung-durchgefallen
 lang: de
 date: 2026-08-22
