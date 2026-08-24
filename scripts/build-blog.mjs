@@ -39,46 +39,76 @@ function parsePost(file) {
 }
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const readingTime = (body) => Math.max(1, Math.round(body.trim().split(/\s+/).length / 200));
 
 // ---------- shared page shell ----------
 const CSS = `
-:root{color-scheme:light}
+:root{
+  --paper:#f8fafc;--surface:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  --accent:#2563eb;--accent-strong:#1d4ed8;--accent-soft:#eff6ff;
+  --good:#059669;--good-soft:#ecfdf5;
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 8px 24px -12px rgba(15,23,42,.12);
+  color-scheme:light dark;
+}
+@media(prefers-color-scheme:dark){:root{
+  --paper:#0b1220;--surface:#111a2c;--ink:#e8ecf5;--muted:#94a3b8;--line:#233149;
+  --accent:#60a5fa;--accent-strong:#93c5fd;--accent-soft:#152238;
+  --good:#34d399;--good-soft:#0f2a22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+}}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;background:#fff;line-height:1.7}
-a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
-header{border-bottom:1px solid #e2e8f0;background:#fff}
-.nav{max-width:760px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-weight:900;font-size:20px;letter-spacing:-.5px;color:#0f172a}.brand span{color:#2563eb}
-.nav a.btn{background:#2563eb;color:#fff;font-weight:700;font-size:14px;padding:9px 18px;border-radius:12px}
-.nav a.btn:hover{text-decoration:none;background:#1d4ed8}
-main{max-width:760px;margin:0 auto;padding:48px 24px 64px}
-.crumbs{font-size:13px;color:#64748b;margin-bottom:24px}
-h1{font-size:34px;line-height:1.2;letter-spacing:-.5px;margin-bottom:12px}
-.meta{color:#64748b;font-size:14px;margin-bottom:32px}
-article h2{font-size:24px;margin:36px 0 12px;letter-spacing:-.3px}
-article h3{font-size:19px;margin:28px 0 10px}
-article p{margin:0 0 16px}
-article ul,article ol{margin:0 0 16px 24px}
-article li{margin-bottom:6px}
-article strong{font-weight:700}
-article table{border-collapse:collapse;width:100%;margin:0 0 16px;font-size:15px}
-article th,article td{border:1px solid #e2e8f0;padding:8px 12px;text-align:left}
-article th{background:#f8fafc}
-.cta{border:1px solid #e2e8f0;border-radius:16px;padding:24px;margin:36px 0;background:#f8fafc}
-.cta p{margin:0 0 14px;color:#334155}
-.cta strong{color:#0f172a}
-.cta a{display:inline-block;background:#2563eb;color:#fff;font-weight:700;padding:12px 24px;border-radius:12px}
-.cta a:hover{text-decoration:none;background:#1d4ed8}
-.related{margin-top:48px;border-top:1px solid #e2e8f0;padding-top:24px}
-.related h2{font-size:18px;margin-bottom:12px}
-.related li{margin-bottom:8px}
-.postlist{list-style:none;margin:0}
-.postlist li{border:1px solid #e2e8f0;border-radius:16px;padding:20px 24px;margin-bottom:16px}
-.postlist a{font-size:19px;font-weight:700;color:#0f172a}
-.postlist a:hover{color:#2563eb;text-decoration:none}
-.postlist p{color:#64748b;font-size:15px;margin:6px 0 0}
-footer{border-top:1px solid #e2e8f0;color:#64748b;font-size:14px}
-footer .inner{max-width:760px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);line-height:1.7;font-size:17px}
+a{color:var(--accent);text-decoration:none}
+h1,h2,h3{font-family:'Inter',sans-serif;letter-spacing:-.02em;font-weight:800}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:var(--surface)}
+.nav{max-width:840px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-weight:900;font-size:20px;letter-spacing:-.03em;color:var(--ink)}.brand span{color:var(--accent)}
+.nav>div{display:flex;align-items:center;gap:14px}
+.nav-link{font-weight:600;color:var(--ink)}
+.nav-lang{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.nav-lang a{color:var(--muted);font-weight:600}
+.nav-lang a.active{color:var(--ink);font-weight:700}
+.nav a.btn{background:var(--accent);color:#fff;font-weight:700;font-size:14px;padding:9px 18px;border-radius:12px;white-space:nowrap}
+.nav a.btn:hover{background:var(--accent-strong)}
+main{max-width:720px;margin:0 auto;padding:40px 24px 72px}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.crumbs a{color:var(--muted);font-weight:600}.crumbs a:hover{color:var(--accent)}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-strong);font-weight:700;font-size:13px;padding:6px 14px;border-radius:999px;margin-bottom:16px}
+h1{font-size:clamp(28px,4.5vw,38px);line-height:1.18;letter-spacing:-.03em;margin-bottom:14px}
+.meta{color:var(--muted);font-size:14px;margin-bottom:36px;display:flex;flex-wrap:wrap;gap:6px}
+article h2{font-size:23px;font-weight:800;color:var(--ink);margin:40px 0 14px;padding-left:14px;border-left:4px solid var(--accent);letter-spacing:-.01em}
+article h3{font-size:18px;font-weight:700;margin:26px 0 10px;color:var(--ink)}
+article p{margin:0 0 18px;color:var(--ink)}
+article ul,article ol{margin:0 0 18px 22px}
+article li{margin-bottom:8px}
+article li::marker{color:var(--accent);font-weight:700}
+article strong{font-weight:700;color:var(--ink)}
+article a{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 40%,transparent);text-underline-offset:2px;font-weight:600}
+article a:hover{text-decoration-color:var(--accent)}
+article table{border-collapse:separate;border-spacing:0;width:100%;margin:0 0 22px;font-size:15px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+article th,article td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+article tr:last-child td{border-bottom:none}
+article th{background:var(--accent-soft);color:var(--accent-strong);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+article tbody tr:nth-child(even){background:var(--paper)}
+.cta{border-radius:20px;padding:28px;margin:44px 0;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
+.cta p{margin:0 0 16px;color:rgba(255,255,255,.92);font-size:16px}
+.cta strong{display:block;color:#fff;font-size:21px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
+.cta a{display:inline-block;background:#fff;color:var(--accent-strong);font-weight:800;padding:13px 26px;border-radius:12px}
+.cta a:hover{background:var(--accent-soft)}
+.related{margin-top:52px;border-top:1px solid var(--line);padding-top:28px}
+.related h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px}
+.postlist{list-style:none;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.postlist li{border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--surface);box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .15s ease}
+.postlist li:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(15,23,42,.06),0 16px 32px -14px rgba(15,23,42,.18)}
+.postlist a{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:var(--ink);text-decoration:none}
+.postlist a:hover{color:var(--accent)}
+.postlist .card-flag{font-size:22px;line-height:1;flex-shrink:0}
+.postlist .card-title{line-height:1.3}
+.postlist p{color:var(--muted);font-size:14px;margin:8px 0 0;line-height:1.5}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:14px;background:var(--surface)}
+footer .inner{max-width:840px;margin:0 auto;padding:28px 24px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between}
+footer a{color:var(--muted);font-weight:600}footer a:hover{color:var(--accent)}
 `;
 
 function shell({ lang, title, description, canonical, head = '', body }) {
@@ -87,10 +117,15 @@ function shell({ lang, title, description, canonical, head = '', body }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#2563eb">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${canonical}">
 <link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta property="og:type" content="article">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
@@ -105,8 +140,8 @@ ${head}
 <header><nav class="nav">
   <a class="brand" href="/">Drive<span>DE</span></a>
   <div>
-    <a href="${lang === 'de' ? '/blog/' : '/blog/en/'}" style="margin-right:14px;font-weight:600;color:#334155">Blog</a>
-    <span style="margin-right:14px;font-size:13px;color:#94a3b8"><a href="/blog/"${lang === 'de' ? ' style="font-weight:700;color:#0f172a"' : ''}>DE</a> | <a href="/blog/en/"${lang !== 'de' ? ' style="font-weight:700;color:#0f172a"' : ''}>EN</a></span>
+    <a class="nav-link" href="${lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a>
+    <span class="nav-lang"><a href="/blog/"${lang === 'de' ? ' class="active"' : ''}>DE</a> <span>|</span> <a href="/blog/en/"${lang !== 'de' ? ' class="active"' : ''}>EN</a></span>
     <a class="btn" href="${lang === 'de' ? '/' : '/?lang=en'}">${lang === 'de' ? 'Gratis testen' : 'Try DriveDE free'}</a>
   </div>
 </nav></header>
@@ -212,8 +247,8 @@ for (const post of posts) {
     })
     .slice(0, 4);
   const relatedHtml = related.length
-    ? `<div class="related"><h2>${post.lang === 'de' ? 'Weitere Guides' : 'More guides'}</h2><ul>${related
-        .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a></li>`)
+    ? `<div class="related"><h2>${post.lang === 'de' ? 'Weitere Guides' : 'More guides'}</h2><ul class="postlist">${related
+        .map((p) => `<li><a href="/blog/${p.slug}/"><span class="card-flag">${p.flag || '📄'}</span><span class="card-title">${esc(p.title)}</span></a></li>`)
         .join('')}</ul></div>`
     : '';
 
@@ -229,9 +264,10 @@ for (const post of posts) {
       `<script type="application/ld+json">${JSON.stringify(breadcrumbJsonld)}</script>`,
     ].filter(Boolean).join('\n'),
     body: `
-<div class="crumbs"><a href="/">Home</a> › <a href="${post.lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a> › ${esc(post.title)}</div>
-<h1>${post.flag ? post.flag + ' ' : ''}${esc(post.title)}</h1>
-<p class="meta">${post.lang === 'de' ? 'Aktualisiert' : 'Updated'}: ${post.updated || post.date} · DriveDE</p>
+<div class="crumbs"><a href="/">Home</a> <span>›</span> <a href="${post.lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a> <span>›</span> <span>${esc(post.title)}</span></div>
+<div class="eyebrow">${post.flag ? post.flag + ' ' : ''}${post.lang === 'de' ? 'Ratgeber' : 'Guide'}</div>
+<h1>${esc(post.title)}</h1>
+<p class="meta"><span>${post.lang === 'de' ? 'Aktualisiert' : 'Updated'}: ${post.updated || post.date}</span><span>·</span><span>${readingTime(post.body)} ${post.lang === 'de' ? 'Min. Lesezeit' : 'min read'}</span><span>·</span><span>DriveDE</span></p>
 <article>${bodyHtml}</article>
 ${ctaHtml(post.lang)}
 ${relatedHtml}`,
@@ -306,7 +342,7 @@ for (const idx of INDEXES) {
 <h1>${idx.heading}</h1>
 <p class="meta">${idx.sub}</p>
 <ul class="postlist">${langPosts
-      .map((p) => `<li><a href="/blog/${p.slug}/">${p.flag ? p.flag + ' ' : ''}${esc(p.title)}</a><p>${esc(p.description)}</p></li>`)
+      .map((p) => `<li><a href="/blog/${p.slug}/"><span class="card-flag">${p.flag || '📄'}</span><span class="card-title">${esc(p.title)}</span></a><p>${esc(p.description)}</p></li>`)
       .join('\n')}</ul>
 ${newsBlock(idx.lang)}`,
   });
