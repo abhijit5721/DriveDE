@@ -47,3 +47,26 @@ CTA:
   youtubeData.isAiGeneratedContent = true).
 - Fact anchors: 1-in-3 fail rate and 600 EUR retake cost match
   /blog/fahrpruefung-durchgefallen/ - keep numbers in sync if those change.
+
+---
+
+## The Examiner - Episode 1: "Right before left: who goes first?" (quiz + answer)
+
+Format: recurring synthetic presenter ("The Examiner", our avatar), quiz video
++ answer video 2 days later. Diagram drawn in Remotion with exact geometry,
+never AI-generated signage. AI labels mandatory on every post.
+
+### Video A: The Quiz (EN, ~22s + end card)
+
+1. Three cars. No signs, no lights. Who goes first?
+2. You are the blue car, going straight. Red comes from your right. Green comes from your left.
+3. Unmarked intersection. That means: right before left.
+4. So, in what order do the three cars go? Answer tomorrow. Follow so you do not miss it.
+
+### Video B: The Answer (EN, ~26s + end card)
+
+1. The answer: red goes first. Then you. Green goes last.
+2. Right before left: whoever comes from your right has priority.
+3. Red is to your right, so red goes before you. You are to green's right, so you go before green.
+4. In the exam, one missed priority check here ends the test on the spot.
+5. Train it until it is reflex. Free at drivede.app. Link in bio.
