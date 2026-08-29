@@ -1,8 +1,19 @@
 # Free AI-avatar pipeline (verified 2026-08-29)
 
-Goal: talking-head reels/shorts of the founder from ONE photo + voice audio,
-at zero cost, licence-clean for commercial use. Local machine cannot run the
-models (512MB VRAM), so generation happens on Google Colab's free T4 GPU.
+Goal: talking-head reels/shorts at zero cost, licence-clean for commercial
+use. Founder decision 2026-08-29: do NOT use the founder's photo or voice for
+now - the presenter is a fully synthetic face (FLUX.1-schnell, Apache 2.0)
+speaking Chatterbox TTS narration. Local machine cannot run the models (512MB
+VRAM), so generation happens on Google Colab's free T4 GPU.
+
+READY TO RUN: content/DriveDE_Avatar_SoulX.ipynb - upload to Colab, Runtime ->
+T4 GPU, Run all, download drivede-avatar-en.mp4. It fetches the committed face
+(content/social-media/avatar-face.png) and narration
+(content/social-media/narration-en-full.wav) from the repo automatically.
+Install/patch recipe adapted from the AIQUEST community notebook
+(TeamAIQ/Colab-notebooks): keeps Colab's torch, xformers instead of
+flash_attn (T4 is Turing - flash_attn 2.x needs Ampere+), and replaces the
+broken mediapipe CPUFaceHandler with an OpenCV DNN face detector.
 
 ## The stack (all commercially safe)
 

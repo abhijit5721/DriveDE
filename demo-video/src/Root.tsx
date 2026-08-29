@@ -4,6 +4,7 @@ import { DemoVideo } from './DemoVideo.tsx';
 import { ShortCockpit, SHORT_FRAMES } from './ShortCockpit.tsx';
 import { ShortReadiness, READINESS_FRAMES } from './ShortReadiness.tsx';
 import { ShortParking, PARKING_FRAMES } from './ShortParking.tsx';
+import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
 
 export const Root: React.FC = () => (
@@ -50,6 +51,18 @@ export const Root: React.FC = () => (
         id={`short-parking-${lang}`}
         component={ShortParking}
         durationInFrames={PARKING_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ lang }}
+      />
+    ))}
+    {(['de', 'en'] as const).map((lang) => (
+      <Composition
+        key={`narrated-${lang}`}
+        id={`short-narrated-${lang}`}
+        component={ShortNarrated}
+        durationInFrames={NARR_TOTAL_FRAMES}
         fps={FPS}
         width={1080}
         height={1920}
