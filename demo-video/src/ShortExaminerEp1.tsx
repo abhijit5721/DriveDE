@@ -171,7 +171,7 @@ export const ShortExaminerEp1: React.FC = () => {
     <AbsoluteFill style={{ background: '#060c18' }}>
       {/* Beat 1: hook clip full-frame */}
       <Sequence from={0} durationInFrames={CLIP}>
-        <Clip src="flow/ep1-hook.mp4" />
+        <Clip src="flow/ep1v2-hook.mp4" />
         <BrandTag />
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 1500 }}>
           <FadeIn>
@@ -197,8 +197,8 @@ export const ShortExaminerEp1: React.FC = () => {
           }}
         >
           <OffthreadVideo
-            src={staticFile('flow/ep1-setup.mp4')}
-            style={{ width: 520, height: 924, objectFit: 'cover', marginLeft: -115, marginTop: -175 }}
+            src={staticFile('flow/ep1v2-setup.mp4')}
+            style={{ width: 520, height: 924, objectFit: 'cover', marginLeft: -165, marginTop: -238 }}
           />
         </div>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 240 }}>
@@ -210,7 +210,7 @@ export const ShortExaminerEp1: React.FC = () => {
 
       {/* Beat 3: cliffhanger clip full-frame */}
       <Sequence from={CLIP * 2} durationInFrames={CLIP}>
-        <Clip src="flow/ep1-cliffhanger.mp4" />
+        <Clip src="flow/ep1v2-cliff.mp4" />
         <BrandTag />
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 1500 }}>
           <FadeIn>
