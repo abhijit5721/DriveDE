@@ -5,6 +5,7 @@ import { ShortCockpit, SHORT_FRAMES } from './ShortCockpit.tsx';
 import { ShortReadiness, READINESS_FRAMES } from './ShortReadiness.tsx';
 import { ShortParking, PARKING_FRAMES } from './ShortParking.tsx';
 import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
+import { ShortAvatar, AVATAR_TOTAL_FRAMES } from './ShortAvatar.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
 
 export const Root: React.FC = () => (
@@ -69,5 +70,14 @@ export const Root: React.FC = () => (
         defaultProps={{ lang }}
       />
     ))}
+    <Composition
+      id="short-avatar-en"
+      component={ShortAvatar}
+      durationInFrames={AVATAR_TOTAL_FRAMES}
+      fps={FPS}
+      width={1080}
+      height={1920}
+      defaultProps={{ lang: 'en' as const }}
+    />
   </>
 );
