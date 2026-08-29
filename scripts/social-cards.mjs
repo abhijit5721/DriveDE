@@ -1,6 +1,6 @@
 /**
  * Social image-card generator (GRO-5 image track).
- * Renders branded 1080x1350 PNG cards from content/social-cards/cards.json
+ * Renders branded 1080x1350 JPEG cards (TikTok rejects PNG) from content/social-cards/cards.json
  * via Playwright. Quiz-style types (lamp, rule) emit a question + answer
  * pair for carousel posts. Output: social-cards-out/ (gitignored).
  *
@@ -115,7 +115,11 @@ for (const card of cards) {
   for (let slide = 0; slide < htmls.length; slide++) {
     await page.setContent(htmls[slide], { waitUntil: 'networkidle' });
     const name = htmls.length > 1 ? `${card.id}-${slide + 1}` : card.id;
-    await page.screenshot({ path: path.join(OUT, `${name}.png`) });
+    // JPEG, not PNG: TikTok's photo API rejects image/png outright
+    // ("The 'image/png' type is not allowed, use 'image/jpeg' or 'image/webp'"),
+    // and Instagram accepts JPEG identically. quality 92 is visually lossless
+    // for flat-colour cards at this size.
+    await page.screenshot({ path: path.join(OUT, `${name}.jpg`), type: 'jpeg', quality: 92 });
     n++;
   }
   console.log(`✓ ${card.id} (${card.type})`);
