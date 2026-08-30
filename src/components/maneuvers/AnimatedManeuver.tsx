@@ -303,24 +303,33 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
   // segment's end. Geometry tuned for the 400x250 road (curbs at x=143/255).
   type Motion =
     | { kind: 'straight'; to: { x: number; y: number } }
+    | { kind: 'coast'; dist: number } // straight ahead along current heading
     | { kind: 'arc'; steer: 'left' | 'right'; rev: boolean; R: number; dh: number }
     | { kind: 'hold' };
 
-  const START = { x: 222, y: 222, h: -90 };
-  const MOTIONS: Motion[] = [
-    { kind: 'straight', to: { x: 229, y: 200 } },               // 0: pull over right, signal left
-    { kind: 'hold' },                                           // 1: mirror + shoulder check left
-    { kind: 'arc', steer: 'left', rev: false, R: 54, dh: 80 },  // 2: forward arc to left curb
-    { kind: 'hold' },                                           // 3: reverse gear, signal right, look around
-    { kind: 'arc', steer: 'right', rev: true, R: 38, dh: 66 },  // 4: reverse arc to right curb
-    { kind: 'hold' },                                           // 5: first gear, signal left, shoulder check
-    { kind: 'arc', steer: 'left', rev: false, R: 155, dh: 34 }, // 6: drive off, merge into own lane
+  // Each step is a list of weighted motion parts (weights sum to 1 per step).
+  const START = { x: 233, y: 222, h: -90 };
+  const STEPS: { m: Motion; w: number }[][] = [
+    [{ m: { kind: 'straight', to: { x: 236, y: 200 } }, w: 1 }],               // 0: pull over right, signal left
+    [{ m: { kind: 'hold' }, w: 1 }],                                           // 1: mirror + shoulder check left
+    [{ m: { kind: 'arc', steer: 'left', rev: false, R: 54, dh: 80 }, w: 1 }],  // 2: forward arc to left curb
+    [{ m: { kind: 'hold' }, w: 1 }],                                           // 3: reverse gear, signal right, look around
+    [{ m: { kind: 'arc', steer: 'right', rev: true, R: 38, dh: 66 }, w: 1 }],  // 4: reverse arc to right curb
+    [{ m: { kind: 'hold' }, w: 1 }],                                           // 5: first gear, signal left, shoulder check
+    [                                                                          // 6: cross the center line, settle into own lane
+      { m: { kind: 'coast', dist: 65 }, w: 0.55 },
+      { m: { kind: 'arc', steer: 'left', rev: false, R: 44, dh: 34 }, w: 0.45 },
+    ],
   ];
 
   const advance = (pose: { x: number; y: number; h: number }, m: Motion, p: number) => {
     if (m.kind === 'hold' || p <= 0) return pose;
     if (m.kind === 'straight') {
       return { x: pose.x + (m.to.x - pose.x) * p, y: pose.y + (m.to.y - pose.y) * p, h: pose.h };
+    }
+    if (m.kind === 'coast') {
+      const t = (pose.h * Math.PI) / 180;
+      return { x: pose.x + m.dist * p * Math.cos(t), y: pose.y + m.dist * p * Math.sin(t), h: pose.h };
     }
     const t0 = (pose.h * Math.PI) / 180;
     // turning-circle center sits on the side the wheels point
@@ -334,12 +343,23 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
     return { x: cx + m.R * Math.cos(a), y: cy + m.R * Math.sin(a), h: pose.h + sign * m.dh * p };
   };
 
+  const advanceParts = (pose: { x: number; y: number; h: number }, parts: { m: Motion; w: number }[], p: number) => {
+    let acc = 0;
+    for (const { m, w } of parts) {
+      if (p <= acc) break;
+      const local = Math.min((p - acc) / w, 1);
+      pose = advance(pose, m, local);
+      acc += w;
+    }
+    return pose;
+  };
+
   const ease = (v: number) => v * v * (3 - 2 * v); // smoothstep: gentle start/stop
   const p = ease(Math.min(Math.max(progress, 0), 100) / 100);
 
   let pose = { ...START };
-  for (let i = 0; i < step && i < MOTIONS.length; i++) pose = advance(pose, MOTIONS[i], 1);
-  pose = advance(pose, MOTIONS[step] || { kind: 'hold' }, p);
+  for (let i = 0; i < step && i < STEPS.length; i++) pose = advanceParts(pose, STEPS[i], 1);
+  pose = advanceParts(pose, STEPS[step] || [{ m: { kind: 'hold' }, w: 1 }], p);
 
   // wheel / indicator / reverse choreography synced to the step texts
   const lerp = (a: number, b: number) => a + (b - a) * p;
