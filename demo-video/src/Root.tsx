@@ -7,6 +7,7 @@ import { ShortParking, PARKING_FRAMES } from './ShortParking.tsx';
 import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
 import { ShortAvatar, AVATAR_TOTAL_FRAMES } from './ShortAvatar.tsx';
 import { ShortExaminerEp1, EP1_TOTAL_FRAMES } from './ShortExaminerEp1.tsx';
+import { ShortExaminerEp1Answer, EP1ANS_TOTAL_FRAMES } from './ShortExaminerEp1Answer.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
 
 export const Root: React.FC = () => (
@@ -84,6 +85,14 @@ export const Root: React.FC = () => (
       id="examiner-ep1-quiz"
       component={ShortExaminerEp1}
       durationInFrames={EP1_TOTAL_FRAMES}
+      fps={FPS}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="examiner-ep1-answer"
+      component={ShortExaminerEp1Answer}
+      durationInFrames={EP1ANS_TOTAL_FRAMES}
       fps={FPS}
       width={1080}
       height={1920}
