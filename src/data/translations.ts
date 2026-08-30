@@ -700,7 +700,7 @@ export const TRANSLATIONS = {
       items: {
         'maneuver-1': { title: 'Längsparken (Parallel)' },
         'maneuver-2': { title: 'Querparken (Rückwärts)' },
-        'maneuver-3': { title: 'Wenden in 3 Zügen' },
+        'maneuver-3': { title: 'Umkehren & Wenden' },
         'maneuver-4': { title: 'Gefahrenbremsung' }
       },
       animatedGuides: 'Animierte Anleitungen',
@@ -1282,8 +1282,8 @@ export const TRANSLATIONS = {
                 ]
               },
               'maneuver-3': {
-                title: 'Wenden (Drei-Punkt-Wende)',
-                description: 'Wenden in einer engen Straße',
+                title: 'Umkehren & Wenden',
+                description: 'Die richtige Wende-Art wählen und sicher ausführen',
                 tips: [
                   { id: 'turn-tip1', title: 'Langsam rollen, schnell lenken', content: 'Fahrzeug im Stand oder sehr langsam rollen lassen und dabei zügig lenken.', type: 'info' }
                 ]
@@ -3044,7 +3044,7 @@ export const TRANSLATIONS = {
       items: {
         'maneuver-1': { title: 'Parallel Parking' },
         'maneuver-2': { title: 'Reverse Parking' },
-        'maneuver-3': { title: 'Three-Point Turn' },
+        'maneuver-3': { title: 'Turning Around (U-Turns)' },
         'maneuver-4': { title: 'Emergency Braking' }
       },
       animatedGuides: 'Animated Guides',
@@ -3628,8 +3628,8 @@ export const TRANSLATIONS = {
                 ]
               },
               'maneuver-3': {
-                title: 'Three-Point Turn',
-                description: 'Turning in a narrow street',
+                title: 'Turning Around (U-Turns)',
+                description: 'Choose the right turning method and execute it safely',
                 tips: [
                   { id: 'turn-tip1', title: 'Slow Roll, Fast Steer', content: 'Let the vehicle roll very slowly or stay stationary while steering quickly.', type: 'info' }
                 ]
