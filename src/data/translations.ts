@@ -1659,6 +1659,15 @@ export const TRANSLATIONS = {
               { title: 'Abstand zum Bordstein', content: 'Beim Längsparken: Max. 30cm zum Bordstein (etwa DIN A4 Breite). Näher = besser!' },
               { title: 'Verkehr beachten', content: 'Andere Verkehrsteilnehmer haben Vorrang. Blickkontakt aufnehmen und ggf. vorbeiwinken.' }
             ],
+            wendenGuidedPoints: [
+              { title: 'Die Wahl der Wende-Art wird mitgeprüft', content: 'Der Prüfer sagt meist nur: "Bitte wenden Sie bei der nächsten Gelegenheit." Welche Methode du wählst, ist Teil der Aufgabe: Nimm die sicherste, die die Situation erlaubt.' },
+              { title: '1. Wahl: Wenden in einem Zug', content: 'Nur wenn die Straße breit genug ist und du freie Sicht in beide Richtungen hast: Blinker links, Spiegel- und Schulterblick, dann in einem Bogen wenden. Wer die Breite falsch einschätzt, muss improvisieren, im Zweifel eine andere Methode wählen.' },
+              { title: '2. Wahl: Zurückstoßen in eine Einmündung', content: 'Der Favorit vieler Prüfer: Rückwärts in eine Einmündung oder Einfahrt auf der rechten Seite stoßen, dann vorwärts in die neue Richtung ausfahren. Vorteil: Du fährst immer vorwärts in den fließenden Verkehr ein.' },
+              { title: '3. Wahl: Wenden in drei Zügen', content: 'Für enge Straßen ohne Einmündungen, genau die Schrittfolge aus der Animation oben. Langsam rangieren, schnell lenken, vor jedem Richtungswechsel Rundum-Blick.' },
+              { title: 'Vermeide: rückwärts in den Verkehr', content: 'Vorwärts in eine Einfahrt und rückwärts auf die Straße hinaus ist die schwächste Variante, du stößt rückwärts in den fließenden Verkehr. Nur wählen, wenn nichts anderes geht, und dann mit Einweiser-Niveau an Beobachtung.' },
+              { title: 'Wo Wenden verboten ist', content: 'Niemals wenden: auf Autobahn und Kraftfahrstraße (lebensgefährlich!), in Einbahnstraßen, in Tunneln, auf Bahnübergängen, bei Zeichen 272 (Wendeverbot) und überall, wo die Sicht nicht ausreicht.' },
+              { title: 'Die Alternative: Block umfahren', content: 'Wenn Wenden verboten oder unübersichtlich ist: einfach den Block umfahren (dreimal abbiegen). Sag dem Prüfer ruhig an, was du vorhast, souveräne Planung gibt Pluspunkte.' }
+            ],
             leftTurnGuidedPoints: [
               { title: 'Frühzeitig einordnen', content: 'Rechtzeitig links einordnen, Geschwindigkeit reduzieren und den rückwärtigen Verkehr im Innen- und Außenspiegel prüfen.' },
               { title: 'Blickführung', content: 'Beobachten Sie Gegenverkehr, querende Fußgänger, Radfahrer auf Radwegen und Fahrzeuge, die Sie überholen könnten.' },
@@ -3997,6 +4006,15 @@ export const TRANSLATIONS = {
               { title: 'Max 2 Corrections', content: 'In the exam, 2 corrections are allowed. When correcting: Don\'t forget to signal!' },
               { title: 'Distance to Curb', content: 'Parallel parking: Max. 30cm to curb (about A4 paper width). Closer = better!' },
               { title: 'Watch Traffic', content: 'Other road users have priority. Make eye contact and wave them through if needed.' }
+            ],
+            wendenGuidedPoints: [
+              { title: 'Your choice of method is part of the test', content: 'The examiner usually just says: "Please turn around at the next opportunity." Which method you pick is part of the task: choose the safest one the situation allows.' },
+              { title: '1st choice: U-turn in one move', content: 'Only if the road is wide enough and you can see clearly in both directions: signal left, mirror and shoulder check, then turn in one continuous arc. If you misjudge the width you are forced to improvise, when in doubt pick another method.' },
+              { title: '2nd choice: reverse into a side street', content: 'Many examiners’ favorite: reverse into a junction or driveway on the RIGHT, then drive out forward in the new direction. The advantage: you always enter flowing traffic driving forward.' },
+              { title: '3rd choice: three-point turn', content: 'For narrow roads without junctions, exactly the step sequence from the animation above. Maneuver slowly, steer quickly, all-round check before every change of direction.' },
+              { title: 'Avoid: reversing into traffic', content: 'Driving forward into a driveway and reversing out onto the road is the weakest option, you back into flowing traffic. Only choose it if nothing else works, and then with maximum observation.' },
+              { title: 'Where turning around is forbidden', content: 'Never turn around: on the Autobahn or Kraftfahrstraße (life-threatening!), in one-way streets, in tunnels, on level crossings, at sign 272 (no U-turn) and anywhere without sufficient visibility.' },
+              { title: 'The alternative: drive around the block', content: 'If turning is forbidden or the situation is unclear: simply drive around the block (three turns). Feel free to tell the examiner your plan, confident planning earns points.' }
             ],
             leftTurnGuidedPoints: [
               { title: 'Position early', content: 'Move into position for a left turn early, reduce speed, and check traffic behind you in the interior and side mirrors.' },
