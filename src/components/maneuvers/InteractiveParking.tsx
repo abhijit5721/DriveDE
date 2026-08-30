@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import { GlobalDefinitions, TopDownCar } from './SimulatorComponents';
+import { GlobalDefinitions, RealCar, } from './SimulatorComponents';
 import { TRANSLATIONS } from '../../data/translations';
 
 
@@ -86,7 +86,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           style={{ top: '45px', left: '260px' }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
-            <TopDownCar color="#94a3b8" />
+            <RealCar variant="gray" />
           </svg>
         </div>
         
@@ -96,7 +96,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           style={{ top: '45px', left: '20px' }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
-            <TopDownCar color="#475569" />
+            <RealCar variant="slate" />
           </svg>
         </div>
 
@@ -113,10 +113,9 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            className="absolute z-20"
         >
            <svg width="70" height="36" viewBox="-35 -18 70 36" style={{ overflow: 'visible' }}>
-              <TopDownCar 
-                color="#10b981" 
-                isUser={true} 
-                indicator={phase === 'start' ? 'none' : 'right'} 
+              <RealCar
+                variant="green"
+                indicator={phase === 'start' ? 'none' : 'right'}
                 brakeLights={phase === 'align' || phase === 'final'}
               />
            </svg>

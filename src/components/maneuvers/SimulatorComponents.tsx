@@ -103,6 +103,60 @@ export const GlobalDefinitions = () => (
   </svg>
 );
 
+/** Photorealistic top-down car sprite (public/topdown-car*.png, nose pointing
+ *  +x like TopDownCar) with the same indicator / brake / reverse overlays. */
+export const RealCar: React.FC<{
+  variant?: 'blue' | 'gray' | 'slate' | 'red' | 'green';
+  indicator?: 'left' | 'right' | 'hazard' | 'none';
+  brakeLights?: boolean;
+  reverseLights?: boolean;
+  scale?: number;
+}> = ({ variant = 'blue', indicator = 'none', brakeLights = false, reverseLights = false, scale = 1 }) => {
+  const href = variant === 'blue' ? '/topdown-car.png' : `/topdown-car-${variant}.png`;
+  const leftOn = indicator === 'left' || indicator === 'hazard';
+  const rightOn = indicator === 'right' || indicator === 'hazard';
+  return (
+    <g transform={`scale(${scale})`}>
+      <rect x="-36" y="-17" width="72" height="36" rx="10" fill="black" opacity="0.18" transform="translate(2, 3)" />
+      <image href={href} x={-38} y={-20} width={76} height={40} preserveAspectRatio="xMidYMid meet" />
+      {brakeLights && (
+        <g>
+          <rect x="-37.5" y="-14" width="3.5" height="8" rx="1.5" fill="#ef4444" />
+          <rect x="-37.5" y="6" width="3.5" height="8" rx="1.5" fill="#ef4444" />
+          <circle cx="-36" cy="-10" r="7" fill="#ef4444" opacity="0.25" />
+          <circle cx="-36" cy="10" r="7" fill="#ef4444" opacity="0.25" />
+        </g>
+      )}
+      {reverseLights && (
+        <g>
+          <rect x="-37" y="-6" width="3.5" height="4.5" rx="1" fill="white" />
+          <rect x="-37" y="1.5" width="3.5" height="4.5" rx="1" fill="white" />
+        </g>
+      )}
+      <AnimatePresence>
+        {leftOn && (
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="29" cy="-15" r="3.5" fill="#fbbf24" />
+            <circle cx="-33" cy="-15" r="3.5" fill="#fbbf24" />
+            <circle cx="29" cy="-15" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-33" cy="-15" r="8" fill="url(#indicatorGlow)" />
+          </motion.g>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {rightOn && (
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="29" cy="15" r="3.5" fill="#fbbf24" />
+            <circle cx="-33" cy="15" r="3.5" fill="#fbbf24" />
+            <circle cx="29" cy="15" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-33" cy="15" r="8" fill="url(#indicatorGlow)" />
+          </motion.g>
+        )}
+      </AnimatePresence>
+    </g>
+  );
+};
+
 export const TopDownCar: React.FC<{
   color: string;
   indicator?: 'left' | 'right' | 'hazard' | 'none';

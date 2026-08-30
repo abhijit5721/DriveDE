@@ -11,7 +11,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GlobalDefinitions, TopDownCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground, Building } from './SimulatorComponents';
+import { GlobalDefinitions, RealCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground, Building } from './SimulatorComponents';
 import { MANEUVER_STEPS } from '../../data/maneuvers';
 import { TRANSLATIONS } from '../../data/translations';
 
@@ -199,8 +199,8 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
 
         {/* Parked Cars */}
-        <g transform="translate(70, 185)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(330, 185)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(70, 185)"><RealCar variant="gray" /></g>
+        <g transform="translate(330, 185)"><RealCar variant="gray" /></g>
 
         {/* Path Arrow */}
         {step >= 3 && step <= 6 && (
@@ -209,7 +209,7 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
+          <RealCar indicator={state.indicator} />
           <AnimatePresence>
             {step === 1 && (
               <g transform="translate(0, -10)">
@@ -279,12 +279,12 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         ))}
         
         {/* Stationary Cars */}
-        <g transform="translate(140, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
-        <g transform="translate(300, 180) rotate(-90)"><TopDownCar color="#94a3b8" /></g>
+        <g transform="translate(140, 180) rotate(-90)"><RealCar variant="gray" /></g>
+        <g transform="translate(300, 180) rotate(-90)"><RealCar variant="gray" /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} />
+          <RealCar indicator={state.indicator} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="round" opacity={0.4} />}
             {step === 3 && <VisionCone side="right" opacity={0.6} />}
@@ -295,45 +295,6 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
     </div>
   );
 };
-
-/** Photorealistic top-down car sprite (public/topdown-car.png, nose pointing
- *  +x like TopDownCar) with the same indicator / reverse-light overlays. */
-const RealCar: React.FC<{
-  indicator?: 'left' | 'right' | 'none';
-  reverseLights?: boolean;
-  scale?: number;
-}> = ({ indicator = 'none', reverseLights = false, scale = 1 }) => (
-  <g transform={`scale(${scale})`}>
-    <rect x="-36" y="-17" width="72" height="36" rx="10" fill="black" opacity="0.18" transform="translate(2, 3)" />
-    <image href="/topdown-car.png" x={-38} y={-20} width={76} height={40} preserveAspectRatio="xMidYMid meet" />
-    {reverseLights && (
-      <g>
-        <rect x="-37" y="-6" width="3.5" height="4.5" rx="1" fill="white" />
-        <rect x="-37" y="1.5" width="3.5" height="4.5" rx="1" fill="white" />
-      </g>
-    )}
-    <AnimatePresence>
-      {indicator === 'left' && (
-        <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
-          <circle cx="29" cy="-15" r="3.5" fill="#fbbf24" />
-          <circle cx="-33" cy="-15" r="3.5" fill="#fbbf24" />
-          <circle cx="29" cy="-15" r="8" fill="url(#indicatorGlow)" />
-          <circle cx="-33" cy="-15" r="8" fill="url(#indicatorGlow)" />
-        </motion.g>
-      )}
-    </AnimatePresence>
-    <AnimatePresence>
-      {indicator === 'right' && (
-        <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
-          <circle cx="29" cy="15" r="3.5" fill="#fbbf24" />
-          <circle cx="-33" cy="15" r="3.5" fill="#fbbf24" />
-          <circle cx="29" cy="15" r="8" fill="url(#indicatorGlow)" />
-          <circle cx="-33" cy="15" r="8" fill="url(#indicatorGlow)" />
-        </motion.g>
-      )}
-    </AnimatePresence>
-  </g>
-);
 
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   // Bicycle-model motion: the car sweeps exact circular arcs (like a real
@@ -497,7 +458,7 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
 
         <g transform={`translate(${state.x}, ${state.y})`}>
-          <TopDownCar color="#3b82f6" isUser={true} brakeLights={state.brake} scale={0.8} />
+          <RealCar brakeLights={state.brake} scale={0.8} />
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
         </g>
 
@@ -602,7 +563,7 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
 
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.7} />
+          <RealCar indicator={state.indicator} scale={0.7} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 4 && <VisionCone side="right" opacity={0.6} />}
@@ -674,12 +635,12 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         />
 
         {/* Highway Traffic with varied colors */}
-        <g transform="translate(320, 65)"><TopDownCar color="#ef4444" scale={0.8} /></g>
-        <g transform="translate(100, 65)"><TopDownCar color="#10b981" scale={0.8} /></g>
+        <g transform="translate(320, 65)"><RealCar variant="red" scale={0.8} /></g>
+        <g transform="translate(100, 65)"><RealCar variant="green" scale={0.8} /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} isUser={true} scale={0.8} />
+          <RealCar indicator={state.indicator} scale={0.8} />
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
         </g>
 
