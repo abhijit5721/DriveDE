@@ -4,5 +4,6 @@
       "path": "/api/drip",
       "schedule": "0 8 * * *"
     }
-  ]
+  ],
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':(exclude)content/social-media' ':(exclude)demo-video' ':(exclude)content/DriveDE_Avatar_SoulX.ipynb' ':(exclude)content/narrator-scripts.md' ':(exclude)content/avatar-pipeline.md'"
 }
