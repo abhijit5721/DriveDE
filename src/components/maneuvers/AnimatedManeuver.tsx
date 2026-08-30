@@ -297,33 +297,66 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
 };
 
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
-  const getInterpolatedState = () => {
-    const states = [
-      { x: 215, y: 220, rotation: -90, wheel: 0, indicator: 'none' as const, reverse: false },      // 0: Start
-      { x: 230, y: 200, rotation: -90, wheel: 0, indicator: 'none' as const, reverse: false },    // 1: Pull over
-      { x: 230, y: 200, rotation: -90, wheel: -90, indicator: 'left' as const, reverse: false },   // 2: Steer Left
-      { x: 175, y: 130, rotation: -135, wheel: -90, indicator: 'left' as const, reverse: false },  // 3: Forward to Left Curb
-      { x: 175, y: 130, rotation: -135, wheel: 90, indicator: 'right' as const, reverse: false },  // 4: Steer Right
-      { x: 230, y: 180, rotation: -225, wheel: 90, indicator: 'right' as const, reverse: true },   // 5: Reverse to Right Curb
-      { x: 230, y: 180, rotation: -225, wheel: -90, indicator: 'left' as const, reverse: false },  // 6: Steer Left
-      { x: 200, y: 240, rotation: -270, wheel: 0, indicator: 'none' as const, reverse: false },    // 7: Done
-    ];
+  // Bicycle-model motion: the car sweeps exact circular arcs (like a real
+  // steered vehicle) instead of sliding between keyframes. Each step is a
+  // motion segment; poses chain so segment starts always match the previous
+  // segment's end. Geometry tuned for the 400x250 road (curbs at x=143/255).
+  type Motion =
+    | { kind: 'straight'; to: { x: number; y: number } }
+    | { kind: 'arc'; steer: 'left' | 'right'; rev: boolean; R: number; dh: number }
+    | { kind: 'hold' };
 
-    const current = states[step] || states[0];
-    const next = states[step + 1] || current;
-    const p = progress / 100;
+  const START = { x: 222, y: 222, h: -90 };
+  const MOTIONS: Motion[] = [
+    { kind: 'straight', to: { x: 229, y: 200 } },               // 0: pull over right, signal left
+    { kind: 'hold' },                                           // 1: mirror + shoulder check left
+    { kind: 'arc', steer: 'left', rev: false, R: 54, dh: 80 },  // 2: forward arc to left curb
+    { kind: 'hold' },                                           // 3: reverse gear, signal right, look around
+    { kind: 'arc', steer: 'right', rev: true, R: 38, dh: 66 },  // 4: reverse arc to right curb
+    { kind: 'hold' },                                           // 5: first gear, signal left, shoulder check
+    { kind: 'arc', steer: 'left', rev: false, R: 155, dh: 34 }, // 6: drive off, merge into own lane
+  ];
 
-    return {
-      x: current.x + (next.x - current.x) * p,
-      y: current.y + (next.y - current.y) * p,
-      rotation: current.rotation + (next.rotation - current.rotation) * p,
-      wheel: current.wheel + (next.wheel - current.wheel) * p,
-      indicator: p > 0.5 ? next.indicator : current.indicator,
-      reverse: p > 0.1 ? next.reverse : current.reverse
-    };
+  const advance = (pose: { x: number; y: number; h: number }, m: Motion, p: number) => {
+    if (m.kind === 'hold' || p <= 0) return pose;
+    if (m.kind === 'straight') {
+      return { x: pose.x + (m.to.x - pose.x) * p, y: pose.y + (m.to.y - pose.y) * p, h: pose.h };
+    }
+    const t0 = (pose.h * Math.PI) / 180;
+    // turning-circle center sits on the side the wheels point
+    const side = m.steer === 'left' ? 1 : -1;
+    const cx = pose.x + side * m.R * Math.sin(t0);
+    const cy = pose.y - side * m.R * Math.cos(t0);
+    // heading: fwd-left and rev-right rotate CCW (negative), the others CW
+    const sign = (m.steer === 'left') !== m.rev ? -1 : 1;
+    const a0 = Math.atan2(pose.y - cy, pose.x - cx);
+    const a = a0 + sign * ((m.dh * Math.PI) / 180) * p;
+    return { x: cx + m.R * Math.cos(a), y: cy + m.R * Math.sin(a), h: pose.h + sign * m.dh * p };
   };
 
-  const state = getInterpolatedState();
+  const ease = (v: number) => v * v * (3 - 2 * v); // smoothstep: gentle start/stop
+  const p = ease(Math.min(Math.max(progress, 0), 100) / 100);
+
+  let pose = { ...START };
+  for (let i = 0; i < step && i < MOTIONS.length; i++) pose = advance(pose, MOTIONS[i], 1);
+  pose = advance(pose, MOTIONS[step] || { kind: 'hold' }, p);
+
+  // wheel / indicator / reverse choreography synced to the step texts
+  const lerp = (a: number, b: number) => a + (b - a) * p;
+  let wheel = 0;
+  let indicator: 'left' | 'right' | 'none' = 'none';
+  let reverse = false;
+  switch (step) {
+    case 0: indicator = p > 0.5 ? 'left' : 'none'; break;
+    case 1: indicator = 'left'; wheel = p > 0.6 ? lerp(0, -90) : 0; break;
+    case 2: indicator = 'left'; wheel = -90; break;
+    case 3: indicator = p > 0.4 ? 'right' : 'left'; wheel = lerp(-90, 90); reverse = p > 0.3; break;
+    case 4: indicator = 'right'; wheel = 90; reverse = true; break;
+    case 5: indicator = p > 0.4 ? 'left' : 'right'; wheel = lerp(90, -35); break;
+    case 6: indicator = p > 0.6 ? 'none' : 'left'; wheel = lerp(-35, 0); break;
+  }
+
+  const state = { x: pose.x, y: pose.y, rotation: pose.h, wheel, indicator, reverse };
 
   return (
     <div className="relative w-full h-full bg-slate-50 overflow-hidden">
