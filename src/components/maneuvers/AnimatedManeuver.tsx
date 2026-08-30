@@ -11,7 +11,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GlobalDefinitions, RealCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground, Building } from './SimulatorComponents';
+import { GlobalDefinitions, RealCar, VisionCone, SteeringWheelOverlay, InstructionPopup, GrassBackground, Building, Tree } from './SimulatorComponents';
 import { MANEUVER_STEPS } from '../../data/maneuvers';
 import { TRANSLATIONS } from '../../data/translations';
 
@@ -192,6 +192,8 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
         {/* Environment */}
         <Building x={20} y={15} width={40} height={30} />
         <Building x={340} y={15} width={40} height={30} />
+        <Tree x={120} y={28} size={36} />
+        <Tree x={290} y={25} size={30} />
         {/* Road */}
         <rect x="0" y="50" width="400" height="180" fill="url(#roadTexture)" />
         {/* Curb */}
@@ -269,6 +271,8 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {/* Environment - Buildings on Grass */}
         <Building x={20} y={220} width={40} height={30} type="house" />
         <Building x={340} y={220} width={40} height={30} type="store" />
+        <Tree x={120} y={235} size={30} />
+        <Tree x={265} y={238} size={26} />
         
         {/* Parking Slots (Bottom row) */}
         {[60, 140, 220, 300, 380].map(x => (
@@ -395,6 +399,9 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <Building x={50} y={30} width={60} height={40} type="house" />
         <Building x={280} y={160} width={70} height={50} type="office" />
         <Building x={290} y={40} width={50} height={40} type="store" />
+        <Tree x={80} y={130} size={40} />
+        <Tree x={45} y={200} size={32} />
+        <Tree x={330} y={110} size={36} />
         {/* Center Line */}
         <line x1="200" y1="0" x2="200" y2="250" stroke="#94a3b8" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
         {/* Curbs */}
@@ -453,6 +460,8 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <Building x={80} y={15} width={40} height={30} type="house" />
         <Building x={250} y={20} width={80} height={50} type="office" />
         <Building x={300} y={180} width={60} height={40} type="store" />
+        <Tree x={180} y={38} size={34} />
+        <Tree x={80} y={205} size={38} />
 
         <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
         <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
@@ -545,6 +554,8 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <Building x={320} y={20} width={60} height={40} type="house" />
         <Building x={20} y={190} width={60} height={40} type="office" />
         <Building x={320} y={190} width={60} height={40} type="apartment" />
+        <Tree x={115} y={45} size={32} />
+        <Tree x={300} y={215} size={30} />
 
         {/* Roundabout Structure */}
         <circle cx="200" cy="125" r="95" fill="url(#roadTexture)" />
@@ -612,6 +623,8 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         <Building x={100} y={10} width={50} height={30} type="house" />
         <Building x={340} y={170} width={40} height={50} type="apartment" />
         <Building x={270} y={180} width={50} height={40} type="store" />
+        <Tree x={200} y={30} size={34} />
+        <Tree x={180} y={215} size={30} />
 
         {/* Main Highway */}
         <rect x="0" y="40" width="400" height="100" fill="url(#roadTexture)" />

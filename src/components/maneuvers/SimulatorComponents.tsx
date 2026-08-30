@@ -26,31 +26,27 @@ export const Building: React.FC<{
 
   const theme = getTheme();
 
+  // photorealistic aerial roof sprites; pitched house roof for homes and
+  // stores, flat gravel roof for offices and apartment blocks
+  const sprite = type === 'office' || type === 'apartment' ? '/topdown-office.png' : '/topdown-house.png';
+  void theme;
   return (
     <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
-      {/* Base */}
-      <rect width={width} height={height} fill={theme.base} rx="4" />
-      
-      {/* Roof/Top with depth */}
-      <rect width={width} height={height * 0.15} fill={theme.roof} rx="2" />
-      
-      {/* Window Grid */}
-      <g opacity="0.8">
-        {[0.2, 0.5, 0.8].map(py => (
-          py > 0.2 && (
-            <g key={py}>
-              <rect x={width * 0.2} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
-              <rect x={width * 0.6} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
-            </g>
-          )
-        ))}
-      </g>
-
-      {/* Subtle details */}
-      <rect x={width * 0.45} y={height * 0.8} width={width * 0.1} height={height * 0.2} fill={theme.roof} opacity="0.3" />
+      <image href={sprite} x="0" y="0" width={width} height={height} preserveAspectRatio="xMidYMid meet" />
     </g>
   );
 };
+
+export const Tree: React.FC<{ x: number; y: number; size?: number }> = ({ x, y, size = 34 }) => (
+  <image
+    href="/topdown-tree.png"
+    x={x - size / 2}
+    y={y - size / 2}
+    width={size}
+    height={size}
+    filter="url(#buildingShadow)"
+  />
+);
 
 export const GrassBackground: React.FC = () => (
   <rect width="100%" height="100%" fill="url(#grassPattern)" />
@@ -86,14 +82,12 @@ export const GlobalDefinitions = () => (
         </feMerge>
       </filter>
 
-      <pattern id="grassPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect width="40" height="40" fill="#15803d" />
-        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#166534" strokeWidth="1" fill="none" />
+      <pattern id="grassPattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+        <image href="/tex-grass.jpg" x="0" y="0" width="120" height="120" preserveAspectRatio="none" />
       </pattern>
 
-      <pattern id="roadTexture" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-        <rect width="100" height="100" fill="#334155" />
-        <rect width="100" height="100" fill="url(#noise)" opacity="0.05" />
+      <pattern id="roadTexture" x="0" y="0" width="90" height="90" patternUnits="userSpaceOnUse">
+        <image href="/tex-asphalt.jpg" x="0" y="0" width="90" height="90" preserveAspectRatio="none" />
       </pattern>
 
       <filter id="buildingShadow">
