@@ -199,8 +199,8 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
 
         {/* Parked Cars */}
-        <g transform="translate(70, 185)"><RealCar variant="gray" /></g>
-        <g transform="translate(330, 185)"><RealCar variant="gray" /></g>
+        <g transform="translate(70, 185)"><RealCar variant="navy" /></g>
+        <g transform="translate(330, 185)"><RealCar variant="sand" /></g>
 
         {/* Path Arrow */}
         {step >= 3 && step <= 6 && (
@@ -279,8 +279,8 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         ))}
         
         {/* Stationary Cars */}
-        <g transform="translate(140, 180) rotate(-90)"><RealCar variant="gray" /></g>
-        <g transform="translate(300, 180) rotate(-90)"><RealCar variant="gray" /></g>
+        <g transform="translate(140, 180) rotate(-90)"><RealCar variant="bordeaux" /></g>
+        <g transform="translate(300, 180) rotate(-90)"><RealCar variant="sand" /></g>
 
         {/* User Car */}
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>

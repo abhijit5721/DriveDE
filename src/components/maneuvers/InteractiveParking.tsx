@@ -86,7 +86,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           style={{ top: '45px', left: '260px' }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
-            <RealCar variant="gray" />
+            <RealCar variant="sand" />
           </svg>
         </div>
         
@@ -96,7 +96,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
           style={{ top: '45px', left: '20px' }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
-            <RealCar variant="slate" />
+            <RealCar variant="navy" />
           </svg>
         </div>
 

@@ -106,7 +106,7 @@ export const GlobalDefinitions = () => (
 /** Photorealistic top-down car sprite (public/topdown-car*.png, nose pointing
  *  +x like TopDownCar) with the same indicator / brake / reverse overlays. */
 export const RealCar: React.FC<{
-  variant?: 'blue' | 'gray' | 'slate' | 'red' | 'green';
+  variant?: 'blue' | 'gray' | 'slate' | 'red' | 'green' | 'sand' | 'bordeaux' | 'navy';
   indicator?: 'left' | 'right' | 'hazard' | 'none';
   brakeLights?: boolean;
   reverseLights?: boolean;
