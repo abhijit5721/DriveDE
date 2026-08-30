@@ -1629,11 +1629,11 @@ export const TRANSLATIONS = {
             ],
             threePointTurnSteps: [
               { title: 'Verkehr beobachten', description: 'Rundum-Blick! Ist die Straße frei in beide Richtungen? Kein Wendeverbote?' },
-              { title: 'Blinker links', description: 'Links blinken und langsam anfahren. Voll nach links einschlagen.' },
+              { title: 'Blinker links', description: 'Links blinken, Spiegel- und Schulterblick links, langsam anfahren. Voll nach links einschlagen.' },
               { title: 'Vor dem Bordstein stoppen', description: 'Kurz vor dem gegenüberliegenden Bordstein anhalten.' },
-              { title: 'Schulterblick & Rückwärts', description: 'Schulterblick! Voll nach rechts einschlagen und rückwärts fahren.' },
+              { title: 'Schulterblick & Rückwärts', description: 'Rückwärtsgang einlegen, Blinker RECHTS, Rundum-Blick! Voll nach rechts einschlagen und rückwärts fahren.' },
               { title: 'Erneut stoppen', description: 'Kurz vor dem Bordstein hinter Ihnen anhalten.' },
-              { title: 'Vorwärts ausfahren', description: 'Nach links einschlagen und in die neue Fahrtrichtung ausfahren.' }
+              { title: 'Vorwärts ausfahren', description: 'Ersten Gang einlegen, Blinker links, Schulterblick. Nach links einschlagen und in die neue Fahrtrichtung ausfahren.' }
             ],
             emergencyBrakingStepsManual: [
               { title: 'Geschwindigkeit: ca. 30 km/h', description: 'Die Gefahrenbremsung wird aus ca. 30 km/h durchgeführt. Der Fahrlehrer gibt das Kommando.' },
@@ -3968,11 +3968,11 @@ export const TRANSLATIONS = {
             ],
             threePointTurnSteps: [
               { title: 'Observe Traffic', description: 'Look around! Is the road clear in both directions? No turning restrictions?' },
-              { title: 'Signal Left', description: 'Signal left and slowly move forward. Steer fully left.' },
+              { title: 'Signal Left', description: 'Signal left, mirror and shoulder check left, slowly move forward. Steer fully left.' },
               { title: 'Stop Before Curb', description: 'Stop just before the opposite curb.' },
-              { title: 'Shoulder Check & Reverse', description: 'Shoulder check! Steer fully right and reverse.' },
+              { title: 'Shoulder Check & Reverse', description: 'Reverse gear, signal RIGHT, all-round check! Steer fully right and reverse.' },
               { title: 'Stop Again', description: 'Stop just before the curb behind you.' },
-              { title: 'Drive Forward', description: 'Steer left and drive forward in the new direction.' }
+              { title: 'Drive Forward', description: 'First gear, signal left, shoulder check. Steer left and drive forward in the new direction.' }
             ],
             emergencyBrakingStepsManual: [
               { title: 'Speed: approx. 30 km/h', description: 'Emergency braking is performed from approx. 30 km/h. The instructor gives the command.' },
