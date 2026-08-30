@@ -296,6 +296,45 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
   );
 };
 
+/** Photorealistic top-down car sprite (public/topdown-car.png, nose pointing
+ *  +x like TopDownCar) with the same indicator / reverse-light overlays. */
+const RealCar: React.FC<{
+  indicator?: 'left' | 'right' | 'none';
+  reverseLights?: boolean;
+  scale?: number;
+}> = ({ indicator = 'none', reverseLights = false, scale = 1 }) => (
+  <g transform={`scale(${scale})`}>
+    <rect x="-36" y="-17" width="72" height="36" rx="10" fill="black" opacity="0.18" transform="translate(2, 3)" />
+    <image href="/topdown-car.png" x={-38} y={-20} width={76} height={40} preserveAspectRatio="xMidYMid meet" />
+    {reverseLights && (
+      <g>
+        <rect x="-37" y="-6" width="3.5" height="4.5" rx="1" fill="white" />
+        <rect x="-37" y="1.5" width="3.5" height="4.5" rx="1" fill="white" />
+      </g>
+    )}
+    <AnimatePresence>
+      {indicator === 'left' && (
+        <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+          <circle cx="29" cy="-15" r="3.5" fill="#fbbf24" />
+          <circle cx="-33" cy="-15" r="3.5" fill="#fbbf24" />
+          <circle cx="29" cy="-15" r="8" fill="url(#indicatorGlow)" />
+          <circle cx="-33" cy="-15" r="8" fill="url(#indicatorGlow)" />
+        </motion.g>
+      )}
+    </AnimatePresence>
+    <AnimatePresence>
+      {indicator === 'right' && (
+        <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+          <circle cx="29" cy="15" r="3.5" fill="#fbbf24" />
+          <circle cx="-33" cy="15" r="3.5" fill="#fbbf24" />
+          <circle cx="29" cy="15" r="8" fill="url(#indicatorGlow)" />
+          <circle cx="-33" cy="15" r="8" fill="url(#indicatorGlow)" />
+        </motion.g>
+      )}
+    </AnimatePresence>
+  </g>
+);
+
 const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }) => {
   // Bicycle-model motion: the car sweeps exact circular arcs (like a real
   // steered vehicle) instead of sliding between keyframes. Each step is a
@@ -402,7 +441,7 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
         
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
-          <TopDownCar color="#3b82f6" indicator={state.indicator} reverseLights={state.reverse} isUser={true} scale={0.8} />
+          <RealCar indicator={state.indicator} reverseLights={state.reverse} scale={0.8} />
           <AnimatePresence>
             {step === 1 && <VisionCone side="left" opacity={0.6} />}
             {step === 3 && <VisionCone side="round" opacity={0.4} />}
