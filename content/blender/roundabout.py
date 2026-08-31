@@ -21,8 +21,10 @@ def arg(name, default=None):
     return argv[argv.index(name) + 1] if name in argv else default
 FRAME = int(arg('--frame', 0))
 OUT = arg('--out', '/tmp/out')
-SAMPLES = int(arg('--samples', 48))
+SAMPLES = int(arg('--samples', 32))
 ANIMATE = '--animate' in argv
+START = int(arg('--start', 1))   # resume: first frame to render
+END = int(arg('--end', 0))       # 0 = full length
 
 FPS = 30
 FRAMES = 480
@@ -33,6 +35,9 @@ scene = bpy.context.scene
 scene.render.engine = 'CYCLES'
 scene.cycles.samples = SAMPLES
 scene.cycles.use_denoising = True
+scene.cycles.use_adaptive_sampling = True
+scene.cycles.adaptive_threshold = 0.05
+scene.render.use_persistent_data = True  # big speedup for animations
 scene.render.resolution_x = 720
 scene.render.resolution_y = 1280
 scene.render.fps = FPS
@@ -295,6 +300,8 @@ cam.keyframe_insert('location', frame=FRAMES)
 # ---------- render ----------
 scene.render.image_settings.file_format = 'PNG'
 if ANIMATE:
+    scene.frame_start = START
+    scene.frame_end = END if END > 0 else FRAMES
     scene.render.filepath = OUT + '/f_'
     bpy.ops.render.render(animation=True)
 else:
