@@ -38,6 +38,7 @@ scene.cycles.use_denoising = True
 scene.cycles.use_adaptive_sampling = True
 scene.cycles.adaptive_threshold = 0.05
 scene.render.use_persistent_data = True  # big speedup for animations
+scene.view_settings.look = 'AgX - Punchy'
 scene.render.resolution_x = 720
 scene.render.resolution_y = 1280
 scene.render.fps = FPS
@@ -66,29 +67,34 @@ def flat_mat(name, rgb, rough=0.8, emit=0.0):
     return m
 
 M = {
-    'grass':   flat_mat('grass', (0.13, 0.34, 0.12)),
-    'asphalt': flat_mat('asphalt', (0.13, 0.14, 0.15)),
+    'grass':   flat_mat('grass', (0.28, 0.50, 0.20)),
+    'asphalt': flat_mat('asphalt', (0.24, 0.25, 0.27)),
     'mark':    flat_mat('mark', (0.85, 0.85, 0.82), rough=0.6),
-    'island':  flat_mat('island', (0.16, 0.40, 0.15)),
+    'island':  flat_mat('island', (0.38, 0.58, 0.26)),
     'trunk':   flat_mat('trunk', (0.25, 0.15, 0.08)),
-    'leaf':    flat_mat('leaf', (0.10, 0.42, 0.14)),
-    'leaf2':   flat_mat('leaf2', (0.16, 0.50, 0.18)),
-    'wall':    flat_mat('wall', (0.85, 0.80, 0.72)),
-    'roof':    flat_mat('roof', (0.55, 0.18, 0.12)),
+    'leaf':    flat_mat('leaf', (0.30, 0.55, 0.22)),
+    'leaf2':   flat_mat('leaf2', (0.42, 0.66, 0.28)),
+    'wall':    flat_mat('wall', (0.93, 0.88, 0.78)),
+    'roof':    flat_mat('roof', (0.60, 0.18, 0.10)),
     'blue':    flat_mat('blue', (0.08, 0.32, 0.85), rough=0.35),
     'red':     flat_mat('red', (0.75, 0.10, 0.10), rough=0.35),
     'sand':    flat_mat('sand', (0.72, 0.62, 0.42), rough=0.4),
     'glass':   flat_mat('glass', (0.06, 0.09, 0.12), rough=0.15),
     'tire':    flat_mat('tire', (0.04, 0.04, 0.04)),
     'blinker': flat_mat('blinker', (1.0, 0.55, 0.0)),
-    'curb':    flat_mat('curb', (0.55, 0.56, 0.58), rough=0.7),
+    'curb':    flat_mat('curb', (0.78, 0.78, 0.76), rough=0.7),
+    'timber':  flat_mat('timber', (0.32, 0.20, 0.12)),
+    'window':  flat_mat('window', (0.35, 0.55, 0.75), rough=0.2),
+    'signred': flat_mat('signred', (0.85, 0.08, 0.08), rough=0.4),
+    'signwt':  flat_mat('signwt', (0.95, 0.95, 0.92), rough=0.4),
+    'pole':    flat_mat('pole', (0.45, 0.47, 0.50), rough=0.5),
 }
 
 def add_cube(name, size, loc, mat, rz=0.0):
     bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
     o = bpy.context.object
     o.name = name
-    o.scale = (size[0] / 2, size[1] / 2, size[2] / 2)
+    o.scale = (size[0], size[1], size[2])  # primitive size=1 has edge 1
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     o.rotation_euler.z = rz
     o.data.materials.append(mat)
@@ -103,18 +109,20 @@ def add_cyl(name, r, depth, loc, mat, verts=24, rx=0.0):
     return o
 
 # ---------- ground + roads ----------
-bpy.ops.mesh.primitive_plane_add(size=70, location=(0, 0, 0))
+bpy.ops.mesh.primitive_plane_add(size=200, location=(0, 0, 0))
 ground = bpy.context.object
 ground.name = 'ground'
 ground.data.materials.append(M['grass'])
 
 RING_OUT, RING_IN, ROAD_W = 9.0, 4.6, 5.6
-add_cyl('ring', RING_OUT, 0.04, (0, 0, 0.02), M['asphalt'], verts=64)
-add_cyl('island', RING_IN, 0.06, (0, 0, 0.04), M['island'], verts=48)
-add_cyl('island_curb', RING_IN + 0.25, 0.05, (0, 0, 0.03), M['curb'], verts=48)
+add_cyl('ring_curb_out', RING_OUT + 0.9, 0.05, (0, 0, 0.015), M['curb'], verts=64)
+add_cyl('ring', RING_OUT, 0.04, (0, 0, 0.035), M['asphalt'], verts=64)
+add_cyl('island', RING_IN, 0.06, (0, 0, 0.065), M['island'], verts=48)
+add_cyl('island_curb', RING_IN + 0.25, 0.05, (0, 0, 0.055), M['curb'], verts=48)
 
 for i, (dx, dy, rz) in enumerate([(0, -1, 0), (0, 1, 0), (-1, 0, math.pi / 2), (1, 0, math.pi / 2)]):
-    add_cube(f'road{i}', (ROAD_W, 30, 0.04), (dx * 21, dy * 21, 0.02), M['asphalt'], rz=rz)
+    add_cube(f'walk{i}', (ROAD_W + 2.4, 34, 0.03), (dx * 22.5, dy * 22.5, 0.015), M['curb'], rz=rz)
+    add_cube(f'road{i}', (ROAD_W, 34, 0.04), (dx * 22, dy * 22, 0.028), M['asphalt'], rz=rz)
 
 # lane dashes on approaches
 for (dx, dy, vertical) in [(0, -1, True), (0, 1, True), (-1, 0, False), (1, 0, False)]:
@@ -130,16 +138,16 @@ RING_MID = (RING_OUT + RING_IN) / 2 + 0.6
 for k in range(22):
     a = k * (2 * math.pi / 22)
     add_cube('rdash', (0.14, 0.8, 0.05),
-             (RING_MID * math.cos(a), RING_MID * math.sin(a), 0.05), M['mark'], rz=a)
+             (RING_MID * math.cos(a), RING_MID * math.sin(a), 0.075), M['mark'], rz=a)
 
 # yield dashes at each entry (broken wait line)
 for (ex, ey, rz) in [(0, -RING_OUT + 0.4, 0), (0, RING_OUT - 0.4, 0),
                      (-RING_OUT + 0.4, 0, math.pi / 2), (RING_OUT - 0.4, 0, math.pi / 2)]:
     for m in (-1.6, -0.55, 0.55, 1.6):
         if rz == 0:
-            add_cube('yield', (0.7, 0.22, 0.05), (ex + m, ey, 0.05), M['mark'])
+            add_cube('yield', (0.7, 0.22, 0.05), (ex + m, ey, 0.075), M['mark'])
         else:
-            add_cube('yield', (0.22, 0.7, 0.05), (ex, ey + m, 0.05), M['mark'])
+            add_cube('yield', (0.22, 0.7, 0.05), (ex, ey + m, 0.075), M['mark'])
 
 # ---------- environment ----------
 def tree(x, y, s=1.0):
@@ -149,12 +157,53 @@ def tree(x, y, s=1.0):
     bpy.ops.mesh.primitive_ico_sphere_add(radius=0.65 * s, location=(x + 0.2 * s, y + 0.15 * s, 1.9 * s), subdivisions=1)
     o = bpy.context.object; o.data.materials.append(M['leaf2'])
 
-def house(x, y, w=4.5, d=3.6, rz=0.0):
-    add_cube('house', (w, d, 2.0), (x, y, 1.0), M['wall'], rz=rz)
-    bpy.ops.mesh.primitive_cone_add(radius1=max(w, d) * 0.72, depth=1.4, vertices=4, location=(x, y, 2.7))
+def house(x, y, w=5.0, d=4.0, rz=0.0):
+    add_cube('house', (w, d, 2.4), (x, y, 1.2), M['wall'], rz=rz)
+    # timber frame: corner posts + mid beam on each long facade
+    c, sn = math.cos(rz), math.sin(rz)
+    def local(lx, ly, lz):
+        return (x + lx * c - ly * sn, y + lx * sn + ly * c, lz)
+    for lx in (-w / 2 + 0.12, w / 2 - 0.12):
+        for ly in (-d / 2 - 0.03, d / 2 + 0.03):
+            add_cube('post', (0.16, 0.1, 2.4), local(lx, ly, 1.2), M['timber'], rz=rz)
+    for ly in (-d / 2 - 0.03, d / 2 + 0.03):
+        add_cube('beam', (w * 0.96, 0.1, 0.14), local(0, ly, 1.55), M['timber'], rz=rz)
+        # windows
+        for lx in (-w * 0.28, w * 0.28):
+            add_cube('win', (0.7, 0.08, 0.6), local(lx, ly, 1.0), M['window'], rz=rz)
+    # pyramid roof with overhang
+    bpy.ops.mesh.primitive_cone_add(radius1=max(w, d) * 0.80, depth=1.8, vertices=4, location=(x, y, 3.2))
     r = bpy.context.object
     r.rotation_euler.z = rz + math.pi / 4
     r.data.materials.append(M['roof'])
+
+def yield_sign(x, y):
+    add_cyl('spole', 0.06, 1.8, (x, y, 0.9), M['pole'], verts=8)
+    bpy.ops.mesh.primitive_cone_add(radius1=0.55, depth=0.06, vertices=3, location=(x, y, 1.75))
+    o = bpy.context.object
+    o.rotation_euler = (math.pi / 2, math.pi, 0)  # flat triangle facing driver, tip down
+    o.data.materials.append(M['signred'])
+    bpy.ops.mesh.primitive_cone_add(radius1=0.38, depth=0.08, vertices=3, location=(x, y, 1.77))
+    o = bpy.context.object
+    o.rotation_euler = (math.pi / 2, math.pi, 0)
+    o.data.materials.append(M['signwt'])
+
+def lamp(x, y):
+    add_cyl('lpole', 0.07, 3.2, (x, y, 1.6), M['pole'], verts=8)
+    add_cube('lhead', (0.5, 0.22, 0.14), (x, y, 3.25), M['signwt'])
+
+# a yield sign at each entry (right-hand side for the approaching driver)
+yield_sign(3.4, -10.6)
+yield_sign(-3.4, 10.6)
+yield_sign(-10.6, -3.4)
+yield_sign(10.6, 3.4)
+for (lx, ly) in [(3.9, -14.5), (-3.9, 14.5), (-14.5, 3.9), (14.5, -3.9)]:
+    lamp(lx, ly)
+
+# island bushes + rocks
+for (bx, by, br) in [(2.2, 1.4, 0.55), (-1.8, 2.2, 0.45), (-2.4, -1.6, 0.5), (1.6, -2.5, 0.4)]:
+    bpy.ops.mesh.primitive_ico_sphere_add(radius=br, location=(bx, by, br * 0.7), subdivisions=1)
+    bpy.context.object.data.materials.append(M['leaf2'])
 
 tree(0, 0, 1.5)  # island tree
 for (x, y, s) in [(-13, -13, 1.2), (14, -11, 1.0), (-12, 12, 1.1), (13, 14, 1.3),
@@ -278,23 +327,24 @@ for fc in blk_mat.node_tree.animation_data.action.fcurves:
 # ---------- light + camera ----------
 bpy.ops.object.light_add(type='SUN', location=(10, -10, 25))
 sun = bpy.context.object
-sun.data.energy = 4.0
+sun.data.energy = 4.5
+sun.data.color = (1.0, 0.95, 0.86)
 sun.data.angle = math.radians(15)
 sun.rotation_euler = (math.radians(35), math.radians(-18), math.radians(20))
 world = bpy.data.worlds.new('w')
 scene.world = world
 world.use_nodes = True
-world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.55, 0.7, 0.9, 1)
-world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.9
+world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.75, 0.82, 0.95, 1)
+world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.8
 
-bpy.ops.object.camera_add(location=(0, -21, 24), rotation=(math.radians(38), 0, 0))
+bpy.ops.object.camera_add(location=(0, -23, 22), rotation=(math.radians(42), 0, 0))
 cam = bpy.context.object
 cam.data.lens = 32
 scene.camera = cam
 # slow push for life
 cam.keyframe_insert('location', frame=1)
 scene.frame_set(FRAMES)
-cam.location = (0, -19.5, 22.5)
+cam.location = (0, -21.5, 20.6)
 cam.keyframe_insert('location', frame=FRAMES)
 
 # ---------- render ----------
