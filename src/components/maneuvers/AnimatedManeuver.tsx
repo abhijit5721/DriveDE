@@ -246,15 +246,21 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
         <GrassBackground />
         
         {/* Environment */}
-        <Building x={20} y={15} width={40} height={30} />
-        <Building x={340} y={15} width={40} height={30} />
-        <Tree x={120} y={28} size={36} />
-        <Tree x={290} y={25} size={30} />
+        <Building x={8} y={2} width={68} height={46} />
+        <Building x={328} y={2} width={68} height={46} />
+        <Tree x={120} y={26} size={38} />
+        <Tree x={290} y={23} size={32} />
         {/* Road */}
         <rect x="0" y="50" width="400" height="180" fill="url(#roadTexture)" />
-        {/* Curb */}
-        <rect x="0" y="210" width="400" height="40" fill="#94a3b8" />
+        {/* Edge line + parking-lane marking */}
+        <line x1="0" y1="55" x2="400" y2="55" stroke="#fff" strokeWidth="2" opacity="0.5" />
+        <line x1="0" y1="128" x2="400" y2="128" stroke="#fff" strokeWidth="2" strokeDasharray="14,10" opacity="0.35" />
+        {/* Curb + sidewalk with paving joints */}
+        <rect x="0" y="210" width="400" height="40" fill="#a8b1bd" />
         <rect x="0" y="210" width="400" height="4" fill="#64748b" />
+        {[...Array(20)].map((_, i) => (
+          <line key={i} x1={i * 21} y1={214} x2={i * 21} y2={250} stroke="#8b95a3" strokeWidth="1.5" opacity="0.7" />
+        ))}
 
         {/* Parked Cars */}
         <g transform="translate(70, 185)"><RealCar variant="navy" /></g>
@@ -326,7 +332,10 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         
         {/* Parking Lot Surface */}
         <rect x="0" y="0" width="400" height="210" fill="url(#roadTexture)" />
-        <rect x="0" y="210" width="400" height="15" fill="#94a3b8" /> {/* Sidewalk */}
+        <rect x="0" y="210" width="400" height="15" fill="#a8b1bd" /> {/* Sidewalk */}
+        {[...Array(20)].map((_, i) => (
+          <line key={i} x1={i * 21} y1={210} x2={i * 21} y2={225} stroke="#8b95a3" strokeWidth="1.5" opacity="0.7" />
+        ))}
         
         {/* Environment - Buildings on Grass */}
         <Building x={20} y={220} width={40} height={30} type="house" />
@@ -409,17 +418,19 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <rect x="145" y="0" width="110" height="250" fill="url(#roadTexture)" />
         
         {/* Environment Details */}
-        <Building x={50} y={30} width={60} height={40} type="house" />
-        <Building x={280} y={160} width={70} height={50} type="office" />
-        <Building x={290} y={40} width={50} height={40} type="store" />
-        <Tree x={80} y={130} size={40} />
-        <Tree x={45} y={200} size={32} />
-        <Tree x={330} y={110} size={36} />
+        <Building x={28} y={16} width={94} height={64} type="house" />
+        <Building x={268} y={150} width={106} height={74} type="office" />
+        <Building x={282} y={28} width={78} height={56} type="store" />
+        <Tree x={92} y={128} size={40} />
+        <Tree x={45} y={205} size={34} />
+        <Tree x={330} y={112} size={36} />
         {/* Center Line */}
         <line x1="200" y1="0" x2="200" y2="250" stroke="#94a3b8" strokeWidth="2" strokeDasharray="10,10" opacity="0.3" />
-        {/* Curbs */}
+        {/* Curbs + edge lines */}
         <rect x="143" y="0" width="2" height="250" fill="#94a3b8" />
         <rect x="255" y="0" width="2" height="250" fill="#94a3b8" />
+        <line x1="149" y1="0" x2="149" y2="250" stroke="#fff" strokeWidth="2" opacity="0.5" />
+        <line x1="251" y1="0" x2="251" y2="250" stroke="#fff" strokeWidth="2" opacity="0.5" />
         
         <g transform={`translate(${state.x}, ${state.y}) rotate(${state.rotation})`}>
           <RealCar indicator={state.indicator} reverseLights={state.reverse} scale={0.8} />
@@ -472,15 +483,17 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         <GrassBackground />
         
         {/* Environment */}
-        <Building x={20} y={20} width={50} height={40} type="apartment" />
-        <Building x={80} y={15} width={40} height={30} type="house" />
-        <Building x={250} y={20} width={80} height={50} type="office" />
-        <Building x={300} y={180} width={60} height={40} type="store" />
+        <Building x={8} y={6} width={76} height={62} type="apartment" />
+        <Building x={94} y={12} width={64} height={50} type="house" />
+        <Building x={238} y={2} width={112} height={72} type="office" />
+        <Building x={290} y={178} width={92} height={64} type="store" />
         <Tree x={180} y={38} size={34} />
         <Tree x={80} y={205} size={38} />
 
         <rect x="0" y="80" width="400" height="90" fill="url(#roadTexture)" />
-        <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="1" strokeDasharray="10,10" opacity="0.2" />
+        <line x1="0" y1="84" x2="400" y2="84" stroke="#fff" strokeWidth="2" opacity="0.5" />
+        <line x1="0" y1="166" x2="400" y2="166" stroke="#fff" strokeWidth="2" opacity="0.5" />
+        <line x1="0" y1="125" x2="400" y2="125" stroke="white" strokeWidth="2" strokeDasharray="12,10" opacity="0.35" />
 
         <g transform={`translate(${state.x}, ${state.y})`}>
           <RealCar brakeLights={state.brake} scale={0.8} />
@@ -573,10 +586,10 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <GrassBackground />
         
         {/* Environment */}
-        <Building x={20} y={20} width={60} height={40} type="store" />
-        <Building x={320} y={20} width={60} height={40} type="house" />
-        <Building x={20} y={190} width={60} height={40} type="office" />
-        <Building x={320} y={190} width={60} height={40} type="apartment" />
+        <Building x={6} y={6} width={88} height={60} type="store" />
+        <Building x={306} y={6} width={88} height={60} type="house" />
+        <Building x={6} y={184} width={88} height={60} type="office" />
+        <Building x={306} y={184} width={88} height={60} type="apartment" />
         <Tree x={115} y={45} size={32} />
         <Tree x={300} y={215} size={30} />
 
@@ -590,8 +603,10 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         <rect x="0" y="100" width="130" height="50" fill="url(#roadTexture)" />
         <rect x="270" y="100" width="130" height="50" fill="url(#roadTexture)" />
         
-        {/* Center Island Details */}
-        <circle cx="200" cy="125" r="20" fill="none" stroke="#166534" strokeWidth="1" />
+        {/* Center Island: tree + edge lines */}
+        <Tree x={200} y={125} size={46} />
+        <circle cx="200" cy="125" r="92" fill="none" stroke="#fff" strokeWidth="2" opacity="0.4" />
+        <circle cx="200" cy="125" r="48" fill="none" stroke="#fff" strokeWidth="2" opacity="0.4" />
         
         {/* Yield Lines */}
         <line x1="175" y1="185" x2="225" y2="185" stroke="#fff" strokeWidth="3" strokeDasharray="4,4" />
@@ -659,7 +674,8 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
 
         {/* Main Highway */}
         <rect x="0" y="40" width="400" height="100" fill="url(#roadTexture)" />
-        <line x1="0" y1="90" x2="400" y2="90" stroke="#fff" strokeWidth="2" strokeDasharray="15,15" opacity="0.3" />
+        <line x1="0" y1="44" x2="400" y2="44" stroke="#fff" strokeWidth="2" opacity="0.5" />
+        <line x1="0" y1="90" x2="400" y2="90" stroke="#fff" strokeWidth="2" strokeDasharray="15,15" opacity="0.35" />
         
         {/* Acceleration Lane (Ramp) */}
         <path 
