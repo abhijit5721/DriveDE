@@ -30,22 +30,29 @@ export const Building: React.FC<{
   // stores, flat gravel roof for offices and apartment blocks
   const sprite = type === 'office' || type === 'apartment' ? '/topdown-office.png' : '/topdown-house.png';
   void theme;
+  const wall = Math.max(6, height * 0.14);
   return (
     <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
-      <image href={sprite} x="0" y="0" width={width} height={height} preserveAspectRatio="xMidYMid meet" />
+      {/* extruded south wall: fakes building height under the tilted camera */}
+      <rect x={width * 0.04} y={height - wall * 0.4} width={width * 0.92} height={wall} rx={2} fill="#111827" opacity="0.6" />
+      <rect x={width * 0.04} y={height - wall * 0.4} width={width * 0.92} height={wall * 0.45} fill="#374151" opacity="0.5" />
+      <image href={sprite} x="0" y={-wall * 0.5} width={width} height={height} preserveAspectRatio="xMidYMid meet" />
     </g>
   );
 };
 
 export const Tree: React.FC<{ x: number; y: number; size?: number }> = ({ x, y, size = 34 }) => (
-  <image
-    href="/topdown-tree.png"
-    x={x - size / 2}
-    y={y - size / 2}
-    width={size}
-    height={size}
-    filter="url(#buildingShadow)"
-  />
+  <g>
+    {/* offset ground shadow gives the crown height */}
+    <ellipse cx={x + size * 0.16} cy={y + size * 0.2} rx={size * 0.42} ry={size * 0.3} fill="black" opacity="0.28" />
+    <image
+      href="/topdown-tree.png"
+      x={x - size / 2}
+      y={y - size / 2 - size * 0.08}
+      width={size}
+      height={size}
+    />
+  </g>
 );
 
 export const GrassBackground: React.FC = () => (

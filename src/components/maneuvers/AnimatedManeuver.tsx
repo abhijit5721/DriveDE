@@ -194,6 +194,13 @@ const advanceParts = (pose: Pose, parts: MotionStep, p: number): Pose => {
 
 const smoothstep = (v: number) => v * v * (3 - 2 * v);
 
+// 2.5D camera: only the ground scene is tilted; HUD elements (steering wheel,
+// speedometer, popups) render in a separate untilted overlay.
+const TILT: React.CSSProperties = {
+  transform: 'perspective(1000px) rotateX(24deg) scale(1.22)',
+  transformOrigin: '50% 55%',
+};
+
 const chainPose = (start: Pose, steps: MotionStep[], step: number, easedP: number): Pose => {
   let pose = { ...start };
   for (let i = 0; i < step && i < steps.length; i++) pose = advanceParts(pose, steps[i], 1);
@@ -242,6 +249,7 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
         {step === 6 && <InstructionPopup text={t.maneuvers.interactive.simulator.counterSteer} />}
       </AnimatePresence>
       
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -283,6 +291,9 @@ const ParallelParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t 
             {step === 4 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
         </g>
+      </svg>
+      </div>
+      <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full pointer-events-none">
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -327,6 +338,7 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckRight} />}
       </AnimatePresence>
       
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -363,6 +375,9 @@ const ReverseParkingAnimation: React.FC<AnimationProps> = ({ step, progress, t }
             {step === 3 && <VisionCone side="right" opacity={0.6} />}
           </AnimatePresence>
         </g>
+      </svg>
+      </div>
+      <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full pointer-events-none">
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -411,6 +426,7 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {step === 3 && <InstructionPopup text={t.maneuvers.interactive.simulator.fullCheckAndSignalRight} />}
         {step === 5 && <InstructionPopup text={t.maneuvers.interactive.simulator.shoulderCheckLeft} />}
       </AnimatePresence>
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -440,6 +456,9 @@ const ThreePointTurnAnimation: React.FC<AnimationProps> = ({ step, progress, t }
             {step === 5 && <VisionCone side="left" opacity={0.6} />}
           </AnimatePresence>
         </g>
+      </svg>
+      </div>
+      <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full pointer-events-none">
         <SteeringWheelOverlay rotation={state.wheel} />
       </svg>
     </div>
@@ -479,6 +498,7 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
         {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.dangerEmergencyBrake} />}
         {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.checkBeforeDrive} />}
       </AnimatePresence>
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -500,6 +520,9 @@ const EmergencyBrakeAnimation: React.FC<AnimationProps> = ({ step, progress, t }
           {step === 4 && <VisionCone side="round" opacity={0.5} />}
         </g>
 
+      </svg>
+      </div>
+      <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full pointer-events-none">
         {/* Speedometer */}
         <g transform="translate(330, 200)">
           <circle r="40" fill="#1e293b" stroke="#334155" strokeWidth="2" />
@@ -582,6 +605,7 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
         {step === 1 && <InstructionPopup text={t.tracker.priorityCheck || t.maneuvers.interactive.simulator.checkSurroundings} />}
         {step === 4 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalRightAndShoulder} />}
       </AnimatePresence>
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -619,6 +643,7 @@ const RoundaboutAnimation: React.FC<AnimationProps> = ({ step, progress, t }) =>
           </AnimatePresence>
         </g>
       </svg>
+      </div>
     </div>
   );
 };
@@ -661,6 +686,7 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
         {step === 1 && <InstructionPopup text={t.maneuvers.interactive.simulator.signalLeftAndAccelerate} />}
         {step === 2 && <InstructionPopup text={t.maneuvers.interactive.simulator.mirrorAndShoulderLeft} />}
       </AnimatePresence>
+      <div className="w-full h-full" style={TILT}>
       <svg viewBox="0 0 400 250" className="w-full h-full">
         <GrassBackground />
         
@@ -704,6 +730,9 @@ const HighwayMergeAnimation: React.FC<AnimationProps> = ({ step, progress, t }) 
           {step === 2 && <VisionCone side="left" opacity={0.6} />}
         </g>
 
+      </svg>
+      </div>
+      <svg viewBox="0 0 400 250" className="absolute inset-0 w-full h-full pointer-events-none">
         {/* Speed Bar */}
         <g transform="translate(20, 20)">
           <rect width="100" height="10" rx="5" fill="#1e293b" opacity="0.2" />
