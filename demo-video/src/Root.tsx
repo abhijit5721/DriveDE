@@ -8,6 +8,7 @@ import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
 import { ShortAvatar, AVATAR_TOTAL_FRAMES } from './ShortAvatar.tsx';
 import { ShortExaminerEp1, EP1_TOTAL_FRAMES } from './ShortExaminerEp1.tsx';
 import { ShortExaminerEp1Answer, EP1ANS_TOTAL_FRAMES } from './ShortExaminerEp1Answer.tsx';
+import { RoundaboutExplainer, RB_TOTAL_FRAMES } from './RoundaboutExplainer.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
 
 export const Root: React.FC = () => (
@@ -97,5 +98,17 @@ export const Root: React.FC = () => (
       width={1080}
       height={1920}
     />
+    {(['de', 'en'] as const).map((lang) => (
+      <Composition
+        key={`rb-${lang}`}
+        id={`roundabout-${lang}`}
+        component={RoundaboutExplainer}
+        durationInFrames={RB_TOTAL_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ lang }}
+      />
+    ))}
   </>
 );
