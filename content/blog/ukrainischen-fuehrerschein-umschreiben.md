@@ -1,57 +1,71 @@
 ---
 title: Ukrainischen Führerschein umschreiben
-description: Für den vorübergehenden Schutzstatus gelten Sonderregeln, sonst sind beide Prüfungen Pflicht, aber ohne Pflichtstunden. Ablauf, Kosten, Ausnahmen.
+description: Seit dem 18. August 2026 steht die Ukraine auf der Anlage 11 FeV. Der ukrainische Führerschein wird ohne Theorie- und ohne praktische Prüfung umgeschrieben. Was sich geändert hat, für wen es gilt, Ablauf und Kosten.
 slug: ukrainischen-fuehrerschein-umschreiben
 lang: de
 date: 2026-08-24
-keywords: ukrainischen Führerschein umschreiben, ukrainischer Führerschein Deutschland, Umschreibung Ukraine, Führerschein Ukraine Deutschland
+updated: 2026-09-08
+keywords: ukrainischen Führerschein umschreiben, ukrainischer Führerschein Deutschland, Umschreibung Ukraine, Führerschein Ukraine Deutschland, Anlage 11 Ukraine
 country: UA
 flag: 🇺🇦
 variants: convert-ukrainian-driving-licence-germany
 ---
 
-Nach den normalen Regeln steht die Ukraine **nicht** auf Deutschlands Anlage-11-Liste: Einen ukrainischen Führerschein umzuschreiben heißt eigentlich, die **deutsche Theorieprüfung und die praktische Prüfung** zu bestehen. Aber für ukrainische Führerscheininhaber gibt es einen wichtigen Sonderfall, lies deshalb zuerst den nächsten Abschnitt.
+**Update vom 18. August 2026:** Die Ukraine wurde in die **Anlage 11 FeV** aufgenommen. Ein ukrainischer Führerschein der Klassen A1, A, B, BE, C1, C1E, C, CE, D1, D1E, D und DE wird jetzt **ohne Theorieprüfung und ohne praktische Prüfung** umgeschrieben. Alles unten bezieht sich auf die neue Regel. Wenn ältere Ratgeber oder die Website deiner Führerscheinstelle noch von beiden Prüfungen sprechen: Das Recht hat sich geändert, die Website noch nicht.
+
+## Was sich geändert hat und wo es steht
+
+Die Anlage 11 zur Fahrerlaubnis-Verordnung ist die Staatenliste, deren Führerscheine Deutschland als gleichwertig anerkennt. Bis August 2026 fehlte die Ukraine darauf, also mussten Umschreiber die komplette deutsche Theorie- und Praxisprüfung ablegen. Mit der Änderung, die am 18. August 2026 in Kraft trat, stehen die Ukraine (und Montenegro) mit "nein" in beiden Prüfungsspalten in der Liste.
+
+Zwei Details aus dem Gesetzestext, die man kennen sollte:
+
+- Für die **Pkw-Klassen (B, BE) und die Motorradklassen (A1, A)** gibt es weder Prüfung noch zusätzliche medizinische Auflage.
+- Für die **Lkw- und Busklassen (C1, C1E, C, CE, D1, D1E, D, DE)** musst du weiterhin Eignung nach Anlage 5 und Sehvermögen nach Anlage 6 nachweisen, bevor der deutsche Führerschein ausgestellt wird. Das ist eine ärztliche Untersuchung und ein Sehtest, keine Fahrprüfung.
+
+Die aktuelle Tabelle kannst du selbst nachlesen: [gesetze-im-internet.de, Anlage 11 FeV](https://www.gesetze-im-internet.de/fev_2010/anlage_11.html).
 
 ## Wenn du unter vorübergehendem Schutz in Deutschland bist
 
-Seit 2022 erlauben EU-weite Regeln Menschen, die vor dem Krieg in der Ukraine geflohen sind und unter die Richtlinie zum vorübergehenden Schutz fallen, weiterhin mit ihrem **gültigen ukrainischen Führerschein zu fahren, ohne ihn umzuschreiben**, und das deutlich länger als die sonst üblichen 6 Monate. Diese Regeln hängen an deinem Schutzstatus und wurden mehrfach verlängert. Trifft das auf dich zu: Frag bei der Führerscheinstelle nach, ob du überhaupt eine Umschreibung brauchst, bevor du irgendetwas bezahlst. Die Regeln können sich mit deinem Aufenthaltsstatus ändern, hol dir die Antwort schriftlich.
+Seit 2022 erlauben EU-weite Regeln Menschen, die vor dem Krieg in der Ukraine geflohen sind und unter die Richtlinie zum vorübergehenden Schutz fallen, weiterhin mit ihrem **gültigen ukrainischen Führerschein zu fahren, ohne ihn umzuschreiben**, und das deutlich länger als die sonst üblichen 6 Monate. Diese Regeln hängen an deinem Schutzstatus und wurden mehrfach verlängert.
+
+Mit der Anlage-11-Änderung ist die Umschreibung jetzt günstig und prüfungsfrei. Sie lohnt sich deshalb auch, wenn du noch nicht dazu gezwungen bist: Ein deutscher Führerschein hängt nicht an deinem Schutzstatus, und die wiederkehrende Frage, ob die ukrainische Karte noch anerkannt wird, erledigt sich. Hol dir die aktuelle Auskunft deiner Führerscheinstelle schriftlich, bevor du entscheidest.
 
 ## Der Standardweg (regulärer Aufenthalt)
 
-Lebst du mit einem regulären Aufenthaltstitel in Deutschland, gelten die normalen Regeln: Dein ukrainischer Führerschein ist **6 Monate nach der Anmeldung** gültig, und die Umschreibung erfordert beide Prüfungen. Der Ausgleich dafür: **keine Pflichtstunden**. Du überspringst die Pflicht-Sonderfahrten und zahlst nur für die Übung, die du brauchst.
+Lebst du mit einem regulären Aufenthaltstitel in Deutschland, ist dein ukrainischer Führerschein **6 Monate nach der Anmeldung** gültig. Beantrage die Umschreibung innerhalb dieser Frist. Es gibt keine Prüfung, also auch keine Fahrschule und keinen TÜV- oder DEKRA-Termin.
 
 ### Schritt für Schritt
 
-1. **Antrag bei der Führerscheinstelle**: Reisepass oder Personalausweis, Anmeldebestätigung, biometrisches Passfoto, dein ukrainischer Führerschein plus **beglaubigte Übersetzung** (ADAC oder vereidigter Übersetzer), ein **Sehtest** (ca. 7 Euro) und eine **Erste-Hilfe-Bescheinigung** (9 Einheiten, 40 bis 60 Euro).
-2. **Anmeldung bei einer Fahrschule**, um die Prüfungen über TÜV/DEKRA zu buchen. Sag klar, dass es eine Umschreibung ist, damit du eine Einstufungsfahrt bekommst statt eines Anfängerpakets.
-3. **Theorieprüfung**: 30 Fragen aus dem offiziellen Katalog. Die Prüfung gibt es unter anderem auf **Ukrainisch und Russisch**, Sprache ist also nicht das Hindernis, geübt werden müssen die szenariobasierten Fragen.
-4. **Praktische Prüfung**: rund 55 Minuten mit einem TÜV- oder DEKRA-Prüfer, auf Deutsch. Lerne die Standardkommandos vorher auswendig.
+1. **Termin bei der Führerscheinstelle** buchen für "ausländische Fahrerlaubnis umschreiben". In größeren Städten dauert es oft mehrere Wochen, also zuerst buchen und die Unterlagen währenddessen sammeln.
+2. **Mitbringen**: Reisepass oder Personalausweis, Anmeldebestätigung, biometrisches Passfoto, deinen ukrainischen Führerschein und eine **Übersetzung**, falls die Behörde sie verlangt (ADAC oder vereidigter Übersetzer). Manche Stellen wollen zusätzlich eine Erklärung, dass dein Führerschein in der Ukraine nicht entzogen ist. Frag bei der Terminbuchung nach.
+3. **Verwaltungsgebühr zahlen.** Das ist die normale Umschreibungsgebühr deiner Stadt, meist deutlich unter 100 Euro. Prüfungsgebühren fallen nicht an.
+4. **Ukrainischen Führerschein abgeben**, wenn du den deutschen abholst. Je nach Behörde wird er einbehalten oder an den Ausstellungsstaat zurückgeschickt.
+5. Bei **C- oder D-Klassen** zusätzlich die ärztlichen Bescheinigungen (Anlage 5 und 6) mitbringen.
 
 ## Typische Stolperstellen
 
-- **Rechts vor links** an unbeschilderten Kreuzungen wird ständig geprüft und ist der häufigste Grund, warum Umschreiber durchfallen.
-- **Lücken in der Dokumentation**: Fehlt auf deiner Führerscheinkarte das Ausstellungsdatum oder hast du gerade keinen Zugriff auf ukrainische Register, sag das der Führerscheinstelle früh, sie kennen diesen Fall und können dir sagen, welche Nachweise akzeptiert werden.
-- **Bewertung des Ablaufs**: Prüfer wollen bei jedem Spurwechsel und jeder Abbiegung sichtbare Spiegel- und Schulterblicke sehen.
+- **Veraltete Auskunft am Schalter.** Die Regel ist neu. Besteht ein Sachbearbeiter auf Prüfungen, verweise auf die Anlage 11 FeV in der Fassung vom 18. August 2026 und bitte darum, die aktuelle Tabelle zu prüfen. Nimm einen Ausdruck mit.
+- **Lücken in der Dokumentation**: Fehlt auf deiner Führerscheinkarte das Ausstellungsdatum oder hast du gerade keinen Zugriff auf ukrainische Register, sag das der Führerscheinstelle früh. Sie kennen diesen Fall und sagen dir, welche Nachweise akzeptiert werden.
+- **6-Monats-Frist verpasst.** Wer mit regulärem Aufenthalt länger als 6 Monate hier lebt und nie umgeschrieben hat, darf bis zur Ausstellung des deutschen Führerscheins nicht fahren. Die Umschreibung selbst bleibt trotzdem prüfungsfrei.
 
-## Realistisches Budget (Standardweg)
+## Realistisches Budget
 
 | Posten | Typische Kosten |
 |---|---|
-| Antrag, Übersetzung, Sehtest, Erste Hilfe | 120-180 € |
-| Theorieprüfungsgebühr + Material | 60-110 € |
-| Fahrschul-Verwaltungsgebühr | 100-250 € |
-| Fahrstunden (typischer Umschreiber: 5-15) | 350-1.400 € |
-| Praktische Prüfungsgebühr | 230-320 € |
-| Gesamt | **850-2.250 €** |
+| Gebühr Führerscheinstelle | ca. 40 bis 90 Euro, je nach Stadt |
+| Übersetzung, falls verlangt | 30 bis 80 Euro |
+| Biometrisches Passfoto | ca. 10 Euro |
+| Ärztliche Untersuchung und Sehtest (nur C- und D-Klassen) | 80 bis 150 Euro |
+| Gesamt für den Pkw-Führerschein | **deutlich unter 200 Euro** |
 
-## Erfahrung nutzen, Format respektieren
+Zum Vergleich: Der Prüfungsweg kostete bisher 850 bis 2.250 Euro. Bietet dir eine Fahrschule ein "Umschreibungspaket" für einen ukrainischen Pkw-Führerschein an, brauchst du es nicht.
 
-Die meisten ukrainischen Führerscheininhaber sind erfahrene Fahrer. Das stellt die deutsche Prüfung nicht in Frage, sie testet nur, ob du nach deutschem Ablauf fährst. Setz deine Vorbereitung genau dort an: Vorfahrtsregeln, Manöver auf Kommando und eine gleichbleibende Blickroutine.
+## Fahren in Deutschland nach dem Umtausch
 
-Wer den eigenen Fortschritt objektiv verfolgen will, findet in der [DriveDE App](https://www.drivede.app) ein Fehlerprotokoll und eine Prüfungsreife-Anzeige, kostenlos zum Ausprobieren.
+Der Papierkram ist jetzt einfach, die Straßen sind trotzdem anders. Rechts vor links an unbeschilderten Kreuzungen, der Schulterblick bei jedem Abbiegen und Spurwechsel und die 30er-Zonen erwischen viele erfahrene Fahrer aus dem Ausland. Nichts davon wird mehr geprüft, alles davon wird weiter kontrolliert und verursacht Unfälle. In der [DriveDE App](https://www.drivede.app) kannst du genau diese Routinen kostenlos üben.
 
 ## Weiterlesen
 
-- Was die Umschreibung insgesamt kostet: [Führerschein Kosten im Überblick](/blog/fuehrerschein-kosten/)
-- Falls eine Wiederholung nötig wird: [was nach einer durchgefallenen Prüfung passiert](/blog/fahrpruefung-durchgefallen/)
 - Alle Länder im Vergleich: [der komplette Umschreibungs-Überblick](/blog/fuehrerschein-umschreiben/)
+- Was ein deutscher Führerschein kostet, wenn Prüfungen nötig sind: [Führerschein Kosten im Überblick](/blog/fuehrerschein-kosten/)
+- Vorfahrt richtig verstehen: [praktische Prüfung, Ablauf und Tipps](/blog/praktische-pruefung-ablauf-tipps/)

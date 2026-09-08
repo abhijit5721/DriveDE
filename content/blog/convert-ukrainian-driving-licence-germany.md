@@ -1,55 +1,71 @@
 ---
 title: Convert a Ukrainian Licence to a German One
-description: The standard Umschreibung for Ukrainian licences requires both German exams, but temporary-protection rules create special cases. Steps and costs.
+description: Since 18 August 2026 Ukraine is on Anlage 11 FeV, so a Ukrainian licence converts to a German one with no theory and no practical exam. What changed, who it applies to, steps and costs.
 slug: convert-ukrainian-driving-licence-germany
 lang: en
 date: 2026-08-12
-keywords: convert Ukrainian driving licence Germany, Umschreibung Ukraine, ukrainischen Führerschein umschreiben, Ukrainian license Germany
+updated: 2026-09-08
+keywords: convert Ukrainian driving licence Germany, Umschreibung Ukraine, ukrainischen Führerschein umschreiben, Ukrainian license Germany, Anlage 11 Ukraine
 country: UA
 flag: 🇺🇦
 variants: ukrainischen-fuehrerschein-umschreiben
 ---
 
-Under the standard rules, Ukraine is **not** on Germany's Anlage 11 FeV list: converting a Ukrainian licence means passing the **German theory and practical exams**. But Ukrainian licence holders are a special case in one important way, so read the first section before anything else.
+**Update, 18 August 2026:** Ukraine has been added to Germany's **Anlage 11 FeV** list. A Ukrainian licence in classes A1, A, B, BE, C1, C1E, C, CE, D1, D1E, D and DE is now converted **without a theory exam and without a practical exam**. Everything below reflects the new rule. If you read older guides, or your local Führerscheinstelle website still says both exams are required, the law changed and the website has not caught up yet.
+
+## What changed and where it is written
+
+Anlage 11 to the Fahrerlaubnis-Verordnung is the list of countries whose licences Germany accepts as equivalent. Until August 2026, Ukraine was not on it, which meant the full German theory and practical exams for anyone converting. The amendment that took effect on 18 August 2026 added Ukraine (and Montenegro) with "no" in both exam columns.
+
+Two details from the law text worth knowing:
+
+- For the **car classes (B, BE) and motorcycle classes (A1, A)** there is no exam and no extra medical step.
+- For the **truck and bus classes (C1, C1E, C, CE, D1, D1E, D, DE)** you still have to prove fitness under Anlage 5 and eyesight under Anlage 6 before the German licence is issued. That is a medical and vision check, not a driving test.
+
+You can read the current table yourself at [gesetze-im-internet.de, Anlage 11 FeV](https://www.gesetze-im-internet.de/fev_2010/anlage_11.html).
 
 ## If you are in Germany under temporary protection
 
-Since 2022, EU-wide rules have allowed people who fled Ukraine under the temporary protection directive to keep driving on their **valid Ukrainian licence without exchanging it**, well beyond the usual 6-month limit. These rules are tied to your protection status and have been extended repeatedly. If this applies to you: before paying for anything, ask your Führerscheinstelle whether you currently need a conversion at all. Rules can change with your residence status, so get the answer in writing.
+Since 2022, EU-wide rules have allowed people who fled Ukraine under the temporary protection directive to keep driving on their **valid Ukrainian licence without exchanging it**, well beyond the usual 6-month limit. These rules are tied to your protection status and have been extended repeatedly.
+
+With the Anlage 11 change, converting is now cheap and exam-free, so it is worth doing even if you are not yet forced to: a German licence does not depend on your protection status, and it saves the recurring question of whether your Ukrainian card is still recognised. Ask your Führerscheinstelle for the current position in writing before you decide.
 
 ## The standard route (regular residence)
 
-If you live in Germany on a regular residence permit, the normal rules apply: your Ukrainian licence is valid for **6 months after Anmeldung**, and the conversion requires both exams. The compensating advantage: **no mandatory lesson hours**. You skip the compulsory Sonderfahrten and pay only for the practice you need.
+If you live in Germany on a regular residence permit, your Ukrainian licence is valid for **6 months after Anmeldung**. Apply for the conversion inside that window. There is no exam, so there is no driving school and no TÜV or DEKRA appointment involved.
 
 ### Step by step
 
-1. **Apply at the Führerscheinstelle**: passport or ID, Anmeldebestätigung, biometric photo, your Ukrainian licence plus a **certified translation** (ADAC or a sworn translator), an **eye test** (about €7) and a **first-aid certificate** (9 units, €40 to €60).
-2. **Register with a driving school** to book the exams via TÜV/DEKRA. Make clear it is an Umschreibung so you get an assessment drive instead of a beginner package.
-3. **Theory exam**: 30 official catalogue questions. The exam is offered in **Ukrainian and Russian** among other languages, so language is not the barrier; the scenario-style questions are what need practice.
-4. **Practical exam**: about 55 minutes with a TÜV/DEKRA examiner, in German. Memorize the standard commands beforehand.
+1. **Book an appointment at the Führerscheinstelle** for "ausländische Fahrerlaubnis umschreiben". In larger cities the wait is often several weeks, so book first and gather documents while you wait.
+2. **Bring**: passport or ID, Anmeldebestätigung, a biometric photo, your Ukrainian licence, and a **translation** if the office asks for one (ADAC or a sworn translator). Some offices also want a statement that your licence is not suspended in Ukraine; ask when you book.
+3. **Pay the administrative fee.** This is a normal Umschreibung fee set by your city, typically well under 100 euros. There are no exam fees.
+4. **Hand in your Ukrainian licence** when you collect the German one. Germany keeps or returns it depending on the office; in most cases it is returned to the issuing country.
+5. For **C or D classes**, bring the medical and eyesight certificates (Anlage 5 and 6) as well.
 
 ## Common friction points
 
-- **Right-before-left** at unmarked junctions is tested constantly and fails more converters than any maneuver.
+- **Outdated information at the counter.** The rule is new. If a caseworker insists on exams, refer to Anlage 11 FeV as amended on 18 August 2026 and ask them to check the current table. Take a printout.
 - **Documentation gaps**: if your licence card lacks a visible original issue date or you cannot access Ukrainian records right now, tell the office early; they deal with this case regularly and can advise on acceptable evidence.
-- **Procedure scoring**: examiners want visible mirror and shoulder checks on every lane change, every turn.
+- **Expired 6-month window.** If you have lived here longer than 6 months on regular residence and never converted, you may not drive until the German licence is issued. The conversion itself is still exam-free.
 
-## Realistic budget (standard route)
+## Realistic budget
 
 | Item | Typical cost |
 |---|---|
-| Application, translation, eye test, first aid | €120-180 |
-| Theory exam fee + materials | €60-110 |
-| Driving school admin fee | €100-250 |
-| Driving lessons (typical converter: 5-15) | €350-1,400 |
-| Practical exam fee | €230-320 |
-| Total | **€850-2,250** |
+| Führerscheinstelle fee | around 40 to 90 euros, city dependent |
+| Translation, if requested | 30 to 80 euros |
+| Biometric photo | about 10 euros |
+| Medical and eye check (C and D classes only) | 80 to 150 euros |
+| Total for a car licence | **well under 200 euros** |
 
-## Use your experience, respect the format
+Compare that with the 850 to 2,250 euros the exam route used to cost. If a driving school offers you a "conversion package" for a Ukrainian car licence, you do not need it.
 
-Most Ukrainian licence holders are experienced drivers. The German exam does not question that; it tests whether you drive by German procedure. Put your preparation effort exactly there: priority rules, maneuvers on command, and consistent checking routines.
+## Driving in Germany after the swap
+
+The paperwork is now easy; the roads are still different. Right-before-left at unmarked junctions, the shoulder check on every turn and lane change, and the 30 zones catch many experienced drivers from abroad. None of it is tested any more, but all of it is still policed and still causes accidents. Our free practice tools cover exactly these habits.
 
 ## Keep reading
 
-- What the whole process costs: [German driving licence cost guide](/blog/german-driving-licence-cost/)
-- If a retake becomes necessary: [what happens after a failed test](/blog/failed-german-driving-test/)
-- Compare against other countries: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)
+- The full country list and what each one needs: [the complete conversion overview](/blog/convert-foreign-licence-germany-overview/)
+- What a German licence costs if you do have to take the exams: [German driving licence cost guide](/blog/german-driving-licence-cost/)
+- Priority rules explained: [right before left in the German driving test](/blog/german-practical-driving-test-guide/)

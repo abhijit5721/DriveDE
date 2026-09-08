@@ -6,11 +6,13 @@ lang: en
 date: 2026-08-12
 keywords: Führerschein umschreiben, convert foreign licence Germany, Umschreibung countries, Anlage 11 FeV list, exchange driving licence Germany
 flag: 🌍
-updated: 2026-08-22
+updated: 2026-09-08
 variants: fuehrerschein-umschreiben
 ---
 
 Whether your foreign licence swaps for a German one with a form, or requires two exams, depends on exactly one thing: **which list your country is on**. German law (Anlage 11 FeV plus the EU directives) sorts every country into three tiers. Here is the complete picture.
+
+**Update, 18 August 2026:** an amendment to the Fahrerlaubnis-Verordnung moved **Ukraine and Montenegro** into the exam-free tier and widened Israel's entry to classes A1, A2, A and B. It also changed §28 FeV so that an **EU licence that was itself exchanged from a non-EU licence** (code 70 on the back) is now recognised in Germany, which used to be refused for countries outside Anlage 11. Many Führerscheinstelle websites still show the old rules.
 
 ## Tier 1: EU and EEA, nothing to convert
 
@@ -22,19 +24,19 @@ Austria, Belgium, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, F
 
 These countries have proven equivalent licensing standards, so Germany exchanges their licences **without theory or practical exams**. It is an administrative process: application, translation, fees, done. Budget roughly €75 to €135 and a few weeks of processing.
 
-Andorra, Australia, Botswana, Canada, Israel, **Japan**, South Korea, Monaco, Namibia, New Zealand, San Marino, Singapore, Switzerland, Taiwan, **United States** (all 50 states and D.C.), South Africa, Zambia, Zimbabwe.
+Andorra, Australia, Botswana, Canada, Israel, **Japan**, South Korea, Monaco, **Montenegro** (since 18 August 2026), Namibia, New Zealand, San Marino, Singapore, Switzerland, Taiwan, **Ukraine** (since 18 August 2026), **United States** (all 50 states and D.C.), South Africa, Zambia, Zimbabwe.
 
-Detailed walkthroughs: [US licence guide](/blog/convert-us-drivers-license-germany/) · [Japan licence guide](/blog/convert-japanese-driving-licence-germany/)
+Detailed walkthroughs: [US licence guide](/blog/convert-us-drivers-license-germany/) · [Japan licence guide](/blog/convert-japanese-driving-licence-germany/) · [Ukraine licence guide](/blog/convert-ukrainian-driving-licence-germany/)
 
 Note: for some countries the equivalence only covers certain licence classes, and a few Anlage 11 entries historically required one of the two exams for specific cases. Your Führerscheinstelle applies the current table, so always confirm your specific case there.
 
 ## Tier 3: everyone else, both exams, but no mandatory hours
 
-All other countries (58 in our app's database, including India, Turkey, Ukraine, the UK since Brexit, Brazil, China, Pakistan, Vietnam, Egypt, Nigeria and more) require passing the **German theory exam and practical exam**.
+All other countries (including India, Turkey, the UK since Brexit, Brazil, China, Pakistan, Vietnam, Egypt, Nigeria and more) require passing the **German theory exam and practical exam**.
 
 The crucial advantage over a first-time learner: **no mandatory lesson hours**. No 12 Sonderfahrten, no minimum practice lessons. A prepared converter often passes with 5 to 15 paid lessons instead of the 40+ hours a beginner buys. That is the difference between roughly €900 and €4,000.
 
-Country guides: [India](/blog/convert-indian-driving-licence-germany/) · [Turkey](/blog/convert-turkish-driving-licence-germany/) · [UK](/blog/convert-uk-driving-licence-germany/) · [Ukraine](/blog/convert-ukrainian-driving-licence-germany/) · [Brazil](/blog/convert-brazilian-driving-licence-germany/) · [China](/blog/convert-chinese-driving-licence-germany/) · [UAE](/blog/convert-uae-driving-licence-germany/)
+Country guides: [India](/blog/convert-indian-driving-licence-germany/) · [Turkey](/blog/convert-turkish-driving-licence-germany/) · [UK](/blog/convert-uk-driving-licence-germany/) · [Brazil](/blog/convert-brazilian-driving-licence-germany/) · [China](/blog/convert-chinese-driving-licence-germany/) · [UAE](/blog/convert-uae-driving-licence-germany/)
 
 ## What every conversion has in common
 
