@@ -4,6 +4,7 @@ description: Führerschein umschreiben in Deutschland: die 6-Monats-Frist, welch
 slug: fuehrerschein-umschreiben
 lang: de
 date: 2026-08-22
+updated: 2026-09-08
 keywords: Führerschein umschreiben, Führerschein umschreiben Kosten, Führerschein umschreiben Fristen, Anlage 11, Führerschein umschreiben Drittstaaten, ausländischen Führerschein umschreiben
 flag: 🌍
 variants: convert-foreign-licence-germany-overview
@@ -23,7 +24,9 @@ Führerscheine aus den 29 EU/EWR-Staaten gelten in Deutschland unverändert weit
 
 Diese Länder haben nachgewiesen gleichwertige Ausbildungsstandards. Der Tausch ist ein reiner Verwaltungsakt: Antrag, Übersetzung, Gebühren, fertig. Budget etwa **75 bis 135 Euro** plus einige Wochen Bearbeitungszeit.
 
-Dazu gehören unter anderem: Australien, Israel, **Japan**, Kanada, Monaco, Namibia, Neuseeland, San Marino, Schweiz, Singapur, Südafrika, Südkorea, Taiwan und die **USA** (alle 50 Bundesstaaten und D.C.).
+Dazu gehören unter anderem: Australien, Israel, **Japan**, Kanada, Monaco, **Montenegro** (seit 18. August 2026), Namibia, Neuseeland, San Marino, Schweiz, Singapur, Südafrika, Südkorea, Taiwan, die **Ukraine** (seit 18. August 2026) und die **USA** (alle 50 Bundesstaaten und D.C.).
+
+**Update vom 18. August 2026:** Eine Änderung der Fahrerlaubnis-Verordnung hat die **Ukraine und Montenegro** in die prüfungsfreie Gruppe aufgenommen und den Eintrag für Israel auf die Klassen A1, A2, A und B erweitert. Außerdem wurde §28 FeV geändert: Ein **EU-Führerschein, der selbst aus einem Drittstaaten-Führerschein umgetauscht wurde** (Code 70 auf der Rückseite), wird jetzt in Deutschland anerkannt. Das war für Staaten außerhalb der Anlage 11 bisher ausgeschlossen. Viele Behörden-Websites zeigen noch den alten Stand.
 
 Wichtig: Bei einigen Ländern gilt die Gleichwertigkeit nur für bestimmte Klassen oder mit Einschränkungen. Die Führerscheinstelle wendet die aktuelle Tabelle an, im Zweifel dort nachfragen.
 
@@ -54,7 +57,7 @@ Die Theorieprüfung gibt es übrigens in **12 Sprachen**, unter anderem Englisch
 
 ## Länder-Guides zum Weiterlesen
 
-Detaillierte Schritt-für-Schritt-Guides: [Indien](/blog/indischen-fuehrerschein-umschreiben/) · [USA](/blog/amerikanischen-fuehrerschein-umschreiben/) · [Türkei](/blog/tuerkischen-fuehrerschein-umschreiben/) · [Großbritannien](/blog/britischen-fuehrerschein-umschreiben/) · [Ukraine](/blog/ukrainischen-fuehrerschein-umschreiben/) · [Brasilien](/blog/brasilianischen-fuehrerschein-umschreiben/) · [China](/blog/chinesischen-fuehrerschein-umschreiben/) · [Japan](/blog/japanischen-fuehrerschein-umschreiben/) · [VAE](/blog/vae-fuehrerschein-umschreiben/)
+Detaillierte Schritt-für-Schritt-Guides: [Indien](/blog/indischen-fuehrerschein-umschreiben/) · [USA](/blog/amerikanischen-fuehrerschein-umschreiben/) · [Türkei](/blog/tuerkischen-fuehrerschein-umschreiben/) · [Großbritannien](/blog/britischen-fuehrerschein-umschreiben/) · [Ukraine (seit 18.8.2026 prüfungsfrei)](/blog/ukrainischen-fuehrerschein-umschreiben/) · [Brasilien](/blog/brasilianischen-fuehrerschein-umschreiben/) · [China](/blog/chinesischen-fuehrerschein-umschreiben/) · [Japan](/blog/japanischen-fuehrerschein-umschreiben/) · [VAE](/blog/vae-fuehrerschein-umschreiben/)
 
 ## Das ehrliche Fazit
 

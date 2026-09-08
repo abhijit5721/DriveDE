@@ -9,6 +9,7 @@ import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { analyticsService } from './services/AnalyticsService';
+import { Analytics } from '@vercel/analytics/react';
 
 // Initialize Sentry as early as possible to capture all errors
 Sentry.init({
@@ -71,6 +72,9 @@ if (typeof window !== 'undefined' && typeof Node !== 'undefined' && Node.prototy
 const Root = () => (
   <ErrorBoundary>
     <App />
+    {/* Cookie-free page counter so we can see traffic without waiting for
+        the consent banner. Consent-gated GA4/PostHog stay in AnalyticsService. */}
+    <Analytics />
   </ErrorBoundary>
 );
 
