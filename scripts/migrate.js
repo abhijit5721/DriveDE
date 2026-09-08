@@ -67,6 +67,16 @@ async function migrate() {
     console.log('🏁 Migrations complete!');
   } catch (error) {
     console.error('❌ Migration FAILED:', error.message);
+    // Preview builds run against the staging database. When that database is
+    // unreachable (paused project, stale pooler host, bad credentials) the
+    // preview should still deploy so UI changes can be reviewed; only a real
+    // SQL failure should block. Production keeps failing hard either way.
+    const unreachable = /ENOTFOUND|ECONNREFUSED|ETIMEDOUT|tenant|password authentication|Connection terminated|getaddrinfo/i.test(error.message || '');
+    if (process.env.VERCEL_ENV === 'preview' && unreachable) {
+      console.warn('⚠️  Preview build: database unreachable, skipping migrations so the preview can deploy. Fix the Preview DATABASE_URL in Vercel.');
+      process.exitCode = 0;
+      return;
+    }
     process.exit(1); // Fail the build
   } finally {
     await sql.end();
