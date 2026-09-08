@@ -72,12 +72,14 @@ function Chip({ children, big, color }: { children: React.ReactNode; big?: boole
   );
 }
 
-function FadeIn({ from, children, y = 24 }: { from: number; children: React.ReactNode; y?: number }) {
+/** Fades in over the first 8 frames OF ITS PARENT SEQUENCE. Inside a
+ *  <Sequence>, useCurrentFrame() is already sequence-relative, so this must
+ *  interpolate from 0 - comparing against the absolute start frame kept every
+ *  caption after the first pinned at opacity 0. */
+function FadeIn({ children, y = 24 }: { children: React.ReactNode; y?: number }) {
   const frame = useCurrentFrame();
-  const t = interpolate(frame - from, [0, 8], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  return (
-    <div style={{ opacity: t, transform: `translateY(${(1 - t) * y}px)` }}>{children}</div>
-  );
+  const t = interpolate(frame, [0, 8], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  return <div style={{ opacity: t, transform: `translateY(${(1 - t) * y}px)` }}>{children}</div>;
 }
 
 export const ShortCockpit: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) => {
@@ -105,7 +107,7 @@ export const ShortCockpit: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) => {
       {/* captions */}
       <Sequence from={4} durationInFrames={72}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 130 }}>
-          <FadeIn from={4}>
+          <FadeIn>
             <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
               <Chip>{c.hook1}</Chip>
               <Chip big color="#7dd3fc">{c.hook2} 🚗</Chip>
@@ -116,7 +118,7 @@ export const ShortCockpit: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) => {
 
       <Sequence from={80} durationInFrames={48}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 150 }}>
-          <FadeIn from={80}><Chip>{c.attempt1}</Chip></FadeIn>
+          <FadeIn><Chip>{c.attempt1}</Chip></FadeIn>
         </AbsoluteFill>
       </Sequence>
 
@@ -130,19 +132,19 @@ export const ShortCockpit: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) => {
 
       <Sequence from={200} durationInFrames={70}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 150 }}>
-          <FadeIn from={200}><Chip>{c.attempt2}</Chip></FadeIn>
+          <FadeIn><Chip>{c.attempt2}</Chip></FadeIn>
         </AbsoluteFill>
       </Sequence>
 
       <Sequence from={330} durationInFrames={70}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 150 }}>
-          <FadeIn from={330}><Chip big color="#6ee7b7">{c.go} 🚗💨</Chip></FadeIn>
+          <FadeIn><Chip big color="#6ee7b7">{c.go} 🚗💨</Chip></FadeIn>
         </AbsoluteFill>
       </Sequence>
 
       <Sequence from={432} durationInFrames={56}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 150 }}>
-          <FadeIn from={432}><Chip>{c.shift} ⬆️</Chip></FadeIn>
+          <FadeIn><Chip>{c.shift} ⬆️</Chip></FadeIn>
         </AbsoluteFill>
       </Sequence>
 

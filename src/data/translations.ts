@@ -700,7 +700,7 @@ export const TRANSLATIONS = {
       items: {
         'maneuver-1': { title: 'Längsparken (Parallel)' },
         'maneuver-2': { title: 'Querparken (Rückwärts)' },
-        'maneuver-3': { title: 'Wenden in 3 Zügen' },
+        'maneuver-3': { title: 'Umkehren & Wenden' },
         'maneuver-4': { title: 'Gefahrenbremsung' }
       },
       animatedGuides: 'Animierte Anleitungen',
@@ -1282,8 +1282,8 @@ export const TRANSLATIONS = {
                 ]
               },
               'maneuver-3': {
-                title: 'Wenden (Drei-Punkt-Wende)',
-                description: 'Wenden in einer engen Straße',
+                title: 'Umkehren & Wenden',
+                description: 'Die richtige Wende-Art wählen und sicher ausführen',
                 tips: [
                   { id: 'turn-tip1', title: 'Langsam rollen, schnell lenken', content: 'Fahrzeug im Stand oder sehr langsam rollen lassen und dabei zügig lenken.', type: 'info' }
                 ]
@@ -1629,11 +1629,11 @@ export const TRANSLATIONS = {
             ],
             threePointTurnSteps: [
               { title: 'Verkehr beobachten', description: 'Rundum-Blick! Ist die Straße frei in beide Richtungen? Kein Wendeverbote?' },
-              { title: 'Blinker links', description: 'Links blinken und langsam anfahren. Voll nach links einschlagen.' },
+              { title: 'Blinker links', description: 'Links blinken, Spiegel- und Schulterblick links, langsam anfahren. Voll nach links einschlagen.' },
               { title: 'Vor dem Bordstein stoppen', description: 'Kurz vor dem gegenüberliegenden Bordstein anhalten.' },
-              { title: 'Schulterblick & Rückwärts', description: 'Schulterblick! Voll nach rechts einschlagen und rückwärts fahren.' },
+              { title: 'Schulterblick & Rückwärts', description: 'Rückwärtsgang einlegen, Blinker RECHTS, Rundum-Blick! Voll nach rechts einschlagen und rückwärts fahren.' },
               { title: 'Erneut stoppen', description: 'Kurz vor dem Bordstein hinter Ihnen anhalten.' },
-              { title: 'Vorwärts ausfahren', description: 'Nach links einschlagen und in die neue Fahrtrichtung ausfahren.' }
+              { title: 'Vorwärts ausfahren', description: 'Ersten Gang einlegen, Blinker links, Schulterblick. Nach links einschlagen und in die neue Fahrtrichtung ausfahren.' }
             ],
             emergencyBrakingStepsManual: [
               { title: 'Geschwindigkeit: ca. 30 km/h', description: 'Die Gefahrenbremsung wird aus ca. 30 km/h durchgeführt. Der Fahrlehrer gibt das Kommando.' },
@@ -1658,6 +1658,15 @@ export const TRANSLATIONS = {
               { title: 'Maximal 2x korrigieren', content: 'Bei der Prüfung sind 2 Korrekturen erlaubt. Beim Korrigieren: Blinken nicht vergessen!' },
               { title: 'Abstand zum Bordstein', content: 'Beim Längsparken: Max. 30cm zum Bordstein (etwa DIN A4 Breite). Näher = besser!' },
               { title: 'Verkehr beachten', content: 'Andere Verkehrsteilnehmer haben Vorrang. Blickkontakt aufnehmen und ggf. vorbeiwinken.' }
+            ],
+            wendenGuidedPoints: [
+              { title: 'Die Wahl der Wende-Art wird mitgeprüft', content: 'Der Prüfer sagt meist nur: "Bitte wenden Sie bei der nächsten Gelegenheit." Welche Methode du wählst, ist Teil der Aufgabe: Nimm die sicherste, die die Situation erlaubt.' },
+              { title: '1. Wahl: Wenden in einem Zug', content: 'Nur wenn die Straße breit genug ist und du freie Sicht in beide Richtungen hast: Blinker links, Spiegel- und Schulterblick, dann in einem Bogen wenden. Wer die Breite falsch einschätzt, muss improvisieren, im Zweifel eine andere Methode wählen.' },
+              { title: '2. Wahl: Zurückstoßen in eine Einmündung', content: 'Der Favorit vieler Prüfer: Rückwärts in eine Einmündung oder Einfahrt auf der rechten Seite stoßen, dann vorwärts in die neue Richtung ausfahren. Vorteil: Du fährst immer vorwärts in den fließenden Verkehr ein.' },
+              { title: '3. Wahl: Wenden in drei Zügen', content: 'Für enge Straßen ohne Einmündungen, genau die Schrittfolge aus der Animation oben. Langsam rangieren, schnell lenken, vor jedem Richtungswechsel Rundum-Blick.' },
+              { title: 'Vermeide: rückwärts in den Verkehr', content: 'Vorwärts in eine Einfahrt und rückwärts auf die Straße hinaus ist die schwächste Variante, du stößt rückwärts in den fließenden Verkehr. Nur wählen, wenn nichts anderes geht, und dann mit Einweiser-Niveau an Beobachtung.' },
+              { title: 'Wo Wenden verboten ist', content: 'Niemals wenden: auf Autobahn und Kraftfahrstraße (lebensgefährlich!), in Einbahnstraßen, in Tunneln, auf Bahnübergängen, bei Zeichen 272 (Wendeverbot) und überall, wo die Sicht nicht ausreicht.' },
+              { title: 'Die Alternative: Block umfahren', content: 'Wenn Wenden verboten oder unübersichtlich ist: einfach den Block umfahren (dreimal abbiegen). Sag dem Prüfer ruhig an, was du vorhast, souveräne Planung gibt Pluspunkte.' }
             ],
             leftTurnGuidedPoints: [
               { title: 'Frühzeitig einordnen', content: 'Rechtzeitig links einordnen, Geschwindigkeit reduzieren und den rückwärtigen Verkehr im Innen- und Außenspiegel prüfen.' },
@@ -3035,7 +3044,7 @@ export const TRANSLATIONS = {
       items: {
         'maneuver-1': { title: 'Parallel Parking' },
         'maneuver-2': { title: 'Reverse Parking' },
-        'maneuver-3': { title: 'Three-Point Turn' },
+        'maneuver-3': { title: 'Turning Around (U-Turns)' },
         'maneuver-4': { title: 'Emergency Braking' }
       },
       animatedGuides: 'Animated Guides',
@@ -3619,8 +3628,8 @@ export const TRANSLATIONS = {
                 ]
               },
               'maneuver-3': {
-                title: 'Three-Point Turn',
-                description: 'Turning in a narrow street',
+                title: 'Turning Around (U-Turns)',
+                description: 'Choose the right turning method and execute it safely',
                 tips: [
                   { id: 'turn-tip1', title: 'Slow Roll, Fast Steer', content: 'Let the vehicle roll very slowly or stay stationary while steering quickly.', type: 'info' }
                 ]
@@ -3968,11 +3977,11 @@ export const TRANSLATIONS = {
             ],
             threePointTurnSteps: [
               { title: 'Observe Traffic', description: 'Look around! Is the road clear in both directions? No turning restrictions?' },
-              { title: 'Signal Left', description: 'Signal left and slowly move forward. Steer fully left.' },
+              { title: 'Signal Left', description: 'Signal left, mirror and shoulder check left, slowly move forward. Steer fully left.' },
               { title: 'Stop Before Curb', description: 'Stop just before the opposite curb.' },
-              { title: 'Shoulder Check & Reverse', description: 'Shoulder check! Steer fully right and reverse.' },
+              { title: 'Shoulder Check & Reverse', description: 'Reverse gear, signal RIGHT, all-round check! Steer fully right and reverse.' },
               { title: 'Stop Again', description: 'Stop just before the curb behind you.' },
-              { title: 'Drive Forward', description: 'Steer left and drive forward in the new direction.' }
+              { title: 'Drive Forward', description: 'First gear, signal left, shoulder check. Steer left and drive forward in the new direction.' }
             ],
             emergencyBrakingStepsManual: [
               { title: 'Speed: approx. 30 km/h', description: 'Emergency braking is performed from approx. 30 km/h. The instructor gives the command.' },
@@ -3997,6 +4006,15 @@ export const TRANSLATIONS = {
               { title: 'Max 2 Corrections', content: 'In the exam, 2 corrections are allowed. When correcting: Don\'t forget to signal!' },
               { title: 'Distance to Curb', content: 'Parallel parking: Max. 30cm to curb (about A4 paper width). Closer = better!' },
               { title: 'Watch Traffic', content: 'Other road users have priority. Make eye contact and wave them through if needed.' }
+            ],
+            wendenGuidedPoints: [
+              { title: 'Your choice of method is part of the test', content: 'The examiner usually just says: "Please turn around at the next opportunity." Which method you pick is part of the task: choose the safest one the situation allows.' },
+              { title: '1st choice: U-turn in one move', content: 'Only if the road is wide enough and you can see clearly in both directions: signal left, mirror and shoulder check, then turn in one continuous arc. If you misjudge the width you are forced to improvise, when in doubt pick another method.' },
+              { title: '2nd choice: reverse into a side street', content: 'Many examiners’ favorite: reverse into a junction or driveway on the RIGHT, then drive out forward in the new direction. The advantage: you always enter flowing traffic driving forward.' },
+              { title: '3rd choice: three-point turn', content: 'For narrow roads without junctions, exactly the step sequence from the animation above. Maneuver slowly, steer quickly, all-round check before every change of direction.' },
+              { title: 'Avoid: reversing into traffic', content: 'Driving forward into a driveway and reversing out onto the road is the weakest option, you back into flowing traffic. Only choose it if nothing else works, and then with maximum observation.' },
+              { title: 'Where turning around is forbidden', content: 'Never turn around: on the Autobahn or Kraftfahrstraße (life-threatening!), in one-way streets, in tunnels, on level crossings, at sign 272 (no U-turn) and anywhere without sufficient visibility.' },
+              { title: 'The alternative: drive around the block', content: 'If turning is forbidden or the situation is unclear: simply drive around the block (three turns). Feel free to tell the examiner your plan, confident planning earns points.' }
             ],
             leftTurnGuidedPoints: [
               { title: 'Position early', content: 'Move into position for a left turn early, reduce speed, and check traffic behind you in the interior and side mirrors.' },

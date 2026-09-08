@@ -26,31 +26,34 @@ export const Building: React.FC<{
 
   const theme = getTheme();
 
+  // photorealistic aerial roof sprites; pitched house roof for homes and
+  // stores, flat gravel roof for offices and apartment blocks
+  const sprite = type === 'office' || type === 'apartment' ? '/topdown-office.png' : '/topdown-house.png';
+  void theme;
+  const wall = Math.max(6, height * 0.14);
   return (
     <g transform={`translate(${x}, ${y})`} filter="url(#buildingShadow)">
-      {/* Base */}
-      <rect width={width} height={height} fill={theme.base} rx="4" />
-      
-      {/* Roof/Top with depth */}
-      <rect width={width} height={height * 0.15} fill={theme.roof} rx="2" />
-      
-      {/* Window Grid */}
-      <g opacity="0.8">
-        {[0.2, 0.5, 0.8].map(py => (
-          py > 0.2 && (
-            <g key={py}>
-              <rect x={width * 0.2} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
-              <rect x={width * 0.6} y={height * py} width={width * 0.2} height={height * 0.15} fill={theme.windows} rx="1" />
-            </g>
-          )
-        ))}
-      </g>
-
-      {/* Subtle details */}
-      <rect x={width * 0.45} y={height * 0.8} width={width * 0.1} height={height * 0.2} fill={theme.roof} opacity="0.3" />
+      {/* extruded south wall: fakes building height under the tilted camera */}
+      <rect x={width * 0.04} y={height - wall * 0.4} width={width * 0.92} height={wall} rx={2} fill="#111827" opacity="0.6" />
+      <rect x={width * 0.04} y={height - wall * 0.4} width={width * 0.92} height={wall * 0.45} fill="#374151" opacity="0.5" />
+      <image href={sprite} x="0" y={-wall * 0.5} width={width} height={height} preserveAspectRatio="xMidYMid meet" />
     </g>
   );
 };
+
+export const Tree: React.FC<{ x: number; y: number; size?: number }> = ({ x, y, size = 34 }) => (
+  <g>
+    {/* offset ground shadow gives the crown height */}
+    <ellipse cx={x + size * 0.16} cy={y + size * 0.2} rx={size * 0.42} ry={size * 0.3} fill="black" opacity="0.28" />
+    <image
+      href="/topdown-tree.png"
+      x={x - size / 2}
+      y={y - size / 2 - size * 0.08}
+      width={size}
+      height={size}
+    />
+  </g>
+);
 
 export const GrassBackground: React.FC = () => (
   <rect width="100%" height="100%" fill="url(#grassPattern)" />
@@ -86,14 +89,12 @@ export const GlobalDefinitions = () => (
         </feMerge>
       </filter>
 
-      <pattern id="grassPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect width="40" height="40" fill="#15803d" />
-        <path d="M 10 10 L 12 5 M 20 30 L 22 25 M 35 15 L 37 10" stroke="#166534" strokeWidth="1" fill="none" />
+      <pattern id="grassPattern" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+        <image href="/tex-grass.jpg" x="0" y="0" width="120" height="120" preserveAspectRatio="none" />
       </pattern>
 
-      <pattern id="roadTexture" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-        <rect width="100" height="100" fill="#334155" />
-        <rect width="100" height="100" fill="url(#noise)" opacity="0.05" />
+      <pattern id="roadTexture" x="0" y="0" width="90" height="90" patternUnits="userSpaceOnUse">
+        <image href="/tex-asphalt.jpg" x="0" y="0" width="90" height="90" preserveAspectRatio="none" />
       </pattern>
 
       <filter id="buildingShadow">
@@ -102,6 +103,60 @@ export const GlobalDefinitions = () => (
     </defs>
   </svg>
 );
+
+/** Photorealistic top-down car sprite (public/topdown-car*.png, nose pointing
+ *  +x like TopDownCar) with the same indicator / brake / reverse overlays. */
+export const RealCar: React.FC<{
+  variant?: 'blue' | 'gray' | 'slate' | 'red' | 'green' | 'sand' | 'bordeaux' | 'navy';
+  indicator?: 'left' | 'right' | 'hazard' | 'none';
+  brakeLights?: boolean;
+  reverseLights?: boolean;
+  scale?: number;
+}> = ({ variant = 'blue', indicator = 'none', brakeLights = false, reverseLights = false, scale = 1 }) => {
+  const href = variant === 'blue' ? '/topdown-car.png' : `/topdown-car-${variant}.png`;
+  const leftOn = indicator === 'left' || indicator === 'hazard';
+  const rightOn = indicator === 'right' || indicator === 'hazard';
+  return (
+    <g transform={`scale(${scale})`}>
+      <rect x="-36" y="-17" width="72" height="36" rx="10" fill="black" opacity="0.18" transform="translate(2, 3)" />
+      <image href={href} x={-38} y={-20} width={76} height={40} preserveAspectRatio="xMidYMid meet" />
+      {brakeLights && (
+        <g>
+          <rect x="-37.5" y="-14" width="3.5" height="8" rx="1.5" fill="#ef4444" />
+          <rect x="-37.5" y="6" width="3.5" height="8" rx="1.5" fill="#ef4444" />
+          <circle cx="-36" cy="-10" r="7" fill="#ef4444" opacity="0.25" />
+          <circle cx="-36" cy="10" r="7" fill="#ef4444" opacity="0.25" />
+        </g>
+      )}
+      {reverseLights && (
+        <g>
+          <rect x="-37" y="-6" width="3.5" height="4.5" rx="1" fill="white" />
+          <rect x="-37" y="1.5" width="3.5" height="4.5" rx="1" fill="white" />
+        </g>
+      )}
+      <AnimatePresence>
+        {leftOn && (
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="29" cy="-15" r="3.5" fill="#fbbf24" />
+            <circle cx="-33" cy="-15" r="3.5" fill="#fbbf24" />
+            <circle cx="29" cy="-15" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-33" cy="-15" r="8" fill="url(#indicatorGlow)" />
+          </motion.g>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {rightOn && (
+          <motion.g animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}>
+            <circle cx="29" cy="15" r="3.5" fill="#fbbf24" />
+            <circle cx="-33" cy="15" r="3.5" fill="#fbbf24" />
+            <circle cx="29" cy="15" r="8" fill="url(#indicatorGlow)" />
+            <circle cx="-33" cy="15" r="8" fill="url(#indicatorGlow)" />
+          </motion.g>
+        )}
+      </AnimatePresence>
+    </g>
+  );
+};
 
 export const TopDownCar: React.FC<{
   color: string;

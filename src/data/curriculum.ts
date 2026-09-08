@@ -334,6 +334,15 @@ const emergencyBrakingStepsAutomatic: ManeuverStep[] = getSteps(
 
 
 
+const wendenGuidedPoints: GuidedPoint[] = (TRANSLATIONS.de.curriculumData.wendenGuidedPoints || []).map((item, index) => ({
+  id: `wenden-gp${index + 1}`,
+  titleDe: item.title,
+  titleEn: TRANSLATIONS.en.curriculumData.wendenGuidedPoints?.[index]?.title || item.title,
+  contentDe: item.content,
+  contentEn: TRANSLATIONS.en.curriculumData.wendenGuidedPoints?.[index]?.content || item.content,
+  emphasis: (['exam', 'look', 'safety', 'exam', 'safety', 'priority', 'exam'] as const)[index],
+}));
+
 const leftTurnGuidedPoints: GuidedPoint[] = (TRANSLATIONS.de.curriculumData.leftTurnGuidedPoints || []).map((item, index) => ({
   id: `left-turn-gp${index + 1}`,
   titleDe: item.title,
@@ -988,6 +997,7 @@ const maneuverLessons: Lesson[] = [
     completed: false,
     isPremium: true,
     steps: threePointTurnSteps,
+    guidedPoints: wendenGuidedPoints,
     quiz: maneuverQuiz,
   },
   {
