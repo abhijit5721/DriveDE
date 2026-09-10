@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import {
   Car, BadgeCheck, Zap, Shield,
   Menu, X, ArrowRight, Play, CheckCircle2, Cog,
@@ -24,6 +24,10 @@ import { PwaInstallHint } from '../common/PwaInstallHint';
 import { PhoneFrame, MonitorFrame } from '../common/DeviceFrames';
 import { LegalPage } from '../legal/LegalPage';
 import type { LegalPageType } from '../../types';
+import { trackFunnel } from '../../services/AnalyticsService';
+
+// Loaded on demand so the landing chunk does not carry the trainer until someone taps it.
+const PublicTrainer = lazy(() => import('./PublicTrainer').then((m) => ({ default: m.PublicTrainer })));
 
 export function Welcome() {
   const { 
@@ -34,6 +38,8 @@ export function Welcome() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [demoEnded, setDemoEnded] = useState(false);
+  // DRI-44: the right-before-left trainer, playable before any signup
+  const [showTrainer, setShowTrainer] = useState(false);
   const demoVideoRef = useRef<HTMLVideoElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
@@ -319,12 +325,9 @@ export function Welcome() {
       {/* Hero Section */}
       <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-6 pt-28 text-center pb-16">
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 max-w-4xl">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-600">
-            <Zap className="h-3.5 w-3.5 text-blue-600" />
-            {isDe ? '7 Tage Pro Testversion inklusive • Keine Kreditkarte nötig' : 'Includes 7-Day Free Pro Trial • No Credit Card Required'}
-          </div>
-
-          <h1 className="mt-8 text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl md:text-7xl leading-tight">
+          {/* The Pro-trial badge used to sit here; it put pricing into the first screen.
+              It now lives with the pricing section further down. */}
+          <h1 className="mt-6 text-[2.35rem] font-bold tracking-tight text-slate-900 sm:text-6xl md:text-7xl leading-[1.08]">
             {t.welcome.hero.titlePrefix}
             <span className="block mt-2 text-blue-600">
               {t.welcome.hero.titleHighlight}
@@ -335,23 +338,47 @@ export function Welcome() {
             {t.welcome.hero.subtitle}
           </p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <button 
-              onClick={() => handleStart()}
-              data-testid="welcome-start-btn"
-              className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
-            >
-              {isReturningUser ? t.common.backToDashboard : t.common.getStartedFree}
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </button>
-            <button 
-              onClick={() => setShowDemo(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-5 text-lg font-bold text-slate-900 transition hover:bg-slate-50 border border-slate-200 shadow-sm"
-            >
-              <Play className="h-5 w-5 text-blue-600" />
-              {t.common.watchDemo}
-            </button>
-          </div>
+          {isReturningUser ? (
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <button
+                onClick={() => handleStart()}
+                data-testid="welcome-start-btn"
+                className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+              >
+                {t.common.backToDashboard}
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* One primary action: try the trainer with no account (DRI-43/44). */}
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+                <button
+                  onClick={() => { trackFunnel('try_click', { trainer: 'vorfahrt' }); setShowTrainer(true); }}
+                  data-testid="welcome-try-btn"
+                  className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+                >
+                  {t.common.tryTrainer}
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+                <button
+                  onClick={() => setShowDemo(true)}
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-5 text-lg font-bold text-slate-900 transition hover:bg-slate-50 border border-slate-200 shadow-sm"
+                >
+                  <Play className="h-5 w-5 text-blue-600" />
+                  {t.common.watchDemo}
+                </button>
+              </div>
+              <p className="mt-4 text-sm font-semibold text-slate-500">{t.common.trainerTrust}</p>
+              <button
+                onClick={() => { trackFunnel('signup_started', { from: 'hero' }); handleStart(); }}
+                data-testid="welcome-start-btn"
+                className="mt-2 text-sm font-medium text-slate-500 underline-offset-4 transition hover:text-blue-600 hover:underline"
+              >
+                {t.common.createAccount}
+              </button>
+            </>
+          )}
 
           {/* Trust strip — only claims that are verifiably true */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-slate-500 text-sm font-medium">
@@ -1095,6 +1122,17 @@ export function Welcome() {
       )}
 
       <PwaInstallHint />
+
+      {/* Public trainer (DRI-44): playable without an account, signup prompt only after a round */}
+      {showTrainer && (
+        <Suspense fallback={<div className="fixed inset-0 z-[100] bg-slate-950/90" />}>
+          <PublicTrainer
+            language={language}
+            onClose={() => setShowTrainer(false)}
+            onSignup={() => { setShowTrainer(false); handleStart(); }}
+          />
+        </Suspense>
+      )}
 
       {/* Demo Modal */}
       {showDemo && (

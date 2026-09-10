@@ -4,11 +4,20 @@
  * 
  * AnalyticsService.ts
  * 
- * Handles conditional injection of tracking scripts (GA4, Meta Pixel, PostHog) 
+ * Handles conditional injection of tracking scripts (GA4, Meta Pixel, PostHog)
  * based on user's GDPR cookie consent preferences.
+ *
+ * Landing-page funnel events (DRI-46), sent cookie-free through Vercel Web
+ * Analytics and mirrored to PostHog once the visitor has consented:
+ *   try_click            visitor opened the public trainer from the hero
+ *   trainer_complete     visitor finished a round (props: trainer, round)
+ *   signup_prompt_shown  the "save your result" prompt appeared
+ *   signup_started       visitor tapped a signup CTA (props: from)
+ * Every event carries utm_source / utm_campaign from the landing URL.
  */
 
 import posthog from 'posthog-js';
+import { track } from '@vercel/analytics';
 import { useAppStore } from '../store/useAppStore';
 
 // Configuration from environment variables
@@ -120,6 +129,11 @@ class AnalyticsService {
     posthog.opt_out_capturing();
     posthog.reset();
     this.scriptsLoaded.posthog = false;
+  }
+
+  /** True once the visitor has consented and PostHog is initialised. */
+  public isPostHogLoaded(): boolean {
+    return this.scriptsLoaded.posthog;
   }
 
   /**
@@ -243,3 +257,22 @@ class AnalyticsService {
 }
 
 export const analyticsService = new AnalyticsService();
+
+export type FunnelEvent = 'try_click' | 'trainer_complete' | 'signup_prompt_shown' | 'signup_started';
+
+/**
+ * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,
+ * no personal data); PostHog only receives it when the visitor has opted in.
+ * Never throws: analytics must not be able to break the page.
+ */
+export function trackFunnel(event: FunnelEvent, props: Record<string, string | number | boolean> = {}) {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams(window.location.search);
+  const enriched = {
+    ...props,
+    utm_source: params.get('utm_source') ?? 'direct',
+    utm_campaign: params.get('utm_campaign') ?? '',
+  };
+  try { track(event, enriched); } catch { /* analytics must never break the page */ }
+  try { if (analyticsService.isPostHogLoaded()) posthog.capture(event, enriched); } catch { /* same */ }
+}
