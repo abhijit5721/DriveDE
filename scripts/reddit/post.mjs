@@ -87,7 +87,11 @@ if (fileIdx !== -1) {
 }
 const keys = argv;
 if (!keys.length) { console.error('give reply keys, e.g. A B F, or --file drafts.json 1 2'); process.exit(1); }
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
+// Two automation Chromes: 9222 = DriveDE account (u/abhi_in_germany), 9223 = founder's personal account.
+// Select with CDP_URL=http://127.0.0.1:9223 (or --personal).
+const personalIdx = keys.indexOf('--personal');
+if (personalIdx !== -1) { keys.splice(personalIdx, 1); process.env.CDP_URL = 'http://127.0.0.1:9223'; }
+const browser = await chromium.connectOverCDP(process.env.CDP_URL || 'http://127.0.0.1:9222', { timeout: 15000 });
 const ctx = browser.contexts()[0];
 const page = await ctx.newPage();
 for (const k of keys) {
@@ -137,12 +141,17 @@ for (const k of keys) {
     await page.waitForTimeout(6000);
     await page.screenshot({ path: `c:/Users/abhij/Downloads/DriveDE/demo-video/reddit-${k}-after.png`, timeout: 15000 }).catch(() => {});
     // Verify against the rendered comment tree after a reload, not the editor.
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(4000);
-    const posted = await page.evaluate((needle) => {
-      const tree = [...document.querySelectorAll('shreddit-comment')].map((c) => c.innerText || '').join('\n');
-      return tree.includes(needle);
-    }, r.text.slice(0, 50));
+    // The tree hydrates late on big threads, so poll a few times before
+    // declaring failure (a false "NOT POSTED" once caused a near-duplicate).
+    let posted = false;
+    for (let attempt = 0; attempt < 3 && !posted; attempt++) {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(5000 + attempt * 3000);
+      posted = await page.evaluate((needle) => {
+        const tree = [...document.querySelectorAll('shreddit-comment')].map((c) => c.innerText || '').join('\n');
+        return tree.includes(needle);
+      }, r.text.slice(0, 50));
+    }
     console.log(`${k}: ${posted ? 'POSTED (verified in comment tree)' : 'NOT POSTED (not in comment tree after reload)'} ${r.url}`);
     await page.waitForTimeout(8000);
   } catch (e) {

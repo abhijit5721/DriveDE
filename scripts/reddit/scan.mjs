@@ -11,6 +11,8 @@ const QUERIES = [
   { sub: 'Munich', q: 'driving licence OR Fahrschule OR driving test' },
   { sub: 'expats', q: 'Germany driving licence OR Germany driving test' },
   { sub: 'Fahrschule', q: '' },
+  { sub: 'Fuehrerschein', q: '' },
+  { sub: 'AskAGerman', q: 'driving licence OR driving license OR Führerschein OR Fahrschule OR driving test' },
 ];
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
 const ctx = browser.contexts()[0];
