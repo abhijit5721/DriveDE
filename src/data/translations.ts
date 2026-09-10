@@ -19,7 +19,7 @@ export const TRANSLATIONS = {
       startNow: 'Jetzt kostenlos starten',
       getStartedFree: 'Jetzt kostenlos starten',
       tryTrainer: 'Rechts-vor-links Trainer ausprobieren',
-      trainerTrust: 'Kostenlos. Ohne Anmeldung. 2 Minuten.',
+      trainerTrust: 'Kostenlos, ohne Anmeldung, in zwei Minuten erledigt.',
       publicTrainer: {
         title: 'Wer fährt zuerst?',
         subtitle: 'Tippe die Autos in der richtigen Reihenfolge an. Drei Kreuzungen, keine Anmeldung.',
@@ -2373,7 +2373,7 @@ export const TRANSLATIONS = {
       startNow: 'Get Started Free',
       getStartedFree: 'Get Started Free',
       tryTrainer: 'Try the right-before-left trainer',
-      trainerTrust: 'Free. No account. 2 minutes.',
+      trainerTrust: 'Free, no account needed, done in two minutes.',
       publicTrainer: {
         title: 'Who goes first?',
         subtitle: 'Tap the cars in the right order. Three intersections, no account needed.',
