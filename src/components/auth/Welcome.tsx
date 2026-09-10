@@ -270,8 +270,9 @@ export function Welcome() {
                 >
                   {isDe ? 'Anmelden' : 'Sign In'}
                 </button>
-                <button 
-                  onClick={() => handleStart('90-days', 'plan')}
+                <button
+                  onClick={() => { trackFunnel('signup_started', { from: 'header' }); handleStart('90-days', 'plan'); }}
+                  data-testid="welcome-start-btn"
                   className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-md"
                 >
                   {t.common.startNow}
@@ -370,13 +371,8 @@ export function Welcome() {
                 </button>
               </div>
               <p className="mt-4 text-sm font-semibold text-slate-500">{t.common.trainerTrust}</p>
-              <button
-                onClick={() => { trackFunnel('signup_started', { from: 'hero' }); handleStart(); }}
-                data-testid="welcome-start-btn"
-                className="mt-2 text-sm font-medium text-slate-500 underline-offset-4 transition hover:text-blue-600 hover:underline"
-              >
-                {t.common.createAccount}
-              </button>
+              {/* Account creation lives in the header ("Jetzt kostenlos starten" / "Anmelden");
+                  the hero keeps a single action on purpose. */}
             </>
           )}
 
