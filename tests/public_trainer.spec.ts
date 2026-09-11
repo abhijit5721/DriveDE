@@ -19,14 +19,13 @@ async function openLanding(page: Page, lang: 'de' | 'en') {
  * Scenario 1 is plain right-before-left: the car from the right (blue) goes
  * first, then red. The two taps are deliberately immediate: since DRI-48 a
  * tap during the 800 ms drive-off is queued and played next, not dropped, so a
- * confident learner tapping fast must still complete the round.
+ * confident learner tapping fast must still complete the round. Since DRI-51
+ * the round ends on the result card, there is no separate continue button.
  */
 async function completeRound(page: Page) {
   await page.getByTestId('car-blue-car').click();
   await page.getByTestId('car-red-car').click();
-  const cont = page.getByTestId('simulator-continue-btn');
-  await expect(cont).toBeVisible({ timeout: 5000 });
-  return cont;
+  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
 }
 
 test('hero leads with the trainer CTA and keeps the account entry in the header', async ({ page }) => {
@@ -60,8 +59,7 @@ test('a visitor completes a round with no account and only then sees the signup 
   // Nothing about the account before the round
   await expect(page.getByTestId('public-trainer-prompt')).toHaveCount(0);
 
-  const cont = await completeRound(page);
-  await cont.click();
+  await completeRound(page);
 
   // DRI-50: one question first, the exam date. Skipping it is a single tap.
   const examStep = page.getByTestId('public-trainer-exam');
@@ -83,8 +81,7 @@ test('a visitor completes a round with no account and only then sees the signup 
   await expect(page.getByTestId('simulator-svg')).toBeVisible();
 
   // The second round goes straight to the prompt, the question is not repeated
-  const cont2 = await completeRound(page);
-  await cont2.click();
+  await completeRound(page);
   await expect(page.getByTestId('public-trainer-exam')).toHaveCount(0);
   await expect(prompt).toBeVisible();
 
@@ -94,8 +91,7 @@ test('a visitor completes a round with no account and only then sees the signup 
 test('the signup CTA after a round opens the normal signup flow', async ({ page }) => {
   await openLanding(page, 'en');
   await page.getByTestId('welcome-try-btn').click();
-  const cont = await completeRound(page);
-  await cont.click();
+  await completeRound(page);
   await page.getByTestId('exam-not-booked').click();
   await page.getByTestId('public-trainer-signup').click();
   await expect(page.getByTestId('public-trainer')).toHaveCount(0);
@@ -105,8 +101,7 @@ test('the signup CTA after a round opens the normal signup flow', async ({ page 
 test('an exam date becomes a countdown, a weekly plan and travels into the app state (DRI-50)', async ({ page }) => {
   await openLanding(page, 'en');
   await page.getByTestId('welcome-try-btn').click();
-  const cont = await completeRound(page);
-  await cont.click();
+  await completeRound(page);
 
   // 30 days from today, formatted for the native date input
   const d = new Date();
@@ -141,11 +136,53 @@ test('an exam date becomes a countdown, a weekly plan and travels into the app s
   ).toBe(iso);
 });
 
+test('result card: own numbers at once, comparison line when the API answers, no card before the round (DRI-51)', async ({ page }) => {
+  const posted: any[] = [];
+  await page.route('**/api/trainer-result', async (route) => {
+    posted.push(route.request().postDataJSON());
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 250, percentile: 61 }) });
+  });
+
+  await openLanding(page, 'en');
+  await page.getByTestId('welcome-try-btn').click();
+  await expect(page.getByTestId('public-trainer-result')).toHaveCount(0);
+  await completeRound(page);
+
+  await expect(page.getByTestId('public-trainer-score')).toHaveText('2 of 2 correct');
+  await expect(page.getByTestId('public-trainer-time')).toHaveText(/^\d+\.\d seconds$/);
+  await expect(page.getByTestId('public-trainer-mistake')).toContainText('No mistakes.');
+  await expect(page.getByTestId('public-trainer-mistake')).toContainText('Right before Left');
+  await expect(page.getByTestId('public-trainer-percentile')).toHaveText('Faster than 61% of learners here.');
+
+  expect(posted).toHaveLength(1);
+  expect(posted[0]).toEqual({ scenarioId: 'public-rvl', cars: 2, wrongTaps: 0, durationMs: expect.any(Number) });
+  expect(Object.keys(posted[0]).sort()).toEqual(['cars', 'durationMs', 'scenarioId', 'wrongTaps']);
+});
+
+test('result card explains the mistake with the exam consequence after a wrong tap (DRI-51)', async ({ page }) => {
+  await page.route('**/api/trainer-result', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 3, percentile: null }) }));
+  await openLanding(page, 'de');
+  await page.getByTestId('welcome-try-btn').click();
+  // Red first is wrong: blue comes from the right
+  await page.getByTestId('car-red-car').click();
+  await completeRound(page);
+
+  await expect(page.getByTestId('public-trainer-score')).toHaveText('2 von 3 richtig');
+  await expect(page.getByTestId('public-trainer-time')).toHaveText(/^\d+,\d Sekunden$/);
+  const mistake = page.getByTestId('public-trainer-mistake');
+  await expect(mistake).toContainText('Dein Fehler, erklärt');
+  await expect(mistake).toContainText('Rechts vor Links');
+  await expect(mistake).toContainText('In der Prüfung beendet dieser Fehler die Fahrt und kostet rund 600 Euro.');
+  // Under 200 rows: time only, no percentile
+  await expect(page.getByTestId('public-trainer-percentile')).toHaveCount(0);
+  // The exam question sits under the card
+  await expect(page.getByTestId('public-trainer-exam')).toBeVisible();
+});
+
 test('German exam-date step', async ({ page }) => {
   await openLanding(page, 'de');
   await page.getByTestId('welcome-try-btn').click();
-  const cont = await completeRound(page);
-  await cont.click();
+  await completeRound(page);
   await expect(page.getByTestId('public-trainer-exam')).toContainText('Wann ist deine praktische Prüfung?');
   await expect(page.getByTestId('exam-not-booked')).toHaveText('Noch nicht gebucht');
   await page.getByTestId('exam-not-booked').click();

@@ -49,6 +49,17 @@ export interface SimulatorScenario {
   };
 }
 
+/** One finished round of the priority trainer, reported by InteractiveVorfahrt (DRI-51). */
+export interface TrainerRoundResult {
+  scenarioId: string;
+  factKey: SimulatorScenario['factKey'];
+  /** Cars in the scenario; each was tapped correctly exactly once to finish. */
+  cars: number;
+  wrongTaps: number;
+  /** First tap to the last car committed. */
+  durationMs: number;
+}
+
 export interface Lesson {
   id: string;
   chapterId: string;

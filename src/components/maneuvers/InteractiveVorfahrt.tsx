@@ -10,7 +10,7 @@ import { TRANSLATIONS } from '../../data/translations';
 import { TrafficSignIcon } from '../common/TrafficSignIcon';
 import { cn } from '../../utils/cn';
 
-import { SimulatorScenario } from '../../types';
+import { SimulatorScenario, TrainerRoundResult } from '../../types';
 
 const CAR_COLORS: Record<string, string> = {
   blue: '#3b82f6',
@@ -83,16 +83,22 @@ const SIGN_POSITION_MAP: Record<string, { x: number; y: number; rotate: number }
   left:   { x: 70,  y: 215, rotate: 90  },   // car from left   → sign south of lane, before right stop-line
   right:  { x: 230, y: 85,  rotate: 270 },   // car from right  → sign north of lane, before left stop-line
 };
-export default function InteractiveVorfahrt({ 
-  onComplete, 
+export default function InteractiveVorfahrt({
+  onComplete,
   language,
   scenario: propScenario,
-  scenarios: propScenarios
-}: { 
-  onComplete: () => void; 
+  scenarios: propScenarios,
+  onRoundResult,
+  hideSuccessOverlay = false,
+}: {
+  onComplete: () => void;
   language: 'de' | 'en';
   scenario?: SimulatorScenario;
   scenarios?: SimulatorScenario[];
+  /** DRI-51: fires once when the last car has committed, with score and timing for a result card. */
+  onRoundResult?: (result: TrainerRoundResult) => void;
+  /** DRI-51: let the parent render its own result instead of the blue success overlay. */
+  hideSuccessOverlay?: boolean;
 }) {
   const t = TRANSLATIONS[language];
   
@@ -132,6 +138,9 @@ export default function InteractiveVorfahrt({
   const pendingRef = useRef<string[]>([]);
   const animatingRef = useRef<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // DRI-51: round statistics for the result card. Timing starts at the first tap.
+  const wrongTapsRef = useRef(0);
+  const startedAtRef = useRef<number | null>(null);
   useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
 
   const translatedCars = useMemo(() => scenario.cars.map(car => ({
@@ -152,6 +161,13 @@ export default function InteractiveVorfahrt({
         animatingRef.current = null;
         setAnimatingCar(null);
         setIsSuccess(true);
+        onRoundResult?.({
+          scenarioId: scenario.id,
+          factKey: scenario.factKey,
+          cars: translatedCars.length,
+          wrongTaps: wrongTapsRef.current,
+          durationMs: Math.max(0, Date.now() - (startedAtRef.current ?? Date.now())),
+        });
         return;
       }
       const next = pendingRef.current.shift();
@@ -170,11 +186,13 @@ export default function InteractiveVorfahrt({
     if (orderRef.current.includes(carId) || animatingRef.current === carId || pendingRef.current.includes(carId)) return;
 
     const clickedCar = translatedCars.find(c => c.id === carId)!;
+    if (startedAtRef.current === null) startedAtRef.current = Date.now();
     // The car currently driving off is not committed yet but its slot is taken.
     const nextIndex = orderRef.current.length + (animatingRef.current ? 1 : 0) + pendingRef.current.length;
     const expectedCar = translatedCars.find(c => c.order === nextIndex)!;
 
     if (clickedCar.id !== expectedCar.id) {
+      wrongTapsRef.current += 1;
       setError(t.maneuvers.interactive.priority.error(expectedCar.label));
       return;
     }
@@ -192,6 +210,8 @@ export default function InteractiveVorfahrt({
     orderRef.current = [];
     pendingRef.current = [];
     animatingRef.current = null;
+    wrongTapsRef.current = 0;
+    startedAtRef.current = null;
     setSelectedOrder([]);
     setError(null);
     setIsSuccess(false);
@@ -510,8 +530,8 @@ export default function InteractiveVorfahrt({
             </motion.div>
           )}
 
-          {isSuccess && (
-            <motion.div 
+          {isSuccess && !hideSuccessOverlay && (
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="absolute inset-0 flex flex-col items-center justify-center bg-blue-600/95 p-6 text-center text-white backdrop-blur-sm z-30"
