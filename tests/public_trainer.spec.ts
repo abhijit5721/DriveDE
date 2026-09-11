@@ -22,9 +22,19 @@ async function openLanding(page: Page, lang: 'de' | 'en') {
  * confident learner tapping fast must still complete the round. Since DRI-51
  * the round ends on the result card, there is no separate continue button.
  */
+/** The three public intersections in play order with the correct tap sequence for each. */
+const ROUND: Array<[scenarioId: string, taps: string[]]> = [
+  ['public-rvl', ['car-blue-car', 'car-red-car']],
+  ['public-bending', ['car-blue-car', 'car-red-car']],
+  ['public-stop', ['car-red-car', 'car-blue-car']],
+];
+
 async function completeRound(page: Page) {
-  await page.getByTestId('car-blue-car').click();
-  await page.getByTestId('car-red-car').click();
+  for (const [scenarioId, taps] of ROUND) {
+    // The trainer auto-advances after a green flash; wait for the next intersection to be on screen.
+    await expect(page.locator(`[data-testid="simulator-svg"][data-scenario="${scenarioId}"]`)).toBeVisible({ timeout: 5000 });
+    for (const car of taps) await page.getByTestId(car).click();
+  }
   await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
 }
 
@@ -148,14 +158,15 @@ test('result card: own numbers at once, comparison line when the API answers, no
   await expect(page.getByTestId('public-trainer-result')).toHaveCount(0);
   await completeRound(page);
 
-  await expect(page.getByTestId('public-trainer-score')).toHaveText('2 of 2 correct');
+  await expect(page.getByTestId('public-trainer-score')).toHaveText('6 of 6 correct');
   await expect(page.getByTestId('public-trainer-time')).toHaveText(/^\d+\.\d seconds$/);
   await expect(page.getByTestId('public-trainer-mistake')).toContainText('No mistakes.');
-  await expect(page.getByTestId('public-trainer-mistake')).toContainText('Right before Left');
+  // Flawless: the card teaches the last intersection's rule
+  await expect(page.getByTestId('public-trainer-mistake')).toContainText('STOP sign');
   await expect(page.getByTestId('public-trainer-percentile')).toHaveText('Faster than 61% of learners here.');
 
   expect(posted).toHaveLength(1);
-  expect(posted[0]).toEqual({ scenarioId: 'public-rvl', cars: 2, wrongTaps: 0, durationMs: expect.any(Number) });
+  expect(posted[0]).toEqual({ scenarioId: 'set-3-public-rvl', cars: 6, wrongTaps: 0, durationMs: expect.any(Number) });
   expect(Object.keys(posted[0]).sort()).toEqual(['cars', 'durationMs', 'scenarioId', 'wrongTaps']);
 });
 
@@ -163,20 +174,54 @@ test('result card explains the mistake with the exam consequence after a wrong t
   await page.route('**/api/trainer-result', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 3, percentile: null }) }));
   await openLanding(page, 'de');
   await page.getByTestId('welcome-try-btn').click();
-  // Red first is wrong: blue comes from the right
+  await expect(page.getByTestId('simulator-progress')).toHaveText('Kreuzung 1 von 3');
+  // Red first is wrong at the first intersection: blue comes from the right
   await page.getByTestId('car-red-car').click();
   await completeRound(page);
 
-  await expect(page.getByTestId('public-trainer-score')).toHaveText('2 von 3 richtig');
+  await expect(page.getByTestId('public-trainer-score')).toHaveText('6 von 7 richtig');
   await expect(page.getByTestId('public-trainer-time')).toHaveText(/^\d+,\d Sekunden$/);
   const mistake = page.getByTestId('public-trainer-mistake');
   await expect(mistake).toContainText('Dein Fehler, erklärt');
   await expect(mistake).toContainText('Rechts vor Links');
   await expect(mistake).toContainText('In der Prüfung beendet dieser Fehler die Fahrt und kostet rund 600 Euro.');
+  // Only one intersection had a mistake, so no "further intersections" line
+  await expect(mistake).not.toContainText('weitere');
   // Under 200 rows: time only, no percentile
   await expect(page.getByTestId('public-trainer-percentile')).toHaveCount(0);
   // The exam question sits under the card
   await expect(page.getByTestId('public-trainer-exam')).toBeVisible();
+});
+
+test('a round runs through all three intersections with a flash between them (DRI-51)', async ({ page }) => {
+  await page.route('**/api/trainer-result', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 1, percentile: null }) }));
+  await openLanding(page, 'en');
+  await page.getByTestId('welcome-try-btn').click();
+
+  await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 1 of 3');
+  // No manual scenario tabs in the public trainer
+  await expect(page.getByTestId('scenario-switch-1')).toHaveCount(0);
+
+  await page.getByTestId('car-blue-car').click();
+  await page.getByTestId('car-red-car').click();
+  await expect(page.getByTestId('simulator-next-flash')).toContainText('Correct! Next intersection.');
+  await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 2 of 3');
+  await expect(page.getByTestId('public-trainer-result')).toHaveCount(0);
+
+  // Wrong tap at the second and third intersections: two mistakes, one explained, the other counted
+  await page.getByTestId('car-red-car').click();
+  await page.getByTestId('car-blue-car').click();
+  await page.getByTestId('car-red-car').click();
+  await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 3 of 3');
+  await page.getByTestId('car-blue-car').click();
+  await page.getByTestId('car-red-car').click();
+  await page.getByTestId('car-blue-car').click();
+
+  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('public-trainer-score')).toHaveText('6 of 8 correct');
+  const mistake = page.getByTestId('public-trainer-mistake');
+  await expect(mistake).toContainText('bending priority road');
+  await expect(mistake).toContainText('One more intersection also had a wrong tap.');
 });
 
 test('German exam-date step', async ({ page }) => {

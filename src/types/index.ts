@@ -51,13 +51,19 @@ export interface SimulatorScenario {
 
 /** One finished round of the priority trainer, reported by InteractiveVorfahrt (DRI-51). */
 export interface TrainerRoundResult {
+  /** Single scenario id, or a set id like `set-3-public-rvl` when the round auto-advanced through several. */
   scenarioId: string;
+  /** How many intersections the round covered. */
+  scenarios: number;
+  /** Fact worth showing on the card: the first mistake's, or the last scenario's when flawless. */
   factKey: SimulatorScenario['factKey'];
-  /** Cars in the scenario; each was tapped correctly exactly once to finish. */
+  /** Cars across the round; each was tapped correctly exactly once to finish. */
   cars: number;
   wrongTaps: number;
-  /** First tap to the last car committed. */
+  /** First tap of the round to the last car committed. */
   durationMs: number;
+  /** Scenarios that had at least one wrong tap, in play order. */
+  mistakes: Array<{ scenarioId: string; factKey: SimulatorScenario['factKey'] }>;
 }
 
 export interface Lesson {

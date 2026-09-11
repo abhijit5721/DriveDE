@@ -66,7 +66,7 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
   const handleRoundResult = (r: TrainerRoundResult) => {
     setResult(r);
     setComparison(null);
-    trackFunnel('trainer_complete', { trainer: 'vorfahrt', round, wrongTaps: r.wrongTaps, durationMs: r.durationMs });
+    trackFunnel('trainer_complete', { trainer: 'vorfahrt', round, scenarios: r.scenarios, wrongTaps: r.wrongTaps, durationMs: r.durationMs });
     // The visitor's own numbers render right away; the comparison line lands when the API answers.
     const thisRound = round;
     void submitTrainerResult(r).then((c) => {
@@ -141,6 +141,7 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
               onComplete={() => undefined}
               onRoundResult={handleRoundResult}
               hideSuccessOverlay
+              autoAdvance
             />
           ) : (
             <div className="flex flex-col gap-3" data-testid="public-trainer-result">
@@ -170,6 +171,7 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
                       <p className="font-bold text-white">{result.wrongTaps > 0 ? t.yourMistake : t.flawless}</p>
                       <p className="text-slate-300">{facts[result.factKey]}</p>
                       {result.wrongTaps > 0 && <p className="font-semibold text-amber-300">{t.examConsequence}</p>}
+                      {result.mistakes.length > 1 && <p className="text-slate-400">{t.moreMistakes(result.mistakes.length - 1)}</p>}
                     </div>
                   </div>
                 </div>

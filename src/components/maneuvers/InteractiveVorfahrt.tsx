@@ -90,6 +90,7 @@ export default function InteractiveVorfahrt({
   scenarios: propScenarios,
   onRoundResult,
   hideSuccessOverlay = false,
+  autoAdvance = false,
 }: {
   onComplete: () => void;
   language: 'de' | 'en';
@@ -99,6 +100,12 @@ export default function InteractiveVorfahrt({
   onRoundResult?: (result: TrainerRoundResult) => void;
   /** DRI-51: let the parent render its own result instead of the blue success overlay. */
   hideSuccessOverlay?: boolean;
+  /**
+   * DRI-51: play every scenario in sequence as one round. A solved intersection
+   * flashes "Richtig" and moves on; onRoundResult fires once, after the last one,
+   * with score and time aggregated across the whole round. Hides the scenario tabs.
+   */
+  autoAdvance?: boolean;
 }) {
   const t = TRANSLATIONS[language];
   
@@ -129,6 +136,7 @@ export default function InteractiveVorfahrt({
   const [animatingCar, setAnimatingCar] = useState<string | null>(null);
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [flash, setFlash] = useState(false);
 
   // DRI-48: taps are judged against the committed order PLUS anything already
   // queued, so a quick second tap during the 800 ms drive-off is accepted and
@@ -141,7 +149,17 @@ export default function InteractiveVorfahrt({
   // DRI-51: round statistics for the result card. Timing starts at the first tap.
   const wrongTapsRef = useRef(0);
   const startedAtRef = useRef<number | null>(null);
-  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
+  // Whole-round aggregates for autoAdvance; survive scenario switches, die with the component.
+  const roundWrongRef = useRef(0);
+  const roundStartRef = useRef<number | null>(null);
+  const mistakesRef = useRef<TrainerRoundResult['mistakes']>([]);
+  const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (advanceTimeoutRef.current) clearTimeout(advanceTimeoutRef.current);
+    if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+  }, []);
 
   const translatedCars = useMemo(() => scenario.cars.map(car => ({
     ...car,
@@ -161,12 +179,23 @@ export default function InteractiveVorfahrt({
         animatingRef.current = null;
         setAnimatingCar(null);
         setIsSuccess(true);
+        const isLast = currentScenarioIndex >= scenarios.length - 1;
+        if (autoAdvance && !isLast) {
+          setFlash(true);
+          advanceTimeoutRef.current = setTimeout(() => switchScenario(currentScenarioIndex + 1), 900);
+          return;
+        }
+        const mistakes = autoAdvance
+          ? [...mistakesRef.current]
+          : wrongTapsRef.current > 0 ? [{ scenarioId: scenario.id, factKey: scenario.factKey }] : [];
         onRoundResult?.({
-          scenarioId: scenario.id,
-          factKey: scenario.factKey,
-          cars: translatedCars.length,
-          wrongTaps: wrongTapsRef.current,
-          durationMs: Math.max(0, Date.now() - (startedAtRef.current ?? Date.now())),
+          scenarioId: autoAdvance ? `set-${scenarios.length}-${scenarios[0].id}` : scenario.id,
+          scenarios: autoAdvance ? scenarios.length : 1,
+          factKey: mistakes[0]?.factKey ?? scenario.factKey,
+          cars: autoAdvance ? scenarios.reduce((n, s) => n + s.cars.length, 0) : translatedCars.length,
+          wrongTaps: autoAdvance ? roundWrongRef.current : wrongTapsRef.current,
+          durationMs: Math.max(0, Date.now() - ((autoAdvance ? roundStartRef.current : startedAtRef.current) ?? Date.now())),
+          mistakes,
         });
         return;
       }
@@ -186,14 +215,24 @@ export default function InteractiveVorfahrt({
     if (orderRef.current.includes(carId) || animatingRef.current === carId || pendingRef.current.includes(carId)) return;
 
     const clickedCar = translatedCars.find(c => c.id === carId)!;
-    if (startedAtRef.current === null) startedAtRef.current = Date.now();
+    const now = Date.now();
+    if (startedAtRef.current === null) startedAtRef.current = now;
+    if (roundStartRef.current === null) roundStartRef.current = now;
     // The car currently driving off is not committed yet but its slot is taken.
     const nextIndex = orderRef.current.length + (animatingRef.current ? 1 : 0) + pendingRef.current.length;
     const expectedCar = translatedCars.find(c => c.order === nextIndex)!;
 
     if (clickedCar.id !== expectedCar.id) {
       wrongTapsRef.current += 1;
+      roundWrongRef.current += 1;
+      if (!mistakesRef.current.some(m => m.scenarioId === scenario.id)) {
+        mistakesRef.current = [...mistakesRef.current, { scenarioId: scenario.id, factKey: scenario.factKey }];
+      }
       setError(t.maneuvers.interactive.priority.error(expectedCar.label));
+      // The banner sits over the bottom lane; it must not outlive the moment or the
+      // next correct tap on a car parked there would be impossible.
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = setTimeout(() => setError(null), 1800);
       return;
     }
     setError(null);
@@ -217,6 +256,7 @@ export default function InteractiveVorfahrt({
     setIsSuccess(false);
     setAnimatingCar(null);
     setShowExplanation(false);
+    setFlash(false);
   };
 
   const switchScenario = (index: number) => {
@@ -235,7 +275,15 @@ export default function InteractiveVorfahrt({
           {t.maneuvers.interactive.priority.title}
         </h4>
         <div className="flex items-center gap-2">
-          {scenarios.length > 1 && (
+          {scenarios.length > 1 && autoAdvance && (
+            <span
+              data-testid="simulator-progress"
+              className="mr-2 rounded-lg bg-slate-200 px-2 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            >
+              {t.maneuvers.interactive.priority.progress(currentScenarioIndex + 1, scenarios.length)}
+            </span>
+          )}
+          {scenarios.length > 1 && !autoAdvance && (
             <div className="mr-2 flex items-center gap-1 rounded-lg bg-slate-200 p-1 dark:bg-slate-800">
               {scenarios.map((_, idx) => (
                 <button
@@ -285,7 +333,7 @@ export default function InteractiveVorfahrt({
 
       {/* Simulator Viewport */}
       <div className="relative aspect-square w-full max-w-[320px] overflow-hidden rounded-2xl bg-emerald-900/10 dark:bg-emerald-900/5 mx-auto border-4 border-slate-200 dark:border-slate-800 shadow-xl">
-        <svg data-testid="simulator-svg" viewBox="0 0 300 300" className="h-full w-full">
+        <svg data-testid="simulator-svg" data-scenario={scenario.id} viewBox="0 0 300 300" className="h-full w-full">
           {/* Grass/Background */}
           <rect x="0" y="0" width="300" height="300" fill="currentColor" className="text-emerald-100 dark:text-emerald-900/20" />
           
@@ -413,6 +461,18 @@ export default function InteractiveVorfahrt({
             );
           })}
 
+          {/* Interaction hints: a pulsing ring under each car still waiting for its tap.
+              Rendered outside the car groups so the tappable area itself never moves. */}
+          {translatedCars.map(car => {
+            if (selectedOrder.includes(car.id) || animatingCar === car.id) return null;
+            return (
+              <g key={`hint-${scenario.id}-${car.id}`} transform={`translate(${car.x}, ${car.y})`} style={{ pointerEvents: 'none' }}>
+                {/* CSS keyframes, not a framer loop: runs on the compositor and leaves the main thread alone on phones */}
+                <circle cx="0" cy="0" r="25" stroke="white" strokeWidth="2" fill="none" className="sim-hint-ring" />
+              </g>
+            );
+          })}
+
           {/* Cars */}
           {translatedCars.map(car => {
              const isMoved = selectedOrder.includes(car.id);
@@ -431,7 +491,9 @@ export default function InteractiveVorfahrt({
              
              return (
                <motion.g
-                 key={car.id}
+                 // Keyed per scenario so a car that drove off in the previous intersection
+                 // does not slide and fade from its exit point to the new start position.
+                 key={`${scenario.id}-${car.id}`}
                  data-testid={`car-${car.id}`}
                  initial={{ x: car.x, y: car.y, rotate: car.rotate, opacity: 1 }}
                  animate={animateProps}
@@ -494,21 +556,6 @@ export default function InteractiveVorfahrt({
                      <circle cx="11" cy="17" r="2.5" fill="#fbd38d" />
                    </motion.g>
                  )}
-                 
-                 {/* Interaction Hint */}
-                 {!isMoved && !isCurrentAnimation && (
-                    <motion.circle 
-                      cx="0" 
-                      cy="0" 
-                      r="25" 
-                      stroke="white" 
-                      strokeWidth="2" 
-                      fill="none"
-                      style={{ pointerEvents: 'none' }}
-                      animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0, 0.6] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    />
-                 )}
                </motion.g>
              );
           })}
@@ -521,11 +568,27 @@ export default function InteractiveVorfahrt({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="absolute inset-x-4 bottom-4 rounded-xl bg-red-500 p-3 text-center text-sm font-bold text-white shadow-2xl z-20 border-2 border-white/20"
+              data-testid="simulator-error"
+              className="pointer-events-none absolute inset-x-4 bottom-4 rounded-xl bg-red-500 p-3 text-center text-sm font-bold text-white shadow-2xl z-20 border-2 border-white/20"
             >
               <div className="flex items-center justify-center gap-2">
                 <X className="h-4 w-4 stroke-[3px]" />
                 {error}
+              </div>
+            </motion.div>
+          )}
+
+          {flash && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              data-testid="simulator-next-flash"
+              className="pointer-events-none absolute inset-x-4 bottom-4 z-20 rounded-xl border-2 border-white/20 bg-emerald-500 p-3 text-center text-sm font-bold text-white shadow-2xl"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Check className="h-4 w-4 stroke-[3px]" />
+                {t.maneuvers.interactive.priority.nextIntersection}
               </div>
             </motion.div>
           )}
