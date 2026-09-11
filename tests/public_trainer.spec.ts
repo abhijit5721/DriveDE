@@ -63,14 +63,30 @@ test('a visitor completes a round with no account and only then sees the signup 
   const cont = await completeRound(page);
   await cont.click();
 
+  // DRI-50: one question first, the exam date. Skipping it is a single tap.
+  const examStep = page.getByTestId('public-trainer-exam');
+  await expect(examStep).toBeVisible();
+  await expect(examStep).toContainText('When is your practical exam?');
+  await expect(page.getByTestId('exam-continue')).toBeDisabled();
+  await expect(page.getByTestId('public-trainer-prompt')).toHaveCount(0);
+  await page.getByTestId('exam-not-booked').click();
+
   const prompt = page.getByTestId('public-trainer-prompt');
   await expect(prompt).toBeVisible();
-  await expect(page.getByTestId('public-trainer-signup')).toBeVisible();
+  await expect(page.getByTestId('public-trainer-countdown')).toHaveCount(0);
+  await expect(page.getByTestId('public-trainer-plan')).toContainText('10 trainers still open');
+  await expect(page.getByTestId('public-trainer-signup')).toContainText('Continue for free');
 
   // "One more round" resets the trainer instead of asking for an account again
   await page.getByTestId('public-trainer-again').click();
   await expect(prompt).toHaveCount(0);
   await expect(page.getByTestId('simulator-svg')).toBeVisible();
+
+  // The second round goes straight to the prompt, the question is not repeated
+  const cont2 = await completeRound(page);
+  await cont2.click();
+  await expect(page.getByTestId('public-trainer-exam')).toHaveCount(0);
+  await expect(prompt).toBeVisible();
 
   expect(authCalls, 'the anonymous trainer path must not call auth').toEqual([]);
 });
@@ -80,9 +96,60 @@ test('the signup CTA after a round opens the normal signup flow', async ({ page 
   await page.getByTestId('welcome-try-btn').click();
   const cont = await completeRound(page);
   await cont.click();
+  await page.getByTestId('exam-not-booked').click();
   await page.getByTestId('public-trainer-signup').click();
   await expect(page.getByTestId('public-trainer')).toHaveCount(0);
   await expect(page.getByText(/Choose your perfect Pro plan|Create your account|Sign up/i).first()).toBeVisible({ timeout: 10000 });
+});
+
+test('an exam date becomes a countdown, a weekly plan and travels into the app state (DRI-50)', async ({ page }) => {
+  await openLanding(page, 'en');
+  await page.getByTestId('welcome-try-btn').click();
+  const cont = await completeRound(page);
+  await cont.click();
+
+  // 30 days from today, formatted for the native date input
+  const d = new Date();
+  d.setDate(d.getDate() + 30);
+  const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  await page.getByTestId('exam-date-input').fill(iso);
+  await expect(page.getByTestId('exam-continue')).toBeEnabled();
+  await page.getByTestId('exam-continue').click();
+
+  await expect(page.getByTestId('public-trainer-countdown')).toHaveText('30 days until your exam.');
+  // 10 trainers left over 4.3 weeks -> 3 a week
+  await expect(page.getByTestId('public-trainer-plan')).toContainText('At 3 a week you finish before the date.');
+  await expect(page.getByText('Keep your plan and countdown?')).toBeVisible();
+  await page.getByTestId('public-trainer-signup').click();
+
+  // The date is now in the persisted store (idb-keyval, IndexedDB) so the dashboard can count down after login
+  await expect.poll(async () =>
+    page.evaluate(() => new Promise<string | null>((resolve) => {
+      const open = indexedDB.open('keyval-store');
+      open.onerror = () => resolve(null);
+      open.onsuccess = () => {
+        const db = open.result;
+        if (!db.objectStoreNames.contains('keyval')) return resolve(null);
+        const req = db.transaction('keyval').objectStore('keyval').get('drivede-storage');
+        req.onerror = () => resolve(null);
+        req.onsuccess = () => {
+          const raw = req.result as string | undefined;
+          resolve(raw ? JSON.parse(raw).state?.examDate ?? null : null);
+        };
+      };
+    }))
+  ).toBe(iso);
+});
+
+test('German exam-date step', async ({ page }) => {
+  await openLanding(page, 'de');
+  await page.getByTestId('welcome-try-btn').click();
+  const cont = await completeRound(page);
+  await cont.click();
+  await expect(page.getByTestId('public-trainer-exam')).toContainText('Wann ist deine praktische Prüfung?');
+  await expect(page.getByTestId('exam-not-booked')).toHaveText('Noch nicht gebucht');
+  await page.getByTestId('exam-not-booked').click();
+  await expect(page.getByText('Ergebnis speichern und weiterüben?')).toBeVisible();
 });
 
 test('close button and Escape both close the trainer and restore scrolling', async ({ page }) => {

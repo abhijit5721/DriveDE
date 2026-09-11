@@ -13,6 +13,7 @@ import { getLearningPathFromLicenseType, getTransmissionFromLicenseType } from '
 import { filterChaptersForSelection, filterLessonsForSelection } from '../../utils/contentFilter';
 import type { TabType } from '../../types';
 import { ExamReadinessGauge } from './ExamReadinessGauge';
+import { ExamCountdown } from './ExamCountdown';
 import { TRANSLATIONS } from '../../data/translations';
 import { DrivingInsights } from './DrivingInsights';
 import { calculateTotalReadiness } from '../../utils/readiness';
@@ -154,6 +155,8 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                   className="w-full"
                 />
               </button>
+            {/* DRI-50: the exam date entered on the landing page (or here) becomes a daily countdown */}
+            <ExamCountdown />
           </div>
         </div>
         

@@ -258,7 +258,13 @@ class AnalyticsService {
 
 export const analyticsService = new AnalyticsService();
 
-export type FunnelEvent = 'try_click' | 'trainer_complete' | 'signup_prompt_shown' | 'signup_started';
+export type FunnelEvent =
+  | 'try_click'
+  | 'trainer_complete'
+  | 'exam_date_entered'
+  | 'signup_prompt_shown'
+  | 'signup_started'
+  | 'result_saved';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,

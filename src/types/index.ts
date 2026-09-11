@@ -270,11 +270,14 @@ export interface AppState {
   activeSession: ActiveSession | null;
   hasVisited: boolean;
   hasCompletedOnboarding: boolean;
+  /** Practical exam date as YYYY-MM-DD, set from the landing-page trainer or the dashboard (DRI-50). */
+  examDate: string | null;
   activeTab: TabType;
   curriculumViewMode: 'quest' | 'list';
   setCurriculumViewMode: (mode: 'quest' | 'list') => void;
   setActiveTab: (tab: TabType) => void;
   setHasVisited: (hasVisited: boolean) => void;
+  setExamDate: (date: string | null) => void;
   setHasCompletedOnboarding: (value: boolean) => void;
   setLanguage: (lang: Language) => void;
   toggleDarkMode: () => void;

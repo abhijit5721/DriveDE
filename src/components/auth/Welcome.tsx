@@ -30,9 +30,9 @@ import { trackFunnel } from '../../services/AnalyticsService';
 const PublicTrainer = lazy(() => import('./PublicTrainer').then((m) => ({ default: m.PublicTrainer })));
 
 export function Welcome() {
-  const { 
+  const {
     language, setLanguage, setHasVisited, licenseType,
-    authStatus, userProgress 
+    authStatus, userProgress, setExamDate
   } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1125,7 +1125,12 @@ export function Welcome() {
           <PublicTrainer
             language={language}
             onClose={() => setShowTrainer(false)}
-            onSignup={() => { setShowTrainer(false); handleStart(); }}
+            onSignup={(examDate) => {
+              // The exam date is the one thing the visitor made "theirs"; carry it into the account.
+              if (examDate) setExamDate(examDate);
+              setShowTrainer(false);
+              handleStart();
+            }}
           />
         </Suspense>
       )}

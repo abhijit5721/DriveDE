@@ -149,6 +149,7 @@ export const useAppStore = create<AppState>()(
         : 'de') as Language,
       darkMode: false,
       isPublicReportEnabled: true,
+      examDate: null,
       licenseType: null,
       learningPath: null,
       transmissionType: null,
@@ -234,6 +235,8 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
 
       setHasVisited: (hasVisited: boolean) => set({ hasVisited }),
+
+      setExamDate: (date: string | null) => set({ examDate: date }),
 
       setHasCompletedOnboarding: (value: boolean) => set({ hasCompletedOnboarding: value }),
 
@@ -852,6 +855,7 @@ export const useAppStore = create<AppState>()(
           activeTab: state.activeTab,
           curriculumViewMode: state.curriculumViewMode,
           licenseType: state.licenseType,
+          examDate: state.examDate,
           learningPath: state.learningPath,
           transmissionType: state.transmissionType,
           isPremium: state.isPremium,
