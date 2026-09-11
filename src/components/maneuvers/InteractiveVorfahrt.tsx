@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Info, RotateCcw, Play } from 'lucide-react';
 import { TRANSLATIONS } from '../../data/translations';
@@ -124,6 +124,16 @@ export default function InteractiveVorfahrt({
   const [hoveredCar, setHoveredCar] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // DRI-48: taps are judged against the committed order PLUS anything already
+  // queued, so a quick second tap during the 800 ms drive-off is accepted and
+  // played next instead of being dropped. Refs hold the authoritative sequence
+  // because React state is stale inside the animation timeout.
+  const orderRef = useRef<string[]>([]);
+  const pendingRef = useRef<string[]>([]);
+  const animatingRef = useRef<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
+
   const translatedCars = useMemo(() => scenario.cars.map(car => ({
     ...car,
     ...POSITION_MAP[car.positionKey],
@@ -131,30 +141,57 @@ export default function InteractiveVorfahrt({
     colorValue: CAR_COLORS[car.color]
   })), [scenario.cars, t.maneuvers.interactive.priority.labels]);
 
+  const driveOff = (carId: string) => {
+    animatingRef.current = carId;
+    setAnimatingCar(carId);
+    timeoutRef.current = setTimeout(() => {
+      orderRef.current = [...orderRef.current, carId];
+      setSelectedOrder(orderRef.current);
+      if (orderRef.current.length === translatedCars.length) {
+        pendingRef.current = [];
+        animatingRef.current = null;
+        setAnimatingCar(null);
+        setIsSuccess(true);
+        return;
+      }
+      const next = pendingRef.current.shift();
+      if (next) {
+        driveOff(next);
+      } else {
+        animatingRef.current = null;
+        setAnimatingCar(null);
+      }
+    }, 800);
+  };
+
   const handleCarClick = (carId: string) => {
-    if (isSuccess || animatingCar) return;
+    if (isSuccess) return;
+    // Already tapped (committed, driving off, or queued): ignore, nothing to judge.
+    if (orderRef.current.includes(carId) || animatingRef.current === carId || pendingRef.current.includes(carId)) return;
 
     const clickedCar = translatedCars.find(c => c.id === carId)!;
-    const expectedCar = translatedCars.find(c => c.order === selectedOrder.length)!;
+    // The car currently driving off is not committed yet but its slot is taken.
+    const nextIndex = orderRef.current.length + (animatingRef.current ? 1 : 0) + pendingRef.current.length;
+    const expectedCar = translatedCars.find(c => c.order === nextIndex)!;
 
-    if (clickedCar.id === expectedCar.id) {
-      setAnimatingCar(carId);
-      setError(null);
-      
-      setTimeout(() => {
-        setSelectedOrder(prev => [...prev, carId]);
-        setAnimatingCar(null);
-        
-        if (selectedOrder.length + 1 === translatedCars.length) {
-          setIsSuccess(true);
-        }
-      }, 800);
-    } else {
+    if (clickedCar.id !== expectedCar.id) {
       setError(t.maneuvers.interactive.priority.error(expectedCar.label));
+      return;
+    }
+    setError(null);
+    if (animatingRef.current) {
+      pendingRef.current = [...pendingRef.current, carId];
+    } else {
+      driveOff(carId);
     }
   };
 
   const reset = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = null;
+    orderRef.current = [];
+    pendingRef.current = [];
+    animatingRef.current = null;
     setSelectedOrder([]);
     setError(null);
     setIsSuccess(false);

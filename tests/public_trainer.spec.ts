@@ -17,22 +17,15 @@ async function openLanding(page: Page, lang: 'de' | 'en') {
 
 /**
  * Scenario 1 is plain right-before-left: the car from the right (blue) goes
- * first, then red. The simulator locks input for ~800 ms while a car drives
- * off, and a tap during that window is dropped, so the second tap waits for
- * the lock and retries until the success card appears.
+ * first, then red. The two taps are deliberately immediate: since DRI-48 a
+ * tap during the 800 ms drive-off is queued and played next, not dropped, so a
+ * confident learner tapping fast must still complete the round.
  */
 async function completeRound(page: Page) {
   await page.getByTestId('car-blue-car').click();
-  await page.waitForTimeout(1000);
+  await page.getByTestId('car-red-car').click();
   const cont = page.getByTestId('simulator-continue-btn');
-  for (let attempt = 0; attempt < 4; attempt++) {
-    // Once the success card is up it covers the cars, so never click again after it appears.
-    await page.getByTestId('car-red-car').click({ trial: false, timeout: 5000 }).catch(() => {});
-    // isVisible() returns immediately; waitFor actually gives the 800 ms animation time to finish.
-    const shown = await cont.waitFor({ state: 'visible', timeout: 2500 }).then(() => true).catch(() => false);
-    if (shown) return cont;
-  }
-  await expect(cont).toBeVisible();
+  await expect(cont).toBeVisible({ timeout: 5000 });
   return cont;
 }
 
