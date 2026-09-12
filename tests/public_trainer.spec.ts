@@ -224,6 +224,34 @@ test('a round runs through all three intersections with a flash between them (DR
   await expect(mistake).toContainText('One more intersection also had a wrong tap.');
 });
 
+test('share button renders the result card image and copies the caption when Web Share is unavailable (DRI-54)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'download interception is flaky on WebKit; the share sheet path is checked on a real phone');
+  await page.route('**/api/trainer-result', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 250, percentile: 61 }) }));
+  // No Web Share API, capture clipboard writes
+  await page.addInitScript(() => {
+    // @ts-expect-error test stub
+    delete navigator.share;
+    (window as any).__copied = [];
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: async (s: string) => { (window as any).__copied.push(s); } }, configurable: true });
+  });
+  await openLanding(page, 'en');
+  await page.getByTestId('welcome-try-btn').click();
+  await completeRound(page);
+
+  const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
+  await page.getByTestId('public-trainer-share').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('drivede-result.png');
+  const path = await download.path();
+  const { size } = await import('node:fs').then((fs) => fs.promises.stat(path!));
+  expect(size).toBeGreaterThan(20000);
+
+  await expect(page.getByTestId('public-trainer-share-hint')).toHaveText('Image saved, text copied. Paste it into WhatsApp.');
+  const copied = await page.evaluate(() => (window as any).__copied as string[]);
+  expect(copied).toHaveLength(1);
+  expect(copied[0]).toMatch(/^Right before left, roundabout, stop sign: 6 of 6 correct in \d+\.\d seconds\. Can you beat that\? https:\/\/drivede\.app\/\?utm_source=share/);
+});
+
 test('German exam-date step', async ({ page }) => {
   await openLanding(page, 'de');
   await page.getByTestId('welcome-try-btn').click();

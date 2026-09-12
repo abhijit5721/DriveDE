@@ -13,7 +13,7 @@
  * exam date travels into the signup call so the dashboard can show it.
  */
 import { useEffect, useRef, useState } from 'react';
-import { X, ArrowRight, RotateCcw, CalendarDays, Timer, Target, Info, Check } from 'lucide-react';
+import { X, ArrowRight, RotateCcw, CalendarDays, Timer, Target, Info, Check, Share2 } from 'lucide-react';
 import InteractiveVorfahrt from '../maneuvers/InteractiveVorfahrt';
 import { PUBLIC_TRAINER_SCENARIOS } from '../../data/publicTrainerScenarios';
 import { TRANSLATIONS } from '../../data/translations';
@@ -21,6 +21,7 @@ import { trackFunnel } from '../../services/AnalyticsService';
 import { submitTrainerResult, type TrainerComparison } from '../../services/TrainerResultService';
 import { buildExamPlan, todayISO } from '../../utils/examPlan';
 import { tapScore, formatSeconds } from '../../utils/trainerResult';
+import { drawShareCard, shareResultCard } from '../../utils/shareCard';
 import type { TrainerRoundResult } from '../../types';
 
 interface PublicTrainerProps {
@@ -44,6 +45,8 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
   const roundRef = useRef(round);
   roundRef.current = round;
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const shareCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [shareState, setShareState] = useState<'idle' | 'busy' | 'done'>('idle');
 
   // A phone user has often scrolled inside the trainer to reach the cars; the
   // result card must start at the top, not wherever that scroll left off.
@@ -94,7 +97,26 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
     setStep('trainer');
     setResult(null);
     setComparison(null);
+    setShareState('idle');
     setRound((r) => r + 1);
+  };
+
+  // DRI-54: the result as an image for the driving-school group chat.
+  const handleShare = async () => {
+    if (!result || !shareCanvasRef.current || shareState === 'busy') return;
+    setShareState('busy');
+    const s = tapScore(result);
+    const data = {
+      language,
+      correct: s.correct,
+      total: s.total,
+      seconds: formatSeconds(result.durationMs, language),
+      comparison: comparison && comparison.percentile !== null ? t.fasterThan(comparison.percentile) : null,
+    };
+    drawShareCard(shareCanvasRef.current, data);
+    const method = await shareResultCard(shareCanvasRef.current, data);
+    trackFunnel('share_click', { method, round, hasDate: !!chosenDate });
+    setShareState(method === 'webshare' || method === 'none' ? 'idle' : 'done');
   };
 
   const handleKeep = () => {
@@ -148,16 +170,32 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
               {/* Result card */}
               {result && score && (
                 <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-3.5 text-left sm:p-4">
-                  <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-                    <p className="flex items-center gap-2 text-sm font-bold text-white sm:text-base" data-testid="public-trainer-score">
-                      <Target className="h-5 w-5 text-blue-400" />
-                      {t.resultScore(score.correct, score.total)}
-                    </p>
-                    <p className="flex items-center gap-2 text-sm font-bold text-white sm:text-base" data-testid="public-trainer-time">
-                      <Timer className="h-5 w-5 text-blue-400" />
-                      {t.resultTime(formatSeconds(result.durationMs, language))}
-                    </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+                      <p className="flex items-center gap-2 text-sm font-bold text-white sm:text-base" data-testid="public-trainer-score">
+                        <Target className="h-5 w-5 text-blue-400" />
+                        {t.resultScore(score.correct, score.total)}
+                      </p>
+                      <p className="flex items-center gap-2 text-sm font-bold text-white sm:text-base" data-testid="public-trainer-time">
+                        <Timer className="h-5 w-5 text-blue-400" />
+                        {t.resultTime(formatSeconds(result.durationMs, language))}
+                      </p>
+                    </div>
+                    {/* DRI-54: the result as an image for the driving-school group chat */}
+                    <button
+                      onClick={handleShare}
+                      disabled={shareState === 'busy'}
+                      data-testid="public-trainer-share"
+                      title={t.shareHint}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:opacity-60"
+                    >
+                      <Share2 className="h-4 w-4 text-blue-300" />
+                      {t.share}
+                    </button>
                   </div>
+                  {shareState === 'done' && (
+                    <p className="mt-1.5 text-xs text-emerald-300" data-testid="public-trainer-share-hint">{t.shareDone}</p>
+                  )}
                   {comparison && comparison.percentile !== null && (
                     <p className="mt-2 text-sm font-semibold text-blue-300" data-testid="public-trainer-percentile">
                       {t.fasterThan(comparison.percentile)}
@@ -174,6 +212,8 @@ export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProp
                       {result.mistakes.length > 1 && <p className="text-slate-400">{t.moreMistakes(result.mistakes.length - 1)}</p>}
                     </div>
                   </div>
+                  {/* Offscreen drawing surface for the share image */}
+                  <canvas ref={shareCanvasRef} className="hidden" width={1080} height={1350} aria-hidden="true" />
                 </div>
               )}
 
