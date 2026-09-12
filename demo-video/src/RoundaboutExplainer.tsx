@@ -17,7 +17,9 @@ import {
 } from 'remotion';
 
 const VIDEO_FRAMES = 480;
-export const RB_TOTAL_FRAMES = VIDEO_FRAMES + 85;
+// End card holds 5 s: the question, the "link in bio" line and the URL need time to register
+// before the feed moves on (founder feedback 12 Sep).
+export const RB_TOTAL_FRAMES = VIDEO_FRAMES + 150;
 
 const COPY = {
   de: {
@@ -27,6 +29,7 @@ const COPY = {
     beat3: 'Ausfahrt: Blinker RECHTS\n+ Schulterblick',
     bait: 'Blinkst du beim Einfahren?',
     bait2: 'Ehrlich! 👇',
+    cta: 'Kreisverkehr selbst üben:\nLink in Bio. Kostenlos, ohne Anmeldung.',
     url: 'drivede.app',
   },
   en: {
@@ -36,6 +39,7 @@ const COPY = {
     beat3: 'Exit: signal RIGHT\n+ shoulder check',
     bait: 'Do you signal when entering?',
     bait2: 'Be honest 👇',
+    cta: 'Practise the roundabout yourself:\nlink in bio. Free, no account.',
     url: 'drivede.app',
   },
 } as const;
@@ -160,7 +164,13 @@ export const RoundaboutExplainer: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) =
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 30 }}>
             <Punch color="#fff" size={82} stroke={false}>{c.bait}</Punch>
             <Punch color="#fbbf24" size={96} stroke={false}>{c.bait2}</Punch>
-            <div style={{ ...font, color: '#7dd3fc', fontWeight: 800, fontSize: 52, marginTop: 26 }}>{c.url}</div>
+            {/* the way to the app, in words a thumb can act on: link in bio */}
+            <Sequence from={40} layout="none">
+              <div style={{ ...font, color: '#e2e8f0', fontWeight: 700, fontSize: 44, lineHeight: 1.25, textAlign: 'center', whiteSpace: 'pre-line', marginTop: 40, maxWidth: 900 }}>
+                {c.cta}
+              </div>
+            </Sequence>
+            <div style={{ ...font, color: '#7dd3fc', fontWeight: 800, fontSize: 60, marginTop: 20 }}>{c.url}</div>
           </div>
         </AbsoluteFill>
       </Sequence>
