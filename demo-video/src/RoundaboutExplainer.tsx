@@ -1,6 +1,6 @@
 /**
- * "Roundabout in 15 seconds" - AutoDad-style 3D explainer. Blender render
- * (public/roundabout-3d.mp4, 720x1280@30fps, 480 frames) + hook-first text
+ * "Roundabout in 15 seconds" - AutoDad-style 3D explainer. Two Google Flow
+ * clips (public/flow/veo-rb-1.mp4 + veo-rb-2.mp4, 720x1280, 8 s each) + hook-first text
  * beats + Chatterbox VO (public/vo-narrator/rb-{lang}/s1..4.wav, synthetic:
  * posts MUST carry AI flags). Hook text lands on frame 0 - no brand-first.
  * Ends on a comment-bait card. 1080x1920 @ 30fps.
@@ -42,11 +42,15 @@ const COPY = {
 
 const font = { fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif" } as const;
 
-function Punch({ children, color = '#fff', size = 84, stroke = true }: {
-  children: React.ReactNode; color?: string; size?: number; stroke?: boolean;
+function Punch({ children, color = '#fff', size = 84, stroke = true, fade = true }: {
+  children: React.ReactNode; color?: string; size?: number; stroke?: boolean; fade?: boolean;
 }) {
   const frame = useCurrentFrame();
-  const t = interpolate(frame, [0, 6], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  // The hook passes fade={false}: a fade-in would leave frame 0 blank, and
+  // frame 0 is both the first thing the feed shows and the cover thumbnail.
+  const t = fade
+    ? interpolate(frame, [0, 6], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    : 1;
   const pop = interpolate(frame, [0, 5, 9], [0.7, 1.06, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   return (
     <div
@@ -77,20 +81,42 @@ export const RoundaboutExplainer: React.FC<{ lang: 'de' | 'en' }> = ({ lang }) =
 
   return (
     <AbsoluteFill style={{ background: '#060c18' }}>
-      {frame < VIDEO_FRAMES + 12 && (
+      {/* Background: two Google Flow (Veo) clips, 8 s each at 30 fps = 480 frames.
+          Clip 1: the red car circulates, the blue car waits at the entry (yield).
+          Clip 2: the blue car enters without a signal, drives round anticlockwise
+          and exits at the top. The Blender render used before showed a car
+          crossing the island in a straight line and was pulled on 12 Sep. */}
+      {frame < 240 && (
         <AbsoluteFill>
           <OffthreadVideo
-            src={staticFile('roundabout-3d.mp4')}
+            src={staticFile('flow/veo-rb-1-cfr.mp4')}
             style={{ width: 1080, height: 1920, objectFit: 'cover' }}
             muted
           />
         </AbsoluteFill>
       )}
+      {frame >= 240 && frame < VIDEO_FRAMES + 12 && (
+        <Sequence from={240} durationInFrames={VIDEO_FRAMES + 12 - 240}>
+          <AbsoluteFill>
+            {/* Veo drove this one clockwise (up the left of the island). The -cfr-mirrored
+                file is the same clip flipped horizontally with ffmpeg, so the car enters,
+                passes on the right and exits at the top: anticlockwise, as German
+                roundabouts are driven. No text or signage in the clip reads wrong mirrored.
+                Both clips are re-encoded to constant 30 fps; Remotion's compositor failed
+                on the variable-frame-rate originals. */}
+            <OffthreadVideo
+              src={staticFile('flow/veo-rb-2-cfr-mirrored.mp4')}
+              style={{ width: 1080, height: 1920, objectFit: 'cover' }}
+              muted
+            />
+          </AbsoluteFill>
+        </Sequence>
+      )}
 
       {/* HOOK on frame 0 - the first thing the test batch sees */}
       <Sequence from={0} durationInFrames={95}>
         <AbsoluteFill style={{ alignItems: 'center', paddingTop: 240 }}>
-          <Punch color="#fbbf24" size={104}>{c.hook}</Punch>
+          <Punch color="#fbbf24" size={104} fade={false}>{c.hook}</Punch>
         </AbsoluteFill>
       </Sequence>
 
