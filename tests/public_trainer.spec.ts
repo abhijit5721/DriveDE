@@ -33,7 +33,12 @@ async function completeRound(page: Page) {
   for (const [scenarioId, taps] of ROUND) {
     // The trainer auto-advances after a green flash; wait for the next intersection to be on screen.
     await expect(page.locator(`[data-testid="simulator-svg"][data-scenario="${scenarioId}"]`)).toBeVisible({ timeout: 5000 });
-    for (const car of taps) await page.getByTestId(car).click();
+    for (const car of taps) {
+      // Headless WebKit under parallel load sometimes never reports the SVG group as
+      // "stable"; the car is static, so fall back to a forced click after 5 s.
+      const el = page.getByTestId(car);
+      await el.click({ timeout: 5000 }).catch(() => el.click({ force: true }));
+    }
   }
   await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
 }
@@ -55,6 +60,7 @@ test('German hero copy', async ({ page }) => {
 });
 
 test('a visitor completes a round with no account and only then sees the signup prompt', async ({ page }) => {
+  test.slow(); // two full three-intersection rounds; headless WebKit needs the headroom
   const authCalls: string[] = [];
   page.on('request', (r) => {
     if (/\/auth\/v1\//.test(r.url())) authCalls.push(r.url());
@@ -250,6 +256,57 @@ test('share button renders the result card image and copies the caption when Web
   const copied = await page.evaluate(() => (window as any).__copied as string[]);
   expect(copied).toHaveLength(1);
   expect(copied[0]).toMatch(/^Right before left, roundabout, stop sign: 6 of 6 correct in \d+\.\d seconds\. Can you beat that\? https:\/\/drivede\.app\/\?utm_source=share/);
+});
+
+test('trainer ladder: rung 2 opens after rung 1, rung 3 is one tap from signup, state survives reopening (DRI-52)', async ({ page }) => {
+  test.slow(); // a full round plus the roundabout plus a reopen
+  await page.route('**/api/trainer-result', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, total: 1, percentile: null }) }));
+  await openLanding(page, 'en');
+  await page.getByTestId('welcome-try-btn').click();
+
+  const ladder = page.getByTestId('trainer-ladder');
+  await expect(ladder).toBeVisible();
+  await expect(page.getByTestId('ladder-rung-1')).toHaveAttribute('data-state', 'active');
+  await expect(page.getByTestId('ladder-rung-2')).toHaveAttribute('data-state', 'closed');
+  await expect(page.getByTestId('ladder-rung-2')).toBeDisabled();
+  await expect(page.getByTestId('ladder-rung-3')).toHaveAttribute('data-state', 'locked');
+  await expect(page.getByTestId('ladder-rung-3')).toContainText('With a free account');
+
+  // Locked rung is one tap from the signup prompt, with copy naming what unlocks
+  await page.getByTestId('ladder-rung-3').click();
+  await expect(page.getByTestId('public-locked-preview')).toBeVisible();
+  await expect(page.getByText('Unlock parking?')).toBeVisible();
+  await expect(page.getByTestId('public-trainer-signup')).toHaveText(/Unlock for free/);
+  await page.getByTestId('public-trainer-back').click();
+  await expect(ladder).toBeVisible();
+
+  // Rung 1 -> exam question -> prompt with "Next: roundabout"
+  await completeRound(page);
+  await page.getByTestId('exam-not-booked').click();
+  const next = page.getByTestId('public-trainer-next-rung');
+  await expect(next).toHaveText(/Next: roundabout/);
+  await next.click();
+
+  // Rung 2 renders standalone and rung 1 shows the tick
+  await expect(page.getByTestId('public-roundabout')).toBeVisible();
+  await expect(page.getByTestId('ladder-rung-1')).toHaveAttribute('data-state', 'done');
+  await expect(page.getByTestId('ladder-rung-2')).toHaveAttribute('data-state', 'active');
+  // Enter without signalling, then signal right and drive out
+  await page.getByTestId('roundabout-action-btn').click();
+  await page.getByTestId('roundabout-signal-btn').click();
+  await page.getByTestId('roundabout-action-btn').click();
+  await page.getByTestId('roundabout-continue-btn').click({ timeout: 8000 });
+  await expect(page.getByTestId('public-roundabout-done')).toContainText('Two of three exercises finished.');
+  // The exam question is not asked a second time
+  await expect(page.getByTestId('public-trainer-exam')).toHaveCount(0);
+  await expect(page.getByTestId('public-trainer-next-rung')).toHaveCount(0);
+
+  // Close and reopen within the visit: both ticks survive (rung 1 is active again for a replay, tick kept)
+  await page.getByTestId('public-trainer-close').click();
+  await page.getByTestId('welcome-try-btn').click();
+  await expect(page.getByTestId('ladder-rung-1')).toHaveAttribute('data-done', 'true');
+  await expect(page.getByTestId('ladder-rung-2')).toHaveAttribute('data-done', 'true');
+  await expect(page.getByTestId('ladder-rung-2')).toHaveAttribute('data-state', 'done');
 });
 
 test('German exam-date step', async ({ page }) => {

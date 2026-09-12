@@ -137,8 +137,9 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
               <Check className="h-12 w-12 mb-2" />
               <h3 className="text-xl font-bold">{rt.success}</h3>
               <p className="text-sm opacity-90 mb-4">{rt.mastered}</p>
-              <button 
+              <button
                 onClick={onComplete}
+                data-testid="roundabout-continue-btn"
                 className="w-full bg-white text-green-600 py-3 rounded-xl font-bold shadow-lg"
               >
                 {t.maneuvers.interactive.priority.continue}
@@ -151,6 +152,7 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={() => setIsBlinking(!isBlinking)}
+          data-testid="roundabout-signal-btn"
           className={cn(
             'flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all border-2',
             isBlinking 
@@ -164,6 +166,7 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
         
         <button
           onClick={handleAction}
+          data-testid="roundabout-action-btn"
           disabled={phase === 'success'}
           className="flex items-center justify-center gap-2 py-3 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
         >

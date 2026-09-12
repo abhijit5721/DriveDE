@@ -265,7 +265,9 @@ export type FunnelEvent =
   | 'signup_prompt_shown'
   | 'signup_started'
   | 'result_saved'
-  | 'share_click';
+  | 'share_click'
+  | 'ladder_rung_started'
+  | 'ladder_locked_tap';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,
