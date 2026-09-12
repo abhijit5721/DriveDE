@@ -25,6 +25,8 @@ import { PhoneFrame, MonitorFrame } from '../common/DeviceFrames';
 import { LegalPage } from '../legal/LegalPage';
 import type { LegalPageType } from '../../types';
 import { trackFunnel } from '../../services/AnalyticsService';
+import { TrainerTiles } from './TrainerTiles';
+import type { Rung } from './TrainerLadder';
 
 // Loaded on demand so the landing chunk does not carry the trainer until someone taps it.
 const PublicTrainer = lazy(() => import('./PublicTrainer').then((m) => ({ default: m.PublicTrainer })));
@@ -38,8 +40,9 @@ export function Welcome() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [demoEnded, setDemoEnded] = useState(false);
-  // DRI-44: the right-before-left trainer, playable before any signup
-  const [showTrainer, setShowTrainer] = useState(false);
+  // DRI-44/45: the public trainer ladder, playable before any signup; the value is the rung to open on
+  const [trainerRung, setTrainerRung] = useState<Rung | null>(null);
+  const showTrainer = trainerRung !== null;
   const demoVideoRef = useRef<HTMLVideoElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
@@ -144,10 +147,11 @@ export function Welcome() {
     setHasVisited(true);
   };
 
+  // DRI-45: "Preise" next to a free trainer button read as a paywall; the nav now names what is free.
   const navLinks = useMemo(() => [
-    { name: isDe ? 'Warum DriveDE' : 'Why DriveDE', href: '#problem-solution' },
+    { name: isDe ? 'Trainer' : 'Trainers', href: '#trainers' },
     { name: isDe ? 'So funktioniert\'s' : 'How It Works', href: '#how-it-works' },
-    { name: isDe ? 'Preise' : 'Pricing', href: '#pricing' },
+    { name: isDe ? 'Kostenlos vs Pro' : 'Free vs Pro', href: '#pricing' },
     { name: 'FAQ', href: '#faq' },
   ], [isDe]);
 
@@ -287,7 +291,13 @@ export function Welcome() {
             </div>
           </div>
 
-          <button className="text-slate-900 md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button
+            className="text-slate-900 md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={isDe ? 'Menü' : 'Menu'}
+            aria-expanded={mobileMenuOpen}
+            data-testid="mobile-menu-toggle"
+          >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -355,7 +365,7 @@ export function Welcome() {
               {/* One primary action: try the trainer with no account (DRI-43/44). */}
               <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
                 <button
-                  onClick={() => { trackFunnel('try_click', { trainer: 'vorfahrt' }); setShowTrainer(true); }}
+                  onClick={() => { trackFunnel('try_click', { trainer: 'vorfahrt', from: 'hero' }); setTrainerRung(1); }}
                   data-testid="welcome-try-btn"
                   className="group flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
                 >
@@ -423,143 +433,53 @@ export function Welcome() {
             />
           </PhoneFrame>
         </div>
-        <PhoneFrame className="mx-auto mt-14 w-full max-w-[280px] sm:hidden">
-          <img
-            src={isDe ? '/screenshots/app-mobile-de.webp' : '/screenshots/app-mobile-en.webp'}
-            alt={isDe ? 'DriveDE App auf dem Smartphone mit Prüfungsreife-Anzeige' : 'DriveDE app on a phone with exam readiness score'}
-            className="w-full"
-            width="680"
-            height="1472"
-            loading="eager"
-            decoding="async"
-          />
-        </PhoneFrame>
+        {/* DRI-45: on phones the trainer tiles are the product shot; the framed screenshot
+            pushed them a full screen further down, so it is desktop-only now. */}
       </main>
 
-      {/* 💡 Problem vs Solution: Why Driving in Germany Costs €3,000+ */}
-      <section id="problem-solution" className="relative z-10 bg-white px-6 py-24 border-t border-slate-100">
-        <div className="mx-auto max-w-6xl text-left">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-blue-600">
-              {isDe ? 'Das 3.000€+ Fahrschul-Problem' : 'The €3,000+ driving school problem'}
-            </p>
-            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
-              {isDe ? 'Weniger Fahrstunden bezahlen.' : 'Spend Less on Driving Hours.'} <span>{isDe ? 'Schneller bestehen.' : 'Pass Faster.'}</span>
+      {/* DRI-45: show before explaining. The trainers sit right under the hero. */}
+      <TrainerTiles
+        language={language}
+        onOpen={(rung, trainer) => { trackFunnel('try_click', { trainer, from: 'tiles', rung }); setTrainerRung(rung); }}
+        onLockedAccount={() => { trackFunnel('signup_started', { from: 'tile_locked' }); handleStart(); }}
+      />
+
+      {/* 💡 The problem in three bullets (DRI-45: the old two-column cost argument cut by more than half) */}
+      <section id="problem-solution" className="relative z-10 bg-slate-50 px-6 py-20 border-t border-slate-100">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-5xl leading-tight">
+              {isDe ? 'Warum die praktische Prüfung so teuer wird' : 'Why the practical exam gets so expensive'}
             </h2>
-            <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-base">
-              {isDe 
-                ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Die meisten Fahrschüler brauchen 35-45+ Stunden, weil sie rein nach Versuch und Irrtum lernen.'
-                : 'In Germany, driving lessons (Fahrstunden) cost up to €95 per hour. Most students take 35-45+ hours because they learn purely by trial and error.'
-              }
-            </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-            {/* Old Way (Expensive & Slow) */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 text-left relative overflow-hidden flex flex-col justify-between">
+          <ul className="grid grid-cols-1 gap-4 md:grid-cols-3" data-testid="problem-bullets">
+            <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+              <Coins className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
               <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-red-600 font-black text-xl">
-                    ✕
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">{isDe ? 'Der alte teure Weg' : 'The Old Expensive Way'}</h3>
-                    <p className="text-xs text-red-600 font-semibold">{isDe ? 'Ohne DriveDE' : 'Without DriveDE'}</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <Coins className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? '3.200€+ Gesamtkosten' : '€3,200+ Total Spent'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchschnittlich 35 bis 45+ Fahrstunden zu je 75€-95€ pro Stunde.' : 'Average student takes 35 to 45+ Fahrstunden at €75-€95 per hour.'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <Clock className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? '38% Durchfallquote beim 1. Versuch' : '38% First-Time Failure Rate'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Durchfallen kostet 600€+ für Pflicht-Zusatzstunden und Prüfungsgebühren.' : 'Failing your practical exam costs €600+ in mandatory extra lessons and re-test fees.'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <Shield className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? 'Keine Transparenz' : 'No Progress Visibility'}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{isDe ? 'Keine objektiven Daten, ob du wirklich prüfungsreif bist.' : 'Zero objective data on whether you are truly exam ready, leaving you dependent on guesswork.'}</p>
-                    </div>
-                  </div>
-                </div>
+                <p className="font-bold text-slate-900">{isDe ? 'Bis zu 95 Euro pro Fahrstunde' : 'Up to 95 euros per lesson'}</p>
+                <p className="mt-1 text-sm text-slate-600">{isDe ? 'Die meisten brauchen 35 bis 45. Jede Stunde, die du vorbereitet antrittst, sitzt besser.' : 'Most people need 35 to 45. Every lesson you arrive prepared for counts double.'}</p>
               </div>
-            </div>
-
-            {/* DriveDE Way (Smart, Fast & Saves €1,000+) */}
-            <div className="relative rounded-3xl border border-slate-200 bg-white p-8 text-left shadow-sm flex flex-col justify-between">
-              <span className="absolute -top-4 right-8 rounded-full bg-blue-600 px-4 py-1 text-xs font-bold text-white shadow-md">
-                {isDe ? 'DER DRIVEDE VORTEIL' : 'THE DRIVEDE ADVANTAGE'}
-              </span>
-
+            </li>
+            <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+              <Clock className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
               <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-blue-600 font-black text-xl">
-                    ✓
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">{isDe ? 'Der smarte DriveDE Weg' : 'The DriveDE Smart Way'}</h3>
-                    <p className="text-xs text-blue-600 font-bold">{isDe ? 'Geld sparen & beim 1. Versuch bestehen' : 'Save Money & Pass First Try'}</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <Coins className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? '800€-1.200€ an Fahrstunden sparen' : 'Save €800-€1,200 in Driving Hours'}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Bereite Manöver gedanklich mit 3D-Simulationen vor, um weniger Fahrstunden zu benötigen.' : 'Practice maneuvers mentally with 3D simulations before stepping into the car to reduce total driving hours.'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <CheckCircle2 className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? 'Aus jeder Fahrstunde lernen' : 'Learn From Every Lesson'}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Route und Fehler-Protokoll machen aus jeder Stunde messbaren Fortschritt statt Bauchgefühl.' : 'Your route and mistake log turn every hour into measurable progress instead of gut feeling.'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-4 border border-slate-200">
-                    <Award className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold text-slate-900">{isDe ? '100% objektive Prüfungsreife' : '100% Objective Exam Readiness Score'}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{isDe ? 'Erkenne genau den Tag, an dem du 90%+ Prüfungsreife erreichst.' : 'Know the exact day you hit 90%+ readiness to schedule your Fahrprüfung with zero doubt.'}</p>
-                    </div>
-                  </div>
-                </div>
+                <p className="font-bold text-slate-900">{isDe ? 'Etwa jeder Dritte fällt durch' : 'About one in three fails'}</p>
+                <p className="mt-1 text-sm text-slate-600">{isDe ? 'Ein Fehlversuch kostet rund 600 Euro für Pflichtstunden und Gebühren.' : 'A failed attempt costs about 600 euros in mandatory lessons and fees.'}</p>
               </div>
-            </div>
-          </div>
-
-          {/* 📚 "More than a theory app" — intercepts Theorie-App search intent and reframes it */}
-          <div className="mt-16 mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-slate-50 p-8 text-center">
-            <h3 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-              {isDe
-                ? 'Führerschein Theorie-Apps bringen dich nur bis zur Theorieprüfung'
-                : 'Theory apps only get you through the theory exam'}
-            </h3>
-            <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
-              {isDe
-                ? 'Der wirklich teure Teil beginnt danach: die praktischen Fahrstunden. Was dein Fahrlehrer dir beibringt (Schulterblick, Einparken, Auffahren auf die Autobahn) findest du in keiner Theorie-App und kaum im Internet erklärt.'
-                : 'The truly expensive part starts after: your practical driving lessons. What your instructor teaches you (Schulterblick, parking maneuvers, Autobahn merging) isn\'t in any theory app, and searching the internet for it lesson by lesson gets you nowhere.'}
-            </p>
-            <p className="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed font-semibold">
-              {isDe
-                ? 'DriveDE bringt genau dieses Wissen auf dein Handy: Theorie lernen und die praktische Fahrprüfung meistern. Alles in einer App.'
-                : 'DriveDE puts exactly that knowledge at your fingertips: learn theory and master the practical exam. Everything in one app.'}
-            </p>
-          </div>
+            </li>
+            <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5">
+              <Shield className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
+              <div>
+                <p className="font-bold text-slate-900">{isDe ? 'Es ist fast nie das Fahren' : 'It is almost never the driving'}</p>
+                <p className="mt-1 text-sm text-slate-600">{isDe ? 'Rechts vor links, Schulterblick, Tempo. Genau das üben die Trainer, bevor es Geld kostet.' : 'Right before left, shoulder check, speed. The trainers drill exactly that before it costs money.'}</p>
+              </div>
+            </li>
+          </ul>
+          <p className="mt-8 text-center text-sm text-slate-500">
+            {isDe
+              ? 'Theorie-Apps enden bei der Theorieprüfung. DriveDE übt den Teil danach.'
+              : 'Theory apps stop at the theory exam. DriveDE trains the part after it.'}
+          </p>
         </div>
       </section>
 
@@ -623,11 +543,11 @@ export function Welcome() {
               data-testid="cta-how-it-works"
               className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
-              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Get Started Free')}
+              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Kostenloses Konto anlegen' : 'Create a free account')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
             <p className="mt-3 text-xs text-slate-500">
-              {isDe ? '7 Tage Pro Testversion • Keine Kreditkarte nötig' : '7-Day Free Pro Trial • No Credit Card Required'}
+              {isDe ? 'Alle Trainer bleiben kostenlos. Keine Kreditkarte.' : 'All trainers stay free. No credit card.'}
             </p>
           </div>
         </div>
@@ -703,8 +623,8 @@ export function Welcome() {
               </h2>
               <p className="max-w-md text-slate-500 text-sm sm:text-base mb-8">
                 {isDe
-                  ? 'Starte heute deine 7-Tage Pro Testversion. Keine Kreditkarte nötig.'
-                  : 'Start your 7-day free Pro trial today. No credit card required.'}
+                  ? 'Alle Trainer kostenlos, dein Fortschritt gespeichert. Konto in einer Minute, keine Kreditkarte.'
+                  : 'All trainers free, your progress saved. Account in a minute, no credit card.'}
               </p>
               <button
                 onClick={() => handleStart()}
@@ -732,13 +652,15 @@ export function Welcome() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-semibold text-blue-600">
-              {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
+              {isDe ? 'Kostenlos vs Pro' : 'Free vs Pro'}
             </span>
-            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}</h2>
+            <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl" data-testid="pricing-heading">
+              {isDe ? 'Alle Trainer bleiben kostenlos' : 'All trainers stay free'}
+            </h2>
             <p className="mt-4 text-slate-500 max-w-xl mx-auto">
               {isDe
-                ? 'Starte heute kostenlos. Schalte Pro frei, wenn du bereit für GPS-Tracking & KI-Coaching bist.'
-                : 'Start free today. Unlock full Pro features whenever you are ready for live GPS tracking & AI coaching.'
+                ? 'Pro ist das GPS-Tracking deiner Fahrstunden und das KI-Coaching danach. Sieben Tage kostenlos testen, ohne Kreditkarte.'
+                : 'Pro is GPS tracking of your lessons and the AI coaching afterwards. Try it free for seven days, no credit card.'
               }
             </p>
             <p className="mt-3 text-sm font-semibold text-blue-600 max-w-xl mx-auto">
@@ -1124,11 +1046,12 @@ export function Welcome() {
         <Suspense fallback={<div className="fixed inset-0 z-[100] bg-slate-950/90" />}>
           <PublicTrainer
             language={language}
-            onClose={() => setShowTrainer(false)}
+            initialRung={trainerRung ?? 1}
+            onClose={() => setTrainerRung(null)}
             onSignup={(examDate) => {
               // The exam date is the one thing the visitor made "theirs"; carry it into the account.
               if (examDate) setExamDate(examDate);
-              setShowTrainer(false);
+              setTrainerRung(null);
               handleStart();
             }}
           />
@@ -1168,7 +1091,7 @@ export function Welcome() {
                   data-testid="demo-cta"
                   className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
                 >
-                  {isDe ? 'Jetzt kostenlos starten' : 'Start Free Trial'}
+                  {isDe ? 'Jetzt kostenlos starten' : 'Get started free'}
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
                 <button

@@ -1,5 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 
+// Every test here plays at least one three-intersection round with real 800 ms
+// animations; under three parallel device projects headless WebKit needs headroom.
+test.describe.configure({ timeout: 90_000 });
+
 /**
  * DRI-44 / DRI-47: the landing-page trainer is playable without an account.
  * A visitor opens it from the hero, completes a round by tapping the cars in
@@ -29,18 +33,27 @@ const ROUND: Array<[scenarioId: string, taps: string[]]> = [
   ['public-stop', ['car-red-car', 'car-blue-car']],
 ];
 
+/**
+ * Headless WebKit under parallel load sometimes never reports an SVG group as
+ * "stable"; the cars are static, so fall back to a forced click after 5 s.
+ */
+async function tap(page: Page, testId: string) {
+  const el = page.getByTestId(testId);
+  await el.click({ timeout: 5000 }).catch(() => el.click({ force: true }));
+}
+
+/** The trainer auto-advances after a green flash; wait for the next intersection to be on screen. */
+async function waitForScenario(page: Page, scenarioId: string) {
+  await expect(page.locator(`[data-testid="simulator-svg"][data-scenario="${scenarioId}"]`)).toBeVisible({ timeout: 10000 });
+}
+
 async function completeRound(page: Page) {
   for (const [scenarioId, taps] of ROUND) {
-    // The trainer auto-advances after a green flash; wait for the next intersection to be on screen.
-    await expect(page.locator(`[data-testid="simulator-svg"][data-scenario="${scenarioId}"]`)).toBeVisible({ timeout: 5000 });
-    for (const car of taps) {
-      // Headless WebKit under parallel load sometimes never reports the SVG group as
-      // "stable"; the car is static, so fall back to a forced click after 5 s.
-      const el = page.getByTestId(car);
-      await el.click({ timeout: 5000 }).catch(() => el.click({ force: true }));
-    }
+    await waitForScenario(page, scenarioId);
+    for (const car of taps) await tap(page, car);
   }
-  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
+  // the last car still drives off for 800 ms; under load a whole round has taken 9 s
+  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 20000 });
 }
 
 test('hero leads with the trainer CTA and keeps the account entry in the header', async ({ page }) => {
@@ -169,7 +182,7 @@ test('result card: own numbers at once, comparison line when the API answers, no
   await expect(page.getByTestId('public-trainer-mistake')).toContainText('No mistakes.');
   // Flawless: the card teaches the last intersection's rule
   await expect(page.getByTestId('public-trainer-mistake')).toContainText('STOP sign');
-  await expect(page.getByTestId('public-trainer-percentile')).toHaveText('Faster than 61% of learners here.');
+  await expect(page.getByTestId('public-trainer-percentile')).toHaveText('Faster than 61% of learners here.', { timeout: 8000 });
 
   expect(posted).toHaveLength(1);
   expect(posted[0]).toEqual({ scenarioId: 'set-3-public-rvl', cars: 6, wrongTaps: 0, durationMs: expect.any(Number) });
@@ -182,7 +195,8 @@ test('result card explains the mistake with the exam consequence after a wrong t
   await page.getByTestId('welcome-try-btn').click();
   await expect(page.getByTestId('simulator-progress')).toHaveText('Kreuzung 1 von 3');
   // Red first is wrong at the first intersection: blue comes from the right
-  await page.getByTestId('car-red-car').click();
+  await waitForScenario(page, 'public-rvl');
+  await tap(page, 'car-red-car');
   await completeRound(page);
 
   await expect(page.getByTestId('public-trainer-score')).toHaveText('6 von 7 richtig');
@@ -204,26 +218,30 @@ test('a round runs through all three intersections with a flash between them (DR
   await openLanding(page, 'en');
   await page.getByTestId('welcome-try-btn').click();
 
+  test.slow();
   await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 1 of 3');
   // No manual scenario tabs in the public trainer
   await expect(page.getByTestId('scenario-switch-1')).toHaveCount(0);
 
-  await page.getByTestId('car-blue-car').click();
-  await page.getByTestId('car-red-car').click();
+  await waitForScenario(page, 'public-rvl');
+  await tap(page, 'car-blue-car');
+  await tap(page, 'car-red-car');
   await expect(page.getByTestId('simulator-next-flash')).toContainText('Correct! Next intersection.');
   await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 2 of 3');
   await expect(page.getByTestId('public-trainer-result')).toHaveCount(0);
 
   // Wrong tap at the second and third intersections: two mistakes, one explained, the other counted
-  await page.getByTestId('car-red-car').click();
-  await page.getByTestId('car-blue-car').click();
-  await page.getByTestId('car-red-car').click();
+  await waitForScenario(page, 'public-bending');
+  await tap(page, 'car-red-car');
+  await tap(page, 'car-blue-car');
+  await tap(page, 'car-red-car');
   await expect(page.getByTestId('simulator-progress')).toHaveText('Intersection 3 of 3');
-  await page.getByTestId('car-blue-car').click();
-  await page.getByTestId('car-red-car').click();
-  await page.getByTestId('car-blue-car').click();
+  await waitForScenario(page, 'public-stop');
+  await tap(page, 'car-blue-car');
+  await tap(page, 'car-red-car');
+  await tap(page, 'car-blue-car');
 
-  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 5000 });
+  await expect(page.getByTestId('public-trainer-result')).toBeVisible({ timeout: 8000 });
   await expect(page.getByTestId('public-trainer-score')).toHaveText('6 of 8 correct');
   const mistake = page.getByTestId('public-trainer-mistake');
   await expect(mistake).toContainText('bending priority road');
@@ -244,7 +262,7 @@ test('share button renders the result card image and copies the caption when Web
   await page.getByTestId('welcome-try-btn').click();
   await completeRound(page);
 
-  const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
+  const downloadPromise = page.waitForEvent('download', { timeout: 20000 });
   await page.getByTestId('public-trainer-share').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('drivede-result.png');

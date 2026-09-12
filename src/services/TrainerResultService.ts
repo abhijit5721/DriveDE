@@ -16,7 +16,9 @@ export interface TrainerComparison {
   total: number;
 }
 
-const TIMEOUT_MS = 2500;
+// The card shows the visitor's own numbers at once; this only bounds how long the
+// comparison line may arrive late. Generous enough for a slow phone radio.
+const TIMEOUT_MS = 5000;
 
 export async function submitTrainerResult(result: TrainerRoundResult): Promise<TrainerComparison | null> {
   if (typeof fetch !== 'function') return null;

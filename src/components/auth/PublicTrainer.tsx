@@ -35,6 +35,8 @@ interface PublicTrainerProps {
   onClose: () => void;
   /** Called when the visitor chooses to keep their result; examDate is YYYY-MM-DD or null. */
   onSignup: (examDate: string | null) => void;
+  /** DRI-45: which rung to open on (a landing tile chose it). 3 opens the locked prompt. */
+  initialRung?: Rung;
 }
 
 type Step = 'trainer' | 'exam' | 'keep';
@@ -58,16 +60,18 @@ function writeSession(s: LadderSession) {
   try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch { /* ignore */ }
 }
 
-export function PublicTrainer({ language, onClose, onSignup }: PublicTrainerProps) {
+export function PublicTrainer({ language, onClose, onSignup, initialRung }: PublicTrainerProps) {
   const t = TRANSLATIONS[language].common.publicTrainer;
   const facts = TRANSLATIONS[language].maneuvers.interactive.priority.facts as Record<string, string>;
   const [session] = useState<LadderSession>(() => readSession());
   const [done1, setDone1] = useState(session.done1);
   const [done2, setDone2] = useState(session.done2);
-  const [rung, setRung] = useState<Rung>(session.done1 && !session.done2 ? 2 : 1);
+  const [rung, setRung] = useState<Rung>(
+    initialRung === 2 ? 2 : initialRung === 1 ? 1 : session.done1 && !session.done2 ? 2 : 1
+  );
   const [round, setRound] = useState(1);
-  const [step, setStep] = useState<Step>('trainer');
-  const [reason, setReason] = useState<PromptReason>('result');
+  const [step, setStep] = useState<Step>(initialRung === 3 ? 'keep' : 'trainer');
+  const [reason, setReason] = useState<PromptReason>(initialRung === 3 ? 'locked' : 'result');
   const [result, setResult] = useState<TrainerRoundResult | null>(null);
   const [comparison, setComparison] = useState<TrainerComparison | null>(null);
   const [examDate, setExamDate] = useState<string>('');
