@@ -87,7 +87,7 @@ export function TrainerTiles({ language, onOpen, onLockedAccount }: TrainerTiles
             {de ? 'Die Trainer. Kostenlos, ohne Anmeldung.' : 'The trainers. Free, no account needed.'}
           </h2>
           <p className="mt-3 text-slate-600">
-            {de ? 'Zwei davon direkt hier, zwei weitere mit einem kostenlosen Konto.' : 'Two of them right here, two more with a free account.'}
+            {de ? 'Zwei davon direkt hier, ohne Konto. Die anderen mit Konto, sieben Tage kostenlos.' : 'Two of them right here, no account. The rest with an account, free for seven days.'}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">

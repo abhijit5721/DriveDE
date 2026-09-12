@@ -151,7 +151,7 @@ export function Welcome() {
   const navLinks = useMemo(() => [
     { name: isDe ? 'Trainer' : 'Trainers', href: '#trainers' },
     { name: isDe ? 'So funktioniert\'s' : 'How It Works', href: '#how-it-works' },
-    { name: isDe ? 'Kostenlos vs Pro' : 'Free vs Pro', href: '#pricing' },
+    { name: isDe ? 'Preise' : 'Pricing', href: '#pricing' },
     { name: 'FAQ', href: '#faq' },
   ], [isDe]);
 
@@ -543,11 +543,11 @@ export function Welcome() {
               data-testid="cta-how-it-works"
               className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
-              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Kostenloses Konto anlegen' : 'Create a free account')}
+              {isReturningUser ? t.common.backToDashboard : (isDe ? 'Jetzt kostenlos starten' : 'Get Started Free')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
             <p className="mt-3 text-xs text-slate-500">
-              {isDe ? 'Alle Trainer bleiben kostenlos. Keine Kreditkarte.' : 'All trainers stay free. No credit card.'}
+              {isDe ? 'Sieben Tage alles kostenlos testen. Keine Kreditkarte.' : 'Seven days of everything, free. No credit card.'}
             </p>
           </div>
         </div>
@@ -623,8 +623,8 @@ export function Welcome() {
               </h2>
               <p className="max-w-md text-slate-500 text-sm sm:text-base mb-8">
                 {isDe
-                  ? 'Alle Trainer kostenlos, dein Fortschritt gespeichert. Konto in einer Minute, keine Kreditkarte.'
-                  : 'All trainers free, your progress saved. Account in a minute, no credit card.'}
+                  ? 'Sieben Tage alle Trainer, GPS-Tracking und KI-Coaching kostenlos. Konto in einer Minute, keine Kreditkarte.'
+                  : 'Seven days of every trainer, GPS tracking and AI coaching, free. Account in a minute, no credit card.'}
               </p>
               <button
                 onClick={() => handleStart()}
@@ -652,15 +652,16 @@ export function Welcome() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs font-semibold text-blue-600">
-              {isDe ? 'Kostenlos vs Pro' : 'Free vs Pro'}
+              {isDe ? 'Transparente Preise' : 'Simple Transparent Pricing'}
             </span>
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl" data-testid="pricing-heading">
-              {isDe ? 'Alle Trainer bleiben kostenlos' : 'All trainers stay free'}
+              {isDe ? 'Fahrprüfung günstiger bestehen' : 'Pass Your Fahrprüfung For Less'}
             </h2>
-            <p className="mt-4 text-slate-500 max-w-xl mx-auto">
+            {/* DRI-45: say what is free before any price, so the pricing link does not read as a paywall */}
+            <p className="mt-4 text-slate-500 max-w-xl mx-auto" data-testid="pricing-free-line">
               {isDe
-                ? 'Pro ist das GPS-Tracking deiner Fahrstunden und das KI-Coaching danach. Sieben Tage kostenlos testen, ohne Kreditkarte.'
-                : 'Pro is GPS tracking of your lessons and the AI coaching afterwards. Try it free for seven days, no credit card.'
+                ? 'Rechts vor links und Kreisverkehr übst du oben kostenlos und ohne Konto. Die ganze App mit allen Trainern, GPS-Tracking und KI-Coaching testest du sieben Tage kostenlos, danach wählst du einen Pass.'
+                : 'Right before left and the roundabout are free above, no account needed. The full app with every trainer, GPS tracking and AI coaching is free for seven days, then you pick a pass.'
               }
             </p>
             <p className="mt-3 text-sm font-semibold text-blue-600 max-w-xl mx-auto">

@@ -17,9 +17,8 @@ test('nav names what is free, tiles sit under the hero, pricing opens with the f
   await openLanding(page, 'en');
   if (isMobile) await page.getByTestId('mobile-menu-toggle').click();
   const nav = page.locator('nav');
-  await expect(nav.getByRole('link', { name: 'Free vs Pro' })).toBeVisible();
   await expect(nav.getByRole('link', { name: 'Trainers' })).toBeVisible();
-  await expect(nav.getByRole('link', { name: 'Pricing', exact: true })).toHaveCount(0);
+  await expect(nav.getByRole('link', { name: 'Pricing', exact: true })).toBeVisible();
   if (isMobile) await page.getByTestId('mobile-menu-toggle').click();
 
   const tiles = page.getByTestId('trainer-tiles');
@@ -29,10 +28,10 @@ test('nav names what is free, tiles sit under the hero, pricing opens with the f
   await expect(page.getByTestId('tile-parking')).toContainText('With account');
 
   await expect(page.getByTestId('problem-bullets').locator('li')).toHaveCount(3);
-  await expect(page.getByTestId('pricing-heading')).toHaveText('All trainers stay free');
-  // The old trial framing is gone from the mid-page CTAs
-  await expect(page.getByText('7-Day Free Pro Trial')).toHaveCount(0);
-  await expect(page.getByText('Start your 7-day free Pro trial today.')).toHaveCount(0);
+  await expect(page.getByTestId('pricing-heading')).toHaveText('Pass Your Fahrprüfung For Less');
+  // The first line under the pricing heading says what is free before any price appears
+  await expect(page.getByTestId('pricing-free-line')).toContainText('free above, no account needed');
+  await expect(page.getByTestId('pricing-free-line')).toContainText('free for seven days, then you pick a pass');
 });
 
 test('on a phone the first trainer tile is within one screen of scrolling from the top', async ({ page, isMobile }) => {
