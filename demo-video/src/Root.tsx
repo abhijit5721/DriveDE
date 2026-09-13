@@ -9,6 +9,8 @@ import { ShortAvatar, AVATAR_TOTAL_FRAMES } from './ShortAvatar.tsx';
 import { ShortExaminerEp1, EP1_TOTAL_FRAMES } from './ShortExaminerEp1.tsx';
 import { ShortExaminerEp1Answer, EP1ANS_TOTAL_FRAMES } from './ShortExaminerEp1Answer.tsx';
 import { RoundaboutExplainer, RB_TOTAL_FRAMES } from './RoundaboutExplainer.tsx';
+import { ShortExaminerEp3, EP3_TOTAL_FRAMES } from './ShortExaminerEp3.tsx';
+import { ShortExaminerEp3Answer, EP3ANS_TOTAL_FRAMES } from './ShortExaminerEp3Answer.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
 
 export const Root: React.FC = () => (
@@ -94,6 +96,22 @@ export const Root: React.FC = () => (
       id="examiner-ep1-answer"
       component={ShortExaminerEp1Answer}
       durationInFrames={EP1ANS_TOTAL_FRAMES}
+      fps={FPS}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="examiner-ep3-quiz"
+      component={ShortExaminerEp3}
+      durationInFrames={EP3_TOTAL_FRAMES}
+      fps={FPS}
+      width={1080}
+      height={1920}
+    />
+    <Composition
+      id="examiner-ep3-answer"
+      component={ShortExaminerEp3Answer}
+      durationInFrames={EP3ANS_TOTAL_FRAMES}
       fps={FPS}
       width={1080}
       height={1920}
