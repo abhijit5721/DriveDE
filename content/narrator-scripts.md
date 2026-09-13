@@ -70,3 +70,52 @@ never AI-generated signage. AI labels mandatory on every post.
 3. Red is to your right, so red goes before you. You are to green's right, so you go before green.
 4. In the exam, one missed priority check here ends the test on the spot.
 5. Train it until it is reflex. Free at drivede.app. Link in bio.
+
+---
+
+## The Examiner - Episode 3: "Two lanes turn left. Which lane do you land in?" (quiz + answer)
+
+Format as ep. 1: the synthetic presenter (Flow character "DriveDE Instructor")
+for hook, setup and cliffhanger; the intersection itself is a Remotion
+exact-geometry diagram (two left-turn lanes, two target lanes, dashed guide
+lines), never generated footage. Geometry matches `InteractiveLaneTurn`:
+approach from the bottom, target road to the left, inner lane next to the
+centre line. Worked example in the caption only: Oststeinbeker Weg /
+Glinder Strasse, Hamburg (no creator footage). AI labels on every post.
+
+### Video A: The Quiz (EN, ~22s + end card)
+
+1. Two lanes turn left at the same time. You are in the right one.
+2. The new road has two lanes. Left lane or right lane: where must you arrive?
+3. Get it wrong here and the examiner writes down "lane change inside the intersection".
+4. Which lane? Answer tomorrow. Follow so you do not miss it.
+
+### Video B: The Answer (EN, ~26s + end card)
+
+1. The answer: lane to lane. Right turning lane, right target lane. Inner stays inner, outer stays outer.
+2. The dashed guide lines are not decoration. You follow yours and no other.
+3. One turning lane, two target lanes? Then keep right, unless arrows or lines say otherwise.
+4. Turning right with two lanes: shoulder check to the right from both lanes. Both cross the cycle path.
+5. Train the lane choice free at drivede.app. Link in bio.
+
+### Video A: Das Quiz (DE)
+
+1. Zwei Spuren biegen gleichzeitig links ab. Du bist in der rechten.
+2. Die Zielstraße hat zwei Fahrstreifen. Links oder rechts: wo musst du ankommen?
+3. Wer das falsch macht, bekommt vom Prüfer "Spurwechsel in der Kreuzung" notiert.
+4. Welche Spur? Antwort morgen. Folge uns, damit du sie nicht verpasst.
+
+### Video B: Die Antwort (DE)
+
+1. Die Antwort: Spur zu Spur. Rechte Abbiegespur, rechter Fahrstreifen. Innen bleibt innen, außen bleibt außen.
+2. Die gestrichelten Leitlinien sind keine Deko. Du folgst deiner und keiner anderen.
+3. Eine Abbiegespur, zwei Fahrstreifen? Dann rechts halten, außer Pfeile oder Linien sagen etwas anderes.
+4. Zweispurig rechts abbiegen: Schulterblick nach rechts aus beiden Spuren. Beide kreuzen den Radweg.
+5. Übe die Spurwahl kostenlos auf drivede.app. Link in Bio.
+
+Production checklist: Flow clips for hook and cliffhanger (12 credits each,
+inspect a mid-frame for character drift), Chatterbox VO per sentence, Remotion
+composition `examiner-ep3-quiz` / `examiner-ep3-answer` reusing the ep. 1
+layout with the lane-turn diagram, render with `--concurrency=1`, re-encode any
+Veo clip to constant 30 fps first, schedule via Metricool with isAigc /
+isAiGenerated / isAiGeneratedContent true, answer video two days after the quiz.
