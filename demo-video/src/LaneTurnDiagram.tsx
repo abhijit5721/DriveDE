@@ -42,13 +42,14 @@ export function LaneTurnDiagram({
   const t = interpolate(frame, [0, 10], [0, 1], { extrapolateRight: 'clamp' });
   const pulse = 1 + 0.03 * Math.sin(frame / 8);
 
-  // Quadratic bezier point for the outer (right) lane path: from (195,210) via (195,105) to (90,105)
+  // Quadratic bezier for the outer (right) lane: from the waiting position (195,262)
+  // via (195,105) to (90,105). Starting behind the stop line keeps the two cars
+  // apart in the quiz frame and gives the answer a visible approach.
   const p = carProgress;
   const bx = (1 - p) * (1 - p) * 195 + 2 * (1 - p) * p * 195 + p * p * 90;
-  const by = (1 - p) * (1 - p) * 210 + 2 * (1 - p) * p * 105 + p * p * 105;
-  // heading: derivative of the curve
-  const dx = 2 * (1 - p) * (195 - 195) + 2 * p * (90 - 195);
-  const dy = 2 * (1 - p) * (105 - 210) + 2 * p * (105 - 105);
+  const by = (1 - p) * (1 - p) * 262 + 2 * (1 - p) * p * 105 + p * p * 105;
+  const dx = 2 * p * (90 - 195);
+  const dy = 2 * (1 - p) * (105 - 262);
   const angle = p === 0 ? -90 : (Math.atan2(dy, dx) * 180) / Math.PI;
 
   return (
@@ -111,15 +112,15 @@ export function LaneTurnDiagram({
         {/* the other car in the inner lane: static in the quiz, turning alongside in the answer
             (inner guide line: from (165,210) via (165,135) to (90,135)), slightly ahead of us */}
         {(() => {
+          // inner lane: from the waiting position (165,262) via (165,135) to (90,135), a little ahead of us
           const q = mode === 'answer' ? Math.min(1, carProgress * 1.08) : 0;
           const rx = (1 - q) * (1 - q) * 165 + 2 * (1 - q) * q * 165 + q * q * 90;
-          const ry = (1 - q) * (1 - q) * 210 + 2 * (1 - q) * q * 135 + q * q * 135;
+          const ry = (1 - q) * (1 - q) * 262 + 2 * (1 - q) * q * 135 + q * q * 135;
           const rdx = 2 * q * (90 - 165);
-          const rdy = 2 * (1 - q) * (135 - 210);
+          const rdy = 2 * (1 - q) * (135 - 262);
           const rAngle = q === 0 ? -90 : (Math.atan2(rdy, rdx) * 180) / Math.PI;
-          const startY = mode === 'quiz' ? 262 : 240;
-          const tx = q === 0 ? X(165) : X(rx);
-          const ty = q === 0 ? Y(startY) : Y(ry);
+          const tx = X(rx);
+          const ty = Y(ry);
           return (
             <g transform={`translate(${tx} ${ty}) rotate(${rAngle})`}>
               <rect x={-60} y={-32} width={120} height={64} rx={16} fill="#ef4444" stroke="rgba(255,255,255,0.9)" strokeWidth={5} />
