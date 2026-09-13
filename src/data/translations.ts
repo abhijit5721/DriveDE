@@ -919,6 +919,32 @@ export const TRANSLATIONS = {
           finish: 'Training abschließen',
           restartStep: 'Neuer Versuch',
         },
+        laneTurn: {
+          title: 'Mehrspurig abbiegen',
+          instructions: 'Tippe auf die Spur, in der das Auto nach dem Abbiegen ankommen muss.',
+          progress: (current: number, total: number) => `Kreuzung ${current} von ${total}`,
+          yourLane: (lane: 'inner' | 'outer', turn: 'left' | 'right') =>
+            turn === 'left'
+              ? (lane === 'inner' ? 'Du stehst in der linken Abbiegespur.' : 'Du stehst in der rechten Abbiegespur.')
+              : (lane === 'inner' ? 'Du stehst in der linken der beiden Rechtsabbiegespuren.' : 'Du stehst in der rechten Abbiegespur.'),
+          singleLane: 'Nur eine Spur biegt ab. Die Zielstraße hat zwei Fahrstreifen.',
+          laneLabelInner: 'Innere Spur',
+          laneLabelOuter: 'Äußere Spur',
+          correct: 'Richtig! Nächste Kreuzung.',
+          errors: {
+            laneToLane: 'Falsch. Aus deiner Abbiegespur geht es Spur zu Spur: innen bleibt innen, außen bleibt außen. Alles andere ist ein Spurwechsel in der Kreuzung.',
+            keepRight: 'Falsch. Ohne Markierung, die es vorgibt, gilt das Rechtsfahrgebot: aus einer einzelnen Abbiegespur fährst du in den rechten Fahrstreifen. Den linken wechselst du erst danach.',
+            rightTurnShoulder: 'Falsch. Auch beim Rechtsabbiegen gilt Spur zu Spur. Aus der linken Abbiegespur kommst du im linken Fahrstreifen an, und der Schulterblick nach rechts bleibt Pflicht, denn du kreuzt den Radweg.',
+          },
+          facts: {
+            laneToLane: 'Bei zwei parallelen Abbiegespuren folgt jede Spur ihrer Leitlinie und kommt in der gleichen Position an. Wer die Spur in der Kreuzung wechselt, macht einen unangezeigten Spurwechsel.',
+            keepRight: 'Rechtsfahrgebot (§ 2 StVO): Aus einer einzelnen Abbiegespur fährst du in den rechten Fahrstreifen der Zielstraße, es sei denn, Pfeile oder Leitlinien geben etwas anderes vor.',
+            rightTurnShoulder: 'Beim mehrspurigen Rechtsabbiegen kreuzen beide Abbiegespuren den Radweg der Zielstraße. Der Schulterblick nach rechts gilt also auch aus der linken Spur.',
+          },
+          successTitle: 'Spur sicher.',
+          successMessage: 'Du weißt jetzt, in welcher Spur du ankommen musst und wann du sie wechseln darfst.',
+          continue: 'Weiter',
+        },
         roundabout: {
           title: 'Kreisverkehr-Meister',
           entry: 'Einfahren',
@@ -3350,6 +3376,32 @@ export const TRANSLATIONS = {
           mistakesLabel: 'Mistakes',
           finish: 'Finish training',
           restartStep: 'Try again',
+        },
+        laneTurn: {
+          title: 'Multi-lane turning',
+          instructions: 'Tap the lane the car must arrive in after the turn.',
+          progress: (current: number, total: number) => `Intersection ${current} of ${total}`,
+          yourLane: (lane: 'inner' | 'outer', turn: 'left' | 'right') =>
+            turn === 'left'
+              ? (lane === 'inner' ? 'You are in the left turning lane.' : 'You are in the right turning lane.')
+              : (lane === 'inner' ? 'You are in the left of the two right-turn lanes.' : 'You are in the right turning lane.'),
+          singleLane: 'Only one lane turns. The new road has two lanes.',
+          laneLabelInner: 'Inner lane',
+          laneLabelOuter: 'Outer lane',
+          correct: 'Correct! Next intersection.',
+          errors: {
+            laneToLane: 'Wrong. From your turning lane it goes lane to lane: inner stays inner, outer stays outer. Anything else is a lane change inside the intersection.',
+            keepRight: 'Wrong. Without a marking that says otherwise, the keep-right rule applies: from a single turning lane you drive into the right lane. You change to the left one only afterwards.',
+            rightTurnShoulder: 'Wrong. Turning right also goes lane to lane. From the left turning lane you arrive in the left lane, and the shoulder check to the right stays mandatory because you cross the cycle path.',
+          },
+          facts: {
+            laneToLane: 'With two parallel turning lanes each lane follows its guide line and arrives in the same position. Changing lanes inside the intersection is an unsignalled lane change.',
+            keepRight: 'Keep-right rule (§ 2 StVO): from a single turning lane you drive into the right lane of the new road unless arrows or guide lines say otherwise.',
+            rightTurnShoulder: 'In a multi-lane right turn both turning lanes cross the new road\'s cycle path. The shoulder check to the right applies from the left lane as well.',
+          },
+          successTitle: 'Lane secured.',
+          successMessage: 'You now know which lane to arrive in and when you may change it.',
+          continue: 'Continue',
         },
         roundabout: {
           title: 'Roundabout Master',

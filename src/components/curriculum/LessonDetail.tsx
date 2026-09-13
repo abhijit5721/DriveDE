@@ -53,6 +53,7 @@ import { PageHeader } from '../layout/PageHeader';
 import InteractiveVorfahrt from '../maneuvers/InteractiveVorfahrt';
 import InteractiveMirrorCheck from '../maneuvers/InteractiveMirrorCheck';
 import InteractiveRoundabout from '../maneuvers/InteractiveRoundabout';
+import InteractiveLaneTurn from '../maneuvers/InteractiveLaneTurn';
 import InteractiveEmergencyBrake from '../maneuvers/InteractiveEmergencyBrake';
 import InteractiveParking from '../maneuvers/InteractiveParking';
 import InteractiveTechCheck from '../maneuvers/InteractiveTechCheck';
@@ -192,6 +193,8 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
   const isVorfahrtLesson = lesson.isInteractive && (lesson.id === 'city-1' || lesson.id === 'city-2' || lesson.id === 'city-12');
   const isMirrorLesson = ['city-5', 'city-6'].includes(lesson.id);
   const isRoundaboutLesson = lesson.id === 'city-3';
+  // DRI-56: multi-lane turning lives with the left-turn lesson (the right-turn lesson carries the text scenario)
+  const isLaneTurnLesson = lesson.id === 'city-2';
   const isEmergencyBrakeLesson = lesson.id.startsWith('maneuver-4');
   const isParkingLesson = lesson.id === 'maneuver-1';
   const isTechLesson = lesson.id === 'basics-1a';
@@ -401,6 +404,28 @@ export function LessonDetail({ lesson, onBack }: LessonDetailProps) {
                   scenario={lesson.simulatorScenario}
                   scenarios={lesson.simulatorScenarios}
                 />
+              </div>
+            </div>
+          )}
+
+          {/* DRI-56: multi-lane turning, which lane to arrive in */}
+          {isLaneTurnLesson && (
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                  <Activity className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                    {t.maneuvers.interactive.laneTurn.title}
+                  </h3>
+                  <p className="text-xs text-muted">
+                    {t.maneuvers.interactive.laneTurn.instructions}
+                  </p>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-3xl border border-line bg-slate-950 shadow-sm">
+                <InteractiveLaneTurn key={`${lesson.id}-lane`} onComplete={handleFinish} language={language} />
               </div>
             </div>
           )}
