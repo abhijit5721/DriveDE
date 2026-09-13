@@ -5,5 +5,5 @@
       "schedule": "0 8 * * *"
     }
   ],
-  "ignoreCommand": "bash -c 'BASE=\"${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}\"; git cat-file -e \"$BASE^{commit}\" 2>/dev/null || exit 1; git diff --quiet \"$BASE\" HEAD -- \":(exclude)content/social-media\" \":(exclude)demo-video\" \":(exclude)content/DriveDE_Avatar_SoulX.ipynb\" \":(exclude)content/narrator-scripts.md\" \":(exclude)content/avatar-pipeline.md\"'"
+  "ignoreCommand": "bash scripts/vercel-ignore.sh"
 }
