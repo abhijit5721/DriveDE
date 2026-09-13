@@ -2048,7 +2048,27 @@ export const TRANSLATIONS = {
                 steps: [
                   { title: 'Eigene Spur eindeutig wählen', description: 'Schon vor der Kreuzung korrekt einordnen und die passende Abbiegespur nutzen.', icon: 'AlignCenter' },
                   { title: 'Leitlinien folgen', description: 'Beim Abbiegen exakt den gestrichelten Leitlinien folgen.', icon: 'ArrowUp' },
-                  { title: 'Spur halten - nicht driften', description: 'Innen nicht zu weit nach außen treiben und außen nicht die Kurve schneiden.', icon: 'AlertTriangle', critical: true }
+                  { title: 'Spur halten - nicht driften', description: 'Innen nicht zu weit nach außen treiben und außen nicht die Kurve schneiden.', icon: 'AlertTriangle', critical: true },
+                  { title: 'Spur-zu-Spur ankommen', description: 'Aus der linken Abbiegespur in den linken Fahrstreifen der Zielstraße, aus der rechten in den rechten. Erst danach mit Blinker und Schulterblick wechseln, falls nötig.', icon: 'CornerDownRight', critical: true }
+                ],
+                mistakes: [
+                  { title: 'Nach dem Abbiegen die Spur wechseln, ohne es zu merken', content: 'Wer aus der rechten Abbiegespur im linken Fahrstreifen landet, hat einen unangezeigten Spurwechsel gemacht. In der Prüfung ist das ein Fehler, an einer belebten Kreuzung ein gefährlicher.' },
+                  { title: 'Zu spät einordnen', content: 'Die Wahl der Abbiegespur fällt vor der Kreuzung, nicht in ihr. Ein Spurwechsel in der Kreuzung ist unzulässig.' }
+                ]
+              },
+              {
+                id: 'left-turn-into-multi-lane',
+                title: 'Linksabbiegen auf eine mehrspurige Straße',
+                situation: 'Sie biegen aus einer einzelnen Abbiegespur links ab. Die Zielstraße hat in Ihrer Richtung zwei Fahrstreifen.',
+                steps: [
+                  { title: 'Zielspur vor dem Abbiegen festlegen', description: 'Im Regelfall gilt das Rechtsfahrgebot: Sie fahren in den rechten Fahrstreifen der Zielstraße, es sei denn, Markierungen oder Leitlinien geben etwas anderes vor.', icon: 'AlignCenter', critical: true },
+                  { title: 'Markierungen lesen', description: 'Leitlinien, Pfeile auf der Fahrbahn und ein zweiter Abbiegestreifen legen die Zielspur fest. Wo eine Leitlinie in einen bestimmten Fahrstreifen führt, gilt sie.', icon: 'Info' },
+                  { title: 'Ohne Zwischenstopp durchziehen', description: 'In einem Bogen in die Zielspur einfahren, nicht diagonal über beide Fahrstreifen und nicht in der Kreuzung anhalten, um die Spur zu wechseln.', icon: 'CornerDownRight' },
+                  { title: 'Spurwechsel erst danach', description: 'Brauchen Sie den linken Fahrstreifen, wechseln Sie nach dem Abbiegen mit Spiegel, Blinker und Schulterblick.', icon: 'ArrowUp' }
+                ],
+                mistakes: [
+                  { title: 'Direkt in den linken Fahrstreifen ziehen', content: 'Ohne Markierung, die das vorgibt, ist das ein Verstoß gegen das Rechtsfahrgebot. Prüfer werten es als Fehler beim Einordnen.' },
+                  { title: 'Zwischen den Fahrstreifen ankommen', content: 'Wer auf der Leitlinie landet, hat keine Spur gewählt. Ziel ist eine klare Position in einem Fahrstreifen.' }
                 ]
               },
               {
@@ -2172,6 +2192,21 @@ export const TRANSLATIONS = {
                 steps: [
                   { title: 'Grün bedeutet nicht freie Fahrt', description: 'Auch bei grüner Ampel müssen Sie querenden Fußgängern Vorrang gewähren.', icon: 'Info' },
                   { title: 'Vor dem Einlenken stoppen, wenn nötig', description: 'Bleiben Sie ruhig stehen, bis die Querung frei ist.', icon: 'CheckCircle', critical: true }
+                ]
+              },
+              {
+                id: 'rt-multi-lane',
+                title: 'Mehrspuriges Rechtsabbiegen',
+                situation: 'Zwei Fahrstreifen biegen gleichzeitig rechts ab, oder Sie biegen aus einer Abbiegespur auf eine Straße mit zwei Fahrstreifen ein. Leitlinien führen durch die Kreuzung.',
+                steps: [
+                  { title: 'Abbiegespur vor der Kreuzung wählen', description: 'Rechtzeitig einordnen. Von der rechten Abbiegespur geht es in den rechten Fahrstreifen der Zielstraße, von der linken in den linken.', icon: 'AlignCenter', critical: true },
+                  { title: 'Radweg und Gehweg vor dem Einlenken prüfen', description: 'Schulterblick rechts, auch aus der linken Abbiegespur: Radfahrer und Fußgänger queren die Zielstraße parallel zu Ihnen und haben Vorrang.', icon: 'Eye', critical: true },
+                  { title: 'Leitlinien folgen', description: 'Den gestrichelten Linien exakt folgen, weder in die Nachbarspur treiben noch die Kurve schneiden.', icon: 'ArrowUp' },
+                  { title: 'Aus einer einzelnen Abbiegespur: rechts ankommen', description: 'Hat nur ein Fahrstreifen die Abbiegepfeile, fahren Sie in den rechten Fahrstreifen der Zielstraße (Rechtsfahrgebot). Der linke wird erst nach dem Abbiegen mit Blinker und Schulterblick gewechselt.', icon: 'CornerDownRight', critical: true }
+                ],
+                mistakes: [
+                  { title: 'Aus der linken Abbiegespur nach rechts driften', content: 'Die innere Spur wird in der Kurve gern zu weit gezogen. Wer dabei in die rechte Spur gerät, nimmt dem Nachbarn den Platz.' },
+                  { title: 'Schulterblick nur aus der rechten Spur', content: 'Auch die linke Abbiegespur kreuzt den Radweg der Zielstraße. Ohne Schulterblick rechts endet die Prüfung hier häufig.' }
                 ]
               },
               {
@@ -4436,7 +4471,27 @@ export const TRANSLATIONS = {
                 steps: [
                   { title: 'Choose your lane clearly', description: 'Position yourself correctly before the intersection and use the appropriate turning lane.', icon: 'AlignCenter' },
                   { title: 'Follow the guidelines', description: 'Follow the dashed guidelines exactly while turning.', icon: 'ArrowUp' },
-                  { title: 'Keep your lane - do not drift', description: 'Do not drift too far out from the inside and do not cut the corner from the outside.', icon: 'AlertTriangle', critical: true }
+                  { title: 'Keep your lane - do not drift', description: 'Do not drift too far out from the inside and do not cut the corner from the outside.', icon: 'AlertTriangle', critical: true },
+                  { title: 'Arrive lane to lane', description: 'From the left turning lane into the left lane of the new road, from the right one into the right lane. Only afterwards change lanes if you need to, with signal and shoulder check.', icon: 'CornerDownRight', critical: true }
+                ],
+                mistakes: [
+                  { title: 'Changing lanes during the turn without noticing', content: 'Ending up in the left lane from the right turning lane is an unsignalled lane change. In the exam that is a fault, at a busy junction a dangerous one.' },
+                  { title: 'Choosing the lane too late', content: 'The turning lane is chosen before the intersection, not inside it. Changing lanes inside the intersection is not allowed.' }
+                ]
+              },
+              {
+                id: 'left-turn-into-multi-lane',
+                title: 'Turning left onto a multi-lane road',
+                situation: 'You turn left from a single turning lane. The new road has two lanes in your direction.',
+                steps: [
+                  { title: 'Decide the target lane before turning', description: 'The default is the keep-right rule: you turn into the right lane of the new road, unless markings or guide lines say otherwise.', icon: 'AlignCenter', critical: true },
+                  { title: 'Read the markings', description: 'Guide lines, arrows on the road and a second turning lane define the target lane. Where a guide line leads into a specific lane, it applies.', icon: 'Info' },
+                  { title: 'Turn in one movement', description: 'Drive an arc into the target lane. Do not go diagonally across both lanes and do not stop inside the intersection to change lanes.', icon: 'CornerDownRight' },
+                  { title: 'Change lanes only afterwards', description: 'If you need the left lane, change after the turn with mirror, signal and shoulder check.', icon: 'ArrowUp' }
+                ],
+                mistakes: [
+                  { title: 'Pulling straight into the left lane', content: 'Without a marking that requires it, this breaks the keep-right rule. Examiners count it as a positioning fault.' },
+                  { title: 'Arriving between the lanes', content: 'Ending up on the lane line means you chose no lane. The goal is a clear position in one lane.' }
                 ]
               },
               {
@@ -4560,6 +4615,21 @@ export const TRANSLATIONS = {
                 steps: [
                   { title: 'Green does not mean free passage', description: 'Even on green, you must yield to pedestrians crossing your destination road.', icon: 'Info' },
                   { title: 'Stop before turning if necessary', description: 'Stay calm and wait until the crossing is clear.', icon: 'CheckCircle', critical: true }
+                ]
+              },
+              {
+                id: 'rt-multi-lane',
+                title: 'Multi-lane right turn',
+                situation: 'Two lanes turn right at the same time, or you turn from one turning lane onto a road with two lanes. Guide lines lead through the intersection.',
+                steps: [
+                  { title: 'Choose the turning lane before the intersection', description: 'Position yourself in time. From the right turning lane you go into the right lane of the new road, from the left one into the left lane.', icon: 'AlignCenter', critical: true },
+                  { title: 'Check the cycle path and pavement before turning in', description: 'Shoulder check to the right, even from the left turning lane: cyclists and pedestrians cross the new road alongside you and have priority.', icon: 'Eye', critical: true },
+                  { title: 'Follow the guide lines', description: 'Follow the dashed lines exactly, neither drifting into the neighbouring lane nor cutting the corner.', icon: 'ArrowUp' },
+                  { title: 'From a single turning lane: arrive on the right', description: 'If only one lane has the turning arrows, drive into the right lane of the new road (keep-right rule). The left lane comes only after the turn, with signal and shoulder check.', icon: 'CornerDownRight', critical: true }
+                ],
+                mistakes: [
+                  { title: 'Drifting right from the left turning lane', content: 'The inner lane tends to swing wide in the curve. Straying into the right lane takes the neighbour\'s space.' },
+                  { title: 'Shoulder check only from the right lane', content: 'The left turning lane also crosses the new road\'s cycle path. Without a shoulder check to the right, exams often end here.' }
                 ]
               },
               {

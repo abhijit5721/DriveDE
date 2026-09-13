@@ -563,6 +563,7 @@ const rightTurnGuidedPoints: GuidedPoint[] = getGuidedPoints('rightTurn', 'rt-gp
 const rightTurnScenarios: LessonScenario[] = [
   getScenario('rt-bike-lane'),
   getScenario('rt-pedestrian-green'),
+  getScenario('rt-multi-lane'),
 ];
 
 
