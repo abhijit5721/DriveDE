@@ -41,9 +41,11 @@ for (const k of keys) {
     for (let attempt = 0; attempt < 3 && !ok; attempt++) {
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(4000 + attempt * 3000);
+      // The answer card shows the username as plain text above the answer; author hrefs vary, so match text only.
       ok = await page.evaluate(({ me, needle }) => {
         const t = document.body.innerText;
-        return t.includes(needle) && [...document.querySelectorAll(`a[href="/nutzer/${me}"]`)].length > 1;
+        const i = t.indexOf(needle);
+        return i !== -1 && t.slice(Math.max(0, i - 400), i).includes(me);
       }, { me: ME, needle: d.text.slice(0, 40) });
     }
     console.log(`${k}: ${ok ? 'POSTED (verified on page)' : 'NOT CONFIRMED'} ${d.url}`);
