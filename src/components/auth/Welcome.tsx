@@ -118,6 +118,15 @@ export function Welcome() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // DRI-57: videos, link in bio and the share card deep-link straight into the trainer.
+  useEffect(() => {
+    const which = new URLSearchParams(window.location.search).get('trainer');
+    if (!which) return;
+    const rung: Rung = which === 'roundabout' || which === 'kreisverkehr' || which === '2' ? 2 : 1;
+    trackFunnel('try_click', { trainer: rung === 2 ? 'roundabout' : 'vorfahrt', from: 'deeplink', rung });
+    setTrainerRung(rung);
+  }, []);
+
   const closePlanPicker = () => {
     setShowPlanPicker(false);
     if (window.location.hash === '#plan') window.history.back();

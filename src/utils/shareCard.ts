@@ -7,7 +7,8 @@
  * No dependencies, page fonts, text in the visitor's language.
  */
 
-export const SHARE_URL = 'https://drivede.app/?utm_source=share&utm_medium=result_card&utm_campaign=vorfahrt';
+// DRI-57: the link opens the trainer itself, not the landing page.
+export const SHARE_URL = 'https://drivede.app/?trainer=vorfahrt&utm_source=share&utm_medium=result_card&utm_campaign=vorfahrt';
 
 export interface ShareCardData {
   language: 'de' | 'en';

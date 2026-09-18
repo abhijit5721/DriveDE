@@ -7,9 +7,9 @@
  *
  * Ladder: 1 right before left (three intersections) -> result card (score,
  * time, comparison, mistake explained, share) -> one question, the practical
- * exam date -> countdown and plan -> account prompt phrased as keeping that
- * plan, with "next: roundabout" as the way on. 2 roundabout -> prompt again.
- * 3 parking is locked; tapping it opens the prompt naming what unlocks.
+ * exam date -> countdown and plan -> share the card, "next: roundabout" as the
+ * way on (DRI-57: no account ask here). 2 roundabout -> plan again.
+ * 3 parking is locked; tapping it opens the one signup prompt, naming what unlocks.
  * Ladder progress and the exam date live in sessionStorage so closing and
  * reopening the overlay within the visit keeps the ticks. One anonymous result
  * row per round is the only thing that leaves the browser.
@@ -103,9 +103,11 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
     };
   }, [onClose]);
 
+  // DRI-57: after a round the result screen carries no account ask any more; the
+  // signup prompt exists only for the locked rung, where the account buys something.
   const openPrompt = (why: PromptReason) => {
     setReason(why);
-    trackFunnel('signup_prompt_shown', { round, hasDate: !!chosenDate, reason: why, rung });
+    if (why === 'locked') trackFunnel('signup_prompt_shown', { round, hasDate: !!chosenDate, reason: why, rung });
     setStep('keep');
   };
 
@@ -201,10 +203,7 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
   const score = result ? tapScore(result) : null;
   const headerTitle = step === 'trainer' ? (rung === 2 ? t.ladder.rung2 : t.title) : t.resultTitle;
 
-  // Prompt copy depends on why it opened
-  const promptTitle = reason === 'locked' ? t.ladder.unlockPrompt : chosenDate ? t.keepPrompt : t.savePrompt;
-  const promptHint = reason === 'locked' ? t.ladder.unlockHint : chosenDate ? t.keepHint : t.saveHint;
-  const promptCta = reason === 'locked' ? t.ladder.unlockCta : chosenDate ? t.keepCta : t.saveCta;
+  const locked = reason === 'locked';
 
   const fallback = <div className="h-64 animate-pulse rounded-2xl bg-slate-800/60" />;
 
@@ -372,17 +371,40 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
                       {t.daysLeft(plan.daysLeft)}
                     </p>
                   )}
-                  {reason !== 'locked' && <p className="max-w-md text-sm text-slate-200" data-testid="public-trainer-plan">{planLine}</p>}
-                  <p className="max-w-md pt-1 text-lg font-bold text-white sm:text-xl">{promptTitle}</p>
-                  <p className="max-w-md text-sm text-slate-300">{promptHint}</p>
-                  <button
-                    onClick={handleKeep}
-                    data-testid="public-trainer-signup"
-                    className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-blue-500 hover:scale-105 active:scale-95"
-                  >
-                    {promptCta}
-                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </button>
+                  {!locked && (
+                    <>
+                      {!(chosenDate && plan.daysLeft !== null && plan.pace !== 'past') && (
+                        <p className="text-lg font-bold text-white sm:text-xl" data-testid="public-trainer-plan-title">{t.planTitle}</p>
+                      )}
+                      <p className="max-w-md text-sm text-slate-200" data-testid="public-trainer-plan">{planLine}</p>
+                    </>
+                  )}
+                  {locked && (
+                    <>
+                      <p className="max-w-md pt-1 text-lg font-bold text-white sm:text-xl">{t.ladder.unlockPrompt}</p>
+                      <p className="max-w-md text-sm text-slate-300">{t.ladder.unlockHint}</p>
+                      <button
+                        onClick={handleKeep}
+                        data-testid="public-trainer-signup"
+                        className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-blue-500 hover:scale-105 active:scale-95"
+                      >
+                        {t.ladder.unlockCta}
+                        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      </button>
+                    </>
+                  )}
+                  {/* DRI-57: after a round the primary action is sharing the card, not an account */}
+                  {!locked && result && (
+                    <button
+                      onClick={handleShare}
+                      disabled={shareState === 'busy'}
+                      data-testid="public-trainer-share-primary"
+                      className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-blue-500 hover:scale-105 active:scale-95 disabled:opacity-60"
+                    >
+                      <Share2 className="h-5 w-5" />
+                      {t.shareCta}
+                    </button>
+                  )}
                   <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
                     {/* DRI-52: the way on is the next rung, not the account */}
                     {done1 && !done2 && (
@@ -416,6 +438,15 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
                       </button>
                     )}
                   </div>
+                  {/* DRI-57: the account is mentioned once, as the door to the rest of the app */}
+                  {!locked && (
+                    <p className="pt-1 text-xs text-slate-400" data-testid="public-trainer-more">
+                      {t.moreTrainers}{' '}
+                      <button onClick={() => startRung(3)} className="font-semibold text-blue-300 underline-offset-2 hover:underline">
+                        {t.moreTrainersLink}
+                      </button>
+                    </p>
+                  )}
                 </div>
               )}
             </div>

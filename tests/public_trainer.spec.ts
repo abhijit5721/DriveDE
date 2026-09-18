@@ -72,7 +72,7 @@ test('German hero copy', async ({ page }) => {
   await expect(page.getByText('Kostenlos, ohne Anmeldung, in zwei Minuten erledigt.')).toBeVisible();
 });
 
-test('a visitor completes a round with no account and only then sees the signup prompt', async ({ page }) => {
+test('a visitor completes a round with no account and meets a plan, not a signup prompt', async ({ page }) => {
   test.slow(); // two full three-intersection rounds; headless WebKit needs the headroom
   const authCalls: string[] = [];
   page.on('request', (r) => {
@@ -101,8 +101,12 @@ test('a visitor completes a round with no account and only then sees the signup 
   const prompt = page.getByTestId('public-trainer-prompt');
   await expect(prompt).toBeVisible();
   await expect(page.getByTestId('public-trainer-countdown')).toHaveCount(0);
+  await expect(page.getByTestId('public-trainer-plan-title')).toHaveText('Your plan until the exam');
   await expect(page.getByTestId('public-trainer-plan')).toContainText('10 trainers still open');
-  await expect(page.getByTestId('public-trainer-signup')).toContainText('Continue for free');
+  // DRI-57: no account ask after a round; sharing is the primary action
+  await expect(page.getByTestId('public-trainer-signup')).toHaveCount(0);
+  await expect(page.getByTestId('public-trainer-share-primary')).toHaveText('Share your result');
+  await expect(page.getByTestId('public-trainer-more')).toContainText('Parking and eight more trainers are in the app.');
 
   // "One more round" resets the trainer instead of asking for an account again
   await page.getByTestId('public-trainer-again').click();
@@ -117,14 +121,31 @@ test('a visitor completes a round with no account and only then sees the signup 
   expect(authCalls, 'the anonymous trainer path must not call auth').toEqual([]);
 });
 
-test('the signup CTA after a round opens the normal signup flow', async ({ page }) => {
+test('the only signup door after a round is the locked rung, and it opens the normal signup flow (DRI-57)', async ({ page }) => {
   await openLanding(page, 'en');
   await page.getByTestId('welcome-try-btn').click();
   await completeRound(page);
   await page.getByTestId('exam-not-booked').click();
+  await expect(page.getByTestId('public-trainer-signup')).toHaveCount(0);
+  // The "see them" link under the plan opens the locked-rung prompt, the one place with an account CTA
+  await page.getByTestId('public-trainer-more').getByRole('button').click();
+  await expect(page.getByTestId('public-locked-preview')).toBeVisible();
   await page.getByTestId('public-trainer-signup').click();
   await expect(page.getByTestId('public-trainer')).toHaveCount(0);
   await expect(page.getByText(/Choose your perfect Pro plan|Create your account|Sign up/i).first()).toBeVisible({ timeout: 10000 });
+});
+
+test('a deep link opens the trainer directly (DRI-57)', async ({ page }) => {
+  await page.goto('/?lang=en&trainer=vorfahrt');
+  const cookie = page.getByTestId('cookie-accept-all');
+  if (await cookie.isVisible({ timeout: 4000 }).catch(() => false)) await cookie.click();
+  await expect(page.getByTestId('public-trainer')).toBeVisible();
+  await expect(page.getByTestId('simulator-svg')).toBeVisible();
+  await page.getByTestId('public-trainer-close').click();
+
+  await page.goto('/?lang=en&trainer=roundabout');
+  await expect(page.getByTestId('public-trainer')).toBeVisible();
+  await expect(page.getByTestId('public-roundabout')).toBeVisible({ timeout: 15000 });
 });
 
 test('an exam date becomes a countdown, a weekly plan and travels into the app state (DRI-50)', async ({ page }) => {
@@ -143,7 +164,9 @@ test('an exam date becomes a countdown, a weekly plan and travels into the app s
   await expect(page.getByTestId('public-trainer-countdown')).toHaveText('30 days until your exam.');
   // 10 trainers left over 4.3 weeks -> 3 a week
   await expect(page.getByTestId('public-trainer-plan')).toContainText('At 3 a week you finish before the date.');
-  await expect(page.getByText('Keep your plan and countdown?')).toBeVisible();
+  // DRI-57: no account ask here; the date travels into the account when the visitor opens the locked rung
+  await expect(page.getByTestId('public-trainer-signup')).toHaveCount(0);
+  await page.getByTestId('public-trainer-more').getByRole('button').click();
   await page.getByTestId('public-trainer-signup').click();
 
   // The date is now in the persisted store (idb-keyval, IndexedDB) so the dashboard can count down after login
@@ -273,7 +296,7 @@ test('share button renders the result card image and copies the caption when Web
   await expect(page.getByTestId('public-trainer-share-hint')).toHaveText('Image saved, text copied. Paste it into WhatsApp.');
   const copied = await page.evaluate(() => (window as any).__copied as string[]);
   expect(copied).toHaveLength(1);
-  expect(copied[0]).toMatch(/^Right before left, roundabout, stop sign: 6 of 6 correct in \d+\.\d seconds\. Can you beat that\? https:\/\/drivede\.app\/\?utm_source=share/);
+  expect(copied[0]).toMatch(/^Right before left, roundabout, stop sign: 6 of 6 correct in \d+\.\d seconds\. Can you beat that\? https:\/\/drivede\.app\/\?trainer=vorfahrt&utm_source=share/);
 });
 
 test('trainer ladder: rung 2 opens after rung 1, rung 3 is one tap from signup, state survives reopening (DRI-52)', async ({ page }) => {
@@ -334,7 +357,8 @@ test('German exam-date step', async ({ page }) => {
   await expect(page.getByTestId('public-trainer-exam')).toContainText('Wann ist deine praktische Prüfung?');
   await expect(page.getByTestId('exam-not-booked')).toHaveText('Noch nicht gebucht');
   await page.getByTestId('exam-not-booked').click();
-  await expect(page.getByText('Ergebnis speichern und weiterüben?')).toBeVisible();
+  await expect(page.getByTestId('public-trainer-plan-title')).toHaveText('Dein Plan bis zur Prüfung');
+  await expect(page.getByTestId('public-trainer-share-primary')).toHaveText('Ergebnis teilen');
 });
 
 test('close button and Escape both close the trainer and restore scrolling', async ({ page }) => {

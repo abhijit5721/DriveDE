@@ -12,6 +12,7 @@ describe('shareCard text', () => {
 
   it('keeps the UTM source distinct so the visits show up separately in analytics', () => {
     expect(SHARE_URL).toContain('utm_source=share');
+    expect(SHARE_URL).toContain('trainer=vorfahrt'); // DRI-57: the link opens the trainer itself
     expect(SHARE_URL).not.toContain('utm_source=reddit');
   });
 
