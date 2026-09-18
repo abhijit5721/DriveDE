@@ -62,3 +62,17 @@ DriveDE, hello@drivede.app
 ## DM template (TikTok or Instagram, for 2 to 8; adapt the first sentence to one video)
 
 Hallo [Name], ich bin Abhijit aus Hamburg, stecke selbst noch in der Fahrausbildung und habe zwischen den Fahrstunden DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken als Hausaufgabe zwischen den Fahrstunden. Ihr Video zu [Thema] hat mich auf eine Lücke gestoßen, die ich gern mit einer Fahrlehrerin/einem Fahrlehrer prüfen würde. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran falsch ist? Läuft ohne Konto: drivede.app. Als Dank die App dauerhaft kostenlos für Sie, und Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
+
+## Channel decision (18 Sep)
+
+- Comments under instructor videos: DriveDE TikTok account (@drivede20), plain help, no link. Needs the TikTok login on the port 9222 Chrome before the comment scan can be built.
+- DMs to instructors: DriveDE Instagram (drivedeapp), because TikTok only delivers DMs from mutual followers and Instagram requests get read. Founder's name in the first line, one DM per week, each opening with a different video. Before the first DM: bio says in one line what DriveDE is and that a learner in Hamburg builds it, with the trainer link once DRI-57 is on main.
+- Fallbacks after two weeks of silence: school contact forms (I'M Drive for Cemile, bukisfahrschule.de for Buki), GoMovi.de for Julia.
+
+## Ready for 25 Sep
+
+DM Cemile Cin (Instagram, only if the mail is unanswered):
+Hallo Frau Cin, hier schreibt Abhijit, der DriveDE baut und selbst noch Fahrschüler in Hamburg ist. Ich habe Ihnen letzte Woche eine Mail zu Ihrem Zeichen-250-Video geschickt, vielleicht ist sie im Spam gelandet. Kurzfassung: Ich habe zwischen den Fahrstunden kleine Browser-Trainer für Rechts vor links und Kreisverkehr gebaut und suche eine Fahrlehrerin, die mir in zwei Minuten sagt, was daran falsch ist. Läuft ohne Konto: https://www.drivede.app/?trainer=vorfahrt. Als Dank die App für Sie dauerhaft kostenlos, Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
+
+DM Fahrlehrerin Hatice (Instagram):
+Hallo Frau Hatice, hier schreibt Abhijit, der DriveDE baut und selbst noch Fahrschüler in Hamburg ist. Ihr Video von der Fahrt zum Frankfurter Flughafen hat mir gezeigt, wie viel Spurwechsel und Beobachtung in so einer Stunde steckt, und genau da scheitern in der Prüfung die meisten. Ich habe zwischen meinen Fahrstunden kleine Browser-Trainer gebaut, Rechts vor links an drei Kreuzungen, Kreisverkehr, mehrspuriges Abbiegen, als Hausaufgabe zwischen den Stunden. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran aus Fahrlehrerinnensicht falsch ist? Läuft ohne Konto: https://www.drivede.app/?trainer=vorfahrt. Als Dank die App für Sie dauerhaft kostenlos, und Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
