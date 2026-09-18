@@ -5,7 +5,7 @@ Purpose: driving-instructor creators have our exact audience and can judge the t
 Rules:
 - Ask for expertise ("was ist daran falsch?"), never for a post. If they like it they post on their own.
 - Framing: homework between lessons, so students arrive at the car knowing rechts vor links. Never "Alternative zur Fahrschule".
-- Send the deep link drivede.app/?trainer=vorfahrt so they can test in the browser in two minutes without an account (live after DRI-57 reaches main; until then the landing page).
+- Send the deep link drivede.app/?trainer=vorfahrt so they can test in the browser in two minutes without an account (live in production since 18 Sep).
 - Offer: lifetime Pro for them (manual grant: a subscriptions row with provider manual, product lifetime, no expiry, plus is_premium on the profile, done with the Supabase CLI after they sign up), and their students unlocked the same way when they mail hello@ with the instructor's name. Real per-instructor codes need Stripe promotion codes in the checkout (DRI-58). Their name as reviewer on the landing page if they want it. No money, no "Influencer" or "Kooperation" wording, no request for a video.
 - Email from hello@drivede.app in the founder's name, German, five to eight sentences, one concrete reference to one of their videos. Instagram DM as second touch after a week of silence. One or two mails at a time, real follow-up on every reply.
 - Skip creators who sell their own course or app; never comment under their videos to compete.
