@@ -24,6 +24,9 @@ for (const k of keys) {
     // replyTo may be an author name or a comment thing id (t1_...) when the author has several comments.
     const target = page.locator(d.replyTo.startsWith('t1_') ? `shreddit-comment[thingid="${d.replyTo}"]` : `shreddit-comment[author="${d.replyTo}"]`).first();
     if (!(await target.count())) { console.log(`${k}: no comment by ${d.replyTo} found`); continue; }
+    // Duplicate guard: never reply twice under the same comment (the founder may have answered by hand).
+    const already = await target.locator(`shreddit-comment[author="${ME}"]`).count();
+    if (already > 0 && !argv.includes('--allow-duplicate')) { console.log(`${k}: SKIPPED, ${ME} already replied under ${d.replyTo}`); continue; }
     await target.scrollIntoViewIfNeeded();
     // The Reply control is inside the comment's own action row (shadow DOM pierced by CSS locators).
     const replyBtn = target.locator('button:has-text("Reply"), [aria-label="Reply"], faceplate-tracker[noun="reply"] button').first();

@@ -22,6 +22,13 @@ for (const k of keys) {
     await page.goto(d.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(3000);
     try { await page.getByRole('button', { name: /Accept all|Alle akzeptieren/i }).first().click({ timeout: 2000 }); } catch {}
+    // Duplicate guard: one answer per question per account.
+    const already = await page.evaluate((me) => {
+      const t = document.body.innerText;
+      const i = t.indexOf('\nAntworten\n');
+      return i !== -1 && new RegExp(`\\n${me}\\n`).test(t.slice(i));
+    }, ME);
+    if (already && !argv.includes('--allow-duplicate')) { console.log(`${k}: SKIPPED, ${ME} already answered ${d.url}`); continue; }
     // Open the answer composer: the blue "Antworten" button under the question, or the inline field.
     const openBtn = page.getByRole('button', { name: /^Antworten$/ }).first();
     if (await openBtn.count()) { await openBtn.click({ timeout: 5000 }).catch(() => {}); await page.waitForTimeout(1200); }

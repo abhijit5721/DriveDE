@@ -91,6 +91,8 @@ if (!keys.length) { console.error('give reply keys, e.g. A B F, or --file drafts
 // Select with CDP_URL=http://127.0.0.1:9223 (or --personal).
 const personalIdx = keys.indexOf('--personal');
 if (personalIdx !== -1) { keys.splice(personalIdx, 1); process.env.CDP_URL = 'http://127.0.0.1:9223'; }
+const ME = personalIdx !== -1 ? 'Then-Big4461' : 'abhi_in_germany';
+const allowDup = keys.includes('--allow-duplicate'); if (allowDup) keys.splice(keys.indexOf('--allow-duplicate'), 1);
 const browser = await chromium.connectOverCDP(process.env.CDP_URL || 'http://127.0.0.1:9222', { timeout: 15000 });
 const ctx = browser.contexts()[0];
 const page = await ctx.newPage();
@@ -100,6 +102,9 @@ for (const k of keys) {
   try {
     await page.goto(r.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(3500);
+    // Duplicate guard: skip if this account already has any comment in the thread (the founder may have answered by hand).
+    const already = await page.locator(`shreddit-comment[author="${ME}"]`).count();
+    if (already > 0 && !allowDup) { console.log(`${k}: SKIPPED, ${ME} already commented in ${r.url} (use --allow-duplicate to override)`); continue; }
     // Open the top-level comment composer (new reddit). The collapsed host
     // renders no editable until clicked; the editor then lives in shadow DOM,
     // which Playwright CSS locators pierce.
