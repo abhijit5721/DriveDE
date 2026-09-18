@@ -32,7 +32,7 @@ Not listed on purpose: agency-run school accounts (Fahrschule Dreams Berlin, Soc
 
 | Creator | First mail | Channel | Reply | Tested? | Feedback | Follow-up |
 |---|---|---|---|---|---|---|
-| Cemile Cin | | email | | | | |
+| Cemile Cin | 18 Sep 2026 | email from hello@drivede.app (landing link, Fahrschüler version) | | | | Instagram DM on 25 Sep if silent |
 | Fahrlehrerin Hatice | | TikTok DM | | | | |
 | Fahrlehrer Buki | | TikTok DM | | | | |
 | dj_eyschüler | | TikTok DM | | | | |
@@ -43,17 +43,17 @@ Not listed on purpose: agency-run school accounts (Fahrschule Dreams Berlin, Soc
 
 ## Mail 1: Cemile Cin (send from hello@drivede.app, founder's name)
 
-Betreff: Kurze Frage von einem Hamburger Gründer zu Ihrem Zeichen-250-Video
+Betreff: Kurze Frage von einem Hamburger Fahrschüler zu Ihrem Zeichen-250-Video
 
 Hallo Frau Cin,
 
-Ihr Video "Will umkehren, StVO sagt Nein" habe ich mir zweimal angesehen, und dann die Kommentare. Zwei Dutzend Leute, die Sackgasse, Einfahrt verboten und Verbot für Fahrzeuge aller Art durcheinanderbringen, und das kurz vor der Prüfung. Genau dieses Problem versuche ich zu lösen.
+Ihr Video "Will umkehren, StVO sagt Nein" habe ich mir zweimal angesehen, und dann die Kommentare. Zwei Dutzend Leute, die Sackgasse, Einfahrt verboten und Verbot für Fahrzeuge aller Art durcheinanderbringen, und das kurz vor der Prüfung. Genau an diesem Problem arbeite ich.
 
 Ich bin Abhijit Sahoo, Softwareentwickler, und ich stecke selbst gerade in der Fahrausbildung in Hamburg, die praktische Prüfung liegt noch vor mir. Zwischen den Fahrstunden habe ich gemerkt, dass ich Rechts vor links und den Kreisverkehr im Kopf üben wollte, statt jede Wiederholung im Auto zu bezahlen, und dafür DriveDE gebaut: kleine interaktive Trainer für die Situationen, an denen die meisten in der praktischen Prüfung scheitern. Rechts vor links an drei Kreuzungen, Kreisverkehr, mehrspuriges Abbiegen, Einparken mit Referenzpunkten. Gedacht als Hausaufgabe zwischen den Fahrstunden.
 
-Genau deshalb brauche ich Ihr Urteil: Ich bin Fahrschüler, nicht Fahrlehrer. Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrerinnensicht falsch oder unvollständig ist? Er läuft direkt im Browser, ohne Konto: drivede.app
+Genau deshalb brauche ich Ihr Urteil: Ich bin Fahrschüler, nicht Fahrlehrer. Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrerinnensicht falsch oder unvollständig ist? Er liegt direkt auf der Startseite und läuft im Browser, ohne Konto: https://www.drivede.app
 
-Was für Sie drin ist: die ganze App für Sie dauerhaft kostenlos, Ihre Fahrschüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben, und wenn Sie möchten, Ihr Name als Fachprüferin auf der Seite. Ich will nichts bewerben lassen, ich will wissen, ob es stimmt, was ich gebaut habe.
+Was für Sie drin ist: die ganze App für Sie dauerhaft kostenlos, Ihre Fahrschüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben, und wenn Sie möchten, Ihr Name als Fachprüferin auf der Seite. Ich will nichts bewerben lassen, ich will wissen, ob das stimmt, was ich gebaut habe.
 
 Viele Grüße aus Hamburg
 Abhijit Kumar Sahoo
