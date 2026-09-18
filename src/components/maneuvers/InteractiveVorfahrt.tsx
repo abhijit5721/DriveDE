@@ -327,7 +327,7 @@ export default function InteractiveVorfahrt({
           )}
         >
           <Info className="h-3.5 w-3.5" />
-          {showExplanation ? 'Hide Rules' : 'Show Rules'}
+          {showExplanation ? t.maneuvers.interactive.priority.hideRules : t.maneuvers.interactive.priority.showRules}
         </button>
       </div>
 

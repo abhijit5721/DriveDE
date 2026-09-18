@@ -268,7 +268,9 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
                         {t.resultTime(formatSeconds(result.durationMs, language))}
                       </p>
                     </div>
-                    {/* DRI-54: the result as an image for the driving-school group chat */}
+                    {/* DRI-54: the result as an image for the driving-school group chat.
+                        DRI-57: on the plan step the big share button below takes over, so hide this one there. */}
+                    {step !== 'keep' && (
                     <button
                       onClick={handleShare}
                       disabled={shareState === 'busy'}
@@ -279,6 +281,7 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
                       <Share2 className="h-4 w-4 text-blue-300" />
                       {t.share}
                     </button>
+                    )}
                   </div>
                   {shareState === 'done' && (
                     <p className="mt-1.5 text-xs text-emerald-300" data-testid="public-trainer-share-hint">{t.shareDone}</p>

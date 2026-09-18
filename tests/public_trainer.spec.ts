@@ -285,6 +285,7 @@ test('share button renders the result card image and copies the caption when Web
   await page.getByTestId('welcome-try-btn').click();
   await completeRound(page);
 
+  // The exam step still shows the small card button; on the plan step the big one takes over (DRI-57)
   const downloadPromise = page.waitForEvent('download', { timeout: 20000 });
   await page.getByTestId('public-trainer-share').click();
   const download = await downloadPromise;

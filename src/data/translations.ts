@@ -798,6 +798,8 @@ export const TRANSLATIONS = {
         priority: {
           title: 'Mini-Simulator: Wer darf zuerst?',
           instructions: 'Klicke auf die Fahrzeuge in der richtigen Reihenfolge.',
+          showRules: 'Regeln zeigen',
+          hideRules: 'Regeln ausblenden',
           error: (label: string) => `Falsch! Das ${label} hat Vorrang.`,
           progress: (current: number, total: number) => `Kreuzung ${current} von ${total}`,
           nextIntersection: 'Richtig! Nächste Kreuzung.',
@@ -3260,6 +3262,8 @@ export const TRANSLATIONS = {
         priority: {
           title: 'Mini-Simulator: Who goes first?',
           instructions: 'Click on the vehicles in the correct order.',
+          showRules: 'Show rules',
+          hideRules: 'Hide rules',
           error: (label: string) => `Incorrect! The ${label} has priority.`,
           progress: (current: number, total: number) => `Intersection ${current} of ${total}`,
           nextIntersection: 'Correct! Next intersection.',
