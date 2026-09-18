@@ -49,9 +49,9 @@ Hallo Frau Cin,
 
 Ihr Video "Will umkehren, StVO sagt Nein" habe ich mir zweimal angesehen, und dann die Kommentare. Zwei Dutzend Leute, die Sackgasse, Einfahrt verboten und Verbot für Fahrzeuge aller Art durcheinanderbringen, und das kurz vor der Prüfung. Genau dieses Problem versuche ich zu lösen.
 
-Ich bin Abhijit Sahoo, ich habe meinen Führerschein in Hamburg gemacht und danach DriveDE gebaut: kleine interaktive Trainer für die Situationen, an denen die meisten in der praktischen Prüfung scheitern. Rechts vor links an drei Kreuzungen, Kreisverkehr, mehrspuriges Abbiegen, Einparken mit Referenzpunkten. Gedacht als Hausaufgabe zwischen den Fahrstunden, damit Ihre Schüler nicht erst im Auto lernen, wer zuerst fährt.
+Ich bin Abhijit Sahoo, Softwareentwickler, und ich stecke selbst gerade in der Fahrausbildung in Hamburg, die praktische Prüfung liegt noch vor mir. Zwischen den Fahrstunden habe ich gemerkt, dass ich Rechts vor links und den Kreisverkehr im Kopf üben wollte, statt jede Wiederholung im Auto zu bezahlen, und dafür DriveDE gebaut: kleine interaktive Trainer für die Situationen, an denen die meisten in der praktischen Prüfung scheitern. Rechts vor links an drei Kreuzungen, Kreisverkehr, mehrspuriges Abbiegen, Einparken mit Referenzpunkten. Gedacht als Hausaufgabe zwischen den Fahrstunden.
 
-Meine Bitte: Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrerinnensicht falsch oder unvollständig ist? Er läuft direkt im Browser, ohne Konto: drivede.app
+Genau deshalb brauche ich Ihr Urteil: Ich bin Fahrschüler, nicht Fahrlehrer. Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrerinnensicht falsch oder unvollständig ist? Er läuft direkt im Browser, ohne Konto: drivede.app
 
 Was für Sie drin ist: die ganze App für Sie dauerhaft kostenlos, Ihre Fahrschüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben, und wenn Sie möchten, Ihr Name als Fachprüferin auf der Seite. Ich will nichts bewerben lassen, ich will wissen, ob es stimmt, was ich gebaut habe.
 
@@ -61,4 +61,4 @@ DriveDE, hello@drivede.app
 
 ## DM template (TikTok or Instagram, for 2 to 8; adapt the first sentence to one video)
 
-Hallo [Name], ich bin Abhijit aus Hamburg und habe nach meinem eigenen Führerschein DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken als Hausaufgabe zwischen den Fahrstunden. Ihr Video zu [Thema] hat mich auf eine Lücke gestoßen, die ich gern mit einer Fahrlehrerin/einem Fahrlehrer prüfen würde. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran falsch ist? Läuft ohne Konto: drivede.app. Als Dank die App dauerhaft kostenlos für Sie, und Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
+Hallo [Name], ich bin Abhijit aus Hamburg, stecke selbst noch in der Fahrausbildung und habe zwischen den Fahrstunden DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken als Hausaufgabe zwischen den Fahrstunden. Ihr Video zu [Thema] hat mich auf eine Lücke gestoßen, die ich gern mit einer Fahrlehrerin/einem Fahrlehrer prüfen würde. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran falsch ist? Läuft ohne Konto: drivede.app. Als Dank die App dauerhaft kostenlos für Sie, und Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
