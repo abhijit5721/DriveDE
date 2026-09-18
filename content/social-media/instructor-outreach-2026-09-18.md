@@ -6,7 +6,7 @@ Rules:
 - Ask for expertise ("was ist daran falsch?"), never for a post. If they like it they post on their own.
 - Framing: homework between lessons, so students arrive at the car knowing rechts vor links. Never "Alternative zur Fahrschule".
 - Send the deep link drivede.app/?trainer=vorfahrt so they can test in the browser in two minutes without an account (live after DRI-57 reaches main; until then the landing page).
-- Offer: lifetime Pro for them, a code for their students, their name as reviewer on the landing page if they want it. No money, no "Influencer" or "Kooperation" wording, no request for a video.
+- Offer: lifetime Pro for them (manual grant: a subscriptions row with provider manual, product lifetime, no expiry, plus is_premium on the profile, done with the Supabase CLI after they sign up), and their students unlocked the same way when they mail hello@ with the instructor's name. Real per-instructor codes need Stripe promotion codes in the checkout (DRI-58). Their name as reviewer on the landing page if they want it. No money, no "Influencer" or "Kooperation" wording, no request for a video.
 - Email from hello@drivede.app in the founder's name, German, five to eight sentences, one concrete reference to one of their videos. Instagram DM as second touch after a week of silence. One or two mails at a time, real follow-up on every reply.
 - Skip creators who sell their own course or app; never comment under their videos to compete.
 - Numbers below read from TikTok profile pages on 18 Sep 2026 (followers / total likes / videos).
@@ -53,7 +53,7 @@ Ich bin Abhijit Sahoo, ich habe meinen Führerschein in Hamburg gemacht und dana
 
 Meine Bitte: Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrerinnensicht falsch oder unvollständig ist? Er läuft direkt im Browser, ohne Konto: drivede.app
 
-Was für Sie drin ist: die ganze App dauerhaft kostenlos, ein Zugangscode für Ihre Fahrschüler, und wenn Sie möchten, Ihr Name als Fachprüferin auf der Seite. Ich will nichts bewerben lassen, ich will wissen, ob es stimmt, was ich gebaut habe.
+Was für Sie drin ist: die ganze App für Sie dauerhaft kostenlos, Ihre Fahrschüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben, und wenn Sie möchten, Ihr Name als Fachprüferin auf der Seite. Ich will nichts bewerben lassen, ich will wissen, ob es stimmt, was ich gebaut habe.
 
 Viele Grüße aus Hamburg
 Abhijit Kumar Sahoo
@@ -61,4 +61,4 @@ DriveDE, hello@drivede.app
 
 ## DM template (TikTok or Instagram, for 2 to 8; adapt the first sentence to one video)
 
-Hallo [Name], ich bin Abhijit aus Hamburg und habe nach meinem eigenen Führerschein DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken als Hausaufgabe zwischen den Fahrstunden. Ihr Video zu [Thema] hat mich auf eine Lücke gestoßen, die ich gern mit einer Fahrlehrerin/einem Fahrlehrer prüfen würde. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran falsch ist? Läuft ohne Konto: drivede.app. Als Dank die App dauerhaft kostenlos für Sie und einen Code für Ihre Schüler. Kein Werbe-Deal, ich will ein Fachurteil.
+Hallo [Name], ich bin Abhijit aus Hamburg und habe nach meinem eigenen Führerschein DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken als Hausaufgabe zwischen den Fahrstunden. Ihr Video zu [Thema] hat mich auf eine Lücke gestoßen, die ich gern mit einer Fahrlehrerin/einem Fahrlehrer prüfen würde. Hätten Sie zwei Minuten, den Rechts-vor-links-Trainer durchzuspielen und mir zu sagen, was daran falsch ist? Läuft ohne Konto: drivede.app. Als Dank die App dauerhaft kostenlos für Sie, und Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben. Kein Werbe-Deal, ich will ein Fachurteil.
