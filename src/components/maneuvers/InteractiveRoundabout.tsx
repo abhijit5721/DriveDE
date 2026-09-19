@@ -9,6 +9,21 @@ import { Check, RotateCcw, Play, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { TRANSLATIONS } from '../../data/translations';
 
+/**
+ * The circulating lane, sampled as keyframes.
+ *
+ * Germany drives on the right, so a roundabout is taken anticlockwise with the
+ * island on the driver's left. A car arriving from the south joins at the six
+ * o'clock point heading east and leaves by the east arm a quarter turn later.
+ * Angles are measured in SVG space (y grows downward), so the sweep runs from
+ * 90 degrees (south) down to 0 (east) and the heading is the tangent, angle - 90.
+ */
+const LANE_RADIUS = 117; // centre of the circular lane, which runs from r=95 to r=140
+const ARC_ANGLES = Array.from({ length: 9 }, (_, i) => 90 - (90 * i) / 8);
+const ARC_X = ARC_ANGLES.map((a) => 150 + LANE_RADIUS * Math.cos((a * Math.PI) / 180));
+const ARC_Y = ARC_ANGLES.map((a) => 150 + LANE_RADIUS * Math.sin((a * Math.PI) / 180));
+const ARC_ROTATE = ARC_ANGLES.map((a) => a - 90);
+
 export default function InteractiveRoundabout({ onComplete, language }: { onComplete: () => void; language: 'de' | 'en' }) {
   const t = TRANSLATIONS[language];
   const rt = t.maneuvers.interactive.roundabout;
@@ -91,35 +106,30 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
             <path d="M 150 280 L 150 240 M 145 250 L 150 240 L 155 250" stroke="white" fill="none" strokeWidth="2" />
             <path d="M 240 150 L 280 150 M 270 145 L 280 150 L 270 155" stroke="white" fill="none" strokeWidth="2" />
           </g>
+          {/* The car is drawn around its own centre so x, y and rotate are literal:
+              the centre of the car sits at (x, y) and rotate is its heading. */}
           <motion.g
-            initial={{ x: 150, y: 280, rotate: -90 }}
+            initial={{ x: 150, y: 252, rotate: -90 }}
             animate={
-              phase === 'entry' ? { x: 150, y: 280, rotate: -90 } :
-              phase === 'inside' ? { rotate: [270, 360], x: 150, y: 150 } :
-              phase === 'exit' ? { rotate: 360, x: [150, 340], y: 150 } :
+              phase === 'entry' ? { x: 150, y: 252, rotate: -90 } :
+              phase === 'inside' ? { x: ARC_X, y: ARC_Y, rotate: ARC_ROTATE } :
+              phase === 'exit' ? { x: [ARC_X[8], 340], y: 150, rotate: [-90, 0] } :
               { x: 340, y: 150, rotate: 0 }
             }
-            transition={{
-              rotate: { duration: phase === 'inside' ? 2 : 0.5, ease: 'linear' },
-              x: { duration: 0.8 },
-              y: { duration: 0.8 }
-            }}
-            className="origin-center"
-            style={{ originX: '150px', originY: '150px' }}
+            transition={{ duration: phase === 'inside' ? 2 : 0.8, ease: 'linear' }}
+            style={{ originX: '0px', originY: '0px' }}
           >
-            <g transform={phase === 'entry' ? 'translate(110, -10)' : 'translate(100, -10)'}>
-              <rect width="30" height="20" rx="4" fill="#ef4444" />
-              <rect x="22" y="2" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-              <rect x="22" y="14" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-              {isBlinking && (
-                <motion.circle 
-                  cx="25" cy="18" r="4" 
-                  fill="#f59e0b"
-                  animate={{ opacity: [1, 0, 1] }}
-                  transition={{ repeat: Infinity, duration: 0.5 }}
-                />
-              )}
-            </g>
+            <rect x="-15" y="-10" width="30" height="20" rx="4" fill="#ef4444" />
+            <rect x="7" y="-8" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+            <rect x="7" y="4" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+            {isBlinking && (
+              <motion.circle
+                cx="10" cy="8" r="4"
+                fill="#f59e0b"
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ repeat: Infinity, duration: 0.5 }}
+              />
+            )}
           </motion.g>
         </svg>
 
