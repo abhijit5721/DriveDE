@@ -16,6 +16,15 @@ test('German landing copy reads correctly and hyphenates', async ({ page }) => {
   });
   expect(hyphenated, 'German running text must be allowed to hyphenate').toBe('auto');
 
+  // Expand every FAQ entry first: collapsed answers are not in innerText, which
+  // is how "Umschreibungspfad" survived the first version of this check.
+  const faqButtons = page.locator('#faq button');
+  const count = await faqButtons.count();
+  for (let i = 0; i < count; i++) {
+    await faqButtons.nth(i).click({ timeout: 4000 }).catch(() => undefined);
+    await page.waitForTimeout(150);
+  }
+
   // none of the corrected phrasings may survive anywhere on the page
   const body = await page.evaluate(() => document.body.innerText);
   for (const gone of [

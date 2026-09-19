@@ -206,7 +206,7 @@ export function Welcome() {
     {
       q: isDe ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
       a: isDe 
-        ? 'Wir unterstützen Klasse B (Schaltgetriebe & Automatik), B197 sowie den Umschreibungspfad.' 
+        ? 'Klasse B mit Schaltgetriebe und Automatik, B197 und die Umschreibung eines ausländischen Führerscheins.' 
         : 'We support Class B (Manual & Automatic), B197, and Foreign License Conversion (Umschreibung).'
     }
   ];
