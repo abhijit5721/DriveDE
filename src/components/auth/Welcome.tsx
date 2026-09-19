@@ -180,21 +180,21 @@ export function Welcome() {
 
   const faqs = [
     {
-      q: isDe ? 'Wie hilft mir DriveDE Geld zu sparen?' : 'How does DriveDE help me save money?',
+      q: isDe ? 'Wie hilft mir DriveDE, Geld zu sparen?' : 'How does DriveDE help me save money?',
       a: isDe
-        ? 'In Deutschland kostet eine Fahrstunde bis zu 95€. Indem du Manöver (wie Einparken) in der 3D-Simulation vorbereitest und jede Fahrstunde im GPS-Fahrtenbuch nachbereitest, brauchst du weniger Fahrstunden und bestehst im ersten Anlauf.'
-        : 'In Germany, driving lessons cost up to €95/hour. By mentally mastering maneuvers via 3D simulations and reviewing every logged lesson afterwards, students take fewer extra hours and pass on their 1st attempt.'
+        ? 'Eine Fahrstunde kostet in Deutschland 70 bis 115 Euro. Wenn du Situationen wie Einparken oder Rechts vor links vorher übst und jede Fahrstunde danach kurz nachbereitest, verbringst du weniger bezahlte Zeit im Auto mit Dingen, die du auch zu Hause lernen kannst.'
+        : 'A driving lesson in Germany costs 70 to 115 euros. If you rehearse situations like parking or right before left beforehand, and spend a few minutes reviewing each lesson afterwards, you spend less paid time in the car on things you could learn at home.'
     },
     {
       q: isDe ? 'Ersetzt DriveDE meine Fahrschule?' : 'Does DriveDE replace my driving school?',
       a: isDe 
-        ? 'Nein, DriveDE ist die perfekte Ergänzung zu deinen praktischen Fahrstunden. Die App trackt deine Fahrten per GPS, gibt dir KI-Auswertungen und bereitet dich optimal auf deine Prüfung vor.' 
+        ? 'Nein. Fahren lernst du im Auto, bei deinem Fahrlehrer. DriveDE ist für die Zeit dazwischen: Situationen vorher üben, die Fahrstunde danach nachbereiten und sehen, woran du noch arbeiten musst.' 
         : 'No, DriveDE is the ideal companion app for your practical driving lessons. It tracks your drives via GPS, provides AI debriefings, and systematically prepares you to pass your exam.'
     },
     {
       q: isDe ? 'Funktioniert DriveDE auch für die Umschreibung?' : 'Does DriveDE work for foreign license conversion (Umschreibung)?',
       a: isDe 
-        ? 'Ja! DriveDE hat einen eigenen Umschreibungspfad, der speziell auf Fahrer mit ausländischem Führerschein abgestimmt ist.' 
+        ? 'Ja. Für die Umschreibung gibt es einen eigenen Lernweg, zugeschnitten auf alle, die schon einen ausländischen Führerschein haben.' 
         : 'Yes! DriveDE features a dedicated Umschreibung mode tailored specifically for foreign license holders converting to a German driving license.'
     },
     {
@@ -215,13 +215,13 @@ export function Welcome() {
   // how long that access lasts. Keep this list single-sourced so the pricing
   // table can never drift from what the app actually gates.
   const proFeatures = [
-    isDe ? 'Unbegrenztes GPS Live Fahrtenbuch' : 'Unlimited GPS Live Driving Tracker',
-    isDe ? 'Ein-Tipp Fehlerprotokoll während der Fahrt' : 'One-Tap Mistake Logging During Drives',
+    isDe ? 'GPS-Fahrtenbuch ohne Limit' : 'Unlimited GPS Live Driving Tracker',
+    isDe ? 'Fehlerprotokoll nach jeder Fahrstunde' : 'One-tap mistake log after each lesson',
     isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
-    isDe ? '3D Manöversimulationen (Einparken, Autobahn)' : '3D Maneuver Simulations (Einparken, Autobahn)',
+    isDe ? '3D-Manöversimulationen (Einparken, Autobahn)' : '3D Maneuver Simulations (Einparken, Autobahn)',
     isDe ? 'Prüfungsreife-Anzeige & Fehleranalyse' : 'Exam Readiness Score & Mistake Analysis',
     isDe ? 'Fahrlehrer PDF Berichtsexport' : 'Fahrlehrer PDF Report Exports',
-    isDe ? 'Kostenrechner & Gefahren-Hotspots' : 'Budget Estimator & Mistake Hotspots',
+    isDe ? 'Kostenrechner und Gefahrenstellen' : 'Budget Estimator & Mistake Hotspots',
     isDe ? 'Vollständiger Theorie-Lehrplan' : 'Full Theory Curriculum',
   ];
 
@@ -466,7 +466,7 @@ export function Welcome() {
               <Coins className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
               <div>
                 <p className="font-bold text-slate-900">{isDe ? 'Bis zu 95 Euro pro Fahrstunde' : 'Up to 95 euros per lesson'}</p>
-                <p className="mt-1 text-sm text-slate-600">{isDe ? 'Die meisten brauchen 35 bis 45. Jede Stunde, die du vorbereitet antrittst, sitzt besser.' : 'Most people need 35 to 45. Every lesson you arrive prepared for counts double.'}</p>
+                <p className="mt-1 text-sm text-slate-600">{isDe ? 'Die meisten brauchen 35 bis 45. Jede Stunde, in die du vorbereitet gehst, bringt mehr.' : 'Most people need 35 to 45. Every lesson you arrive prepared for counts double.'}</p>
               </div>
             </li>
             <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5">
@@ -505,7 +505,7 @@ export function Welcome() {
             <h2 className="mt-4 text-3xl font-bold text-slate-900 sm:text-5xl">{isDe ? 'So funktioniert DriveDE' : 'How DriveDE Works'}</h2>
             <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
               {isDe 
-                ? 'Von deiner ersten Fahrstunde bis zum Erhalt deines Führerscheins.'
+                ? 'Von der ersten Fahrstunde bis zum Führerschein.'
                 : 'From your very first Fahrstunde to receiving your official Führerschein.'
               }
             </p>
@@ -523,14 +523,14 @@ export function Welcome() {
               {
                 title: isDe ? 'KI-Fehleranalyse & 3D' : 'AI Mistake Debriefings',
                 desc: isDe 
-                  ? 'Nutze KI-Auswertungen und 3D-Manöversimulationen (Einparken) zur gezielten Vorbereitung.'
+                  ? 'Nach der Fahrstunde siehst du die Auswertung und übst die Situationen, die nicht saßen, in der 3D-Simulation.'
                   : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
                 icon: Zap
               },
               {
                 title: isDe ? 'Prüfung sicher bestehen' : 'Pass Your Fahrprüfung',
                 desc: isDe 
-                  ? 'Verfolge deine Prüfungsreife bis 100% und gehe voller Selbstvertrauen in die Fahrprüfung.'
+                  ? 'Du siehst, wie deine Prüfungsreife steigt, und weißt vor dem Termin, wo du stehst.'
                   : 'Monitor your Exam Readiness Gauge until you hit 100% confidence and get your license.',
                 icon: Award
               }
@@ -583,7 +583,7 @@ export function Welcome() {
               {
                 shot: 'dashboard',
                 title: isDe ? 'Prüfungsreife auf einen Blick' : 'Exam readiness at a glance',
-                desc: isDe ? 'Wisse genau, wann du bereit bist, mit PDF-Berichten für deinen Fahrlehrer.' : 'Know exactly when you are ready, with PDF reports for your instructor.',
+                desc: isDe ? 'Du siehst genau, wann du bereit bist, mit PDF-Berichten für deinen Fahrlehrer.' : 'Know exactly when you are ready, with PDF reports for your instructor.',
               },
               {
                 shot: 'curriculum',

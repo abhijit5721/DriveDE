@@ -2,6 +2,20 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* German compounds are long enough to break badly in narrow columns, which
+   readers notice immediately ("unnatürliches Umbrechen", r/hamburg, 19 Sep).
+   The document language is set from the app language in App.tsx, so the
+   browser can hyphenate properly once it is allowed to. Headings keep their
+   whole words; only running text is hyphenated. */
+@layer base {
+  :lang(de) p,
+  :lang(de) li,
+  :lang(de) dd {
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+}
+
 /* Tailwind v4 preflight leaves buttons with cursor: default — every enabled
    interactive element should signal clickability (DRI-14 review feedback). */
 @layer base {
