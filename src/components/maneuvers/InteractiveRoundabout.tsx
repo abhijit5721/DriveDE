@@ -75,11 +75,18 @@ export default function InteractiveRoundabout({ onComplete, language }: { onComp
 
       <div className="relative aspect-square w-full max-w-[300px] overflow-hidden rounded-xl bg-slate-200 dark:bg-slate-800 mx-auto border-4 border-slate-300 dark:border-slate-700">
         <svg viewBox="0 0 300 300" className="h-full w-full">
-          <circle cx="150" cy="150" r="140" fill="#334155" />
-          <circle cx="150" cy="150" r="60" fill="#15803d" />
+          {/* Single-lane roundabout as built in Germany: one circular lane, no lane
+              markings inside it. The light band around the island is the Innenring,
+              the paved overrun strip that long vehicles may cross. A dashed circle
+              here would read as a two-lane roundabout fed by a one-lane road. */}
+          {/* Draw order matters: the four approach roads go down first, then the
+              circular carriageway covers them, then the Innenring and the island.
+              Painting the roads last put a crossroads straight through the island. */}
           <rect x="120" y="0" width="60" height="300" fill="#334155" />
           <rect x="0" y="120" width="300" height="60" fill="#334155" />
-          <circle cx="150" cy="150" r="100" stroke="white" strokeWidth="2" strokeDasharray="10,10" fill="none" opacity="0.2" />
+          <circle cx="150" cy="150" r="140" fill="#334155" />
+          <circle cx="150" cy="150" r="95" fill="#94a3b8" />
+          <circle cx="150" cy="150" r="85" fill="#15803d" />
           <g opacity="0.4">
             <path d="M 150 280 L 150 240 M 145 250 L 150 240 L 155 250" stroke="white" fill="none" strokeWidth="2" />
             <path d="M 240 150 L 280 150 M 270 145 L 280 150 L 270 155" stroke="white" fill="none" strokeWidth="2" />

@@ -35,9 +35,11 @@ function RoundaboutArt() {
       <rect width="120" height="120" fill="#dcfce7" />
       <rect x="48" y="0" width="24" height="120" fill="#334155" />
       <rect x="0" y="48" width="120" height="24" fill="#334155" />
+      {/* One circular lane, no marking inside it; the light band is the Innenring
+          (overrun strip for long vehicles), not a lane divider. */}
       <circle cx="60" cy="60" r="40" fill="#334155" />
-      <circle cx="60" cy="60" r="16" fill="#15803d" />
-      <circle cx="60" cy="60" r="28" fill="none" stroke="#fff" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.5" />
+      <circle cx="60" cy="60" r="26" fill="#94a3b8" />
+      <circle cx="60" cy="60" r="21" fill="#15803d" />
       <rect x="54" y="92" width="12" height="18" rx="3" fill="#ef4444" />
     </svg>
   );

@@ -200,8 +200,8 @@ export function Welcome() {
     {
       q: isDe ? 'Wie funktioniert das GPS-Fahrtenbuch?' : 'How does the GPS driving log work?',
       a: isDe 
-        ? 'Sobald du vor deiner Fahrstunde auf "Start" tippst, zeichnet DriveDE Route und Fahrzeit automatisch auf. Fehler hältst du unterwegs mit einem Tipp fest und wertest sie nach der Fahrt in der Analyse aus.' 
-        : 'Once you tap "Start" before your drive, DriveDE records your route and driving time automatically. You log mistakes with a single tap and review them in your post-drive analysis.'
+        ? 'Du tippst vor der Fahrstunde auf "Start" und legst das Handy weg. DriveDE zeichnet Route und Fahrzeit im Hintergrund auf. Die Fehler trägst du nach der Fahrt ein, wenn der Motor aus ist, und wertest sie in der Analyse aus. Während der Fahrt wird das Handy nicht bedient, das verbietet § 23 StVO.'
+        : 'You tap "Start" before the lesson and put the phone away. DriveDE records route and driving time in the background. You enter the mistakes after the drive with the engine off and review them in the analysis. The phone is never operated while driving, German law (§ 23 StVO) forbids it.'
     },
     {
       q: isDe ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
@@ -516,8 +516,8 @@ export function Welcome() {
               {
                 title: isDe ? 'Fahrstunden aufzeichnen' : 'Track Driving Lessons',
                 desc: isDe 
-                  ? 'Tippe vor deiner Fahrstunde auf Start. GPS zeichnet deine Route auf, Fehler hältst du mit einem Tipp fest.'
-                  : 'Tap Start during your Fahrstunde. GPS records your route; you log mistakes with a single tap.',
+                  ? 'Vor der Fahrstunde auf Start tippen, Handy weglegen. GPS zeichnet die Route im Hintergrund auf, die Fehler trägst du nach der Fahrt ein.'
+                  : 'Tap Start before the lesson, then put the phone away. GPS records the route in the background; you enter the mistakes after the drive.',
                 icon: MapPin
               },
               {
