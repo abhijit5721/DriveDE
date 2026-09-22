@@ -155,3 +155,21 @@ export function registerEmailLocally(email: string): void {
   }
 }
 
+
+/**
+ * DRI-60: start an anonymous session so a visitor can use the whole app before
+ * giving an email. Returns the user, or an error when Supabase is not
+ * configured, anonymous sign-ins are disabled on the project, or the network
+ * fails. Callers fall back to the account form on error.
+ */
+export async function signInAnonymously(): Promise<{ user: User; error?: undefined } | { user?: undefined; error: Error }> {
+  if (!isSupabaseConfigured || !supabase) return { error: new Error('supabase-not-configured') };
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error || !data.user) return { error: error ?? new Error('anonymous-sign-in-failed') };
+  return { user: data.user };
+}
+
+/** True for a session created by signInAnonymously that has not been given an email yet. */
+export function isAnonymousUser(user: User | null | undefined): boolean {
+  return user?.is_anonymous === true;
+}

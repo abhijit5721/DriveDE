@@ -1,7 +1,16 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Visual check for DRI-59: every free CTA must open the account form, never the Pro price list.
-// Run: npx playwright test tests/signup-door.spec.ts --project="Mobile Android (Pixel 7)"
+/**
+ * DRI-59 / DRI-60: what happens behind every call to action.
+ *
+ * Free CTAs open the app itself on an anonymous account, no form (DRI-60). In this
+ * local build Supabase is not configured, so the app uses the same simulated
+ * session the signup form already uses offline; the network path is covered by
+ * the fallback logic in Welcome.tsx and by the Supabase project switch.
+ * Pricing CTAs still open the account form with the plan preselected, because
+ * there the person genuinely intends to buy.
+ * Run: npx playwright test tests/signup-door.spec.ts
+ */
 test.describe.configure({ timeout: 120_000 });
 
 const ROUND: Array<[string, string[]]> = [
@@ -20,26 +29,20 @@ async function open(page: Page) {
   await page.getByTestId('cookie-accept-all').click({ timeout: 4000 }).catch(() => undefined);
 }
 
-/** The screen that appears must be the account form, not the price list. */
-async function expectAccountForm(page: Page, shot: string) {
-  await expect(page.getByText(/Choose your perfect Pro plan|Wähle deinen|Pro-Plan/i)).toHaveCount(0);
-  await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
-  // No price inside the signup card on a free path: nothing is being bought yet.
-  // Scoped to the card, because the landing page behind the overlay still has pricing.
-  const card = page.locator('div').filter({ has: page.locator('input[type="email"]') }).last();
-  await expect(card.getByText(/€\s?\d|\d+[.,]\d\d\s?€/)).toHaveCount(0);
-  await expect(page.getByText(/7 Tage Pro, kostenlos|7 days of Pro, free/)).toBeVisible();
-  await page.screenshot({ path: `demo-video/${shot}.png` });
+/** The app opened directly: the licence chooser is the first in-app screen, and there is no form. */
+async function expectInsideApp(page: Page) {
+  await expect(page.getByTestId('license-continue-btn')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('input[type="email"]')).toHaveCount(0);
+  await expect(page.getByText(/Wähle deinen passenden Pro-Plan|Erstelle dein Konto/)).toHaveCount(0);
 }
 
-test('a "Jetzt kostenlos starten" button opens the account form', async ({ page }) => {
+test('a "Jetzt kostenlos starten" button opens the app, not a form', async ({ page }) => {
   await open(page);
-  // whichever one is on screen for this viewport: header on desktop, mid-page on mobile
   await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
-  await expectAccountForm(page, 'door-free-cta');
+  await expectInsideApp(page);
 });
 
-test('the trainer account door opens the account form', async ({ page }) => {
+test('the trainer account door opens the app and keeps the exam date', async ({ page }) => {
   await open(page);
   await page.getByTestId('welcome-try-btn').click();
   for (const [scenarioId, taps] of ROUND) {
@@ -51,16 +54,16 @@ test('the trainer account door opens the account form', async ({ page }) => {
   await page.getByTestId('public-trainer-more').getByRole('button').click();
   await expect(page.getByTestId('public-locked-preview')).toBeVisible();
   await page.getByTestId('public-trainer-signup').click();
-  await expectAccountForm(page, 'door-trainer');
+  await expectInsideApp(page);
 });
 
-test('a pricing CTA still opens its own flow', async ({ page }) => {
+test('a pricing CTA still opens the account form with the plan preselected', async ({ page }) => {
   await open(page);
   await page.locator('#pricing').scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
-  // pricing buttons pass their step explicitly, so they must be unaffected by the default change
   const buy = page.locator('#pricing button').filter({ hasText: /Pass|wählen|Jetzt|kaufen|starten/i }).first();
   await buy.click();
   await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
-  await page.screenshot({ path: 'demo-video/door-pricing.png' });
+  // the buy path names the plan and its price, which is right: here a purchase is intended
+  await expect(page.getByText(/Einmalzahlung/).first()).toBeVisible();
 });

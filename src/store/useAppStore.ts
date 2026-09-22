@@ -168,6 +168,7 @@ export const useAppStore = create<AppState>()(
       authDisplayName: null,
       authUserId: null,
       authStatus: 'guest',
+      authIsAnonymous: false,
       userProgress: initialProgress,
       activeSession: null,
       hasVisited: false,
@@ -313,12 +314,13 @@ export const useAppStore = create<AppState>()(
         ? { isPremium, trialStartedAt: null, trialEndsAt: null } 
         : { isPremium }),
 
-      setAuthState: (email, status, displayName, userId) =>
+      setAuthState: (email, status, displayName, userId, isAnonymous = false) =>
         set((state) => ({
           authEmail: email,
           authStatus: status,
           authDisplayName: displayName,
           authUserId: userId,
+          authIsAnonymous: status === 'signed_in' && isAnonymous,
           // If we just signed in, we have definitely visited the app
           hasVisited: status === 'signed_in' ? true : state.hasVisited,
           isPremium: Capacitor.isNativePlatform()
@@ -712,6 +714,7 @@ export const useAppStore = create<AppState>()(
           authStatus: 'guest',
           authDisplayName: null,
           authUserId: null,
+          authIsAnonymous: false,
         });
       },
 

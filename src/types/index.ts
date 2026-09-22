@@ -283,6 +283,8 @@ export interface AppState {
   authDisplayName: string | null;
   authUserId: string | null;
   authStatus: 'guest' | 'signed_in';
+  /** DRI-60: signed in through Supabase anonymous sign-in and no email added yet. */
+  authIsAnonymous: boolean;
   userProgress: UserProgress;
   activeSession: ActiveSession | null;
   hasVisited: boolean;
@@ -302,7 +304,7 @@ export interface AppState {
   setLearningPath: (path: LearningPathType) => void;
   setTransmissionType: (type: TransmissionType) => void;
   setPremium: (isPremium: boolean) => void;
-  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in', authDisplayName: string | null, authUserId: string | null) => void;
+  setAuthState: (authEmail: string | null, authStatus: 'guest' | 'signed_in', authDisplayName: string | null, authUserId: string | null, authIsAnonymous?: boolean) => void;
   unlockAchievement: (achievementId: string) => void;
   updateStreak: () => void;
   completeLesson: (lessonId: string) => void;

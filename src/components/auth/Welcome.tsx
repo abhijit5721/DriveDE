@@ -25,6 +25,8 @@ import { PhoneFrame, MonitorFrame } from '../common/DeviceFrames';
 import { LegalPage } from '../legal/LegalPage';
 import type { LegalPageType } from '../../types';
 import { trackFunnel } from '../../services/AnalyticsService';
+import { signInAnonymously } from '../../services/auth';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { TrainerTiles } from './TrainerTiles';
 import type { Rung } from './TrainerLadder';
 
@@ -34,7 +36,7 @@ const PublicTrainer = lazy(() => import('./PublicTrainer').then((m) => ({ defaul
 export function Welcome() {
   const {
     language, setLanguage, setHasVisited, licenseType,
-    authStatus, userProgress, setExamDate
+    authStatus, userProgress, setExamDate, setAuthState, startFreeTrial
   } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -115,6 +117,32 @@ export function Welcome() {
     window.history.pushState({ planPicker: true }, '', '#plan');
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // DRI-60: a free CTA opens the app itself. The account is created silently with
+  // Supabase anonymous sign-in, the seven-day trial starts on it, and the email is
+  // asked for later in the Account page, once there is progress worth keeping.
+  // Between 11 and 22 Sep, 9 of 98 visitors asked for an account and none finished
+  // the form. If anonymous sign-in is unavailable, the form is the fallback.
+  const startAnonymous = async (from: string) => {
+    if (isReturningUser) { setHasVisited(true); return; }
+    trackFunnel('anonymous_start', { from });
+    setMobileMenuOpen(false);
+    if (!isSupabaseConfigured) {
+      // Local or offline build: mirror the form's simulated confirmation.
+      setAuthState(null, 'signed_in', null, `local-anon-${Date.now()}`, true);
+      startFreeTrial('90-days');
+      setHasVisited(true);
+      return;
+    }
+    const result = await signInAnonymously();
+    if (result.error) {
+      console.warn('[Welcome] Anonymous sign-in unavailable, opening the account form:', result.error.message);
+      handleStart();
+      return;
+    }
+    startFreeTrial('90-days');
+    setHasVisited(true);
   };
 
   useEffect(() => {
@@ -289,7 +317,7 @@ export function Welcome() {
                   {isDe ? 'Anmelden' : 'Sign In'}
                 </button>
                 <button
-                  onClick={() => { trackFunnel('signup_started', { from: 'header' }); handleStart('90-days', 'signup'); }}
+                  onClick={() => void startAnonymous('header')}
                   data-testid="welcome-start-btn"
                   className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-md"
                 >
@@ -337,7 +365,7 @@ export function Welcome() {
                   <button onClick={handleSignInClick} className="rounded-xl bg-slate-900 py-3 text-base font-bold text-white">
                     {isDe ? 'Anmelden' : 'Sign In'}
                   </button>
-                  <button onClick={() => handleStart('90-days', 'signup')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
+                  <button onClick={() => void startAnonymous('menu')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                     {t.common.startNow}
                   </button>
                 </div>
@@ -455,7 +483,7 @@ export function Welcome() {
       <TrainerTiles
         language={language}
         onOpen={(rung, trainer) => { trackFunnel('try_click', { trainer, from: 'tiles', rung }); setTrainerRung(rung); }}
-        onLockedAccount={() => { trackFunnel('signup_started', { from: 'tile_locked' }); handleStart(); }}
+        onLockedAccount={() => void startAnonymous('tile_locked')}
       />
 
       {/* 💡 The problem in three bullets (DRI-45: the old two-column cost argument cut by more than half) */}
@@ -553,7 +581,7 @@ export function Welcome() {
           {/* Mid-Page CTA (DRI-6) */}
           <div className="mt-14 text-center">
             <button
-              onClick={() => handleStart()}
+              onClick={() => void startAnonymous('cta')}
               data-testid="cta-how-it-works"
               className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
             >
@@ -641,7 +669,7 @@ export function Welcome() {
                   : 'Seven days of every trainer, GPS tracking and AI coaching, free. Account in a minute, no credit card.'}
               </p>
               <button
-                onClick={() => handleStart()}
+                onClick={() => void startAnonymous('cta')}
                 data-testid="cta-photo-banner"
                 className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-md transition hover:bg-blue-500 hover:scale-105 active:scale-95"
               >
@@ -1067,7 +1095,7 @@ export function Welcome() {
               // The exam date is the one thing the visitor made "theirs"; carry it into the account.
               if (examDate) setExamDate(examDate);
               setTrainerRung(null);
-              handleStart();
+              void startAnonymous('trainer');
             }}
           />
         </Suspense>
@@ -1102,7 +1130,7 @@ export function Welcome() {
                   {isDe ? 'Bereit, es selbst auszuprobieren?' : 'Ready to try it yourself?'}
                 </p>
                 <button
-                  onClick={() => { setShowDemo(false); handleStart(); }}
+                  onClick={() => { setShowDemo(false); void startAnonymous('demo'); }}
                   data-testid="demo-cta"
                   className="group inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-blue-500 hover:scale-105 active:scale-95"
                 >

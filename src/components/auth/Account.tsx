@@ -3,13 +3,14 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { User, LogIn, LogOut, Cloud, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download, Trophy, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 import { signInWithProvider } from '../../services/auth';
+import { trackFunnel } from '../../services/AnalyticsService';
 import GoogleLogo from '../../assets/google-logo.svg';
 import { syncAllData } from '../../services/supabaseSync';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -33,6 +34,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
     setLanguage,
     authStatus,
     authEmail,
+    authIsAnonymous,
     authDisplayName,
     authUserId,
     userProgress,
@@ -88,6 +90,35 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
     }
 
     setAuthLoading(false);
+  };
+
+  // DRI-60: turn an anonymous account into a real one. Supabase treats an email set
+  // on an anonymous user as an email change, so a confirmation link goes out and the
+  // account becomes permanent once it is clicked.
+  const [secureEmail, setSecureEmail] = useState('');
+  const [securePassword, setSecurePassword] = useState('');
+  const [secureSent, setSecureSent] = useState(false);
+
+  const handleSecureAccount = async (e: FormEvent) => {
+    e.preventDefault();
+    setAuthError(null);
+    if (!isSupabaseConfigured || !supabase) { setAuthError(t.secureUnavailable); return; }
+    setAuthLoading(true);
+    const { error } = await supabase.auth.updateUser({ email: secureEmail.trim().toLowerCase(), password: securePassword });
+    setAuthLoading(false);
+    if (error) { setAuthError(error.message); return; }
+    trackFunnel('email_added', { via: 'email' });
+    setSecureSent(true);
+  };
+
+  const handleSecureWithGoogle = async () => {
+    setAuthError(null);
+    if (!isSupabaseConfigured || !supabase) { setAuthError(t.secureUnavailable); return; }
+    setAuthLoading(true);
+    const { error } = await supabase.auth.linkIdentity({ provider: 'google' });
+    if (error) { setAuthError(error.message); setAuthLoading(false); return; }
+    trackFunnel('email_added', { via: 'google' });
+    // the browser is now redirecting to Google
   };
 
   const handleOpenShare = async () => {
@@ -177,7 +208,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
             </p>
             <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold leading-tight truncate">
               {authStatus === 'signed_in'
-                 ? authDisplayName
+                ? (authIsAnonymous ? t.anonymousTitle : authDisplayName)
                 : t.guestMode}
               {isPremium && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
@@ -188,11 +219,64 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-300 break-words">
               {authStatus === 'signed_in'
-                ? authEmail
+                ? (authIsAnonymous ? t.anonymousDesc : authEmail)
                 : t.guestDesc}
             </p>
           </div>
         </div>
+
+        {authStatus === 'signed_in' && authIsAnonymous && (
+          <div className="mt-4 rounded-2xl border border-amber-400/40 bg-amber-400/10 p-4" data-testid="account-secure-panel">
+            <p className="text-sm font-bold text-amber-200">{t.secureTitle}</p>
+            {secureSent ? (
+              <p className="mt-2 text-sm text-slate-200" data-testid="account-secure-sent">{t.secureSent}</p>
+            ) : (
+              <>
+                <form onSubmit={handleSecureAccount} className="mt-3 space-y-2">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    {t.secureEmailLabel}
+                    <input
+                      type="email"
+                      required
+                      autoComplete="email"
+                      value={secureEmail}
+                      onChange={(e) => setSecureEmail(e.target.value)}
+                      data-testid="account-secure-email"
+                      className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-blue-400"
+                    />
+                  </label>
+                  <label className="block text-xs font-semibold text-slate-300">
+                    {t.securePasswordLabel}
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      autoComplete="new-password"
+                      value={securePassword}
+                      onChange={(e) => setSecurePassword(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-blue-400"
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={authLoading}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {t.secureCta}
+                  </button>
+                </form>
+                <button
+                  onClick={handleSecureWithGoogle}
+                  disabled={authLoading}
+                  className="mt-2 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:opacity-70"
+                >
+                  <img src={GoogleLogo} alt="Google" className="h-5 w-5" />
+                  {t.secureGoogle}
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="mt-4 space-y-3">
           {authStatus === 'signed_in' ? (

@@ -121,7 +121,7 @@ test('a visitor completes a round with no account and meets a plan, not a signup
   expect(authCalls, 'the anonymous trainer path must not call auth').toEqual([]);
 });
 
-test('the only signup door after a round is the locked rung, and it opens the normal signup flow (DRI-57)', async ({ page }) => {
+test('the only account door after a round is the locked rung, and it opens the app itself (DRI-57, DRI-60)', async ({ page }) => {
   await openLanding(page, 'en');
   await page.getByTestId('welcome-try-btn').click();
   await completeRound(page);
@@ -132,10 +132,12 @@ test('the only signup door after a round is the locked rung, and it opens the no
   await expect(page.getByTestId('public-locked-preview')).toBeVisible();
   await page.getByTestId('public-trainer-signup').click();
   await expect(page.getByTestId('public-trainer')).toHaveCount(0);
-  // It must open the account form, never the Pro price list: nine visitors reached this
-  // point between 11 and 22 Sep and none got through, because they met pricing first.
+  // DRI-60: no form and no price list. The visitor is inside the app on an anonymous
+  // account; the licence chooser is the first in-app screen. Nine visitors asked for an
+  // account between 11 and 22 Sep and none finished the form that used to be here.
   await expect(page.getByText(/Choose your perfect Pro plan/i)).toHaveCount(0);
-  await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('input[type="email"]')).toHaveCount(0);
+  await expect(page.getByTestId('license-continue-btn')).toBeVisible({ timeout: 15000 });
 });
 
 test('a deep link opens the trainer directly (DRI-57)', async ({ page }) => {

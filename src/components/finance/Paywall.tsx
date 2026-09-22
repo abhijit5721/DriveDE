@@ -16,7 +16,7 @@ import { TRANSLATIONS } from '../../data/translations';
 type Tier = '30-days' | '90-days' | 'lifetime';
 
 export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { language, setPremium, intendedPlan } = useAppStore();
+  const { language, setPremium, intendedPlan, authIsAnonymous } = useAppStore();
   const [selectedTier, setSelectedTier] = useState<Tier>(intendedPlan ?? '90-days');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,6 +43,15 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         onClose();
         toast.success(language === 'de' ? 'Pro (Demo) aktiviert! Viel Erfolg!' : 'Pro (Demo) activated! Good luck!');
       }, 1500);
+      return;
+    }
+
+    // DRI-60: a pass bought on an anonymous account would be lost with the browser
+    // storage, because there is no way to sign back in. Ask for the email first.
+    if (authIsAnonymous) {
+      toast.error(language === 'de'
+        ? 'Sichere dein Konto zuerst mit einer E-Mail (unter Konto), damit dein Pass nicht verloren geht.'
+        : 'Secure your account with an email first (under Account), so your pass cannot be lost.');
       return;
     }
 

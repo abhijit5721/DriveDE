@@ -13,6 +13,8 @@
  *   trainer_complete     visitor finished a round (props: trainer, round)
  *   signup_prompt_shown  the "save your result" prompt appeared
  *   signup_started       visitor tapped a signup CTA (props: from)
+ *   anonymous_start      free CTA opened the app on an anonymous account (props: from) (DRI-60)
+ *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
 
@@ -267,7 +269,9 @@ export type FunnelEvent =
   | 'result_saved'
   | 'share_click'
   | 'ladder_rung_started'
-  | 'ladder_locked_tap';
+  | 'ladder_locked_tap'
+  | 'anonymous_start'
+  | 'email_added';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,

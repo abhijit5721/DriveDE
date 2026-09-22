@@ -22,7 +22,7 @@ import { checkAndUnlockAchievements } from './utils/achievements';
 import { resolveTrial } from './utils/trialSync';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
-import { signOut, subscribeToAuthChanges } from './services/auth';
+import { signOut, subscribeToAuthChanges, isAnonymousUser } from './services/auth';
 import { analyticsService } from './services/AnalyticsService';
 import { chapters } from './data/curriculum';
 import { Header } from './components/layout/Header';
@@ -318,13 +318,15 @@ export default function App() {
     const unsubscribe = subscribeToAuthChanges(async (session) => {
       clearTimeout(fallbackTimer);
       try {
-        const isNewUser = !useAppStore.getState().authEmail && !!session?.user;
+        // Decided by user id, not by a missing email: an anonymous user (DRI-60) never
+        // has an email, and would otherwise re-run the local-to-cloud migration on every load.
+        const isNewUser = !!session?.user && useAppStore.getState().authUserId !== session.user.id;
         
         if (session?.user) {
           const { user } = session;
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
-          setAuthState(user.email || null, 'signed_in', displayName, user.id);
+          setAuthState(user.email || null, 'signed_in', displayName, user.id, isAnonymousUser(user));
           setShowAuthModal(false); // Close modal on success
           // Identify user in PostHog so sessions are linked to their account
           analyticsService.identifyUser(user.id, user.email || '');
@@ -655,6 +657,9 @@ export default function App() {
   };
 
   const handleSignOut = async () => {
+    // DRI-60: an anonymous account has no way back in, so make sure this is wanted.
+    const { authIsAnonymous, language: lang } = useAppStore.getState();
+    if (authIsAnonymous && !window.confirm(TRANSLATIONS[lang].account.anonymousSignOutWarn)) return;
     analyticsService.resetUser(); // Clear PostHog identity before logging out
     await signOut();
     logoutCleanup();
