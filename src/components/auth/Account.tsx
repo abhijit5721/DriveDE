@@ -206,7 +206,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
               {t.title}
             </p>
-            <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold leading-tight truncate">
+            <h2 className={`mt-1 flex items-center gap-2 text-2xl font-bold leading-tight ${authIsAnonymous ? 'flex-wrap' : 'truncate'}`}>
               {authStatus === 'signed_in'
                 ? (authIsAnonymous ? t.anonymousTitle : authDisplayName)
                 : t.guestMode}
