@@ -37,7 +37,7 @@ const PLAN_CONFIG = {
   'de': {
     badge: '7 TAGE TESTVERSION • KOSTENLOS',
     headline: 'Wähle deinen passenden Pro-Plan',
-    subline: 'GPS-Tracking, Ein-Tipp Fehlerprotokoll, 3D-Trainer und Prüfungsreife-Score: 7 Tage kostenlos testen.',
+    subline: 'GPS-Tracking, Fehlerprotokoll nach der Fahrt, 3D-Trainer und Prüfungsreife-Score: 7 Tage kostenlos testen.',
     signupHeadline: 'Erstelle dein Konto',
     signupSubline: 'Melde dich an, um deine 7-Tage Pro Testversion zu aktivieren.',
     plans: {
@@ -73,7 +73,7 @@ const PLAN_CONFIG = {
     },
     features: [
       { text: 'GPS Live-Fahrtracking & Fahrtenbuch', badge: 'GPS' },
-      { text: 'Ein-Tipp Fehlerprotokoll & Auswertung', badge: 'Analyse' },
+      { text: 'Fehlerprotokoll & Auswertung nach der Fahrt', badge: 'Analyse' },
       { text: 'Fahrt-Auswertung nach jeder Fahrt', badge: 'Report' },
       { text: '3D-Einparktrainer & Prüfungs-Simulationen', badge: '3D' },
       { text: 'Fahrbereitschafts- & Fortschritts-Score', badge: 'Score' },
@@ -147,7 +147,7 @@ const PLAN_CONFIG = {
     },
     features: [
       { text: 'GPS Live Driving Tracker & Logbook', badge: 'GPS' },
-      { text: 'One-Tap Mistake Log & Analysis', badge: 'Log' },
+      { text: 'Mistake log & analysis after each drive', badge: 'Log' },
       { text: 'Drive analysis after every drive', badge: 'Report' },
       { text: '3D Parking Simulator & Exam Scenarios', badge: '3D' },
       { text: 'Exam Readiness & Progress Analytics', badge: 'Score' },
