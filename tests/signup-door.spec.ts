@@ -24,6 +24,11 @@ async function open(page: Page) {
 async function expectAccountForm(page: Page, shot: string) {
   await expect(page.getByText(/Choose your perfect Pro plan|Wähle deinen|Pro-Plan/i)).toHaveCount(0);
   await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
+  // No price inside the signup card on a free path: nothing is being bought yet.
+  // Scoped to the card, because the landing page behind the overlay still has pricing.
+  const card = page.locator('div').filter({ has: page.locator('input[type="email"]') }).last();
+  await expect(card.getByText(/€\s?\d|\d+[.,]\d\d\s?€/)).toHaveCount(0);
+  await expect(page.getByText(/7 Tage Pro, kostenlos|7 days of Pro, free/)).toBeVisible();
   await page.screenshot({ path: `demo-video/${shot}.png` });
 }
 

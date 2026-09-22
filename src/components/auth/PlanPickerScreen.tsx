@@ -91,6 +91,9 @@ const PLAN_CONFIG = {
     ],
     back: 'Zurück',
     changePlan: 'Plan ändern',
+    trialBadgeTitle: '7 Tage Pro, kostenlos',
+    trialBadgeSub: 'Keine Kreditkarte. Welchen Pass du danach willst, entscheidest du später.',
+    seePasses: 'Pässe ansehen',
     emailLabel: 'E-Mail-Adresse',
     passwordLabel: 'Passwort (mind. 8 Zeichen)',
     googleBtn: 'Mit Google fortfahren',
@@ -165,6 +168,9 @@ const PLAN_CONFIG = {
     ],
     back: 'Back',
     changePlan: 'Change Plan',
+    trialBadgeTitle: '7 days of Pro, free',
+    trialBadgeSub: 'No card needed. You choose a pass later, if you want one.',
+    seePasses: 'See passes',
     emailLabel: 'Email address',
     passwordLabel: 'Password (min. 8 chars)',
     googleBtn: 'Continue with Google',
@@ -387,13 +393,15 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
       {/* Header */}
       <div className="relative flex items-center justify-between px-4 sm:px-8 py-5 shrink-0 z-10">
         <Logo size="sm" />
+        {/* On the free path there is no plan to change yet, so this offers to look at
+            the passes rather than telling someone to change one they never picked. */}
         {step !== 'plan' ? (
           <button
             onClick={() => setStep('plan')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-line text-muted hover:text-slate-900 dark:hover:text-white text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            {t.changePlan}
+            {intent === 'buy' ? t.changePlan : t.seePasses}
           </button>
         ) : (
           <motion.button
@@ -602,12 +610,18 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
                     <Crown className="w-4 h-4 text-white" />
                   </div>
+                  {/* Someone who came from a free CTA is not buying anything yet, so naming
+                      a pass and its price here reads as a paywall and is also inaccurate:
+                      signing up starts the trial, it does not purchase that pass. Only the
+                      buy intent, which comes from a pricing CTA, shows the plan and price. */}
                   <div>
-                    <p className="text-xs font-bold text-slate-900 dark:text-white">{activePlan.label} ({activePlan.price})</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {intent === 'buy' ? `${activePlan.label} (${activePlan.price})` : t.trialBadgeTitle}
+                    </p>
                     <p className="text-xs text-muted font-medium">
                       {intent === 'buy'
                         ? (language === 'de' ? 'Einmalzahlung: inkl. 7 Tage Pro ab sofort' : 'One-time payment: includes Pro from day one')
-                        : (language === 'de' ? '7 Tage kostenlos freigeschaltet' : 'Unlocked free for 7 days')}
+                        : t.trialBadgeSub}
                     </p>
                   </div>
                 </div>
@@ -616,7 +630,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                   onClick={() => setStep('plan')}
                   className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline uppercase"
                 >
-                  {t.changePlan}
+                  {intent === 'buy' ? t.changePlan : t.seePasses}
                 </button>
               </div>
 
