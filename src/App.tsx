@@ -892,8 +892,9 @@ export default function App() {
           language={language}
         />
 
-        <PrivacyConsentModal 
-          isOpen={!userProgress.hasAcceptedPrivacy && hasVisited && authStatus !== 'guest'} 
+        <PrivacyConsentModal
+          isOpen={!userProgress.hasAcceptedPrivacy && hasVisited && authStatus !== 'guest'}
+          language={language}
           onAccept={() => setAcceptedPrivacy(true)}
           onOpenPrivacyPolicy={() => {
             setActiveTab('legal');

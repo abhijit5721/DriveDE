@@ -1,25 +1,37 @@
 /**
  * (c) 2026 DriveDE. All rights reserved.
- * 
+ *
  * PrivacyConsentModal.tsx
- * 
+ *
  * A high-visibility modal that requests explicit user consent for data processing
  * (GPS, sensors, telemetry) as required by GDPR Art. 6 & 7.
+ * Since DRI-60 this is the first in-app screen every new visitor sees, so it
+ * follows the app language like every other screen.
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { TRANSLATIONS } from '../../data/translations';
+import type { Language } from '../../types';
 
 interface PrivacyConsentModalProps {
   isOpen: boolean;
+  language: Language;
   onAccept: () => void;
   onOpenPrivacyPolicy: () => void;
 }
 
-export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: PrivacyConsentModalProps) {
+export function PrivacyConsentModal({ isOpen, language, onAccept, onOpenPrivacyPolicy }: PrivacyConsentModalProps) {
   const [hasChecked, setHasChecked] = useState(false);
+  const t = TRANSLATIONS[language].legal.consent;
+
+  const points = [
+    { title: t.gpsTitle, desc: t.gpsDesc, box: 'bg-blue-100 dark:bg-blue-900/50', icon: 'text-blue-600 dark:text-blue-400' },
+    { title: t.telemetryTitle, desc: t.telemetryDesc, box: 'bg-indigo-100 dark:bg-indigo-900/50', icon: 'text-indigo-600 dark:text-indigo-400' },
+    { title: t.controlTitle, desc: t.controlDesc, box: 'bg-emerald-100 dark:bg-emerald-900/50', icon: 'text-emerald-600 dark:text-emerald-400' },
+  ];
 
   return (
     <AnimatePresence>
@@ -49,50 +61,34 @@ export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: P
                   </div>
                 </div>
               </div>
-              
+
               <h3 className="mb-3 text-center text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                Privacy Matters
+                {t.title}
               </h3>
-              
+
               <p className="mb-6 text-center text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                To provide DriveDE's core features like route tracking and driving analysis, we need to process your location and sensor data.
+                {t.intro}
               </p>
 
               <div className="mb-6 space-y-4 rounded-3xl bg-slate-50 p-5 dark:bg-slate-800/50">
-                <div className="flex gap-3">
-                  <div className="mt-1 rounded-lg bg-blue-100 p-1.5 dark:bg-blue-900/50">
-                    <Check className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                {points.map((point) => (
+                  <div key={point.title} className="flex gap-3">
+                    <div className={cn('mt-1 rounded-lg p-1.5', point.box)}>
+                      <Check className={cn('h-3.5 w-3.5', point.icon)} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">{point.title}</h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{point.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">GPS & Sensors</h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Real-time speed and route analysis during sessions.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="mt-1 rounded-lg bg-indigo-100 p-1.5 dark:bg-indigo-900/50">
-                    <Check className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">Telemetry Analysis</h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Anonymous data used to detect driving mistakes.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="mt-1 rounded-lg bg-emerald-100 p-1.5 dark:bg-emerald-900/50">
-                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">Full Control</h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Export or delete your data anytime under Account settings.</p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               <div className="mb-8">
                 <label className="group flex cursor-pointer items-start gap-4 rounded-2xl border-2 border-transparent bg-slate-50/50 p-4 transition-all hover:bg-slate-100/50 dark:bg-slate-800/30 dark:hover:bg-slate-800/50">
                   <div className="relative flex h-6 w-6 shrink-0 items-center justify-center mt-0.5">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       data-testid="privacy-consent-checkbox"
                       checked={hasChecked}
                       onChange={(e) => setHasChecked(e.target.checked)}
@@ -101,7 +97,7 @@ export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: P
                     <Check className="pointer-events-none absolute h-4 w-4 scale-0 text-white transition-transform peer-checked:scale-100" />
                   </div>
                   <span className="text-xs font-bold leading-snug text-slate-700 dark:text-slate-300">
-                    I agree to the processing of my data as described above and in the <button onClick={(e) => { e.preventDefault(); onOpenPrivacyPolicy(); }} className="text-blue-600 underline hover:text-blue-500 dark:text-blue-400">Privacy Policy</button>.
+                    {t.agreePrefix}<button onClick={(e) => { e.preventDefault(); onOpenPrivacyPolicy(); }} className="text-blue-600 underline hover:text-blue-500 dark:text-blue-400">{t.agreeLink}</button>{t.agreeSuffix}
                   </span>
                 </label>
               </div>
@@ -113,16 +109,16 @@ export function PrivacyConsentModal({ isOpen, onAccept, onOpenPrivacyPolicy }: P
                   disabled={!hasChecked}
                   className={cn(
                     'w-full rounded-2xl py-4 text-sm font-bold text-white shadow-xl transition-all active:scale-95',
-                    hasChecked 
-                      ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/25' 
+                    hasChecked
+                      ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/25'
                       : 'bg-slate-300 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
                   )}
                 >
-                  Accept & Continue
+                  {t.accept}
                 </button>
                 <div className="flex items-center justify-center gap-1.5 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   <Info className="h-3 w-3" />
-                  GDPR Compliant Processing
+                  {t.footer}
                 </div>
               </div>
             </div>
