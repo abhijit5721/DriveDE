@@ -20,6 +20,7 @@ import { supabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { checkAndUnlockAchievements } from './utils/achievements';
 import { resolveTrial } from './utils/trialSync';
+import { recordDeviceTrial } from './utils/deviceTrial';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
 import { signOut, subscribeToAuthChanges, isAnonymousUser } from './services/auth';
@@ -430,6 +431,9 @@ export default function App() {
                 if (needsPush && !isPremium) {
                     import('./services/supabaseSync').then(m => m.pushTrialToSupabase(trial));
                 }
+                // An anonymous account's trial is also the device's trial: remember it
+                // here too, so a device that lost the marker but kept the session is re-marked.
+                if (isAnonymousUser(user) && !isPremium) recordDeviceTrial(trial);
 
                 return {
                     isPremium,

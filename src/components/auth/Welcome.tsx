@@ -27,6 +27,7 @@ import type { LegalPageType } from '../../types';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { signInAnonymously } from '../../services/auth';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { readDeviceTrial, recordDeviceTrial, isDeviceTrialExpired } from '../../utils/deviceTrial';
 import { TrainerTiles } from './TrainerTiles';
 import type { Rung } from './TrainerLadder';
 
@@ -36,7 +37,7 @@ const PublicTrainer = lazy(() => import('./PublicTrainer').then((m) => ({ defaul
 export function Welcome() {
   const {
     language, setLanguage, setHasVisited, licenseType,
-    authStatus, userProgress, setExamDate, setAuthState, startFreeTrial
+    authStatus, userProgress, setExamDate, setAuthState, startFreeTrial, adoptTrial
   } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -51,6 +52,8 @@ export function Welcome() {
   const [selectedPlanForPicker, setSelectedPlanForPicker] = useState<'30-days' | '90-days' | 'lifetime'>('90-days');
   const [pickerInitialStep, setPickerInitialStep] = useState<'plan' | 'signup'>('plan');
   const [pickerInitialIsExistingUser, setPickerInitialIsExistingUser] = useState(false);
+  // Set when a free CTA opened the form because this device's trial is already used up
+  const [pickerNotice, setPickerNotice] = useState<'deviceTrialUsed' | undefined>(undefined);
   const [legalPage, setLegalPage] = useState<LegalPageType | null>(null);
   // Set when the user arrived from a pricing CTA — they intend to buy that tier now
   const [purchaseIntent, setPurchaseIntent] = useState<'30-days' | '90-days' | 'lifetime' | null>(null);
@@ -111,6 +114,7 @@ export function Welcome() {
     if (buying) setPendingPurchase(buying); else clearPendingPurchase();
     setPickerInitialStep(step);
     setPickerInitialIsExistingUser(isExistingUser);
+    setPickerNotice(undefined);
     setShowPlanPicker(true);
     // Give the overlay a history entry so the browser Back button closes it
     // instead of leaving the site (DRI-14 review feedback).
@@ -124,15 +128,31 @@ export function Welcome() {
   // asked for later in the Account page, once there is progress worth keeping.
   // Between 11 and 22 Sep, 9 of 98 visitors asked for an account and none finished
   // the form. If anonymous sign-in is unavailable, the form is the fallback.
+  //
+  // One trial per device: a marker outside the store remembers that the trial has
+  // run here. Still running, a new anonymous account continues it; over, the free
+  // CTA opens the account form with a note instead of another anonymous account.
   const startAnonymous = async (from: string) => {
     if (isReturningUser) { setHasVisited(true); return; }
-    trackFunnel('anonymous_start', { from });
     setMobileMenuOpen(false);
+    const deviceTrial = readDeviceTrial();
+    if (isDeviceTrialExpired(deviceTrial)) {
+      trackFunnel('anonymous_blocked', { from });
+      handleStart();
+      setPickerNotice('deviceTrialUsed');
+      return;
+    }
+    trackFunnel('anonymous_start', { from, resumed: !!deviceTrial });
+    const beginTrial = () => {
+      if (deviceTrial) adoptTrial({ trialStartedAt: deviceTrial.startedAt, trialEndsAt: deviceTrial.endsAt });
+      else startFreeTrial('90-days');
+      recordDeviceTrial(useAppStore.getState());
+      setHasVisited(true);
+    };
     if (!isSupabaseConfigured) {
       // Local or offline build: mirror the form's simulated confirmation.
       setAuthState(null, 'signed_in', null, `local-anon-${Date.now()}`, true);
-      startFreeTrial('90-days');
-      setHasVisited(true);
+      beginTrial();
       return;
     }
     const result = await signInAnonymously();
@@ -141,8 +161,7 @@ export function Welcome() {
       handleStart();
       return;
     }
-    startFreeTrial('90-days');
-    setHasVisited(true);
+    beginTrial();
   };
 
   useEffect(() => {
@@ -268,6 +287,7 @@ export function Welcome() {
             initialStep={pickerInitialStep}
             initialIsExistingUser={pickerInitialIsExistingUser}
             intent={purchaseIntent ? 'buy' : 'trial'}
+            notice={pickerNotice}
             onComplete={handlePlanPickerComplete}
             onCancel={closePlanPicker} 
           />

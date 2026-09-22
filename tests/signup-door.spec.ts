@@ -57,6 +57,54 @@ test('the trainer account door opens the app and keeps the exam date', async ({ 
   await expectInsideApp(page);
 });
 
+test('a device whose free trial is over gets the account form, not a second trial', async ({ page }) => {
+  await page.goto('/?lang=de');
+  // the marker utils/deviceTrial.ts leaves behind, dated so the trial ended yesterday
+  await page.evaluate(() => {
+    const trial = JSON.stringify({
+      startedAt: new Date(Date.now() - 8 * 86_400_000).toISOString(),
+      endsAt: new Date(Date.now() - 1 * 86_400_000).toISOString(),
+    });
+    localStorage.setItem('drivede_device_trial', trial);
+  });
+  await page.reload();
+  await page.getByTestId('cookie-accept-all').click({ timeout: 4000 }).catch(() => undefined);
+  await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
+  await expect(page.getByTestId('device-trial-notice')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('input[type="email"]').first()).toBeVisible();
+  await expect(page.getByTestId('license-continue-btn')).toHaveCount(0);
+});
+
+test('a device whose trial is still running continues it instead of restarting', async ({ page }) => {
+  await page.goto('/?lang=de');
+  const startedAt = new Date(Date.now() - 5 * 86_400_000).toISOString();
+  const endsAt = new Date(Date.now() + 2 * 86_400_000).toISOString();
+  await page.evaluate(([s, e]) => {
+    localStorage.setItem('drivede_device_trial', JSON.stringify({ startedAt: s, endsAt: e }));
+  }, [startedAt, endsAt]);
+  await page.reload();
+  await page.getByTestId('cookie-accept-all').click({ timeout: 4000 }).catch(() => undefined);
+  await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
+  await expectInsideApp(page);
+  // the store adopted the device's dates, so the trial did not restart
+  await expect.poll(async () => page.evaluate(() => new Promise<string | null>((resolve) => {
+    // idb-keyval's default store, where zustand persists 'drivede-storage'
+    const req = indexedDB.open('keyval-store');
+    req.onerror = () => resolve(null);
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains('keyval')) return resolve(null);
+      const get = db.transaction('keyval').objectStore('keyval').get('drivede-storage');
+      get.onerror = () => resolve(null);
+      get.onsuccess = () => {
+        try { resolve(JSON.parse(get.result).state.trialStartedAt ?? null); } catch { resolve(null); }
+      };
+    };
+  })), { timeout: 15000 }).toBe(startedAt);
+  const marker = await page.evaluate(() => localStorage.getItem('drivede_device_trial'));
+  expect(JSON.parse(marker!).startedAt).toBe(startedAt);
+});
+
 test('a pricing CTA still opens the account form with the plan preselected', async ({ page }) => {
   await open(page);
   await page.locator('#pricing').scrollIntoViewIfNeeded();

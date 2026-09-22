@@ -29,6 +29,8 @@ interface PlanPickerScreenProps {
   initialIsExistingUser?: boolean;
   /** 'buy' when the user arrived from a pricing CTA and goes to Stripe after signup */
   intent?: 'trial' | 'buy';
+  /** Why the form opened instead of the app: the free trial has already run on this device */
+  notice?: 'deviceTrialUsed';
   onComplete: () => void;
   onCancel?: () => void;
 }
@@ -94,6 +96,7 @@ const PLAN_CONFIG = {
     trialBadgeTitle: '7 Tage Pro, kostenlos',
     trialBadgeSub: 'Keine Kreditkarte. Welchen Pass du danach willst, entscheidest du später.',
     seePasses: 'Pässe ansehen',
+    deviceTrialUsed: 'Die kostenlose Testphase wurde auf diesem Gerät schon genutzt. Melde dich an oder erstelle ein Konto, um weiterzumachen.',
     emailLabel: 'E-Mail-Adresse',
     passwordLabel: 'Passwort (mind. 8 Zeichen)',
     googleBtn: 'Mit Google fortfahren',
@@ -171,6 +174,7 @@ const PLAN_CONFIG = {
     trialBadgeTitle: '7 days of Pro, free',
     trialBadgeSub: 'No card needed. You choose a pass later, if you want one.',
     seePasses: 'See passes',
+    deviceTrialUsed: 'The free trial has already been used on this device. Sign in or create an account to continue.',
     emailLabel: 'Email address',
     passwordLabel: 'Password (min. 8 chars)',
     googleBtn: 'Continue with Google',
@@ -197,7 +201,7 @@ const planIcons = {
   'lifetime': Crown,
 };
 
-export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signup', initialIsExistingUser = false, intent = 'trial', onComplete, onCancel }: PlanPickerScreenProps) {
+export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signup', initialIsExistingUser = false, intent = 'trial', notice, onComplete, onCancel }: PlanPickerScreenProps) {
   const { language, startFreeTrial, setAuthState, setIntendedPlan } = useAppStore();
   const [step, setStep] = useState<ScreenStep>(initialStep);
   const [selected, setSelected] = useState<Plan>(initialPlan);
@@ -646,6 +650,13 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                     : t.signupSubline}
                 </p>
               </div>
+
+              {notice === 'deviceTrialUsed' && (
+                <div data-testid="device-trial-notice" className="mb-4 flex items-center gap-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 p-3 text-xs font-medium text-amber-800 dark:text-amber-300">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{t.deviceTrialUsed}</span>
+                </div>
+              )}
 
               {error && (
                 <div className="mb-4 flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 p-3 text-xs text-red-600 dark:text-red-400">

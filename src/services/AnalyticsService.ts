@@ -13,7 +13,8 @@
  *   trainer_complete     visitor finished a round (props: trainer, round)
  *   signup_prompt_shown  the "save your result" prompt appeared
  *   signup_started       visitor tapped a signup CTA (props: from)
- *   anonymous_start      free CTA opened the app on an anonymous account (props: from) (DRI-60)
+ *   anonymous_start      free CTA opened the app on an anonymous account (props: from, resumed) (DRI-60)
+ *   anonymous_blocked    free CTA opened the form instead: this device's trial is used up (props: from)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -271,6 +272,7 @@ export type FunnelEvent =
   | 'ladder_rung_started'
   | 'ladder_locked_tap'
   | 'anonymous_start'
+  | 'anonymous_blocked'
   | 'email_added';
 
 /**

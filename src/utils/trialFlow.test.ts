@@ -77,6 +77,22 @@ describe('7-Day Trial & Auth Flow Verification', () => {
     expect(updated.getRemainingTrialDays()).toBe(7);
   });
 
+  it('2b. Adopting the device trial keeps its dates instead of a fresh seven days', () => {
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+    const inTwoDays = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+    useAppStore.getState().adoptTrial({ trialStartedAt: fiveDaysAgo, trialEndsAt: inTwoDays });
+
+    const adopted = useAppStore.getState();
+    expect(adopted.trialStartedAt).toBe(fiveDaysAgo);
+    expect(adopted.getRemainingTrialDays()).toBe(2);
+    // and startFreeTrial afterwards is a no-op, the earlier start stays
+    adopted.startFreeTrial('30-days');
+    expect(useAppStore.getState().trialStartedAt).toBe(fiveDaysAgo);
+    // a later start never replaces an earlier one either
+    useAppStore.getState().adoptTrial({ trialStartedAt: new Date().toISOString(), trialEndsAt: inTwoDays });
+    expect(useAppStore.getState().trialStartedAt).toBe(fiveDaysAgo);
+  });
+
   it('3. Pro access is automatically revoked when 7 days expire', () => {
     // Simulate a trial that started 8 days ago
     const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();

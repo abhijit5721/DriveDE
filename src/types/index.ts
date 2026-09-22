@@ -341,6 +341,8 @@ export interface AppState {
   trialEndsAt: string | null;
   intendedPlan: '30-days' | '90-days' | 'lifetime' | null;
   startFreeTrial: (plan: '30-days' | '90-days' | 'lifetime') => void;
+  /** Continues a trial that already ran on this device instead of starting a fresh one */
+  adoptTrial: (trial: { trialStartedAt: string; trialEndsAt: string }) => void;
   setIntendedPlan: (plan: '30-days' | '90-days' | 'lifetime') => void;
   isProActive: () => boolean;
   /** True while Pro access comes from the free trial rather than a purchase */

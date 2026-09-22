@@ -202,6 +202,17 @@ export const useAppStore = create<AppState>()(
         return trial;
       }),
 
+      // The device already had a trial (see utils/deviceTrial): a new anonymous
+      // account inherits its dates, so signing out never restarts the seven days.
+      adoptTrial: (trial) => set((state) => {
+        if (state.trialStartedAt && new Date(state.trialStartedAt) <= new Date(trial.trialStartedAt)) return state;
+        const adopted = { trialStartedAt: trial.trialStartedAt, trialEndsAt: trial.trialEndsAt, intendedPlan: state.intendedPlan ?? '90-days' as const };
+        import('../services/supabaseSync')
+          .then(m => m.pushTrialToSupabase(adopted))
+          .catch(err => console.error('[Store] Trial push failed:', err));
+        return adopted;
+      }),
+
       setIntendedPlan: (plan) => set({ intendedPlan: plan }),
 
       isProActive: () => {
