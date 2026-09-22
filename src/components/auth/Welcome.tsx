@@ -289,7 +289,7 @@ export function Welcome() {
                   {isDe ? 'Anmelden' : 'Sign In'}
                 </button>
                 <button
-                  onClick={() => { trackFunnel('signup_started', { from: 'header' }); handleStart('90-days', 'plan'); }}
+                  onClick={() => { trackFunnel('signup_started', { from: 'header' }); handleStart('90-days', 'signup'); }}
                   data-testid="welcome-start-btn"
                   className="rounded-full bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 active:scale-95 shadow-md"
                 >
@@ -337,7 +337,7 @@ export function Welcome() {
                   <button onClick={handleSignInClick} className="rounded-xl bg-slate-900 py-3 text-base font-bold text-white">
                     {isDe ? 'Anmelden' : 'Sign In'}
                   </button>
-                  <button onClick={() => handleStart('90-days', 'plan')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
+                  <button onClick={() => handleStart('90-days', 'signup')} className="rounded-xl bg-blue-600 py-3.5 text-lg font-bold text-white">
                     {t.common.startNow}
                   </button>
                 </div>
