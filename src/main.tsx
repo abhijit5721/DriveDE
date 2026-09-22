@@ -10,6 +10,10 @@ import App from './App';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { analyticsService } from './services/AnalyticsService';
 import { Analytics } from '@vercel/analytics/react';
+import { applyOwnTrafficFlagFromUrl, isOwnTraffic } from './utils/ownTraffic';
+
+// Own devices and test runs opt out of every counter with ?noanalytics (see utils/ownTraffic).
+applyOwnTrafficFlagFromUrl();
 
 // Initialize Sentry as early as possible to capture all errors
 Sentry.init({
@@ -73,8 +77,9 @@ const Root = () => (
   <ErrorBoundary>
     <App />
     {/* Cookie-free page counter so we can see traffic without waiting for
-        the consent banner. Consent-gated GA4/PostHog stay in AnalyticsService. */}
-    <Analytics />
+        the consent banner. Consent-gated GA4/PostHog stay in AnalyticsService.
+        beforeSend covers page views and the funnel's track() calls alike. */}
+    <Analytics beforeSend={(event) => (isOwnTraffic() ? null : event)} />
   </ErrorBoundary>
 );
 
