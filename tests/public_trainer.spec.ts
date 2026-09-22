@@ -132,7 +132,10 @@ test('the only signup door after a round is the locked rung, and it opens the no
   await expect(page.getByTestId('public-locked-preview')).toBeVisible();
   await page.getByTestId('public-trainer-signup').click();
   await expect(page.getByTestId('public-trainer')).toHaveCount(0);
-  await expect(page.getByText(/Choose your perfect Pro plan|Create your account|Sign up/i).first()).toBeVisible({ timeout: 10000 });
+  // It must open the account form, never the Pro price list: nine visitors reached this
+  // point between 11 and 22 Sep and none got through, because they met pricing first.
+  await expect(page.getByText(/Choose your perfect Pro plan/i)).toHaveCount(0);
+  await expect(page.locator('input[type="email"]').first()).toBeVisible({ timeout: 10000 });
 });
 
 test('a deep link opens the trainer directly (DRI-57)', async ({ page }) => {

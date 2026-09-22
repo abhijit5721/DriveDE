@@ -84,9 +84,14 @@ export function Welcome() {
     };
   }, [showDemo]);
 
+  // The step defaults to 'signup', not 'plan'. Every caller that passes nothing is a
+  // free CTA ("Jetzt kostenlos starten", the trainer's account door, the locked tile),
+  // and opening those on the Pro price list is what the funnel died on: between 11 and
+  // 22 Sep nine visitors reached this point and none created an account. Callers that
+  // genuinely sell a tier pass 'plan' or 'signup' with intent 'buy' explicitly.
   const handleStart = (
     plan?: '30-days' | '90-days' | 'lifetime',
-    step: 'plan' | 'signup' = 'plan',
+    step: 'plan' | 'signup' = 'signup',
     isExistingUser = false,
     intent: 'trial' | 'buy' = 'trial'
   ) => {
