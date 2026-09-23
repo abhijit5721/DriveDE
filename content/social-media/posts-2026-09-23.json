@@ -1,0 +1,7 @@
+{
+  "C": {
+    "sub": "Fuehrerschein",
+    "title": "Fahrschüler baut Rechts-vor-links-Trainer, sagt mir was falsch ist",
+    "body": "Ich stecke selbst in der Fahrausbildung in Hamburg, die praktische Prüfung liegt noch vor mir. Zwischen den Fahrstunden wollte ich Rechts vor links, Kreisverkehr und Spurwahl im Kopf üben, statt jede Wiederholung im Auto zu bezahlen, und habe dafür DriveDE gebaut: kleine Browser-Trainer für genau die Situationen, an denen die meisten in der praktischen Prüfung scheitern. Keine Theoriefragen, kein KI-Kram, jede Kreuzung ist per Hand nach StVO gezeichnet.\n\nLäuft ohne Konto: https://www.drivede.app/?trainer=vorfahrt\n\nIch bin Fahrschüler, kein Fahrlehrer, deshalb die Frage an euch und an die Fahrlehrer hier: Was ist daran falsch oder unvollständig? Zerreißt es, das hilft mir mehr als Lob."
+  }
+}
