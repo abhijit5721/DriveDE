@@ -1,0 +1,5 @@
+Hallo zusammen, eine Frage an alle, die gerade in der Fahrausbildung sind: Ich bin selbst Fahrschüler in Hamburg, die praktische Prüfung liegt noch vor mir. Zwischen den Fahrstunden wollte ich Rechts vor links, Kreisverkehr und Spurwahl im Kopf üben, statt jede Wiederholung im Auto zu bezahlen, und habe dafür DriveDE gebaut: kleine Browser-Trainer für genau die Situationen, an denen die meisten in der praktischen Prüfung scheitern. Keine Theoriefragen, dafür gibt es die offiziellen Apps.
+
+Läuft ohne Konto direkt im Browser: https://www.drivede.app
+
+Ich bin Fahrschüler, kein Fahrlehrer. Deshalb die ehrliche Frage: Was ist daran falsch oder unvollständig? Wenn eure Fahrschule etwas anders erklärt, will ich das wissen.
