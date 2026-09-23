@@ -73,5 +73,6 @@ const state = await p.evaluate((n) => {
   return { inFeed: t.includes(n), pending: /pending|Pending approval|wartet auf Freigabe|Ausstehend|will be reviewed|admin/i.test(t.slice(0, 4000)) };
 }, needle);
 console.log(`${groupName}: ${state.inFeed ? 'POSTED, visible in feed' : state.pending ? 'SUBMITTED, pending admin approval' : 'not visible yet, check the group'}`);
-await p.screenshot({ path: 'scripts/outreach/fb-post-result.png' });
+// Facebook's feed keeps loading fonts for a long time; a screenshot can hang, so it is best effort.
+await p.screenshot({ path: 'scripts/outreach/fb-post-result.png', timeout: 8000 }).catch(() => {});
 await p.close(); await b.close();
