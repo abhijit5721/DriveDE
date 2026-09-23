@@ -1,0 +1,11 @@
+Hallo Herr Agircan,
+
+ich bin Abhijit aus Hamburg, Softwareentwickler und selbst noch Fahrschüler, die praktische Prüfung liegt noch vor mir. Zwischen den Fahrstunden habe ich DriveDE gebaut, kleine Browser-Trainer für Rechts vor links, Kreisverkehr und Einparken, gedacht als Hausaufgabe zwischen den Stunden.
+
+Ihre Videos bringen genau die Mischung aus Witz und Erklärung, mit der Fahrschüler sich Regeln tatsächlich merken, deshalb hätte ich gern Ihr Urteil: Könnten Sie zwei Minuten den Rechts-vor-links-Trainer durchspielen und mir sagen, was daran aus Fahrlehrersicht falsch oder unvollständig ist? Er läuft ohne Konto im Browser: https://www.drivede.app/?trainer=vorfahrt
+
+Als Dank die App für Sie dauerhaft kostenlos, Ihre Schüler schalte ich frei, wenn sie mir mit Ihrem Namen schreiben, und wenn Sie möchten, Ihr Name als Fachprüfer auf der Seite. Kein Werbe-Deal, ich will wissen, ob das stimmt, was ich gebaut habe.
+
+Viele Grüße aus Hamburg
+Abhijit Kumar Sahoo
+DriveDE, hello@drivede.app

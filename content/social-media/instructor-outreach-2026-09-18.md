@@ -33,8 +33,8 @@ Not listed on purpose: agency-run school accounts (Fahrschule Dreams Berlin, Soc
 | Creator | First mail | Channel | Reply | Tested? | Feedback | Follow-up |
 |---|---|---|---|---|---|---|
 | Cemile Cin | 18 Sep 2026 | email from hello@drivede.app (landing link, Fahrschüler version) | none as of 22 Sep | | | Instagram DM on 25 Sep (text below, now referencing the "Killer-Kreuzung Linksabbiegen" video 7641188689258777888); school contact form I'M Drive on 2 Oct if still silent |
-| Fahrlehrerin Hatice | | TikTok DM | | | | |
-| Fahrlehrer Buki | | TikTok DM | | | | |
+| Fahrlehrerin Hatice | 23 Sep 2026 | TikTok DM from @drivede20 (she has no real Instagram; text in hatice-dm.txt) | | | | check thread 30 Sep; second touch only if she replies or after two weeks via a comment under a new video |
+| Fahrlehrer Buki | | contact form blocked by hCaptcha; email instead | | | | founder sends buki-form-message.txt from hello@drivede.app to info@bukisfahrschule.de, subject "Kurze Frage eines Hamburger Fahrschülers zu Ihren Videos" |
 | dj_eyschüler | | TikTok DM | | | | |
 | Fahrlehrerin Yaren | | TikTok DM | | | | |
 | FrauFahrschule | | TikTok DM | | | | |
