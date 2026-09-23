@@ -13,11 +13,12 @@ One post per day, anonymous alias where the group offers it, first sentence vari
 | 28 Sep | Germans In India / Indians In Germany | 44.6k | https://www.facebook.com/groups/1808556619294536 | EN | |
 | 29 Sep | Indians In Munich | 9.7k | https://www.facebook.com/groups/622479101772307 | EN | |
 | 30 Sep | Indians in Frankfurt | 7.3k | https://www.facebook.com/groups/indiansinfrankfurt | EN | |
+| 1 Oct | Munich Expats (joined 23 Sep, no rules section, about page checked) | 76.8k | https://www.facebook.com/groups/munich.expats | EN | |
 | after joins | Führerschein (private, pending) | 4.1k | https://www.facebook.com/groups/1361195243915123 | DE | feed check first |
 | after joins | Deutsche Führerschein | 1.8k | https://www.facebook.com/groups/343687438339332 | DE | joined 23 Sep, feed check first |
 | after joins | Führerschein helfen.de | 714 | https://www.facebook.com/groups/1065635527633585 | DE | joined 23 Sep |
 | after joins | Lernen für den Führerschein | 148 | https://www.facebook.com/groups/135538539836810 | DE | joined 23 Sep |
 
-Join requests sent 23 Sep, rules to be read once inside (private groups): Indians in Frankfurt (22k, 1487927254783433), Munich Indians (20k, 168266226545074), Munich Expats (76k, munich.expats), berlin EXPATS (93k, berlinexpats). Post only if their rules allow it.
+Join requests 23 Sep: Munich Expats accepted at once (76.8k, no rules, scheduled 1 Oct). berlin EXPATS (93k) pending, its radio questions were left unanswered so the admins may reject. Munich Indians (20.6k) pending, but its rule 1 bans self-promotion, so no post there even if accepted. Indians in Frankfurt private (22k, 1487927254783433): join click failed, retry with the header button.
 
 Never post in: Expats in Hamburg, Enjoy Hamburg, Indians in Hamburg (all three), Indians in Munich 15.7k, +Expats in Berlin+, +Expats in Munich+, International Friends in Berlin, Meine Fahrschule (all ban self-promotion), INDIANS IN GERMANY 71k (admin permission needed first), any "ohne MPU / ohne Prüfung" group (scams), Fahrlehrer-only groups.
