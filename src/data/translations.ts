@@ -719,13 +719,14 @@ export const TRANSLATIONS = {
             'Lernfortschritt, absolvierte Lektionen, Quizstände und Fahrtenbuchdaten (lokal, mit Konto zusätzlich synchronisiert)',
             'GPS-Positionsdaten während einer aktiv gestarteten Fahrten-Aufzeichnung; die Auswertung erfolgt auf dem Gerät',
             'Zahlungsbezogene Daten bei Pro-Käufen; die Zahlungsabwicklung erfolgt vollständig durch Stripe; Kartendaten erreichen unsere Systeme nicht',
-            'Nutzungs- und Fehlerdaten zur Verbesserung der App, Analytik nur nach Einwilligung über die Cookie-Einstellungen',
+            'Nutzungs- und Fehlerdaten zur Verbesserung der App: eine cookielose Reichweitenmessung (Vercel Web Analytics), die nichts auf deinem Gerät speichert und ohne Einwilligung läuft; weitergehende Analytik (PostHog, Google Analytics) nur nach Einwilligung über die Cookie-Einstellungen',
+            'Ohne Einwilligung auf deinem Gerät gespeichert, weil technisch erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG): deine Anmeldesitzung, Sprache und App-Einstellungen, deine Cookie-Auswahl sowie Beginn und Ende der kostenlosen Testphase auf diesem Gerät (Cookie und lokaler Speicher „drivede_device_trial“, bis zu 400 Tage), damit die Testphase nur einmal pro Gerät genutzt werden kann',
             'Optionale Kontakt- oder Feedbackdaten, wenn du aktiv eine Anfrage sendest'
           ],
           recipients: [
             'Supabase: Datenbank, Konten und Synchronisierung',
             'Stripe: Zahlungsabwicklung',
-            'Vercel: Hosting und Auslieferung der App',
+            'Vercel: Hosting und Auslieferung der App sowie cookielose Reichweitenmessung (Vercel Web Analytics)',
             'Resend: Transaktions-E-Mails (z. B. Willkommensmail)',
             'PostHog und Google Analytics: Nutzungsanalyse, nur nach Einwilligung',
             'Sentry: Fehlerdiagnose und Stabilität',
@@ -2478,7 +2479,7 @@ export const TRANSLATIONS = {
       back: 'Zurück',
       essential: {
         title: 'Notwendige Cookies',
-        desc: 'Erforderlich für Grundfunktionen wie Login, Sicherheit und lokales Speichern deines Fortschritts.'
+        desc: 'Erforderlich für Grundfunktionen wie Login, Sicherheit, lokales Speichern deines Fortschritts und den Schutz der kostenlosen Testphase (einmal pro Gerät).'
       },
       analytics: {
         title: 'Analyse & Performance',
@@ -3218,13 +3219,14 @@ export const TRANSLATIONS = {
             'Learning progress, completed lessons, quiz results, and tracker/logbook data (local; additionally synced with an account)',
             'GPS position data during an actively started drive recording; analysis happens on the device',
             'Payment-related data for Pro purchases; payment processing is handled entirely by Stripe; card details never reach our systems',
-            'Usage and error data to improve the app: analytics only after consent via the cookie settings',
+            'Usage and error data to improve the app: a cookieless page-view count (Vercel Web Analytics) that stores nothing on your device and runs without consent; further analytics (PostHog, Google Analytics) only after consent via the cookie settings',
+            'Stored on your device without consent because technically necessary (§ 25(2) no. 2 TDDDG): your sign-in session, language and app settings, your cookie choice, and the start and end of the free trial on this device (cookie and local storage "drivede_device_trial", up to 400 days), so the trial can be used once per device',
             'Optional contact or feedback data when you actively send an inquiry'
           ],
           recipients: [
             'Supabase: database, accounts, and synchronization',
             'Stripe: payment processing',
-            'Vercel: hosting and app delivery',
+            'Vercel: hosting and app delivery, plus cookieless page-view counting (Vercel Web Analytics)',
             'Resend: transactional emails (e.g. welcome email)',
             'PostHog and Google Analytics: usage analytics, only after consent',
             'Sentry: error diagnostics and stability',
@@ -4988,7 +4990,7 @@ export const TRANSLATIONS = {
       back: 'Back',
       essential: {
         title: 'Essential Cookies',
-        desc: 'Required for basic functions like login, security, and local progress storage.'
+        desc: 'Required for basic functions like login, security, local progress storage, and protecting the free trial (once per device).'
       },
       analytics: {
         title: 'Analytics & Performance',
