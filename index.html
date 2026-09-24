@@ -116,7 +116,10 @@
     <link rel="alternate" hreflang="x-default" href="https://www.drivede.app/" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Loaded without blocking the first paint (it blocked ~0.8 s on slow 4G): text
+         shows in the system font and swaps to Inter when it arrives. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />

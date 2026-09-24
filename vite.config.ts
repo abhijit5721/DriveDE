@@ -18,6 +18,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Register the service worker after parsing instead of as a blocking <script>
+      // in <head> (it cost ~0.3 s of first paint on slow 4G).
+      injectRegister: 'script-defer',
       includeAssets: ['icons/*.png', 'icons/*.svg'],
       manifest: {
         name: 'DriveDE - Fahrschule App',
