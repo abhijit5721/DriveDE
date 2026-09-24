@@ -179,6 +179,14 @@ export function Welcome() {
     setTrainerRung(rung);
   }, []);
 
+  // Public addresses for the legal pages (?legal=privacy, ?legal=terms, ...). Google's
+  // sign-in screen links to them from the OAuth branding, so they must open the page.
+  useEffect(() => {
+    const which = new URLSearchParams(window.location.search).get('legal');
+    const pages: LegalPageType[] = ['privacy', 'terms', 'gdpr', 'impressum', 'disclaimer'];
+    if (which && (pages as string[]).includes(which)) setLegalPage(which as LegalPageType);
+  }, []);
+
   const closePlanPicker = () => {
     setShowPlanPicker(false);
     if (window.location.hash === '#plan') window.history.back();
