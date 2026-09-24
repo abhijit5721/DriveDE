@@ -30,7 +30,15 @@ if (rulesForbidPromotion(rules.rules) && !force) {
 
 await p.goto(groupUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
 await p.waitForTimeout(8000);
-const groupName = (await p.title()).replace(/\s*\|.*$/, '');
+const groupName = (await p.title()).replace(/^\(\d+\)\s*/, '').replace(/\s*\|.*$/, '');
+
+// Only members can post. A non-member's composer click opens a join prompt, and the text then
+// sits unsent in a dialog, which once read as "posted" (24 Sep). Join first with fb-join.mjs.
+const member = await p.evaluate(() => {
+  const main = document.querySelector('div[role="main"]') || document.body;
+  return ![...main.querySelectorAll('div[role="button"], button')].some((e) => /^(Join group|Gruppe beitreten|Cancel request|Anfrage zurückziehen)$/i.test(e.innerText.trim()));
+});
+if (!member) { console.log(`NOT A MEMBER of ${groupName}, nothing posted. Run fb-join.mjs first.`); await p.close(); await b.close(); process.exit(1); }
 
 // duplicate guard: our text already visible in this group's feed?
 if (await p.evaluate((n) => document.body.innerText.includes(n), needle)) {
@@ -58,6 +66,22 @@ const cont = p.locator('div[role="dialog"] div[role="button"]').filter({ hasText
 if (await cont.count()) { await cont.click(); await p.waitForTimeout(2500); }
 
 await composerDialog().waitFor({ timeout: 15000 });
+// Some groups put anonymity inside the composer as a "Post anonymously" switch instead of a
+// separate button. Clicking its label does not flip it (24 Sep, a post went out under the real
+// name), so click the switch itself and refuse to post unless it reads as on.
+if (anonymous && !opened) {
+  const sw = composerDialog().locator('[role="switch"], input[type="checkbox"]').first();
+  if (await sw.count()) {
+    if ((await sw.getAttribute('aria-checked')) !== 'true') { await sw.click({ force: true }); await p.waitForTimeout(2500); }
+    const cont2 = p.locator('div[role="dialog"] div[role="button"]').filter({ hasText: /^Continue$|^Got it$|^OK$|^Weiter$/ }).first();
+    if (await cont2.count()) { await cont2.click(); await p.waitForTimeout(2000); }
+    const on = (await composerDialog().locator('[role="switch"], input[type="checkbox"]').first().getAttribute('aria-checked')) === 'true';
+    if (!on) { console.log('anonymous switch did not turn on, nothing posted'); await p.close(); await b.close(); process.exit(1); }
+    console.log('anonymous switch on');
+  } else if (/Post anonymously|Anonym posten/i.test(await composerDialog().innerText())) {
+    console.log('anonymous option present but no switch found, nothing posted'); await p.close(); await b.close(); process.exit(1);
+  }
+}
 const box = composerDialog().locator('div[role="textbox"][contenteditable="true"]').first();
 await box.click();
 await p.keyboard.insertText(text);
@@ -66,13 +90,20 @@ const dialogText = await composerDialog().innerText();
 console.log('composer mode:', /anonymous|anonym/i.test(dialogText) ? 'anonymous' : 'named');
 const post = composerDialog().locator('div[aria-label="Post"], div[aria-label="Posten"], div[role="button"]').filter({ hasText: /^Post$|^Posten$/ }).last();
 await post.click();
-await p.waitForTimeout(8000);
+// wait until the composer has closed ("Posting" spinner done) before leaving the page
+for (let i = 0; i < 20 && (await composerDialog().count()); i++) await p.waitForTimeout(1500);
+await p.waitForTimeout(4000);
 
-const state = await p.evaluate((n) => {
-  const t = document.body.innerText;
-  return { inFeed: t.includes(n), pending: /pending|Pending approval|wartet auf Freigabe|Ausstehend|will be reviewed|admin/i.test(t.slice(0, 4000)) };
-}, needle);
-console.log(`${groupName}: ${state.inFeed ? 'POSTED, visible in feed' : state.pending ? 'SUBMITTED, pending admin approval' : 'not visible yet, check the group'}`);
+// Verify on the group's "Your content" pages, never on the current page: the unsent text in an
+// open composer would match too.
+const base = groupUrl.replace(/\/$/, '');
+let verdict = 'NOT FOUND in your content, check the group manually';
+for (const [tab, label] of [['my_posted_content', 'POSTED (published)'], ['my_pending_content', 'SUBMITTED, pending admin approval'], ['my_declined_content', 'DECLINED by the admins']]) {
+  await p.goto(`${base}/${tab}/`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await p.waitForTimeout(7000);
+  if (await p.evaluate((n) => document.body.innerText.includes(n), needle)) { verdict = label; break; }
+}
+console.log(`${groupName}: ${verdict}`);
 // Facebook's feed keeps loading fonts for a long time; a screenshot can hang, so it is best effort.
 await p.screenshot({ path: 'scripts/outreach/fb-post-result.png', timeout: 8000 }).catch(() => {});
 await p.close(); await b.close();
