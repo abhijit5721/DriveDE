@@ -44,7 +44,7 @@ const SCHEMA_DE = {
   ...BASE,
   name: 'DriveDE: Führerschein & Fahrschule App',
   description:
-    'Kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS aufzeichnen, KI-Auswertungen erhalten und die Fahrprüfung im ersten Versuch bestehen. Inklusive Umschreibungs-Modus für ausländische Führerscheine.',
+    'Kostenlose Führerschein-App für die praktische Fahrprüfung in Deutschland: Rechts vor links, Kreisverkehr und Grundfahraufgaben üben, Fahrstunden per GPS aufzeichnen und die Prüfungsreife einschätzen. Inklusive Umschreibungs-Modus für ausländische Führerscheine.',
   featureList: [
     'GPS Fahrstunden-Tracking mit digitalem Fahrtenbuch',
     'KI-Fahrlehrer Auswertungen nach jeder Fahrt',
@@ -59,7 +59,7 @@ const SCHEMA_EN = {
   ...BASE,
   name: 'DriveDE: German Driving License App',
   description:
-    'The free app for your German driving license: learn theory, track driving lessons via GPS, get AI instructor debriefings, and pass your Fahrprüfung on the first try. Includes an Umschreibung mode that guides foreign license holders through conversion, country by country.',
+    'The free app for the German practical driving test: practise right of way, roundabouts and the basic manoeuvres, log your driving lessons via GPS and see how exam-ready you are. Includes an Umschreibung mode that guides foreign license holders through conversion, country by country.',
   featureList: [
     'GPS driving lesson tracking with a digital logbook',
     'AI instructor debriefings after every drive',

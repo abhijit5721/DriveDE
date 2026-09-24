@@ -183,14 +183,14 @@ export default function App() {
   useEffect(() => {
     const isDe = language === 'de';
     document.title = isDe
-      ? 'Führerschein App kostenlos: Fahrschule, Theorie & Fahrprüfung | DriveDE'
-      : 'Free German Driving License App: Theory, Practical Exam & Umschreibung | DriveDE';
+      ? 'Führerschein App kostenlos für die praktische Prüfung | DriveDE'
+      : 'Free German Driving Test App for the Practical Exam | DriveDE';
     document.documentElement.lang = isDe ? 'de' : 'en';
     document.querySelector('meta[name="description"]')?.setAttribute(
       'content',
       isDe
-        ? 'Die kostenlose Führerschein App für Deutschland: Theorie lernen, Fahrstunden per GPS tracken und die Fahrprüfung im 1. Versuch bestehen. Auch auf Englisch.'
-        : 'The free app for your German driving license: learn theory, track driving lessons via GPS, and pass your Fahrprüfung on the first try. Includes Umschreibung guidance for foreign licenses.'
+        ? 'Kostenlose Führerschein-App für die praktische Prüfung: Rechts vor links, Kreisverkehr und Einparken üben, Fahrstunden per GPS protokollieren. Auch auf Englisch.'
+        : 'Free app for the German practical driving test: practise right of way, roundabouts and parking, log your lessons with GPS. In English, with Umschreibung guides.'
     );
     syncStructuredData(language);
   }, [language]);
