@@ -168,9 +168,42 @@ for (const p of posts) {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
-const ctaHtml = (lang) => lang === 'de'
-  ? `<div class="cta"><p><strong>Bereit für die praktische Prüfung?</strong> DriveDE trackt deine Fahrstunden per GPS, erkennt Fehler automatisch und zeigt dir objektiv, wann du prüfungsreif bist.</p><a href="/">7 Tage Pro gratis testen</a></div>`
-  : `<div class="cta"><p><strong>Getting ready for the practical exam?</strong> DriveDE tracks your driving lessons with GPS, catches mistakes automatically and shows you objectively when you are exam-ready.</p><a href="/?lang=en">Try DriveDE free for 7 days</a></div>`;
+// End-of-article box: the trainer that fits the topic, not the generic start page.
+// The articles get the search impressions, the trainer is where readers turn into
+// players, so each link opens it directly and is tagged per article for analytics.
+// Override per post with frontmatter `trainer: vorfahrt | roundabout | app`.
+function trainerFor(post) {
+  if (post.trainer) return post.trainer;
+  if (/einpark|parallel-park|mehrspurig|multi-lane/.test(post.slug)) return 'app'; // no public trainer for these
+  // Left-hand-traffic countries: their roundabouts run clockwise, ours counter-clockwise.
+  if (/britisch|uk-driving|indisch|indian|japan/.test(post.slug)) return 'roundabout';
+  return 'vorfahrt';
+}
+
+const CTA_COPY = {
+  de: {
+    vorfahrt: { title: 'Teste dich: Rechts vor links an drei Kreuzungen', text: 'Der häufigste Fehler in der praktischen Prüfung, als kurzer Trainer im Browser. Ohne Konto, in zwei Minuten.', button: 'Trainer starten' },
+    roundabout: { title: 'Kreisverkehr in Deutschland: gegen den Uhrzeigersinn', text: 'Einfahren, Vorfahrt, Blinken beim Ausfahren: der Kreisverkehr-Trainer im Browser. Ohne Konto, in zwei Minuten.', button: 'Kreisverkehr üben' },
+    app: { title: 'Manöver mit Referenzpunkten üben', text: 'In DriveDE findest du Einparken, Spurwahl und die Grundfahraufgaben Schritt für Schritt, dazu ein Fehlerprotokoll für jede Fahrstunde. Kostenlos, ohne Konto.', button: 'Kostenlos starten' },
+  },
+  en: {
+    vorfahrt: { title: 'Test yourself: right of way at three junctions', text: 'The most common mistake in the German practical exam, as a short browser trainer. No account, two minutes.', button: 'Start the trainer' },
+    roundabout: { title: 'German roundabouts run counter-clockwise', text: 'Entering, right of way, signalling on the way out: the roundabout trainer in your browser. No account, two minutes.', button: 'Practise roundabouts' },
+    app: { title: 'Practise the manoeuvres with reference points', text: 'DriveDE walks you through parking, lane choice and the basic manoeuvres step by step, plus a mistake log for every lesson. Free, no account needed.', button: 'Start free' },
+  },
+};
+
+function ctaHtml(post) {
+  const lang = post.lang === 'de' ? 'de' : 'en';
+  const kind = trainerFor(post);
+  const c = (CTA_COPY[lang][kind] || CTA_COPY[lang].vorfahrt);
+  const params = new URLSearchParams();
+  if (kind !== 'app') params.set('trainer', kind);
+  if (lang === 'en') params.set('lang', 'en');
+  params.set('utm_source', 'blog');
+  params.set('utm_campaign', post.slug);
+  return `<div class="cta" data-cta="${kind}"><p><strong>${esc(c.title)}</strong> ${esc(c.text)}</p><a href="/?${params.toString()}">${esc(c.button)}</a></div>`;
+}
 
 for (const post of posts) {
   const canonical = `${SITE}/blog/${post.slug}/`;
@@ -269,7 +302,7 @@ for (const post of posts) {
 <h1>${esc(post.title)}</h1>
 <p class="meta"><span>${post.lang === 'de' ? 'Aktualisiert' : 'Updated'}: ${post.updated || post.date}</span><span>·</span><span>${readingTime(post.body)} ${post.lang === 'de' ? 'Min. Lesezeit' : 'min read'}</span><span>·</span><span>DriveDE</span></p>
 <article>${bodyHtml}</article>
-${ctaHtml(post.lang)}
+${ctaHtml(post)}
 ${relatedHtml}`,
   });
 
