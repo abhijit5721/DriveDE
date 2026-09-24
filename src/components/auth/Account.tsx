@@ -75,6 +75,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
     }
 
     setAuthLoading(true);
+    trackFunnel('google_started', { from: 'account' });
 
     try {
       await signInWithProvider('google');
@@ -113,6 +114,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
   const handleSecureWithGoogle = async () => {
     setAuthError(null);
     setAuthLoading(true);
+    trackFunnel('google_started', { from: 'secure_account' });
     const { error } = await secureAnonymousWithGoogle();
     if (error) { setAuthError(error === 'unavailable' ? t.secureUnavailable : error); setAuthLoading(false); return; }
     trackFunnel('email_added', { via: 'google', from: 'account' });

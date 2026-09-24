@@ -18,6 +18,7 @@ import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
+import { trackFunnel } from '../../services/AnalyticsService';
 import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
 
 type Plan = '30-days' | '90-days' | 'lifetime';
@@ -381,6 +382,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
     }
 
     setLoading(true);
+    trackFunnel('google_started', { from: intent === 'buy' ? 'plan_picker_buy' : 'plan_picker' });
     try {
       await signInWithProvider('google');
       startFreeTrial(selected);

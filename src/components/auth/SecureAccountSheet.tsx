@@ -59,6 +59,7 @@ export function SecureAccountSheet({ trigger, onClose }: SheetProps) {
   const google = async () => {
     setError(null);
     setLoading(true);
+    trackFunnel('google_started', { from: `secure_${trigger}` });
     const result = await secureAnonymousWithGoogle();
     if (result.error) { setError(result.error === 'unavailable' ? t.secureUnavailable : result.error); setLoading(false); return; }
     trackFunnel('email_added', { via: 'google', from: `prompt_${trigger}` });

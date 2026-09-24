@@ -24,7 +24,16 @@ import { recordDeviceTrial } from './utils/deviceTrial';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
 import { signOut, subscribeToAuthChanges, isAnonymousUser } from './services/auth';
-import { analyticsService } from './services/AnalyticsService';
+import { analyticsService, trackFunnel } from './services/AnalyticsService';
+
+// A failed Google/email sign-in comes back as #error=...&error_code=... (or ?error=).
+// Read it at load, before Supabase cleans the URL, and report it once analytics is up.
+const initialAuthError = (() => {
+  if (typeof window === 'undefined') return null;
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, '') || window.location.search);
+  const code = params.get('error_code') || params.get('error');
+  return code ? { code, description: (params.get('error_description') || '').slice(0, 120) } : null;
+})();
 import { chapters } from './data/curriculum';
 import { Header } from './components/layout/Header';
 import { BottomNav } from './components/layout/BottomNav';
@@ -304,6 +313,12 @@ export default function App() {
   }, []);
 
 
+  useEffect(() => {
+    if (!initialAuthError) return;
+    const timer = window.setTimeout(() => trackFunnel('auth_error', initialAuthError), 2000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   // --- AUTH & DATA SYNC LOGIC ---
   useEffect(() => {
     // Safety timeout: if Supabase is paused/unreachable the auth callback may
@@ -325,9 +340,20 @@ export default function App() {
         // Decided by user id, not by a missing email: an anonymous user (DRI-60) never
         // has an email, and would otherwise re-run the local-to-cloud migration on every load.
         const isNewUser = !!session?.user && useAppStore.getState().authUserId !== session.user.id;
-        
+
         if (session?.user) {
           const { user } = session;
+          // Sign-in funnel: count who actually comes back from Google, and anonymous
+          // accounts that really got an email or Google identity (not just a tap).
+          const wasAnonymous = useAppStore.getState().authIsAnonymous;
+          const hasGoogle = (user.identities || []).some((i) => i.provider === 'google');
+          if (hasGoogle && isNewUser) {
+            const ageMs = Date.now() - new Date(user.created_at).getTime();
+            trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000 });
+          }
+          if (wasAnonymous && !isAnonymousUser(user) && !isNewUser) {
+            trackFunnel('account_secured', { via: hasGoogle ? 'google' : 'email' });
+          }
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
           setAuthState(user.email || null, 'signed_in', displayName, user.id, isAnonymousUser(user));

@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { LogIn, Mail, Lock, UserPlus, Loader2, AlertCircle } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
+import { trackFunnel } from '../../services/AnalyticsService';
 import { useAppStore } from '../../store/useAppStore';
 import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
 import { cn } from '../../utils/cn';
@@ -78,6 +79,7 @@ export function AuthModal({ onClose }: AuthModalProps) {
     }
 
     setLoading(true);
+    trackFunnel('google_started', { from: 'auth_modal' });
 
     try {
       await signInWithProvider('google');

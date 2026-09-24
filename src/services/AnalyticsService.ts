@@ -17,6 +17,10 @@
  *   anonymous_blocked    free CTA opened the form instead: this device's trial is used up (props: from)
  *   secure_prompt_shown  the "add an email" sheet appeared for an anonymous user (props: trigger)
  *   secure_prompt_dismissed  it was closed with "Später" or the X (props: trigger)
+ *   google_started       a "Mit Google" button was tapped (props: from)
+ *   google_completed     back from Google and signed in (props: new_account)
+ *   auth_error           Google/Supabase returned an error in the URL (props: code, from)
+ *   account_secured      an anonymous account now has an email or Google identity (props: via)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -291,7 +295,11 @@ export type FunnelEvent =
   | 'anonymous_blocked'
   | 'secure_prompt_shown'
   | 'secure_prompt_dismissed'
-  | 'email_added';
+  | 'email_added'
+  | 'google_started'
+  | 'google_completed'
+  | 'auth_error'
+  | 'account_secured';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,
