@@ -931,7 +931,9 @@ export default function App() {
       {/* Never overlay the tour on a live tracking session: its full-screen
           scrim (z-9998) sits above the driving HUD (z-50) and would block the
           mistake log mid-drive. The tour resumes after the session ends. */}
-      {hasVisited && !hasCompletedOnboarding && !activeSession && <OnboardingTour />}
+      {/* The tour explains the app, so it starts once the licence path is chosen,
+          not on top of the licence selector. */}
+      {hasVisited && hasCompleteSelection && !hasCompletedOnboarding && !activeSession && <OnboardingTour />}
       {hasVisited && <SecureAccountPrompt />}
     </>
   );
