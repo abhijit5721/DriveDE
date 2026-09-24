@@ -54,13 +54,20 @@ async function load(): Promise<void> {
   for (const [err, extra] of pending.splice(0)) S.captureException(err, extra ? { extra } : undefined);
 }
 
-/** Starts Sentry once the page has painted. Call once from main.tsx. */
+/**
+ * Starts Sentry well after the page is usable. Call once from main.tsx.
+ * First version (idle, max 3 s) moved Sentry out of the first paint but ran its
+ * ~470 KB chunk right when visitors start tapping: blocking time on the live site
+ * went from 179 to 541 ms (Lighthouse, 24 Sep). Now: after the load event, then
+ * 5 s, then the next idle moment.
+ */
 export function initMonitoring(): void {
   if (typeof window === 'undefined') return;
   const start = () => { void load().catch((err) => console.warn('[Monitoring] Sentry failed to load:', err)); };
   const idle = (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
-  if (idle) idle(start, { timeout: 3000 });
-  else window.setTimeout(start, 3000);
+  const later = () => window.setTimeout(() => (idle ? idle(start, { timeout: 5000 }) : start()), 5000);
+  if (document.readyState === 'complete') later();
+  else window.addEventListener('load', later, { once: true });
 }
 
 /** Reports an error; queued until Sentry has loaded. */
