@@ -188,6 +188,31 @@ let profileSyncTimer: NodeJS.Timeout | null = null;
  * Syncs the global application state (settings, progress, etc) to the profiles table.
  * Includes a 2-second debounce to prevent spamming the database with high-frequency updates.
  */
+/**
+ * The licence choice stored on the profile, or nulls when the learner never made one.
+ * learning_path and transmission_type are NOT NULL with defaults, so a fresh row (an
+ * anonymous account's included) always holds 'standard' + 'automatic'; only
+ * path_chosen (migration 026) says whether that is a real choice.
+ */
+export function pathFromProfile(profile: { learning_path?: string | null; transmission_type?: string | null; path_chosen?: boolean | null } | null | undefined): {
+  licenseType: LicenseType | null; learningPath: LearningPathType | null; transmissionType: TransmissionType | null;
+} {
+  if (!profile || profile.path_chosen !== true) return { licenseType: null, learningPath: null, transmissionType: null };
+  const dbLearningPath = profile.learning_path; // 'standard' | 'conversion'
+  const dbTransmissionType = profile.transmission_type; // 'manual' | 'automatic'
+  let licenseType: LicenseType | null = null;
+  if (dbLearningPath === 'conversion') {
+    licenseType = dbTransmissionType === 'automatic' ? 'umschreibung-automatic' : 'umschreibung-manual';
+  } else if (dbLearningPath === 'standard') {
+    licenseType = dbTransmissionType === 'automatic' ? 'automatic' : 'manual';
+  }
+  return {
+    licenseType,
+    learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
+    transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,
+  };
+}
+
 export async function ensureProfileFromState(state: AppState, isRetry: boolean = false): Promise<{ error: any }> {
   if (profileSyncTimer && !isRetry) {
     clearTimeout(profileSyncTimer);
@@ -208,10 +233,17 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
 
       console.log('[DB-Sync] Starting profile sync for user:', userId);
 
+      // The path is written only once it is fully chosen. Before that, leaving the
+      // columns out keeps an existing choice intact (a new device syncing its empty
+      // state used to overwrite it with the defaults) and keeps path_chosen false.
+      const pathChosen = !!(state.licenseType && state.learningPath && state.transmissionType);
       const { error } = await supabase.from('profiles_secure').upsert({
         id: userId,
-        learning_path: mapLearningPathToDb(state.learningPath),
-        transmission_type: mapTransmissionToDb(state.transmissionType),
+        ...(pathChosen ? {
+          learning_path: mapLearningPathToDb(state.learningPath),
+          transmission_type: mapTransmissionToDb(state.transmissionType),
+          path_chosen: true,
+        } : {}),
         language: state.language,
         theme: state.darkMode ? 'dark' : 'light',
         incorrect_questions: state.userProgress.incorrectQuestions || [],
@@ -395,23 +427,13 @@ export async function hydrateFromSupabase() {
     quizAttempts: quizAttempts?.length || 0
   });
 
-  // Map DB values back to frontend types
-  const dbLearningPath = profile?.learning_path; // 'standard' | 'conversion'
-  const dbTransmissionType = profile?.transmission_type; // 'manual' | 'automatic'
-
-  // Derive the licenseType from learning_path + transmission_type
-  let licenseType: LicenseType | null = null;
-  if (dbLearningPath === 'conversion') {
-    licenseType = dbTransmissionType === 'automatic' ? 'umschreibung-automatic' : 'umschreibung-manual';
-  } else if (dbLearningPath === 'standard') {
-    licenseType = dbTransmissionType === 'automatic' ? 'automatic' : 'manual';
-  }
+  const { licenseType, learningPath, transmissionType } = pathFromProfile(profile);
 
   return {
     profile: profile ? { ...profile, is_premium: isPremium } : (isPremium ? { is_premium: true } : null),
     licenseType,
-    learningPath: (dbLearningPath === 'conversion' ? 'umschreibung' : (dbLearningPath === 'standard' ? 'standard' : null)) as LearningPathType | null,
-    transmissionType: (dbTransmissionType ?? null) as TransmissionType | null,
+    learningPath,
+    transmissionType,
     lessons: lessons ?? [],
     hasCompletedOnboarding: profile?.has_completed_onboarding ?? null,
     sessions: (sessions ?? []).map(s => ({
