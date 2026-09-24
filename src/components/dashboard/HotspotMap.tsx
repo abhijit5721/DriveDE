@@ -107,7 +107,8 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
           preferCanvas={true}
         >
           <TileLayer
-            key={tiles.url}
+            key={tiles.className}
+            className={tiles.className}
             attribution={tiles.attribution}
             url={tiles.url}
           />

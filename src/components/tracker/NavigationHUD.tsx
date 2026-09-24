@@ -313,7 +313,8 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               style={{ height: '100%', width: '100%' }}
             >
               <TileLayer
-                key={tiles.url}
+                key={tiles.className}
+                className={tiles.className}
                 attribution={tiles.attribution}
                 url={tiles.url}
                 maxZoom={20}

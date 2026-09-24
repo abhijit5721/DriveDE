@@ -4,24 +4,28 @@
  *
  * mapTiles.ts
  *
- * One tile source for every Leaflet map, theme-aware. Carto's voyager/dark_all
- * pair keeps light and dark cartography consistent across Tracker, the
- * navigation HUD and the hotspot map (previously a mix of OSM and Carto,
- * all light-only). Key the <TileLayer> on the returned url so Leaflet
- * swaps tiles when the theme toggles.
+ * One tile source for every Leaflet map (Tracker, navigation HUD, hotspot map).
+ *
+ * OpenStreetMap's standard tiles. Until 24 Sep 2026 this was Carto's
+ * voyager/dark_all pair, but Carto started requiring an API key and now stamps
+ * "API KEY REQUIRED" on every keyless tile. OSM needs no key, only attribution,
+ * and is the provider the privacy policy names. OSM has no dark style, so dark
+ * mode inverts the tiles with a CSS filter (see .map-tiles-dark in index.css).
+ * Usage policy: https://operations.osmfoundation.org/policies/tiles/ (browser
+ * requests with a Referer and visible attribution are fine at our volume).
  */
 
 export interface TileConfig {
   url: string;
   attribution: string;
+  /** className for <TileLayer>, so dark mode can filter the tile pane */
+  className: string;
 }
 
 export function getTileConfig(dark: boolean): TileConfig {
   return {
-    url: dark
-      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    className: dark ? 'map-tiles-dark' : 'map-tiles-light',
   };
 }

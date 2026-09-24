@@ -296,3 +296,12 @@ summary:focus-visible,
     border-radius: 0 !important;
   }
 }
+
+/* Dark map tiles: OpenStreetMap has no dark style (Carto's dark_all needs a key
+   since Sep 2026), so dark mode inverts the light tiles. hue-rotate keeps water
+   blue and parks green after the inversion. Only the tile pane is filtered, the
+   route line, markers and popups keep their real colours. */
+.leaflet-tile-pane .map-tiles-dark,
+.map-tiles-dark.leaflet-layer {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.6);
+}

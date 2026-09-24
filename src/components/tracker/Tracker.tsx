@@ -235,7 +235,7 @@ const RouteMap = ({ route, mistakes, language }: { route: NonNullable<DrivingSes
           style={{ height: '100%', width: '100%' }}
           preferCanvas={true}
         >
-          <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
+          <TileLayer key={tiles.className} className={tiles.className} attribution={tiles.attribution} url={tiles.url} />
           <MapBounds playbackIndex={playbackIndex} polyline={polyline} route={route} />
           <Polyline positions={polyline} color="#3b82f6" weight={4} opacity={0.7} />
           
@@ -1989,7 +1989,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   preferCanvas={true}
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
+                  <TileLayer key={tiles.className} className={tiles.className} attribution={tiles.attribution} url={tiles.url} />
                   <Polyline positions={gpsPoints.map(p => [p.lat, p.lng])} color="#00A0E9" weight={6} opacity={0.9} />
                   
                   {destinationCoords && (
@@ -2032,7 +2032,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                   scrollWheelZoom={false}
                   style={{ height: '100%', width: '100%' }}
                 >
-                  <TileLayer key={tiles.url} attribution={tiles.attribution} url={tiles.url} />
+                  <TileLayer key={tiles.className} className={tiles.className} attribution={tiles.attribution} url={tiles.url} />
                   <Marker position={[currentLocation.lat, currentLocation.lng]} icon={getCarMarkerIcon(0)} />
                 </MapContainer>
                 <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5">
