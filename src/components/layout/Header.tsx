@@ -14,11 +14,12 @@ interface HeaderProps {
 }
 
 export function Header({ onSignOut, onTabChange }: HeaderProps) {
-  const { 
-    language, darkMode, setLanguage, toggleDarkMode, authStatus,
+  const {
+    language, darkMode, setLanguage, toggleDarkMode, authStatus, authIsAnonymous,
     isProActive, isOnTrial, getRemainingTrialDays
   } = useAppStore();
   const t = TRANSLATIONS[language].common;
+  const ta = TRANSLATIONS[language].account;
 
   const proActive = isProActive();
   // Trial users get a countdown instead of the crown — a PRO badge would imply
@@ -61,6 +62,19 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
               </p>
             </div>
           </button>
+          {/* DRI-60: an anonymous account is one browser wipe away from being lost;
+              this badge is the always-available way to the Konto form. It sits next
+              to the logo button, not inside it (no nested buttons). */}
+          {authStatus === 'signed_in' && authIsAnonymous && (
+            <button
+              onClick={() => onTabChange?.('account')}
+              data-testid="guest-badge"
+              aria-label={ta.guestBadgeLabel}
+              className="shrink-0 rounded-full border border-amber-400/60 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 active:scale-95 dark:bg-amber-900/30 dark:text-amber-300"
+            >
+              {ta.guestBadge}
+            </button>
+          )}
         </div>
 
         <div className="flex flex-shrink-0 items-center gap-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>

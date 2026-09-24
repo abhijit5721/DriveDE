@@ -902,3 +902,9 @@ export const useAppStore = create<AppState>()(
   )
 )
 );
+
+// Dev server only (vite strips this from production builds): lets Playwright specs set
+// state that takes many UI steps to reach, such as a completed lesson.
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  (window as unknown as { __drivedeStore?: typeof useAppStore }).__drivedeStore = useAppStore;
+}

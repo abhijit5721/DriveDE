@@ -65,6 +65,7 @@ import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 import { TRANSLATIONS } from './data/translations';
 import { HotspotMap } from './components/dashboard/HotspotMap';
 import { OnboardingTour } from './components/onboarding/OnboardingTour';
+import { SecureAccountPrompt } from './components/auth/SecureAccountSheet';
 
 
 export default function App() {
@@ -931,6 +932,7 @@ export default function App() {
           scrim (z-9998) sits above the driving HUD (z-50) and would block the
           mistake log mid-drive. The tour resumes after the session ends. */}
       {hasVisited && !hasCompletedOnboarding && !activeSession && <OnboardingTour />}
+      {hasVisited && <SecureAccountPrompt />}
     </>
   );
 }

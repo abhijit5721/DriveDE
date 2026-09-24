@@ -15,6 +15,8 @@
  *   signup_started       visitor tapped a signup CTA (props: from)
  *   anonymous_start      free CTA opened the app on an anonymous account (props: from, resumed) (DRI-60)
  *   anonymous_blocked    free CTA opened the form instead: this device's trial is used up (props: from)
+ *   secure_prompt_shown  the "add an email" sheet appeared for an anonymous user (props: trigger)
+ *   secure_prompt_dismissed  it was closed with "Später" or the X (props: trigger)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -279,6 +281,8 @@ export type FunnelEvent =
   | 'ladder_locked_tap'
   | 'anonymous_start'
   | 'anonymous_blocked'
+  | 'secure_prompt_shown'
+  | 'secure_prompt_dismissed'
   | 'email_added';
 
 /**

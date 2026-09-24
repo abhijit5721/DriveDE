@@ -173,3 +173,22 @@ export async function signInAnonymously(): Promise<{ user: User; error?: undefin
 export function isAnonymousUser(user: User | null | undefined): boolean {
   return user?.is_anonymous === true;
 }
+
+/**
+ * DRI-60: turn the anonymous account into a permanent one. Supabase treats an email
+ * set on an anonymous user as an email change: a confirmation link goes out and the
+ * account keeps its id, progress and trial once the link is clicked. The password is
+ * required because the app signs people in with email + password only.
+ */
+export async function secureAnonymousAccount(email: string, password: string): Promise<{ error?: string }> {
+  if (!isSupabaseConfigured || !supabase) return { error: 'unavailable' };
+  const { error } = await supabase.auth.updateUser({ email: email.trim().toLowerCase(), password });
+  return error ? { error: error.message } : {};
+}
+
+/** Same, through Google: links the Google identity to the anonymous user (manual linking must be on). */
+export async function secureAnonymousWithGoogle(): Promise<{ error?: string }> {
+  if (!isSupabaseConfigured || !supabase) return { error: 'unavailable' };
+  const { error } = await supabase.auth.linkIdentity({ provider: 'google', options: { redirectTo: window.location.origin } });
+  return error ? { error: error.message } : {};
+}

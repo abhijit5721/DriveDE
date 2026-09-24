@@ -8,8 +8,8 @@ import { User, LogIn, LogOut, Cloud, Globe, Moon, Sun, RefreshCcw, FileText, Rot
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
-import { isSupabaseConfigured, supabase } from '../../lib/supabase';
-import { signInWithProvider } from '../../services/auth';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { signInWithProvider, secureAnonymousAccount, secureAnonymousWithGoogle } from '../../services/auth';
 import { trackFunnel } from '../../services/AnalyticsService';
 import GoogleLogo from '../../assets/google-logo.svg';
 import { syncAllData } from '../../services/supabaseSync';
@@ -102,22 +102,20 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
   const handleSecureAccount = async (e: FormEvent) => {
     e.preventDefault();
     setAuthError(null);
-    if (!isSupabaseConfigured || !supabase) { setAuthError(t.secureUnavailable); return; }
     setAuthLoading(true);
-    const { error } = await supabase.auth.updateUser({ email: secureEmail.trim().toLowerCase(), password: securePassword });
+    const { error } = await secureAnonymousAccount(secureEmail, securePassword);
     setAuthLoading(false);
-    if (error) { setAuthError(error.message); return; }
-    trackFunnel('email_added', { via: 'email' });
+    if (error) { setAuthError(error === 'unavailable' ? t.secureUnavailable : error); return; }
+    trackFunnel('email_added', { via: 'email', from: 'account' });
     setSecureSent(true);
   };
 
   const handleSecureWithGoogle = async () => {
     setAuthError(null);
-    if (!isSupabaseConfigured || !supabase) { setAuthError(t.secureUnavailable); return; }
     setAuthLoading(true);
-    const { error } = await supabase.auth.linkIdentity({ provider: 'google' });
-    if (error) { setAuthError(error.message); setAuthLoading(false); return; }
-    trackFunnel('email_added', { via: 'google' });
+    const { error } = await secureAnonymousWithGoogle();
+    if (error) { setAuthError(error === 'unavailable' ? t.secureUnavailable : error); setAuthLoading(false); return; }
+    trackFunnel('email_added', { via: 'google', from: 'account' });
     // the browser is now redirecting to Google
   };
 
