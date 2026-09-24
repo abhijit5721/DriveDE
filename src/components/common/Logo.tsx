@@ -1,5 +1,6 @@
-
-import logoImg from '../../assets/logo.png';
+// 256 px WebP (22 KB) instead of the 588 px PNG (117 KB): the logo is shown at
+// 28 to 96 px, so 256 px stays sharp on 3x screens. Source: assets/logo.png.
+import logoImg from '../../assets/logo-256.webp';
 import { cn } from '../../utils/cn';
 
 interface LogoProps {

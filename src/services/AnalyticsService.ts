@@ -21,7 +21,9 @@
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
 
-import posthog from 'posthog-js';
+// PostHog is ~230 KB and only runs after cookie consent, so it is fetched then, as its
+// own chunk, instead of sitting in the first-load bundle of every landing visit.
+import type { PostHog } from 'posthog-js';
 import { track } from '@vercel/analytics';
 import { useAppStore } from '../store/useAppStore';
 import { isOwnTraffic } from '../utils/ownTraffic';
@@ -39,6 +41,8 @@ declare global {
     fbq: any;
   }
 }
+
+let posthog: PostHog | null = null;
 
 class AnalyticsService {
   private scriptsLoaded = {
@@ -110,35 +114,39 @@ class AnalyticsService {
     if (this.scriptsLoaded.posthog || !POSTHOG_KEY) return;
 
     console.log('[AnalyticsService] Loading PostHog...');
-
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      person_profiles: 'identified_only', // Only create profiles for identified (logged-in) users
-      capture_pageview: true,
-      capture_pageleave: true,
-      session_recording: {
-        maskAllInputs: true,    // GDPR: mask all input fields in session recordings
-        maskTextSelector: '.ph-mask', // Allow masking specific elements with class
-      },
-      persistence: 'localStorage+cookie',
-      loaded: (ph) => {
-        // In development, disable sending events to keep data clean
-        if (import.meta.env.DEV) {
-          ph.opt_out_capturing();
-          console.log('[AnalyticsService] PostHog loaded in DEV mode — event capture disabled.');
-        }
-      }
-    });
-
     this.scriptsLoaded.posthog = true;
+
+    void import('posthog-js').then(({ default: ph }) => {
+      // consent may have been withdrawn while the chunk was loading
+      if (!this.scriptsLoaded.posthog) return;
+      posthog = ph;
+      ph.init(POSTHOG_KEY, {
+        api_host: POSTHOG_HOST,
+        person_profiles: 'identified_only', // Only create profiles for identified (logged-in) users
+        capture_pageview: true,
+        capture_pageleave: true,
+        session_recording: {
+          maskAllInputs: true,    // GDPR: mask all input fields in session recordings
+          maskTextSelector: '.ph-mask', // Allow masking specific elements with class
+        },
+        persistence: 'localStorage+cookie',
+        loaded: (instance) => {
+          // In development, disable sending events to keep data clean
+          if (import.meta.env.DEV) {
+            instance.opt_out_capturing();
+            console.log('[AnalyticsService] PostHog loaded in DEV mode — event capture disabled.');
+          }
+        }
+      });
+    }).catch((err) => console.warn('[AnalyticsService] PostHog failed to load:', err));
   }
 
   private disablePostHog() {
     if (!this.scriptsLoaded.posthog) return;
 
     console.log('[AnalyticsService] Disabling PostHog...');
-    posthog.opt_out_capturing();
-    posthog.reset();
+    posthog?.opt_out_capturing();
+    posthog?.reset();
     this.scriptsLoaded.posthog = false;
   }
 
@@ -155,7 +163,7 @@ class AnalyticsService {
   public identifyUser(userId: string, email: string) {
     if (!this.scriptsLoaded.posthog) return;
     console.log(`[AnalyticsService] Identifying PostHog user: ${email}`);
-    posthog.identify(userId, { email });
+    posthog?.identify(userId, { email });
   }
 
   /**
@@ -164,7 +172,7 @@ class AnalyticsService {
   public resetUser() {
     if (!this.scriptsLoaded.posthog) return;
     console.log('[AnalyticsService] Resetting PostHog identity.');
-    posthog.reset();
+    posthog?.reset();
   }
 
   // --- GA4 Implementation ---
@@ -299,5 +307,5 @@ export function trackFunnel(event: FunnelEvent, props: Record<string, string | n
     utm_campaign: params.get('utm_campaign') ?? '',
   };
   try { track(event, enriched); } catch { /* analytics must never break the page */ }
-  try { if (analyticsService.isPostHogLoaded()) posthog.capture(event, enriched); } catch { /* same */ }
+  try { if (analyticsService.isPostHogLoaded()) posthog?.capture(event, enriched); } catch { /* same */ }
 }

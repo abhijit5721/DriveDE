@@ -29,7 +29,8 @@ import { chapters } from './data/curriculum';
 import { Header } from './components/layout/Header';
 import { BottomNav } from './components/layout/BottomNav';
 import { DesktopNav } from './components/layout/DesktopNav';
-import { Dashboard } from './components/dashboard/Dashboard';
+// Not on the landing page: loaded when the app shell opens (first-load bundle diet, 24 Sep).
+const Dashboard = lazy(() => import('./components/dashboard/Dashboard').then(m => ({ default: m.Dashboard })));
 const Welcome = lazy(() => import('./components/auth/Welcome').then(m => ({ default: m.Welcome })));
 const LicenseSelector = lazy(() => import('./components/auth/LicenseSelector').then(m => ({ default: m.LicenseSelector })));
 const AuthModal = lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
@@ -58,12 +59,13 @@ const TrialEndedModal = lazy(() => import('./components/finance/TrialEndedModal'
 import { Skeleton } from './components/common/Skeleton';
 import { AchievementOverlay } from './components/common/AchievementOverlay';
 import type { TabType, Lesson, LegalPageType } from './types';
-import { PublicReport } from './components/maneuvers/PublicReport';
+const PublicReport = lazy(() => import('./components/maneuvers/PublicReport').then(m => ({ default: m.PublicReport })));
 import { PathSelectorModal } from './components/auth/PathSelectorModal';
 import { CookieConsent } from './components/legal/CookieConsent';
 import { PrivacyConsentModal } from './components/legal/PrivacyConsentModal';
 import { TRANSLATIONS } from './data/translations';
-import { HotspotMap } from './components/dashboard/HotspotMap';
+// Pulls in Leaflet (~150 KB); only needed when the hotspot map is opened.
+const HotspotMap = lazy(() => import('./components/dashboard/HotspotMap').then(m => ({ default: m.HotspotMap })));
 import { OnboardingTour } from './components/onboarding/OnboardingTour';
 import { SecureAccountPrompt } from './components/auth/SecureAccountSheet';
 
@@ -789,7 +791,11 @@ export default function App() {
 
   const renderAppContent = () => {
     if (reportUserId) {
-      return <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />;
+      return (
+        <Suspense fallback={<div className="h-screen bg-slate-50" />}>
+          <PublicReport userId={reportUserId} onBack={() => setReportUserId(null)} />
+        </Suspense>
+      );
     }
 
     if (isAuthLoading && authStatus !== 'guest') {
@@ -907,7 +913,11 @@ export default function App() {
           }}
         />
 
-        {showHotspotMap && <HotspotMap onClose={() => setShowHotspotMap(false)} />}
+        {showHotspotMap && (
+          <Suspense fallback={null}>
+            <HotspotMap onClose={() => setShowHotspotMap(false)} />
+          </Suspense>
+        )}
       </div>
     );
   };
