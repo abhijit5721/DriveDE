@@ -1,6 +1,6 @@
 # Facebook group schedule, approved by the founder 23 Sep 2026 ("go")
 
-One post per day, anonymous alias where the group offers it, first sentence varied per group, rules re-read by `scripts/outreach/fb-group-post.mjs` at post time (it refuses groups that ban self-promotion). Text: `fb-post-B.txt` (English) or `fb-post-B-de.txt` (German, for the Führerschein groups). Verify each post afterwards (published or pending), log the result in `outreach-2026-09-08.md`, and check the previous day's post for comments to answer.
+One post per day, anonymous alias where the group offers it. Since 27 Sep: share the matching guide (country conversion guide for nationality groups) rather than the app post, the row says which text, first sentence varied per group, rules re-read by `scripts/outreach/fb-group-post.mjs` at post time (it refuses groups that ban self-promotion). Text: `fb-post-B.txt` (English) or `fb-post-B-de.txt` (German, for the Führerschein groups). Verify each post afterwards (published or pending), log the result in `outreach-2026-09-08.md`, and check the previous day's post for comments to answer.
 
 | Date | Group | Members | URL | Language | Status |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ One post per day, anonymous alias where the group offers it, first sentence vari
 | 5 Oct | Indians in Stuttgart (moved from 25 Sep) | 22.5k | https://www.facebook.com/groups/186337235225676 | EN | |
 | 25 Sep | Indians in Stuttgart | 22.5k | https://www.facebook.com/groups/186337235225676 | EN | not run (no session that day); moved to 5 Oct |
 | 26 Sep | New in Hamburg : English | 24.3k | https://www.facebook.com/groups/1603294993274673 | EN | PUBLISHED anonymously (fb-post-B-hamburg.txt). Button read "Submit" for the anonymous post; script updated |
-| 27 Sep | Indians in Frankfurt am Main | 17.9k | https://www.facebook.com/groups/5990199951011720 | EN | |
+| 27 Sep | Indians in Frankfurt am Main | 17.9k | https://www.facebook.com/groups/5990199951011720 | EN | TEXT: fb-post-guide-india.txt (guide share instead of the app post, founder feedback 26 Sep). From now on Indian groups get this guide text with the group name in utm_campaign, other groups the matching country or topic guide |
 | 28 Sep | Germans In India / Indians In Germany | 44.6k | https://www.facebook.com/groups/1808556619294536 | EN | |
 | 29 Sep | Indians In Munich | 9.7k | https://www.facebook.com/groups/622479101772307 | EN | |
 | 30 Sep | Indians in Frankfurt | 7.3k | https://www.facebook.com/groups/indiansinfrankfurt | EN | |
