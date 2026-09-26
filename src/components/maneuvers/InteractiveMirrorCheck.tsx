@@ -195,7 +195,7 @@ export default function InteractiveMirrorCheck({
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="absolute inset-0 bg-blue-600/95 flex flex-col items-center justify-center p-6 text-center z-20"
+              className="absolute inset-0 bg-brand-overlay flex flex-col items-center justify-center p-6 text-center z-20"
             >
               <div className="h-20 w-20 rounded-full bg-white flex items-center justify-center mb-4 shadow-2xl">
                 <ShieldCheck className="h-12 w-12 text-blue-600" />

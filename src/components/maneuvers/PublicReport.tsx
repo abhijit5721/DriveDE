@@ -343,7 +343,7 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
         {lessonMode ? (
           <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
             {/* Condensed Smart Briefing */}
-            <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl">
+            <div className="rounded-3xl bg-brand-surface p-6 text-white shadow-xl">
               <div className="flex items-center gap-2 mb-3 opacity-80">
                 <Activity className="h-4 w-4" />
                 <span className="text-xs font-semibold">Active briefing</span>

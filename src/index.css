@@ -29,6 +29,18 @@
 }
 
 
+/* Brand surface for large panels (dashboard hero, banners, result overlays): deep navy
+   with a soft blue glow, the same as the link-preview cards. Solid blue-600 on whole
+   panels read as too harsh (26 Sep); blue now stays for actions (buttons, links, gauge). */
+.bg-brand-surface {
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(37, 99, 235, 0.45) 0%, rgba(37, 99, 235, 0) 60%),
+    linear-gradient(135deg, #0b1220 0%, #12234d 55%, #1e3a8a 100%);
+}
+.bg-brand-overlay {
+  background: rgba(15, 28, 61, 0.96);
+}
+
 @theme {
   --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-family-display: 'Inter', sans-serif;

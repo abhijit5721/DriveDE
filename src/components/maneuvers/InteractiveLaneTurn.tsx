@@ -259,7 +259,7 @@ export default function InteractiveLaneTurn({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-blue-600/95 p-6 text-center text-white backdrop-blur-sm"
+              className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-brand-overlay p-6 text-center text-white backdrop-blur-sm"
             >
               <motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }} className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white text-blue-600 shadow-2xl">
                 <Check className="h-12 w-12 stroke-[3px]" />

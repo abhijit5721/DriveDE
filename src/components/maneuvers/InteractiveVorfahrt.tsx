@@ -597,7 +597,7 @@ export default function InteractiveVorfahrt({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-blue-600/95 p-6 text-center text-white backdrop-blur-sm z-30"
+              className="absolute inset-0 flex flex-col items-center justify-center bg-brand-overlay p-6 text-center text-white backdrop-blur-sm z-30"
             >
               <motion.div 
                 initial={{ scale: 0.5, rotate: -180 }}

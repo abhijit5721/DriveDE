@@ -162,7 +162,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
       )}
       {/* Premium Hero Section: Exam Readiness & Path */}
       <div data-tour="readiness" className={cn('overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10', introClass)}>
-        <div className="bg-blue-600 p-8 text-white relative overflow-hidden">
+        <div className="bg-brand-surface p-8 text-white relative overflow-hidden">
           
           
           <div className="relative z-10">
@@ -211,7 +211,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 'flex w-full items-center justify-between rounded-2xl p-5 text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]',
                 trialDaysLeft <= 2
                   ? 'bg-red-600 shadow-red-500/20'
-                  : 'bg-blue-600 shadow-blue-500/20'
+                  : 'bg-brand-surface shadow-blue-900/20'
               )}
             >
               <div className="flex items-center gap-4">
@@ -633,7 +633,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
       </div>
 
-      <div className={cn('rounded-3xl bg-blue-600 p-8 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden', introClass)} style={introDelay(800)}>
+      <div className={cn('rounded-3xl bg-brand-surface p-8 text-white shadow-lg shadow-blue-900/20 relative overflow-hidden', introClass)} style={introDelay(800)}>
         <div className="relative z-10 flex items-start gap-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-lg">
             <Target className="h-8 w-8 text-white" />
