@@ -26,13 +26,13 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
         width={radius * 2}
         className="transform transition-transform duration-500"
       >
-        {/* Track */}
+        {/* Track: faint on the navy hero, so an empty gauge reads as empty, not full (26 Sep) */}
         <path
           d={`M ${strokeWidth/2},${radius} A ${normalizedRadius},${normalizedRadius} 0 0,1 ${radius * 2 - strokeWidth/2},${radius}`}
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-slate-200 dark:text-slate-700"
+          className="text-white/15"
           strokeLinecap="round"
         />
         
@@ -49,7 +49,8 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
           </filter>
         </defs>
 
-        <path
+        {/* round caps would leave a dot at 0 %, so no progress arc until there is progress */}
+        {progress > 0 && <path
           d={`M ${strokeWidth/2},${radius} A ${normalizedRadius},${normalizedRadius} 0 0,1 ${radius * 2 - strokeWidth/2},${radius}`}
           fill="none"
           stroke="url(#gaugeGradient)"
@@ -59,7 +60,7 @@ export function ExamReadinessGauge({ progress, label, subLabel, className }: Exa
           strokeLinecap="round"
           className="transition-all duration-1000 ease-out"
           style={{ filter: 'drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))' }}
-        />
+        />}
       </svg>
 
       {/* Center Label */}

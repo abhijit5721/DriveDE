@@ -161,8 +161,9 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         </div>
       )}
       {/* Premium Hero Section: Exam Readiness & Path */}
-      <div data-tour="readiness" className={cn('overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10', introClass)}>
-        <div className="bg-brand-surface p-8 text-white relative overflow-hidden">
+      <div data-tour="readiness" className={cn('overflow-hidden rounded-3xl bg-brand-surface shadow-2xl shadow-blue-900/20', introClass)}>
+        {/* One navy card: the trial/Pro rows below sit inside it, not in a white strip (26 Sep) */}
+        <div className="p-8 text-white relative overflow-hidden">
           
           
           <div className="relative z-10">
@@ -203,7 +204,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         
         {/* Trial users: show what's left and how to keep it, rather than nothing */}
         {onTrial && (
-          <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
+          <div className="border-t border-white/10 p-5">
             <button
               onClick={onOpenPaywall}
               data-testid="trial-banner"
@@ -211,7 +212,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
                 'flex w-full items-center justify-between rounded-2xl p-5 text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]',
                 trialDaysLeft <= 2
                   ? 'bg-red-600 shadow-red-500/20'
-                  : 'bg-brand-surface shadow-blue-900/20'
+                  : 'border border-white/10 bg-white/10 hover:bg-white/15'
               )}
             >
               <div className="flex items-center gap-4">
@@ -237,7 +238,7 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
         )}
 
         {!proActive && (
-          <div className="border-t border-white/10 p-5 bg-white/5 dark:bg-slate-900/5">
+          <div className="border-t border-white/10 p-5">
             <button
               onClick={onOpenPaywall}
               aria-label={t.dashboard.unlockPro}
