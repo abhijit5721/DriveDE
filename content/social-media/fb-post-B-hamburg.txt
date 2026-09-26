@@ -1,0 +1,7 @@
+Hi Hamburg 👋 New here and doing the German driving licence, or converting a foreign one (Umschreibung)? This is for the practical exam, not the theory questions.
+
+I am a learner in Hamburg myself, my practical test is still ahead of me, and between lessons I built DriveDE: interactive trainers for the things the examiner actually fails people on. Right of way at unmarked junctions, roundabouts, lane choice when turning, the maneuvers with reference points, and the exam "traps" (one-way street ends, examiner instruction vs. sign) explained in plain English.
+
+It opens straight in the browser, no signup: https://www.drivede.app
+
+Tell me what is wrong or missing, that is genuinely why I am posting. If your driving school teaches something differently, I want to hear it.

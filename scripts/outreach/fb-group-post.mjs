@@ -88,7 +88,8 @@ await p.keyboard.insertText(text);
 await p.waitForTimeout(4000); // link preview
 const dialogText = await composerDialog().innerText();
 console.log('composer mode:', /anonymous|anonym/i.test(dialogText) ? 'anonymous' : 'named');
-const post = composerDialog().locator('div[aria-label="Post"], div[aria-label="Posten"], div[role="button"]').filter({ hasText: /^Post$|^Posten$/ }).last();
+// Anonymous posts that go to admin review show "Submit" instead of "Post" (26 Sep).
+const post = composerDialog().locator('div[role="button"]').filter({ hasText: /^\s*(Post|Posten|Submit|Senden|Einreichen)\s*$/ }).last();
 await post.click();
 // wait until the composer has closed ("Posting" spinner done) before leaving the page
 for (let i = 0; i < 20 && (await composerDialog().count()); i++) await p.waitForTimeout(1500);
@@ -98,10 +99,14 @@ await p.waitForTimeout(4000);
 // open composer would match too.
 const base = groupUrl.replace(/\/$/, '');
 let verdict = 'NOT FOUND in your content, check the group manually';
-for (const [tab, label] of [['my_posted_content', 'POSTED (published)'], ['my_pending_content', 'SUBMITTED, pending admin approval'], ['my_declined_content', 'DECLINED by the admins']]) {
-  await p.goto(`${base}/${tab}/`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await p.waitForTimeout(7000);
-  if (await p.evaluate((n) => document.body.innerText.includes(n), needle)) { verdict = label; break; }
+// Anonymous posts can take a minute to appear there (26 Sep), so look twice.
+for (let attempt = 0; attempt < 2 && verdict.startsWith('NOT FOUND'); attempt++) {
+  if (attempt) await p.waitForTimeout(45000);
+  for (const [tab, label] of [['my_posted_content', 'POSTED (published)'], ['my_pending_content', 'SUBMITTED, pending admin approval'], ['my_declined_content', 'DECLINED by the admins']]) {
+    await p.goto(`${base}/${tab}/`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await p.waitForTimeout(7000);
+    if (await p.evaluate((n) => document.body.innerText.includes(n), needle)) { verdict = label; break; }
+  }
 }
 console.log(`${groupName}: ${verdict}`);
 // Facebook's feed keeps loading fonts for a long time; a screenshot can hang, so it is best effort.
