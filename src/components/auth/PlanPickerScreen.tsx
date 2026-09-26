@@ -40,7 +40,7 @@ const PLAN_CONFIG = {
   'de': {
     badge: '7 TAGE TESTVERSION • KOSTENLOS',
     headline: 'Wähle deinen passenden Pro-Plan',
-    subline: 'GPS-Tracking, Fehlerprotokoll nach der Fahrt, 3D-Trainer und Prüfungsreife-Score: 7 Tage kostenlos testen.',
+    subline: 'GPS-Tracking, Fehlerprotokoll nach der Fahrt, interaktive Trainer und Prüfungsreife-Score: 7 Tage kostenlos testen.',
     signupHeadline: 'Erstelle dein Konto',
     signupSubline: 'Melde dich an, um deine 7-Tage Pro Testversion zu aktivieren.',
     plans: {
@@ -118,7 +118,7 @@ const PLAN_CONFIG = {
   'en': {
     badge: '7-DAY TRIAL • FREE',
     headline: 'Choose your perfect Pro plan',
-    subline: 'GPS tracking, one-tap mistake log, 3D trainers and readiness score: free for 7 days.',
+    subline: 'GPS tracking, mistake log after each drive, interactive trainers and readiness score: free for 7 days.',
     signupHeadline: 'Create your account',
     signupSubline: 'Sign up to activate your 7-day unlimited Pro trial.',
     plans: {

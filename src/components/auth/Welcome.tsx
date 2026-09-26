@@ -451,6 +451,12 @@ export function Welcome() {
                 </button>
               </div>
               <p className="mt-4 text-sm font-semibold text-slate-500">{t.common.trainerTrust}</p>
+              {/* Price stated up front (feedback 26 Sep), but as a line, not a gate: the
+                  old price-first signup screen lost every signup (DRI-59). */}
+              <p className="mt-1 text-sm text-slate-500" data-testid="hero-price-note">
+                {t.welcome.hero.priceNote}{' '}
+                <a href="#pricing" className="font-semibold text-blue-600 hover:underline">{t.welcome.hero.priceLink}</a>
+              </p>
               {/* Account creation lives in the header ("Jetzt kostenlos starten" / "Anmelden");
                   the hero keeps a single action on purpose. */}
             </>

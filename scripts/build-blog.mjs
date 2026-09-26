@@ -12,7 +12,7 @@
  *   flag (optional emoji), variants (optional comma list of sibling slugs
  *   in other languages — wired into hreflang, see GRO-10)
  */
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
@@ -111,7 +111,13 @@ footer .inner{max-width:840px;margin:0 auto;padding:28px 24px;display:flex;flex-
 footer a{color:var(--muted);font-weight:600}footer a:hover{color:var(--accent)}
 `;
 
-function shell({ lang, title, description, canonical, head = '', body }) {
+// Link-preview card from scripts/og-cards.mjs (public/og/<slug>.jpg), else the landing card.
+function ogImageFor(slug, lang) {
+  const own = slug && existsSync(path.join(ROOT, 'public', 'og', `${slug}.jpg`));
+  return `${SITE}/og/${own ? slug : (lang === 'de' ? 'landing-de' : 'landing-en')}.jpg`;
+}
+
+function shell({ lang, title, description, canonical, head = '', body, slug = null }) {
   return `<!doctype html>
 <html lang="${lang}">
 <head>
@@ -130,9 +136,13 @@ function shell({ lang, title, description, canonical, head = '', body }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${SITE}/icons/icon-512.png">
+<meta property="og:image" content="${ogImageFor(slug, lang)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="${lang === 'de' ? 'de_DE' : 'en_US'}">
 <meta property="og:site_name" content="DriveDE">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${ogImageFor(slug, lang)}">
 ${head}
 <style>${CSS}</style>
 </head>
@@ -290,6 +300,7 @@ for (const post of posts) {
     title: `${post.title} | DriveDE Blog`,
     description: post.description,
     canonical,
+    slug: post.slug,
     head: [
       post.keywords ? `<meta name="keywords" content="${esc(post.keywords)}">` : '',
       hreflang,
