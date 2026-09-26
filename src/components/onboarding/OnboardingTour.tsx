@@ -42,6 +42,7 @@ export function OnboardingTour() {
   const [spotlight, setSpotlight] = useState<SpotlightRect | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('bottom');
   const [isVisible, setIsVisible] = useState(false);
+  const [targetMissing, setTargetMissing] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const totalSteps = TOUR_STEPS.length;
@@ -104,7 +105,8 @@ export function OnboardingTour() {
   // Handle polling for target elements when switching tabs
   useEffect(() => {
     if (currentStep < 0 || currentStep >= totalSteps) return;
-    
+    setTargetMissing(false);
+
     // Set an interval to poll for the DOM element to appear after tab switches
     const interval = setInterval(() => {
       const target = document.querySelector(`[data-tour="${TOUR_STEPS[currentStep].target}"]`);
@@ -113,11 +115,17 @@ export function OnboardingTour() {
         clearInterval(interval);
       }
     }, 100);
+    // A step whose element never shows up (renamed or removed in a redesign) used to
+    // leave only the scrim with no card and no way on (26 Sep). After 1.5 s the card
+    // shows centred instead, so Weiter and X always work.
+    const fallback = setTimeout(() => {
+      if (!document.querySelector(`[data-tour="${TOUR_STEPS[currentStep].target}"]`)) setTargetMissing(true);
+    }, 1500);
 
     // Initial check
     updateSpotlight();
 
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); clearTimeout(fallback); };
   }, [currentStep, updateSpotlight, totalSteps, activeTab]);
 
   useEffect(() => {
@@ -278,16 +286,19 @@ export function OnboardingTour() {
           )}
 
           {/* Step Tooltip Cards */}
-          {!isWelcome && spotlight && (
+          {!isWelcome && (spotlight || targetMissing) && (
             <motion.div
               key={`step-${currentStep}`}
+              data-testid="tour-step-card"
               initial={{ opacity: 0, y: tooltipPosition === 'bottom' ? -15 : 15, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: tooltipPosition === 'bottom' ? -15 : 15, scale: 0.95 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="absolute left-4 right-4 mx-auto max-w-sm"
               style={{
-                ...(tooltipPosition === 'bottom'
+                ...(!spotlight
+                  ? { top: Math.max(window.innerHeight / 2 - 120, 16) }
+                  : tooltipPosition === 'bottom'
                   ? { top: Math.min(spotlight.top + spotlight.height + 20, window.innerHeight - 240) }
                   : { top: Math.max(spotlight.top - 220, 16) }),
               }}
@@ -356,15 +367,15 @@ export function OnboardingTour() {
                   </div>
                 </div>
 
-                {/* Arrow pointer */}
-                <div
+                {/* Arrow pointer (none for the centred fallback card) */}
+                {spotlight && <div
                   className={cn(
                     'absolute left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 bg-slate-900/95 border-white/10',
                     tooltipPosition === 'bottom'
                       ? '-top-2 border-l border-t'
                       : '-bottom-2 border-r border-b'
                   )}
-                />
+                />}
               </div>
             </motion.div>
           )}

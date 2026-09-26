@@ -199,8 +199,8 @@ export function Curriculum({ onLessonSelect }: CurriculumProps) {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. Header & License Type Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 1. Header & License Type Switcher (tour step 2 spotlights it) */}
+      <div data-tour="tour-curriculum" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">

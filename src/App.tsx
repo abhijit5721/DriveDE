@@ -108,6 +108,7 @@ export default function App() {
     setActiveTab,
     language,
     hasCompletedOnboarding,
+    cookieSettings,
     activeSession,
     trialStartedAt,
     trialEndsAt,
@@ -969,7 +970,8 @@ export default function App() {
           mistake log mid-drive. The tour resumes after the session ends. */}
       {/* The tour explains the app, so it starts once the licence path is chosen,
           not on top of the licence selector. */}
-      {hasVisited && hasCompleteSelection && !hasCompletedOnboarding && !activeSession && <OnboardingTour />}
+      {/* ...and only after the cookie banner is answered: the two used to open together (26 Sep). */}
+      {hasVisited && hasCompleteSelection && !hasCompletedOnboarding && !activeSession && (Capacitor.isNativePlatform() || cookieSettings.hasSet) && <OnboardingTour />}
       {hasVisited && <SecureAccountPrompt />}
     </>
   );
