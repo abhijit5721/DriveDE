@@ -49,8 +49,8 @@ const GERMAN_RULE_BADGES: Record<string, { labelDe: string; labelEn: string; ico
   'basics-5': { labelDe: 'Berganfahren (Handbremse)', labelEn: 'Hill Start (Manual)', icon: Mountain },
   'basics-5a': { labelDe: 'Berganfahren (Hill-Hold)', labelEn: 'Hill Start (Auto)', icon: Mountain },
 
-  'maneuver-1': { labelDe: 'Parallel-Einparken (3D)', labelEn: 'Parallel Parking (3D)', icon: ParkingSquare },
-  'maneuver-2': { labelDe: 'Rückwärts-Einparken (3D)', labelEn: 'Reverse Parking (3D)', icon: ParkingSquare },
+  'maneuver-1': { labelDe: 'Parallel-Einparken', labelEn: 'Parallel Parking', icon: ParkingSquare },
+  'maneuver-2': { labelDe: 'Rückwärts-Einparken', labelEn: 'Reverse Parking', icon: ParkingSquare },
   'maneuver-3': { labelDe: 'Wenden in 3 Zügen', labelEn: 'Three-Point Turn', icon: RefreshCcw },
   'maneuver-4': { labelDe: 'Gefahrenbremsung (Schaltwagen)', labelEn: 'Emergency Stop (Manual)', icon: AlertOctagon },
   'maneuver-4a': { labelDe: 'Gefahrenbremsung (Automatik)', labelEn: 'Emergency Stop (Auto)', icon: AlertOctagon },

@@ -156,7 +156,7 @@ const PLAN_CONFIG = {
       { text: 'GPS Live Driving Tracker & Logbook', badge: 'GPS' },
       { text: 'Mistake log & analysis after each drive', badge: 'Log' },
       { text: 'Drive analysis after every drive', badge: 'Report' },
-      { text: '3D Parking Simulator & Exam Scenarios', badge: '3D' },
+      { text: 'Parking & right-of-way trainers, exam scenarios', badge: 'Trainer' },
       { text: 'Exam Readiness & Progress Analytics', badge: 'Score' },
     ],
     ctaPlan: (planLabel: string) => `Start 7-Day Free Trial with ${planLabel} →`,

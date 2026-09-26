@@ -404,7 +404,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
               'flex min-h-14 items-center justify-center gap-2 rounded-full px-5 shadow-2xl transition-all',
               showMistakeSuccess
                 ? 'bg-emerald-500 text-white'
-                : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
             )}
           >
             <AlertTriangle className="h-6 w-6" />
@@ -508,7 +508,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
                'flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold shadow-md transition-all active:scale-[0.98]',
                showMistakeSuccess
                  ? 'bg-emerald-500 text-white'
-                 : 'bg-amber-500 text-slate-950 hover:bg-amber-400'
+                 : 'bg-blue-600 text-white hover:bg-blue-700'
              )}
            >
              <AlertTriangle className="h-5 w-5" />
@@ -521,7 +521,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
                data-testid="pause-tracking-btn"
                className={cn(
                  'flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl py-4 text-sm font-bold transition-all shadow-md',
-                 isPaused ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                 isPaused ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                )}
              >
                {isPaused ? <Play className="h-4 w-4 fill-white" /> : <Pause className="h-4 w-4 fill-current" />}
@@ -531,7 +531,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
              <button
                onClick={onStop}
                data-testid="stop-tracking-btn"
-               className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-red-50 py-4 text-sm font-bold text-red-600 transition-all shadow-md active:scale-95 dark:bg-red-900/20 dark:text-red-400"
+               className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-900 py-4 text-sm font-bold text-white transition-all shadow-md active:scale-95 dark:bg-white dark:text-slate-900"
              >
                <Square className="h-4 w-4 fill-current" />
                {t.stopAndSave || 'Stop & Save'}

@@ -92,7 +92,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.05),transparent_60%)] pointer-events-none" />
           {renderAnimation()}
         </div>
-        <div className="absolute top-10 right-10 bg-[#38BDF8] text-[#030712] px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(56,189,248,0.4)]">
+        <div className="absolute top-10 right-10 bg-blue-600 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(37,99,235,0.4)]">
           {currentStep + 1} <span className="opacity-50 mx-1">/</span> {steps.length}
         </div>
       </div>
@@ -104,23 +104,23 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
         <div className="mt-6 h-2 bg-[#1e293b] rounded-full overflow-hidden">
           <motion.div 
             animate={{ width: `${progress}%` }}
-            className="h-full bg-[#38BDF8] shadow-[0_0_15px_rgba(56,189,248,0.6)]"
+            className="h-full bg-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.6)]"
             transition={{ type: 'spring', bounce: 0, duration: 0.1 }}
           />
         </div>
       </div>
 
       <div className="flex items-center justify-center gap-6 p-6 bg-[#020617] border-t border-[#1e293b]">
-        <button onClick={handleReset} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] hover:border-[#38BDF8]/50 transition-all shadow-lg active:scale-95 group">
+        <button onClick={handleReset} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-blue-300 hover:border-blue-400/50 transition-all shadow-lg active:scale-95 group">
           <RotateCcw size={22} className="group-hover:rotate-[-45deg] transition-transform" />
         </button>
-        <button onClick={handlePrevStep} disabled={currentStep === 0} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] shadow-lg disabled:opacity-20 active:scale-95">
+        <button onClick={handlePrevStep} disabled={currentStep === 0} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-blue-300 shadow-lg disabled:opacity-20 active:scale-95">
           <ChevronLeft size={22} />
         </button>
-        <button onClick={() => setIsPlaying(!isPlaying)} className="p-5 rounded-3xl bg-[#38BDF8] text-[#030712] hover:scale-105 shadow-[0_0_25px_rgba(56,189,248,0.3)] transition-all active:scale-95">
+        <button onClick={() => setIsPlaying(!isPlaying)} data-testid="maneuver-play" className="p-5 rounded-3xl bg-blue-600 text-white hover:scale-105 shadow-[0_0_25px_rgba(37,99,235,0.3)] transition-all active:scale-95">
           {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} className="translate-x-0.5" fill="currentColor" />}
         </button>
-        <button onClick={handleNextStep} disabled={currentStep === steps.length - 1} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-[#38BDF8] shadow-lg disabled:opacity-20 active:scale-95">
+        <button onClick={handleNextStep} disabled={currentStep === steps.length - 1} className="p-3.5 rounded-2xl bg-[#0f172a] border border-[#1e293b] text-slate-400 hover:text-blue-300 shadow-lg disabled:opacity-20 active:scale-95">
           <ChevronRight size={22} />
         </button>
       </div>
@@ -131,7 +131,7 @@ const AnimatedManeuver: React.FC<AnimatedManeuverProps> = ({ type, language }) =
             key={step.id}
             onClick={() => { setCurrentStep(index); setProgress(0); setIsPlaying(false); }}
             className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all ${
-              index === currentStep ? 'bg-[#38BDF8] text-[#030712] shadow-[0_0_20px_rgba(56,189,248,0.4)] scale-110' : 'bg-[#0f172a] text-slate-500 border border-[#1e293b]'
+              index === currentStep ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-110' : 'bg-[#0f172a] text-slate-500 border border-[#1e293b]'
             }`}
           >
             {index + 1}

@@ -588,10 +588,10 @@ export function Welcome() {
                 icon: MapPin
               },
               {
-                title: isDe ? 'KI-Fehleranalyse & 3D' : 'AI Mistake Debriefings',
+                title: isDe ? 'KI-Fehleranalyse & Trainer' : 'AI Mistake Debriefings',
                 desc: isDe 
-                  ? 'Nach der Fahrstunde siehst du die Auswertung und übst die Situationen, die nicht saßen, in der 3D-Simulation.'
-                  : 'Review post-drive briefings & 3D maneuver simulations (Einparken, Autobahn) before your next lesson.',
+                  ? 'Nach der Fahrstunde siehst du die Auswertung und übst die Situationen, die nicht saßen, im Trainer.'
+                  : 'Review the post-drive briefing, then practise what went wrong (Einparken, right of way) in the trainers before your next lesson.',
                 icon: Zap
               },
               {

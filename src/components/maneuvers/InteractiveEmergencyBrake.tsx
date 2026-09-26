@@ -72,12 +72,12 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
       <GlobalDefinitions />
       <div className="flex items-center justify-between">
         <h4 className="flex items-center gap-3 font-bold text-slate-100 text-lg uppercase tracking-wider">
-          <Zap className="h-5 w-5 text-[#38BDF8]" />
+          <Zap className="h-5 w-5 text-blue-400" />
           {et.title}
         </h4>
         <button 
           onClick={reset}
-          className="rounded-2xl p-2.5 text-slate-400 hover:bg-[#1e293b] hover:text-[#38BDF8] transition-all"
+          className="rounded-2xl p-2.5 text-slate-400 hover:bg-[#1e293b] hover:text-blue-300 transition-all"
         >
           <RotateCcw className="h-5 w-5" />
         </button>
@@ -191,7 +191,7 @@ export default function InteractiveEmergencyBrake({ onComplete, language }: { on
             <div className="absolute inset-0 z-30 flex items-center justify-center backdrop-blur-md bg-slate-950/40 rounded-2xl">
               <button 
                 onClick={startTest}
-                className="bg-[#38BDF8] text-[#030712] px-12 py-6 rounded-3xl font-bold text-xl shadow-[0_0_50px_rgba(56,189,248,0.4)] hover:scale-110 transition-all flex items-center gap-3 uppercase tracking-wider"
+                className="bg-blue-600 text-white px-12 py-6 rounded-3xl font-bold text-xl shadow-[0_0_50px_rgba(37,99,235,0.4)] hover:scale-110 transition-all flex items-center gap-3 uppercase tracking-wider"
               >
                 <Zap className="h-6 w-6 fill-current" />
                 {et.startTest}
