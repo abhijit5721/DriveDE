@@ -970,8 +970,8 @@ export default function App() {
           mistake log mid-drive. The tour resumes after the session ends. */}
       {/* The tour explains the app, so it starts once the licence path is chosen,
           not on top of the licence selector. */}
-      {/* ...and only after the cookie banner is answered: the two used to open together (26 Sep). */}
-      {hasVisited && hasCompleteSelection && !hasCompletedOnboarding && !activeSession && (Capacitor.isNativePlatform() || cookieSettings.hasSet) && <OnboardingTour />}
+      {/* ...and only after the privacy consent and the cookie banner are answered: they used to open together (26 Sep). */}
+      {hasVisited && hasCompleteSelection && !hasCompletedOnboarding && !activeSession && userProgress.hasAcceptedPrivacy && (Capacitor.isNativePlatform() || cookieSettings.hasSet) && <OnboardingTour />}
       {hasVisited && <SecureAccountPrompt />}
     </>
   );

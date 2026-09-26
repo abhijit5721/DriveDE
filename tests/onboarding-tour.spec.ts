@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 /**
  * Onboarding tour (26 Sep founder report): it opened together with the cookie banner,
  * and step 2 showed only the dark scrim with no card, so nobody could get past it.
- * The tour now waits for the cookie choice and every step shows a card with Weiter.
+ * The tour now waits for the cookie choice and the privacy consent and every step shows a card with Weiter.
  */
 test.describe.configure({ timeout: 120_000 });
 
@@ -20,18 +20,25 @@ async function enterBeforeTour(page: Page) {
     s.setLicenseType?.('manual');
     s.setLearningPath?.('standard');
     s.setTransmissionType?.('manual');
-    s.setAcceptedPrivacy?.(true);
+    s.setAcceptedPrivacy?.(false);
     s.setHasCompletedOnboarding?.(false);
   });
 }
 
-test('the tour waits for the cookie banner, then every step can be passed', async ({ page }) => {
+test('the tour waits for the privacy consent and the cookie banner, then every step can be passed', async ({ page }) => {
   await enterBeforeTour(page);
-  const banner = page.getByTestId('cookie-accept-all');
-  await expect(banner).toBeVisible({ timeout: 10000 });
+  // privacy consent (Deine Daten, deine Kontrolle) is open on top of the cookie banner: no tour yet
+  await expect(page.getByTestId('accept-privacy-btn')).toBeVisible({ timeout: 10000 });
   await page.waitForTimeout(2500);
   await expect(page.getByTestId('tour-skip')).toHaveCount(0);
+  await page.getByTestId('privacy-consent-checkbox').check();
+  await page.getByTestId('accept-privacy-btn').click();
 
+  // still no tour while the cookie banner is unanswered
+  const banner = page.getByTestId('cookie-accept-all');
+  await expect(banner).toBeVisible({ timeout: 8000 });
+  await page.waitForTimeout(2500);
+  await expect(page.getByTestId('tour-skip')).toHaveCount(0);
   await banner.click();
   await expect(page.getByTestId('tour-skip')).toBeVisible({ timeout: 8000 });
   await page.getByRole('button', { name: 'Weiter' }).first().click();
