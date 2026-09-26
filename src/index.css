@@ -46,6 +46,14 @@
   --font-family-display: 'Inter', sans-serif;
   --animate-spin-slow: spin 3s linear infinite;
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Brand blue, shifted one step deeper so buttons and badges sit in the same family
+     as the navy panels (26 Sep: the stock blue-600 looked electric next to them).
+     Remapping the shades here moves all ~60 bg-/text-/border-blue uses at once and
+     keeps hover order: 500 lighter, 600 base, 700 darker. */
+  --color-blue-500: #2563eb;
+  --color-blue-600: #1e40af;
+  --color-blue-700: #1e3a8a;
 }
 
 /* Semantic surface tokens: the single source both themes render from.
