@@ -28,7 +28,7 @@ async function seed(page, lang) {
   const fixture = JSON.parse(await readFile(FIXTURE, 'utf-8'));
   Object.assign(fixture.state, {
     language: lang,
-    darkMode: false,
+    darkMode: true, // dark shots read better in the monitor and phone frames (founder, 27 Sep)
     activeTab: 'home',
     dashboardIntroPlayed: true,
     hasVisited: true,
