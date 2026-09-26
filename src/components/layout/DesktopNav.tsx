@@ -49,16 +49,18 @@ export function DesktopNav({ activeTab, onTabChange, onSignOut }: DesktopNavProp
           aria-label="Go to Home"
         >
           <Logo className="h-10 w-10 transition-all" />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
+          {/* Badge under the name, as in the phone header: logo + name + badge do not
+              fit the 256 px sidebar in one row, so the badge wrapped (26 Sep). */}
+          <div className="min-w-0 text-left">
+            <h2 className="text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-white">DriveDE</h2>
+            <div className="mt-1.5 flex items-center gap-2">
               {onTrial ? (
-                <span className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+                <span className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                   <Clock className="h-2.5 w-2.5" />
                   <span className="notranslate">{language === 'de' ? `TEST · ${trialDaysLeft}T` : `TRIAL · ${trialDaysLeft}d`}</span>
                 </span>
               ) : proActive ? (
-                <span className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+                <span className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                   <Crown className="h-2.5 w-2.5" />
                   PRO
                 </span>
