@@ -398,7 +398,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     switch (type) {
       case 'nacht': return 'text-slate-700 bg-slate-100 dark:bg-slate-700/40 dark:text-slate-300';
       case 'autobahn': return 'text-blue-700 bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300';
-      case 'ueberland': return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400';
+      case 'ueberland': return 'text-blue-900 bg-blue-200/60 dark:bg-blue-800/40 dark:text-blue-200';
       default: return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
     }
   };
@@ -2215,7 +2215,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               {isTimerRunning ? (
                 <button
                   onClick={handlePauseTimer}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-amber-600 shadow-lg shadow-amber-500/20 active:scale-95"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm font-bold text-slate-900 dark:text-white transition-all hover:bg-surface-raised shadow-sm active:scale-95"
                 >
                   <Pause className="h-4 w-4" />
                   <span>{t.common.pause}</span>
@@ -2235,12 +2235,9 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
                     }
                   }}
                   data-testid={(activeSession && activeSession.isPaused) ? 'resume-tracking-btn' : 'start-tracking-btn'}
-                  className={cn(
-                    'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition-all shadow-lg active:scale-95',
-                    (!proActive && userProgress.drivingSessions.filter(s => s.route && s.route.length > 0).length >= TRIAL_LIMIT && !(activeSession && activeSession.isPaused))
-                      ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'
-                      : (activeSession && activeSession.isPaused) ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20' : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20'
-                  )}
+                  // Start, Resume and the Pro-locked start are all the one primary action: brand blue.
+                  // Pause is neutral, Stop & Save dark; red stays for mistakes and deleting (26 Sep).
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition-all shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-95"
                 >
                   {(activeSession && activeSession.isPaused) ? (
                     <>
@@ -2268,7 +2265,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               <button
                 onClick={handleStopTimer}
                 disabled={elapsedTime === 0 && !isTimerRunning}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20 active:scale-95"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-slate-900/20 active:scale-95"
               >
                 <Square className="h-4 w-4" />
                 {t.common.stopAndSave}

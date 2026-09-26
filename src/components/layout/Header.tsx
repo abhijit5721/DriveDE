@@ -30,20 +30,26 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-surface pt-safe border-b border-line lg:hidden">
       <div className="mx-auto flex max-w-lg items-center justify-between gap-4 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2 text-left animate-fade-in-up">
+        {/* Name on top, status badges on the line below (in place of the subtitle): on a
+            phone the name, trial badge, Gast badge and three icon buttons do not fit in
+            one row, and the badges wrapped or slid under the globe button (26 Sep). */}
+        <div className="flex min-w-0 items-center gap-3 text-left animate-fade-in-up">
           <button
             onClick={() => onTabChange?.('home')}
-            className="group flex items-center gap-3 active:scale-95 transition-all"
+            className="flex-shrink-0 active:scale-95 transition-all"
             aria-label="Go to Home"
           >
-            <Logo className="h-10 w-10 flex-shrink-0" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
+            <Logo className="h-10 w-10" />
+          </button>
+          <div className="min-w-0">
+            <button onClick={() => onTabChange?.('home')} tabIndex={-1} className="block">
+              <h1 className="truncate text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">DriveDE</h1>
+            </button>
+            <div className="mt-1 flex items-center gap-1.5">
                 {onTrial ? (
                   <span
                     data-testid="trial-badge"
-                    className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm"
+                    className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm"
                   >
                     <Clock className="h-2.5 w-2.5" />
                     <span className="notranslate">
@@ -51,30 +57,30 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
                     </span>
                   </span>
                 ) : proActive ? (
-                  <span className="flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+                  <span className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
                     <Crown className="h-2.5 w-2.5" />
                     <span className="notranslate">PRO</span>
                   </span>
                 ) : null}
-              </div>
-              <p className="truncate text-[11px] font-bold text-muted uppercase tracking-widest mt-0.5">
-                {t.appSubtitle}
-              </p>
+              {/* DRI-60: an anonymous account is one browser wipe away from being lost;
+                  this badge is the always-available way to the Konto form. */}
+              {authStatus === 'signed_in' && authIsAnonymous && (
+                <button
+                  onClick={() => onTabChange?.('account')}
+                  data-testid="guest-badge"
+                  aria-label={ta.guestBadgeLabel}
+                  className="shrink-0 whitespace-nowrap rounded-full border border-amber-400/60 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 active:scale-95 dark:bg-amber-900/30 dark:text-amber-300"
+                >
+                  {ta.guestBadge}
+                </button>
+              )}
+              {!onTrial && !proActive && !(authStatus === 'signed_in' && authIsAnonymous) && (
+                <p className="truncate text-[11px] font-bold text-muted uppercase tracking-widest">
+                  {t.appSubtitle}
+                </p>
+              )}
             </div>
-          </button>
-          {/* DRI-60: an anonymous account is one browser wipe away from being lost;
-              this badge is the always-available way to the Konto form. It sits next
-              to the logo button, not inside it (no nested buttons). */}
-          {authStatus === 'signed_in' && authIsAnonymous && (
-            <button
-              onClick={() => onTabChange?.('account')}
-              data-testid="guest-badge"
-              aria-label={ta.guestBadgeLabel}
-              className="shrink-0 rounded-full border border-amber-400/60 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 active:scale-95 dark:bg-amber-900/30 dark:text-amber-300"
-            >
-              {ta.guestBadge}
-            </button>
-          )}
+          </div>
         </div>
 
         <div className="flex flex-shrink-0 items-center gap-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
