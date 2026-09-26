@@ -189,12 +189,12 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
   return (
     <div className="space-y-6 pb-26 px-4 pt-4 max-w-2xl mx-auto">
       {/* Header Card */}
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 text-white shadow-2xl dark:bg-slate-950">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-brand-surface p-8 text-white shadow-2xl">
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10">
-                <PiggyBank className="h-8 w-8 text-emerald-400" />
+                <PiggyBank className="h-8 w-8 text-blue-300" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold tracking-tight">{t.budget.title}</h2>
@@ -220,7 +220,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
               <p className="text-xs font-semibold text-slate-500">{t.budget.totalGoal}</p>
               {proActive ? (
                 <div className="flex items-baseline justify-end gap-1">
-                  <span className="text-4xl font-bold text-emerald-400">€{estimation.totalEstimate.toLocaleString()}</span>
+                  <span className="text-4xl font-bold text-white">€{estimation.totalEstimate.toLocaleString()}</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-end gap-1">
@@ -275,10 +275,10 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                 <div className="h-1.5 w-1.5 rounded-full bg-blue-800" />
                  <span className="text-xs text-slate-500">{t.budget.specialDrives}</span>
               </div>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{proActive ? estimation.remainingSpecial : '-'}</span>
+              <span className="text-xs font-bold text-slate-900 dark:text-white">{proActive ? estimation.remainingSpecial : '-'}</span>
             </div>
             
             <div className="flex items-center justify-between">
@@ -314,7 +314,7 @@ export function BudgetEstimator({ onOpenPaywall }: BudgetEstimatorProps) {
           className="relative group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
               <Wallet className="h-6 w-6" />
             </div>
             <div>

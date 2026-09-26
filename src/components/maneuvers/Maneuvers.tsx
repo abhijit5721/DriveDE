@@ -82,16 +82,6 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
     }
   };
 
-  const getManeuverColor = (lessonId: string) => {
-    switch (lessonId) {
-      case 'maneuver-1': return 'from-blue-500 to-blue-600';
-      case 'maneuver-2': return 'from-emerald-500 to-emerald-600';
-      case 'maneuver-3': return 'from-blue-700 to-blue-800';
-      case 'maneuver-4': return 'from-red-500 to-red-600';
-      default: return 'from-slate-500 to-slate-600';
-    }
-  };
-
   return (
     <motion.div 
       data-tour="tour-maneuvers"
@@ -137,10 +127,9 @@ export function Maneuvers({ onLessonSelect, onOpenPaywall }: ManeuversProps) {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className={cn(
-                'absolute inset-0 bg-gradient-to-br opacity-90',
-                getManeuverColor(maneuver.id)
-              )} />
+              {/* All four cards share the brand navy: four equal tasks, not four meanings.
+                  Blue/green/indigo/red read as a rainbow, and red as "error" (26 Sep). */}
+              <div className="absolute inset-0 bg-brand-surface" />
               <div className="relative z-10">
                 <div className="flex items-start justify-between">
                   <div className="mb-3">

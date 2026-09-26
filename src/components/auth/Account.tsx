@@ -197,7 +197,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
 
   return (
     <div className="space-y-6 pb-6">
-      <div data-tour="tour-account" className="rounded-2xl bg-slate-900 p-5 text-white shadow-xl dark:bg-slate-800">
+      <div data-tour="tour-account" className="rounded-2xl bg-brand-surface p-5 text-white shadow-xl">
         <div className="flex items-start gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
             {authStatus === 'signed_in' ? <Cloud className="h-7 w-7" /> : <User className="h-7 w-7" />}
@@ -226,8 +226,8 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
         </div>
 
         {authStatus === 'signed_in' && authIsAnonymous && (
-          <div className="mt-4 rounded-2xl border border-amber-400/40 bg-amber-400/10 p-4" data-testid="account-secure-panel">
-            <p className="text-sm font-bold text-amber-200">{t.secureTitle}</p>
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/10 p-4" data-testid="account-secure-panel">
+            <p className="text-sm font-bold text-white">{t.secureTitle}</p>
             {secureSent ? (
               <p className="mt-2 text-sm text-slate-200" data-testid="account-secure-sent">{t.secureSent}</p>
             ) : (
@@ -283,7 +283,7 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <button
                 onClick={onSignOut}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 <LogOut className="h-4 w-4" />
                 <span>{t.signOut}</span>
@@ -602,11 +602,11 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
 
         <button
           onClick={onOpenLegal}
-          className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-left shadow-sm transition hover:shadow-md dark:border-emerald-900/40 dark:bg-emerald-900/10"
+          className="rounded-xl border border-line bg-surface p-4 text-left shadow-sm transition hover:shadow-md"
         >
           <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
-              <FileText className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/40">
+              <FileText className="h-5 w-5 text-blue-700 dark:text-blue-300" />
             </div>
             <div>
               <p className="text-sm font-bold text-slate-900 dark:text-white">{t.privacyLegal}</p>

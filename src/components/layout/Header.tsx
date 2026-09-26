@@ -90,7 +90,7 @@ export function Header({ onSignOut, onTabChange }: HeaderProps) {
             <button
               onClick={onSignOut}
               aria-label={t.nav.signOut}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all active:scale-95 border border-line shadow-sm"
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-raised text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 border border-line shadow-sm"
             >
               <LogOut className="h-5 w-5" />
             </button>
