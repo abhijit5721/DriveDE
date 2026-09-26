@@ -19,6 +19,7 @@ import { DrivingInsights } from './DrivingInsights';
 import { calculateTotalReadiness } from '../../utils/readiness';
 import { HotspotPanel } from './HotspotPanel';
 import packageJson from '../../../package.json';
+import { trackFunnel } from '../../services/AnalyticsService';
 
 interface DashboardProps {
   onNavigate: (tab: TabType) => void;
@@ -117,8 +118,48 @@ export function Dashboard({ onNavigate, onChangePath, onOpenPaywall, onStartSimu
 
   const mistakesCount = (userProgress.incorrectQuestions || []).length;
 
+  // First-step card (26 Sep): PostHog showed new users landing on a 0% dashboard,
+  // tapping Home and the logo, and leaving. Until the first lesson or drive, the top
+  // of the dashboard is one obvious next action instead of an empty overview.
+  const isFirstVisit = completedLessons === 0 && userProgress.drivingSessions.length === 0;
+  const firstLessonId = visibleLessons.some((l) => l.id === 'city-1')
+    ? 'city-1'
+    : (visibleLessons.find((l) => !l.isPremium)?.id ?? null);
+  const fs = language === 'de'
+    ? { eyebrow: 'Dein erster Schritt', title: 'Starte mit Rechts vor links', text: 'Der häufigste Fehler in der praktischen Prüfung. Zwei Minuten, dann weißt du, wo du stehst.', primary: 'Übung starten', drive: 'Erste Fahrstunde eintragen', lessons: 'Alle Lektionen' }
+    : { eyebrow: 'Your first step', title: 'Start with right of way', text: 'The most common mistake in the practical exam. Two minutes, then you know where you stand.', primary: 'Start the exercise', drive: 'Log your first lesson', lessons: 'All lessons' };
+
   return (
     <div className={cn('space-y-8 pb-10', playIntro && 'animate-scale-in')}>
+      {isFirstVisit && firstLessonId && (
+        <div data-testid="first-step-card" className={cn('rounded-3xl border border-blue-200 bg-white p-6 shadow-xl shadow-blue-500/10 dark:border-blue-900 dark:bg-slate-900', introClass)}>
+          <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400">{fs.eyebrow}</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{fs.title}</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{fs.text}</p>
+          <button
+            onClick={() => { trackFunnel('first_step_click', { action: 'lesson', lesson: firstLessonId }); onDirectLessonSelect(firstLessonId); }}
+            data-testid="first-step-start"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-4 text-base font-bold text-white shadow-lg shadow-blue-500/25 transition hover:bg-blue-500 active:scale-[0.98]"
+          >
+            <TrafficCone className="h-5 w-5" />
+            {fs.primary}
+          </button>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              onClick={() => { trackFunnel('first_step_click', { action: 'tracker' }); onNavigate('tracker'); }}
+              className="rounded-2xl border border-slate-200 px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              {fs.drive}
+            </button>
+            <button
+              onClick={() => { trackFunnel('first_step_click', { action: 'curriculum' }); onNavigate('curriculum'); }}
+              className="rounded-2xl border border-slate-200 px-3 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              {fs.lessons}
+            </button>
+          </div>
+        </div>
+      )}
       {/* Premium Hero Section: Exam Readiness & Path */}
       <div data-tour="readiness" className={cn('overflow-hidden rounded-3xl glass shadow-2xl shadow-blue-500/10', introClass)}>
         <div className="bg-blue-600 p-8 text-white relative overflow-hidden">

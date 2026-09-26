@@ -21,6 +21,7 @@
  *   google_completed     back from Google and signed in (props: new_account)
  *   auth_error           Google/Supabase returned an error in the URL (props: code, from)
  *   account_secured      an anonymous account now has an email or Google identity (props: via)
+ *   first_step_click     a new user used the dashboard's first-step card (props: action, lesson)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -299,7 +300,8 @@ export type FunnelEvent =
   | 'google_started'
   | 'google_completed'
   | 'auth_error'
-  | 'account_secured';
+  | 'account_secured'
+  | 'first_step_click';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,
