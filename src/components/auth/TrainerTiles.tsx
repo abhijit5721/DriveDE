@@ -16,59 +16,109 @@ interface TrainerTilesProps {
   onLockedAccount: () => void;
 }
 
-function IntersectionArt() {
+/* One art style for all four tiles (27 Sep): the brand navy surface of the hero,
+   dark roads with faint markings, YOUR car in brand blue and every other car in
+   muted slate. The tiles used to be mint, grey and light blue with red, green and
+   yellow accents, four looks that matched nothing else on the page. */
+const ART = {
+  road: '#1e293b',
+  edge: '#334155',
+  mark: 'rgba(255,255,255,0.28)',
+  you: '#3b82f6',
+  youGlow: 'rgba(59,130,246,0.45)',
+  other: '#64748b',
+  hint: '#93c5fd',
+};
+
+function ArtFrame({ id, children }: { id: string; children: React.ReactNode }) {
   return (
     <svg viewBox="0 0 120 120" className="h-full w-full" aria-hidden="true">
-      <rect width="120" height="120" fill="#dcfce7" />
-      <rect x="45" y="0" width="30" height="120" fill="#334155" />
-      <rect x="0" y="45" width="120" height="30" fill="#334155" />
-      <rect x="45" y="45" width="30" height="30" fill="none" stroke="#fff" strokeWidth="1.5" />
-      <rect x="80" y="54" width="18" height="12" rx="3" fill="#3b82f6" />
-      <rect x="54" y="82" width="12" height="18" rx="3" fill="#ef4444" />
+      <defs>
+        <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0b1220" />
+          <stop offset="55%" stopColor="#12234d" />
+          <stop offset="100%" stopColor="#1e3a8a" />
+        </linearGradient>
+        <filter id={`${id}-glow`} x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor={ART.youGlow} />
+        </filter>
+      </defs>
+      <rect width="120" height="120" fill={`url(#${id}-bg)`} />
+      {children}
     </svg>
+  );
+}
+
+/** Your car: brand blue with a soft glow, so it is the first thing the eye finds. */
+function YouCar({ id, x, y, w, h, rotate }: { id: string; x: number; y: number; w: number; h: number; rotate?: string }) {
+  return <rect x={x} y={y} width={w} height={h} rx="3" fill={ART.you} filter={`url(#${id}-glow)`} transform={rotate} />;
+}
+
+function IntersectionArt() {
+  const id = 'art-vorfahrt';
+  return (
+    <ArtFrame id={id}>
+      <rect x="45" y="0" width="30" height="120" fill={ART.road} />
+      <rect x="0" y="45" width="120" height="30" fill={ART.road} />
+      <path d="M60 0 V40 M60 80 V120 M0 60 H40 M80 60 H120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="4 4" />
+      <rect x="45" y="45" width="30" height="30" fill="none" stroke={ART.edge} strokeWidth="1" />
+      {/* the car from the right has priority; you wait at the bottom */}
+      <rect x="82" y="47" width="18" height="11" rx="3" fill={ART.other} />
+      <YouCar id={id} x={62} y={84} w={11} h={18} />
+    </ArtFrame>
   );
 }
 
 function RoundaboutArt() {
+  const id = 'art-roundabout';
   return (
-    <svg viewBox="0 0 120 120" className="h-full w-full" aria-hidden="true">
-      <rect width="120" height="120" fill="#dcfce7" />
-      <rect x="48" y="0" width="24" height="120" fill="#334155" />
-      <rect x="0" y="48" width="120" height="24" fill="#334155" />
-      {/* One circular lane, no marking inside it; the light band is the Innenring
+    <ArtFrame id={id}>
+      <rect x="48" y="0" width="24" height="120" fill={ART.road} />
+      <rect x="0" y="48" width="120" height="24" fill={ART.road} />
+      {/* One circular lane, no marking inside it; the lighter band is the Innenring
           (overrun strip for long vehicles), not a lane divider. */}
-      <circle cx="60" cy="60" r="40" fill="#334155" />
-      <circle cx="60" cy="60" r="26" fill="#94a3b8" />
-      <circle cx="60" cy="60" r="21" fill="#15803d" />
-      <rect x="54" y="92" width="12" height="18" rx="3" fill="#ef4444" />
-    </svg>
+      <circle cx="60" cy="60" r="40" fill={ART.road} />
+      <circle cx="60" cy="60" r="26" fill={ART.edge} />
+      <circle cx="60" cy="60" r="21" fill="#12234d" />
+      {/* anticlockwise, passing the island on its right */}
+      <path d="M 88 44 A 33 33 0 0 0 44 32" fill="none" stroke={ART.hint} strokeWidth="1.5" strokeDasharray="3 3" opacity="0.8" />
+      <rect x="84" y="46" width="11" height="17" rx="3" fill={ART.other} transform="rotate(-30 89 54)" />
+      <YouCar id={id} x={54} y={92} w={12} h={18} />
+    </ArtFrame>
   );
 }
 
 function ParkingArt() {
+  const id = 'art-parking';
   return (
-    <svg viewBox="0 0 120 120" className="h-full w-full" aria-hidden="true">
-      <rect width="120" height="120" fill="#e2e8f0" />
-      <rect x="0" y="0" width="120" height="22" fill="#94a3b8" />
-      <rect x="8" y="28" width="30" height="16" rx="4" fill="#0f172a" />
-      <rect x="82" y="28" width="30" height="16" rx="4" fill="#c2a878" />
-      <rect x="40" y="62" width="30" height="16" rx="4" fill="#16a34a" transform="rotate(25 55 70)" />
-      <path d="M 70 68 Q 60 40 62 34" fill="none" stroke="#2563eb" strokeWidth="2" strokeDasharray="3 3" />
-    </svg>
+    <ArtFrame id={id}>
+      <rect x="0" y="0" width="120" height="20" fill="#0b1220" opacity="0.6" />
+      <path d="M0 20 H120" stroke={ART.edge} strokeWidth="2" />
+      <rect x="0" y="22" width="120" height="98" fill={ART.road} opacity="0.55" />
+      <path d="M0 96 H120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="6 5" />
+      <rect x="8" y="28" width="30" height="16" rx="4" fill={ART.other} />
+      <rect x="82" y="28" width="30" height="16" rx="4" fill={ART.other} />
+      <path d="M 70 68 Q 60 40 62 34" fill="none" stroke={ART.hint} strokeWidth="2" strokeDasharray="3 3" />
+      <YouCar id={id} x={40} y={62} w={30} h={16} rotate="rotate(25 55 70)" />
+    </ArtFrame>
   );
 }
 
 function MirrorArt() {
+  const id = 'art-mirror';
   return (
-    <svg viewBox="0 0 120 120" className="h-full w-full" aria-hidden="true">
-      <rect width="120" height="120" fill="#e0f2fe" />
-      <rect x="20" y="70" width="80" height="30" rx="8" fill="#1e293b" />
-      <rect x="30" y="40" width="60" height="30" rx="6" fill="#0f172a" />
-      <rect x="12" y="50" width="14" height="8" rx="2" fill="#1e293b" />
-      <rect x="94" y="50" width="14" height="8" rx="2" fill="#1e293b" />
-      <circle cx="60" cy="55" r="7" fill="#fbbf24" />
-      <path d="M 60 55 L 96 30" stroke="#fbbf24" strokeWidth="2" strokeDasharray="3 3" />
-    </svg>
+    <ArtFrame id={id}>
+      {/* your car seen from above: the head turns, the sight line reaches the blind spot */}
+      <rect x="0" y="0" width="120" height="120" fill={ART.road} opacity="0.35" />
+      <path d="M78 0 V120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="6 5" />
+      <rect x="40" y="50" width="30" height="48" rx="8" fill={ART.you} filter={`url(#${id}-glow)`} />
+      <rect x="44" y="58" width="22" height="13" rx="3" fill="#0b1220" opacity="0.55" />
+      <rect x="35" y="62" width="6" height="4" rx="1.5" fill={ART.you} />
+      <rect x="69" y="62" width="6" height="4" rx="1.5" fill={ART.you} />
+      <circle cx="55" cy="64" r="4" fill="#e2e8f0" />
+      <path d="M 58 66 L 88 84" stroke={ART.hint} strokeWidth="2" strokeDasharray="3 3" />
+      <rect x="84" y="80" width="16" height="26" rx="4" fill={ART.other} />
+    </ArtFrame>
   );
 }
 
