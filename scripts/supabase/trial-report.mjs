@@ -7,7 +7,8 @@
  * Counts anonymous vs. secured accounts, trials running / expired, and how many
  * anonymous accounts expired without ever adding an email. Runs one SQL query
  * through the Management API with the CLI login token (~/.supabase/access-token
- * or SUPABASE_ACCESS_TOKEN). Decision rule agreed 22 Sep: stay with the plain
+ * or SUPABASE_ACCESS_TOKEN). Accounts tagged own_traffic (founder devices marked with
+ * ?noanalytics, local test runs) are left out. Decision rule agreed 22 Sep: stay with the plain
  * 7-day anonymous trial (option A) unless expired-without-email accounts pile
  * up week over week, then switch to the two-stage trial (option B).
  */
@@ -26,6 +27,8 @@ with acc as (
          p.trial_started_at, p.trial_ends_at, p.is_premium
   from auth.users u
   left join public.profiles_secure p on p.id = u.id
+  -- own devices and local test runs (tagged by signInAnonymously since 27 Sep) never count
+  where coalesce(u.raw_user_meta_data->>'own_traffic', '') <> 'true'
 )
 select
   count(*)                                                          as accounts_total,
