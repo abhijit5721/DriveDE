@@ -21,12 +21,12 @@ interface TrainerTilesProps {
    muted slate. The tiles used to be mint, grey and light blue with red, green and
    yellow accents, four looks that matched nothing else on the page. */
 const ART = {
-  road: '#1e293b',
-  edge: '#334155',
-  mark: 'rgba(255,255,255,0.28)',
+  road: '#3b4a61', // lighter than the navy ground, so the roads read at a glance
+  edge: '#64748b', // kerb line along every road
+  mark: 'rgba(255,255,255,0.6)',
   you: '#3b82f6',
   youGlow: 'rgba(59,130,246,0.45)',
-  other: '#64748b',
+  other: '#cbd5e1', // light slate: clear on the road, still quieter than your blue car
   hint: '#93c5fd',
 };
 
@@ -60,8 +60,8 @@ function IntersectionArt() {
     <ArtFrame id={id}>
       <rect x="45" y="0" width="30" height="120" fill={ART.road} />
       <rect x="0" y="45" width="120" height="30" fill={ART.road} />
+      <path d="M45 0 V45 H0 M75 0 V45 H120 M45 120 V75 H0 M75 120 V75 H120" fill="none" stroke={ART.edge} strokeWidth="1.5" />
       <path d="M60 0 V40 M60 80 V120 M0 60 H40 M80 60 H120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="4 4" />
-      <rect x="45" y="45" width="30" height="30" fill="none" stroke={ART.edge} strokeWidth="1" />
       {/* the car from the right has priority; you wait at the bottom */}
       <rect x="82" y="47" width="18" height="11" rx="3" fill={ART.other} />
       <YouCar id={id} x={62} y={84} w={11} h={18} />
@@ -78,8 +78,8 @@ function RoundaboutArt() {
       {/* One circular lane, no marking inside it; the lighter band is the Innenring
           (overrun strip for long vehicles), not a lane divider. */}
       <circle cx="60" cy="60" r="40" fill={ART.road} />
-      <circle cx="60" cy="60" r="26" fill={ART.edge} />
-      <circle cx="60" cy="60" r="21" fill="#12234d" />
+      <circle cx="60" cy="60" r="26" fill="#52627a" />
+      <circle cx="60" cy="60" r="21" fill="#12234d" stroke={ART.edge} strokeWidth="1.5" />
       {/* anticlockwise, passing the island on its right */}
       <path d="M 88 44 A 33 33 0 0 0 44 32" fill="none" stroke={ART.hint} strokeWidth="1.5" strokeDasharray="3 3" opacity="0.8" />
       <rect x="84" y="46" width="11" height="17" rx="3" fill={ART.other} transform="rotate(-30 89 54)" />
@@ -92,14 +92,18 @@ function ParkingArt() {
   const id = 'art-parking';
   return (
     <ArtFrame id={id}>
+      {/* drawn with the kerb at the bottom, on the car's right (right-hand traffic),
+          like the parking simulator; the group mirrors the original top-kerb drawing */}
+      <g transform="translate(0 120) scale(1 -1)">
       <rect x="0" y="0" width="120" height="20" fill="#0b1220" opacity="0.6" />
       <path d="M0 20 H120" stroke={ART.edge} strokeWidth="2" />
-      <rect x="0" y="22" width="120" height="98" fill={ART.road} opacity="0.55" />
+      <rect x="0" y="22" width="120" height="98" fill={ART.road} />
       <path d="M0 96 H120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="6 5" />
       <rect x="8" y="28" width="30" height="16" rx="4" fill={ART.other} />
       <rect x="82" y="28" width="30" height="16" rx="4" fill={ART.other} />
       <path d="M 70 68 Q 60 40 62 34" fill="none" stroke={ART.hint} strokeWidth="2" strokeDasharray="3 3" />
       <YouCar id={id} x={40} y={62} w={30} h={16} rotate="rotate(25 55 70)" />
+      </g>
     </ArtFrame>
   );
 }
@@ -109,7 +113,8 @@ function MirrorArt() {
   return (
     <ArtFrame id={id}>
       {/* your car seen from above: the head turns, the sight line reaches the blind spot */}
-      <rect x="0" y="0" width="120" height="120" fill={ART.road} opacity="0.35" />
+      <rect x="12" y="0" width="100" height="120" fill={ART.road} />
+      <path d="M12 0 V120 M112 0 V120" stroke={ART.edge} strokeWidth="1.5" />
       <path d="M78 0 V120" stroke={ART.mark} strokeWidth="1.2" strokeDasharray="6 5" />
       <rect x="40" y="50" width="30" height="48" rx="8" fill={ART.you} filter={`url(#${id}-glow)`} />
       <rect x="44" y="58" width="22" height="13" rx="3" fill="#0b1220" opacity="0.55" />
