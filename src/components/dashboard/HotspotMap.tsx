@@ -61,7 +61,8 @@ export function HotspotMap({ lat = 52.52, lng = 13.405, onClose }: HotspotMapPro
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col bg-white dark:bg-slate-950">
+    // safe-area padding: the close button sat under the iPhone notch (same trap as the exam simulation)
+    <div className="fixed inset-0 z-[9999] flex flex-col bg-white dark:bg-slate-950" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <MapPin className="h-5 w-5 text-red-500" />

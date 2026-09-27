@@ -278,6 +278,8 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           className="absolute left-0 right-0 top-0 z-[100] bg-blue-600 pb-3 pt-10 shadow-lg dark:bg-blue-700"
+          // clears the iPhone notch/status bar (edge-to-edge layout), at least the old 40px
+          style={{ paddingTop: 'max(2.5rem, calc(env(safe-area-inset-top) + 0.75rem))' }}
         >
           <div className="flex items-start px-6">
             <div className="mr-5 flex flex-col items-center">

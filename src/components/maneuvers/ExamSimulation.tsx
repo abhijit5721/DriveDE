@@ -75,12 +75,20 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
   };
 
   return (
-    <div className="flex h-full flex-col bg-slate-900 text-white">
+    // Full-screen layer with safe-area padding: the app runs edge to edge
+    // (viewport-fit=cover, black-translucent status bar), so on an iPhone in portrait the
+    // old header sat under the notch and the back button could not be tapped; users had
+    // to rotate the phone to get out (26 Sep). It also filled only half the screen.
+    <div
+      className="fixed inset-0 z-[80] flex flex-col overflow-y-auto bg-brand-surface text-white"
+      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      data-testid="exam-simulation"
+    >
       <header className="flex items-center p-4">
-        <button onClick={onBack} className="p-2">
+        <button onClick={onBack} aria-label="Zurück" data-testid="exam-simulation-back" className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/10 transition hover:bg-white/15 active:scale-95">
           <ChevronLeft className="h-6 w-6" />
         </button>
-        <h2 className="ml-4 text-lg font-bold">Prüfungssimulation</h2>
+        <h2 className="ml-3 text-lg font-bold">Prüfungssimulation</h2>
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center p-8 text-center">
@@ -109,7 +117,7 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
           {!isSimulating ? (
             <button
               onClick={startSimulation}
-              className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-green-600"
+              className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
             >
               <Play className="h-6 w-6" />
               Simulation starten
@@ -118,14 +126,14 @@ export default function ExamSimulation({ onBack }: ExamSimulationProps) {
             <>
               <button
                 onClick={stopSimulation}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-red-600"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-white/10"
               >
                 <Square className="h-6 w-6" />
                 Beenden
               </button>
               <button
                 onClick={nextCommand}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-600"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-4 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
               >
                 Nächster Befehl
                 <ChevronRight className="h-6 w-6" />
