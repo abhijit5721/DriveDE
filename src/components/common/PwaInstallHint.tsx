@@ -13,18 +13,35 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
 }
 
+/** In-app browsers (Facebook, Instagram, TikTok, ...) have no "Add to Home Screen" at
+ *  all, and most of our visitors arrive through Facebook: the iOS instructions led
+ *  nowhere there (27 Sep). */
+const IN_APP_BROWSER = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Line\/|Twitter|LinkedInApp|Snapchat|TikTok|musical_ly|Bytedance|Pinterest|GSA\//i;
+
+type IosBrowser = 'safari' | 'chrome' | 'edge';
+
+/** Only browsers where Share, then Add to Home Screen exists (Chrome and Edge since iOS 16.4). */
+function iosBrowser(ua: string): IosBrowser | null {
+  if (/CriOS/i.test(ua)) return 'chrome';
+  if (/EdgiOS/i.test(ua)) return 'edge';
+  if (/FxiOS|OPiOS|OPT\/|YaBrowser|DuckDuckGo|Brave/i.test(ua)) return null;
+  return /Safari/i.test(ua) ? 'safari' : null;
+}
+
 /**
  * DriveDE isn't in the app stores yet, and iOS never prompts for PWA install —
  * so mobile visitors have no idea the site installs like an app. This is a
  * small dismissible banner: on iOS it explains Share → Add to Home Screen; on
  * Android/Chrome it triggers the native install prompt. Hidden when already
- * running installed, on desktop, and after dismissal.
+ * running installed, on desktop, in in-app browsers (Facebook, Instagram, ...),
+ * in iOS browsers without Add to Home Screen, and after dismissal.
  */
 export function PwaInstallHint() {
   const { language } = useAppStore();
   const isDe = language === 'de';
   const [visible, setVisible] = useState(false);
   const [isIos, setIsIos] = useState(false);
+  const [iosKind, setIosKind] = useState<IosBrowser>('safari');
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -38,9 +55,13 @@ export function PwaInstallHint() {
     const ios = /iphone|ipad|ipod/i.test(ua);
     const mobile = ios || /android/i.test(ua);
     if (!mobile) return;
+    if (IN_APP_BROWSER.test(ua)) return; // no install option there
 
     setIsIos(ios);
     if (ios) {
+      const kind = iosBrowser(ua);
+      if (!kind) return; // a browser without Add to Home Screen
+      setIosKind(kind);
       setVisible(true);
     } else {
       // Android: only show when the browser actually offers installation
@@ -81,7 +102,9 @@ export function PwaInstallHint() {
         {isIos ? (
           <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-slate-500">
             <Share className="h-3.5 w-3.5 shrink-0 text-blue-600" />
-            {isDe ? 'Teilen antippen, dann' : 'Tap Share, then'}
+            {iosKind === 'chrome'
+              ? (isDe ? 'Teilen oben rechts antippen, dann' : 'Tap Share at the top right, then')
+              : (isDe ? 'Teilen antippen, dann' : 'Tap Share, then')}
             <PlusSquare className="h-3.5 w-3.5 shrink-0 text-blue-600" />
             {isDe ? '„Zum Home-Bildschirm"' : '"Add to Home Screen"'}
           </p>
