@@ -4,7 +4,7 @@ import { loadFont } from '@remotion/google-fonts/Inter';
 
 const { fontFamily } = loadFont();
 
-/** Lower-third caption pill with spring slide-up. Highlights €-amounts and numbers in emerald. */
+/** Lower-third caption pill with spring slide-up. Highlights €-amounts and numbers in brand blue (emerald until 27 Sep: green on a cost reads as good). */
 export const Caption: React.FC<{ text: string; delay?: number }> = ({ text, delay = 8 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -45,7 +45,7 @@ export const Caption: React.FC<{ text: string; delay?: number }> = ({ text, dela
       >
         {parts.map((part, i) =>
           /^(€?\d|GPS|3D|KI|AI)/.test(part) ? (
-            <span key={i} style={{ color: '#34d399', fontWeight: 800 }}>{part}</span>
+            <span key={i} style={{ color: '#60a5fa', fontWeight: 800 }}>{part}</span>
           ) : (
             <React.Fragment key={i}>{part}</React.Fragment>
           )

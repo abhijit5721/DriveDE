@@ -13,22 +13,22 @@ VOICES = {"en": "en-US-AndrewNeural", "de": "de-DE-FlorianMultilingualNeural"}
 
 LINES = {
     "en": {
-        "hook": "Meet DriveDE — the fastest way to your German driving license.",
+        "hook": "Meet DriveDE, your practice partner for the German driving test.",
         "tracker": "Track every real driving lesson with GPS, and log mistakes with a single tap for your review afterwards.",
-        "readiness": "After each drive, your exam readiness score updates — so you know exactly when you're ready. No gut feeling.",
+        "readiness": "After each drive, your exam readiness updates, so you can see what still needs work.",
         "curriculum": "Follow a structured path through every chapter, every Sonderfahrt, and every maneuver.",
-        "maneuvers": "And practice parking in 3D — before you're in the real car.",
-        "devices": "One account — phone, tablet, and desktop.",
-        "cta": "DriveDE saves you up to 1200 euros on lessons. Start your free 7 day trial at drive dee ee dot app.",
+        "maneuvers": "And go through every maneuver step by step, before you're in the real car.",
+        "devices": "It runs in your browser, on phone and laptop.",
+        "cta": "A failed test can quickly cost up to 600 euros. Start free at drive dee ee dot app.",
     },
     "de": {
-        "hook": "Das ist DriveDE — der schnellste Weg zum deutschen Führerschein.",
+        "hook": "Das ist DriveDE, dein Übungspartner für die Führerscheinprüfung.",
         "tracker": "Tracke jede echte Fahrstunde per GPS und halte Fehler mit einem Tipp für die Auswertung fest.",
-        "readiness": "Nach jeder Fahrt aktualisiert sich dein Prüfungs-Score — du weißt genau, wann du bereit bist. Kein Bauchgefühl.",
+        "readiness": "Nach jeder Fahrt aktualisiert sich deine Prüfungsreife, so siehst du, woran du noch arbeiten musst.",
         "curriculum": "Folge einem klaren Weg durch alle Kapitel, Sonderfahrten und Manöver.",
-        "maneuvers": "Und übe das Einparken in 3D — bevor du im echten Auto sitzt.",
-        "devices": "Ein Konto — Handy, Tablet und Desktop.",
-        "cta": "DriveDE spart dir 800 bis 1200 Euro an Fahrstunden. Teste Pro 7 Tage kostenlos — auf drive dee eeh punkt app.",
+        "maneuvers": "Und geh jedes Manöver Schritt für Schritt durch, bevor du im echten Auto sitzt.",
+        "devices": "Läuft im Browser, auf Handy und Laptop.",
+        "cta": "Ein Fehlversuch kostet schnell bis zu 600 Euro. Starte kostenlos auf drive dee eeh punkt app.",
     },
 }
 

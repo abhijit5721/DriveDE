@@ -29,6 +29,8 @@ type SceneName = 'tracker' | 'readiness' | 'curriculum' | 'maneuvers' | 'cockpit
 async function seedState(page: Page, lang: Lang) {
   const fixture = JSON.parse(await readFile(FIXTURE, 'utf-8'));
   fixture.state.language = lang;
+  // dark mode, as on the landing screenshots (scripts/app-screenshots.mjs), 27 Sep
+  fixture.state.darkMode = true;
   const value = JSON.stringify(fixture);
   await page.goto(`${BASE}/robots.txt`);
   await page.evaluate((val) => {
@@ -404,13 +406,9 @@ const scenes: Record<SceneName, (page: Page, cdp: CDPSession, dir: string) => Pr
     await page.waitForTimeout(400);
     await openBtn.click();
     await page.waitForTimeout(800);
-    // play button: the sky-blue (#38BDF8) control in AnimatedManeuver — no testid, find by bg color
+    // play button (data-testid since 27 Sep: matching it by colour also hit the blue tab)
     const clicked = await page.evaluate(() => {
-      const btns = Array.from(document.querySelectorAll<HTMLElement>('button'));
-      const play = btns.find((b) => {
-        const bg = getComputedStyle(b).backgroundColor;
-        return bg === 'rgb(56, 189, 248)';
-      });
+      const play = document.querySelector<HTMLElement>('[data-testid="maneuver-play"]');
       if (!play) return false;
       play.scrollIntoView({ block: 'center' });
       play.click();
@@ -418,7 +416,7 @@ const scenes: Record<SceneName, (page: Page, cdp: CDPSession, dir: string) => Pr
     });
     if (!clicked) {
       await page.screenshot({ path: path.join(dir, '..', 'maneuvers-debug.png') });
-      throw new Error('maneuvers: play button (#38BDF8) not found — see maneuvers-debug.png');
+      throw new Error('maneuvers: play button [data-testid=maneuver-play] not found, see maneuvers-debug.png');
     }
     await page.waitForTimeout(300);
     await freeze(cdp);

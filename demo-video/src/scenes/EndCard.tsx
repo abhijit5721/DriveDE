@@ -39,7 +39,7 @@ export const EndCard: React.FC<{ title: string; sub: string; domain: string }> =
         >
           {title.split(/(€?\d[\d.,–]*\s?€?)/g).map((part, i) =>
             /^€?\d/.test(part) ? (
-              <span key={i} style={{ color: '#34d399' }}>{part}</span>
+              <span key={i} style={{ color: '#60a5fa' }}>{part}</span>
             ) : (
               <React.Fragment key={i}>{part}</React.Fragment>
             )

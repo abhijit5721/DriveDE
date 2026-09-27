@@ -1,4 +1,5 @@
-/** Captions per language. Honesty rules (DRI-14): real footage, concrete numbers, no "guaranteed pass". */
+/** Captions per language. Honesty rules (DRI-14): real footage, concrete numbers, no "guaranteed pass".
+ *  27 Sep: aligned with the landing page (600 € failed attempt, one-time passes), no 3D and no app-store claims. */
 export type Lang = 'de' | 'en';
 
 export const COPY: Record<Lang, {
@@ -13,25 +14,25 @@ export const COPY: Record<Lang, {
   domain: string;
 }> = {
   en: {
-    hook: 'Know the exact day you’re ready to pass your Fahrprüfung.',
+    hook: 'Practise the situations most learners fail on.',
     tracker: 'Track every real lesson: GPS route + one-tap mistake log',
-    readiness: 'An objective exam-readiness score. Not a gut feeling.',
+    readiness: 'Your exam readiness after every drive, in clear numbers',
     curriculum: 'A structured path through every Sonderfahrt & maneuver',
-    maneuvers: 'Practice Einparken in 3D, before the real car',
-    devices: 'Everything syncs: Web, iOS & Android',
-    ctaTitle: 'Save €800-€1,200 on driving lessons.',
-    ctaSub: '7-day free Pro trial · No credit card required',
+    maneuvers: 'Every maneuver step by step, before the real car',
+    devices: 'In the browser on phone and laptop, nothing to install',
+    ctaTitle: 'A failed test can quickly cost up to €600.',
+    ctaSub: 'Free to start · Pro passes from €9.99 one-time, no subscription',
     domain: 'drivede.app',
   },
   de: {
-    hook: 'Wisse genau, wann du bereit für die Fahrprüfung bist.',
+    hook: 'Übe die Situationen, an denen die meisten scheitern.',
     tracker: 'Jede Fahrstunde tracken: GPS-Route + Fehler-Log per Tipp',
-    readiness: 'Objektiver Prüfungs-Score. Kein Bauchgefühl.',
+    readiness: 'Deine Prüfungsreife nach jeder Fahrt, klar in Zahlen',
     curriculum: 'Strukturierter Weg durch alle Sonderfahrten & Manöver',
-    maneuvers: 'Einparken in 3D üben, vor dem echten Auto',
-    devices: 'Alles synchron: Web, iOS & Android',
-    ctaTitle: 'Spare 800-1.200 € an Fahrstunden.',
-    ctaSub: '7 Tage Pro gratis testen · Keine Kreditkarte nötig',
+    maneuvers: 'Jedes Manöver Schritt für Schritt, vor dem echten Auto',
+    devices: 'Im Browser auf Handy und Laptop, ohne Installation',
+    ctaTitle: 'Ein Fehlversuch kostet schnell bis zu 600 €.',
+    ctaSub: 'Kostenlos starten · Pro-Pässe ab 9,99 € einmalig, kein Abo',
     domain: 'drivede.app',
   },
 };
