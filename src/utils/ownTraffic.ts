@@ -34,3 +34,18 @@ export function applyOwnTrafficFlagFromUrl(search: string = typeof window !== 'u
   } catch { /* storage blocked: nothing to remember */ }
   return isOwnTraffic();
 }
+
+/**
+ * Staging, preview deployments (*.vercel.app) and local dev share the production
+ * database and analytics projects, but only the founder and our test runs ever open
+ * them: 27 Sep, 12 of 17 PostHog "anonymous starts" came from staging links. Treated
+ * like ?noanalytics everywhere. The native app (Capacitor serves from localhost) is
+ * real traffic and stays counted.
+ */
+export function isInternalHost(hostname: string = typeof window !== 'undefined' ? window.location.hostname : ''): boolean {
+  try {
+    const cap = (typeof window !== 'undefined' ? (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor : undefined);
+    if (cap?.isNativePlatform?.()) return false;
+  } catch { /* not native */ }
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.vercel.app');
+}

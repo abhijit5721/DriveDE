@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { OWN_TRAFFIC_KEY, applyOwnTrafficFlagFromUrl, isOwnTraffic } from './ownTraffic';
+import { OWN_TRAFFIC_KEY, applyOwnTrafficFlagFromUrl, isInternalHost, isOwnTraffic } from './ownTraffic';
 
 // Node's experimental localStorage global shadows jsdom's here (no clear()), so use a plain map.
 const memoryStorage = (): Storage => {
@@ -38,5 +38,16 @@ describe('ownTraffic', () => {
     vi.stubGlobal('localStorage', { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } });
     expect(isOwnTraffic()).toBe(false);
     expect(applyOwnTrafficFlagFromUrl('?noanalytics')).toBe(false);
+  });
+});
+
+describe('isInternalHost', () => {
+  it('treats staging, previews and local dev as internal, the real site as real', () => {
+    expect(isInternalHost('drive-de-git-staging-abhishek572021-9716s-projects.vercel.app')).toBe(true);
+    expect(isInternalHost('drive-95mjwrxhj-abhishek572021-9716s-projects.vercel.app')).toBe(true);
+    expect(isInternalHost('localhost')).toBe(true);
+    expect(isInternalHost('127.0.0.1')).toBe(true);
+    expect(isInternalHost('www.drivede.app')).toBe(false);
+    expect(isInternalHost('drivede.app')).toBe(false);
   });
 });

@@ -7,7 +7,7 @@ import type { Provider, Session, User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { Capacitor } from '@capacitor/core';
 import { toast } from 'react-hot-toast';
-import { isOwnTraffic } from '../utils/ownTraffic';
+import { isInternalHost, isOwnTraffic } from '../utils/ownTraffic';
 
 export async function getCurrentSession(): Promise<Session | null> {
   if (!isSupabaseConfigured || !supabase) return null;
@@ -165,11 +165,11 @@ export function registerEmailLocally(email: string): void {
  */
 export async function signInAnonymously(): Promise<{ user: User; error?: undefined } | { user?: undefined; error: Error }> {
   if (!isSupabaseConfigured || !supabase) return { error: new Error('supabase-not-configured') };
-  // Accounts from the founder's marked devices (?noanalytics) and from local test runs
-  // (localhost shares the production database) carry own_traffic, so the account
-  // report can leave them out (27 Sep: test runs had created real-looking accounts).
-  const host = typeof window !== 'undefined' ? window.location.hostname : '';
-  const own = isOwnTraffic() || host === 'localhost' || host === '127.0.0.1';
+  // Accounts from the founder's marked devices (?noanalytics), staging/preview links and
+  // local test runs carry own_traffic, so the account
+  // report can leave them out (27 Sep: test runs and staging reviews had created
+  // real-looking accounts; staging and previews share the production database).
+  const own = isOwnTraffic() || isInternalHost();
   const { data, error } = await supabase.auth.signInAnonymously(own ? { options: { data: { own_traffic: true } } } : undefined);
   if (error || !data.user) return { error: error ?? new Error('anonymous-sign-in-failed') };
   return { user: data.user };

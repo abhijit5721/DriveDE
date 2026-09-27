@@ -31,7 +31,7 @@
 import type { PostHog } from 'posthog-js';
 import { track } from '@vercel/analytics';
 import { useAppStore } from '../store/useAppStore';
-import { isOwnTraffic } from '../utils/ownTraffic';
+import { isInternalHost, isOwnTraffic } from '../utils/ownTraffic';
 
 // Configuration from environment variables
 const GA4_MEASUREMENT_ID = import.meta.env.VITE_GA4_ID;
@@ -61,8 +61,8 @@ class AnalyticsService {
    */
   public init() {
     // The founder's devices and our test runs: no PostHog, GA4 or Meta at all.
-    if (isOwnTraffic()) {
-      console.log('[AnalyticsService] Own traffic, analytics stay off.');
+    if (isOwnTraffic() || isInternalHost()) {
+      console.log('[AnalyticsService] Own traffic or staging/preview/local host, analytics stay off.');
       return;
     }
     if (typeof window === 'undefined') return;
@@ -309,7 +309,7 @@ export type FunnelEvent =
  * Never throws: analytics must not be able to break the page.
  */
 export function trackFunnel(event: FunnelEvent, props: Record<string, string | number | boolean> = {}) {
-  if (typeof window === 'undefined' || isOwnTraffic()) return;
+  if (typeof window === 'undefined' || isOwnTraffic() || isInternalHost()) return;
   const params = new URLSearchParams(window.location.search);
   const enriched = {
     ...props,
