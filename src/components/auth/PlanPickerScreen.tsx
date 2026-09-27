@@ -78,7 +78,7 @@ const PLAN_CONFIG = {
       { text: 'GPS Live-Fahrtracking & Fahrtenbuch', badge: 'GPS' },
       { text: 'Fehlerprotokoll & Auswertung nach der Fahrt', badge: 'Analyse' },
       { text: 'Fahrt-Auswertung nach jeder Fahrt', badge: 'Report' },
-      { text: '3D-Einparktrainer & Prüfungs-Simulationen', badge: '3D' },
+      { text: 'Einpark- & Vorfahrt-Trainer, Prüfungsszenarien', badge: 'Trainer' },
       { text: 'Fahrbereitschafts- & Fortschritts-Score', badge: 'Score' },
     ],
     ctaPlan: (planLabel: string) => `Mit ${planLabel} 7 Tage kostenlos testen →`,

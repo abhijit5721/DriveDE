@@ -1,6 +1,6 @@
 ---
 title: How to Parallel Park in Germany
-description: Reverse parallel and bay parking explained step by step, the reference points examiners look for, the mistakes that fail people, and a free 3D simulator.
+description: Reverse parallel and bay parking explained step by step, the reference points examiners look for, the mistakes that fail people, and a free parking trainer.
 slug: learn-to-parallel-park-germany
 lang: en
 date: 2026-08-24
@@ -9,7 +9,7 @@ flag: 🅿️
 variants: einparken-lernen
 ---
 
-Parking isn't about talent, it's about **reference points**: fixed visual markers that tell you exactly when to steer. Learn the sequence three times and practice it twenty times, and you'll still park cleanly even with an examiner watching. Here's the full method, and at the end you can run it in a [free 3D simulator](https://www.drivede.app) before you ever need it in the car.
+Parking isn't about talent, it's about **reference points**: fixed visual markers that tell you exactly when to steer. Learn the sequence three times and practice it twenty times, and you'll still park cleanly even with an examiner watching. Here's the full method, and at the end you can run it in a [free parking trainer](https://www.drivede.app) before you ever need it in the car.
 
 ## Reverse parallel parking (curbside)
 
@@ -39,6 +39,6 @@ Worth knowing: a botched first attempt is **not an automatic fail**. Most examin
 
 ## Understand it first, then practice, then get in the car
 
-The most expensive way to learn parking is to try it for the first time in a lesson at 80 euros an hour. Cheaper: internalize the sequence beforehand. The [DriveDE app](https://www.drivede.app) has a **free 3D parking trainer** that shows exactly the reference points above, interactively, for both parallel and bay parking, as many times as you want.
+The most expensive way to learn parking is to try it for the first time in a lesson at 80 euros an hour. Cheaper: internalize the sequence beforehand. The [DriveDE app](https://www.drivede.app) has a **free parking trainer** that shows exactly the reference points above, interactively, for both parallel and bay parking, as many times as you want.
 
 Wondering how many lessons you'll realistically need in total? [Here's the average](/blog/how-many-driving-lessons-germany/). And for everything else that comes up in the practical test, [see the full guide](/blog/german-practical-driving-test-guide/).

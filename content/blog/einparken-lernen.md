@@ -1,6 +1,6 @@
 ---
 title: Einparken lernen: Schritt für Schritt
-description: Rückwärts einparken einfach erklärt, die Referenzpunkte für Längs- und Querparken, die häufigsten Prüfungsfehler und ein kostenloser 3D-Simulator zum Üben.
+description: Rückwärts einparken einfach erklärt, die Referenzpunkte für Längs- und Querparken, die häufigsten Prüfungsfehler und ein kostenloser Einparktrainer zum Üben.
 slug: einparken-lernen
 lang: de
 date: 2026-08-22
@@ -9,7 +9,7 @@ flag: 🅿️
 variants: learn-to-parallel-park-germany
 ---
 
-Einparken ist keine Frage von Talent, sondern von **Referenzpunkten**: festen Blickmarken, an denen du lenkst. Wer die Abfolge dreimal verstanden und zwanzigmal geübt hat, parkt auch nervös in der Prüfung ein. Hier ist die komplette Anleitung, und am Ende kannst du sie direkt im [kostenlosen 3D-Simulator](https://www.drivede.app) durchspielen, bevor du sie im Auto brauchst.
+Einparken ist keine Frage von Talent, sondern von **Referenzpunkten**: festen Blickmarken, an denen du lenkst. Wer die Abfolge dreimal verstanden und zwanzigmal geübt hat, parkt auch nervös in der Prüfung ein. Hier ist die komplette Anleitung, und am Ende kannst du sie direkt im [kostenlosen Einparktrainer](https://www.drivede.app) durchspielen, bevor du sie im Auto brauchst.
 
 ## Rückwärts längs einparken (am Bordstein)
 
@@ -39,6 +39,6 @@ Wichtig zu wissen: Ein missglückter erster Versuch ist **nicht automatisch durc
 
 ## Erst verstehen, dann üben, dann ins Auto
 
-Die teuerste Art, Einparken zu lernen, ist es zum ersten Mal in der Fahrstunde zu versuchen, bei 80 Euro pro Stunde. Günstiger: die Abfolge vorher verinnerlichen. In der [DriveDE App](https://www.drivede.app) gibt es einen **kostenlosen 3D-Einparktrainer**, der genau die Referenzpunkte von oben interaktiv zeigt, Längs- und Querparken, so oft du willst.
+Die teuerste Art, Einparken zu lernen, ist es zum ersten Mal in der Fahrstunde zu versuchen, bei 80 Euro pro Stunde. Günstiger: die Abfolge vorher verinnerlichen. In der [DriveDE App](https://www.drivede.app) gibt es einen **kostenlosen Einparktrainer**, der genau die Referenzpunkte von oben interaktiv zeigt, Längs- und Querparken, so oft du willst.
 
 Wie viele Fahrstunden insgesamt realistisch sind, steht [hier](/blog/wie-viele-fahrstunden/), und was in der praktischen Prüfung sonst noch drankommt, [hier](/blog/praktische-pruefung-ablauf-tipps/).

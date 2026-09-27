@@ -278,7 +278,7 @@ export function Welcome() {
     isDe ? 'GPS-Fahrtenbuch ohne Limit' : 'Unlimited GPS Live Driving Tracker',
     isDe ? 'Fehlerprotokoll nach jeder Fahrstunde' : 'One-tap mistake log after each lesson',
     isDe ? 'KI-Fahrlehrer Auswertungen' : 'AI Instructor Debriefings',
-    isDe ? '3D-Manöversimulationen (Einparken, Autobahn)' : '3D Maneuver Simulations (Einparken, Autobahn)',
+    isDe ? 'Animierte Manöver-Anleitungen (Einparken, Autobahn)' : 'Animated maneuver guides (Einparken, Autobahn)',
     isDe ? 'Prüfungsreife-Anzeige & Fehleranalyse' : 'Exam Readiness Score & Mistake Analysis',
     isDe ? 'Fahrlehrer PDF Berichtsexport' : 'Fahrlehrer PDF Report Exports',
     isDe ? 'Kostenrechner und Gefahrenstellen' : 'Budget Estimator & Mistake Hotspots',

@@ -177,7 +177,7 @@ export const TRANSLATIONS = {
         },
         maneuverReplay: {
           title: 'Manöver-Wiederholung',
-          desc: 'Schau dir deine Einpark- und Autobahnmanöver in der 3D-Vorschau an.',
+          desc: 'Schau dir deine Einpark- und Autobahnmanöver als animierte Vorschau an.',
         },
         instructorSync: {
           title: 'Fahrlehrer-Synchronisation',
@@ -1192,7 +1192,7 @@ export const TRANSLATIONS = {
             features: [
               'GPS Live-Tracking & Fehler-Analyse',
               'Smarter Fahr-Coach & Individuelle Tipps',
-              'Alle Video-Lektionen & 3D-Szenarien',
+              'Alle Video-Lektionen & Trainer-Szenarien',
               'Exklusives PDF Fahrlehrer-Review',
               'Priorisierter Cloud-Sync & Support'
             ],
@@ -2678,7 +2678,7 @@ export const TRANSLATIONS = {
         },
         maneuverReplay: {
           title: 'Maneuver Replay',
-          desc: 'Review your parking and highway maneuvers in a smooth 3D-style preview.',
+          desc: 'Review your parking and highway maneuvers in an animated preview.',
         },
         instructorSync: {
           title: 'Instructor Sync',
@@ -3694,7 +3694,7 @@ export const TRANSLATIONS = {
             features: [
               'GPS Live Tracking & Fault Analysis',
               'Smart Driving Coach & Custom Tips',
-              'All Video Lessons & 3D Scenarios',
+              'All Video Lessons & Trainer Scenarios',
               'Exclusive PDF Instructor Review',
               'Priority Cloud Sync & Support'
             ],

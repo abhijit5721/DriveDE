@@ -48,7 +48,7 @@ const SCHEMA_DE = {
   featureList: [
     'GPS Fahrstunden-Tracking mit digitalem Fahrtenbuch',
     'KI-Fahrlehrer Auswertungen nach jeder Fahrt',
-    '3D Manöversimulationen (Einparken, Autobahn)',
+    'Animierte Manöver-Anleitungen (Einparken, Autobahn)',
     'Objektive Prüfungsreife-Anzeige',
     'Theorie-Lehrplan',
     'Umschreibungs-Modus für ausländische Führerscheine',
@@ -63,7 +63,7 @@ const SCHEMA_EN = {
   featureList: [
     'GPS driving lesson tracking with a digital logbook',
     'AI instructor debriefings after every drive',
-    '3D maneuver simulations (parking, Autobahn)',
+    'Animated maneuver guides (parking, Autobahn)',
     'Objective exam readiness score',
     'Theory curriculum',
     'Umschreibung mode for foreign license conversion',
