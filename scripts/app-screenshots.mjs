@@ -1,5 +1,5 @@
 /**
- * Landing-page app screenshots (public/screenshots/app-*.webp) and the copies the demo
+ * Landing-page app screenshots (public/screenshots/app-*.webp, shot-*.webp) and the copies the demo
  * video's devices scene uses (demo-video/public/devices/). Rendered from the current
  * app with the demo fixture state, so the landing page never shows an old design
  * again (the 9 Aug set still had the electric blue, orange PRO badge and 7-tab bar).
@@ -19,9 +19,54 @@ const VIDEO_DEVICES = path.join(ROOT, 'demo-video', 'public', 'devices');
 const FIXTURE = path.join(ROOT, 'demo-video', 'fixtures', 'seed-state.json');
 
 // width/height match the <img> attributes in Welcome.tsx
+const PHONE = { viewport: { width: 340, height: 736 }, scale: 2, mobile: true };
+
+/** Click by data-testid through the DOM (the first match; nav ids exist in both navs). */
+const tap = (page, id) => page.evaluate((i) => {
+  const el = document.querySelector(`[data-testid="${i}"]`);
+  if (!el) throw new Error(`no [data-testid="${i}"]`);
+  el.click();
+}, id);
+
+// app-* : hero monitor + phone (also used by the demo video's devices scene)
+// shot-*: the three phones in "Die App in Aktion"
 const SHOTS = [
-  { name: 'app-dashboard', viewport: { width: 1280, height: 847 }, scale: 1.25, mobile: false },
-  { name: 'app-mobile', viewport: { width: 340, height: 736 }, scale: 2, mobile: true },
+  { name: 'app-dashboard', viewport: { width: 1280, height: 847 }, scale: 1.25, mobile: false, video: true },
+  { name: 'app-mobile', ...PHONE, video: true },
+  { name: 'shot-dashboard', ...PHONE },
+  {
+    name: 'shot-curriculum', ...PHONE,
+    prepare: async (page) => {
+      await tap(page, 'nav-curriculum');
+      await page.waitForTimeout(1800);
+      await page.evaluate(() => { const el = document.querySelector('div.overflow-y-auto.overscroll-contain'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); });
+    },
+  },
+  {
+    // live drive screen in simulation: route, speed, one logged mistake (the shipped manual log)
+    name: 'shot-tracker', ...PHONE,
+    prepare: async (page) => {
+      await page.addStyleTag({ content: '#_rht_toaster{display:none!important} [data-testid="hud-speed-sign"]{display:none!important}' });
+      await tap(page, 'nav-tracker');
+      await page.waitForTimeout(1200);
+      await tap(page, 'sim-toggle');
+      await page.waitForTimeout(400);
+      await tap(page, 'start-tracking-btn');
+      await page.waitForTimeout(800);
+      await tap(page, 'mount-confirmation-checkbox');
+      await page.waitForTimeout(200);
+      await tap(page, 'confirm-mount-btn');
+      await page.waitForTimeout(7000); // map tiles + first sim steps
+      await tap(page, 'problem-btn');
+      await page.waitForTimeout(700);
+      await tap(page, 'manual-mistake-shoulder_check');
+      await page.waitForTimeout(4000); // "saved" flash clears
+      // the voice-guidance toast sits over the distance line; hide it for the still
+      await page.evaluate(() => document.querySelectorAll('div').forEach((d) => {
+        if (typeof d.className === 'string' && d.className.includes('mt-48') && /Sprachansage|Voice guidance/.test(d.textContent || '')) d.style.display = 'none';
+      }));
+    },
+  },
 ];
 
 async function seed(page, lang) {
@@ -66,11 +111,12 @@ for (const lang of ['de', 'en']) {
     await page.getByTestId('nav-home').first().waitFor({ state: 'attached', timeout: 15000 });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(3500); // gauge sweep and card intros settle
+    if (shot.prepare) await shot.prepare(page);
     const png = path.join(OUT, `${shot.name}-${lang}.png`);
     await page.screenshot({ path: png });
     const webp = path.join(OUT, `${shot.name}-${lang}.webp`);
     execFileSync('python', ['-c', `from PIL import Image; Image.open(r'${png}').convert('RGB').save(r'${webp}', 'WEBP', quality=82, method=6)`]);
-    await copyFile(webp, path.join(VIDEO_DEVICES, `${shot.name}-${lang}.webp`));
+    if (shot.video) await copyFile(webp, path.join(VIDEO_DEVICES, `${shot.name}-${lang}.webp`));
     await (await import('node:fs/promises')).unlink(png);
     console.log(`wrote ${shot.name}-${lang}.webp`);
     await context.close();

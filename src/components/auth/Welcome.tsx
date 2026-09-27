@@ -650,7 +650,7 @@ export function Welcome() {
               {
                 shot: 'dashboard',
                 title: isDe ? 'Prüfungsreife auf einen Blick' : 'Exam readiness at a glance',
-                desc: isDe ? 'Du siehst genau, wann du bereit bist, mit PDF-Berichten für deinen Fahrlehrer.' : 'Know exactly when you are ready, with PDF reports for your instructor.',
+                desc: isDe ? 'Deine Prüfungsreife nach jeder Fahrt, mit PDF-Berichten für deinen Fahrlehrer.' : 'Your exam readiness after every drive, with PDF reports for your instructor.',
               },
               {
                 shot: 'curriculum',
