@@ -320,7 +320,10 @@ export function PublicTrainer({ language, onClose, onSignup, initialRung }: Publ
                 <div className="relative overflow-hidden rounded-2xl border border-slate-700" data-testid="public-locked-preview">
                   <div className="pointer-events-none max-h-56 overflow-hidden opacity-60 grayscale" aria-hidden="true">
                     <Suspense fallback={fallback}>
-                      <InteractiveParking language={language} onComplete={() => undefined} />
+                      {/* the kerb and the gap sit at the bottom of the scene (right-hand traffic), so the preview shows the lower part */}
+                      <div className="-mt-24">
+                        <InteractiveParking language={language} onComplete={() => undefined} />
+                      </div>
                     </Suspense>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-950/50">

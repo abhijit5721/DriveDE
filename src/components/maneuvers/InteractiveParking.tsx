@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Check, Info } from 'lucide-react';
 import { cn } from '../../utils/cn';
@@ -17,6 +17,23 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
   const t = TRANSLATIONS[language];
   const [phase, setPhase] = useState<ParkingPhase>('start');
   const [hint, setHint] = useState<string>('');
+  // Positions follow the scene width: fixed pixels (front car at 260px) put the front
+  // car and the aligned user car off-screen on phones.
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const [sceneW, setSceneW] = useState(360);
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (!el) return;
+    const update = () => setSceneW(el.clientWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const CAR_W = 70;
+  const rearX = 8;
+  const frontX = Math.max(sceneW - CAR_W - 8, rearX + CAR_W * 2 + 20);
+  const slotX = (rearX + CAR_W + frontX) / 2 - CAR_W / 2; // centre of the gap
 
   useEffect(() => {
     switch (phase) {
@@ -68,22 +85,25 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
       </div>
       <GlobalDefinitions />
 
-      <div className="relative h-[300px] w-full overflow-hidden rounded-xl bg-slate-200 border-2 border-slate-300 dark:bg-slate-800 dark:border-slate-700">
+      <div ref={sceneRef} className="relative h-[300px] w-full overflow-hidden rounded-xl bg-slate-200 border-2 border-slate-300 dark:bg-slate-800 dark:border-slate-700">
+        {/* Right-hand traffic: the car drives to the right (+x), so its RIGHT side is the
+            bottom of the scene. Kerb and gap sit there; until 27 Sep they were at the top,
+            on the car's left, while it signalled right and the hints said steer right. */}
         {/* The Curb */}
-        <div className="absolute top-0 h-10 w-full bg-slate-400 border-b-4 border-slate-500 dark:bg-slate-700 dark:border-slate-600">
+        <div className="absolute bottom-0 h-10 w-full bg-slate-400 border-t-4 border-slate-500 dark:bg-slate-700 dark:border-slate-600">
           <div className="flex h-full w-full opacity-20">
              {[...Array(10)].map((_, i) => <div key={i} className="w-1 border-r border-white h-full ml-10" />) }
           </div>
         </div>
 
         {/* Road Markings */}
-        <div className="absolute top-24 w-full border-t border-white/10 border-dashed h-1" />
+        <div className="absolute top-[118px] w-full border-t border-white/10 border-dashed h-1" />
 
         {/* Existing Cars (Parked parallel to curb) */}
         {/* Front Car */}
         <div 
           className="absolute z-10"
-          style={{ top: '45px', left: '260px' }}
+          style={{ top: '219px', left: `${frontX}px` }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
             <RealCar variant="sand" />
@@ -93,7 +113,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
         {/* Rear Car */}
         <div 
           className="absolute z-10"
-          style={{ top: '45px', left: '20px' }}
+          style={{ top: '219px', left: `${rearX}px` }}
         >
           <svg width="70" height="36" viewBox="-35 -18 70 36">
             <RealCar variant="navy" />
@@ -105,9 +125,11 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            layout
            initial={false}
            animate={{
-             top: phase === 'final' ? 45 : phase === 'steering-out' ? 55 : phase === 'backing-in' ? 80 : 130,
-             left: phase === 'align' ? 260 : phase === 'steering-in' ? 260 : phase === 'backing-in' ? 180 : phase === 'steering-out' ? 140 : phase === 'final' ? 140 : 20,
-             rotate: phase === 'backing-in' ? 35 : phase === 'steering-out' ? 15 : 0
+             top: phase === 'final' ? 219 : phase === 'steering-out' ? 208 : phase === 'backing-in' ? 184 : 150,
+             left: phase === 'align' || phase === 'steering-in' ? frontX : phase === 'backing-in' ? slotX + 40 : phase === 'steering-out' || phase === 'final' ? slotX : rearX,
+             // reversing with the wheel turned right swings the rear to the right (down),
+             // so the nose points up-right: counterclockwise on screen
+             rotate: phase === 'backing-in' ? -35 : phase === 'steering-out' ? -15 : 0
            }}
            transition={{ duration: 1.5, ease: 'easeInOut' }}
            className="absolute z-20"
@@ -115,7 +137,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            <svg width="70" height="36" viewBox="-35 -18 70 36" style={{ overflow: 'visible' }}>
               <RealCar
                 variant="green"
-                indicator={phase === 'start' ? 'none' : 'right'}
+                indicator={phase === 'start' || phase === 'final' ? 'none' : 'right'} // off once parked
                 brakeLights={phase === 'align' || phase === 'final'}
               />
            </svg>
@@ -124,7 +146,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
            {(phase === 'steering-in' || phase === 'steering-out') && (
              <motion.div 
                animate={{ rotate: phase === 'steering-in' ? 90 : -90 }}
-               className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center"
+               className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center"
              >
                 <div className="h-10 w-10 rounded-full border-4 border-slate-700 flex items-center justify-center bg-slate-800 shadow-xl">
                    <div className="h-5 w-1.5 bg-blue-400 rounded-full" />
@@ -134,7 +156,7 @@ export default function InteractiveParking({ onComplete, language }: { onComplet
         </motion.div>
 
         {/* Guidance Overlay */}
-        <div className="absolute bottom-4 left-4 right-4 z-30">
+        <div className="absolute top-4 left-4 right-4 z-30">
           <div className="rounded-xl bg-white/90 p-3 shadow-xl backdrop-blur-sm dark:bg-slate-900/90">
              <p className="text-xs font-bold text-slate-800 dark:text-white">{hint}</p>
           </div>
