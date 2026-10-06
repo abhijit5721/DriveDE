@@ -24,6 +24,7 @@
  *   first_step_click     a new user used the dashboard's first-step card (props: action, lesson)
  *   scenario_answered    an exam situation answer was checked (props: scenario, covered, total)
  *   scenario_minitest    the quick check after it was answered (props: scenario, correct)
+ *   scenario_ai_feedback detailed AI feedback was requested (props: scenario, ok, reason)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -305,7 +306,8 @@ export type FunnelEvent =
   | 'account_secured'
   | 'first_step_click'
   | 'scenario_answered'
-  | 'scenario_minitest';
+  | 'scenario_minitest'
+  | 'scenario_ai_feedback';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,

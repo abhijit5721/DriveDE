@@ -723,6 +723,7 @@ export const TRANSLATIONS = {
             'Zahlungsbezogene Daten bei Pro-Käufen; die Zahlungsabwicklung erfolgt vollständig durch Stripe; Kartendaten erreichen unsere Systeme nicht',
             'Nutzungs- und Fehlerdaten zur Verbesserung der App: eine cookielose Reichweitenmessung (Vercel Web Analytics), die nichts auf deinem Gerät speichert und ohne Einwilligung läuft; weitergehende Analytik (PostHog, Google Analytics) nur nach Einwilligung über die Cookie-Einstellungen',
             'Ohne Einwilligung auf deinem Gerät gespeichert, weil technisch erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG): deine Anmeldesitzung, Sprache und App-Einstellungen, deine Cookie-Auswahl sowie Beginn und Ende der kostenlosen Testphase auf diesem Gerät (Cookie und lokaler Speicher „drivede_device_trial“, bis zu 400 Tage), damit die Testphase nur einmal pro Gerät genutzt werden kann',
+            'Antworten in der Prüfungssimulation: Getippte Antworten werden auf deinem Gerät geprüft. Nutzt du das Mikrofon, wandelt dein Browser die Sprache in Text um; je nach Browser geschieht das über den Anbieter des Browsers (z. B. Google bei Chrome, Apple bei Safari). Tippst du auf „Ausführliches Feedback (KI)“, wird nur der Text deiner Antwort mit der Situation an Groq (USA) zur Auswertung gesendet, ohne Konto, E-Mail oder IP-Adresse, und weder von Groq noch von uns gespeichert (Art. 6 Abs. 1 lit. b DSGVO, Übermittlung auf Grundlage der EU-Standardvertragsklauseln)',
             'Optionale Kontakt- oder Feedbackdaten, wenn du aktiv eine Anfrage sendest'
           ],
           recipients: [
@@ -732,7 +733,8 @@ export const TRANSLATIONS = {
             'Resend: Transaktions-E-Mails (z. B. Willkommensmail)',
             'PostHog und Google Analytics: Nutzungsanalyse, nur nach Einwilligung',
             'Sentry: Fehlerdiagnose und Stabilität',
-            'OpenStreetMap: Kartendarstellung beim GPS-Tracking'
+            'OpenStreetMap: Kartendarstellung beim GPS-Tracking',
+            'Groq (USA): KI-Auswertung einer Antwort in der Prüfungssimulation, nur auf deinen Tipp hin, als Auftragsverarbeiter mit EU-Standardvertragsklauseln, ohne Speicherung'
           ],
           purpose: 'Die Daten werden zur Bereitstellung der App-Funktionen, zur Speicherung des Lernfortschritts, zur Verbesserung der Nutzererfahrung sowie (mit einem Konto) zur Synchronisierung über mehrere Geräte verwendet.',
           storage: 'Lernfortschritt und Einstellungen werden primär lokal auf deinem Gerät gespeichert. Mit einem Konto werden Fortschrittsdaten zusätzlich in unserer Datenbank (Supabase) gespeichert, um die Synchronisierung über mehrere Geräte zu ermöglichen. Daten werden gelöscht, sobald sie für die genannten Zwecke nicht mehr erforderlich sind oder du die Löschung deines Kontos verlangst.',
@@ -3225,6 +3227,7 @@ export const TRANSLATIONS = {
             'Payment-related data for Pro purchases; payment processing is handled entirely by Stripe; card details never reach our systems',
             'Usage and error data to improve the app: a cookieless page-view count (Vercel Web Analytics) that stores nothing on your device and runs without consent; further analytics (PostHog, Google Analytics) only after consent via the cookie settings',
             'Stored on your device without consent because technically necessary (§ 25(2) no. 2 TDDDG): your sign-in session, language and app settings, your cookie choice, and the start and end of the free trial on this device (cookie and local storage "drivede_device_trial", up to 400 days), so the trial can be used once per device',
+            'Answers in the exam simulation: typed answers are checked on your device. If you use the microphone, your browser turns speech into text; depending on the browser this is done by its provider (e.g. Google for Chrome, Apple for Safari). If you tap "Detailed feedback (AI)", only the text of your answer together with the situation is sent to Groq (USA) for grading, without account, email or IP address, and stored neither by Groq nor by us (Art. 6(1)(b) GDPR, transfer based on the EU Standard Contractual Clauses)',
             'Optional contact or feedback data when you actively send an inquiry'
           ],
           recipients: [
@@ -3234,7 +3237,8 @@ export const TRANSLATIONS = {
             'Resend: transactional emails (e.g. welcome email)',
             'PostHog and Google Analytics: usage analytics, only after consent',
             'Sentry: error diagnostics and stability',
-            'OpenStreetMap: map rendering during GPS tracking'
+            'OpenStreetMap: map rendering during GPS tracking',
+            'Groq (USA): AI grading of an answer in the exam simulation, only when you tap for it, as a processor under the EU Standard Contractual Clauses, without storage'
           ],
           purpose: 'Data is used to provide app functionality, save study progress, improve user experience, and, with an account, to synchronize progress across devices.',
           storage: 'Learning progress and settings are primarily stored locally on your device. With an account, progress data is additionally stored in our database (Supabase) to enable synchronization across devices. Data is deleted once it is no longer required for the stated purposes or when you request deletion of your account.',

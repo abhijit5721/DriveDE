@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen } from 'lucide-react';
+import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen, Sparkles, Loader2 } from 'lucide-react';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { EXAM_SCENARIOS, type ExamScenario } from '../../data/examScenarios';
 import { gradeAnswer, type GradeResult } from '../../utils/scenarioGrader';
@@ -25,6 +25,25 @@ interface ExamSimulationProps {
 }
 
 const RESULTS_KEY = 'drivede-scenario-results';
+
+// Detailed AI feedback (api/grade-scenario, Groq free plan): a few per device and day so
+// one person cannot use up the shared daily quota. The server limits per IP as well.
+const AI_KEY = 'drivede-ai-feedback';
+const AI_PER_DAY = 5;
+function aiUsedToday(): number {
+  try {
+    const v = JSON.parse(localStorage.getItem(AI_KEY) || '{}');
+    return v.day === new Date().toISOString().slice(0, 10) ? Number(v.count) || 0 : 0;
+  } catch { return 0; }
+}
+function countAiUse() {
+  try { localStorage.setItem(AI_KEY, JSON.stringify({ day: new Date().toISOString().slice(0, 10), count: aiUsedToday() + 1 })); } catch { /* not remembered */ }
+}
+type AiState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'done'; covered: Set<string>; feedback: string; better: string }
+  | { status: 'error'; reason: 'limit' | 'unavailable' };
 
 function loadResults(): Record<string, number> {
   try { return JSON.parse(localStorage.getItem(RESULTS_KEY) || '{}'); } catch { return {}; }
@@ -146,6 +165,7 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<GradeResult | null>(null);
   const [choice, setChoice] = useState<number | null>(null);
+  const [ai, setAi] = useState<AiState>({ status: 'idle' });
   const [listening, setListening] = useState(false);
   const recRef = useRef<SpeechRec | null>(null);
   const usedMic = useRef(false);
@@ -184,7 +204,34 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
     trackFunnel('scenario_answered', { scenario: scenario.id, covered: r.covered, total: r.total, voice: usedMic.current });
   };
 
-  const retry = () => { setResult(null); setChoice(null); };
+  const retry = () => { setResult(null); setChoice(null); setAi({ status: 'idle' }); };
+
+  const askAi = async () => {
+    if (aiUsedToday() >= AI_PER_DAY) { setAi({ status: 'error', reason: 'limit' }); return; }
+    setAi({ status: 'loading' });
+    countAiUse();
+    try {
+      const r = await fetch('/api/grade-scenario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenarioId: scenario.id, answer, language }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (j?.ok) {
+        setAi({ status: 'done', covered: new Set((j.points as { id: string; covered: boolean }[]).filter((x) => x.covered).map((x) => x.id)), feedback: j.feedback, better: j.better });
+        trackFunnel('scenario_ai_feedback', { scenario: scenario.id, ok: true });
+      } else {
+        setAi({ status: 'error', reason: j?.reason === 'limit' ? 'limit' : 'unavailable' });
+        trackFunnel('scenario_ai_feedback', { scenario: scenario.id, ok: false, reason: String(j?.reason ?? r.status) });
+      }
+    } catch {
+      setAi({ status: 'error', reason: 'unavailable' });
+    }
+  };
+
+  // a point counts when the on-device check or the AI feedback found it
+  const isCovered = (id: string) => result?.points.find((x) => x.id === id)?.status === 'covered' || (ai.status === 'done' && ai.covered.has(id));
+  const coveredCount = result ? scenario.keyPoints.filter((p) => isCovered(p.id)).length : 0;
 
   const pick = (i: number) => {
     if (choice !== null) return;
@@ -246,18 +293,19 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
           >
             {de ? 'Antwort prüfen' : 'Check my answer'}
           </button>
-          <p className="text-center text-[11px] text-blue-100/50">{de ? 'Die Prüfung läuft auf deinem Gerät. Deine Antwort bleibt dort und wird nicht gesendet.' : 'The check runs on your device. Your answer stays there and is not sent anywhere.'}</p>
+          <p className="text-center text-[11px] text-blue-100/50">{de ? 'Die Prüfung läuft auf deinem Gerät. Beim Mikrofon wandelt dein Browser die Sprache in Text um, z. B. über Google oder Apple.' : 'The check runs on your device. With the microphone, your browser turns speech into text, e.g. via Google or Apple.'}</p>
         </section>
       ) : (
         <section className="space-y-4" data-testid="scenario-result">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-bold text-blue-200">{de ? 'Deine Antwort' : 'Your answer'}</p>
             <p className="mt-1 text-2xl font-bold" data-testid="scenario-score">
-              {result.covered} {de ? 'von' : 'of'} {result.total} {de ? 'Punkten' : 'points'}
+              {coveredCount} {de ? 'von' : 'of'} {result.total} {de ? 'Punkten' : 'points'}
             </p>
             <ul className="mt-3 space-y-2">
               {scenario.keyPoints.map((p) => {
-                const st = result.points.find((x) => x.id === p.id)!.status;
+                const raw = result.points.find((x) => x.id === p.id)!.status;
+                const st = isCovered(p.id) ? 'covered' : raw;
                 return (
                   <li key={p.id} className="flex items-start gap-2 text-sm">
                     {st === 'covered'
@@ -276,6 +324,37 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />{h[language]}
               </p>
             ))}
+          </div>
+
+          {/* Detailed AI feedback on request (Groq free plan via our server) */}
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4" data-testid="scenario-ai">
+            {ai.status === 'idle' && (
+              <>
+                <button onClick={askAi} data-testid="scenario-ai-btn" className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-600/20 py-3 text-sm font-bold transition hover:bg-blue-600/30">
+                  <Sparkles className="h-4 w-4" />{de ? 'Ausführliches Feedback (KI)' : 'Detailed feedback (AI)'}
+                </button>
+                <p className="mt-2 text-center text-[11px] text-blue-100/50">{de ? 'Deine Antwort wird zur Auswertung an unseren KI-Dienst gesendet und nicht gespeichert.' : 'Your answer is sent to our AI service for grading and is not stored.'}</p>
+              </>
+            )}
+            {ai.status === 'loading' && (
+              <p className="flex items-center justify-center gap-2 py-2 text-sm text-blue-100/80"><Loader2 className="h-4 w-4 animate-spin" />{de ? 'Deine Antwort wird ausgewertet ...' : 'Grading your answer ...'}</p>
+            )}
+            {ai.status === 'done' && (
+              <div data-testid="scenario-ai-feedback">
+                <p className="flex items-center gap-2 text-sm font-bold text-blue-200"><Sparkles className="h-4 w-4" />Feedback</p>
+                <p className="mt-2 text-sm leading-relaxed">{ai.feedback}</p>
+                {ai.better && (
+                  <p className="mt-3 rounded-xl bg-white/10 p-3 text-sm"><span className="font-bold">{de ? 'So könntest du es sagen: ' : 'You could say: '}</span>{ai.better}</p>
+                )}
+              </div>
+            )}
+            {ai.status === 'error' && (
+              <p className="text-sm text-blue-100/80" data-testid="scenario-ai-error">
+                {ai.reason === 'limit'
+                  ? (de ? 'Für heute sind die KI-Auswertungen aufgebraucht. Dein Ergebnis oben gilt trotzdem, morgen geht es weiter.' : 'AI feedback is used up for today. Your result above still counts; it is back tomorrow.')
+                  : (de ? 'Die KI-Auswertung ist gerade nicht erreichbar. Dein Ergebnis oben gilt trotzdem.' : 'AI feedback is not reachable right now. Your result above still counts.')}
+              </p>
+            )}
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">

@@ -64,3 +64,47 @@ test('an exam situation: type an answer, see covered points, the model answer an
   await expect(page.getByTestId('scenario-zebrastreifen')).toContainText('83%');
 });
 
+async function openZebra(page: import('@playwright/test').Page) {
+  await page.goto('/?lang=de');
+  await page.getByTestId('cookie-accept-all').click({ timeout: 4000 }).catch(() => undefined);
+  await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
+  await expect(page.getByTestId('license-continue-btn')).toBeVisible({ timeout: 15000 });
+  await page.waitForTimeout(4500);
+  await page.evaluate(() => {
+    const s = (window as any).__drivedeStore.getState();
+    s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
+    s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
+    s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+  });
+  await page.waitForTimeout(1500);
+  await page.locator('[data-tour="exam-sim"] button').first().click();
+  await page.getByTestId('scenario-zebrastreifen').click();
+  await page.getByTestId('scenario-answer').fill('Ich fahre langsam heran. Wenn sie queren will, halte ich an.');
+  await page.getByTestId('scenario-grade').click();
+  await expect(page.getByTestId('scenario-result')).toBeVisible();
+}
+
+test('detailed AI feedback: shown on request, adds points the on-device check missed', async ({ page }) => {
+  await page.route('**/api/grade-scenario', (route) => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ ok: true, points: [
+      { id: 'observe', covered: false }, { id: 'speed', covered: true }, { id: 'yield', covered: true },
+      { id: 'position', covered: true }, { id: 'wait', covered: false }, { id: 'recheck', covered: false },
+    ], feedback: 'Du fährst langsam heran und lässt sie gehen, gut.', better: 'Ich halte vor dem Zebrastreifen an.' }),
+  }));
+  await openZebra(page);
+  await expect(page.getByTestId('scenario-score')).toContainText('2 von 6');
+  await expect(page.getByTestId('scenario-ai')).toContainText('KI-Dienst');
+  await page.getByTestId('scenario-ai-btn').click();
+  await expect(page.getByTestId('scenario-ai-feedback')).toContainText('lässt sie gehen');
+  await expect(page.getByTestId('scenario-ai-feedback')).toContainText('So könntest du es sagen');
+  await expect(page.getByTestId('scenario-score')).toContainText('3 von 6');
+});
+
+test('detailed AI feedback: a used-up quota keeps the on-device result', async ({ page }) => {
+  await page.route('**/api/grade-scenario', (route) => route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ ok: false, reason: 'limit' }) }));
+  await openZebra(page);
+  await page.getByTestId('scenario-ai-btn').click();
+  await expect(page.getByTestId('scenario-ai-error')).toContainText('aufgebraucht');
+  await expect(page.getByTestId('scenario-score')).toContainText('2 von 6');
+});
