@@ -16,6 +16,14 @@ describe('api/grade-scenario', () => {
   beforeEach(() => { delete process.env.DATABASE_URL; process.env.GROQ_API_KEY = 'test-key'; });
   afterEach(() => { process.env = { ...env }; vi.unstubAllGlobals(); });
 
+  it('GET reports whether the feature is switched on', async () => {
+    const on = mockRes(); await handler({ method: 'GET', headers: {} }, on);
+    expect(on.body).toEqual({ enabled: true });
+    delete process.env.GROQ_API_KEY;
+    const off = mockRes(); await handler({ method: 'GET', headers: {} }, off);
+    expect(off.body).toEqual({ enabled: false });
+  });
+
   it('rejects unknown scenarios and too-short answers', async () => {
     const r1 = mockRes(); await handler(req({ scenarioId: 'nope', answer: ANSWER }), r1);
     expect(r1.statusCode).toBe(400);

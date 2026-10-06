@@ -8,6 +8,7 @@
  * (no card on file, so it can never bill); when Groq's daily quota is used up or it is
  * slow, the reply says so and the app keeps its on-device result.
  *
+ * GET:   { enabled: boolean }  (is GROQ_API_KEY set)
  * Body:  { scenarioId: string, answer: string, language: 'de' | 'en' }
  * Reply: { ok: true, points: { id, covered }[], feedback: string, better: string }
  *        { ok: false, reason: 'limit' | 'unavailable' | 'invalid' }
@@ -115,6 +116,12 @@ const SCHEMA = {
 };
 
 export default async function handler(req: any, res: any) {
+  // GET tells the app whether detailed feedback is switched on (GROQ_API_KEY set), so the
+  // button only appears when it can work.
+  if (req.method === 'GET') {
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    return res.status(200).json({ enabled: Boolean(process.env.GROQ_API_KEY) });
+  }
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ ok: false, reason: 'invalid' });

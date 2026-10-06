@@ -85,7 +85,7 @@ async function openZebra(page: import('@playwright/test').Page) {
 }
 
 test('detailed AI feedback: shown on request, adds points the on-device check missed', async ({ page }) => {
-  await page.route('**/api/grade-scenario', (route) => route.fulfill({
+  await page.route('**/api/grade-scenario', (route) => route.request().method() === 'GET' ? route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":true}' }) : route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ ok: true, points: [
       { id: 'observe', covered: false }, { id: 'speed', covered: true }, { id: 'yield', covered: true },
@@ -102,9 +102,15 @@ test('detailed AI feedback: shown on request, adds points the on-device check mi
 });
 
 test('detailed AI feedback: a used-up quota keeps the on-device result', async ({ page }) => {
-  await page.route('**/api/grade-scenario', (route) => route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ ok: false, reason: 'limit' }) }));
+  await page.route('**/api/grade-scenario', (route) => route.request().method() === 'GET' ? route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":true}' }) : route.fulfill({ status: 429, contentType: 'application/json', body: JSON.stringify({ ok: false, reason: 'limit' }) }));
   await openZebra(page);
   await page.getByTestId('scenario-ai-btn').click();
   await expect(page.getByTestId('scenario-ai-error')).toContainText('aufgebraucht');
   await expect(page.getByTestId('scenario-score')).toContainText('2 von 6');
+});
+
+test('without a Groq key the detailed-feedback button is not shown', async ({ page }) => {
+  await page.route('**/api/grade-scenario', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":false}' }));
+  await openZebra(page);
+  await expect(page.getByTestId('scenario-ai')).toHaveCount(0);
 });

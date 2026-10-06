@@ -73,6 +73,11 @@ export default function ExamSimulation({ onBack, onOpenPaywall }: ExamSimulation
   const de = language === 'de';
   const pro = isProActive();
   const [results, setResults] = useState<Record<string, number>>(loadResults);
+  // the detailed-feedback button only shows when the server has a Groq key
+  const [aiEnabled, setAiEnabled] = useState(false);
+  useEffect(() => {
+    fetch('/api/grade-scenario').then((r) => (r.ok ? r.json() : null)).then((j) => setAiEnabled(j?.enabled === true)).catch(() => undefined);
+  }, []);
   const [current, setCurrent] = useState<ExamScenario | null>(null);
 
   useEffect(() => () => { TextToSpeech.stop().catch(() => undefined); }, []);
@@ -115,6 +120,7 @@ export default function ExamSimulation({ onBack, onOpenPaywall }: ExamSimulation
           <ScenarioView
             key={current.id}
             scenario={current}
+            aiEnabled={aiEnabled}
             de={de}
             language={language}
             next={next}
@@ -158,8 +164,8 @@ export default function ExamSimulation({ onBack, onOpenPaywall }: ExamSimulation
   );
 }
 
-function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBackToList, onGraded }: {
-  scenario: ExamScenario; de: boolean; language: 'de' | 'en'; next: ExamScenario | null; nextLocked: boolean;
+function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onNext, onBackToList, onGraded }: {
+  scenario: ExamScenario; aiEnabled: boolean; de: boolean; language: 'de' | 'en'; next: ExamScenario | null; nextLocked: boolean;
   onNext: () => void; onBackToList: () => void; onGraded: (id: string, ratio: number) => void;
 }) {
   const [answer, setAnswer] = useState('');
@@ -327,7 +333,7 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
           </div>
 
           {/* Detailed AI feedback on request (Groq free plan via our server) */}
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4" data-testid="scenario-ai">
+          {aiEnabled && <div className="rounded-2xl border border-white/10 bg-white/5 p-4" data-testid="scenario-ai">
             {ai.status === 'idle' && (
               <>
                 <button onClick={askAi} data-testid="scenario-ai-btn" className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-600/20 py-3 text-sm font-bold transition hover:bg-blue-600/30">
@@ -355,7 +361,7 @@ function ScenarioView({ scenario, de, language, next, nextLocked, onNext, onBack
                   : (de ? 'Die KI-Auswertung ist gerade nicht erreichbar. Dein Ergebnis oben gilt trotzdem.' : 'AI feedback is not reachable right now. Your result above still counts.')}
               </p>
             )}
-          </div>
+          </div>}
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-bold text-blue-200">{de ? 'So klingt eine gute Antwort' : 'A strong answer'}</p>
