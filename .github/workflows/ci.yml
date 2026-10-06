@@ -43,6 +43,10 @@ jobs:
     needs: validate
     # Only deploy on pushes to main, not on PRs
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # The native app is not in the stores yet and the Capgo key has been rejected since
+    # 29 Aug, which turned every main run red although validate passed. The upload stays
+    # but cannot fail the run; renew the CAPGO_TOKEN secret before the store release.
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
