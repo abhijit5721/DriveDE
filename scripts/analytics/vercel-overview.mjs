@@ -29,7 +29,7 @@ for (const type of ['path', 'referrer', 'country', 'event_name', 'device_type'])
   console.log(`\n${type}\n  ` + (rows.length ? rows.join('\n  ') : JSON.stringify(s).slice(0, 200)));
 }
 const ts = await get(`timeseries?${q()}`);
-const series = Array.isArray(ts?.data) ? ts.data : (Array.isArray(ts?.data?.data) ? ts.data.data : []);
+const series = Array.isArray(ts?.data) ? ts.data : Array.isArray(ts?.data?.data) ? ts.data.data : Array.isArray(ts?.data?.groups?.all) ? ts.data.groups.all : [];
 const perDay = new Map();
 for (const d of series) {
   const day = String(d.key ?? d.date ?? d.timestamp ?? '').slice(0, 10);
