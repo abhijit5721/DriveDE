@@ -13,8 +13,8 @@ One post per day, anonymous alias where the group offers it. Since 27 Sep: share
 | 5 Oct | Indians in Stuttgart (moved from 25 Sep) | 22.5k | https://www.facebook.com/groups/186337235225676 | EN | |
 | 25 Sep | Indians in Stuttgart | 22.5k | https://www.facebook.com/groups/186337235225676 | EN | not run (no session that day); moved to 5 Oct |
 | 26 Sep | New in Hamburg : English | 24.3k | https://www.facebook.com/groups/1603294993274673 | EN | PUBLISHED anonymously (fb-post-B-hamburg.txt). Button read "Submit" for the anonymous post; script updated |
-| 27 Sep | Indians in Frankfurt am Main | 17.9k | https://www.facebook.com/groups/5990199951011720 | EN | TEXT: fb-post-guide-india.txt (guide share instead of the app post, founder feedback 26 Sep). From now on Indian groups get this guide text with the group name in utm_campaign, other groups the matching country or topic guide |
-| 28 Sep | Germans In India / Indians In Germany | 44.6k | https://www.facebook.com/groups/1808556619294536 | EN | |
+| 27 Sep | Indians in Frankfurt am Main | 17.9k | https://www.facebook.com/groups/5990199951011720 | EN | NOT POSTED 6 Oct: the account is not a member (no rules section). Needs the founder's join first. TEXT: fb-post-guide-india.txt (guide share instead of the app post, founder feedback 26 Sep). From now on Indian groups get this guide text with the group name in utm_campaign, other groups the matching country or topic guide |
+| 28 Sep | Germans In India / Indians In Germany | 44.6k | https://www.facebook.com/groups/1808556619294536 | EN | PUBLISHED 6 Oct under the account name (group has no anonymous option; rules: be kind, no hate, privacy, nothing on promotion). TEXT fb-post-guide-india-gii.txt |
 | 29 Sep | Indians In Munich | 9.7k | https://www.facebook.com/groups/622479101772307 | EN | |
 | 30 Sep | Indians in Frankfurt | 7.3k | https://www.facebook.com/groups/indiansinfrankfurt | EN | |
 | 1 Oct | Munich Expats (joined 23 Sep, no rules section, about page checked) | 76.8k | https://www.facebook.com/groups/munich.expats | EN | |
