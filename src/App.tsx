@@ -859,7 +859,7 @@ export default function App() {
     if (showExamSimulation) {
       return (
         <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Loading...</div>}>
-          <ExamSimulation onBack={() => setShowExamSimulation(false)} />
+          <ExamSimulation onBack={() => setShowExamSimulation(false)} onOpenPaywall={() => { setShowExamSimulation(false); setShowPaywall(true); }} />
         </Suspense>
       );
     }
