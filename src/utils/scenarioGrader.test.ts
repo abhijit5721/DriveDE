@@ -8,7 +8,7 @@ const status = (r: ReturnType<typeof gradeAnswer>, id: string) => r.points.find(
 describe('normalize', () => {
   it('folds umlauts and punctuation', () => {
     expect(normalize('Ich überprüfe, ob der Überweg frei ist!')).toBe('ich ueberpruefe ob der ueberweg frei ist');
-    expect(normalize("I don't stop")).toBe('i don t stop');
+    expect(normalize('I don\'t stop')).toBe('i don t stop');
     expect(normalize('Ich winke nicht. Erst dann!')).toBe('ich winke nicht . erst dann');
   });
 });
@@ -30,7 +30,7 @@ describe('gradeAnswer', () => {
   it('a negated statement does not count', () => {
     const r = gradeAnswer(scenario('zebrastreifen'), 'Ich halte nicht an, sie steht ja noch auf dem Gehweg.');
     expect(status(r, 'yield')).toBe('negated');
-    const en = gradeAnswer(scenario('zebrastreifen'), "I don't stop because she is still on the pavement.");
+    const en = gradeAnswer(scenario('zebrastreifen'), 'I don\'t stop because she is still on the pavement.');
     expect(status(en, 'yield')).toBe('negated');
   });
 
