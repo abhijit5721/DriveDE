@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen, Sparkles, Loader2, ListOrdered, PenLine } from 'lucide-react';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { EXAM_SCENARIOS, type ExamScenario } from '../../data/examScenarios';
 import { gradeAnswer, type GradeResult } from '../../utils/scenarioGrader';
@@ -44,6 +44,30 @@ type AiState =
   | { status: 'loading' }
   | { status: 'done'; covered: Set<string>; feedback: string; better: string }
   | { status: 'error'; reason: 'limit' | 'unavailable' };
+
+// Step mode (DRI-73): the right steps and the tempting mistakes as cards, shuffled once
+// per attempt; the learner taps them in the order they would act. Mistakes are marked
+// 'm<i>', steps 's<i>'.
+type Card = { key: string; text: string };
+function shuffledCards(scenario: ExamScenario, language: 'de' | 'en', seed: number): Card[] {
+  const cards: Card[] = [
+    ...scenario.steps.map((t, i) => ({ key: `s${i}`, text: t[language] })),
+    ...scenario.mistakes.map((m, i) => ({ key: `m${i}`, text: m.text[language] })),
+  ];
+  // deterministic shuffle (mulberry32) so a re-render never reorders the cards mid-attempt
+  let a = seed >>> 0;
+  const rnd = () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  return cards;
+}
+type StepVerdict = 'right' | 'wrong-place' | 'mistake';
+/** Per picked card: right place, right step at the wrong place, or a mistake. Missing steps are listed. */
+function gradeSteps(scenario: ExamScenario, picked: string[]) {
+  const verdicts: StepVerdict[] = picked.map((k, i) => (k.startsWith('m') ? 'mistake' : k === `s${i}` ? 'right' : 'wrong-place'));
+  const missing = scenario.steps.map((_, i) => `s${i}`).filter((k) => !picked.includes(k));
+  const right = verdicts.filter((v) => v === 'right').length;
+  return { verdicts, missing, right, total: scenario.steps.length, mistakes: verdicts.filter((v) => v === 'mistake').length };
+}
 
 function loadResults(): Record<string, number> {
   try { return JSON.parse(localStorage.getItem(RESULTS_KEY) || '{}'); } catch { return {}; }
@@ -170,6 +194,12 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
 }) {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<GradeResult | null>(null);
+  // 'steps' (tap the cards in order) is the easy entry; 'write' is the free answer
+  const [mode, setMode] = useState<'steps' | 'write'>('steps');
+  const [seed, setSeed] = useState(() => Date.now());
+  const [picked, setPicked] = useState<string[]>([]);
+  const [stepResult, setStepResult] = useState<ReturnType<typeof gradeSteps> | null>(null);
+  const cards = useMemo(() => shuffledCards(scenario, language, seed), [scenario, language, seed]);
   const [choice, setChoice] = useState<number | null>(null);
   const [ai, setAi] = useState<AiState>({ status: 'idle' });
   const [listening, setListening] = useState(false);
@@ -210,7 +240,18 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
     trackFunnel('scenario_answered', { scenario: scenario.id, covered: r.covered, total: r.total, voice: usedMic.current });
   };
 
-  const retry = () => { setResult(null); setChoice(null); setAi({ status: 'idle' }); };
+  const retry = () => { setResult(null); setStepResult(null); setPicked([]); setSeed(Date.now()); setChoice(null); setAi({ status: 'idle' }); };
+
+  const toggleCard = (key: string) => {
+    if (stepResult) return;
+    setPicked((p) => (p.includes(key) ? p.filter((k) => k !== key) : [...p, key]));
+  };
+  const checkSteps = () => {
+    const g = gradeSteps(scenario, picked);
+    setStepResult(g);
+    onGraded(scenario.id, g.total ? g.right / g.total : 0);
+    trackFunnel('scenario_steps', { scenario: scenario.id, right: g.right, total: g.total, mistakes: g.mistakes });
+  };
 
   const askAi = async () => {
     if (aiUsedToday() >= AI_PER_DAY) { setAi({ status: 'error', reason: 'limit' }); return; }
@@ -262,7 +303,99 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
         </div>
       </section>
 
-      {!result ? (
+      {/* Mode switch: steps (easy entry, no typing) or free answer */}
+      {!result && !stepResult && (
+        <div className="flex rounded-xl border border-white/10 bg-white/5 p-1" role="tablist">
+          {([['steps', ListOrdered, de ? 'Schritte ordnen' : 'Order the steps'], ['write', PenLine, de ? 'Frei antworten' : 'Free answer']] as const).map(([m, Icon, label]) => (
+            <button
+              key={m}
+              role="tab"
+              aria-selected={mode === m}
+              data-testid={`mode-${m}`}
+              onClick={() => setMode(m)}
+              className={cn('flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition', mode === m ? 'bg-blue-600 text-white shadow' : 'text-blue-100/70 hover:bg-white/5')}
+            >
+              <Icon className="h-4 w-4" />{label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {mode === 'steps' && !stepResult && (
+        <section className="space-y-3" data-testid="step-mode">
+          <p className="text-sm font-bold">{de ? 'Tippe die Schritte in der Reihenfolge an, in der du sie machst.' : 'Tap the steps in the order you would do them.'}</p>
+          <p className="text-xs text-blue-100/70">{de ? `${scenario.steps.length} Schritte sind richtig, ${scenario.mistakes.length} Karten sind Fehler und gehören nicht dazu. Nochmal antippen entfernt eine Karte.` : `${scenario.steps.length} steps are right, ${scenario.mistakes.length} cards are mistakes and do not belong. Tap again to remove a card.`}</p>
+          <ul className="space-y-2">
+            {cards.map((c) => {
+              const pos = picked.indexOf(c.key);
+              return (
+                <li key={c.key}>
+                  <button
+                    onClick={() => toggleCard(c.key)}
+                    data-testid={`card-${c.key}`}
+                    aria-pressed={pos !== -1}
+                    className={cn('flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition active:scale-[0.99]', pos !== -1 ? 'border-blue-400/60 bg-blue-600/25' : 'border-white/15 bg-white/5 hover:bg-white/10')}
+                  >
+                    <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold', pos !== -1 ? 'bg-blue-600 text-white' : 'bg-white/10 text-blue-100/60')}>{pos !== -1 ? pos + 1 : ''}</span>
+                    <span>{c.text}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <button
+            onClick={checkSteps}
+            disabled={picked.length < 2}
+            data-testid="steps-check"
+            className="w-full rounded-xl bg-blue-600 py-4 text-base font-bold transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-40"
+          >
+            {de ? 'Reihenfolge prüfen' : 'Check the order'}
+          </button>
+        </section>
+      )}
+
+      {stepResult && (
+        <section className="space-y-4" data-testid="steps-result">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-sm font-bold text-blue-200">{de ? 'Deine Reihenfolge' : 'Your order'}</p>
+            <p className="mt-1 text-2xl font-bold" data-testid="steps-score">
+              {stepResult.right} {de ? 'von' : 'of'} {stepResult.total} {de ? 'Schritten an der richtigen Stelle' : 'steps in the right place'}
+            </p>
+            <ol className="mt-3 space-y-2">
+              {picked.map((k, i) => {
+                const v = stepResult.verdicts[i];
+                const card = cards.find((c) => c.key === k)!;
+                const mistake = k.startsWith('m') ? scenario.mistakes[Number(k.slice(1))] : null;
+                return (
+                  <li key={k} className="flex items-start gap-2 text-sm">
+                    {v === 'right' ? <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> : v === 'wrong-place' ? <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 rotate-90 text-amber-300" /> : <X className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />}
+                    <span>
+                      <span className={v === 'right' ? 'text-white' : 'text-blue-100/80'}>{i + 1}. {card.text}</span>
+                      {v === 'wrong-place' && <span className="text-amber-200"> {de ? `(richtig, aber Schritt ${scenario.steps.findIndex((_, j) => `s${j}` === k) + 1})` : `(right, but step ${scenario.steps.findIndex((_, j) => `s${j}` === k) + 1})`}</span>}
+                      {mistake && <span className="block text-red-200">{mistake.why[language]}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+            {stepResult.missing.length > 0 && (
+              <p className="mt-3 text-sm text-blue-100/80">
+                <span className="font-bold">{de ? 'Fehlt: ' : 'Missing: '}</span>
+                {stepResult.missing.map((k) => scenario.steps[Number(k.slice(1))][language]).join(', ')}
+              </p>
+            )}
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-sm font-bold text-blue-200">{de ? 'Die richtige Reihenfolge' : 'The right order'}</p>
+            <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm">
+              {scenario.steps.map((t, i) => <li key={i}>{t[language]}</li>)}
+            </ol>
+            <p className="mt-3 flex items-start gap-2 text-xs text-blue-100/70"><BookOpen className="mt-0.5 h-3.5 w-3.5 shrink-0" />{scenario.law[language]}</p>
+          </div>
+        </section>
+      )}
+
+      {mode === 'write' && !result ? (
         <section className="space-y-3">
           <div>
             <p className="text-sm font-bold">{de ? 'Erkläre Schritt für Schritt, was du tust:' : 'Explain step by step what you would do:'}</p>
@@ -301,7 +434,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
           </button>
           <p className="text-center text-[11px] text-blue-100/50">{de ? 'Die Prüfung läuft auf deinem Gerät. Beim Mikrofon wandelt dein Browser die Sprache in Text um, z. B. über Google oder Apple.' : 'The check runs on your device. With the microphone, your browser turns speech into text, e.g. via Google or Apple.'}</p>
         </section>
-      ) : (
+      ) : mode === 'write' && result ? (
         <section className="space-y-4" data-testid="scenario-result">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm font-bold text-blue-200">{de ? 'Deine Antwort' : 'Your answer'}</p>
@@ -412,6 +545,52 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
               </button>
             ) : (
               <button onClick={onBackToList} className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-bold transition hover:bg-blue-700">
+                {de ? 'Zur Übersicht' : 'All situations'}
+              </button>
+            )}
+          </div>
+        </section>
+      ) : null}
+
+      {/* After the step check: the same quick check and buttons as the free answer */}
+      {stepResult && (
+        <section className="space-y-4">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4" data-testid="scenario-minitest">
+            <p className="text-sm font-bold text-blue-200">{de ? 'Kurztest' : 'Quick check'}</p>
+            <p className="mt-2 text-sm">{scenario.miniTest.question[language]}</p>
+            <div className="mt-3 space-y-2">
+              {scenario.miniTest.options.map((o, i) => {
+                const isRight = i === scenario.miniTest.correct;
+                const chosen = choice === i;
+                return (
+                  <button key={i} onClick={() => pick(i)} data-testid={`minitest-option-${i}`}
+                    className={cn('flex w-full items-start gap-3 rounded-xl border p-3 text-left text-sm transition',
+                      choice === null ? 'border-white/15 bg-white/5 hover:bg-white/10' : isRight ? 'border-emerald-400/60 bg-emerald-400/10' : chosen ? 'border-red-400/60 bg-red-400/10' : 'border-white/10 opacity-60')}>
+                    <span className="font-bold">{String.fromCharCode(65 + i)})</span><span>{o[language]}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {choice !== null && (
+              <p className="mt-3 text-sm text-blue-50">
+                <span className="font-bold">{choice === scenario.miniTest.correct ? (de ? 'Richtig. ' : 'Correct. ') : (de ? 'Nicht ganz. ' : 'Not quite. ')}</span>
+                {scenario.miniTest.explanation[language]}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={retry} className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 py-3.5 text-sm font-bold transition hover:bg-white/10">
+              <RotateCcw className="h-4 w-4" />{de ? 'Nochmal' : 'Try again'}
+            </button>
+            <button onClick={() => { retry(); setMode('write'); }} data-testid="steps-to-write" className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 py-3.5 text-sm font-bold transition hover:bg-white/10">
+              <PenLine className="h-4 w-4" />{de ? 'Jetzt frei antworten' : 'Now answer freely'}
+            </button>
+            {next ? (
+              <button onClick={onNext} data-testid="scenario-next" className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-bold transition hover:bg-blue-700">
+                {nextLocked && <Lock className="h-4 w-4" />}{de ? 'Nächste Situation' : 'Next situation'}<ArrowRight className="h-4 w-4" />
+              </button>
+            ) : (
+              <button onClick={onBackToList} className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-bold transition hover:bg-blue-700">
                 {de ? 'Zur Übersicht' : 'All situations'}
               </button>
             )}

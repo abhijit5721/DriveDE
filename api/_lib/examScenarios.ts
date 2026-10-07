@@ -42,6 +42,10 @@ export interface ExamScenario {
   keyPoints: KeyPoint[];
   /** Phrases that point to a wrong or risky answer (checked with the same negation rule). */
   contradictions: { patterns: string[]; hint: Bilingual }[];
+  /** Level 1 (step mode): the right sequence as short cards, in order. */
+  steps: Bilingual[];
+  /** Tempting wrong cards mixed into the step mode, each with the reason it is wrong. */
+  mistakes: { text: Bilingual; why: Bilingual }[];
   modelAnswer: Bilingual;
   law: Bilingual;
   miniTest: MiniTest;
@@ -83,6 +87,17 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { patterns: ['wink', 'handzeichen', '\\bwave', 'gesture'], hint: { de: 'Fußgänger nicht herüberwinken: Du kannst nicht sehen, ob von der anderen Seite jemand kommt.', en: 'Do not wave pedestrians across: you cannot see whether someone is coming from the other side.' } },
       { patterns: ['hupe', 'hupen', 'honk', 'horn'], hint: { de: 'Hupen ist hier falsch: Fußgänger haben Vorrang.', en: 'Honking is wrong here: pedestrians have priority.' } },
       { patterns: ['ueberhol', 'overtak'], hint: { de: 'Vor einem Zebrastreifen darfst du nicht überholen.', en: 'Overtaking at a zebra crossing is not allowed.' } },
+    ],
+    steps: [
+      { de: 'Früh beide Gehwege am Überweg beobachten', en: 'Watch both pavements at the crossing early' },
+      { de: 'Tempo reduzieren, bremsbereit sein', en: 'Slow down, be ready to brake' },
+      { de: 'Vor dem Zebrastreifen anhalten', en: 'Stop before the zebra crossing' },
+      { de: 'Warten, bis der Überweg frei ist', en: 'Wait until the crossing is clear' },
+      { de: 'Erneut umschauen und weiterfahren', en: 'Check again and drive on' },
+    ],
+    mistakes: [
+      { text: { de: 'Die Fußgängerin herüberwinken', en: 'Wave the pedestrian across' }, why: { de: 'Du kannst nicht sehen, ob von der anderen Seite jemand kommt.', en: 'You cannot see whether someone is coming from the other side.' } },
+      { text: { de: 'Kurz hupen, damit sie wartet', en: 'Honk briefly so she waits' }, why: { de: 'Fußgänger, die queren wollen, haben am Zebrastreifen Vorrang.', en: 'Pedestrians who want to cross have priority at a zebra crossing.' } },
     ],
     modelAnswer: {
       de: 'Ich beobachte früh beide Gehwege am Zebrastreifen und fahre mit mäßiger Geschwindigkeit heran, bremsbereit. Da die Fußgängerin erkennbar queren will, halte ich vor dem Zebrastreifen an und lasse sie gehen. Ich winke sie nicht herüber. Erst wenn der Überweg frei ist, schaue ich mich noch einmal um und fahre weiter.',
@@ -127,6 +142,18 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     contradictions: [
       { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'fahre (einfach )?durch', 'drive (straight )?through'], hint: { de: 'Das Auto von rechts hat Vorfahrt, nicht du.', en: 'The car from the right has priority, not you.' } },
     ],
+    steps: [
+      { de: 'Erkennen: keine Schilder, also rechts vor links', en: 'Recognise: no signs, so right before left' },
+      { de: 'Langsam und bremsbereit heranfahren', en: 'Approach slowly, ready to brake' },
+      { de: 'Zuerst nach rechts schauen', en: 'Look right first' },
+      { de: 'Dem Auto von rechts Vorfahrt lassen', en: 'Give way to the car from the right' },
+      { de: 'Nach links schauen, auf Radfahrer achten', en: 'Look left, watch for cyclists' },
+      { de: 'Geradeaus weiterfahren', en: 'Go straight on' },
+    ],
+    mistakes: [
+      { text: { de: 'Zügig durchfahren, die eigene Straße ist breiter', en: 'Drive straight through, your road is wider' }, why: { de: 'Ohne Schilder gibt die Breite der Straße keine Vorfahrt.', en: 'Without signs, a wider road gives no priority.' } },
+      { text: { de: 'Nur nach links schauen', en: 'Look only to the left' }, why: { de: 'Der Verkehr von rechts hat Vorfahrt, dort schaust du zuerst.', en: 'Traffic from the right has priority, so you look there first.' } },
+    ],
     modelAnswer: {
       de: 'Die Kreuzung hat keine Schilder, also gilt rechts vor links. Ich fahre langsam und bremsbereit heran, schaue zuerst nach rechts und lasse dem Auto von rechts die Vorfahrt. Ich schaue auch nach links und achte auf Radfahrer und Fußgänger. Wenn alles frei ist, fahre ich geradeaus weiter.',
       en: 'The junction has no signs, so right before left applies. I approach slowly and ready to brake, look right first and give way to the car from the right. I also look left and watch for cyclists and pedestrians. When everything is clear, I go straight on.',
@@ -169,6 +196,18 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { patterns: ['(beim|vor dem) einfahr\\w* .{0,15}(links |rechts )?blink', 'blinke? (beim|vor dem) einfahr', 'indicate (left |right )?(when|before|while) entering', 'signal (left |right )?(when|before|while) entering'], hint: { de: 'Beim Einfahren in den Kreisverkehr ist Blinken nicht erlaubt.', en: 'Indicating when entering the roundabout is not allowed.' } },
       { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)'], hint: { de: 'Mit „Vorfahrt gewähren“ hat der Verkehr im Kreis Vorfahrt.', en: 'With the give-way sign, traffic in the roundabout has priority.' } },
     ],
+    steps: [
+      { de: 'Langsam und bremsbereit heranfahren', en: 'Approach slowly, ready to brake' },
+      { de: 'Nach links schauen: der Verkehr im Kreis hat Vorfahrt', en: 'Look left: traffic in the roundabout has priority' },
+      { de: 'Ohne Blinker einfahren', en: 'Enter without indicating' },
+      { de: 'Vor der Ausfahrt rechts blinken', en: 'Indicate right before the exit' },
+      { de: 'Schulterblick rechts, auf Radfahrer und Fußgänger achten', en: 'Shoulder check right, watch for cyclists and pedestrians' },
+      { de: 'Ausfahren', en: 'Leave the roundabout' },
+    ],
+    mistakes: [
+      { text: { de: 'Beim Einfahren links blinken', en: 'Indicate left when entering' }, why: { de: 'Blinken beim Einfahren in den Kreisverkehr ist nicht erlaubt.', en: 'Indicating when entering a roundabout is not allowed.' } },
+      { text: { de: 'Vor dem Auto im Kreis einfahren', en: 'Enter in front of the car in the roundabout' }, why: { de: 'Mit „Vorfahrt gewähren“ hat der Verkehr im Kreis Vorrang.', en: 'With the give-way sign, traffic in the roundabout has priority.' } },
+    ],
     modelAnswer: {
       de: 'Ich fahre langsam und bremsbereit heran. Das Schild „Vorfahrt gewähren“ zeigt: Der Verkehr im Kreis hat Vorfahrt, also schaue ich nach links und lasse das Auto im Kreis fahren. Beim Einfahren blinke ich nicht. Vor der zweiten Ausfahrt blinke ich rechts, mache einen Schulterblick und achte auf Radfahrer und Fußgänger an der Ausfahrt.',
       en: 'I approach slowly and ready to brake. The give-way sign shows that traffic in the roundabout has priority, so I look left and let the car in the roundabout go. I do not indicate when entering. Before the second exit I indicate right, do a shoulder check and watch for cyclists and pedestrians at the exit.',
@@ -208,6 +247,17 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     ],
     contradictions: [
       { patterns: ['ohne schulterblick', 'nur (in den |die )?spiegel', 'without (a )?shoulder', 'only (the |my )?mirror'], hint: { de: 'Spiegel allein reichen nicht: Der tote Winkel braucht einen Schulterblick.', en: 'Mirrors alone are not enough: the blind spot needs a shoulder check.' } },
+    ],
+    steps: [
+      { de: 'Innenspiegel', en: 'Interior mirror' },
+      { de: 'Linker Außenspiegel', en: 'Left side mirror' },
+      { de: 'Links blinken', en: 'Indicate left' },
+      { de: 'Schulterblick nach links', en: 'Shoulder check to the left' },
+      { de: 'Bei ausreichender Lücke zügig wechseln', en: 'Change smoothly when the gap is big enough' },
+    ],
+    mistakes: [
+      { text: { de: 'Nur in den Spiegel schauen und wechseln', en: 'Only check the mirror and change' }, why: { de: 'Der tote Winkel braucht einen Schulterblick.', en: 'The blind spot needs a shoulder check.' } },
+      { text: { de: 'Erst wechseln, dann blinken', en: 'Change first, then indicate' }, why: { de: 'Der Blinker kündigt den Wechsel vorher an.', en: 'The indicator announces the change beforehand.' } },
     ],
     modelAnswer: {
       de: 'Ich ordne mich früh links ein. Ich schaue in den Innenspiegel, dann in den linken Außenspiegel, blinke links und mache einen Schulterblick nach links in den toten Winkel. Ich wechsle erst, wenn eine ausreichend große Lücke da ist und ich niemanden behindere, und dann zügig und gleichmäßig.',
@@ -250,6 +300,18 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     contradictions: [
       { patterns: ['vor dem radfahrer .{0,20}abbieg', 'schnell .{0,15}abbieg', 'cut in front', 'turn (quickly )?before the (cyclist|bike)'], hint: { de: 'Nicht vor dem Radfahrer abbiegen: Er fährt geradeaus und hat Vorrang.', en: 'Do not turn in front of the cyclist: they are going straight on and have priority.' } },
     ],
+    steps: [
+      { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' },
+      { de: 'Langsamer werden und rechts einordnen', en: 'Slow down and keep to the right' },
+      { de: 'Rechter Spiegel und Schulterblick rechts', en: 'Right mirror and shoulder check right' },
+      { de: 'Radfahrer geradeaus durchfahren lassen', en: 'Let cyclists going straight on pass' },
+      { de: 'Querende Fußgänger gehen lassen', en: 'Let crossing pedestrians go' },
+      { de: 'Abbiegen', en: 'Turn' },
+    ],
+    mistakes: [
+      { text: { de: 'Schnell vor dem Radfahrer abbiegen', en: 'Turn quickly in front of the cyclist' }, why: { de: 'Der Radfahrer fährt geradeaus und hat Vorrang.', en: 'The cyclist is going straight on and has priority.' } },
+      { text: { de: 'Hupen, damit der Radfahrer bremst', en: 'Honk so the cyclist brakes' }, why: { de: 'Hupen ändert nichts am Vorrang des Radfahrers.', en: 'Honking does not change the cyclist\'s priority.' } },
+    ],
     modelAnswer: {
       de: 'Ich blinke rechtzeitig rechts, werde langsamer und ordne mich rechts ein. Vor dem Abbiegen schaue ich in den rechten Spiegel und mache einen Schulterblick nach rechts, denn auf dem Radweg kann jemand geradeaus kommen. Radfahrer geradeaus und Fußgänger, die die Straße queren, haben Vorrang. Wenn nötig halte ich an und warte, dann biege ich ab.',
       en: 'I indicate right in good time, slow down and keep to the right. Before turning I check the right mirror and do a shoulder check to the right, because someone may come straight on along the cycle lane. Cyclists going straight on and pedestrians crossing the road have priority. If necessary I stop and wait, then I turn.',
@@ -290,6 +352,17 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     ],
     contradictions: [
       { patterns: ['(normal|zuegig|schnell) .{0,15}vorbei', 'ueberhole den bus', '(pass|overtake) .{0,15}(quickly|normally)', 'hupe', 'honk'], hint: { de: 'Am haltenden Bus mit Warnblinklicht nur mit Schrittgeschwindigkeit vorbei, nie zügig.', en: 'Past a stopped bus with hazard lights only at walking speed, never briskly.' } },
+    ],
+    steps: [
+      { de: 'Warnblinklicht am Bus erkennen', en: 'Notice the bus\'s hazard lights' },
+      { de: 'Auf Schrittgeschwindigkeit verlangsamen', en: 'Slow down to walking speed' },
+      { de: 'Mit Kindern rechnen, die auf die Straße laufen', en: 'Expect children running into the road' },
+      { de: 'Mit ausreichendem Seitenabstand vorbeifahren', en: 'Pass with enough side distance' },
+      { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' },
+    ],
+    mistakes: [
+      { text: { de: 'Zügig vorbeifahren, solange niemand auf der Straße ist', en: 'Pass briskly while nobody is in the road' }, why: { de: 'Am haltenden Bus mit Warnblinklicht nur Schrittgeschwindigkeit.', en: 'Past a stopped bus with hazard lights only at walking speed.' } },
+      { text: { de: 'Den Bus überholen, bevor er hält', en: 'Overtake the bus before it stops' }, why: { de: 'Busse mit Warnblinklicht vor der Haltestelle darfst du nicht überholen.', en: 'You may not overtake a bus approaching a stop with hazard lights on.' } },
     ],
     modelAnswer: {
       de: 'Der Bus hat das Warnblinklicht an, also gelten besondere Regeln. Ich fahre nur mit Schrittgeschwindigkeit und mit ausreichendem Seitenabstand vorbei und rechne damit, dass Kinder vor oder hinter dem Bus auf die Straße laufen. Wenn nötig halte ich an und warte. Einen Bus, der sich mit Warnblinklicht der Haltestelle nähert, überhole ich nicht.',
@@ -333,6 +406,17 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { patterns: ['reissverschluss', 'zipper', 'zip merge'], hint: { de: 'Das Reißverschlussverfahren gilt hier nicht: Der Verkehr auf der Autobahn hat Vorfahrt.', en: 'The zip rule does not apply here: traffic on the Autobahn has priority.' } },
       { patterns: ['langsam (auf|ein)', 'slowly merge', 'merge slowly'], hint: { de: 'Zu langsames Auffahren ist gefährlich: Nutze den Beschleunigungsstreifen zum Beschleunigen.', en: 'Joining too slowly is dangerous: use the acceleration lane to speed up.' } },
     ],
+    steps: [
+      { de: 'Auf dem Beschleunigungsstreifen beschleunigen', en: 'Accelerate on the acceleration lane' },
+      { de: 'Früh in den linken Spiegel schauen', en: 'Check the left mirror early' },
+      { de: 'Links blinken', en: 'Indicate left' },
+      { de: 'Schulterblick nach links', en: 'Shoulder check to the left' },
+      { de: 'In eine passende Lücke einfädeln', en: 'Merge into a suitable gap' },
+    ],
+    mistakes: [
+      { text: { de: 'Am Ende des Streifens anhalten und warten', en: 'Stop at the end of the lane and wait' }, why: { de: 'Anhalten ist gefährlich: Nutze den Streifen zum Beschleunigen.', en: 'Stopping is dangerous: use the lane to speed up.' } },
+      { text: { de: 'Auf das Reißverschlussverfahren vertrauen', en: 'Rely on the zip rule' }, why: { de: 'Der Verkehr auf der Autobahn hat Vorfahrt.', en: 'Traffic on the Autobahn has priority.' } },
+    ],
     modelAnswer: {
       de: 'Ich nutze den Beschleunigungsstreifen und beschleunige auf die Geschwindigkeit des Verkehrs. Dabei schaue ich früh in den linken Spiegel, blinke links und mache einen Schulterblick nach links. Der Verkehr auf der Autobahn hat Vorrang, also fädle ich zügig in eine passende Lücke ein, ohne jemanden zu behindern.',
       en: 'I use the acceleration lane and speed up to the speed of the traffic. While doing that I check the left mirror early, indicate left and do a shoulder check to the left. Traffic on the Autobahn has priority, so I merge smoothly into a suitable gap without hindering anyone.',
@@ -373,6 +457,18 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     ],
     contradictions: [
       { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'zwaeng', 'squeeze'], hint: { de: 'Das Hindernis ist auf deiner Seite, also lässt du den Gegenverkehr zuerst fahren.', en: 'The obstacle is on your side, so you let the oncoming traffic go first.' } },
+    ],
+    steps: [
+      { de: 'Erkennen: der Gegenverkehr hat Vorrang', en: 'Recognise: oncoming traffic has priority' },
+      { de: 'Langsamer werden, mit Abstand hinter dem Hindernis warten', en: 'Slow down, wait at a distance behind the obstacle' },
+      { de: 'Spiegel und links blinken', en: 'Mirror and indicate left' },
+      { de: 'Schulterblick nach links', en: 'Shoulder check to the left' },
+      { de: 'Mit etwa einem Meter Abstand vorbeifahren', en: 'Pass with about one metre of distance' },
+      { de: 'Rechts blinken und wieder einordnen', en: 'Indicate right and move back in' },
+    ],
+    mistakes: [
+      { text: { de: 'Zügig vorbei, bevor der Gegenverkehr da ist', en: 'Hurry past before the oncoming car arrives' }, why: { de: 'Das Hindernis ist auf deiner Seite, also wartest du.', en: 'The obstacle is on your side, so you wait.' } },
+      { text: { de: 'Dicht am Lieferwagen vorbeifahren', en: 'Pass close to the van' }, why: { de: 'Türen können sich öffnen, halte etwa einen Meter Abstand.', en: 'Doors can open; keep about one metre away.' } },
     ],
     modelAnswer: {
       de: 'Das Hindernis ist auf meiner Seite, also hat der Gegenverkehr Vorrang. Ich werde langsamer und halte mit Abstand hinter dem Lieferwagen, damit ich später gut vorbeikomme. Wenn die Gegenseite frei ist, schaue ich in den Spiegel, blinke links, mache einen Schulterblick und fahre mit etwa einem Meter Seitenabstand vorbei, weil sich Türen öffnen oder Personen aussteigen können. Danach blinke ich rechts und ordne mich wieder ein.',

@@ -18,6 +18,8 @@ test('exam simulation fills the phone screen and its back button works', async (
     s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
     s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
     s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+    // the banner can appear late under load and would cover the bottom buttons
+    s.setCookieSettings?.({ essential: true, analytics: false, marketing: false, hasSet: true });
   });
   await page.waitForTimeout(2000);
   const card = page.locator('[data-tour="exam-sim"] button').first();
@@ -48,11 +50,14 @@ test('an exam situation: type an answer, see covered points, the model answer an
     s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
     s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
     s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+    // the banner can appear late under load and would cover the bottom buttons
+    s.setCookieSettings?.({ essential: true, analytics: false, marketing: false, hasSet: true });
   });
   await page.waitForTimeout(1500);
   await page.locator('[data-tour="exam-sim"] button').first().click();
   await expect(page.getByTestId('scenario-list')).toBeVisible();
   await page.getByTestId('scenario-zebrastreifen').click();
+  await page.getByTestId('mode-write').click();
   await page.getByTestId('scenario-answer').fill('Ich fahre langsam heran und beobachte den Gehweg. Wenn sie queren will, halte ich vor dem Zebrastreifen an und warte, bis sie drüben ist.');
   await page.getByTestId('scenario-grade').click();
   await expect(page.getByTestId('scenario-result')).toBeVisible();
@@ -75,10 +80,13 @@ async function openZebra(page: import('@playwright/test').Page) {
     s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
     s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
     s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+    // the banner can appear late under load and would cover the bottom buttons
+    s.setCookieSettings?.({ essential: true, analytics: false, marketing: false, hasSet: true });
   });
   await page.waitForTimeout(1500);
   await page.locator('[data-tour="exam-sim"] button').first().click();
   await page.getByTestId('scenario-zebrastreifen').click();
+  await page.getByTestId('mode-write').click();
   await page.getByTestId('scenario-answer').fill('Ich fahre langsam heran. Wenn sie queren will, halte ich an.');
   await page.getByTestId('scenario-grade').click();
   await expect(page.getByTestId('scenario-result')).toBeVisible();
@@ -113,4 +121,47 @@ test('without a Groq key the detailed-feedback button is not shown', async ({ pa
   await page.route('**/api/grade-scenario', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":false}' }));
   await openZebra(page);
   await expect(page.getByTestId('scenario-ai')).toHaveCount(0);
+});
+
+test('step mode: tap the steps in order, mistakes are explained, wrong place is flagged', async ({ page }) => {
+  await page.goto('/?lang=de');
+  await page.getByTestId('cookie-accept-all').click({ timeout: 4000 }).catch(() => undefined);
+  await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
+  await expect(page.getByTestId('license-continue-btn')).toBeVisible({ timeout: 15000 });
+  await page.waitForTimeout(4500);
+  // the dev server may reload the page once while it optimises new imports
+  await page.waitForFunction(() => Boolean((window as any).__drivedeStore), null, { timeout: 15000 });
+  await page.evaluate(() => {
+    const s = (window as any).__drivedeStore.getState();
+    s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
+    s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
+    s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+    // the banner can appear late under load and would cover the bottom buttons
+    s.setCookieSettings?.({ essential: true, analytics: false, marketing: false, hasSet: true });
+  });
+  await page.waitForTimeout(1500);
+  await page.locator('[data-tour="exam-sim"] button').first().click();
+  await page.getByTestId('scenario-zebrastreifen').click();
+  await expect(page.getByTestId('step-mode')).toBeVisible(); // steps is the default
+  // 5 steps + 2 mistakes = 7 cards, shuffled
+  await expect(page.locator('[data-testid^="card-"]')).toHaveCount(7);
+  // pick: s0 right, s2 at the wrong place, mistake m0, then s1
+  for (const k of ['s0', 's2', 'm0', 's1']) await page.getByTestId(`card-${k}`).click();
+  // tapping again removes a card; re-add to keep the sequence
+  await page.getByTestId('card-s1').click();
+  await expect(page.getByTestId('card-s1')).toHaveAttribute('aria-pressed', 'false');
+  await page.getByTestId('card-s1').click();
+  await page.getByTestId('steps-check').click();
+  const res = page.getByTestId('steps-result');
+  await expect(res).toBeVisible();
+  await expect(page.getByTestId('steps-score')).toContainText('1 von 5');
+  await expect(res).toContainText('richtig, aber Schritt 3');
+  await expect(res).toContainText('ob von der anderen Seite jemand kommt'); // the mistake's reason
+  await expect(res).toContainText('Fehlt:');
+  await expect(res).toContainText('Die richtige Reihenfolge');
+  // quick check and the switch to free answering are offered
+  await page.getByTestId('minitest-option-1').click();
+  await expect(page.getByTestId('scenario-minitest')).toContainText('Richtig');
+  await page.getByTestId('steps-to-write').click();
+  await expect(page.getByTestId('scenario-answer')).toBeVisible();
 });

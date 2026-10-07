@@ -78,3 +78,19 @@ describe('gradeAnswer', () => {
     }
   });
 });
+
+describe('step mode content', () => {
+  it('every scenario has an ordered step list and two mistakes with reasons', () => {
+    for (const s of EXAM_SCENARIOS) {
+      expect(s.steps.length, s.id).toBeGreaterThanOrEqual(4);
+      expect(s.steps.length, s.id).toBeLessThanOrEqual(7);
+      expect(s.mistakes.length, s.id).toBe(2);
+      for (const m of s.mistakes) {
+        expect(m.why.de.length, s.id).toBeGreaterThan(10);
+        expect(s.steps.some((t) => t.de === m.text.de), s.id).toBe(false);
+      }
+      const all = JSON.stringify([s.steps, s.mistakes, s.situation, s.modelAnswer, s.law, s.miniTest]);
+      expect(all, s.id).not.toMatch(/[\u2013\u2014]/);
+    }
+  });
+});
