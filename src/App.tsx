@@ -178,6 +178,18 @@ export default function App() {
     return unsub;
   }, []);
 
+  // The public situation pages (/pruefung/<id>/, /exam/<id>/) link into the
+  // Prüfungssimulation with ?exam=<id>. Parked in sessionStorage because a new visitor
+  // first passes the landing page and the licence selector; consumed below once the
+  // app shell is up.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('exam');
+    if (id && /^[a-z0-9-]{1,64}$/.test(id)) {
+      try { sessionStorage.setItem('drivede_pending_exam', id); } catch { /* storage blocked */ }
+    }
+  }, []);
+  const [examStartId, setExamStartId] = useState<string | null>(null);
+
   // Keep document title, meta description, and <html lang> in sync with the app
   // language — the static index.html defaults are German; English visitors (and
   // Google crawling the ?lang=en alternate) get the English versions.
@@ -715,6 +727,20 @@ export default function App() {
   };
 
   const hasCompleteSelection = !!licenseType && !!learningPath && !!transmissionType;
+
+  // open the situation a public page linked to, once the app shell can show it
+  useEffect(() => {
+    if (!hasVisited || !hasCompleteSelection || showExamSimulation) return;
+    let id: string | null = null;
+    try {
+      id = sessionStorage.getItem('drivede_pending_exam');
+      if (id) sessionStorage.removeItem('drivede_pending_exam');
+    } catch { /* storage blocked */ }
+    if (!id) return;
+    trackFunnel('exam_deeplink', { scenario: id });
+    setExamStartId(id);
+    setShowExamSimulation(true);
+  }, [hasVisited, hasCompleteSelection, showExamSimulation]);
   const isDetailPage = selectedLesson !== null || selectedLegalPage !== null;
 
   const renderContent = () => {
@@ -859,7 +885,7 @@ export default function App() {
     if (showExamSimulation) {
       return (
         <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Loading...</div>}>
-          <ExamSimulation onBack={() => setShowExamSimulation(false)} onOpenPaywall={() => { setShowExamSimulation(false); setShowPaywall(true); }} />
+          <ExamSimulation initialScenarioId={examStartId} onBack={() => { setShowExamSimulation(false); setExamStartId(null); }} onOpenPaywall={() => { setShowExamSimulation(false); setExamStartId(null); setShowPaywall(true); }} />
         </Suspense>
       );
     }

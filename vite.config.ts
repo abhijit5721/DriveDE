@@ -55,7 +55,7 @@ export default defineConfig({
         // static blog pages are server-rendered HTML, not SPA routes:
         // keep them out of the precache and out of the SPA navigation fallback
         globIgnores: ['blog/**'],
-        navigateFallbackDenylist: [/^\/blog(\/|$)/, /^\/sitemap\.xml$/],
+        navigateFallbackDenylist: [/^\/blog(\/|$)/, /^\/pruefung(\/|$)/, /^\/exam(\/|$)/, /^\/sitemap\.xml$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

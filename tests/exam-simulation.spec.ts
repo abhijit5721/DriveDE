@@ -165,3 +165,30 @@ test('step mode: tap the steps in order, mistakes are explained, wrong place is 
   await page.getByTestId('steps-to-write').click();
   await expect(page.getByTestId('scenario-answer')).toBeVisible();
 });
+
+test('a public situation page links into the app: ?exam=kreisverkehr opens that situation', async ({ page }) => {
+  await page.goto('/?lang=de&exam=kreisverkehr');
+  await page.locator('button:visible', { hasText: 'Jetzt kostenlos starten' }).first().click();
+  await expect(page.getByTestId('license-continue-btn')).toBeVisible({ timeout: 15000 });
+  await page.waitForTimeout(4500);
+  await page.waitForFunction(() => Boolean((window as any).__drivedeStore), null, { timeout: 15000 });
+  await page.evaluate(() => {
+    const s = (window as any).__drivedeStore.getState();
+    s.setAuthState?.(null, 'signed_in', null, 'local-anon-test', true);
+    s.setLicenseType?.('manual'); s.setLearningPath?.('standard'); s.setTransmissionType?.('manual');
+    s.setHasCompletedOnboarding?.(true); s.setAcceptedPrivacy?.(true);
+    s.setCookieSettings?.({ essential: true, analytics: false, marketing: false, hasSet: true });
+  });
+  const sim = page.getByTestId('exam-simulation');
+  await expect(sim).toBeVisible({ timeout: 10000 });
+  await expect(sim.locator('h2')).toContainText('Kreisverkehr');
+  await expect(page.getByTestId('step-mode')).toBeVisible();
+  // back goes to the list, not out of the simulation; a second back leaves
+  await page.getByTestId('exam-simulation-back').click();
+  await expect(page.getByTestId('scenario-list')).toBeVisible();
+  await page.getByTestId('exam-simulation-back').click();
+  await expect(sim).toHaveCount(0);
+  // reopening from the dashboard starts on the list again
+  await page.locator('[data-tour="exam-sim"] button').first().click();
+  await expect(page.getByTestId('scenario-list')).toBeVisible();
+});

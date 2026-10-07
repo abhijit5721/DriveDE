@@ -16,6 +16,7 @@ import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
+import { buildExamPages } from './build-exam-pages.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT = path.join(ROOT, 'content', 'blog');
@@ -151,6 +152,7 @@ ${head}
   <a class="brand" href="/">Drive<span>DE</span></a>
   <div>
     <a class="nav-link" href="${lang === 'de' ? '/blog/' : '/blog/en/'}">Blog</a>
+    <a class="nav-link" href="${lang === 'de' ? '/pruefung/' : '/exam/'}">${lang === 'de' ? 'Prüfung' : 'Exam'}</a>
     <span class="nav-lang"><a href="/blog/"${lang === 'de' ? ' class="active"' : ''}>DE</a> <span>|</span> <a href="/blog/en/"${lang !== 'de' ? ' class="active"' : ''}>EN</a></span>
     <a class="btn" href="${lang === 'de' ? '/' : '/?lang=en'}">${lang === 'de' ? 'Gratis testen' : 'Try DriveDE free'}</a>
   </div>
@@ -394,8 +396,11 @@ ${newsBlock(idx.lang)}`,
   writeFileSync(path.join(idx.dir, 'index.html'), html);
 }
 
-// ---------- sitemap ----------
+// ---------- public exam situation pages (scripts/build-exam-pages.mjs) ----------
 const today = new Date().toISOString().slice(0, 10);
+const examUrls = await buildExamPages({ shell, esc, SITE, ROOT, today });
+
+// ---------- sitemap ----------
 const urls = [
   `  <url>
     <loc>${SITE}/</loc>
@@ -432,8 +437,9 @@ const urls = [
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`),
+  ...examUrls,
 ];
 writeFileSync(path.join(ROOT, 'public', 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`);
 
-console.log(`blog: ${posts.length} posts + index + sitemap generated`);
+console.log(`blog: ${posts.length} posts + index, ${examUrls.length} exam pages, sitemap generated`);

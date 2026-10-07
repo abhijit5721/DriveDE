@@ -26,6 +26,7 @@
  *   scenario_minitest    the quick check after it was answered (props: scenario, correct)
  *   scenario_ai_feedback detailed AI feedback was requested (props: scenario, ok, reason)
  *   scenario_steps       the step order was checked (props: scenario, right, total, mistakes)
+ *   exam_deeplink        the app opened a situation from its public page /pruefung/<id>/ (props: scenario)
  *   email_added          an anonymous account was secured with an email (props: via)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
@@ -309,7 +310,8 @@ export type FunnelEvent =
   | 'scenario_answered'
   | 'scenario_minitest'
   | 'scenario_ai_feedback'
-  | 'scenario_steps';
+  | 'scenario_steps'
+  | 'exam_deeplink';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,

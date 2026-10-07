@@ -22,6 +22,8 @@ import { cn } from '../../utils/cn';
 interface ExamSimulationProps {
   onBack: () => void;
   onOpenPaywall?: () => void;
+  /** Situation to open at once (deep link from its public page); unknown ids show the list. */
+  initialScenarioId?: string | null;
 }
 
 const RESULTS_KEY = 'drivede-scenario-results';
@@ -92,7 +94,7 @@ function speechRecognitionCtor(): (new () => SpeechRec) | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
-export default function ExamSimulation({ onBack, onOpenPaywall }: ExamSimulationProps) {
+export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioId = null }: ExamSimulationProps) {
   const { language, isProActive } = useAppStore();
   const de = language === 'de';
   const pro = isProActive();
@@ -110,6 +112,12 @@ export default function ExamSimulation({ onBack, onOpenPaywall }: ExamSimulation
     if (!s.free && !pro) { onOpenPaywall?.(); return; }
     setCurrent(s);
   };
+
+  useEffect(() => {
+    const s = initialScenarioId ? EXAM_SCENARIOS.find((x) => x.id === initialScenarioId) : undefined;
+    if (s) open(s);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialScenarioId]);
 
   const next = useMemo(() => {
     if (!current) return null;
