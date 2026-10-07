@@ -160,8 +160,8 @@ function indexBody({ all, lang, t, esc }) {
  * Writes the pages under outRoot (default public/) and returns sitemap <url> entries.
  * shell/esc come from build-blog.mjs so the pages share the blog's look.
  */
-export async function buildExamPages({ shell, esc, SITE, ROOT, outRoot = path.join(ROOT, 'public'), today = new Date().toISOString().slice(0, 10) }) {
-  const all = await loadScenarios(ROOT);
+export async function buildExamPages({ shell, esc, SITE, ROOT, outRoot = path.join(ROOT, 'public'), today = new Date().toISOString().slice(0, 10), scenarios = null }) {
+  const all = scenarios ?? await loadScenarios(ROOT);
   const urls = [];
   for (const lang of ['de', 'en']) {
     const t = T[lang];

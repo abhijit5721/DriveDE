@@ -16,4 +16,5 @@ export function buildExamPages(opts: {
   ROOT: string;
   outRoot?: string;
   today?: string;
+  scenarios?: unknown[] | null;
 }): Promise<string[]>;

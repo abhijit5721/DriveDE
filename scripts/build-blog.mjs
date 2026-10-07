@@ -16,7 +16,7 @@ import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
-import { buildExamPages } from './build-exam-pages.mjs';
+import { buildExamPages, loadScenarios } from './build-exam-pages.mjs';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT = path.join(ROOT, 'content', 'blog');
@@ -97,6 +97,9 @@ article tbody tr:nth-child(even){background:var(--paper)}
 .cta strong{display:block;color:#fff;font-size:21px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
 .cta a{display:inline-block;background:#fff;color:var(--accent-strong);font-weight:800;padding:13px 26px;border-radius:12px}
 .cta a:hover{background:var(--accent-soft)}
+.cta .cta-more{margin:16px 0 0;font-size:15px}
+.cta .cta-more a{display:inline;background:none;color:#fff;padding:0;border-radius:0;font-weight:700;text-decoration:underline;text-decoration-color:rgba(255,255,255,.5);text-underline-offset:3px}
+.cta .cta-more a:hover{background:none;text-decoration-color:#fff}
 .related{margin-top:52px;border-top:1px solid var(--line);padding-top:28px}
 .related h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:16px}
 .postlist{list-style:none;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
@@ -205,6 +208,21 @@ const CTA_COPY = {
   },
 };
 
+// The public situation page that matches the post's trainer topic (DRI-61): the
+// right-of-way page for right-of-way posts, the roundabout page for roundabout posts,
+// the overview for everything else. Internal links are also what tells Google the
+// situation pages matter.
+const SITUATION_FOR = { vorfahrt: 'rechts-vor-links', roundabout: 'kreisverkehr' };
+function situationLink(lang, kind) {
+  const dir = lang === 'de' ? 'pruefung' : 'exam';
+  const id = SITUATION_FOR[kind];
+  const s = id ? scenarios.find((x) => x.id === id) : null;
+  const label = lang === 'de' ? 'Was der Prüfer sehen will' : 'What the examiner looks for';
+  return s
+    ? `<p class="cta-more"><a href="/${dir}/${s.id}/">${label}: ${esc(s.title[lang])} →</a></p>`
+    : `<p class="cta-more"><a href="/${dir}/">${label}: ${lang === 'de' ? 'alle Prüfungssituationen' : 'all exam situations'} →</a></p>`;
+}
+
 function ctaHtml(post) {
   const lang = post.lang === 'de' ? 'de' : 'en';
   const kind = trainerFor(post);
@@ -214,8 +232,10 @@ function ctaHtml(post) {
   if (lang === 'en') params.set('lang', 'en');
   params.set('utm_source', 'blog');
   params.set('utm_campaign', post.slug);
-  return `<div class="cta" data-cta="${kind}"><p><strong>${esc(c.title)}</strong> ${esc(c.text)}</p><a href="/?${params.toString()}">${esc(c.button)}</a></div>`;
+  return `<div class="cta" data-cta="${kind}"><p><strong>${esc(c.title)}</strong> ${esc(c.text)}</p><a href="/?${params.toString()}">${esc(c.button)}</a>${situationLink(lang, kind)}</div>`;
 }
+
+const scenarios = await loadScenarios(ROOT);
 
 for (const post of posts) {
   const canonical = `${SITE}/blog/${post.slug}/`;
@@ -390,6 +410,13 @@ for (const idx of INDEXES) {
 <ul class="postlist">${langPosts
       .map((p) => `<li><a href="/blog/${p.slug}/"><span class="card-flag">${p.flag || '📄'}</span><span class="card-title">${esc(p.title)}</span></a><p>${esc(p.description)}</p></li>`)
       .join('\n')}</ul>
+<section class="related">
+  <h2>${idx.lang === 'de' ? 'Prüfungssituationen' : 'Exam situations'}</h2>
+  <p class="meta" style="margin-bottom:16px">${idx.lang === 'de' ? 'Was der Prüfer in jeder Situation sehen will, mit der richtigen Reihenfolge und den typischen Fehlern.' : 'What the examiner wants to see in each situation, with the right order and the typical mistakes.'} <a href="/${idx.lang === 'de' ? 'pruefung' : 'exam'}/">${idx.lang === 'de' ? 'Alle Situationen' : 'All situations'} →</a></p>
+  <ul class="postlist">${scenarios
+      .map((s) => `<li><a href="/${idx.lang === 'de' ? 'pruefung' : 'exam'}/${s.id}/"><span class="card-flag">🚦</span><span class="card-title">${esc(s.title[idx.lang])}</span></a><p>„${esc(s.examiner.de)}“</p></li>`)
+      .join('\n')}</ul>
+</section>
 ${newsBlock(idx.lang)}`,
   });
   mkdirSync(idx.dir, { recursive: true });
@@ -398,7 +425,7 @@ ${newsBlock(idx.lang)}`,
 
 // ---------- public exam situation pages (scripts/build-exam-pages.mjs) ----------
 const today = new Date().toISOString().slice(0, 10);
-const examUrls = await buildExamPages({ shell, esc, SITE, ROOT, today });
+const examUrls = await buildExamPages({ shell, esc, SITE, ROOT, today, scenarios });
 
 // ---------- sitemap ----------
 const urls = [

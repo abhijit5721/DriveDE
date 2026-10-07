@@ -264,6 +264,13 @@ export function Welcome() {
         : 'You tap "Start" before the lesson and put the phone away. DriveDE records route and driving time in the background. You enter the mistakes after the drive with the engine off and review them in the analysis. The phone is never operated while driving, German law (§ 23 StVO) forbids it.'
     },
     {
+      q: isDe ? 'Welche Situationen kommen in der praktischen Prüfung dran?' : 'Which situations come up in the practical test?',
+      a: isDe
+        ? 'Die praktische Prüfung besteht aus festen Fahraufgaben: Vorfahrt, Kreisverkehr, Abbiegen, Spurwechsel, Fußgängerüberwege, Bahnübergänge und die Grundfahraufgaben. Für jede Situation haben wir aufgeschrieben, worauf der Prüfer achtet, in welcher Reihenfolge du handelst und welche Fehler Kandidaten dabei machen. In der App übst du sie in der Prüfungssimulation.'
+        : 'The practical test consists of fixed driving tasks: right of way, roundabouts, turning, lane changes, pedestrian crossings, railway crossings and the basic manoeuvres. For each situation we have written down what the examiner watches for, the order you act in and the mistakes candidates make. In the app you practise them in the exam simulation.',
+      link: { href: isDe ? '/pruefung/' : '/exam/', label: isDe ? 'Alle Prüfungssituationen ansehen' : 'See all exam situations' },
+    },
+    {
       q: isDe ? 'Welche Führerscheinklassen werden unterstützt?' : 'Which license classes are supported?',
       a: isDe 
         ? 'Klasse B mit Schaltgetriebe und Automatik, B197 und die Umschreibung eines ausländischen Führerscheins.' 
@@ -877,6 +884,9 @@ export function Welcome() {
                 {openFaq === i && (
                   <div className="px-6 pb-6 text-sm text-slate-500 leading-relaxed border-t border-slate-100/50 pt-4">
                     {faq.a}
+                    {faq.link && (
+                      <a href={faq.link.href} className="mt-3 inline-flex items-center gap-1 font-bold text-blue-600 hover:text-blue-700">{faq.link.label} →</a>
+                    )}
                   </div>
                 )}
               </div>
@@ -1082,6 +1092,8 @@ export function Welcome() {
             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4">{isDe ? 'Unternehmen' : 'Company'}</h3>
             <ul className="space-y-2.5 text-xs text-slate-500">
               <li><a href="#expat-stories" className="hover:text-slate-900 transition">{isDe ? 'Für Expats & Umschreibung' : 'For Expats & Umschreibung'}</a></li>
+              <li><a href={isDe ? '/pruefung/' : '/exam/'} className="hover:text-slate-900 transition">{isDe ? 'Prüfungssituationen' : 'Exam situations'}</a></li>
+              <li><a href={isDe ? '/blog/' : '/blog/en/'} className="hover:text-slate-900 transition">Blog</a></li>
               <li><a href="#feedback" className="hover:text-slate-900 transition">{isDe ? 'Kontakt & Support' : 'Contact & Support'}</a></li>
             </ul>
           </div>
