@@ -147,7 +147,7 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Langsam und bremsbereit heranfahren', en: 'Approach slowly, ready to brake' },
       { de: 'Zuerst nach rechts schauen', en: 'Look right first' },
       { de: 'Dem Auto von rechts Vorfahrt lassen', en: 'Give way to the car from the right' },
-      { de: 'Nach links schauen, auf Radfahrer achten', en: 'Look left, watch for cyclists' },
+      { de: 'Nach links schauen, kurz vor dem Einfahren noch einmal nach rechts', en: 'Look left, then right again just before entering' },
       { de: 'Geradeaus weiterfahren', en: 'Go straight on' },
     ],
     mistakes: [
@@ -155,8 +155,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { text: { de: 'Nur nach links schauen', en: 'Look only to the left' }, why: { de: 'Der Verkehr von rechts hat Vorfahrt, dort schaust du zuerst.', en: 'Traffic from the right has priority, so you look there first.' } },
     ],
     modelAnswer: {
-      de: 'Die Kreuzung hat keine Schilder, also gilt rechts vor links. Ich fahre langsam und bremsbereit heran, schaue zuerst nach rechts und lasse dem Auto von rechts die Vorfahrt. Ich schaue auch nach links und achte auf Radfahrer und Fußgänger. Wenn alles frei ist, fahre ich geradeaus weiter.',
-      en: 'The junction has no signs, so right before left applies. I approach slowly and ready to brake, look right first and give way to the car from the right. I also look left and watch for cyclists and pedestrians. When everything is clear, I go straight on.',
+      de: 'Die Kreuzung hat keine Schilder, also gilt rechts vor links. Ich fahre langsam und bremsbereit heran, schaue zuerst nach rechts und lasse dem Auto von rechts die Vorfahrt. Ich schaue auch nach links und achte auf Radfahrer und Fußgänger. Kurz vor dem Einfahren schaue ich noch einmal nach rechts, dann fahre ich geradeaus weiter.',
+      en: 'The junction has no signs, so right before left applies. I approach slowly and ready to brake, look right first and give way to the car from the right. I also look left and watch for cyclists and pedestrians. Just before entering I look right once more, then I go straight on.',
     },
     law: { de: '§ 8 Abs. 1 StVO: An Kreuzungen und Einmündungen hat Vorfahrt, wer von rechts kommt, sofern nichts anderes geregelt ist.', en: '§ 8 (1) StVO: at junctions, whoever comes from the right has priority unless signs or lights say otherwise.' },
     miniTest: {
@@ -212,7 +212,7 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       de: 'Ich fahre langsam und bremsbereit heran. Das Schild „Vorfahrt gewähren“ zeigt: Der Verkehr im Kreis hat Vorfahrt, also schaue ich nach links und lasse das Auto im Kreis fahren. Beim Einfahren blinke ich nicht. Vor der zweiten Ausfahrt blinke ich rechts, mache einen Schulterblick und achte auf Radfahrer und Fußgänger an der Ausfahrt.',
       en: 'I approach slowly and ready to brake. The give-way sign shows that traffic in the roundabout has priority, so I look left and let the car in the roundabout go. I do not indicate when entering. Before the second exit I indicate right, do a shoulder check and watch for cyclists and pedestrians at the exit.',
     },
-    law: { de: '§ 9a Abs. 1 StVO: Beim Einfahren in einen Kreisverkehr ist Blinken unzulässig. Mit Zeichen 205 hat der Verkehr im Kreis Vorfahrt. Das Verlassen wird rechts angezeigt.', en: '§ 9a (1) StVO: indicating when entering a roundabout is not allowed. With sign 205 the traffic in the roundabout has priority. Leaving is indicated to the right.' },
+    law: { de: '§ 9a Abs. 1 StVO: Mit den Zeichen 215 und 205 hat der Verkehr im Kreis Vorfahrt, beim Einfahren ist Blinken unzulässig. Das Verlassen ist Abbiegen (§ 9 Abs. 1 StVO) und wird rechtzeitig rechts angezeigt.', en: '§ 9a (1) StVO: with signs 215 and 205 the traffic in the roundabout has priority, and indicating when entering is not allowed. Leaving is a turn (§ 9 (1) StVO) and is indicated right in good time.' },
     miniTest: {
       question: { de: 'Wie blinkst du im Kreisverkehr?', en: 'How do you indicate at a roundabout?' },
       options: [
@@ -292,8 +292,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     keyPoints: [
       { id: 'signal', label: { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' }, patterns: ['blink', 'indicat', 'signal'] },
       { id: 'speed', label: { de: 'Langsam werden, rechts einordnen', en: 'Slow down, keep to the right' }, patterns: [...SLOW, 'einordn'] },
-      { id: 'shoulder', label: { de: 'Rechter Spiegel und Schulterblick rechts', en: 'Right mirror and shoulder check to the right' }, patterns: [...SHOULDER, 'rechte\\w* spiegel', 'right mirror'] },
-      { id: 'cyclists', label: { de: 'Radfahrern geradeaus Vorrang lassen', en: 'Let cyclists going straight on go first' }, patterns: ['(radfahr|fahrrad|radweg)\\w* .{0,70}(vorrang|vorfahrt|vortritt|zuerst|durch|lass|warte)', '(warte|lasse) .{0,40}(radfahr|fahrrad)', '(cyclist|bike|cycle)\\w* .{0,40}(priority|first|right of way|pass|go)', '(wait for|let) .{0,30}(cyclist|bike)'] },
+      { id: 'shoulder', label: { de: 'Rechter Spiegel, kurz vor dem Abbiegen Schulterblick nach rechts', en: 'Right mirror, shoulder check to the right just before turning' }, patterns: [...SHOULDER, 'rechte\\w* spiegel', 'right mirror'] },
+      { id: 'cyclists', label: { de: 'Radfahrern auf dem Radweg Vorrang lassen, aus beiden Richtungen', en: 'Let cyclists on the cycle lane go first, from both directions' }, patterns: ['(radfahr|fahrrad|radweg)\\w* .{0,70}(vorrang|vorfahrt|vortritt|zuerst|durch|lass|warte)', '(warte|lasse) .{0,40}(radfahr|fahrrad)', '(cyclist|bike|cycle)\\w* .{0,40}(priority|first|right of way|pass|go)', '(wait for|let) .{0,30}(cyclist|bike)'] },
       { id: 'pedestrians', label: { de: 'Querenden Fußgängern Vorrang lassen', en: 'Let crossing pedestrians go first' }, patterns: ['fussgaeng\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte)', '(warte|lasse) .{0,40}fussgaeng', 'pedestrian\\w* .{0,40}(priority|first|right of way|cross|go)', '(wait for|let) .{0,30}pedestrian'] },
       { id: 'wait', label: { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' }, patterns: STOP_WAIT },
     ],
@@ -301,22 +301,22 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { patterns: ['vor dem radfahrer .{0,20}abbieg', 'schnell .{0,15}abbieg', 'cut in front', 'turn (quickly )?before the (cyclist|bike)'], hint: { de: 'Nicht vor dem Radfahrer abbiegen: Er fährt geradeaus und hat Vorrang.', en: 'Do not turn in front of the cyclist: they are going straight on and have priority.' } },
     ],
     steps: [
-      { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' },
-      { de: 'Langsamer werden und rechts einordnen', en: 'Slow down and keep to the right' },
-      { de: 'Rechter Spiegel und Schulterblick rechts', en: 'Right mirror and shoulder check right' },
-      { de: 'Radfahrer geradeaus durchfahren lassen', en: 'Let cyclists going straight on pass' },
+      { de: 'Innenspiegel und rechter Außenspiegel, dann rechtzeitig rechts blinken', en: 'Interior and right mirror, then indicate right in good time' },
+      { de: 'Langsamer werden und möglichst weit rechts einordnen', en: 'Slow down and keep as far right as possible' },
+      { de: 'Kurz vor dem Abbiegen Schulterblick nach rechts', en: 'Shoulder check to the right just before turning' },
+      { de: 'Radfahrer auf dem Radweg aus beiden Richtungen durchfahren lassen', en: 'Let cyclists on the cycle lane pass, from both directions' },
       { de: 'Querende Fußgänger gehen lassen', en: 'Let crossing pedestrians go' },
       { de: 'Abbiegen', en: 'Turn' },
     ],
     mistakes: [
       { text: { de: 'Schnell vor dem Radfahrer abbiegen', en: 'Turn quickly in front of the cyclist' }, why: { de: 'Der Radfahrer fährt geradeaus und hat Vorrang.', en: 'The cyclist is going straight on and has priority.' } },
-      { text: { de: 'Hupen, damit der Radfahrer bremst', en: 'Honk so the cyclist brakes' }, why: { de: 'Hupen ändert nichts am Vorrang des Radfahrers.', en: 'Honking does not change the cyclist\'s priority.' } },
+      { text: { de: 'Nur in den Spiegel schauen, kein Schulterblick', en: 'Only check the mirror, no shoulder check' }, why: { de: 'Radfahrer im toten Winkel siehst du nur mit dem Schulterblick. Abbiegeunfälle entstehen genau so.', en: 'A cyclist in the blind spot is only seen with a shoulder check. That is exactly how turning accidents happen.' } },
     ],
     modelAnswer: {
-      de: 'Ich blinke rechtzeitig rechts, werde langsamer und ordne mich rechts ein. Vor dem Abbiegen schaue ich in den rechten Spiegel und mache einen Schulterblick nach rechts, denn auf dem Radweg kann jemand geradeaus kommen. Radfahrer geradeaus und Fußgänger, die die Straße queren, haben Vorrang. Wenn nötig halte ich an und warte, dann biege ich ab.',
-      en: 'I indicate right in good time, slow down and keep to the right. Before turning I check the right mirror and do a shoulder check to the right, because someone may come straight on along the cycle lane. Cyclists going straight on and pedestrians crossing the road have priority. If necessary I stop and wait, then I turn.',
+      de: 'Ich schaue in den Innenspiegel und den rechten Außenspiegel, blinke rechtzeitig rechts, werde langsamer und ordne mich möglichst weit rechts ein. Kurz vor dem Abbiegen mache ich einen Schulterblick nach rechts, denn auf dem Radweg kann jemand geradeaus kommen, auch entgegen der Fahrtrichtung. Radfahrer geradeaus und Fußgänger, die die Straße queren, haben Vorrang. Wenn nötig halte ich an und warte, dann biege ich ab.',
+      en: 'I check the interior mirror and the right mirror, indicate right in good time, slow down and keep as far right as possible. Just before turning I do a shoulder check to the right, because someone may come straight on along the cycle lane, also against the direction of traffic. Cyclists going straight on and pedestrians crossing the road have priority. If necessary I stop and wait, then I turn.',
     },
-    law: { de: '§ 9 Abs. 3 StVO: Wer abbiegt, muss Fahrzeuge, auch Radfahrer auf Radwegen, durchfahren lassen und auf Fußgänger besondere Rücksicht nehmen, wenn nötig warten.', en: '§ 9 (3) StVO: when turning you must let vehicles through, including cyclists on cycle lanes, and take special care of pedestrians, waiting if necessary.' },
+    law: { de: '§ 9 Abs. 1 StVO: Vor dem Einordnen und nochmals vor dem Abbiegen auf den nachfolgenden Verkehr achten. § 9 Abs. 3 StVO: Wer abbiegt, muss Radfahrer auf Radwegen in gleicher Richtung durchfahren lassen und auf Fußgänger besondere Rücksicht nehmen, wenn nötig warten.', en: '§ 9 (1) StVO: watch the traffic behind you before moving over and again before turning. § 9 (3) StVO: when turning you must let cyclists on cycle lanes going the same way through and take special care of pedestrians, waiting if necessary.' },
     miniTest: {
       question: { de: 'Du blinkst rechts. Auf dem Radweg kommt von hinten ein Radfahrer, der geradeaus fährt. Was tust du?', en: 'You are indicating right. A cyclist comes up from behind on the cycle lane, going straight on. What do you do?' },
       options: [
@@ -400,7 +400,7 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { id: 'signal', label: { de: 'Links blinken', en: 'Indicate left' }, patterns: ['blink', 'indicat', 'signal'] },
       { id: 'shoulder', label: { de: 'Schulterblick nach links', en: 'Shoulder check to the left' }, patterns: SHOULDER },
       { id: 'gap', label: { de: 'In eine Lücke einfädeln', en: 'Merge into a gap' }, patterns: ['luecke', 'einfaedel', 'einordn', '\\bgap', 'merge', 'space'] },
-      { id: 'priority', label: { de: 'Der Verkehr auf der Autobahn hat Vorrang', en: 'Traffic on the Autobahn has priority' }, patterns: ['(autobahn|durchgehend|fliessend)\\w* .{0,30}(vorfahrt|vorrang)', 'vorfahrt (gewaehr|lass|achten)', 'nicht (erzwing|behinder|draengel)', '(traffic|cars) on the (autobahn|motorway|highway) .{0,30}(priority|right of way|first)', '(not|dont|don t) (force|cut)'] },
+      { id: 'priority', label: { de: 'Der Verkehr auf der Autobahn hat Vorfahrt', en: 'Traffic on the Autobahn has priority' }, patterns: ['(autobahn|durchgehend|fliessend)\\w* .{0,30}(vorfahrt|vorrang)', 'vorfahrt (gewaehr|lass|achten)', 'nicht (erzwing|behinder|draengel)', '(traffic|cars) on the (autobahn|motorway|highway) .{0,30}(priority|right of way|first)', '(not|dont|don t) (force|cut)'] },
     ],
     contradictions: [
       { patterns: ['reissverschluss', 'zipper', 'zip merge'], hint: { de: 'Das Reißverschlussverfahren gilt hier nicht: Der Verkehr auf der Autobahn hat Vorfahrt.', en: 'The zip rule does not apply here: traffic on the Autobahn has priority.' } },
@@ -415,10 +415,10 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     ],
     mistakes: [
       { text: { de: 'Am Ende des Streifens anhalten und warten', en: 'Stop at the end of the lane and wait' }, why: { de: 'Anhalten ist gefährlich: Nutze den Streifen zum Beschleunigen.', en: 'Stopping is dangerous: use the lane to speed up.' } },
-      { text: { de: 'Auf das Reißverschlussverfahren vertrauen', en: 'Rely on the zip rule' }, why: { de: 'Der Verkehr auf der Autobahn hat Vorfahrt.', en: 'Traffic on the Autobahn has priority.' } },
+      { text: { de: 'Auf das Reißverschlussverfahren vertrauen', en: 'Rely on the zip rule' }, why: { de: 'Der Reißverschluss gilt nur, wenn ein Fahrstreifen endet. Hier hat der Verkehr auf der Autobahn Vorfahrt.', en: 'The zip rule only applies where a lane ends. Here the traffic on the Autobahn has priority.' } },
     ],
     modelAnswer: {
-      de: 'Ich nutze den Beschleunigungsstreifen und beschleunige auf die Geschwindigkeit des Verkehrs. Dabei schaue ich früh in den linken Spiegel, blinke links und mache einen Schulterblick nach links. Der Verkehr auf der Autobahn hat Vorrang, also fädle ich zügig in eine passende Lücke ein, ohne jemanden zu behindern.',
+      de: 'Ich nutze den Beschleunigungsstreifen und beschleunige auf die Geschwindigkeit des Verkehrs. Dabei schaue ich früh in den linken Spiegel, blinke links und mache einen Schulterblick nach links. Der Verkehr auf der Autobahn hat Vorfahrt, also fädle ich zügig in eine passende Lücke ein, ohne jemanden zu behindern.',
       en: 'I use the acceleration lane and speed up to the speed of the traffic. While doing that I check the left mirror early, indicate left and do a shoulder check to the left. Traffic on the Autobahn has priority, so I merge smoothly into a suitable gap without hindering anyone.',
     },
     law: { de: '§ 18 Abs. 3 StVO: Der Verkehr auf der durchgehenden Fahrbahn hat Vorfahrt.', en: '§ 18 (3) StVO: traffic on the through carriageway has priority.' },
@@ -474,7 +474,7 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       de: 'Das Hindernis ist auf meiner Seite, also hat der Gegenverkehr Vorrang. Ich werde langsamer und halte mit Abstand hinter dem Lieferwagen, damit ich später gut vorbeikomme. Wenn die Gegenseite frei ist, schaue ich in den Spiegel, blinke links, mache einen Schulterblick und fahre mit etwa einem Meter Seitenabstand vorbei, weil sich Türen öffnen oder Personen aussteigen können. Danach blinke ich rechts und ordne mich wieder ein.',
       en: 'The obstacle is on my side, so oncoming traffic has priority. I slow down and stop at a distance behind the van so I can pull out easily later. When the other side is clear, I check the mirror, indicate left, do a shoulder check and pass with about one metre of side distance, because doors can open or people can step out. Then I indicate right and move back in.',
     },
-    law: { de: '§ 6 StVO: Wer an einem Hindernis auf der Fahrbahn vorbeifahren will, muss entgegenkommende Fahrzeuge durchfahren lassen. Ausscheren und Wiedereinordnen sind mit dem Blinker anzukündigen.', en: '§ 6 StVO: whoever wants to pass an obstacle on the road must let oncoming vehicles through. Pulling out and moving back in must be announced with the indicator.' },
+    law: { de: '§ 6 StVO: Wer an einem Hindernis auf der Fahrbahn links vorbeifahren will, muss entgegenkommende Fahrzeuge durchfahren lassen, außer die Zeichen 208 und 308 regeln den Vorrang anders. Ausscheren und Wiedereinordnen zeigst du rechtzeitig mit dem Blinker an (§ 5 Abs. 4a StVO).', en: '§ 6 StVO: whoever wants to pass an obstacle on the road must let oncoming vehicles through, unless signs 208 and 308 set the priority differently. Pulling out and moving back in are announced in good time with the indicator (§ 5 (4a) StVO).' },
     miniTest: {
       question: { de: 'Das Hindernis steht auf der Seite des Gegenverkehrs. Wer muss warten?', en: 'The obstacle is on the oncoming side. Who has to wait?' },
       options: [
