@@ -15,9 +15,15 @@
 
 export interface Bilingual { de: string; en: string }
 
+export type CompetenceArea = 'observation' | 'position' | 'speed' | 'communication' | 'handling';
+
 export interface KeyPoint {
   id: string;
   label: Bilingual;
+  /** The Fahrkompetenzbereich the examiner would file this under (elektronisches Prüfprotokoll). */
+  area: CompetenceArea;
+  /** Missing this is a severe mistake by the catalogue's hazard logic (can end the test). */
+  severe?: boolean;
   /** Regex sources tested against the normalized answer; any match covers the point. */
   patterns: string[];
   /** The point itself is a "do not" (no indicator when entering): a negation is expected. */
@@ -41,11 +47,11 @@ export interface ExamScenario {
   questions: Bilingual[];
   keyPoints: KeyPoint[];
   /** Phrases that point to a wrong or risky answer (checked with the same negation rule). */
-  contradictions: { patterns: string[]; hint: Bilingual }[];
+  contradictions: { patterns: string[]; hint: Bilingual; area?: CompetenceArea; severe?: boolean }[];
   /** Level 1 (step mode): the right sequence as short cards, in order. */
   steps: Bilingual[];
   /** Tempting wrong cards mixed into the step mode, each with the reason it is wrong. */
-  mistakes: { text: Bilingual; why: Bilingual }[];
+  mistakes: { text: Bilingual; why: Bilingual; area?: CompetenceArea; severe?: boolean }[];
   modelAnswer: Bilingual;
   law: Bilingual;
   miniTest: MiniTest;
@@ -76,12 +82,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Was prüfst du, bevor du weiterfährst?', en: 'What do you check before driving on?' },
     ],
     keyPoints: [
-      { id: 'observe', label: { de: 'Früh beobachten: Gehwege links und rechts am Überweg', en: 'Observe early: the pavements on both sides of the crossing' }, patterns: ['beobacht', 'schaue?', 'blick', 'guck', 'achte auf', 'gehweg', '\\blook', '\\bcheck', 'observ', '\\bwatch', '\\bscan', 'pavement', 'sidewalk'] },
-      { id: 'speed', label: { de: 'Mit mäßiger Geschwindigkeit heranfahren, bremsbereit', en: 'Approach at moderate speed, ready to brake' }, patterns: SLOW },
-      { id: 'yield', label: { de: 'Fußgänger, die erkennbar queren wollen, gehen lassen und anhalten', en: 'Stop and let pedestrians who clearly want to cross go' }, patterns: [...STOP_WAIT, 'vortritt', 'vorrang', 'durchlassen', 'gehen lassen', 'lasse\\w* (\\w+ ){0,2}gehen', 'rueber lassen', 'give way', 'let (her|him|them|the pedestrian)', 'priority'] },
-      { id: 'position', label: { de: 'Vor dem Zebrastreifen halten, nicht darauf', en: 'Stop before the crossing, not on it' }, patterns: ['vor dem (zebrastreifen|ueberweg|streifen)', 'vor der haltelinie', '(before|in front of) the (zebra|crossing|stripes)'] },
-      { id: 'wait', label: { de: 'Warten, bis der Überweg frei ist', en: 'Wait until the crossing is clear' }, patterns: ['bis .{0,40}(drueben|rueber|ueberquert|vorbei|frei|andere seite|gegangen)', '(erst )?wenn .{0,40}(frei|drueben|ueberquert|vorbei)', 'until .{0,40}(crossed|across|clear|other side|passed|gone)', 'when .{0,40}(clear|crossed|across|free)'] },
-      { id: 'recheck', label: { de: 'Vor dem Anfahren noch einmal umschauen', en: 'Check again before moving off' }, patterns: ['(wieder|erneut|nochmal|noch einmal) .{0,20}(beobacht|schau|pruef|kontroll|umschau|blick)', '(schau|blick|pruef|kontroll|beobacht)\\w* .{0,15}(wieder|erneut|nochmal|noch einmal)', 'bevor ich .{0,20}(los|weiter|anfahr)', '(check|look) again', 'before (driving|moving|pulling|going) (off|on|away)', 'before i (continue|drive|go|move)'] },
+      { id: 'observe', area: 'observation', label: { de: 'Früh beobachten: Gehwege links und rechts am Überweg', en: 'Observe early: the pavements on both sides of the crossing' }, patterns: ['beobacht', 'schaue?', 'blick', 'guck', 'achte auf', 'gehweg', '\\blook', '\\bcheck', 'observ', '\\bwatch', '\\bscan', 'pavement', 'sidewalk'] },
+      { id: 'speed', area: 'speed', label: { de: 'Mit mäßiger Geschwindigkeit heranfahren, bremsbereit', en: 'Approach at moderate speed, ready to brake' }, patterns: SLOW },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Fußgänger, die erkennbar queren wollen, gehen lassen und anhalten', en: 'Stop and let pedestrians who clearly want to cross go' }, patterns: [...STOP_WAIT, 'vortritt', 'vorrang', 'durchlassen', 'gehen lassen', 'lasse\\w* (\\w+ ){0,2}gehen', 'rueber lassen', 'give way', 'let (her|him|them|the pedestrian)', 'priority'] },
+      { id: 'position', area: 'position', label: { de: 'Vor dem Zebrastreifen halten, nicht darauf', en: 'Stop before the crossing, not on it' }, patterns: ['vor dem (zebrastreifen|ueberweg|streifen)', 'vor der haltelinie', '(before|in front of) the (zebra|crossing|stripes)'] },
+      { id: 'wait', area: 'observation', label: { de: 'Warten, bis der Überweg frei ist', en: 'Wait until the crossing is clear' }, patterns: ['bis .{0,40}(drueben|rueber|ueberquert|vorbei|frei|andere seite|gegangen)', '(erst )?wenn .{0,40}(frei|drueben|ueberquert|vorbei)', 'until .{0,40}(crossed|across|clear|other side|passed|gone)', 'when .{0,40}(clear|crossed|across|free)'] },
+      { id: 'recheck', area: 'observation', label: { de: 'Vor dem Anfahren noch einmal umschauen', en: 'Check again before moving off' }, patterns: ['(wieder|erneut|nochmal|noch einmal) .{0,20}(beobacht|schau|pruef|kontroll|umschau|blick)', '(schau|blick|pruef|kontroll|beobacht)\\w* .{0,15}(wieder|erneut|nochmal|noch einmal)', 'bevor ich .{0,20}(los|weiter|anfahr)', '(check|look) again', 'before (driving|moving|pulling|going) (off|on|away)', 'before i (continue|drive|go|move)'] },
     ],
     contradictions: [
       { patterns: ['wink', 'handzeichen', '\\bwave', 'gesture'], hint: { de: 'Fußgänger nicht herüberwinken: Du kannst nicht sehen, ob von der anderen Seite jemand kommt.', en: 'Do not wave pedestrians across: you cannot see whether someone is coming from the other side.' } },
@@ -96,8 +102,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Erneut umschauen und weiterfahren', en: 'Check again and drive on' },
     ],
     mistakes: [
-      { text: { de: 'Die Fußgängerin herüberwinken', en: 'Wave the pedestrian across' }, why: { de: 'Du kannst nicht sehen, ob von der anderen Seite jemand kommt.', en: 'You cannot see whether someone is coming from the other side.' } },
-      { text: { de: 'Kurz hupen, damit sie wartet', en: 'Honk briefly so she waits' }, why: { de: 'Fußgänger, die queren wollen, haben am Zebrastreifen Vorrang.', en: 'Pedestrians who want to cross have priority at a zebra crossing.' } },
+      { area: 'communication', text: { de: 'Die Fußgängerin herüberwinken', en: 'Wave the pedestrian across' }, why: { de: 'Du kannst nicht sehen, ob von der anderen Seite jemand kommt.', en: 'You cannot see whether someone is coming from the other side.' } },
+      { area: 'communication', severe: true, text: { de: 'Kurz hupen, damit sie wartet', en: 'Honk briefly so she waits' }, why: { de: 'Fußgänger, die queren wollen, haben am Zebrastreifen Vorrang.', en: 'Pedestrians who want to cross have priority at a zebra crossing.' } },
     ],
     modelAnswer: {
       de: 'Ich beobachte früh beide Gehwege am Zebrastreifen und fahre mit mäßiger Geschwindigkeit heran, bremsbereit. Da die Fußgängerin erkennbar queren will, halte ich vor dem Zebrastreifen an und lasse sie gehen. Ich winke sie nicht herüber. Erst wenn der Überweg frei ist, schaue ich mich noch einmal um und fahre weiter.',
@@ -132,12 +138,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
     ],
     keyPoints: [
       // "keine Schilder" / "no signs" is itself a negation, so negations are expected here
-      { id: 'rule', label: { de: 'Erkennen: keine Schilder, also rechts vor links', en: 'Recognise: no signs, so right before left' }, allowNegation: true, patterns: ['rechts vor links', 'right before left', 'keine (schilder|zeichen|vorfahrtsschilder)', 'no (signs|markings)', 'unmarked', 'ungeregelt'] },
-      { id: 'speed', label: { de: 'Langsam heranfahren, bremsbereit', en: 'Approach slowly, ready to brake' }, patterns: SLOW },
-      { id: 'right', label: { de: 'Zuerst nach rechts schauen', en: 'Look right first' }, patterns: [...LOOK_RIGHT, '(zuerst|erst) .{0,15}rechts', 'right first'] },
-      { id: 'yield', label: { de: 'Dem Auto von rechts Vorfahrt lassen', en: 'Give way to the car from the right' }, patterns: ['von rechts .{0,40}(vorfahrt|vorrang|lass|zuerst|vor)', '(lasse|warte) .{0,40}(rechts)', 'vorfahrt (gewaehr|lass)', 'give way', '\\byield', '(car|vehicle|traffic) (from|on) the right .{0,40}(first|priority|go|right of way)', 'let .{0,30}right'] },
-      { id: 'left', label: { de: 'Auch nach links schauen', en: 'Look left as well' }, patterns: [...LOOK_LEFT, 'left side'] },
-      { id: 'others', label: { de: 'Auf Radfahrer und Fußgänger achten', en: 'Watch for cyclists and pedestrians' }, patterns: ['radfahr', 'fahrrad', 'fussgaeng', 'cyclist', 'bike', 'pedestrian'] },
+      { id: 'rule', area: 'observation', label: { de: 'Erkennen: keine Schilder, also rechts vor links', en: 'Recognise: no signs, so right before left' }, allowNegation: true, patterns: ['rechts vor links', 'right before left', 'keine (schilder|zeichen|vorfahrtsschilder)', 'no (signs|markings)', 'unmarked', 'ungeregelt'] },
+      { id: 'speed', area: 'speed', label: { de: 'Langsam heranfahren, bremsbereit', en: 'Approach slowly, ready to brake' }, patterns: SLOW },
+      { id: 'right', area: 'observation', label: { de: 'Zuerst nach rechts schauen', en: 'Look right first' }, patterns: [...LOOK_RIGHT, '(zuerst|erst) .{0,15}rechts', 'right first'] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Dem Auto von rechts Vorfahrt lassen', en: 'Give way to the car from the right' }, patterns: ['von rechts .{0,40}(vorfahrt|vorrang|lass|zuerst|vor)', '(lasse|warte) .{0,40}(rechts)', 'vorfahrt (gewaehr|lass)', 'give way', '\\byield', '(car|vehicle|traffic) (from|on) the right .{0,40}(first|priority|go|right of way)', 'let .{0,30}right'] },
+      { id: 'left', area: 'observation', label: { de: 'Auch nach links schauen', en: 'Look left as well' }, patterns: [...LOOK_LEFT, 'left side'] },
+      { id: 'others', area: 'observation', label: { de: 'Auf Radfahrer und Fußgänger achten', en: 'Watch for cyclists and pedestrians' }, patterns: ['radfahr', 'fahrrad', 'fussgaeng', 'cyclist', 'bike', 'pedestrian'] },
     ],
     contradictions: [
       { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'fahre (einfach )?durch', 'drive (straight )?through'], hint: { de: 'Das Auto von rechts hat Vorfahrt, nicht du.', en: 'The car from the right has priority, not you.' } },
@@ -151,8 +157,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Geradeaus weiterfahren', en: 'Go straight on' },
     ],
     mistakes: [
-      { text: { de: 'Zügig durchfahren, die eigene Straße ist breiter', en: 'Drive straight through, your road is wider' }, why: { de: 'Ohne Schilder gibt die Breite der Straße keine Vorfahrt.', en: 'Without signs, a wider road gives no priority.' } },
-      { text: { de: 'Nur nach links schauen', en: 'Look only to the left' }, why: { de: 'Der Verkehr von rechts hat Vorfahrt, dort schaust du zuerst.', en: 'Traffic from the right has priority, so you look there first.' } },
+      { area: 'speed', severe: true, text: { de: 'Zügig durchfahren, die eigene Straße ist breiter', en: 'Drive straight through, your road is wider' }, why: { de: 'Ohne Schilder gibt die Breite der Straße keine Vorfahrt.', en: 'Without signs, a wider road gives no priority.' } },
+      { area: 'observation', severe: true, text: { de: 'Nur nach links schauen', en: 'Look only to the left' }, why: { de: 'Der Verkehr von rechts hat Vorfahrt, dort schaust du zuerst.', en: 'Traffic from the right has priority, so you look there first.' } },
     ],
     modelAnswer: {
       de: 'Die Kreuzung hat keine Schilder, also gilt rechts vor links. Ich fahre langsam und bremsbereit heran, schaue zuerst nach rechts und lasse dem Auto von rechts die Vorfahrt. Ich schaue auch nach links und achte auf Radfahrer und Fußgänger. Kurz vor dem Einfahren schaue ich noch einmal nach rechts, dann fahre ich geradeaus weiter.',
@@ -185,12 +191,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Was tust du vor der Ausfahrt?', en: 'What do you do before the exit?' },
     ],
     keyPoints: [
-      { id: 'speed', label: { de: 'Langsam heranfahren, bremsbereit', en: 'Approach slowly, ready to brake' }, patterns: SLOW },
-      { id: 'yield', label: { de: 'Dem Verkehr im Kreis Vorfahrt lassen', en: 'Give way to traffic in the roundabout' }, patterns: ['(im kreis|im kreisverkehr|kreisend)\\w* .{0,40}(vorfahrt|vorrang|zuerst|lass)', 'vorfahrt (gewaehr|lass)', 'warte .{0,30}(kreis|auto)', 'traffic (in|on|inside) the roundabout .{0,40}(priority|first|right of way)', 'give way', '\\byield'] },
-      { id: 'left', label: { de: 'Beim Einfahren nach links schauen', en: 'Look left when entering' }, patterns: [...LOOK_LEFT, 'from the left'] },
-      { id: 'noSignal', label: { de: 'Beim Einfahren nicht blinken', en: 'Do not indicate when entering' }, allowNegation: true, patterns: ['(nicht|kein|ohne) (zu )?blink', 'blink\\w* (ich |man )?nicht', 'blink\\w* .{0,25}einfahr\\w* .{0,10}nicht', 'einfahr\\w* .{0,25}(nicht|kein|ohne) (zu )?blink', '(do not|dont|don t|not|no|never) (indicat|signal|blink)', 'without (indicating|signalling|signaling)', 'no indicator'] },
-      { id: 'exitSignal', label: { de: 'Vor der Ausfahrt rechts blinken', en: 'Indicate right before the exit' }, patterns: ['rechts blink', 'blinker (nach )?rechts', 'blinke .{0,20}rechts', 'indicat\\w* (to the )?right', 'signal\\w* (to the )?right', 'right indicator'] },
-      { id: 'exitWatch', label: { de: 'An der Ausfahrt auf Radfahrer und Fußgänger achten', en: 'Watch for cyclists and pedestrians at the exit' }, patterns: ['radfahr', 'fahrrad', 'fussgaeng', 'cyclist', 'bike', 'pedestrian', ...SHOULDER] },
+      { id: 'speed', area: 'speed', label: { de: 'Langsam heranfahren, bremsbereit', en: 'Approach slowly, ready to brake' }, patterns: SLOW },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Dem Verkehr im Kreis Vorfahrt lassen', en: 'Give way to traffic in the roundabout' }, patterns: ['(im kreis|im kreisverkehr|kreisend)\\w* .{0,40}(vorfahrt|vorrang|zuerst|lass)', 'vorfahrt (gewaehr|lass)', 'warte .{0,30}(kreis|auto)', 'traffic (in|on|inside) the roundabout .{0,40}(priority|first|right of way)', 'give way', '\\byield'] },
+      { id: 'left', area: 'observation', label: { de: 'Beim Einfahren nach links schauen', en: 'Look left when entering' }, patterns: [...LOOK_LEFT, 'from the left'] },
+      { id: 'noSignal', area: 'communication', label: { de: 'Beim Einfahren nicht blinken', en: 'Do not indicate when entering' }, allowNegation: true, patterns: ['(nicht|kein|ohne) (zu )?blink', 'blink\\w* (ich |man )?nicht', 'blink\\w* .{0,25}einfahr\\w* .{0,10}nicht', 'einfahr\\w* .{0,25}(nicht|kein|ohne) (zu )?blink', '(do not|dont|don t|not|no|never) (indicat|signal|blink)', 'without (indicating|signalling|signaling)', 'no indicator'] },
+      { id: 'exitSignal', area: 'communication', label: { de: 'Vor der Ausfahrt rechts blinken', en: 'Indicate right before the exit' }, patterns: ['rechts blink', 'blinker (nach )?rechts', 'blinke .{0,20}rechts', 'indicat\\w* (to the )?right', 'signal\\w* (to the )?right', 'right indicator'] },
+      { id: 'exitWatch', area: 'observation', label: { de: 'An der Ausfahrt auf Radfahrer und Fußgänger achten', en: 'Watch for cyclists and pedestrians at the exit' }, patterns: ['radfahr', 'fahrrad', 'fussgaeng', 'cyclist', 'bike', 'pedestrian', ...SHOULDER] },
     ],
     contradictions: [
       { patterns: ['(beim|vor dem) einfahr\\w* .{0,15}(links |rechts )?blink', 'blinke? (beim|vor dem) einfahr', 'indicate (left |right )?(when|before|while) entering', 'signal (left |right )?(when|before|while) entering'], hint: { de: 'Beim Einfahren in den Kreisverkehr ist Blinken nicht erlaubt.', en: 'Indicating when entering the roundabout is not allowed.' } },
@@ -205,8 +211,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Ausfahren', en: 'Leave the roundabout' },
     ],
     mistakes: [
-      { text: { de: 'Beim Einfahren links blinken', en: 'Indicate left when entering' }, why: { de: 'Blinken beim Einfahren in den Kreisverkehr ist nicht erlaubt.', en: 'Indicating when entering a roundabout is not allowed.' } },
-      { text: { de: 'Vor dem Auto im Kreis einfahren', en: 'Enter in front of the car in the roundabout' }, why: { de: 'Mit „Vorfahrt gewähren“ hat der Verkehr im Kreis Vorrang.', en: 'With the give-way sign, traffic in the roundabout has priority.' } },
+      { area: 'communication', text: { de: 'Beim Einfahren links blinken', en: 'Indicate left when entering' }, why: { de: 'Blinken beim Einfahren in den Kreisverkehr ist nicht erlaubt.', en: 'Indicating when entering a roundabout is not allowed.' } },
+      { area: 'speed', severe: true, text: { de: 'Vor dem Auto im Kreis einfahren', en: 'Enter in front of the car in the roundabout' }, why: { de: 'Mit „Vorfahrt gewähren“ hat der Verkehr im Kreis Vorrang.', en: 'With the give-way sign, traffic in the roundabout has priority.' } },
     ],
     modelAnswer: {
       de: 'Ich fahre langsam und bremsbereit heran. Das Schild „Vorfahrt gewähren“ zeigt: Der Verkehr im Kreis hat Vorfahrt, also schaue ich nach links und lasse das Auto im Kreis fahren. Beim Einfahren blinke ich nicht. Vor der zweiten Ausfahrt blinke ich rechts, mache einen Schulterblick und achte auf Radfahrer und Fußgänger an der Ausfahrt.',
@@ -238,12 +244,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Wann wechselst du?', en: 'When do you change?' },
     ],
     keyPoints: [
-      { id: 'inner', label: { de: 'Innenspiegel', en: 'Interior mirror' }, patterns: ['innenspiegel', 'rueckspiegel', 'interior mirror', 'rear ?view mirror', 'inside mirror'] },
-      { id: 'outer', label: { de: 'Linker Außenspiegel', en: 'Left side mirror' }, patterns: ['aussenspiegel', 'seitenspiegel', 'linke\\w* spiegel', 'side mirror', 'wing mirror', 'left mirror', 'door mirror'] },
-      { id: 'signal', label: { de: 'Rechtzeitig links blinken', en: 'Indicate left in good time' }, patterns: ['blink', 'indicat', 'signal'] },
-      { id: 'shoulder', label: { de: 'Schulterblick nach links', en: 'Shoulder check to the left' }, patterns: SHOULDER },
-      { id: 'gap', label: { de: 'Nur wechseln, wenn eine ausreichende Lücke da ist', en: 'Change only when there is a big enough gap' }, patterns: ['luecke', 'platz', 'frei', 'abstand', 'niemand (gefaehrd|behinder)', '\\bgap', 'space', 'clear', 'safe distance', 'without (endangering|cutting|forcing)'] },
-      { id: 'early', label: { de: 'Früh und flüssig einordnen', en: 'Move over early and smoothly' }, patterns: ['rechtzeitig', 'frueh', 'einordn', 'zuegig', 'fluessig', 'in good time', 'early', 'smooth'] },
+      { id: 'inner', area: 'observation', label: { de: 'Innenspiegel', en: 'Interior mirror' }, patterns: ['innenspiegel', 'rueckspiegel', 'interior mirror', 'rear ?view mirror', 'inside mirror'] },
+      { id: 'outer', area: 'observation', label: { de: 'Linker Außenspiegel', en: 'Left side mirror' }, patterns: ['aussenspiegel', 'seitenspiegel', 'linke\\w* spiegel', 'side mirror', 'wing mirror', 'left mirror', 'door mirror'] },
+      { id: 'signal', area: 'communication', label: { de: 'Rechtzeitig links blinken', en: 'Indicate left in good time' }, patterns: ['blink', 'indicat', 'signal'] },
+      { id: 'shoulder', area: 'observation', severe: true, label: { de: 'Schulterblick nach links', en: 'Shoulder check to the left' }, patterns: SHOULDER },
+      { id: 'gap', area: 'position', severe: true, label: { de: 'Nur wechseln, wenn eine ausreichende Lücke da ist', en: 'Change only when there is a big enough gap' }, patterns: ['luecke', 'platz', 'frei', 'abstand', 'niemand (gefaehrd|behinder)', '\\bgap', 'space', 'clear', 'safe distance', 'without (endangering|cutting|forcing)'] },
+      { id: 'early', area: 'position', label: { de: 'Früh und flüssig einordnen', en: 'Move over early and smoothly' }, patterns: ['rechtzeitig', 'frueh', 'einordn', 'zuegig', 'fluessig', 'in good time', 'early', 'smooth'] },
     ],
     contradictions: [
       { patterns: ['ohne schulterblick', 'nur (in den |die )?spiegel', 'without (a )?shoulder', 'only (the |my )?mirror'], hint: { de: 'Spiegel allein reichen nicht: Der tote Winkel braucht einen Schulterblick.', en: 'Mirrors alone are not enough: the blind spot needs a shoulder check.' } },
@@ -256,8 +262,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Bei ausreichender Lücke zügig wechseln', en: 'Change smoothly when the gap is big enough' },
     ],
     mistakes: [
-      { text: { de: 'Nur in den Spiegel schauen und wechseln', en: 'Only check the mirror and change' }, why: { de: 'Der tote Winkel braucht einen Schulterblick.', en: 'The blind spot needs a shoulder check.' } },
-      { text: { de: 'Erst wechseln, dann blinken', en: 'Change first, then indicate' }, why: { de: 'Der Blinker kündigt den Wechsel vorher an.', en: 'The indicator announces the change beforehand.' } },
+      { area: 'observation', severe: true, text: { de: 'Nur in den Spiegel schauen und wechseln', en: 'Only check the mirror and change' }, why: { de: 'Der tote Winkel braucht einen Schulterblick.', en: 'The blind spot needs a shoulder check.' } },
+      { area: 'communication', text: { de: 'Erst wechseln, dann blinken', en: 'Change first, then indicate' }, why: { de: 'Der Blinker kündigt den Wechsel vorher an.', en: 'The indicator announces the change beforehand.' } },
     ],
     modelAnswer: {
       de: 'Ich ordne mich früh links ein. Ich schaue in den Innenspiegel, dann in den linken Außenspiegel, blinke links und mache einen Schulterblick nach links in den toten Winkel. Ich wechsle erst, wenn eine ausreichend große Lücke da ist und ich niemanden behindere, und dann zügig und gleichmäßig.',
@@ -290,12 +296,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Wer hat Vorrang?', en: 'Who has priority?' },
     ],
     keyPoints: [
-      { id: 'signal', label: { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' }, patterns: ['blink', 'indicat', 'signal'] },
-      { id: 'speed', label: { de: 'Langsam werden, rechts einordnen', en: 'Slow down, keep to the right' }, patterns: [...SLOW, 'einordn'] },
-      { id: 'shoulder', label: { de: 'Rechter Spiegel, kurz vor dem Abbiegen Schulterblick nach rechts', en: 'Right mirror, shoulder check to the right just before turning' }, patterns: [...SHOULDER, 'rechte\\w* spiegel', 'right mirror'] },
-      { id: 'cyclists', label: { de: 'Radfahrern auf dem Radweg Vorrang lassen, aus beiden Richtungen', en: 'Let cyclists on the cycle lane go first, from both directions' }, patterns: ['(radfahr|fahrrad|radweg)\\w* .{0,70}(vorrang|vorfahrt|vortritt|zuerst|durch|lass|warte)', '(warte|lasse) .{0,40}(radfahr|fahrrad)', '(cyclist|bike|cycle)\\w* .{0,40}(priority|first|right of way|pass|go)', '(wait for|let) .{0,30}(cyclist|bike)'] },
-      { id: 'pedestrians', label: { de: 'Querenden Fußgängern Vorrang lassen', en: 'Let crossing pedestrians go first' }, patterns: ['fussgaeng\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte)', '(warte|lasse) .{0,40}fussgaeng', 'pedestrian\\w* .{0,40}(priority|first|right of way|cross|go)', '(wait for|let) .{0,30}pedestrian'] },
-      { id: 'wait', label: { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' }, patterns: STOP_WAIT },
+      { id: 'signal', area: 'communication', label: { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' }, patterns: ['blink', 'indicat', 'signal'] },
+      { id: 'speed', area: 'position', label: { de: 'Langsam werden, rechts einordnen', en: 'Slow down, keep to the right' }, patterns: [...SLOW, 'einordn'] },
+      { id: 'shoulder', area: 'observation', severe: true, label: { de: 'Rechter Spiegel, kurz vor dem Abbiegen Schulterblick nach rechts', en: 'Right mirror, shoulder check to the right just before turning' }, patterns: [...SHOULDER, 'rechte\\w* spiegel', 'right mirror'] },
+      { id: 'cyclists', area: 'observation', severe: true, label: { de: 'Radfahrern auf dem Radweg Vorrang lassen, aus beiden Richtungen', en: 'Let cyclists on the cycle lane go first, from both directions' }, patterns: ['(radfahr|fahrrad|radweg)\\w* .{0,70}(vorrang|vorfahrt|vortritt|zuerst|durch|lass|warte)', '(warte|lasse) .{0,40}(radfahr|fahrrad)', '(cyclist|bike|cycle)\\w* .{0,40}(priority|first|right of way|pass|go)', '(wait for|let) .{0,30}(cyclist|bike)'] },
+      { id: 'pedestrians', area: 'observation', severe: true, label: { de: 'Querenden Fußgängern Vorrang lassen', en: 'Let crossing pedestrians go first' }, patterns: ['fussgaeng\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte)', '(warte|lasse) .{0,40}fussgaeng', 'pedestrian\\w* .{0,40}(priority|first|right of way|cross|go)', '(wait for|let) .{0,30}pedestrian'] },
+      { id: 'wait', area: 'speed', label: { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' }, patterns: STOP_WAIT },
     ],
     contradictions: [
       { patterns: ['vor dem radfahrer .{0,20}abbieg', 'schnell .{0,15}abbieg', 'cut in front', 'turn (quickly )?before the (cyclist|bike)'], hint: { de: 'Nicht vor dem Radfahrer abbiegen: Er fährt geradeaus und hat Vorrang.', en: 'Do not turn in front of the cyclist: they are going straight on and have priority.' } },
@@ -309,8 +315,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Abbiegen', en: 'Turn' },
     ],
     mistakes: [
-      { text: { de: 'Schnell vor dem Radfahrer abbiegen', en: 'Turn quickly in front of the cyclist' }, why: { de: 'Der Radfahrer fährt geradeaus und hat Vorrang.', en: 'The cyclist is going straight on and has priority.' } },
-      { text: { de: 'Nur in den Spiegel schauen, kein Schulterblick', en: 'Only check the mirror, no shoulder check' }, why: { de: 'Radfahrer im toten Winkel siehst du nur mit dem Schulterblick. Abbiegeunfälle entstehen genau so.', en: 'A cyclist in the blind spot is only seen with a shoulder check. That is exactly how turning accidents happen.' } },
+      { area: 'observation', severe: true, text: { de: 'Schnell vor dem Radfahrer abbiegen', en: 'Turn quickly in front of the cyclist' }, why: { de: 'Der Radfahrer fährt geradeaus und hat Vorrang.', en: 'The cyclist is going straight on and has priority.' } },
+      { area: 'observation', severe: true, text: { de: 'Nur in den Spiegel schauen, kein Schulterblick', en: 'Only check the mirror, no shoulder check' }, why: { de: 'Radfahrer im toten Winkel siehst du nur mit dem Schulterblick. Abbiegeunfälle entstehen genau so.', en: 'A cyclist in the blind spot is only seen with a shoulder check. That is exactly how turning accidents happen.' } },
     ],
     modelAnswer: {
       de: 'Ich schaue in den Innenspiegel und den rechten Außenspiegel, blinke rechtzeitig rechts, werde langsamer und ordne mich möglichst weit rechts ein. Kurz vor dem Abbiegen mache ich einen Schulterblick nach rechts, denn auf dem Radweg kann jemand geradeaus kommen, auch entgegen der Fahrtrichtung. Radfahrer geradeaus und Fußgänger, die die Straße queren, haben Vorrang. Wenn nötig halte ich an und warte, dann biege ich ab.',
@@ -343,12 +349,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Worauf achtest du?', en: 'What do you watch for?' },
     ],
     keyPoints: [
-      { id: 'hazard', label: { de: 'Warnblinklicht erkennen: besondere Regeln', en: 'Recognise the hazard lights: special rules apply' }, patterns: ['warnblink', 'hazard', 'flashing', 'blinkt'] },
-      { id: 'walking', label: { de: 'Nur mit Schrittgeschwindigkeit vorbeifahren', en: 'Pass only at walking speed' }, patterns: ['schritt', '4 (bis|7)', 'walking (pace|speed)', 'very slow', 'ganz langsam', 'sehr langsam'] },
-      { id: 'children', label: { de: 'Mit Kindern rechnen, die auf die Straße laufen', en: 'Expect children running into the road' }, patterns: ['kind', 'schueler', 'fahrgaest', 'child', 'kids', 'pupil', 'passenger'] },
-      { id: 'distance', label: { de: 'Ausreichend Seitenabstand', en: 'Enough side distance' }, patterns: ['abstand', 'distance', 'space', 'clearance', 'gap'] },
-      { id: 'wait', label: { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' }, patterns: STOP_WAIT },
-      { id: 'noOvertake', label: { de: 'Einen Bus mit Warnblinklicht, der sich der Haltestelle nähert, nicht überholen', en: 'Do not overtake a bus approaching the stop with hazard lights on' }, allowNegation: true, patterns: ['(nicht|kein) .{0,10}ueberhol', 'ueberhol\\w* (ich |man )?nicht', 'ueberholverbot', '(not|no|dont|don t|never) .{0,10}overtak'] },
+      { id: 'hazard', area: 'observation', label: { de: 'Warnblinklicht erkennen: besondere Regeln', en: 'Recognise the hazard lights: special rules apply' }, patterns: ['warnblink', 'hazard', 'flashing', 'blinkt'] },
+      { id: 'walking', area: 'speed', severe: true, label: { de: 'Nur mit Schrittgeschwindigkeit vorbeifahren', en: 'Pass only at walking speed' }, patterns: ['schritt', '4 (bis|7)', 'walking (pace|speed)', 'very slow', 'ganz langsam', 'sehr langsam'] },
+      { id: 'children', area: 'observation', label: { de: 'Mit Kindern rechnen, die auf die Straße laufen', en: 'Expect children running into the road' }, patterns: ['kind', 'schueler', 'fahrgaest', 'child', 'kids', 'pupil', 'passenger'] },
+      { id: 'distance', area: 'position', label: { de: 'Ausreichend Seitenabstand', en: 'Enough side distance' }, patterns: ['abstand', 'distance', 'space', 'clearance', 'gap'] },
+      { id: 'wait', area: 'speed', label: { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' }, patterns: STOP_WAIT },
+      { id: 'noOvertake', area: 'position', severe: true, label: { de: 'Einen Bus mit Warnblinklicht, der sich der Haltestelle nähert, nicht überholen', en: 'Do not overtake a bus approaching the stop with hazard lights on' }, allowNegation: true, patterns: ['(nicht|kein) .{0,10}ueberhol', 'ueberhol\\w* (ich |man )?nicht', 'ueberholverbot', '(not|no|dont|don t|never) .{0,10}overtak'] },
     ],
     contradictions: [
       { patterns: ['(normal|zuegig|schnell) .{0,15}vorbei', 'ueberhole den bus', '(pass|overtake) .{0,15}(quickly|normally)', 'hupe', 'honk'], hint: { de: 'Am haltenden Bus mit Warnblinklicht nur mit Schrittgeschwindigkeit vorbei, nie zügig.', en: 'Past a stopped bus with hazard lights only at walking speed, never briskly.' } },
@@ -361,8 +367,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Wenn nötig anhalten und warten', en: 'Stop and wait if necessary' },
     ],
     mistakes: [
-      { text: { de: 'Zügig vorbeifahren, solange niemand auf der Straße ist', en: 'Pass briskly while nobody is in the road' }, why: { de: 'Am haltenden Bus mit Warnblinklicht nur Schrittgeschwindigkeit.', en: 'Past a stopped bus with hazard lights only at walking speed.' } },
-      { text: { de: 'Den Bus überholen, bevor er hält', en: 'Overtake the bus before it stops' }, why: { de: 'Busse mit Warnblinklicht vor der Haltestelle darfst du nicht überholen.', en: 'You may not overtake a bus approaching a stop with hazard lights on.' } },
+      { area: 'speed', severe: true, text: { de: 'Zügig vorbeifahren, solange niemand auf der Straße ist', en: 'Pass briskly while nobody is in the road' }, why: { de: 'Am haltenden Bus mit Warnblinklicht nur Schrittgeschwindigkeit.', en: 'Past a stopped bus with hazard lights only at walking speed.' } },
+      { area: 'position', severe: true, text: { de: 'Den Bus überholen, bevor er hält', en: 'Overtake the bus before it stops' }, why: { de: 'Busse mit Warnblinklicht vor der Haltestelle darfst du nicht überholen.', en: 'You may not overtake a bus approaching a stop with hazard lights on.' } },
     ],
     modelAnswer: {
       de: 'Der Bus hat das Warnblinklicht an, also gelten besondere Regeln. Ich fahre nur mit Schrittgeschwindigkeit und mit ausreichendem Seitenabstand vorbei und rechne damit, dass Kinder vor oder hinter dem Bus auf die Straße laufen. Wenn nötig halte ich an und warte. Einen Bus, der sich mit Warnblinklicht der Haltestelle nähert, überhole ich nicht.',
@@ -395,12 +401,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Wer hat Vorrang?', en: 'Who has priority?' },
     ],
     keyPoints: [
-      { id: 'accelerate', label: { de: 'Auf die Geschwindigkeit der Autobahn beschleunigen', en: 'Accelerate to the speed of the Autobahn traffic' }, patterns: ['beschleunig', 'gas geben', '(tempo|geschwindigkeit) an(pass|gleich)', 'accelerat', 'speed up', 'match (the )?speed', 'up to speed'] },
-      { id: 'mirror', label: { de: 'Früh in den linken Spiegel schauen', en: 'Check the left mirror early' }, patterns: [...MIRROR, 'beobacht', 'observ', 'watch the traffic'] },
-      { id: 'signal', label: { de: 'Links blinken', en: 'Indicate left' }, patterns: ['blink', 'indicat', 'signal'] },
-      { id: 'shoulder', label: { de: 'Schulterblick nach links', en: 'Shoulder check to the left' }, patterns: SHOULDER },
-      { id: 'gap', label: { de: 'In eine Lücke einfädeln', en: 'Merge into a gap' }, patterns: ['luecke', 'einfaedel', 'einordn', '\\bgap', 'merge', 'space'] },
-      { id: 'priority', label: { de: 'Der Verkehr auf der Autobahn hat Vorfahrt', en: 'Traffic on the Autobahn has priority' }, patterns: ['(autobahn|durchgehend|fliessend)\\w* .{0,30}(vorfahrt|vorrang)', 'vorfahrt (gewaehr|lass|achten)', 'nicht (erzwing|behinder|draengel)', '(traffic|cars) on the (autobahn|motorway|highway) .{0,30}(priority|right of way|first)', '(not|dont|don t) (force|cut)'] },
+      { id: 'accelerate', area: 'speed', label: { de: 'Auf die Geschwindigkeit der Autobahn beschleunigen', en: 'Accelerate to the speed of the Autobahn traffic' }, patterns: ['beschleunig', 'gas geben', '(tempo|geschwindigkeit) an(pass|gleich)', 'accelerat', 'speed up', 'match (the )?speed', 'up to speed'] },
+      { id: 'mirror', area: 'observation', label: { de: 'Früh in den linken Spiegel schauen', en: 'Check the left mirror early' }, patterns: [...MIRROR, 'beobacht', 'observ', 'watch the traffic'] },
+      { id: 'signal', area: 'communication', label: { de: 'Links blinken', en: 'Indicate left' }, patterns: ['blink', 'indicat', 'signal'] },
+      { id: 'shoulder', area: 'observation', label: { de: 'Schulterblick nach links', en: 'Shoulder check to the left' }, patterns: SHOULDER },
+      { id: 'gap', area: 'position', label: { de: 'In eine Lücke einfädeln', en: 'Merge into a gap' }, patterns: ['luecke', 'einfaedel', 'einordn', '\\bgap', 'merge', 'space'] },
+      { id: 'priority', area: 'position', severe: true, label: { de: 'Der Verkehr auf der Autobahn hat Vorfahrt', en: 'Traffic on the Autobahn has priority' }, patterns: ['(autobahn|durchgehend|fliessend)\\w* .{0,30}(vorfahrt|vorrang)', 'vorfahrt (gewaehr|lass|achten)', 'nicht (erzwing|behinder|draengel)', '(traffic|cars) on the (autobahn|motorway|highway) .{0,30}(priority|right of way|first)', '(not|dont|don t) (force|cut)'] },
     ],
     contradictions: [
       { patterns: ['reissverschluss', 'zipper', 'zip merge'], hint: { de: 'Das Reißverschlussverfahren gilt hier nicht: Der Verkehr auf der Autobahn hat Vorfahrt.', en: 'The zip rule does not apply here: traffic on the Autobahn has priority.' } },
@@ -414,8 +420,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'In eine passende Lücke einfädeln', en: 'Merge into a suitable gap' },
     ],
     mistakes: [
-      { text: { de: 'Am Ende des Streifens anhalten und warten', en: 'Stop at the end of the lane and wait' }, why: { de: 'Anhalten ist gefährlich: Nutze den Streifen zum Beschleunigen.', en: 'Stopping is dangerous: use the lane to speed up.' } },
-      { text: { de: 'Auf das Reißverschlussverfahren vertrauen', en: 'Rely on the zip rule' }, why: { de: 'Der Reißverschluss gilt nur, wenn ein Fahrstreifen endet. Hier hat der Verkehr auf der Autobahn Vorfahrt.', en: 'The zip rule only applies where a lane ends. Here the traffic on the Autobahn has priority.' } },
+      { area: 'speed', severe: true, text: { de: 'Am Ende des Streifens anhalten und warten', en: 'Stop at the end of the lane and wait' }, why: { de: 'Anhalten ist gefährlich: Nutze den Streifen zum Beschleunigen.', en: 'Stopping is dangerous: use the lane to speed up.' } },
+      { area: 'position', severe: true, text: { de: 'Auf das Reißverschlussverfahren vertrauen', en: 'Rely on the zip rule' }, why: { de: 'Der Reißverschluss gilt nur, wenn ein Fahrstreifen endet. Hier hat der Verkehr auf der Autobahn Vorfahrt.', en: 'The zip rule only applies where a lane ends. Here the traffic on the Autobahn has priority.' } },
     ],
     modelAnswer: {
       de: 'Ich nutze den Beschleunigungsstreifen und beschleunige auf die Geschwindigkeit des Verkehrs. Dabei schaue ich früh in den linken Spiegel, blinke links und mache einen Schulterblick nach links. Der Verkehr auf der Autobahn hat Vorfahrt, also fädle ich zügig in eine passende Lücke ein, ohne jemanden zu behindern.',
@@ -448,12 +454,12 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Was tust du beim Vorbeifahren?', en: 'What do you do when passing?' },
     ],
     keyPoints: [
-      { id: 'oncoming', label: { de: 'Der Gegenverkehr hat Vorrang', en: 'Oncoming traffic has priority' }, patterns: ['gegenverkehr .{0,40}(vorrang|vorfahrt|zuerst|durch|lass|vor)', '(lasse|warte) .{0,40}(gegenverkehr|entgegen)', 'oncoming .{0,40}(first|priority|go|pass|right of way)', '(let|wait for) .{0,30}oncoming'] },
-      { id: 'wait', label: { de: 'Mit Abstand vor dem Hindernis warten', en: 'Wait at a distance behind the obstacle' }, patterns: [...STOP_WAIT, ...SLOW] },
-      { id: 'mirror', label: { de: 'Spiegel und Schulterblick vor dem Ausscheren', en: 'Mirror and shoulder check before pulling out' }, patterns: [...MIRROR, ...SHOULDER] },
-      { id: 'signal', label: { de: 'Ausscheren und Einordnen mit dem Blinker anzeigen', en: 'Indicate when pulling out and back in' }, patterns: ['blink', 'indicat', 'signal'] },
-      { id: 'distance', label: { de: 'Etwa einen Meter Seitenabstand (Türen)', en: 'About one metre side distance (doors)' }, patterns: ['abstand', 'meter', '1 m', '\\bdistance', 'space', 'door', 'tuer'] },
-      { id: 'people', label: { de: 'Mit Personen am Lieferwagen rechnen', en: 'Expect people at the van' }, patterns: ['fussgaeng', 'person', 'fahrer', 'aussteig', 'pedestrian', 'people', 'someone', 'driver', 'step out'] },
+      { id: 'oncoming', area: 'speed', severe: true, label: { de: 'Der Gegenverkehr hat Vorrang', en: 'Oncoming traffic has priority' }, patterns: ['gegenverkehr .{0,40}(vorrang|vorfahrt|zuerst|durch|lass|vor)', '(lasse|warte) .{0,40}(gegenverkehr|entgegen)', 'oncoming .{0,40}(first|priority|go|pass|right of way)', '(let|wait for) .{0,30}oncoming'] },
+      { id: 'wait', area: 'position', label: { de: 'Mit Abstand vor dem Hindernis warten', en: 'Wait at a distance behind the obstacle' }, patterns: [...STOP_WAIT, ...SLOW] },
+      { id: 'mirror', area: 'observation', label: { de: 'Spiegel und Schulterblick vor dem Ausscheren', en: 'Mirror and shoulder check before pulling out' }, patterns: [...MIRROR, ...SHOULDER] },
+      { id: 'signal', area: 'communication', label: { de: 'Ausscheren und Einordnen mit dem Blinker anzeigen', en: 'Indicate when pulling out and back in' }, patterns: ['blink', 'indicat', 'signal'] },
+      { id: 'distance', area: 'position', label: { de: 'Etwa einen Meter Seitenabstand (Türen)', en: 'About one metre side distance (doors)' }, patterns: ['abstand', 'meter', '1 m', '\\bdistance', 'space', 'door', 'tuer'] },
+      { id: 'people', area: 'observation', label: { de: 'Mit Personen am Lieferwagen rechnen', en: 'Expect people at the van' }, patterns: ['fussgaeng', 'person', 'fahrer', 'aussteig', 'pedestrian', 'people', 'someone', 'driver', 'step out'] },
     ],
     contradictions: [
       { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'zwaeng', 'squeeze'], hint: { de: 'Das Hindernis ist auf deiner Seite, also lässt du den Gegenverkehr zuerst fahren.', en: 'The obstacle is on your side, so you let the oncoming traffic go first.' } },
@@ -467,8 +473,8 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       { de: 'Rechts blinken und wieder einordnen', en: 'Indicate right and move back in' },
     ],
     mistakes: [
-      { text: { de: 'Zügig vorbei, bevor der Gegenverkehr da ist', en: 'Hurry past before the oncoming car arrives' }, why: { de: 'Das Hindernis ist auf deiner Seite, also wartest du.', en: 'The obstacle is on your side, so you wait.' } },
-      { text: { de: 'Dicht am Lieferwagen vorbeifahren', en: 'Pass close to the van' }, why: { de: 'Türen können sich öffnen, halte etwa einen Meter Abstand.', en: 'Doors can open; keep about one metre away.' } },
+      { area: 'speed', severe: true, text: { de: 'Zügig vorbei, bevor der Gegenverkehr da ist', en: 'Hurry past before the oncoming car arrives' }, why: { de: 'Das Hindernis ist auf deiner Seite, also wartest du.', en: 'The obstacle is on your side, so you wait.' } },
+      { area: 'position', text: { de: 'Dicht am Lieferwagen vorbeifahren', en: 'Pass close to the van' }, why: { de: 'Türen können sich öffnen, halte etwa einen Meter Abstand.', en: 'Doors can open; keep about one metre away.' } },
     ],
     modelAnswer: {
       de: 'Das Hindernis ist auf meiner Seite, also hat der Gegenverkehr Vorrang. Ich werde langsamer und halte mit Abstand hinter dem Lieferwagen, damit ich später gut vorbeikomme. Wenn die Gegenseite frei ist, schaue ich in den Spiegel, blinke links, mache einen Schulterblick und fahre mit etwa einem Meter Seitenabstand vorbei, weil sich Türen öffnen oder Personen aussteigen können. Danach blinke ich rechts und ordne mich wieder ein.',

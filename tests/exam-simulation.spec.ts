@@ -62,6 +62,16 @@ test('an exam situation: type an answer, see covered points, the model answer an
   await page.getByTestId('scenario-grade').click();
   await expect(page.getByTestId('scenario-result')).toBeVisible();
   await expect(page.getByTestId('scenario-score')).toContainText('5 von 6');
+  // the examiner's grid: areas with counts, and the missing severe point flagged
+  const grid = page.getByTestId('competence-grid');
+  await expect(grid).toContainText('Verkehrsbeobachtung');
+  await expect(grid.getByTestId('area-speed')).toContainText('2 / 2');
+  await expect(grid.getByTestId('area-observation')).toContainText('2 / 3');
+  await expect(grid.getByTestId('severe-note')).toHaveCount(0); // the missed point (check again) is not a severe one
+  await grid.getByTestId('grid-info').click();
+  await expect(page.getByTestId('exam-evaluation-info')).toContainText('adaptive');
+  await page.getByTestId('exam-simulation-back').click(); // back closes the info screen, result stays
+  await expect(page.getByTestId('scenario-result')).toBeVisible();
   await page.getByTestId('minitest-option-1').click();
   await expect(page.getByTestId('scenario-minitest')).toContainText('Richtig');
   // back to the list shows the saved result

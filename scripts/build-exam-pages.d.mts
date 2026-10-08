@@ -9,6 +9,7 @@ export interface ShellArgs {
   slug?: string | null;
 }
 export function loadScenarios(ROOT: string): Promise<unknown[]>;
+export function loadEvaluation(ROOT: string): Promise<Record<string, unknown>>;
 export function buildExamPages(opts: {
   shell: (args: ShellArgs) => string;
   esc: (s: string) => string;

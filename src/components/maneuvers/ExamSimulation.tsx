@@ -11,10 +11,11 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen, Sparkles, Loader2, ListOrdered, PenLine } from 'lucide-react';
+import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, X, AlertTriangle, BookOpen, Sparkles, Loader2, ListOrdered, PenLine, ClipboardList } from 'lucide-react';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { EXAM_SCENARIOS, type ExamScenario } from '../../data/examScenarios';
 import { gradeAnswer, type GradeResult } from '../../utils/scenarioGrader';
+import { CompetenceGrid, ExamEvaluationInfo } from './ExamEvaluationInfo';
 import { useAppStore } from '../../store/useAppStore';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { cn } from '../../utils/cn';
@@ -105,6 +106,8 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
     fetch('/api/grade-scenario').then((r) => (r.ok ? r.json() : null)).then((j) => setAiEnabled(j?.enabled === true)).catch(() => undefined);
   }, []);
   const [current, setCurrent] = useState<ExamScenario | null>(null);
+  // "So bewertet der Prüfer": the examiner's protocol explained (data/examEvaluation.ts)
+  const [showInfo, setShowInfo] = useState(false);
 
   useEffect(() => () => { TextToSpeech.stop().catch(() => undefined); }, []);
 
@@ -134,7 +137,7 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
     >
       <header className="flex items-center gap-3 p-4">
         <button
-          onClick={() => (current ? setCurrent(null) : onBack())}
+          onClick={() => (showInfo ? setShowInfo(false) : current ? setCurrent(null) : onBack())}
           aria-label={de ? 'Zurück' : 'Back'}
           data-testid="exam-simulation-back"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 transition hover:bg-white/15 active:scale-95"
@@ -142,12 +145,15 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
           <ChevronLeft className="h-6 w-6" />
         </button>
         <div className="min-w-0">
-          <h2 className="truncate text-lg font-bold">{current ? current.title[language] : 'Prüfungssimulation'}</h2>
-          {!current && <p className="text-xs text-blue-100/70">{de ? 'Erkläre, was du tust. Die App prüft deine Antwort.' : 'Explain what you would do. The app checks your answer.'}</p>}
+          <h2 className="truncate text-lg font-bold">{showInfo ? (de ? 'So bewertet der Prüfer' : 'How the examiner grades') : current ? current.title[language] : 'Prüfungssimulation'}</h2>
+          {!current && !showInfo && <p className="text-xs text-blue-100/70">{de ? 'Erkläre, was du tust. Die App prüft deine Antwort.' : 'Explain what you would do. The app checks your answer.'}</p>}
         </div>
       </header>
 
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 pb-8">
+        {/* the explainer overlays the current view instead of replacing it, so a result survives a look at it */}
+        {showInfo && <ExamEvaluationInfo language={language} />}
+        <div className={cn(showInfo && 'hidden')}>
         {current ? (
           <ScenarioView
             key={current.id}
@@ -160,8 +166,21 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
             onNext={() => next && open(next)}
             onBackToList={() => setCurrent(null)}
             onGraded={(id, ratio) => { saveResult(id, ratio); setResults(loadResults()); }}
+            onInfo={() => setShowInfo(true)}
           />
         ) : (
+          <>
+          <button
+            onClick={() => setShowInfo(true)}
+            data-testid="exam-info-btn"
+            className="mb-4 flex w-full items-center gap-3 rounded-2xl border border-blue-400/30 bg-blue-600/20 p-4 text-left transition hover:bg-blue-600/30"
+          >
+            <ClipboardList className="h-6 w-6 shrink-0 text-blue-200" />
+            <span className="min-w-0">
+              <span className="block font-bold">{de ? 'So bewertet der Prüfer' : 'How the examiner grades'}</span>
+              <span className="block text-xs text-blue-100/70">{de ? 'Das elektronische Prüfprotokoll, die 8 Fahraufgaben, die 5 Kompetenzbereiche' : 'The electronic test protocol, the 8 driving tasks, the 5 competence areas'}</span>
+            </span>
+          </button>
           <ul className="space-y-3" data-testid="scenario-list">
             {EXAM_SCENARIOS.map((s, i) => {
               const locked = !s.free && !pro;
@@ -190,15 +209,17 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
               );
             })}
           </ul>
+          </>
         )}
+        </div>
       </div>
     </div>
   );
 }
 
-function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onNext, onBackToList, onGraded }: {
+function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onNext, onBackToList, onGraded, onInfo }: {
   scenario: ExamScenario; aiEnabled: boolean; de: boolean; language: 'de' | 'en'; next: ExamScenario | null; nextLocked: boolean;
-  onNext: () => void; onBackToList: () => void; onGraded: (id: string, ratio: number) => void;
+  onNext: () => void; onBackToList: () => void; onGraded: (id: string, ratio: number) => void; onInfo: () => void;
 }) {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<GradeResult | null>(null);
@@ -380,7 +401,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
                     <span>
                       <span className={v === 'right' ? 'text-white' : 'text-blue-100/80'}>{i + 1}. {card.text}</span>
                       {v === 'wrong-place' && <span className="text-amber-200"> {de ? `(richtig, aber Schritt ${scenario.steps.findIndex((_, j) => `s${j}` === k) + 1})` : `(right, but step ${scenario.steps.findIndex((_, j) => `s${j}` === k) + 1})`}</span>}
-                      {mistake && <span className="block text-red-200">{mistake.why[language]}</span>}
+                      {mistake && <span className="block text-red-200">{mistake.why[language]}{mistake.severe && <span className="ml-1 rounded bg-red-500/30 px-1.5 py-0.5 text-[11px] font-bold text-red-100">{de ? 'schwerer Fehler' : 'severe mistake'}</span>}</span>}
                     </span>
                   </li>
                 );
@@ -399,6 +420,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
               {scenario.steps.map((t, i) => <li key={i}>{t[language]}</li>)}
             </ol>
             <p className="mt-3 flex items-start gap-2 text-xs text-blue-100/70"><BookOpen className="mt-0.5 h-3.5 w-3.5 shrink-0" />{scenario.law[language]}</p>
+            <button onClick={onInfo} className="mt-3 text-xs font-bold text-blue-200 hover:text-white">{de ? 'So bewertet der Prüfer →' : 'How the examiner grades →'}</button>
           </div>
         </section>
       )}
@@ -466,6 +488,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
                 );
               })}
             </ul>
+            <CompetenceGrid scenario={scenario} language={language} isCovered={isCovered} onInfo={onInfo} />
             {result.hints.map((h, i) => (
               <p key={i} className="mt-3 flex items-start gap-2 rounded-xl bg-amber-400/10 p-3 text-sm text-amber-100">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />{h[language]}

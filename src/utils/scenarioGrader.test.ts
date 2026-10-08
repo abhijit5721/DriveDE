@@ -94,3 +94,13 @@ describe('step mode content', () => {
     }
   });
 });
+
+describe('competence areas', () => {
+  it('every key point has an area, every scenario has at least one severe point, texts have no dashes', () => {
+    const areas = new Set(['observation', 'position', 'speed', 'communication', 'handling']);
+    for (const s of EXAM_SCENARIOS) {
+      for (const p of s.keyPoints) expect(areas.has(p.area), `${s.id}/${p.id}`).toBe(true);
+      expect(s.keyPoints.some((p) => p.severe), s.id).toBe(true);
+    }
+  });
+});

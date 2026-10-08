@@ -31,7 +31,16 @@ describe('public exam situation pages', () => {
       expect(existsSync(path.join(out, 'pruefung', 'index.html'))).toBe(true);
       expect(existsSync(path.join(out, 'exam', 'index.html'))).toBe(true);
       expect(urls.join('\n')).toContain('<loc>https://www.drivede.app/pruefung/zebrastreifen/</loc>');
-      expect(urls.length).toBe(2 + 2 * EXAM_SCENARIOS.length);
+      expect(de).toContain('Was der Prüfer im Protokoll bewertet');
+      expect(de).toContain('Verkehrsbeobachtung');
+      expect(de).toContain('schwerer Fehler');
+      const ev = readFileSync(path.join(out, 'pruefung', 'so-bewertet-der-pruefer', 'index.html'), 'utf8');
+      expect(ev).toContain('elektronische Prüfprotokoll');
+      expect(ev).toContain('Geradeausfahren');
+      expect(ev).toContain('youtube.com/watch?v=3Oxq727_6k0');
+      expect(ev).not.toMatch(/[\u2013\u2014]/);
+      expect(existsSync(path.join(out, 'exam', 'how-the-examiner-grades', 'index.html'))).toBe(true);
+      expect(urls.length).toBe(4 + 2 * EXAM_SCENARIOS.length);
     } finally {
       rmSync(out, { recursive: true, force: true });
     }
