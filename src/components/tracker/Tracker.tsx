@@ -22,6 +22,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { getMistakeMeta, MANUAL_MISTAKE_GROUPS } from '../../data/mistakeTypes';
 import { getTileConfig } from '../../utils/mapTiles';
 import { cn } from '../../utils/cn';
+import { initialSpeedState, nextSpeed, type SpeedState } from '../../utils/speed';
 import { TRANSLATIONS } from '../../data/translations';
 import { EmptyState } from '../common/EmptyState';
 import { NavigationHUD } from './NavigationHUD';
@@ -446,8 +447,8 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   const lastIdlingLogRef = useRef<number>(0);
   const cumulativeMistakesRef = useRef<DrivingMistake[]>([]);
   const cumulativeRouteRef = useRef<GPSPoint[]>([]);
-  const speedBufferRef = useRef<number[]>([]);
-  const MAX_SPEED_BUFFER = 5;
+  // live speed readout state (utils/speed.ts): previous fix + last shown km/h
+  const speedStateRef = useRef<SpeedState>(initialSpeedState());
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const watchRef = useRef<number | string | null>(null);
@@ -1110,6 +1111,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
         const canTrackLive = proActive || hasTrial;
 
         if (canTrackLive) {
+          speedStateRef.current = initialSpeedState(); // a new drive starts from 0
           const handlePosition = (position: any) => {
             if (!position) return;
             const { latitude: lat, longitude: lng, speed, accuracy } = position.coords;
@@ -1131,46 +1133,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               setGpsSignalQuality('poor');
             }
 
-            const newPoint = { lat, lng, timestamp: Date.now() };
-            
+            // the fix's own time when the platform gives one (fixes can arrive late)
+            const fixTime = typeof position.timestamp === 'number' && position.timestamp > 0 ? position.timestamp : Date.now();
+            const newPoint = { lat, lng, timestamp: fixTime };
+
+            // Speed: the phone's GPS speed first, position deltas as fallback, 0 at once
+            // below walking pace, jitter while stopped ignored (utils/speed.ts, 8 Oct).
+            // Computed against the previous fix, not the last recorded route point.
+            speedStateRef.current = nextSpeed(speedStateRef.current, { lat, lng, timestamp: fixTime, speed, accuracy });
+            setCurrentSpeed(speedStateRef.current.kmh);
+
             setGpsPoints(prev => {
               const lastPoint = prev[prev.length - 1];
-              let currentKmh = 0;
-
-              // 1. DETERMINE RAW SPEED
-              // USE HARDWARE SPEED IF AVAILABLE (Much more accurate for driving)
-              if (speed !== null && speed !== undefined && speed >= 0) {
-                currentKmh = Math.round(speed * 3.6);
-              } else if (lastPoint) {
-                // Fallback to manual calc only if hardware speed is missing
-                const distKm = calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng);
-                const timeHours = (newPoint.timestamp - lastPoint.timestamp) / 3600000;
-                if (timeHours > 0) {
-                  const calculatedSpeed = distKm / timeHours;
-                  // Filter out impossible spikes (e.g. GPS jumps)
-                  if (calculatedSpeed < 250) { 
-                    currentKmh = Math.round(calculatedSpeed);
-                  }
-                }
-              }
-
-              // 2. SPEED SMOOTHING (Moving Average)
-              // This prevents "flickering" speed readings
-              speedBufferRef.current.push(currentKmh);
-              if (speedBufferRef.current.length > MAX_SPEED_BUFFER) {
-                speedBufferRef.current.shift();
-              }
-              
-              const smoothedSpeed = Math.round(
-                speedBufferRef.current.reduce((a, b) => a + b, 0) / speedBufferRef.current.length
-              );
-
-              // 3. ZERO-MOTION CHECK
-              // If we moved less than 1.0 meters, assume speed is 0 to avoid "drifting" while stopped
               const distSinceLast = lastPoint ? calculateDistance(lastPoint.lat, lastPoint.lng, lat, lng) : 0;
-              const finalSpeed = distSinceLast < 0.0010 ? 0 : smoothedSpeed;
-
-              setCurrentSpeed(finalSpeed);
 
               if (lastPoint) {
                 // Minimize battery usage/data noise by only logging if moved > 3.5 meters

@@ -170,7 +170,9 @@ function SpeedometerGauge({ speed, limit, isSpeeding }: { speed: number; limit: 
         <span className={cn('text-4xl font-black tracking-tighter', isSpeeding ? 'text-red-500' : 'text-slate-900 dark:text-white')}>
           {speed}
         </span>
+        {/* GPS is the true speed; car speedometers read 2 to 5 km/h above it by law */}
         <span className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">km/h</span>
+        <span className="text-[9px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">GPS</span>
       </div>
     </div>
   );
