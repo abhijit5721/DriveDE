@@ -9,6 +9,7 @@
  */
 import { AlertTriangle, Check, ExternalLink, X } from 'lucide-react';
 import { COMPETENCE_AREAS, DRIVING_TASKS, EXAM_EVALUATION, type CompetenceArea } from '../../data/examEvaluation';
+import { RATING_LABEL, type AreaRating } from '../../utils/examProtocol';
 import type { ExamScenario } from '../../data/examScenarios';
 import { cn } from '../../utils/cn';
 
@@ -101,6 +102,36 @@ export function CompetenceGrid({ scenario, language, isCovered, onInfo }: {
           {de ? 'So bewertet der Prüfer →' : 'How the examiner grades →'}
         </button>
       )}
+    </div>
+  );
+}
+
+/**
+ * The learner's own protocol: one line per Fahrkompetenzbereich with the examiner's
+ * rating words, summed over all situations answered freely. Hidden until there is data.
+ */
+export function ProtocolRatings({ language, ratings, compact = false }: { language: Lang; ratings: AreaRating[]; compact?: boolean }) {
+  const de = language === 'de';
+  const withData = ratings.filter((r) => r.rating);
+  if (withData.length === 0) return null;
+  const tone = (r: AreaRating['rating']) => r === 'very-good' || r === 'good' ? 'text-emerald-400' : r === 'sufficient' ? 'text-amber-300' : 'text-red-300';
+  return (
+    <div className={cn('rounded-2xl border border-white/10 bg-white/5 p-4', compact ? '' : 'mb-4')} data-testid="protocol-ratings">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-blue-200">{de ? 'Dein Prüfprotokoll bisher' : 'Your protocol so far'}</p>
+      <ul className="mt-2 space-y-1.5">
+        {ratings.map((r) => {
+          const a = COMPETENCE_AREAS.find((x) => x.id === r.area)!;
+          return (
+            <li key={r.area} className="flex items-center justify-between gap-3 text-sm" data-testid={`rating-${r.area}`}>
+              <span className="text-blue-50">{a.label[language]}</span>
+              {r.rating
+                ? <span className={cn('shrink-0 font-bold', tone(r.rating))}>{RATING_LABEL[r.rating][language]} <span className="font-normal text-blue-100/60">({r.got}/{r.total})</span></span>
+                : <span className="shrink-0 text-xs text-blue-100/50">{de ? 'noch keine Daten' : 'no data yet'}</span>}
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-2 text-[11px] text-blue-100/50">{de ? 'Skala wie beim Prüfer, Schwellen von uns: ab 90 % sehr gut, ab 75 % gut, ab 50 % ausreichend. Zählt frei beantwortete Situationen, beste Antwort je Situation.' : 'The examiner\'s scale, our thresholds: 90 % very good, 75 % good, 50 % sufficient. Counts freely answered situations, best answer per situation.'}</p>
     </div>
   );
 }

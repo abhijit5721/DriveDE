@@ -15,7 +15,8 @@ import { ArrowRight, Check, ChevronLeft, Lock, Mic, MicOff, RotateCcw, Volume2, 
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { EXAM_SCENARIOS, type ExamScenario } from '../../data/examScenarios';
 import { gradeAnswer, type GradeResult } from '../../utils/scenarioGrader';
-import { CompetenceGrid, ExamEvaluationInfo } from './ExamEvaluationInfo';
+import { CompetenceGrid, ExamEvaluationInfo, ProtocolRatings } from './ExamEvaluationInfo';
+import { areaRatings, bestRatios, recordAttempt, type Protocol } from '../../utils/examProtocol';
 import { useAppStore } from '../../store/useAppStore';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { cn } from '../../utils/cn';
@@ -27,7 +28,7 @@ interface ExamSimulationProps {
   initialScenarioId?: string | null;
 }
 
-const RESULTS_KEY = 'drivede-scenario-results';
+// results live in utils/examProtocol.ts (best attempt per situation, per-area tallies)
 
 // Detailed AI feedback (api/grade-scenario, Groq free plan): a few per device and day so
 // one person cannot use up the shared daily quota. The server limits per IP as well.
@@ -72,16 +73,6 @@ function gradeSteps(scenario: ExamScenario, picked: string[]) {
   return { verdicts, missing, right, total: scenario.steps.length, mistakes: verdicts.filter((v) => v === 'mistake').length };
 }
 
-function loadResults(): Record<string, number> {
-  try { return JSON.parse(localStorage.getItem(RESULTS_KEY) || '{}'); } catch { return {}; }
-}
-function saveResult(id: string, ratio: number) {
-  try {
-    const all = loadResults();
-    all[id] = Math.max(all[id] ?? 0, ratio);
-    localStorage.setItem(RESULTS_KEY, JSON.stringify(all));
-  } catch { /* storage blocked: progress just is not remembered */ }
-}
 
 type SpeechRec = {
   lang: string; continuous: boolean; interimResults: boolean;
@@ -99,7 +90,8 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
   const { language, isProActive } = useAppStore();
   const de = language === 'de';
   const pro = isProActive();
-  const [results, setResults] = useState<Record<string, number>>(loadResults);
+  const [results, setResults] = useState<Record<string, number>>(() => bestRatios());
+  const [protocol, setProtocol] = useState<Protocol | null>(null);
   // the detailed-feedback button only shows when the server has a Groq key
   const [aiEnabled, setAiEnabled] = useState(false);
   useEffect(() => {
@@ -165,7 +157,7 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
             nextLocked={!!next && !next.free && !pro}
             onNext={() => next && open(next)}
             onBackToList={() => setCurrent(null)}
-            onGraded={(id, ratio) => { saveResult(id, ratio); setResults(loadResults()); }}
+            onGraded={(s, ratio, isCovered) => { const p = recordAttempt(s, ratio, isCovered); setResults(bestRatios(p)); setProtocol(p); }}
             onInfo={() => setShowInfo(true)}
           />
         ) : (
@@ -181,6 +173,7 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
               <span className="block text-xs text-blue-100/70">{de ? 'Das elektronische Prüfprotokoll, die 8 Fahraufgaben, die 5 Kompetenzbereiche' : 'The electronic test protocol, the 8 driving tasks, the 5 competence areas'}</span>
             </span>
           </button>
+          <ProtocolRatings language={language} ratings={areaRatings(protocol ?? undefined)} />
           <ul className="space-y-3" data-testid="scenario-list">
             {EXAM_SCENARIOS.map((s, i) => {
               const locked = !s.free && !pro;
@@ -219,7 +212,7 @@ export default function ExamSimulation({ onBack, onOpenPaywall, initialScenarioI
 
 function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onNext, onBackToList, onGraded, onInfo }: {
   scenario: ExamScenario; aiEnabled: boolean; de: boolean; language: 'de' | 'en'; next: ExamScenario | null; nextLocked: boolean;
-  onNext: () => void; onBackToList: () => void; onGraded: (id: string, ratio: number) => void; onInfo: () => void;
+  onNext: () => void; onBackToList: () => void; onGraded: (scenario: ExamScenario, ratio: number, isCovered?: (id: string) => boolean) => void; onInfo: () => void;
 }) {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<GradeResult | null>(null);
@@ -265,7 +258,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
     recRef.current?.stop();
     const r = gradeAnswer(scenario, answer);
     setResult(r);
-    onGraded(scenario.id, r.total ? r.covered / r.total : 0);
+    onGraded(scenario, r.total ? r.covered / r.total : 0, (id) => r.points.find((x) => x.id === id)?.status === 'covered');
     trackFunnel('scenario_answered', { scenario: scenario.id, covered: r.covered, total: r.total, voice: usedMic.current });
   };
 
@@ -278,7 +271,7 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
   const checkSteps = () => {
     const g = gradeSteps(scenario, picked);
     setStepResult(g);
-    onGraded(scenario.id, g.total ? g.right / g.total : 0);
+    onGraded(scenario, g.total ? g.right / g.total : 0);
     trackFunnel('scenario_steps', { scenario: scenario.id, right: g.right, total: g.total, mistakes: g.mistakes });
   };
 

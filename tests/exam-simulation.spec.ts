@@ -74,9 +74,18 @@ test('an exam situation: type an answer, see covered points, the model answer an
   await expect(page.getByTestId('scenario-result')).toBeVisible();
   await page.getByTestId('minitest-option-1').click();
   await expect(page.getByTestId('scenario-minitest')).toContainText('Richtig');
-  // back to the list shows the saved result
+  // back to the list shows the saved result and the learner's protocol
   await page.getByTestId('exam-simulation-back').click();
   await expect(page.getByTestId('scenario-zebrastreifen')).toContainText('83%');
+  const ratings = page.getByTestId('protocol-ratings');
+  await expect(ratings.getByTestId('rating-speed')).toContainText('sehr gut');
+  await expect(ratings.getByTestId('rating-observation')).toContainText('ausreichend'); // 2 of 3
+  await expect(ratings.getByTestId('rating-handling')).toContainText('noch keine Daten');
+  // and on the dashboard, in the readiness breakdown
+  await page.getByTestId('exam-simulation-back').click();
+  await page.locator('[data-tour="readiness"]').getByText(/\d+%$/).first().click(); // the gauge opens the breakdown
+  await expect(page.getByTestId('dashboard-protocol')).toContainText('Geschwindigkeitsanpassung');
+  await expect(page.getByTestId('dashboard-protocol')).toContainText('sehr gut');
 });
 
 async function openZebra(page: import('@playwright/test').Page) {

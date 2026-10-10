@@ -7,6 +7,8 @@ import { X, TrendingUp, TrendingDown, Minus, Car, Target, Info } from 'lucide-re
 import { useEffect } from 'react';
 import { cn } from '../../utils/cn';
 import type { ReadinessBreakdown } from '../../utils/readiness';
+import { areaRatings, RATING_LABEL } from '../../utils/examProtocol';
+import { COMPETENCE_AREAS } from '../../data/examEvaluation';
 
 interface ReadinessBreakdownModalProps {
   isOpen: boolean;
@@ -23,6 +25,11 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  // the examiner's five areas, rated from the Prüfungssimulation (utils/examProtocol.ts)
+  const ratings = areaRatings();
+  const hasProtocol = ratings.some((r) => r.rating);
+  const tone = (r: (typeof ratings)[number]['rating']) => r === 'very-good' || r === 'good' ? 'text-emerald-600 dark:text-emerald-400' : r === 'sufficient' ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400';
 
   const components = [
     { label: language === 'de' ? 'Fahrstunden' : 'Driving Hours', value: readinessData.legal, color: 'bg-emerald-500', icon: Car },
@@ -131,6 +138,25 @@ export function ReadinessBreakdownModal({ isOpen, onClose, readinessData, langua
                 : (language === 'de' ? 'Konsistente Leistung' : 'Consistent performance')}
             </p>
           </div>
+
+          {hasProtocol && (
+            <div className="rounded-xl bg-slate-100/50 dark:bg-slate-800/50 border border-black/5 dark:border-white/5 p-4 mb-6" data-testid="dashboard-protocol">
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                {language === 'de' ? 'Prüfungssimulation: wie der Prüfer bewerten würde' : 'Exam simulation: how the examiner would rate it'}
+              </p>
+              <ul className="space-y-1.5">
+                {ratings.map((r) => (
+                  <li key={r.area} className="flex items-center justify-between text-xs">
+                    <span className="text-slate-600 dark:text-slate-300">{COMPETENCE_AREAS.find((a) => a.id === r.area)!.label[language]}</span>
+                    {r.rating
+                      ? <span className={cn('font-bold', tone(r.rating))}>{RATING_LABEL[r.rating][language]}</span>
+                      : <span className="text-slate-400">{language === 'de' ? 'noch keine Daten' : 'no data yet'}</span>}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">{language === 'de' ? 'Skala wie beim Prüfer, Schwellen von uns (90 / 75 / 50 %).' : 'The examiner\'s scale, our thresholds (90 / 75 / 50 %).'}</p>
+            </div>
+          )}
 
           <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-4">
             <p className="text-xs font-semibold text-blue-400 mb-2">
