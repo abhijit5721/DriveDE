@@ -7,7 +7,7 @@ One post per day, anonymous alias where the group offers it. Since 27 Sep: share
 | 20 Sep | Indians in Berlin | 58.9k | https://www.facebook.com/groups/2606668189644850 | EN | published (founder), reply A 23 Sep |
 | 23 Sep | Indians in Germany/Deutschland | 63.9k | https://www.facebook.com/groups/ghotrarobin | EN | published |
 | 24 Sep | INDIANS IN FRANKFURT | 30.1k | https://www.facebook.com/groups/2334504690127469 | EN | DECLINED. Joined first (was not a member), then the post went out under the founder's name (the in-composer anonymous switch did not flip) and was declined by the admins within a minute; three submissions show as declined because of the script bug. Do not retry this group. |
-| 2 Oct | Indians in Deutschland (founder joined 23 Sep, group exists for members to share services and products) | 9.7k | https://www.facebook.com/groups/Indians.Deutschland | EN | |
+| 2 Oct | Indians in Deutschland (founder joined 23 Sep, group exists for members to share services and products) | 9.7k | https://www.facebook.com/groups/Indians.Deutschland | EN | PUBLISHED 10 Oct anonymously (fb-post-guide-india-deutschland.txt, utm_campaign=indians-in-deutschland) |
 | 3 Oct | Indians in Berlin (second Berlin group, founder joined 23 Sep, no rules) | 6.7k | https://www.facebook.com/groups/5990167097741235 | EN | |
 | 4 Oct | Indians living in Cologne / Köln (founder joined 23 Sep, no rules) | 6.4k | https://www.facebook.com/groups/1731377857297919 | EN | |
 | 5 Oct | Indians in Stuttgart (moved from 25 Sep) | 22.5k | https://www.facebook.com/groups/186337235225676 | EN | |
