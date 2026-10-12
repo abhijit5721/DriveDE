@@ -55,6 +55,25 @@ describe('gradeAnswer', () => {
     expect(r.hints.length).toBe(1);
   });
 
+  it('green arrow: rolling round without stopping is flagged, stopping first is covered', () => {
+    const bad = gradeAnswer(scenario('gruenpfeil'), 'Ich rolle langsam um die Ecke, ohne anzuhalten, der Grünpfeil erlaubt das ja.');
+    expect(status(bad, 'stop')).toBe('missing');
+    expect(bad.hints.length).toBeGreaterThan(0);
+    const good = gradeAnswer(scenario('gruenpfeil'), 'I stop first at the stop line, then I let the cyclist and the pedestrians pass and turn carefully.');
+    expect(status(good, 'stop')).toBe('covered');
+    expect(status(good, 'cross')).toBe('covered');
+    expect(good.hints).toHaveLength(0);
+  });
+
+  it('zip merge: changing lanes right after the sign is flagged, driving to the end is covered', () => {
+    const early = gradeAnswer(scenario('reissverschluss'), 'Ich wechsle sofort nach dem Schild rüber und blinke rechts.');
+    expect(early.hints.length).toBe(1);
+    const late = gradeAnswer(scenario('reissverschluss'), 'I use the whole lane up to the end, indicate right, shoulder check and merge in turn at the bottleneck.');
+    expect(status(late, 'late')).toBe('covered');
+    expect(status(late, 'zip')).toBe('covered');
+    expect(late.hints).toHaveLength(0);
+  });
+
   it('an empty answer covers nothing', () => {
     const r = gradeAnswer(scenario('rechts-vor-links'), '');
     expect(r.covered).toBe(0);
