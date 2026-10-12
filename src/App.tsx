@@ -932,7 +932,9 @@ export default function App() {
         )}
         {showPathSelector && <PathSelectorModal onClose={() => setShowPathSelector(false)} />}
 
-        {showPaywall && !proActive && (
+        {/* Also during the trial: the dashboard banner "Noch 6 Tage Pro-Testphase" opens the
+            paywall so the learner can keep Pro before the trial ends (was a dead tap). */}
+        {showPaywall && (!proActive || !isPremium) && (
           <Suspense fallback={null}>
             <Paywall onClose={() => setShowPaywall(false)} />
           </Suspense>
