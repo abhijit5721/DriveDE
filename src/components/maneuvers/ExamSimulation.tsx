@@ -298,6 +298,34 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
     }
   };
 
+  // DRI-74: a fixed answer structure that fits almost every exam situation; tapping a stage
+  // appends its sentence starter. While typing, the on-device grader counts the points
+  // already found, without saying which ones (that would turn the box into a checklist).
+  const stages: { label: string; starter: string }[] = de
+    ? [
+        { label: 'Beobachten', starter: 'Ich beobachte ' },
+        { label: 'Tempo', starter: 'Ich fahre ' },
+        { label: 'Entscheiden', starter: 'Ich lasse ' },
+        { label: 'Handeln', starter: 'Dann ' },
+        { label: 'Nochmal prüfen', starter: 'Bevor ich weiterfahre, ' },
+      ]
+    : [
+        { label: 'Observe', starter: 'I watch ' },
+        { label: 'Speed', starter: 'I drive ' },
+        { label: 'Decide', starter: 'I let ' },
+        { label: 'Act', starter: 'Then I ' },
+        { label: 'Check again', starter: 'Before I drive on, ' },
+      ];
+  const insertStarter = (starter: string) => {
+    setAnswer((a) => {
+      const base = a.trimEnd();
+      if (!base) return starter;
+      const sep = /[.!?]$/.test(base) ? ' ' : '. ';
+      return `${base}${sep}${starter}`;
+    });
+  };
+  const liveCount = useMemo(() => (answer.trim().length >= 15 ? gradeAnswer(scenario, answer).covered : 0), [scenario, answer]);
+
   // a point counts when the on-device check or the AI feedback found it
   const isCovered = (id: string) => result?.points.find((x) => x.id === id)?.status === 'covered' || (ai.status === 'done' && ai.covered.has(id));
   const coveredCount = result ? scenario.keyPoints.filter((p) => isCovered(p.id)).length : 0;
@@ -426,6 +454,18 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
               {scenario.questions.map((q, i) => <li key={i}>{q[language]}</li>)}
             </ul>
           </div>
+          <div className="flex flex-wrap gap-2" data-testid="scenario-stages">
+            {stages.map((s) => (
+              <button
+                key={s.label}
+                type="button"
+                onClick={() => insertStarter(s.starter)}
+                className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-blue-100 transition hover:bg-white/20 active:scale-95"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
           <div className="relative">
             <textarea
               value={answer}
@@ -447,6 +487,13 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
             )}
           </div>
           {listening && <p className="text-xs text-blue-100/80">{de ? 'Ich höre zu. Sprich ganz normal, tippe dann auf das Mikrofon.' : 'Listening. Speak normally, then tap the microphone.'}</p>}
+          {answer.trim().length >= 15 && (
+            <p className="text-xs text-blue-100/70" data-testid="scenario-live-count" aria-live="polite">
+              {de
+                ? `${liveCount} ${liveCount === 1 ? 'Punkt' : 'Punkte'} erkannt`
+                : `${liveCount} ${liveCount === 1 ? 'point' : 'points'} recognised`}
+            </p>
+          )}
           <button
             onClick={grade}
             disabled={answer.trim().length < 15}
