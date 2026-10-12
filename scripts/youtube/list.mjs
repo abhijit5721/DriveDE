@@ -1,0 +1,13 @@
+import { chromium } from 'playwright';
+const b = await chromium.connectOverCDP('http://127.0.0.1:9226', { timeout: 20000 });
+const page = b.contexts()[0].pages()[0];
+await page.goto('https://studio.youtube.com/channel/UC7vTRoaxnGKv_aQRFtPGErQ/videos/upload', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(6000);
+const rows = await page.locator('ytcp-video-row').evaluateAll((rs) => rs.map((r) => r.innerText.replace(/\s+/g, ' ').slice(0, 160)));
+console.log(rows.join('\n'));
+await page.goto('https://studio.youtube.com/video/DmsAuhKQKmo/translations', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(6000);
+console.log('--- subtitles DE ---');
+console.log(await page.evaluate(() => document.body.innerText.replace(/\n{2,}/g, '\n').slice(0, 900)));
+await page.screenshot({ path: 'demo-video/out/yt-subs-de.png' });
+await b.close();

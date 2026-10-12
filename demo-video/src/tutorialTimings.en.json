@@ -1,0 +1,61 @@
+{
+ "fps": 30,
+ "pause": 0.8,
+ "scenes": [
+  {
+   "id": "s01",
+   "audio": 16.248,
+   "seconds": 17.048
+  },
+  {
+   "id": "s02",
+   "audio": 15.264,
+   "seconds": 16.064
+  },
+  {
+   "id": "s03",
+   "audio": 12.096,
+   "seconds": 12.896
+  },
+  {
+   "id": "s04",
+   "audio": 13.2,
+   "seconds": 14.0
+  },
+  {
+   "id": "s05",
+   "audio": 16.68,
+   "seconds": 17.48
+  },
+  {
+   "id": "s06",
+   "audio": 13.344,
+   "seconds": 14.144
+  },
+  {
+   "id": "s07",
+   "audio": 12.168,
+   "seconds": 12.968
+  },
+  {
+   "id": "s08",
+   "audio": 15.864,
+   "seconds": 16.664
+  },
+  {
+   "id": "s09",
+   "audio": 10.848,
+   "seconds": 11.648
+  },
+  {
+   "id": "s10",
+   "audio": 15.936,
+   "seconds": 16.736
+  },
+  {
+   "id": "s11",
+   "audio": 9.744,
+   "seconds": 10.544
+  }
+ ]
+}

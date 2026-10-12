@@ -12,6 +12,7 @@ import { RoundaboutExplainer, RB_TOTAL_FRAMES } from './RoundaboutExplainer.tsx'
 import { ShortExaminerEp3, EP3_TOTAL_FRAMES } from './ShortExaminerEp3.tsx';
 import { ShortExaminerEp3Answer, EP3ANS_TOTAL_FRAMES } from './ShortExaminerEp3Answer.tsx';
 import { FPS, TOTAL_FRAMES } from './timings.ts';
+import { Tutorial, tutorialFrames } from './Tutorial.tsx';
 
 export const Root: React.FC = () => (
   <>
@@ -125,6 +126,18 @@ export const Root: React.FC = () => (
         fps={FPS}
         width={1080}
         height={1920}
+        defaultProps={{ lang }}
+      />
+    ))}
+    {(['de', 'en'] as const).map((lang) => (
+      <Composition
+        key={`tutorial-${lang}`}
+        id={`tutorial-${lang}`}
+        component={Tutorial}
+        durationInFrames={tutorialFrames(lang)}
+        fps={FPS}
+        width={1920}
+        height={1080}
         defaultProps={{ lang }}
       />
     ))}
