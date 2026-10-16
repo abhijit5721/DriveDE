@@ -7,7 +7,7 @@
 // Numbers before 2026-09-22 include the founder's own visits and our automated checks.
 // Only "/" shows up under path: the static blog and /pruefung pages do not load the
 // analytics script, so their views are not counted here (Search Console has them).
-import { execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 
 const argv = process.argv.slice(2);
 const DAYS = Number(argv[argv.indexOf('--days') + 1] || 7);
@@ -19,7 +19,8 @@ from.setUTCHours(0, 0, 0, 0);
 const q = (extra = '') => `projectId=${PROJECT}&teamId=${TEAM}&environment=production&filter=%7B%7D&tz=Europe%2FBerlin&from=${from.toISOString()}&to=${to.toISOString()}${extra}`;
 
 const api = (path) => {
-  const out = execFileSync('npx', ['vercel', 'api', `/web-analytics/v2/${path}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], shell: true });
+  // the query string holds & characters, so the URL is quoted for the Windows shell
+  const out = execSync(`npx vercel api "/web-analytics/v2/${path}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
   return JSON.parse(out.slice(out.indexOf('{')));
 };
 
