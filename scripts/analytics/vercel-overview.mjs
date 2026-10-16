@@ -1,42 +1,33 @@
-// Vercel Web Analytics for drivede.app through the logged-in dashboard session on the
-// port 9222 Chrome (the public REST API has no analytics endpoint). Prints visitors, page
-// views, top paths, referrers, countries and the funnel events for a window.
+// Vercel Web Analytics for drivede.app through the Vercel CLI's API passthrough
+// (`npx vercel api`), which carries the CLI login. The internal web-analytics endpoints
+// accept it, so no dashboard browser session is needed (the old version drove the port
+// 9222 Chrome and died whenever that session was logged out).
+// Prints visitors, page views, top paths, referrers, countries, funnel events, devices.
 // Usage: node scripts/analytics/vercel-overview.mjs [--days 7]
 // Numbers before 2026-09-22 include the founder's own visits and our automated checks.
-import { chromium } from 'playwright';
+// Only "/" shows up under path: the static blog and /pruefung pages do not load the
+// analytics script, so their views are not counted here (Search Console has them).
+import { execFileSync } from 'node:child_process';
 
 const argv = process.argv.slice(2);
 const DAYS = Number(argv[argv.indexOf('--days') + 1] || 7);
 const TEAM = 'team_6TSdiy5nuL2LngvlEY6YKvus';
-const PROJECT = 'drive-de';
-const to = new Date(); const from = new Date(to.getTime() - DAYS * 86_400_000);
-const q = (extra = '') => `environment=production&filter=%7B%7D&projectId=${PROJECT}&teamId=${TEAM}&tz=Europe%2FBerlin&from=${from.toISOString()}&to=${to.toISOString()}${extra}`;
+const PROJECT = 'prj_Ung8mpRsv7AWAXsRECj62erXtoOu';
+const to = new Date();
+const from = new Date(to.getTime() - DAYS * 86_400_000);
+from.setUTCHours(0, 0, 0, 0);
+const q = (extra = '') => `projectId=${PROJECT}&teamId=${TEAM}&environment=production&filter=%7B%7D&tz=Europe%2FBerlin&from=${from.toISOString()}&to=${to.toISOString()}${extra}`;
 
-const b = await chromium.connectOverCDP('http://127.0.0.1:9222', { timeout: 20000 });
-const p = await b.contexts()[0].newPage();
-await p.goto('https://vercel.com/', { waitUntil: 'domcontentloaded', timeout: 60000 });
-const get = async (path) => {
-  const r = await p.request.get(`https://vercel.com/api/web-analytics/v2/${path}`);
-  if (!r.ok()) return { error: r.status() };
-  return r.json();
+const api = (path) => {
+  const out = execFileSync('npx', ['vercel', 'api', `/web-analytics/v2/${path}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], shell: true });
+  return JSON.parse(out.slice(out.indexOf('{')));
 };
-const overview = await get(`overview?${q()}`);
+
+const overview = api(`overview?${q()}`);
 console.log(`Vercel Analytics, last ${DAYS} days (${from.toISOString().slice(0, 10)} to ${to.toISOString().slice(0, 10)})`);
-console.log('overview', JSON.stringify(overview?.data ?? overview));
+console.log(`  ${overview.total} page views, ${overview.devices} visitors`);
 for (const type of ['path', 'referrer', 'country', 'event_name', 'device_type']) {
-  const s = await get(`stats?${q(`&type=${type}&limit=12`)}`);
-  const rows = (s?.data ?? []).map((r) => `${r.key ?? r.name ?? r[type]}: ${r.total ?? r.visitors ?? r.count}${r.devices != null ? ` (${r.devices} visitors)` : ''}`);
-  console.log(`\n${type}\n  ` + (rows.length ? rows.join('\n  ') : JSON.stringify(s).slice(0, 200)));
+  const s = api(`stats?${q(`&type=${type}&limit=15`)}`);
+  const rows = (s.data ?? []).map((r) => `${r.key ?? r.name}: ${r.total} views, ${r.devices} visitors`);
+  console.log(`\n${type}\n  ` + (rows.length ? rows.join('\n  ') : '(none)'));
 }
-const ts = await get(`timeseries?${q()}`);
-const series = Array.isArray(ts?.data) ? ts.data : Array.isArray(ts?.data?.data) ? ts.data.data : Array.isArray(ts?.data?.groups?.all) ? ts.data.groups.all : [];
-const perDay = new Map();
-for (const d of series) {
-  const day = String(d.key ?? d.date ?? d.timestamp ?? '').slice(0, 10);
-  const cur = perDay.get(day) ?? { v: 0, pv: 0 };
-  cur.v += Number(d.devices ?? d.visitors ?? 0); cur.pv += Number(d.total ?? d.pageviews ?? 0);
-  perDay.set(day, cur);
-}
-const days = [...perDay].map(([day, c]) => `${day} ${c.v}v/${c.pv}pv`);
-console.log('\nper day (hourly buckets summed, visitors may double-count across hours)\n  ' + (days.length ? days.join('\n  ') : JSON.stringify(ts).slice(0, 300)));
-await p.close(); await b.close();
