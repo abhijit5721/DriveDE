@@ -1,0 +1,40 @@
+# DriveDE
+
+> DriveDE (https://www.drivede.app) is a web app for learner drivers in Germany preparing for the practical driving test (praktische Fahrprüfung, Klasse B), including people converting a foreign licence (Umschreibung). It covers the time between driving lessons: practise the exam situations beforehand, record each lesson afterwards with a mistake log, and see what still needs work. German and English. Free to start without an account; Pro passes are one-time payments, no subscription. Built in Hamburg, GDPR compliant, data stored in the EU.
+
+DriveDE ist eine Web-App für Fahrschüler in Deutschland, die sich auf die praktische Fahrprüfung (Klasse B) vorbereiten, auch für die Umschreibung eines ausländischen Führerscheins. Prüfungssituationen vorher üben, Fahrstunden danach nachbereiten, Fortschritt sehen. Kostenlos ohne Anmeldung starten, Pro-Pässe einmalig, kein Abo.
+
+## What the app does
+
+- Prüfungssimulation: 20 situations from the practical test (Zebrastreifen, rechts vor links, Kreisverkehr, Spurwechsel, Rechtsabbiegen mit Radweg, Schulbus, Autobahn auffahren und verlassen, Hindernis, Linksabbiegen mit Gegenverkehr, abknickende Vorfahrt, Grünpfeil, Bahnübergang, Straßenbahnhaltestelle, Radfahrer überholen, Tempo-30-Zone, Überholen auf der Landstraße, Reißverschluss, verkehrsberuhigter Bereich, Handzeichen eines Polizisten). For each: the examiner's instruction, what the examiner wants to see, the right order of actions, typical mistakes, a model answer, the StVO paragraph. The learner orders the steps or answers in their own words; the answer is checked on the device against key points, with optional detailed AI feedback.
+- The learner's own Prüfprotokoll: results per situation and per Fahrkompetenzbereich (Verkehrsbeobachtung, Fahrzeugpositionierung, Geschwindigkeitsanpassung, Kommunikation, Fahrzeugbedienung), summed into the examiner's rating words.
+- Right-before-left trainer and roundabout trainer on the landing page, no account needed.
+- Manoeuvres step by step (parking, three-point turn, emergency stop and the other Grundfahraufgaben).
+- Lesson recording with a mistake log, GPS track, history and cost overview.
+- Vehicle technology questions (Fahrzeugtechnik) as asked at the start of the test.
+
+## Key pages
+
+- Landing page (DE): https://www.drivede.app/
+- Landing page (EN): https://www.drivede.app/?lang=en
+- All exam situations explained (DE): https://www.drivede.app/pruefung/
+- All exam situations explained (EN): https://www.drivede.app/exam/
+- How the examiner grades, the electronic test protocol (DE): https://www.drivede.app/pruefung/so-bewertet-der-pruefer/
+- How the examiner grades (EN): https://www.drivede.app/exam/how-the-examiner-grades/
+- Blog (DE): https://www.drivede.app/blog/
+- Blog (EN): https://www.drivede.app/blog/en/
+- Pricing, machine readable: https://www.drivede.app/pricing.md
+- Sitemap: https://www.drivede.app/sitemap.xml
+
+## Pricing (summary, see /pricing.md)
+
+- Free: landing-page trainers, the first exam situations, lesson recording basics. No account needed to start; a 7-day Pro trial begins automatically.
+- Pro passes, one-time payments, no subscription: 30 days 9,99 EUR, 90 days 19,99 EUR, lifetime 29,99 EUR.
+
+## Facts
+
+- Audience: learner drivers in Germany (Fahrschüler) and holders of foreign licences converting to a German licence, including Ukrainian, Indian, Turkish and other expat communities.
+- Languages: German and English. The examiner's instructions are always shown in German, as spoken in the real test.
+- Legal basis of the content: StVO (Straßenverkehrs-Ordnung), the Fahraufgabenkatalog and the electronic test protocol (ePP) used by TÜV and DEKRA examiners. Every situation page cites the paragraph.
+- Not an official TÜV, DEKRA or Fahrschule product. DriveDE complements driving lessons; it does not replace them.
+- Company location: Hamburg, Germany. Contact: hello@drivede.app

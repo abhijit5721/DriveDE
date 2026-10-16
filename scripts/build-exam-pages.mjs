@@ -70,6 +70,15 @@ const T = {
     tasks: 'Die acht Fahraufgaben',
     areasH: 'Die fünf Kompetenzbereiche',
     video: 'Erklärvideo von TÜV SÜD ansehen (YouTube)',
+    answerLead: 'Kurz gesagt',
+    answerShow: (title) => `Der Prüfer will bei „${title}“ vor allem sehen:`,
+    answerSevere: 'Ein schwerer Fehler, der die Prüfung beenden kann:',
+    updated: 'Stand',
+    source: 'Gesetzestext',
+    faqShow: (title) => `Was will der Prüfer bei „${title}“ sehen?`,
+    faqSevere: (title) => `Was ist bei „${title}“ ein schwerer Fehler?`,
+    faqLaw: (title) => `Welche Regel gilt bei „${title}“?`,
+    faqSevereIntro: 'Als schwerer Fehler gilt:',
   },
   en: {
     section: 'Exam simulation',
@@ -104,10 +113,105 @@ const T = {
     tasks: 'The eight driving tasks',
     areasH: 'The five areas of driving competence',
     video: 'Watch TÜV SÜD\'s explainer (YouTube)',
+    answerLead: 'In short',
+    answerShow: (title) => `At "${title}" the examiner mainly wants to see:`,
+    answerSevere: 'A severe mistake that can end the test:',
+    updated: 'Updated',
+    source: 'Legal text',
+    faqShow: (title) => `What does the examiner want to see at "${title}"?`,
+    faqSevere: (title) => `What counts as a severe mistake at "${title}"?`,
+    faqLaw: (title) => `Which rule applies at "${title}"?`,
+    faqSevereIntro: 'Counted as a severe mistake:',
   },
 };
 
+// First publication dates, kept stable so dateModified can move without datePublished drifting.
+const PUBLISHED = { default: '2026-10-06', batch1: '2026-10-14' };
+const BATCH1 = new Set(['linksabbiegen-gegenverkehr', 'abknickende-vorfahrt', 'gruenpfeil', 'bahnuebergang', 'strassenbahnhaltestelle', 'radfahrer-ueberholen', 'tempo-30-zone', 'autobahn-verlassen', 'ueberholen-landstrasse', 'reissverschluss', 'verkehrsberuhigter-bereich', 'polizist-handzeichen']);
+const publishedOn = (s) => (BATCH1.has(s.id) ? PUBLISHED.batch1 : PUBLISHED.default);
+
+const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+const joinList = (items, L) => {
+  if (items.length <= 1) return items.join('');
+  return `${items.slice(0, -1).join(', ')} ${L === 'de' ? 'und' : 'and'} ${items[items.length - 1]}`;
+};
+
+/** The 40 to 60 word direct answer at the top of a situation page: the key points the
+ *  examiner files, and the one severe mistake. Self-contained so an answer engine can lift it. */
+function directAnswer(s, L, t) {
+  // the labels are short imperative phrases; semicolons keep them readable as a list
+  const points = s.keyPoints.slice(0, 4).map((p) => p.label[L].replace(/\.$/, ''));
+  const severe = s.mistakes.find((m) => m.severe) || s.mistakes[0];
+  return `${t.answerLead}: ${t.answerShow(s.title[L])} ${points.join('; ')}. ${t.answerSevere} ${lower(severe.text[L])}.`;
+}
+
+/** Links into gesetze-im-internet.de for every StVO paragraph and Anlage named in the law text. */
+function lawLinks(lawText) {
+  const links = [];
+  const seen = new Set();
+  for (const m of lawText.matchAll(/§\s*(\d+[a-z]?)/g)) {
+    const key = `§ ${m[1]}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    links.push({ label: `${key} StVO`, href: `https://www.gesetze-im-internet.de/stvo_2013/__${m[1]}.html` });
+  }
+  for (const m of lawText.matchAll(/(?:Anlage|annex)\s*(\d)/gi)) {
+    const key = `Anlage ${m[1]}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    links.push({ label: `${key} StVO`, href: `https://www.gesetze-im-internet.de/stvo_2013/anlage_${m[1]}.html` });
+  }
+  if (/Zeichen\s*\d{3}|sign\s*\d{3}/i.test(lawText) && !seen.has('Anlage 2')) {
+    links.push({ label: 'Anlage 2 StVO (Verkehrszeichen)', href: 'https://www.gesetze-im-internet.de/stvo_2013/anlage_2.html' });
+  }
+  return links;
+}
+
+const monthName = (iso, L) => new Date(iso + 'T00:00:00Z').toLocaleDateString(L === 'de' ? 'de-DE' : 'en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+function pageJsonLd({ s, L, t, SITE, today, canonical }) {
+  const title = s.title[L];
+  const severePoints = s.keyPoints.filter((p) => p.severe).map((p) => p.label[L]);
+  const severeMistakes = s.mistakes.filter((m) => m.severe).map((m) => m.text[L]);
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.title(title),
+    description: trim(s.situation[L], 155),
+    datePublished: publishedOn(s),
+    dateModified: today,
+    inLanguage: L,
+    mainEntityOfPage: canonical,
+    image: `${SITE}/icons/icon-512.png`,
+    author: { '@type': 'Organization', name: 'DriveDE', url: SITE },
+    publisher: { '@type': 'Organization', name: 'DriveDE', logo: { '@type': 'ImageObject', url: `${SITE}/icons/icon-512.png` } },
+    citation: lawLinks(s.law[L]).map((l) => l.href),
+  };
+  const faq = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      { '@type': 'Question', name: t.faqShow(title), acceptedAnswer: { '@type': 'Answer', text: s.keyPoints.map((p) => p.label[L]).join('. ') + '.' } },
+      { '@type': 'Question', name: t.faqSevere(title), acceptedAnswer: { '@type': 'Answer', text: `${t.faqSevereIntro} ${[...severePoints, ...severeMistakes].join('. ')}.` } },
+      { '@type': 'Question', name: t.faqLaw(title), acceptedAnswer: { '@type': 'Answer', text: s.law[L] } },
+      { '@type': 'Question', name: s.miniTest.question[L], acceptedAnswer: { '@type': 'Answer', text: `${s.miniTest.options[s.miniTest.correct][L]}. ${s.miniTest.explanation[L]}` } },
+    ],
+  };
+  const crumbs = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t.home, item: SITE },
+      { '@type': 'ListItem', position: 2, name: t.section, item: `${SITE}/${t.dir}/` },
+      { '@type': 'ListItem', position: 3, name: title, item: canonical },
+    ],
+  };
+  return [article, faq, crumbs].map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n');
+}
+
 const PAGE_CSS = `
+.answer{font-size:17px;line-height:1.55;padding:14px 18px;border-radius:14px;background:var(--accent-soft);color:var(--ink);margin:0 0 20px}
+.source{font-size:14px;color:var(--muted)}
 .sit{border-radius:20px;padding:22px 24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);margin:0 0 28px}
 .sit p{margin:0 0 14px}
 .sit blockquote{margin:0;padding:14px 18px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;font-weight:700;color:var(--ink)}
@@ -150,15 +254,17 @@ function gridHtml({ s, lang, t, esc, areas }) {
 <p><a href="/${t.dir}/${t.evalSlug}/">${t.evalLink} →</a></p>`;
 }
 
-function pageBody({ s, i, all, lang, t, esc, areas }) {
+function pageBody({ s, i, all, lang, t, esc, areas, today }) {
   const L = lang;
   const other = all.filter((x) => x.id !== s.id);
+  const links = lawLinks(s.law[L]);
   return `
 <div class="crumbs"><a href="/">${t.home}</a> <span>›</span> <a href="/${t.dir}/">${t.section}</a> <span>›</span> <span>${esc(s.title[L])}</span></div>
 <span class="eyebrow">${t.section} · ${i + 1} / ${all.length}</span>
 <h1>${esc(t.title(s.title[L]))}</h1>
-<p class="meta"><span>${esc(s.law[L].split(':')[0])}</span><span>·</span><span>${s.free ? t.free : t.pro}</span></p>
+<p class="meta"><span>${esc(s.law[L].split(':')[0])}</span><span>·</span><span>${s.free ? t.free : t.pro}</span><span>·</span><span>${t.updated}: ${esc(monthName(today, L))}</span><span>·</span><span>DriveDE</span></p>
 <article>
+<p class="answer">${esc(directAnswer(s, L, t))}</p>
 <div class="sit">
   <p>${esc(s.situation[L])}</p>
   <blockquote><small>${t.examiner}</small>„${esc(s.examiner.de)}“${L === 'en' ? `<br><span style="font-weight:500;color:var(--muted)">"${esc(s.examiner.en)}"</span>` : ''}</blockquote>
@@ -174,6 +280,7 @@ ${gridHtml({ s, lang, t, esc, areas })}
 <p>${esc(s.modelAnswer[L])}</p>
 <h2>${t.law}</h2>
 <p>${esc(s.law[L])}</p>
+${links.length ? `<p class="source">${t.source}: ${links.map((l) => `<a href="${l.href}" rel="noopener" target="_blank">${esc(l.label)}</a>`).join(' · ')} (gesetze-im-internet.de)</p>` : ''}
 <h2>${t.quiz}</h2>
 <div class="quiz">
   <p><strong>${esc(s.miniTest.question[L])}</strong></p>
@@ -268,13 +375,14 @@ export async function buildExamPages({ shell, esc, SITE, ROOT, outRoot = path.jo
 
     all.forEach((s, i) => {
       mkdirSync(path.join(dir, s.id), { recursive: true });
+      const canonical = `${SITE}/${t.dir}/${s.id}/`;
       writeFileSync(path.join(dir, s.id, 'index.html'), shell({
         lang,
         title: `${t.title(s.title[lang])} | DriveDE`,
         description: trim(s.situation[lang], 155),
-        canonical: `${SITE}/${t.dir}/${s.id}/`,
-        head: hreflang(`/pruefung/${s.id}/`, `/exam/${s.id}/`),
-        body: pageBody({ s, i, all, lang, t, esc, areas }),
+        canonical,
+        head: hreflang(`/pruefung/${s.id}/`, `/exam/${s.id}/`) + '\n' + pageJsonLd({ s, L: lang, t, SITE, today, canonical }),
+        body: pageBody({ s, i, all, lang, t, esc, areas, today }),
       }));
       urls.push(`  <url>
     <loc>${SITE}/${t.dir}/${s.id}/</loc>

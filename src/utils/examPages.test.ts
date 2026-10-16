@@ -34,6 +34,14 @@ describe('public exam situation pages', () => {
       expect(de).toContain('Was der Prüfer im Protokoll bewertet');
       expect(de).toContain('Verkehrsbeobachtung');
       expect(de).toContain('schwerer Fehler');
+      // answer-engine blocks: direct answer, FAQ and Article schema, dated, law text linked
+      expect(de).toContain('<p class="answer">Kurz gesagt:');
+      expect(de).toContain('"@type":"FAQPage"');
+      expect(de).toContain('"@type":"Article"');
+      expect(de).toContain('"dateModified":"2026-10-07"');
+      expect(de).toContain('https://www.gesetze-im-internet.de/stvo_2013/__26.html');
+      expect(de).toContain('Stand: Oktober 2026');
+      expect(en).toContain('<p class="answer">In short:');
       const ev = readFileSync(path.join(out, 'pruefung', 'so-bewertet-der-pruefer', 'index.html'), 'utf8');
       expect(ev).toContain('elektronische Prüfprotokoll');
       expect(ev).toContain('Geradeausfahren');
