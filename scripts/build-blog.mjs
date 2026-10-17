@@ -149,6 +149,9 @@ function shell({ lang, title, description, canonical, head = '', body, slug = nu
 <meta name="twitter:image" content="${ogImageFor(slug, lang)}">
 ${head}
 <style>${CSS}</style>
+<!-- Vercel Web Analytics (cookieless) on the static pages too, so blog and /pruefung visits and
+     ?ref= sources show up next to the app's. Skips browsers flagged as our own traffic, like the app. -->
+<script>try{if(localStorage.getItem('drivede_own_traffic')!=='1'){window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};var s=document.createElement('script');s.defer=true;s.src='/_vercel/insights/script.js';document.head.appendChild(s)}}catch(e){}</script>
 </head>
 <body>
 <header><nav class="nav">
