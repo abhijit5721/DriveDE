@@ -105,5 +105,47 @@
     "tier": "Depends on your state: some swap license-for-license, some need exams",
     "tierColor": "#3b82f6",
     "note": "Washington, Texas, Michigan and ~25 more states: direct swap. California, New York, Florida: theory exam. A few states: both exams. Check your state before booking anything."
+  },
+  {
+    "id": "rule-zip-merge",
+    "type": "rule",
+    "question": "Your lane ends in 200 m. To be safe, you should merge into the other lane as early as possible.",
+    "answer": false,
+    "explanation": "Zip rule (§ 7 StVO): use your lane to the end and merge in turn right at the bottleneck. Merging early wastes road and causes the queue. Pushing in is the mistake that fails the test, not merging late."
+  },
+  {
+    "id": "rule-level-crossing",
+    "type": "rule",
+    "question": "At a level crossing the red light starts flashing but the barriers are still up, so you may still cross.",
+    "answer": false,
+    "explanation": "Flashing red means stop (§ 19 StVO). A train is already on its way and needs hundreds of metres to brake. Stop before the stop line or the cross, never on the tracks."
+  },
+  {
+    "id": "rule-tram-stop",
+    "type": "rule",
+    "question": "A tram has stopped at a stop with no island. If nobody is on the road right now, you may pass at normal speed.",
+    "answer": false,
+    "explanation": "While passengers get on or off you may pass on the right only at walking speed and with enough distance (§ 20 StVO). Passengers step straight onto your lane, so wait if necessary."
+  },
+  {
+    "id": "rule-cyclist-gap",
+    "type": "rule",
+    "question": "Outside town you need at least 2 metres of side distance when overtaking a cyclist.",
+    "answer": true,
+    "explanation": "§ 5 StVO: at least 1.5 m in town and 2 m outside town. On a narrow road that means using the oncoming lane. If there is no room, you stay behind the cyclist."
+  },
+  {
+    "id": "rule-autobahn-exit",
+    "type": "rule",
+    "question": "To leave the Autobahn safely, you should slow down on the right lane before you reach the exit lane.",
+    "answer": false,
+    "explanation": "Never brake on the through carriageway. Move onto the deceleration lane at the same speed and reduce speed only there (§ 7a StVO). Check the speedometer: after the Autobahn, 80 feels like 50."
+  },
+  {
+    "id": "rule-police-signal",
+    "type": "rule",
+    "question": "A police officer is directing traffic and faces you with their chest. That means you may drive.",
+    "answer": false,
+    "explanation": "Chest or back towards you means stop, like a red light. Side towards you means go. A raised arm means wait before the junction (§ 36 StVO). Police signals override lights and signs."
   }
 ]
