@@ -1,81 +1,103 @@
 ---
-title: Best Driving Test Apps in Germany (2026): Theory vs Practical
-description: Theory apps cover the exam catalogue, almost nothing covers the expensive practical exam. An honest comparison of German driving apps for learners and licence converters, in English.
+title: Best Apps for the German Practical Driving Test (2026) Compared
+description: Which app actually helps with the German practical driving test? Five apps compared honestly, with prices, languages, whether you need a driving school for access, and each app's weakness. Theory apps in brief.
 slug: best-driving-apps-germany
 lang: en
 date: 2026-08-22
-updated: 2026-09-24
-keywords: best driving test app germany, driving test germany app, german driving license app, führerschein app english, driving theory app germany english, german practical driving test app, free driving app germany
+updated: 2026-10-18
+keywords: best driving test app germany, driving test germany app, german driving license app, führerschein app english, german practical driving test app, free driving app germany, drivers cam, steerclear germany, smart bestehen, fahrpraxis
 flag: 📱
 variants: fuehrerschein-app-vergleich
 ---
 
-**Short answer:** for the **theory exam**, use your driving school's app or one of the big question-catalogue apps; they all use the same official catalogue, and most offer English. For the **practical exam**, the expensive part, there are hardly any apps. What helps there is practising right of way, roundabouts and the basic manoeuvres between lessons, and keeping a log of your mistakes. Together that covers the whole licence.
+**Short answer:** for the **theory exam** every serious app uses the same official question catalogue, so take your driving school's app. For the **practical exam** there are five apps that do something other than quiz you: **Drivers Cam**, **FahrPRAXIS** and **Smart Bestehen** show videos of the tricky spots in your test area and are handed out through driving schools. **SteerClear** guides you along GPS practice routes around the test centre. **DriveDE** explains the exam situations, checks your answer and logs your lessons, with no school and no account needed. Which one fits depends on whether your school partners with one of the video apps.
 
-There is no single best German driving app, because getting the licence is two completely different problems. The theory exam is a flashcard problem. The practical training is a skills-and-money problem, at €70 to €95 per lesson. Here is the landscape in two minutes.
+Disclosure: DriveDE is our own app. The facts about the other apps come from the app stores and the publishers' pages, seen on 18 October 2026, with a source behind every number.
 
-## Theory apps: a crowded, fine market
+## Theory apps in five lines
 
-These train the **official TÜV/DEKRA question catalogue**, the exact pool your theory questions come from:
+The theory exam is a flashcard problem, and that market is full and good:
 
-- **Fahren Lernen Max**: usually included in your driving school's learning package, and your instructor can see your progress.
-- **ADAC Führerschein app**: a solid free way into the catalogue.
-- **Theorie24, iTheorie and similar**: standalone catalogue trainers, one-time or subscription (check current pricing).
+- **Fahren Lernen Max** (Springer Fachmedien): the app most schools use, needs a serial number and school code, 13 languages, 4.7 stars from 80,000 App Store ratings.
+- **ClickClickDrive**: theory plus lesson booking and chat with your instructor, free with ads, subscriptions from 8.99 to 24.99 euros, 4.8 stars from 64,000 ratings.
+- **Führerschein GOLD** (theorie24): official questions, 13 languages, 9.99 euros one-time, 4.8 stars.
+- **ADAC Führerschein app**: free, but only for ADAC members, German only, 3.9 stars.
 
-You cannot go far wrong here: serious providers use the same official catalogue, and the theory exam itself can be taken in English and eleven other foreign languages. The sensible choice is usually whatever your driving school already includes.
+You cannot go far wrong here. The questions are the same everywhere, so choose by usability and price, and usually that is whatever your school includes. The theory exam itself can be taken in English and eleven other languages.
 
-## The practical exam: where the map goes empty
+## The practical-test apps at a glance
 
-From your first lesson the questions change: which mistakes do I keep making? Do I spot right-before-left early enough? How many more €80 lessons do I need? Many people fail the practical exam not on car control but on observation and right of way: the [shoulder check](/blog/shoulder-check-german-driving-test/), unmarked junctions, lane choice in [multi-lane turns](/blog/multi-lane-turns-germany/). If you drove for years abroad, these German specifics are exactly what trips you up. A question-catalogue trainer does not help with any of it.
+| App | What it does for the practical test | Access and price | Platforms | Languages | Weakness |
+|---|---|---|---|---|---|
+| Drivers Cam | videos of the tricky spots in your test area with instructor commentary, a quiz per video, basic manoeuvres | only through a partner driving school, price set by the school | iOS, Android, web | 13 | useless if your school is not a partner or your test area is not filmed |
+| FahrPRAXIS | videos of the spots examiners like to use locally, a practice test per video, technique tests | only through a driving school, price not published | iOS, Android, web | German | no public list of covered test areas |
+| Smart Bestehen | 360-degree videos of your test area, daily challenge, basics | via partner schools, otherwise in-app purchase (60 euros quoted in 2024) | iOS, Android, web | 14 | very small distribution, 9 ratings across both stores |
+| SteerClear | GPS practice routes around the test centre, sensor scoring of your driving, mock test | free tier, purchases from 3.99 to 14.99 euros, weekly pass 7.99 euros | iOS, Android | English (German interface not confirmed) | UK product, few German test centres, no videos, no German exam situations |
+| DriveDE | 20 exam situations explained and checked, your own test protocol on the examiner's scale, manoeuvres, mistake log per lesson | free without an account, Pro passes 9.99 to 29.99 euros one-time | web app on any device | English, German | no videos of your test route, no link to your driving school |
 
-That gap is what **DriveDE** is built for:
+Sources: [Drivers Cam on the App Store](https://apps.apple.com/de/app/drivers-cam/id934464161), [FahrPRAXIS](https://fahr.app/), [Smart Bestehen](https://www.smartbestehen.de/preise), [SteerClear](https://www.steerclear.io/de), [DriveDE pricing](/pricing.md).
 
-| Task | Theory app | DriveDE |
-|---|---|---|
-| Official question catalogue for the theory exam | yes | no, deliberately |
-| Right-of-way and roundabout trainers | no | yes, in the browser, no account |
-| Basic manoeuvres with reference points (parking, turning) | no | yes |
-| GPS logbook for practice drives | no | yes |
-| Mistake log after every lesson | no | yes |
-| Estimate of how exam-ready you are | no | yes |
-| Licence-conversion mode (Umschreibung) with country guides | no | yes |
-| Languages | theory exam in German and 12 foreign languages | English and German |
-| Cost | often via your school, otherwise one-time or subscription | trainers free, 7 days of Pro free, then passes from €9.99 one-time, no subscription |
+## Drivers Cam: the standard, if your school is on board
 
-Your phone stays in the mount while you drive: you log mistakes **after** the lesson, not on the road.
+Drivers Cam from the publisher Heinrich Vogel is the best-known practical-test app. Local instructors film the difficult spots of the test area, the app marks the details, asks questions after each video and shows your school where you struggle. It adds videos on vehicle technology, parking and emergency braking, all available offline. 4.7 stars from 12,000 App Store ratings and over 500,000 downloads on Google Play speak for themselves.
 
-## What to look for in a driving app
+The catch: it is only available through selected driving schools, you cannot buy it yourself, and no price is published anywhere. If your school is a partner, ask for access. If not, the app is closed to you.
 
-1. **What is it for?** Theory or practical. An app promising both is usually weak at one of them.
-2. **Current catalogue** (theory only): the official catalogue changes regularly; make sure the app is up to date.
-3. **Subscription trap:** a monthly subscription that keeps running after your exam is the most common complaint. One-time payments or the school's app are usually cheaper.
-4. **Try before you sign up:** a good app lets you test it before asking for an email or payment.
-5. **Privacy:** for apps with GPS, it should be clear where your drives are stored and how to delete them.
+## FahrPRAXIS: the same principle from Wendel-Verlag
+
+FahrPRAXIS works the same way: videos of the spots examiners in your city like to use, a practice test after each video, technique tests for the pre-drive check, downloads for offline use. 4.8 stars from 1,800 App Store ratings, 100,000 downloads on Google Play.
+
+Again, access exists only through driving schools across Germany, and only your school can tell you whether your test area has been filmed. The App Store lists German only.
+
+## Smart Bestehen: 360-degree videos, still very small
+
+Smart Bestehen uses 360-degree videos with instructor commentary, a daily challenge of three videos, and basics on technical questions, manoeuvres and right of way, in 14 languages. Schools pay on request, and learners from other schools can unlock videos by in-app purchase.
+
+The numbers are honestly small: about 1,000 downloads and nine ratings across both stores. Which cities are covered is not public. If a school in your city has filmed, it may be worth a look; otherwise not.
+
+## SteerClear: GPS routes, from the UK
+
+SteerClear is a British product offering practice routes around test centres in 31 countries, with voice navigation, sensor-based scoring of braking, cornering and lane keeping, a mock test with a pass or fail result, and an AI coach. The app generates the routes itself and explicitly does not promise the examiner's routes. For Germany it has route pages for Augsburg, Dortmund and Mannheim, among others.
+
+The free tier gives you one mock test, one route and one drill. After that, packages cost 3.99 to 14.99 euros or 7.99 euros per week. The German App Store shows two ratings, and the app is listed in English only. It does not know German exam situations such as the green arrow sign, the zip merge or a priority road that bends.
+
+## DriveDE: understand the situations instead of driving the routes
+
+DriveDE takes the third route. Instead of videos of your test area, it explains the situations that fail the most candidates nationwide: 20 of them, from [right before left](/exam/rechts-vor-links/) to the [green arrow](/exam/gruenpfeil/) and the [zip merge](/exam/reissverschluss/), each with the examiner's instruction, the points the examiner wants to see, typical mistakes and the StVO paragraph. You tap the steps in the right order or explain in your own words what you would do, and the app checks the answer instantly. That builds your own test protocol across the five competence areas, [the way the examiner grades](/exam/how-the-examiner-grades/). On top come the basic manoeuvres step by step and a mistake log per lesson with history and costs.
+
+The trainers and the first situations are free, without an account, in the browser. Pro passes cost 9.99 euros for 30 days, 19.99 euros for 90 days or 29.99 euros with no time limit, one-time and without a subscription. English and German.
+
+The weaknesses, to keep it fair: DriveDE has no videos of your test route, no link to your driving school, and it is not in an app store yet. If you want to see the spots of your own test area, you need one of the video apps.
+
+## Which app for whom
+
+1. **Your school partners with Drivers Cam or FahrPRAXIS:** take the access, nothing replaces videos of your own test area. DriveDE complements them for understanding the rules and keeping the protocol.
+2. **Your school offers no app:** DriveDE, because you can start without a school. Smart Bestehen is worth a look if a school in your city has filmed.
+3. **You are converting a foreign licence** and only need the practical test: DriveDE in English, because right before left, the green arrow and the zip merge are exactly what trips up people who drove abroad for years. SteerClear only if your test centre is listed and you want to practise in English.
+4. **You want to drive routes:** SteerClear, knowing the routes are not the examiner's.
 
 ## Frequently asked questions
 
-### Is there a free German driving app in English?
-
-Yes. For theory, the ADAC app is free and many schools include their theory app. For the practical exam, DriveDE's right-of-way and roundabout trainers are free, in English, and run in the browser without an account.
-
-### Which app is best for the German theory exam?
-
-The one your driving school provides, as long as it uses the current official catalogue. The questions are the same everywhere, so choose by usability and price.
-
 ### Is there an app for the German practical driving test?
 
-Hardly, and that is the real gap. An app does not replace a lesson, but you can practise right of way, roundabouts and manoeuvres between lessons instead of paying for every repetition in the car, and keep a record of your mistakes per lesson.
+Yes, five. Drivers Cam, FahrPRAXIS and Smart Bestehen show videos of your test area and come through driving schools. SteerClear offers GPS practice routes around the test centre. DriveDE explains and checks the exam situations and logs your lessons, without a school.
+
+### Which German driving app is free?
+
+For theory, the ADAC app (members only) and usually your school's app. For the practical test, Drivers Cam, FahrPRAXIS and Smart Bestehen are free to download, but access comes from the school. SteerClear has a free tier. With DriveDE the trainers and the first exam situations are free, without an account.
+
+### Which app is best for the theory exam?
+
+The one your school provides, as long as it uses the current official catalogue. The questions are the same with every serious provider.
+
+### Does an app replace driving lessons?
+
+No. None of the five claims that, and the exam grades how you drive in real traffic. Apps save repetitions in the car: if you understood the rule before the lesson, you need fewer lessons at 70 to 95 euros each to practise it.
 
 ### Can I use my phone during a driving lesson?
 
-Not as the driver: operating your phone while driving is not allowed, lessons included. A tracking app can run in a mount. Make your entries before or after the drive.
-
-### Does an app help with converting a foreign licence?
-
-For which exams you need, start with the [country-by-country conversion overview](/blog/convert-foreign-licence-germany-overview/). For the practical exam itself, practise the German specifics such as right-before-left on purpose, because that is where many experienced drivers from abroad fail.
+Not as the driver. A tracking app can run in a mount, and you make your entries before or after the drive.
 
 ## The honest recommendation
 
-Realistically you want **both**: a theory trainer (often already included through your school) and support for the practical part. A failed theory exam costs about €100 to repeat, a [failed practical exam considerably more](/blog/failed-german-driving-test/), and lessons are by far the [biggest cost block](/blog/german-driving-licence-cost/). The practical side is where you can actually save money.
-
-Easiest way to decide: the [right-of-way trainer](/?trainer=vorfahrt&lang=en&utm_source=blog&utm_campaign=best-driving-apps-germany-text) takes two minutes in your browser, no account needed.
+Ask your driving school first whether it offers Drivers Cam or FahrPRAXIS. If it does, take it. In either case, an app that explains the rules behind the situations and keeps your mistakes across lessons is worth having alongside, because a [failed practical exam](/blog/failed-german-driving-test/) quickly costs several hundred euros. The easiest way to decide: read the [exam situations](/exam/), and the [right-of-way trainer](/?trainer=vorfahrt&lang=en&utm_source=blog&utm_campaign=best-driving-apps-germany-text) takes two minutes in your browser, no account needed.
