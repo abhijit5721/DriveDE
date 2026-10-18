@@ -202,8 +202,8 @@ export default function App() {
     document.querySelector('meta[name="description"]')?.setAttribute(
       'content',
       isDe
-        ? 'Kostenlose Führerschein-App für die praktische Prüfung: Rechts vor links, Kreisverkehr und Einparken üben, Fahrstunden per GPS protokollieren. Auch auf Englisch.'
-        : 'Free app for the German practical driving test: practise right of way, roundabouts and parking, log your lessons with GPS. In English, with Umschreibung guides.'
+        ? 'Kostenlose App für die praktische Fahrprüfung: 20 Prüfungssituationen, Rechts vor links, Kreisverkehr, Einparken. Ohne Anmeldung, auch auf Englisch.'
+        : 'Free app for the German practical driving test: 20 exam situations, right of way, roundabouts, parking. Start without an account, in English and German.'
     );
     syncStructuredData(language);
   }, [language]);
