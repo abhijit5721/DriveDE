@@ -2,6 +2,7 @@ import React from 'react';
 import { Composition } from 'remotion';
 import { DemoVideo } from './DemoVideo.tsx';
 import { ShortCockpit, SHORT_FRAMES } from './ShortCockpit.tsx';
+import { ShortSimulation, SIM_SHORT_FRAMES } from './ShortSimulation.tsx';
 import { ShortReadiness, READINESS_FRAMES } from './ShortReadiness.tsx';
 import { ShortParking, PARKING_FRAMES } from './ShortParking.tsx';
 import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
@@ -123,6 +124,18 @@ export const Root: React.FC = () => (
         id={`roundabout-${lang}`}
         component={RoundaboutExplainer}
         durationInFrames={RB_TOTAL_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ lang }}
+      />
+    ))}
+    {(['de', 'en'] as const).map((lang) => (
+      <Composition
+        key={`short-sim-${lang}`}
+        id={`short-sim-${lang}`}
+        component={ShortSimulation}
+        durationInFrames={SIM_SHORT_FRAMES}
         fps={FPS}
         width={1080}
         height={1920}
