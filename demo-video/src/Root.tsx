@@ -3,6 +3,7 @@ import { Composition } from 'remotion';
 import { DemoVideo } from './DemoVideo.tsx';
 import { ShortCockpit, SHORT_FRAMES } from './ShortCockpit.tsx';
 import { ShortSimulation, SIM_SHORT_FRAMES } from './ShortSimulation.tsx';
+import { ShortSituation, situationFrames, situationIds } from './ShortSituation.tsx';
 import { ShortReadiness, READINESS_FRAMES } from './ShortReadiness.tsx';
 import { ShortParking, PARKING_FRAMES } from './ShortParking.tsx';
 import { ShortNarrated, NARR_TOTAL_FRAMES } from './ShortNarrated.tsx';
@@ -142,6 +143,18 @@ export const Root: React.FC = () => (
         defaultProps={{ lang }}
       />
     ))}
+    {situationIds().flatMap((id) => (['de', 'en'] as const).map((lang) => (
+      <Composition
+        key={`sit-${id}-${lang}`}
+        id={`sit-${id}-${lang}`}
+        component={ShortSituation}
+        durationInFrames={situationFrames(id, lang)}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ id, lang }}
+      />
+    )))}
     {(['de', 'en'] as const).map((lang) => (
       <Composition
         key={`tutorial-${lang}`}

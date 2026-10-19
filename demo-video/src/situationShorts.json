@@ -1,0 +1,318 @@
+{
+ "gruenpfeil": {
+  "de": {
+   "title": "Grünpfeil an der roten Ampel",
+   "situation": "Du willst an einer Ampelkreuzung rechts abbiegen. Die Ampel zeigt Rot. Neben dem roten Licht ist das Grünpfeil-Schild angebracht. Von links kommt auf dem Radweg ein Radfahrer, Fußgänger queren die Straße, in die du abbiegen willst.",
+   "examinerDe": "An der Ampel bitte rechts abbiegen.",
+   "examinerEn": "Turn right at the lights, please.",
+   "points": [
+    {
+     "label": "Zuerst an der Haltlinie anhalten, wie bei Rot",
+     "severe": true
+    },
+    {
+     "label": "Der Grünpfeil erlaubt das Rechtsabbiegen bei Rot nach dem Halt",
+     "severe": false
+    },
+    {
+     "label": "Rechts blinken",
+     "severe": false
+    },
+    {
+     "label": "Querverkehr von links hat Vorrang, auch Radfahrer auf dem Radweg",
+     "severe": true
+    }
+   ],
+   "severe": {
+    "text": "Langsam um die Ecke rollen, ohne anzuhalten",
+    "why": "Beim Grünpfeil ist das Anhalten an der Haltlinie Pflicht. Ohne Halt ist es ein Rotlichtverstoß."
+   },
+   "law": "§ 37 Abs. 2 Nr. 1 StVO",
+   "segments": {
+    "hook": {
+     "from": 9,
+     "frames": 157,
+     "text": "Grünpfeil an der roten Ampel. Was der Prüfer sehen will."
+    },
+    "situation": {
+     "from": 179,
+     "frames": 431,
+     "text": "Du willst an einer Ampelkreuzung rechts abbiegen. Die Ampel zeigt Rot. Neben dem roten Licht ist das Grünpfeil-Schild angebracht. Von links kommt auf dem Radweg ein Radfahrer, Fußgänger queren die Straße, in die du abbiegen willst."
+    },
+    "examiner": {
+     "from": 624,
+     "frames": 68,
+     "text": "An der Ampel bitte rechts abbiegen."
+    },
+    "p1": {
+     "from": 705,
+     "frames": 95,
+     "text": "Zuerst an der Haltlinie anhalten, wie bei Rot"
+    },
+    "p2": {
+     "from": 814,
+     "frames": 134,
+     "text": "Der Grünpfeil erlaubt das Rechtsabbiegen bei Rot nach dem Halt"
+    },
+    "p3": {
+     "from": 961,
+     "frames": 56,
+     "text": "Rechts blinken"
+    },
+    "p4": {
+     "from": 1031,
+     "frames": 122,
+     "text": "Querverkehr von links hat Vorrang, auch Radfahrer auf dem Radweg"
+    },
+    "severe": {
+     "from": 1167,
+     "frames": 324,
+     "text": "Schwerer Fehler: Langsam um die Ecke rollen, ohne anzuhalten. Beim Grünpfeil ist das Anhalten an der Haltlinie Pflicht. Ohne Halt ist es ein Rotlichtverstoß."
+    },
+    "cta": {
+     "from": 1504,
+     "frames": 164,
+     "text": "Alle zwanzig Situationen, kostenlos, ohne Konto: drive dee ee punkt app."
+    }
+   },
+   "totalFrames": 1760,
+   "fps": 30
+  },
+  "en": {
+   "title": "Green arrow sign at a red light",
+   "situation": "You want to turn right at a junction with traffic lights. The light is red. Next to the red light is the green arrow sign. A cyclist is coming from the left on the cycle path, pedestrians are crossing the road you want to turn into.",
+   "examinerDe": "An der Ampel bitte rechts abbiegen.",
+   "examinerEn": "Turn right at the lights, please.",
+   "points": [
+    {
+     "label": "First stop at the stop line, as at red",
+     "severe": true
+    },
+    {
+     "label": "The green arrow allows turning right at red after the stop",
+     "severe": false
+    },
+    {
+     "label": "Indicate right",
+     "severe": false
+    },
+    {
+     "label": "Cross traffic from the left has priority, cyclists on the cycle path too",
+     "severe": true
+    }
+   ],
+   "severe": {
+    "text": "Roll slowly round the corner without stopping",
+    "why": "With the green arrow, stopping at the stop line is mandatory. Without stopping it counts as running a red light."
+   },
+   "law": "§ 37 (2) no. 1 StVO",
+   "segments": {
+    "hook": {
+     "from": 9,
+     "frames": 119,
+     "text": "Green arrow sign at a red light. What the examiner wants to see."
+    },
+    "situation": {
+     "from": 141,
+     "frames": 388,
+     "text": "You want to turn right at a junction with traffic lights. The light is red. Next to the red light is the green arrow sign. A cyclist is coming from the left on the cycle path, pedestrians are crossing the road you want to turn into."
+    },
+    "examiner": {
+     "from": 543,
+     "frames": 68,
+     "text": "An der Ampel bitte rechts abbiegen."
+    },
+    "p1": {
+     "from": 625,
+     "frames": 76,
+     "text": "First stop at the stop line, as at red"
+    },
+    "p2": {
+     "from": 714,
+     "frames": 102,
+     "text": "The green arrow allows turning right at red after the stop"
+    },
+    "p3": {
+     "from": 830,
+     "frames": 56,
+     "text": "Indicate right"
+    },
+    "p4": {
+     "from": 899,
+     "frames": 134,
+     "text": "Cross traffic from the left has priority, cyclists on the cycle path too"
+    },
+    "severe": {
+     "from": 1047,
+     "frames": 295,
+     "text": "Severe mistake: Roll slowly round the corner without stopping. With the green arrow, stopping at the stop line is mandatory. Without stopping it counts as running a red light."
+    },
+    "cta": {
+     "from": 1355,
+     "frames": 163,
+     "text": "All twenty situations, free, no account: drive dee ee dot app."
+    }
+   },
+   "totalFrames": 1610,
+   "fps": 30
+  }
+ },
+ "reissverschluss": {
+  "de": {
+   "title": "Fahrstreifen endet: Reißverschluss",
+   "situation": "Zweispurige Stadtstraße, dichter Verkehr. Das Schild zeigt: Dein linker Fahrstreifen endet in 200 m. Auf dem rechten Fahrstreifen fahren die Autos langsam hintereinander.",
+   "examinerDe": "Fahren Sie bitte weiter geradeaus.",
+   "examinerEn": "Please continue straight ahead.",
+   "points": [
+    {
+     "label": "Erkennen: Fahrstreifen endet, es gilt das Reißverschlussverfahren",
+     "severe": false
+    },
+    {
+     "label": "Bis zum Ende des Fahrstreifens fahren, nicht zu früh wechseln",
+     "severe": false
+    },
+    {
+     "label": "Rechtzeitig rechts blinken",
+     "severe": false
+    },
+    {
+     "label": "Spiegel und Schulterblick nach rechts",
+     "severe": false
+    }
+   ],
+   "severe": {
+    "text": "Am Ende hineindrängen, die anderen müssen dich ja lassen",
+    "why": "Der Reißverschluss erlaubt dir ein Einfädeln im Wechsel, nicht das Erzwingen. Du passt Tempo und Lücke an."
+   },
+   "law": "Zeichen 531 (Einengungstafel). § 7 Abs. 4 StVO",
+   "segments": {
+    "hook": {
+     "from": 9,
+     "frames": 161,
+     "text": "Fahrstreifen endet: Reißverschluss. Was der Prüfer sehen will."
+    },
+    "situation": {
+     "from": 184,
+     "frames": 331,
+     "text": "Zweispurige Stadtstraße, dichter Verkehr. Das Schild zeigt: Dein linker Fahrstreifen endet in 200 m. Auf dem rechten Fahrstreifen fahren die Autos langsam hintereinander."
+    },
+    "examiner": {
+     "from": 528,
+     "frames": 73,
+     "text": "Fahren Sie bitte weiter geradeaus."
+    },
+    "p1": {
+     "from": 615,
+     "frames": 135,
+     "text": "Erkennen: Fahrstreifen endet, es gilt das Reißverschlussverfahren"
+    },
+    "p2": {
+     "from": 764,
+     "frames": 129,
+     "text": "Bis zum Ende des Fahrstreifens fahren, nicht zu früh wechseln"
+    },
+    "p3": {
+     "from": 906,
+     "frames": 62,
+     "text": "Rechtzeitig rechts blinken"
+    },
+    "p4": {
+     "from": 981,
+     "frames": 72,
+     "text": "Spiegel und Schulterblick nach rechts"
+    },
+    "severe": {
+     "from": 1067,
+     "frames": 377,
+     "text": "Schwerer Fehler: Am Ende hineindrängen, die anderen müssen dich ja lassen. Der Reißverschluss erlaubt dir ein Einfädeln im Wechsel, nicht das Erzwingen. Du passt Tempo und Lücke an."
+    },
+    "cta": {
+     "from": 1457,
+     "frames": 164,
+     "text": "Alle zwanzig Situationen, kostenlos, ohne Konto: drive dee ee punkt app."
+    }
+   },
+   "totalFrames": 1713,
+   "fps": 30
+  },
+  "en": {
+   "title": "Lane ends: the zip rule",
+   "situation": "Two-lane city road, dense traffic. The sign shows that your left lane ends in 200 m. In the right lane, cars are driving slowly in a line.",
+   "examinerDe": "Fahren Sie bitte weiter geradeaus.",
+   "examinerEn": "Please continue straight ahead.",
+   "points": [
+    {
+     "label": "Recognise: lane ends, the zip rule applies",
+     "severe": false
+    },
+    {
+     "label": "Drive to the end of the lane, do not change too early",
+     "severe": false
+    },
+    {
+     "label": "Indicate right in good time",
+     "severe": false
+    },
+    {
+     "label": "Mirrors and shoulder check to the right",
+     "severe": false
+    }
+   ],
+   "severe": {
+    "text": "Push in at the end, the others have to let you",
+    "why": "The zip rule lets you merge in turn, not force your way in. You match the speed and the gap."
+   },
+   "law": "Sign 531 (lane reduction). § 7 (4) StVO",
+   "segments": {
+    "hook": {
+     "from": 9,
+     "frames": 113,
+     "text": "Lane ends: the zip rule. What the examiner wants to see."
+    },
+    "situation": {
+     "from": 136,
+     "frames": 264,
+     "text": "Two-lane city road, dense traffic. The sign shows that your left lane ends in 200 m. In the right lane, cars are driving slowly in a line."
+    },
+    "examiner": {
+     "from": 413,
+     "frames": 73,
+     "text": "Fahren Sie bitte weiter geradeaus."
+    },
+    "p1": {
+     "from": 499,
+     "frames": 104,
+     "text": "Recognise: lane ends, the zip rule applies"
+    },
+    "p2": {
+     "from": 617,
+     "frames": 98,
+     "text": "Drive to the end of the lane, do not change too early"
+    },
+    "p3": {
+     "from": 728,
+     "frames": 53,
+     "text": "Indicate right in good time"
+    },
+    "p4": {
+     "from": 794,
+     "frames": 66,
+     "text": "Mirrors and shoulder check to the right"
+    },
+    "severe": {
+     "from": 874,
+     "frames": 281,
+     "text": "Severe mistake: Push in at the end, the others have to let you. The zip rule lets you merge in turn, not force your way in. You match the speed and the gap."
+    },
+    "cta": {
+     "from": 1168,
+     "frames": 163,
+     "text": "All twenty situations, free, no account: drive dee ee dot app."
+    }
+   },
+   "totalFrames": 1423,
+   "fps": 30
+  }
+ }
+}
