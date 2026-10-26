@@ -86,15 +86,20 @@ const MapBoundsSimple = ({ points }: { points: { lat: number, lng: number }[] })
 
 /**
  * Runs an Overpass query through the /api/overpass proxy (same pattern as spatialCache.ts).
- * Never call overpass-api.de directly from the client: CORS, rate limits, no mirror fallback.
+ * The native app is served from https://localhost where relative /api paths do not reach
+ * Vercel, so it keeps querying Overpass directly (Overpass allows CORS).
  */
 const queryOverpass = async (query: string, timeoutMs = 8000) => {
-  const response = await fetch('/api/overpass', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: query }),
-    signal: AbortSignal.timeout(timeoutMs)
-  });
+  const response = Capacitor.isNativePlatform()
+    ? await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, {
+        signal: AbortSignal.timeout(timeoutMs)
+      })
+    : await fetch('/api/overpass', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: query }),
+        signal: AbortSignal.timeout(timeoutMs)
+      });
   if (!response.ok) {
     throw new Error(`Proxy error! status: ${response.status}`);
   }
