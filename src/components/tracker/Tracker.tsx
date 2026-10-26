@@ -1321,7 +1321,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       }
       if (limitCheckRef.current) clearInterval(limitCheckRef.current);
     }
-  }, [isTimerRunning, isSimulationMode, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, proActive, t, logRoutePoint, logMistake, currentSpeed, userProgress.drivingSessions, TRIAL_LIMIT]);
+  }, [isTimerRunning, isSimulationMode, isAutoDetectEnabled, fetchSpeedLimit, checkNearbyStopSign, checkWrongWayDriving, checkIllegalTurn, checkRightBeforeLeft, checkSchoolArea, proActive, t, logRoutePoint, logMistake, currentSpeed, userProgress.drivingSessions, TRIAL_LIMIT]);
 
   useEffect(() => {
     if (!isTimerRunning || gpsPoints.length === 0) return;
