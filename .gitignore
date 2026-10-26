@@ -447,3 +447,15 @@ social-cards-out/
 .impeccable/
 .mcp.json
 .indexnow-key
+
+# marketing skill packs installed per project
+.claude/skills/
+# demo-video: recording screenshots, generated narration and clips, scan dumps
+demo-video/*.png
+demo-video/*.err
+demo-video/reddit-*.json
+demo-video/public/vo-*/
+demo-video/public/flow/
+demo-video/public/card-*.jpg
+# Supabase CLI cache
+supabase/.temp/
