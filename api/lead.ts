@@ -6,7 +6,11 @@ import {
 } from './_lib/umschreibungCountries.js';
 import type { UmschreibungCountry, UmschreibungTier } from './_lib/umschreibungCountries.js';
 
+import { bodyTooLarge, clientIp, hasDottedDomain, honeypotFilled, overLimit } from './_lib/rateLimit.js';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const LEAD_MAX_PER_HOUR = 3;
 
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
@@ -155,6 +159,14 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  if (bodyTooLarge(req)) {
+    return res.status(413).json({ error: 'Payload too large' });
+  }
+  // Honeypot: bots fill the hidden field. Pretend success, do nothing.
+  if (honeypotFilled(req.body)) {
+    return res.status(200).json({ ok: true });
+  }
+
   const { email, language, country } = req.body || {};
   const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
   const lang = language === 'de' ? 'de' : 'en';
@@ -163,8 +175,12 @@ export default async function handler(req: any, res: any) {
       ? country.toUpperCase()
       : null;
 
-  if (!EMAIL_REGEX.test(normalizedEmail)) {
+  if (!EMAIL_REGEX.test(normalizedEmail) || !hasDottedDomain(normalizedEmail)) {
     return res.status(400).json({ error: 'Invalid email address' });
+  }
+
+  if (await overLimit('lead', clientIp(req), LEAD_MAX_PER_HOUR)) {
+    return res.status(429).json({ error: 'Too many requests, try again later' });
   }
 
   const connectionString = process.env.DATABASE_URL;

@@ -13,7 +13,8 @@ export function ContactForm({ className }: ContactFormProps) {
     name: '',
     email: '',
     subject: 'Feedback',
-    message: ''
+    message: '',
+    website: '' // honeypot, must stay empty
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +31,7 @@ export function ContactForm({ className }: ContactFormProps) {
       if (!response.ok) throw new Error('Failed to send');
 
       setStatus('success');
-      setFormData({ name: '', email: '', subject: 'Feedback', message: '' });
+      setFormData({ name: '', email: '', subject: 'Feedback', message: '', website: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
       console.error('Contact error:', error);
@@ -120,6 +121,18 @@ export function ContactForm({ className }: ContactFormProps) {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Honeypot: hidden from people and screen readers, bots fill it */}
+              <div aria-hidden='true' className='absolute -left-[9999px] h-0 w-0 overflow-hidden'>
+                <input
+                  type='text'
+                  name='website'
+                  tabIndex={-1}
+                  autoComplete='off'
+                  value={formData.website}
+                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                />
               </div>
 
               <div className='space-y-2'>

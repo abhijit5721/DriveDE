@@ -22,6 +22,7 @@ export function LeadCaptureSection() {
 
   const [email, setEmail] = useState('');
   const [country, setCountry] = useState('');
+  const [website, setWebsite] = useState(''); // honeypot, must stay empty
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const sortedCountries = useMemo(
@@ -41,7 +42,7 @@ export function LeadCaptureSection() {
       const response = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), language, country: country || null }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), language, country: country || null, website }),
       });
 
       if (!response.ok) throw new Error(`Lead API failed with ${response.status}`);
@@ -108,7 +109,18 @@ export function LeadCaptureSection() {
                   }
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3 items-center">
+                <form onSubmit={handleSubmit} className="relative mt-8 flex flex-col gap-3 items-center">
+                  {/* Honeypot: hidden from people and screen readers, bots fill it */}
+                  <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                    <input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                    />
+                  </div>
                   {/* Country selector — tailors the checklist to the Umschreibung tier */}
                   <div className="relative group w-full sm:max-w-md text-left">
                     <label className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-widest text-slate-500">
