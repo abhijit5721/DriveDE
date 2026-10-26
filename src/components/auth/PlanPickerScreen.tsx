@@ -83,9 +83,9 @@ const PLAN_CONFIG = {
     ],
     ctaPlan: (planLabel: string) => `Mit ${planLabel} 7 Tage kostenlos testen →`,
     ctaSignup: 'Konto erstellen & 7 Tage Pro testen',
-    ctaSub: 'Keine Kreditkarte erforderlich · Sofortiger Zugriff · Jederzeit kündbar',
+    ctaSub: 'Keine Kreditkarte erforderlich · Sofortiger Zugriff · Endet automatisch',
     guarantee: 'Risikofrei testen',
-    guaranteeDesc: 'Du kannst innerhalb der 7 Tage jederzeit mit einem Klick kündigen.',
+    guaranteeDesc: 'Nach 7 Tagen endet die Testphase von selbst. Keine Kosten, nichts zu kündigen.',
     timelineTitle: 'So funktioniert deine Testphase:',
     timelineSteps: [
       { step: '1', title: 'Heute', desc: '7 Tage Pro kostenlos freischalten' },
@@ -161,9 +161,9 @@ const PLAN_CONFIG = {
     ],
     ctaPlan: (planLabel: string) => `Start 7-Day Free Trial with ${planLabel} →`,
     ctaSignup: 'Create Account & Start 7-Day Trial',
-    ctaSub: 'No credit card required · Instant access · Cancel anytime',
+    ctaSub: 'No credit card required · Instant access · Ends on its own',
     guarantee: 'Risk-free trial',
-    guaranteeDesc: 'Cancel anytime during the 7 days with a single click.',
+    guaranteeDesc: 'After 7 days the trial simply ends. No charge, nothing to cancel.',
     timelineTitle: 'How your free trial works:',
     timelineSteps: [
       { step: '1', title: 'Today', desc: 'Unlock 7 Days of Pro free' },

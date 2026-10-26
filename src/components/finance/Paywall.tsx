@@ -239,6 +239,8 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </AnimatePresence>
             </button>
 
+            <p className="text-center text-xs font-semibold text-slate-500">{t.noRenewal}</p>
+
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4">
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
