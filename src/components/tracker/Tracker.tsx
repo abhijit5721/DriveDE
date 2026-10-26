@@ -85,6 +85,23 @@ const MapBoundsSimple = ({ points }: { points: { lat: number, lng: number }[] })
 };
 
 /**
+ * Runs an Overpass query through the /api/overpass proxy (same pattern as spatialCache.ts).
+ * Never call overpass-api.de directly from the client: CORS, rate limits, no mirror fallback.
+ */
+const queryOverpass = async (query: string, timeoutMs = 8000) => {
+  const response = await fetch('/api/overpass', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data: query }),
+    signal: AbortSignal.timeout(timeoutMs)
+  });
+  if (!response.ok) {
+    throw new Error(`Proxy error! status: ${response.status}`);
+  }
+  return response.json();
+};
+
+/**
  * Calculates the bearing (compass direction) between two GPS points.
  * Used to rotate the car icon on the map.
  */
@@ -789,8 +806,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     try {
       const query = `[out:json];node(around:40,${lat},${lng})["highway"="stop"];out;`;
-      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-      const data = await response.json();
+      const data = await queryOverpass(query);
       
       if (data.elements && data.elements.length > 0) {
         const sign = data.elements[0];
@@ -843,6 +859,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
   }, [gpsPoints, isTimerRunning]);
 
   const checkWrongWayDriving = useCallback(async (lat: number, lng: number, travelBearing: number) => {
+    if (!isAutoDetectEnabled) return;
     if (Date.now() - lastWrongWayLogRef.current < 30000) return;
     if (currentSpeed < 10) return;
 
@@ -875,11 +892,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
 
     try {
       const query = `[out:json];way(around:20,${lat},${lng})[oneway=yes];out geom 1;`;
-      const response = await fetch(
-        `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`,
-        { signal: AbortSignal.timeout(5000) }
-      );
-      const data = await response.json();
+      const data = await queryOverpass(query);
 
       if (!data.elements || data.elements.length === 0) return;
 
@@ -895,16 +908,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (e) {
       console.error('[Tracker] Wrong way check error:', e);
     }
-  }, [currentSpeed, t, logMistake, spatialCache]);
+  }, [isAutoDetectEnabled, currentSpeed, t, logMistake, spatialCache]);
 
   const checkIllegalTurn = useCallback(async (lat: number, lng: number) => {
+    if (!isAutoDetectEnabled) return;
     if (Date.now() - lastIllegalTurnLogRef.current < 20000) return;
     if (currentSpeed < 5) return;
 
     try {
       const query = `[out:json];way(around:15,${lat},${lng})[~"^(access|motor_vehicle|footway)$"~"^(no|private|pedestrian)$"];out tags;`;
-      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(5000) });
-      const data = await response.json();
+      const data = await queryOverpass(query);
 
       if (data.elements && data.elements.length > 0) {
         lastIllegalTurnLogRef.current = Date.now();
@@ -927,19 +940,19 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] Illegal turn check failed:', error);
     }
-  }, [currentSpeed, t, logMistake]);
+  }, [isAutoDetectEnabled, currentSpeed, t, logMistake]);
 
   const checkRightBeforeLeft = useCallback(async (lat: number, lng: number) => {
+    if (!isAutoDetectEnabled) return;
     if (Date.now() - lastRvlCheckRef.current < 30000) return;
     if (currentSpeed < 10) return;
 
     try {
       const query = `[out:json];way(around:30,${lat},${lng})["highway"~"residential|living_street"]->.w;node(w.w)(around:15,${lat},${lng})->.n;way(bn.n)["highway"~"residential|living_street"]->.i;(.i; - .w;);out count;`;
-      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
-      const data = await response.json();
-      
+      const data = await queryOverpass(query);
+
       if (data.count && data.count > 0) {
-        if (currentSpeed > 22) { 
+        if (currentSpeed > 22) {
           lastRvlCheckRef.current = Date.now();
           toast.error(
             t.tracker.rightBeforeLeftAlert,
@@ -956,16 +969,16 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] RVL check failed:', error);
     }
-  }, [currentSpeed, t, logMistake]);
+  }, [isAutoDetectEnabled, currentSpeed, t, logMistake]);
 
   const checkSchoolArea = useCallback(async (lat: number, lng: number) => {
+    if (!isAutoDetectEnabled) return;
     if (Date.now() - lastSchoolCheckRef.current < 30000) return;
     
     try {
       const query = `[out:json];(node(around:60,${lat},${lng})["amenity"~"school|kindergarten"];node(around:60,${lat},${lng})["leisure"="playground"];);out count;`;
-      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(4000) });
-      const data = await response.json();
-      
+      const data = await queryOverpass(query);
+
       if (data.count && data.count > 0) {
         if (currentSpeed > 32) {
           lastSchoolCheckRef.current = Date.now();
@@ -985,13 +998,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     } catch (error) {
       console.error('[Tracker] School check failed:', error);
     }
-  }, [currentSpeed, t, logMistake]);
+  }, [isAutoDetectEnabled, currentSpeed, t, logMistake]);
 
   const fetchSpeedLimit = useCallback(async (lat: number, lng: number) => {
     try {
       const query = `[out:json];way(around:50,${lat},${lng})[highway];out tags;`;
-      const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-      const data = await response.json();
+      const data = await queryOverpass(query);
       
       if (data.elements && data.elements.length > 0) {
         const tags = data.elements[0].tags;
@@ -1032,9 +1044,12 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           return limit;
         }
       }
+      setCurrentLimit(null);
       return null;
     } catch (error) {
       console.error('[Tracker] Speed limit fetch failed:', error);
+      // Drop the old limit: a stale limit from the previous road would trigger false speeding mistakes
+      setCurrentLimit(null);
       return null;
     }
   }, []);
@@ -1096,11 +1111,13 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               const prevPoint = currentPoints[currentPoints.length - 2];
               fetchSpeedLimit(lastPoint.lat, lastPoint.lng);
               checkNearbyStopSign(lastPoint.lat, lastPoint.lng);
-              const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
-              checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
-              checkIllegalTurn(lastPoint.lat, lastPoint.lng);
-              checkRightBeforeLeft(lastPoint.lat, lastPoint.lng);
-              checkSchoolArea(lastPoint.lat, lastPoint.lng);
+              if (isAutoDetectEnabled) {
+                const bearing = calculateBearing(prevPoint.lat, prevPoint.lng, lastPoint.lat, lastPoint.lng);
+                checkWrongWayDriving(lastPoint.lat, lastPoint.lng, bearing);
+                checkIllegalTurn(lastPoint.lat, lastPoint.lng);
+                checkRightBeforeLeft(lastPoint.lat, lastPoint.lng);
+                checkSchoolArea(lastPoint.lat, lastPoint.lng);
+              }
             }
             return currentPoints;
           });

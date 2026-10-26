@@ -36,6 +36,7 @@ export default async function handler(req: any, res: any) {
           'User-Agent': 'DriveDE/1.0 (https://drive-de.vercel.app)'
         },
         body: `data=${encodeURIComponent(query)}`,
+        signal: AbortSignal.timeout(10000),
       });
 
       if (response.ok) {
