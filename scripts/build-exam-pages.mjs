@@ -126,9 +126,10 @@ const T = {
 };
 
 // First publication dates, kept stable so dateModified can move without datePublished drifting.
-const PUBLISHED = { default: '2026-10-06', batch1: '2026-10-14' };
+const PUBLISHED = { default: '2026-10-06', batch1: '2026-10-14', batch2: '2026-10-26' };
 const BATCH1 = new Set(['linksabbiegen-gegenverkehr', 'abknickende-vorfahrt', 'gruenpfeil', 'bahnuebergang', 'strassenbahnhaltestelle', 'radfahrer-ueberholen', 'tempo-30-zone', 'autobahn-verlassen', 'ueberholen-landstrasse', 'reissverschluss', 'verkehrsberuhigter-bereich', 'polizist-handzeichen']);
-const publishedOn = (s) => (BATCH1.has(s.id) ? PUBLISHED.batch1 : PUBLISHED.default);
+const BATCH2 = new Set(['vorfahrt-gewaehren', 'stoppschild', 'ampel-ausgefallen', 'gelb-vor-kreuzung', 'linksabbiegen-ampel-ohne-pfeil', 'grundstueck-ausfahrt', 'ende-vorfahrtstrasse', 'linksabbieger-gegenueber']);
+const publishedOn = (s) => (BATCH1.has(s.id) ? PUBLISHED.batch1 : BATCH2.has(s.id) ? PUBLISHED.batch2 : PUBLISHED.default);
 
 const lower = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 const joinList = (items, L) => {

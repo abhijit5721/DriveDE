@@ -64,6 +64,7 @@ const LOOK_LEFT = ['(nach )?links (schau|blick|guck|achte)', '(schau|blick|guck)
 const LOOK_RIGHT = ['(nach )?rechts (schau|blick|guck|achte)', '(schau|blick|guck)\\w* (\\w+ ){0,3}(nach )?rechts', 'look(ing)? (to the )?right', 'check(ing)? (the )?right'];
 const SHOULDER = ['schulterblick', 'ueber die schulter', 'tote?n? winkel', 'shoulder', 'blind spot'];
 const MIRROR = ['spiegel', 'mirror'];
+const LOOK_BOTH = ['links und rechts', 'rechts und links', 'beide seiten', 'beide richtungen', 'nach beiden', 'left and right', 'right and left', 'both (sides|directions|ways)', 'in both'];
 
 export const EXAM_SCENARIOS: ExamScenario[] = [
   {
@@ -1137,6 +1138,441 @@ export const EXAM_SCENARIOS: ExamScenario[] = [
       ],
       correct: 1,
       explanation: { de: 'Arm hoch heißt Achtung: Wer noch vor der Kreuzung ist, wartet; wer schon in ihr ist, räumt sie.', en: 'Arm up means attention: whoever is still before the junction waits; whoever is already inside clears it.' },
+    },
+  },
+  {
+    id: 'vorfahrt-gewaehren',
+    free: false,
+    title: { de: 'Vorfahrt gewähren (Zeichen 205)', en: 'Give way (sign 205)' },
+    situation: {
+      de: 'Du näherst dich einer Einmündung. Rechts steht das Zeichen „Vorfahrt gewähren“ (Zeichen 205), auf der Fahrbahn ist eine Wartelinie (Zeichen 341) markiert. Die Querstraße ist die Vorfahrtsstraße. Von links nähert sich ein Auto, von rechts kommt auf dem Radweg neben der Vorfahrtsstraße ein Radfahrer.',
+      en: 'You approach a T-junction. On the right is the “give way” sign (sign 205), and a give-way line (sign 341) is marked on the road. The road ahead is the priority road. A car approaches from the left, a cyclist comes from the right on the cycle path beside the priority road.',
+    },
+    examiner: { de: 'Biegen Sie an der Einmündung bitte rechts ab.', en: 'Turn right at the junction, please.' },
+    questions: [
+      { de: 'Was bedeutet das Schild für dich?', en: 'What does the sign mean for you?' },
+      { de: 'Wohin schaust du, bevor du einbiegst?', en: 'Where do you look before you turn in?' },
+      { de: 'Wann darfst du einbiegen?', en: 'When may you turn in?' },
+    ],
+    keyPoints: [
+      { id: 'recognise', area: 'observation', label: { de: 'Zeichen 205 früh erkennen: Du musst Vorfahrt gewähren', en: 'Spot sign 205 early: you have to give way' }, patterns: ['zeichen 205', 'vorfahrt gewaehren', 'dreieck', 'wartepflicht', 'sign 205', 'give way', 'yield', 'triangle'] },
+      { id: 'speed', area: 'speed', label: { de: 'Tempo reduzieren, bremsbereit, so dass man erkennt: Ich warte', en: 'Reduce speed and be ready to brake, so others can see: I will wait' }, patterns: SLOW },
+      { id: 'look', area: 'observation', label: { de: 'In beide Richtungen der Vorfahrtsstraße schauen', en: 'Look both ways along the priority road' }, patterns: [...LOOK_BOTH, ...LOOK_LEFT, ...LOOK_RIGHT] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Fahrzeugen und Radfahrern auf der Vorfahrtsstraße die Vorfahrt lassen', en: 'Let vehicles and cyclists on the priority road go first' }, patterns: ['vorfahrt (lassen|gewaehr)', 'lasse\\w* (\\w+ ){0,6}vorfahrt', 'lasse\\w* (\\w+ ){0,4}(vorbei|durch|zuerst|fahren)', 'gewaehre', 'vorrang', '(let|give) (\\w+ ){0,4}(pass|go|way|priority|first|through)', 'give way to', 'yield to'] },
+      { id: 'gap', area: 'speed', label: { de: 'Erst einbiegen, wenn ich weder gefährde noch wesentlich behindere', en: 'Turn in only when I neither endanger nor substantially hinder anyone' }, patterns: ['gefaehrd', 'behinder', 'luecke', 'frei ist', 'endanger', 'hinder', 'obstruct', 'gap', 'is clear'] },
+      { id: 'signal', area: 'communication', label: { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' }, patterns: ['blink', 'indicat', 'signal'] },
+      { id: 'others', area: 'observation', label: { de: 'Beim Rechtsabbiegen Schulterblick, auf Radfahrer und Fußgänger achten', en: 'Shoulder check when turning right, watch for cyclists and pedestrians' }, patterns: [...SHOULDER, 'radfahr', 'fussgaeng', 'cyclist', 'pedestrian'] },
+    ],
+    contradictions: [
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'rechts vor links', 'right before left'], hint: { de: 'Mit Zeichen 205 hast du keine Vorfahrt: Rechts vor links gilt hier nicht, die Querstraße fährt zuerst.', en: 'With sign 205 you do not have priority: right before left does not apply, the road ahead goes first.' } },
+      { patterns: ['schnell .{0,15}(davor|vor ihm|vor dem)', 'vor dem (auto|fahrzeug|radfahrer) .{0,10}(einbieg|rein|durch)', '(quickly|before the) (car|cyclist|vehicle)', 'before (he|she|it) (gets|arrives|reaches)'], hint: { de: 'Nicht vor dem Querverkehr einbiegen: Wer wartepflichtig ist, darf nur fahren, wenn er niemanden gefährdet oder wesentlich behindert.', en: 'Do not squeeze in ahead of the cross traffic: whoever must give way may only go if nobody is endangered or substantially hindered.' } },
+    ],
+    steps: [
+      { de: 'Zeichen 205 erkennen, Tempo reduzieren, bremsbereit', en: 'Spot sign 205, reduce speed, be ready to brake' },
+      { de: 'Spiegel, rechtzeitig rechts blinken', en: 'Mirrors, indicate right in good time' },
+      { de: 'Nach links und rechts auf die Vorfahrtsstraße schauen', en: 'Look left and right along the priority road' },
+      { de: 'Ist die Sicht schlecht: vorsichtig vortasten, bis du die Straße übersiehst', en: 'If the view is poor: edge forward carefully until you can see the road' },
+      { de: 'Schulterblick rechts, Radfahrer und Fußgänger beachten', en: 'Shoulder check right, watch for cyclists and pedestrians' },
+      { de: 'Einbiegen, wenn niemand gefährdet oder wesentlich behindert wird', en: 'Turn in when nobody is endangered or substantially hindered' },
+    ],
+    mistakes: [
+      { area: 'speed', severe: true, text: { de: 'Zügig einbiegen, das Auto von links wird schon etwas bremsen', en: 'Turn in briskly, the car from the left will brake a little' }, why: { de: 'Wer warten muss, darf nur fahren, wenn er niemanden gefährdet oder wesentlich behindert. Muss der Vorfahrtberechtigte deinetwegen bremsen, ist das eine Vorfahrtverletzung.', en: 'Whoever must give way may only go if nobody is endangered or substantially hindered. If the driver with priority has to brake because of you, that is a right-of-way violation.' } },
+      { area: 'observation', text: { de: 'Nur nach links schauen, von rechts kommt ohnehin nichts', en: 'Only look left, nothing comes from the right anyway' }, why: { de: 'Auch von rechts kommen Auto und Radfahrer auf der Vorfahrtsstraße. Du schaust in beide Richtungen.', en: 'Cars and cyclists also come from the right on the priority road. You look both ways.' } },
+    ],
+    modelAnswer: {
+      de: 'Ich erkenne das Zeichen 205: Ich muss Vorfahrt gewähren. Deshalb reduziere ich das Tempo und bin bremsbereit, damit man sieht, dass ich warte. Ich schaue in den Spiegel und blinke rechtzeitig rechts. Dann schaue ich nach links und rechts auf die Vorfahrtsstraße und lasse das Auto und den Radfahrer zuerst vorbei. Ist die Sicht eingeschränkt, taste ich mich vorsichtig vor. Mit einem Schulterblick achte ich auf Radfahrer und Fußgänger. Ich biege erst ein, wenn ich niemanden gefährde oder wesentlich behindere.',
+      en: 'I spot sign 205: I have to give way. So I reduce speed and stay ready to brake, so others see that I will wait. I check the mirror and indicate right in good time. Then I look left and right along the priority road and let the car and the cyclist pass first. If my view is limited, I edge forward carefully. With a shoulder check I watch for cyclists and pedestrians. I only turn in when nobody is endangered or substantially hindered by me.',
+    },
+    law: { de: '§ 41 Abs. 1 StVO i. V. m. Anlage 2 lfd. Nr. 2 (Zeichen 205): „Wer ein Fahrzeug führt, muss Vorfahrt gewähren.“ § 8 Abs. 2 StVO: „Wer die Vorfahrt zu beachten hat, muss rechtzeitig durch sein Fahrverhalten, insbesondere durch mäßige Geschwindigkeit, erkennen lassen, dass gewartet wird. Es darf nur weitergefahren werden, wenn übersehen werden kann, dass wer die Vorfahrt hat, weder gefährdet noch wesentlich behindert wird. Kann das nicht übersehen werden, weil die Straßenstelle unübersichtlich ist, so darf sich vorsichtig in die Kreuzung oder Einmündung hineingetastet werden, bis die Übersicht gegeben ist.“ Die Vorfahrt gilt auch für Radfahrer auf dem Radweg neben der Vorfahrtsstraße.', en: '§ 41 (1) StVO with annex 2 no. 2 (sign 205): whoever drives a vehicle must give way. § 8 (2) StVO: whoever must give way has to show in good time by how they drive, in particular by moderate speed, that they will wait. They may only drive on if they can see that whoever has priority is neither endangered nor substantially hindered. If they cannot see this because the spot is unclear, they may edge carefully into the crossing or junction until they have a clear view. The priority also covers cyclists on the cycle path beside the priority road.' },
+    miniTest: {
+      question: { de: 'Du stehst am Zeichen 205, ein Auto von links hat den rechten Blinker an. Was tust du?', en: 'You are at sign 205, a car from the left has its right indicator on. What do you do?' },
+      options: [
+        { de: 'Einfahren, er biegt ja ab', en: 'Pull out, he is turning off' },
+        { de: 'Warten, bis sicher ist, dass er wirklich abbiegt', en: 'Wait until it is certain that he really turns' },
+        { de: 'Hupen und losfahren', en: 'Honk and drive off' },
+      ],
+      correct: 1,
+      explanation: { de: 'Ein Blinker allein ist keine Garantie. Du fährst erst, wenn du sicher siehst, dass er abbiegt und niemand gefährdet wird.', en: 'An indicator alone is no guarantee. You only go when you can see for certain that he is turning and nobody is endangered.' },
+    },
+  },
+  {
+    id: 'stoppschild',
+    free: false,
+    title: { de: 'Stoppschild (Zeichen 206)', en: 'Stop sign (sign 206)' },
+    situation: {
+      de: 'Du kommst an eine Kreuzung mit Stoppschild (Zeichen 206). Die Haltlinie liegt ein Stück vor der Kreuzung, parkende Autos und eine Hecke verdecken die Sicht auf die Querstraße. Die Querstraße ist die Vorfahrtsstraße.',
+      en: 'You come to a crossing with a stop sign (sign 206). The stop line is some way before the crossing, parked cars and a hedge block the view of the cross road. The cross road is the priority road.',
+    },
+    examiner: { de: 'Fahren Sie bitte an der Kreuzung geradeaus weiter.', en: 'Please drive straight ahead at the crossing.' },
+    questions: [
+      { de: 'Wo und wie hältst du an?', en: 'Where and how do you stop?' },
+      { de: 'Was machst du, wenn du an der Haltlinie nichts siehst?', en: 'What do you do if you cannot see anything at the stop line?' },
+      { de: 'Wer fährt zuerst?', en: 'Who goes first?' },
+    ],
+    keyPoints: [
+      { id: 'speed', area: 'speed', label: { de: 'Früh bremsen, gleichmäßig zum Stehen kommen', en: 'Brake early, come to a smooth stop' }, patterns: SLOW },
+      { id: 'stop', area: 'speed', severe: true, label: { de: 'Vollständig anhalten, bis das Fahrzeug steht', en: 'Come to a full stop until the vehicle is stationary' }, patterns: ['stillstand', 'komplett', 'vollstaendig', 'zum stehen', 'steht\\b', 'full stop', 'complete stop', 'completely', 'standstill', 'come to a (full |complete )?(stop|halt)'] },
+      { id: 'line', area: 'position', label: { de: 'An der Haltlinie anhalten, ohne Haltlinie dort, wo die Querstraße zu übersehen ist', en: 'Stop at the stop line, without a line where the cross road can be seen' }, patterns: ['halte?linie', 'sichtlinie', 'stop line', 'sight line', 'where .{0,30}(see|view|visible)', 'wo .{0,30}(uebersehen|einsehen|sehen)'] },
+      { id: 'creep', area: 'position', label: { de: 'Reicht die Sicht an der Haltlinie nicht, danach vorsichtig bis zur Sichtlinie vortasten und dort wenn nötig erneut anhalten', en: 'If the view from the line is poor, then edge forward carefully to the sight line and stop there again if needed' }, patterns: ['vortast', 'hineintast', 'taste\\w* (\\w+ ){0,8}vor\\b', 'vorsichtig (vor|ran|heran|hinein|weiter)', 'creep', 'edge (forward|up)', 'inch (forward|up)', 'carefully (forward|ahead)'] },
+      { id: 'look', area: 'observation', label: { de: 'In beide Richtungen schauen, auch auf Radfahrer und Fußgänger', en: 'Look both ways, also for cyclists and pedestrians' }, patterns: [...LOOK_BOTH, ...LOOK_LEFT, ...LOOK_RIGHT, 'radfahr', 'cyclist'] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Nach dem Halt dem Querverkehr die Vorfahrt lassen', en: 'After stopping, give way to the cross traffic' }, patterns: ['vorfahrt (lassen|gewaehr)', 'lasse\\w* (\\w+ ){0,6}vorfahrt', 'lasse\\w* (\\w+ ){0,4}(vorbei|durch|zuerst)', 'gewaehre', 'vorrang', 'give way', 'yield', 'priority', '(let|wait for) (\\w+ ){0,4}(pass|first|through)'] },
+    ],
+    contradictions: [
+      { patterns: ['(durch|weiter|drueber)rollen', 'rolle (durch|weiter|drueber)', 'langsam (durch|drueber|weiter)', 'ohne (anzuhalten|zu halten|halt)', 'rolling (stop|through)', 'roll (through|past|over)', 'without (stopping|a stop)', 'slow(ly)? (through|past)'], hint: { de: 'Am Stoppschild genügt Langsamfahren nicht: Das Fahrzeug muss stehen.', en: 'At a stop sign slowing down is not enough: the vehicle must be stationary.' } },
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'rechts vor links', 'right before left'], hint: { de: 'Am Stoppschild hat der Querverkehr Vorfahrt, rechts vor links gilt hier nicht.', en: 'At a stop sign the cross traffic has priority, right before left does not apply here.' } },
+    ],
+    steps: [
+      { de: 'Stoppschild erkennen, früh bremsen', en: 'Spot the stop sign, brake early' },
+      { de: 'An der Haltlinie anhalten, bis das Fahrzeug steht', en: 'Stop at the stop line until the vehicle is stationary' },
+      { de: 'Reicht die Sicht nicht: vorsichtig bis zur Sichtlinie vortasten, dort wenn nötig erneut anhalten', en: 'If the view is poor: edge forward carefully to the sight line, stop there again if needed' },
+      { de: 'Nach links und rechts schauen, Radfahrer und Fußgänger beachten', en: 'Look left and right, watch for cyclists and pedestrians' },
+      { de: 'Querverkehr durchfahren lassen', en: 'Let the cross traffic through' },
+      { de: 'Erst fahren, wenn niemand gefährdet oder wesentlich behindert wird', en: 'Only go when nobody is endangered or substantially hindered' },
+    ],
+    mistakes: [
+      { area: 'speed', severe: true, text: { de: 'Fast stehen bleiben und weiterrollen, es kommt ja nichts', en: 'Almost stop and roll on, nothing is coming anyway' }, why: { de: 'Das Stoppschild verlangt den vollständigen Halt. Nur kurz langsam werden zählt als Stoppschild missachtet.', en: 'The stop sign demands a full stop. Merely slowing down counts as ignoring the stop sign.' } },
+      { area: 'position', text: { de: 'Direkt hinter der Haltlinie weiterfahren, auch ohne Sicht', en: 'Drive on right after the stop line, even without a view' }, why: { de: 'Wenn die Sicht an der Haltlinie fehlt, tastest du dich nach dem Halt vorsichtig vor, bis du die Querstraße siehst.', en: 'If the view at the line is blocked, you edge forward after stopping until you can see the cross road.' } },
+    ],
+    modelAnswer: {
+      de: 'Ich bremse früh und gleichmäßig und halte an der Haltlinie vollständig an, bis das Fahrzeug steht. Ist die Sicht dort schlecht, taste ich mich danach vorsichtig bis zur Sichtlinie vor, wo ich die Querstraße übersehe, und halte dort wenn nötig erneut an. Fehlt die Haltlinie, halte ich dort an, wo ich die Querstraße übersehen kann. Ich schaue nach links und rechts, auch auf Radfahrer und Fußgänger. Der Querverkehr hat Vorfahrt, ich lasse ihn zuerst durchfahren und fahre erst, wenn niemand gefährdet oder wesentlich behindert wird.',
+      en: 'I brake early and smoothly and come to a full stop at the stop line, until the vehicle is stationary. If the view there is poor, I then edge forward carefully to the sight line, where I can see the cross road, and stop there again if needed. If the line is missing, I stop where I can see the cross road. I look left and right, also for cyclists and pedestrians. The cross traffic has priority, I let it through first and only go when nobody is endangered or substantially hindered.',
+    },
+    law: { de: '§ 41 Abs. 1 StVO i. V. m. Anlage 2 lfd. Nr. 3 (Zeichen 206): „Wer ein Fahrzeug führt, muss anhalten und Vorfahrt gewähren.“ „Ist keine Haltlinie (Zeichen 294) vorhanden, ist dort anzuhalten, wo die andere Straße zu übersehen ist.“ Anlage 2 lfd. Nr. 67 (Zeichen 294): „Wer ein Fahrzeug führt, muss hier anhalten. Erforderlichenfalls ist an der Stelle, wo die Straße eingesehen werden kann, in die eingefahren werden soll (Sichtlinie), erneut anzuhalten.“ Danach gilt § 8 Abs. 2 StVO: nur weiterfahren, wenn wer die Vorfahrt hat, weder gefährdet noch wesentlich behindert wird.', en: '§ 41 (1) StVO with annex 2 no. 3 (sign 206): whoever drives a vehicle must stop and give way. If there is no stop line (sign 294), stop where the other road can be seen. Annex 2 no. 67 (sign 294): whoever drives a vehicle must stop here. If necessary, stop again at the point where the road you are entering can be seen (sight line). After that § 8 (2) StVO applies: only drive on if whoever has priority is neither endangered nor substantially hindered.' },
+    miniTest: {
+      question: { de: 'Du stehst am Stoppschild an der Haltlinie, siehst aber wegen eines Lieferwagens nichts von links. Was tust du?', en: 'You are at the stop sign at the stop line, but a van blocks your view to the left. What do you do?' },
+      options: [
+        { de: 'Gas geben, damit du schnell querst', en: 'Accelerate so you cross quickly' },
+        { de: 'Dich im Schritttempo vortasten, bis du die Straße siehst', en: 'Creep forward at walking pace until you can see the road' },
+        { de: 'Hupen, damit dich der Querverkehr bemerkt', en: 'Honk so the cross traffic notices you' },
+      ],
+      correct: 1,
+      explanation: { de: 'Nach dem Halt darfst du dich vortasten, bis du die Querstraße übersiehst, und hältst dort wenn nötig erneut an (Sichtlinie). Dabei bleibst du bremsbereit und gewährst weiter Vorfahrt.', en: 'After stopping you may edge forward until you can see the cross road, and stop there again if needed (sight line). You stay ready to brake and keep giving way.' },
+    },
+  },
+  {
+    id: 'ampel-ausgefallen',
+    free: false,
+    title: { de: 'Ampel ausgefallen oder gelb blinkend', en: 'Traffic light out of order or flashing amber' },
+    situation: {
+      de: 'Du näherst dich einer Ampelkreuzung. Die Ampel ist ausgefallen, sie blinkt gelb. An deinem Mast hängt das Zeichen „Vorfahrt gewähren“ (Zeichen 205), die Querstraße hat Zeichen 306 (Vorfahrtsstraße). Von links nähert sich ein Auto.',
+      en: 'You approach a junction with traffic lights. The light is out of order and flashes amber. On your pole is the “give way” sign (sign 205), the cross road has sign 306 (priority road). A car approaches from the left.',
+    },
+    examiner: { de: 'Fahren Sie bitte geradeaus über die Kreuzung.', en: 'Please drive straight across the junction.' },
+    questions: [
+      { de: 'Was sagt die Ampel jetzt?', en: 'What does the light say now?' },
+      { de: 'Was regelt dann die Vorfahrt?', en: 'What then regulates priority?' },
+      { de: 'Und wenn keine Schilder da wären?', en: 'And if there were no signs?' },
+    ],
+    keyPoints: [
+      { id: 'recognise', area: 'observation', label: { de: 'Erkennen: Die Ampel ist ausgefallen oder blinkt gelb, sie regelt die Vorfahrt nicht, gelbes Blinklicht warnt nur', en: 'Recognise: the light is out of order or flashing amber, it does not regulate priority, flashing amber only warns' }, patterns: ['ausgefallen', 'dunkel', 'blinkt gelb', 'gelb blink', 'gelbes? blink', 'ampel (ist |)aus', 'out of (order|service)', 'flashing (amber|yellow)', 'flashes? (amber|yellow)', 'amber flash', 'switched off', 'not working', 'has failed', 'dead'] },
+      { id: 'signs', area: 'observation', label: { de: 'Verkehrszeichen und Vorfahrtsregeln gelten wieder', en: 'Traffic signs and priority rules apply again' }, patterns: ['verkehrszeichen', 'schild', 'zeichen 205', 'vorfahrtsregel', 'vorfahrtsschild', 'traffic signs?', '\\bsigns?\\b', 'sign 205', 'priority (rules|signs)', 'right of way rules'] },
+      { id: 'speed', area: 'speed', label: { de: 'Tempo reduzieren, bremsbereit, mit besonderer Vorsicht heranfahren', en: 'Reduce speed, be ready to brake, approach with particular care' }, patterns: SLOW },
+      { id: 'look', area: 'observation', label: { de: 'In beide Richtungen schauen', en: 'Look both ways' }, patterns: [...LOOK_BOTH, ...LOOK_LEFT, ...LOOK_RIGHT] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Dem Querverkehr auf der Vorfahrtsstraße die Vorfahrt lassen', en: 'Give way to the cross traffic on the priority road' }, patterns: ['vorfahrt (lassen|gewaehr)', 'lasse\\w* (\\w+ ){0,6}vorfahrt', 'lasse\\w* (\\w+ ){0,4}(vorbei|durch|zuerst)', 'gewaehre', 'vorrang', 'give way', 'yield', '(let|wait for) (\\w+ ){0,4}(pass|first|through)'] },
+      { id: 'fallback', area: 'observation', label: { de: 'Ohne Schilder gilt rechts vor links', en: 'Without signs right before left applies' }, patterns: ['rechts vor links', 'right before left', 'right[- ]hand rule', 'from the right'] },
+    ],
+    contradictions: [
+      { patterns: ['ampel (gilt|zeigt|ist) gruen', 'gelb heisst (fahren|frei|weiter|durch)', 'einfach durch', 'just (drive|go) (through|on)', 'amber means (go|drive)', 'treat it as green'], hint: { de: 'Eine ausgefallene oder gelb blinkende Ampel gibt keine Fahrerlaubnis: Verkehrszeichen und Vorfahrtsregeln gelten.', en: 'A failed or flashing amber light gives no permission to go: signs and priority rules apply.' } },
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)'], hint: { de: 'Hier hast du keine Vorfahrt: Zeichen 205 verpflichtet dich zu warten.', en: 'You do not have priority here: sign 205 obliges you to wait.' } },
+    ],
+    steps: [
+      { de: 'Erkennen: Ampel ausgefallen, sie regelt nichts', en: 'Recognise: light out of order, it regulates nothing' },
+      { de: 'Tempo reduzieren, bremsbereit heranfahren', en: 'Reduce speed, approach ready to brake' },
+      { de: 'Verkehrszeichen lesen: Zeichen 205 am Mast', en: 'Read the signs: sign 205 on the pole' },
+      { de: 'Nach links und rechts schauen', en: 'Look left and right' },
+      { de: 'Dem Querverkehr die Vorfahrt lassen', en: 'Give way to the cross traffic' },
+      { de: 'Erst fahren, wenn die Kreuzung frei ist', en: 'Only go when the junction is clear' },
+    ],
+    mistakes: [
+      { area: 'observation', severe: true, text: { de: 'Mit Tempo durchfahren, blinkt ja gelb, also Vorsicht und weiter', en: 'Drive through at speed, it flashes amber, so care and carry on' }, why: { de: 'Gelbes Blinken erteilt keine Vorfahrt. Es gelten die Verkehrszeichen, hier musst du dem Querverkehr Vorfahrt lassen.', en: 'Flashing amber grants no priority. The signs apply, here you must give way to the cross traffic.' } },
+      { area: 'observation', text: { de: 'Das Schild übersehen und einfach rechts vor links anwenden', en: 'Overlook the sign and simply apply right before left' }, why: { de: 'Rechts vor links gilt nur ohne Schilder. Hier regelt Zeichen 205 die Vorfahrt.', en: 'Right before left only applies without signs. Here sign 205 regulates priority.' } },
+    ],
+    modelAnswer: {
+      de: 'Die Ampel ist ausgefallen und blinkt gelb, sie regelt also nichts. Ich reduziere das Tempo und fahre bremsbereit heran, mit besonderer Vorsicht. Jetzt gelten die Verkehrszeichen: An meinem Mast hängt Zeichen 205. Ich schaue nach links und rechts und lasse dem Querverkehr auf der Vorfahrtsstraße die Vorfahrt. Erst wenn die Kreuzung frei ist, fahre ich. Fehlen Schilder, gilt rechts vor links.',
+      en: 'The light is out of order and flashes amber, so it regulates nothing. I reduce speed and approach ready to brake, with particular care. Now the traffic signs apply: there is sign 205 on my pole. I look left and right and give way to the cross traffic on the priority road. Only when the junction is clear do I go. If signs are missing, right before left applies.',
+    },
+    law: { de: '§ 37 Abs. 1 Satz 1 StVO: „Lichtzeichen gehen Vorrangregeln und Vorrang regelnden Verkehrszeichen vor.“ Eine dunkle oder nur gelb blinkende Ampel gibt kein Wechsellichtzeichen nach § 37 Abs. 2 StVO. Dann gelten die Verkehrszeichen (hier Zeichen 205, § 8 Abs. 1 Satz 2 Nr. 1 und Abs. 2 StVO), ohne Zeichen „rechts vor links“ (§ 8 Abs. 1 Satz 1 StVO). § 38 Abs. 3 Satz 1 StVO: „Gelbes Blinklicht warnt vor Gefahren.“', en: '§ 37 (1) sentence 1 StVO: light signals take precedence over priority rules and priority signs. A dark light or one that only flashes amber gives no alternating light signal under § 37 (2) StVO. Then the traffic signs apply (here sign 205, § 8 (1) sentence 2 no. 1 and (2) StVO), without signs “right before left” (§ 8 (1) sentence 1 StVO). § 38 (3) sentence 1 StVO: flashing amber light warns of danger.' },
+    miniTest: {
+      question: { de: 'Die Ampel ist komplett dunkel, an der Kreuzung gibt es keine Schilder. Wer fährt zuerst?', en: 'The traffic light is completely dark, there are no signs at the junction. Who goes first?' },
+      options: [
+        { de: 'Wer zuerst da ist', en: 'Whoever arrives first' },
+        { de: 'Wer von rechts kommt', en: 'Whoever comes from the right' },
+        { de: 'Wer geradeaus fährt', en: 'Whoever goes straight on' },
+      ],
+      correct: 1,
+      explanation: { de: 'Ohne Ampel und Schilder gilt rechts vor links. Ist ein Polizeibeamter vor Ort, gelten dessen Zeichen.', en: 'Without lights or signs right before left applies. If a police officer is on site, their signals apply.' },
+    },
+  },
+  {
+    id: 'gelb-vor-kreuzung',
+    free: false,
+    title: { de: 'Gelb kurz vor der Kreuzung', en: 'Amber shortly before the junction' },
+    situation: {
+      de: 'Innerorts, du fährst mit 50 km/h auf eine Ampel zu. Die Ampel springt auf Gelb, die Haltlinie ist noch ein Stück entfernt. Hinter dir folgt ein Auto.',
+      en: 'In town, you approach a traffic light at 50 km/h. The light turns amber, the stop line is still some distance away. A car follows behind you.',
+    },
+    examiner: { de: 'Fahren Sie bitte geradeaus weiter.', en: 'Please continue straight ahead.' },
+    questions: [
+      { de: 'Was bedeutet Gelb?', en: 'What does amber mean?' },
+      { de: 'Wovon hängt deine Entscheidung ab?', en: 'What does your decision depend on?' },
+      { de: 'Wann fährst du noch durch?', en: 'When do you still drive through?' },
+    ],
+    keyPoints: [
+      { id: 'mirror', area: 'observation', label: { de: 'Blick in den Rückspiegel: Wie dicht folgt das Auto hinter mir?', en: 'Check the rear-view mirror: how close is the car behind?' }, patterns: [...MIRROR, 'hinter mir', 'hintermann', 'behind (me|us)', 'car behind', 'traffic behind'] },
+      { id: 'judge', area: 'observation', label: { de: 'Entfernung zur Haltlinie und Bremsweg einschätzen', en: 'Judge the distance to the stop line and the braking distance' }, patterns: ['bremsweg', 'entfernung', 'abstand zur', 'einschaetz', 'beurteil', 'distance', 'braking distance', 'estimate', 'judge', 'assess'] },
+      { id: 'stop', area: 'speed', label: { de: 'Gelb heißt vor der Haltlinie warten: Bremse ich gefahrlos, halte ich an', en: 'Amber means wait before the stop line: if I can brake safely, I stop' }, patterns: ['halte?linie', 'gefahrlos', 'sicher (anhalt|halt|brems)', 'anhalt', 'stop line', 'safely', 'stop before', 'come to a stop', 'brake'] },
+      { id: 'clear', area: 'speed', label: { de: 'Kann ich nicht mehr gefahrlos anhalten, fahre ich zügig durch, ohne zu beschleunigen', en: 'If I can no longer stop safely, I drive through briskly without accelerating' }, patterns: ['zuegig', 'durchfahren', 'durch die kreuzung', 'ohne (zu )?beschleunig', 'drive (on |through)', 'briskly', 'continue through', 'without accelerating'] },
+      { id: 'red', area: 'speed', severe: true, label: { de: 'Bei Rot an der Haltlinie warten', en: 'Wait at the stop line at red' }, patterns: ['\\brot\\b', 'rotlicht', '\\bred\\b'] },
+    ],
+    contradictions: [
+      { patterns: ['gas geben', 'beschleunig(e|en) .{0,15}(damit|um)', 'gelb heisst (gas|schneller)', 'speed up', 'accelerate to', 'floor it', 'step on it'], hint: { de: 'Gelb ist kein Signal zum Beschleunigen: Fahre nicht schneller, um die Ampel zu erwischen.', en: 'Amber is not a signal to speed up: do not accelerate to beat the light.' } },
+      { patterns: ['vollbremsung', 'voll bremsen', 'hart bremsen', 'emergency brak', 'slam on', 'brake hard'], hint: { de: 'Eine Vollbremsung ohne Not gefährdet den Hintermann. Entscheide früh und bremse gleichmäßig.', en: 'Hard braking without need endangers the car behind. Decide early and brake smoothly.' } },
+    ],
+    steps: [
+      { de: 'Gelb erkennen: Rückspiegel, wie dicht ist der Hintermann?', en: 'Notice amber: rear-view mirror, how close is the car behind?' },
+      { de: 'Entfernung zur Haltlinie und Bremsweg einschätzen', en: 'Judge the distance to the stop line and the braking distance' },
+      { de: 'Kann ich gefahrlos anhalten: gleichmäßig bremsen und vor der Haltlinie anhalten', en: 'If I can stop safely: brake smoothly and stop before the stop line' },
+      { de: 'Geht das nicht mehr gefahrlos: zügig durchfahren, nicht beschleunigen', en: 'If that is no longer safe: drive through briskly, do not accelerate' },
+      { de: 'Bei Rot an der Haltlinie warten', en: 'At red wait at the stop line' },
+    ],
+    mistakes: [
+      { area: 'speed', text: { de: 'Gas geben, um noch bei Gelb durchzukommen', en: 'Accelerate to get through while it is still amber' }, why: { de: 'Gelb ordnet das Warten vor der Kreuzung an. Beschleunigen riskiert Rot und Querverkehr.', en: 'Amber orders you to wait before the junction. Accelerating risks running red and meeting cross traffic.' } },
+      { area: 'speed', severe: true, text: { de: 'Eine Vollbremsung, obwohl der Hintermann dicht folgt', en: 'Slam on the brakes although the car behind follows closely' }, why: { de: 'Das gefährdet den Hintermann, und ohne zwingenden Grund darfst du nicht stark bremsen (§ 4 Abs. 1 Satz 2 StVO). Kannst du nicht mehr gefahrlos halten, fährst du zügig durch.', en: 'That endangers the car behind, and you must not brake hard without a compelling reason (§ 4 (1) sentence 2 StVO). If you cannot stop safely any more, you drive through briskly.' } },
+    ],
+    modelAnswer: {
+      de: 'Bei Gelb schaue ich in den Rückspiegel, wie dicht mein Hintermann folgt, und schätze die Entfernung zur Haltlinie und meinen Bremsweg ein. Gelb heißt: vor der Haltlinie warten. Kann ich gefahrlos bremsen, bremse ich gleichmäßig und halte an. Kann ich nicht mehr gefahrlos anhalten, fahre ich zügig durch die Kreuzung, ohne zu beschleunigen. Zeigt die Ampel Rot, warte ich an der Haltlinie.',
+      en: 'At amber I check the rear-view mirror to see how close the car behind is, and I judge the distance to the stop line and my braking distance. Amber means: wait before the stop line. If I can brake safely, I brake smoothly and stop. If I can no longer stop safely, I drive briskly through the junction without accelerating. If the light shows red, I wait at the stop line.',
+    },
+    law: { de: '§ 37 Abs. 2 Nr. 1 StVO: „Gelb ordnet an: ‚Vor der Kreuzung auf das nächste Zeichen warten‘.“ „Rot ordnet an: ‚Halt vor der Kreuzung‘.“ Gehalten wird an der Haltlinie (Zeichen 294, Anlage 2 lfd. Nr. 67). § 4 Abs. 1 Satz 2 StVO: „Wer vorausfährt, darf nicht ohne zwingenden Grund stark bremsen.“ Dass durchfahren darf, wer bei Gelb mit normaler Bremsung nicht mehr vor der Haltlinie zum Stehen kommt, steht nicht im Wortlaut der StVO, sondern folgt aus der Rechtsprechung. Wer bei Rot einfährt, begeht einen Rotlichtverstoß.', en: '§ 37 (2) no. 1 StVO: amber orders “wait before the junction for the next signal”. Red orders “stop before the junction”. You stop at the stop line (sign 294, annex 2 no. 67). § 4 (1) sentence 2 StVO: whoever drives ahead must not brake hard without a compelling reason. That you may drive on if normal braking at amber no longer stops you before the stop line is not in the wording of the StVO, it comes from case law. Entering at red is a red-light offence.' },
+    miniTest: {
+      question: { de: 'Du fährst 50 km/h auf eine grüne Ampel zu. Sie springt auf Gelb, die Haltlinie ist noch gut 60 Meter entfernt, der Hintermann ist weit weg. Was tust du?', en: 'You drive 50 km/h towards a green light. It turns amber, the stop line is still a good 60 metres away, the car behind is far away. What do you do?' },
+      options: [
+        { de: 'Gleichmäßig bremsen und anhalten', en: 'Brake smoothly and stop' },
+        { de: 'Beschleunigen, damit du noch durchkommst', en: 'Accelerate so you get through' },
+        { de: 'Hupen und durchfahren', en: 'Honk and drive through' },
+      ],
+      correct: 0,
+      explanation: { de: 'Bei 50 km/h reichen gut 60 Meter für eine normale Bremsung. Kannst du gefahrlos anhalten, tust du das. Beschleunigen oder Hupen sind falsch.', en: 'At 50 km/h a good 60 metres is enough for normal braking. If you can stop safely, you do. Accelerating or honking is wrong.' },
+    },
+  },
+  {
+    id: 'linksabbiegen-ampel-ohne-pfeil',
+    free: false,
+    title: { de: 'Links abbiegen bei Grün ohne Pfeil', en: 'Turning left at green without an arrow' },
+    situation: {
+      de: 'Ampelkreuzung, deine Ampel zeigt Grün (runde Scheibe, kein Pfeil). Du willst links abbiegen. Der Gegenverkehr hat ebenfalls Grün und fährt geradeaus. In der Straße, in die du abbiegst, haben Fußgänger gleichzeitig Grün. Hinter dir wartet ein Auto.',
+      en: 'Junction with traffic lights, your light shows green (round disc, no arrow). You want to turn left. Oncoming traffic also has green and goes straight on. Pedestrians have green at the same time in the road you turn into. A car waits behind you.',
+    },
+    examiner: { de: 'Biegen Sie an der Ampel bitte links ab.', en: 'Please turn left at the lights.' },
+    questions: [
+      { de: 'Was bedeutet das Grün ohne Pfeil für dich?', en: 'What does green without an arrow mean for you?' },
+      { de: 'Wo wartest du, und worauf achtest du?', en: 'Where do you wait, and what do you watch for?' },
+      { de: 'Was machst du, wenn die Ampel umschaltet?', en: 'What do you do if the light changes?' },
+    ],
+    keyPoints: [
+      { id: 'noarrow', area: 'observation', allowNegation: true, label: { de: 'Grün ohne Pfeil: Der Gegenverkehr hat auch Grün, ich bin nicht geschützt', en: 'Green without an arrow: oncoming traffic has green too, I am not protected' }, patterns: ['ohne (gruenen )?pfeil', 'kein(en)? (gruenen )?pfeil', 'gruener kreis', 'runde\\w* (scheibe|gruen)', 'ungeschuetzt', 'green (circle|disc|light) without', 'without (an |the )?(green )?arrow', 'no (green )?arrow', 'not protected', 'unprotected'] },
+      { id: 'prepare', area: 'communication', label: { de: 'Innenspiegel, linker Außenspiegel, rechtzeitig links blinken', en: 'Interior mirror, left mirror, indicate left in good time' }, patterns: [...MIRROR, 'blink', 'indicat'] },
+      { id: 'position', area: 'position', label: { de: 'Zur Mitte hin einordnen', en: 'Move over towards the centre' }, patterns: ['einordn', '(zur|in der|an die|an der) mitte', 'mittig', 'move (over )?(to|towards) the (centre|center|middle)', 'centre line', 'center line', 'middle of'] },
+      { id: 'wait', area: 'position', label: { de: 'In die Kreuzung einfahren, Räder gerade, auf eine Lücke warten', en: 'Enter the junction, wheels straight, wait for a gap' }, patterns: ['(raeder|lenkung|reifen) .{0,15}gerade', 'gerade\\w* .{0,15}(raeder|lenkung|reifen)', 'wheels? .{0,15}straight', 'straight .{0,15}wheels?'] },
+      { id: 'oncoming', area: 'speed', severe: true, label: { de: 'Gegenverkehr, der geradeaus fährt oder rechts abbiegt, durchfahren lassen', en: 'Let oncoming traffic going straight on or turning right through' }, patterns: ['gegenverkehr .{0,40}(vorrang|vorfahrt|zuerst|durch|lass|vor\\b|warte)', '(lasse|warte) .{0,40}(gegenverkehr|entgegen)', 'oncoming .{0,40}(first|priority|go|pass|through|right of way)', '(let|wait for) .{0,30}oncoming'] },
+      { id: 'pedestrians', area: 'observation', severe: true, label: { de: 'Fußgängern in der Zielstraße Vorrang lassen', en: 'Let pedestrians in the target road go first' }, patterns: ['fussgaeng\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte|gehen)', '(warte|lasse) .{0,40}fussgaeng', 'pedestrian\\w* .{0,40}(priority|first|right of way|cross|go)', '(wait for|let) .{0,30}pedestrian'] },
+      { id: 'shoulder', area: 'observation', label: { de: 'Vor dem Abbiegen Schulterblick links', en: 'Shoulder check left before turning' }, patterns: SHOULDER },
+      { id: 'clear', area: 'position', label: { de: 'Wechselt die Ampel, während ich warte, räume ich die Kreuzung', en: 'If the light changes while I wait, I clear the junction' }, patterns: ['raeum', 'kreuzung frei', 'zuegig (ab|raus|durch)', 'clear(ing)? the (junction|intersection)', 'leave the (junction|intersection)', 'get out of the (junction|intersection)'] },
+    ],
+    contradictions: [
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'gruen gibt mir', 'green gives me', 'schnell .{0,15}(vor|durch)', '(quickly|before) the oncoming'], hint: { de: 'Grün ohne Pfeil gibt dir keinen Vorrang vor dem Gegenverkehr.', en: 'Green without an arrow gives you no priority over oncoming traffic.' } },
+      { patterns: ['raeder .{0,10}(nach links|eingeschlagen)', '(schlage|lenke) .{0,20}(ein|links) .{0,20}(warte|stehe)', 'wheels turned', 'turn the wheels while'], hint: { de: 'Beim Warten die Räder gerade halten: Wirst du aufgefahren, schiebt es dich sonst in den Gegenverkehr.', en: 'Keep the wheels straight while waiting: if you are hit from behind, turned wheels push you into oncoming traffic.' } },
+    ],
+    steps: [
+      { de: 'Ampel lesen: Grün ohne Pfeil, der Gegenverkehr fährt mit', en: 'Read the light: green without an arrow, oncoming traffic goes too' },
+      { de: 'Spiegel, rechtzeitig links blinken, zur Mitte hin einordnen', en: 'Mirrors, indicate left in good time, move over towards the centre' },
+      { de: 'Bei Grün in die Kreuzung einfahren, Räder gerade, warten', en: 'At green, enter the junction, wheels straight, wait' },
+      { de: 'Gegenverkehr durchfahren lassen', en: 'Let oncoming traffic through' },
+      { de: 'Schulterblick links, Fußgänger in der Zielstraße gehen lassen', en: 'Shoulder check left, let pedestrians in the target road go' },
+      { de: 'Abbiegen oder bei Gelb und Rot die Kreuzung räumen', en: 'Turn, or at amber and red clear the junction' },
+    ],
+    mistakes: [
+      { area: 'speed', severe: true, text: { de: 'Mit Schwung abbiegen, die Ampel ist grün', en: 'Turn with momentum, the light is green' }, why: { de: 'Grün ohne Pfeil gibt dir keinen Vorrang. Der Gegenverkehr und die Fußgänger haben ebenfalls Grün und gehen vor.', en: 'Green without an arrow gives you no priority. Oncoming traffic and pedestrians also have green and come first.' } },
+      { area: 'position', text: { de: 'Vor der Kreuzung an der Haltlinie stehen bleiben, bis alles frei ist', en: 'Stay at the stop line before the junction until everything is clear' }, why: { de: 'Dann kommst du bei dichtem Gegenverkehr kaum zum Abbiegen und hältst den Verkehr hinter dir auf. Du fährst bei Grün bis zum Wartepunkt in die Kreuzung ein, damit du nach dem Umschalten noch abbiegen kannst.', en: 'Then in dense oncoming traffic you hardly get to turn and you hold up the traffic behind you. At green you enter the junction up to the waiting point, so you can still turn after the light changes.' } },
+    ],
+    modelAnswer: {
+      de: 'Die Ampel zeigt Grün ohne Pfeil, ich bin also nicht geschützt: Der Gegenverkehr hat auch Grün. Ich schaue in den Innenspiegel und den linken Außenspiegel, blinke rechtzeitig links und ordne mich zur Mitte hin ein. Bei Grün fahre ich in die Kreuzung ein und warte dort mit geraden Rädern. Ich lasse den Gegenverkehr durchfahren. Mit einem Schulterblick nach links prüfe ich den Raum neben mir und lasse die Fußgänger in der Zielstraße zuerst gehen. Schaltet die Ampel um, räume ich die Kreuzung zügig, sobald der Gegenverkehr steht.',
+      en: 'The light shows green without an arrow, so I am not protected: oncoming traffic has green too. I check the interior mirror and the left mirror, indicate left in good time and move over towards the centre. At green I enter the junction and wait there with the wheels straight. I let the oncoming traffic through. With a shoulder check to the left I look at the space beside me and let the pedestrians in the target road go first. If the light changes, I clear the junction briskly as soon as the oncoming traffic has stopped.',
+    },
+    law: { de: '§ 9 Abs. 1 StVO: Wer links abbiegen will, ordnet sich bis zur Mitte ein, zeigt es rechtzeitig an und achtet vor dem Einordnen und nochmals vor dem Abbiegen auf den nachfolgenden Verkehr. § 9 Abs. 3 StVO: Entgegenkommende Fahrzeuge durchfahren lassen; „auf zu Fuß Gehende ist besondere Rücksicht zu nehmen; wenn nötig, ist zu warten“. § 9 Abs. 4 Satz 1 StVO: Auch entgegenkommende Rechtsabbieger durchfahren lassen. § 37 Abs. 2 Nr. 1 StVO: „Grün: ‚Der Verkehr ist freigegeben‘. Er kann nach den Regeln des § 9 abbiegen.“ Dass du nach dem Umschalten die Kreuzung zügig räumst, steht nicht im Wortlaut der StVO, es ist gefestigte Praxis und Rechtsprechung; auch beim Räumen gilt weiter § 9 Abs. 3.', en: '§ 9 (1) StVO: whoever turns left moves over towards the centre, indicates in good time and watches the traffic behind before moving over and again before turning. § 9 (3) StVO: let oncoming vehicles through, take special care of pedestrians, wait if necessary. § 9 (4) sentence 1 StVO: also let oncoming right-turners through. § 37 (2) no. 1 StVO: green means traffic may go, turning follows the rules of § 9. Clearing the junction briskly after the light changes is not in the wording of the StVO, it is established practice and case law; § 9 (3) still applies while you clear it.' },
+    miniTest: {
+      question: { de: 'Du stehst in der Kreuzung und willst links abbiegen. Die Ampel wird gelb, der Gegenverkehr fährt noch. Was tust du?', en: 'You stand in the junction wanting to turn left. The light turns amber, oncoming traffic still drives. What do you do?' },
+      options: [
+        { de: 'Stehen bleiben, bis es wieder Grün wird', en: 'Stay put until it turns green again' },
+        { de: 'Abbiegen, sobald der Gegenverkehr anhält, und dabei Fußgänger beachten', en: 'Turn as soon as the oncoming traffic stops, watching for pedestrians' },
+        { de: 'Geradeaus mitfahren', en: 'Drive straight on with the traffic' },
+      ],
+      correct: 1,
+      explanation: { de: 'Du räumst die Kreuzung, sobald der Gegenverkehr steht. Fußgänger, die noch Grün hatten, gehen weiter vor.', en: 'You clear the junction as soon as the oncoming traffic has stopped. Pedestrians who still had green go first.' },
+    },
+  },
+  {
+    id: 'grundstueck-ausfahrt',
+    free: false,
+    title: { de: 'Ausfahren aus Grundstück oder Feldweg', en: 'Leaving a driveway or a field track' },
+    situation: {
+      de: 'Du stehst in einer Grundstücksausfahrt. Zwischen dir und der Straße liegen ein Gehweg und ein Radweg, ein abgesenkter Bordstein, rechts eine Hecke. Auf dem Gehweg geht ein Fußgänger, auf dem Radweg kommt ein Radfahrer, auf der Straße fährt ein Auto.',
+      en: 'You are in a driveway. Between you and the road are a pavement and a cycle path, a lowered kerb, a hedge on the right. A pedestrian walks on the pavement, a cyclist comes along the cycle path, a car drives on the road.',
+    },
+    examiner: { de: 'Fahren Sie bitte aus der Einfahrt und biegen Sie rechts auf die Straße ab.', en: 'Please leave the driveway and turn right onto the road.' },
+    questions: [
+      { de: 'Wer hat Vorrang?', en: 'Who has priority?' },
+      { de: 'Wie fährst du heraus?', en: 'How do you drive out?' },
+      { de: 'Was machst du, wenn du nichts siehst?', en: 'What do you do if you cannot see?' },
+    ],
+    keyPoints: [
+      { id: 'speed', area: 'speed', label: { de: 'Sehr langsam, im Schritttempo ausfahren', en: 'Drive out very slowly, at walking pace' }, patterns: [...SLOW, 'schritt', 'walking pace'] },
+      { id: 'stop', area: 'position', label: { de: 'Vor dem Gehweg und Radweg anhalten, wenn dort jemand kommt', en: 'Stop before the pavement and cycle path if someone comes' }, patterns: ['vor dem (gehweg|radweg|buergersteig|fussweg)', '(before|in front of) the (pavement|sidewalk|cycle path|footpath|bike path)', 'anhalt', 'halte', '\\bstop'] },
+      { id: 'look', area: 'observation', label: { de: 'In beide Richtungen schauen, auch auf Gehweg und Radweg', en: 'Look both ways, also at the pavement and the cycle path' }, patterns: [...LOOK_BOTH, ...LOOK_LEFT, ...LOOK_RIGHT, 'gehweg', 'radweg', 'pavement', 'cycle path'] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Fußgängern, Radfahrern und dem fließenden Verkehr Vorrang lassen, niemanden gefährden', en: 'Let pedestrians, cyclists and the flowing traffic go first, endanger nobody' }, patterns: ['(fussgaeng|radfahr|verkehr)\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte|gehen|durch)', '(warte|lasse) .{0,40}(fussgaeng|radfahr|verkehr)', 'gefaehrd', '(pedestrian|cyclist|traffic)\\w* .{0,40}(priority|first|right of way|go|pass)', '(wait for|let) .{0,30}(pedestrian|cyclist|traffic)', 'endanger'] },
+      { id: 'help', area: 'observation', label: { de: 'Bei verdeckter Sicht vorsichtig vortasten oder mich einweisen lassen', en: 'If the view is blocked, edge forward carefully or have someone guide me' }, patterns: ['einweis', 'helfer', 'vortast', 'hineintast', 'vorsichtig (vor|ran|heran|hinein|raus)', 'guide', 'spotter', 'creep', 'edge (forward|out)', 'inch (forward|out)'] },
+      { id: 'signal', area: 'communication', label: { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' }, patterns: ['blink', 'indicat', 'signal'] },
+    ],
+    contradictions: [
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'rechts vor links', 'right before left'], hint: { de: 'Aus einem Grundstück hast du keinen Vorrang: Du musst eine Gefährdung ausschließen. Aus einem Feldweg hast du keine Vorfahrt.', en: 'Leaving a driveway you have no priority: you must rule out any danger. Coming out of a field track you have no right of way.' } },
+      { patterns: ['hupe', 'hupen', 'honk', 'horn'], hint: { de: 'Hupen ersetzt nicht das Schauen und Warten: Du musst eine Gefährdung ausschließen.', en: 'Honking does not replace looking and waiting: you must rule out any danger.' } },
+    ],
+    steps: [
+      { de: 'Rechtzeitig rechts blinken', en: 'Indicate right in good time' },
+      { de: 'Im Schritttempo bis kurz vor den Gehweg rollen', en: 'Roll at walking pace up to just before the pavement' },
+      { de: 'Nach links und rechts schauen, auf Fußgänger und Radfahrer achten', en: 'Look left and right, watch for pedestrians and cyclists' },
+      { de: 'Sicht verdeckt: vorsichtig vortasten oder einweisen lassen', en: 'View blocked: edge forward carefully or have someone guide you' },
+      { de: 'Fußgänger, Radfahrer und fließenden Verkehr vorbeilassen, vor der Fahrbahn wenn nötig nochmals anhalten', en: 'Let pedestrians, cyclists and the flowing traffic pass, stop again before the carriageway if needed' },
+      { de: 'Erst einfahren, wenn eine Gefährdung ausgeschlossen ist', en: 'Only pull out when any danger is ruled out' },
+    ],
+    mistakes: [
+      { area: 'speed', severe: true, text: { de: 'Zügig herausfahren, auf der Straße kommt ja nur ein Auto', en: 'Pull out briskly, only one car is coming on the road' }, why: { de: 'Du darfst erst fahren, wenn eine Gefährdung ausgeschlossen ist. Der fließende Verkehr hat Vorrang.', en: 'You may only go when any danger is ruled out. The flowing traffic has priority.' } },
+      { area: 'observation', text: { de: 'Nur auf die Straße achten, der Gehweg ist unwichtig', en: 'Only watch the road, the pavement does not matter' }, why: { de: 'Auf Gehweg und Radweg sind Fußgänger und Radfahrer, auch aus beiden Richtungen. Sie haben Vorrang.', en: 'Pedestrians and cyclists use the pavement and cycle path, from both directions. They have priority.' } },
+    ],
+    modelAnswer: {
+      de: 'Ich blinke rechtzeitig rechts und fahre im Schritttempo heraus. Fußgänger, Radfahrer und der fließende Verkehr haben Vorrang, ich darf niemanden gefährden. Vor dem Gehweg halte ich an, wenn dort jemand kommt, und schaue nach links und rechts, auch auf Gehweg und Radweg. Ist die Sicht durch die Hecke verdeckt, taste ich mich vorsichtig vor oder lasse mich einweisen. Vor der Fahrbahn halte ich wenn nötig noch einmal an und fahre erst ein, wenn alle durch sind und niemand gefährdet wird.',
+      en: 'I indicate right in good time and drive out at walking pace. Pedestrians, cyclists and the flowing traffic have priority, and I must endanger nobody. I stop before the pavement if someone comes there, and I look left and right, also at the pavement and cycle path. If the hedge blocks my view, I edge forward carefully or have someone guide me. Before the carriageway I stop again if needed and only pull out when everyone has passed and nobody is endangered.',
+    },
+    law: { de: '§ 10 Satz 1 und 2 StVO: „Wer aus einem Grundstück, aus einer Fußgängerzone (Zeichen 242.1 und 242.2), aus einem verkehrsberuhigten Bereich (Zeichen 325.1 und 325.2) auf die Straße oder von anderen Straßenteilen oder über einen abgesenkten Bordstein hinweg auf die Fahrbahn einfahren oder vom Fahrbahnrand anfahren will, hat sich dabei so zu verhalten, dass eine Gefährdung anderer Verkehrsteilnehmer ausgeschlossen ist; erforderlichenfalls muss man sich einweisen lassen. Die Absicht einzufahren oder anzufahren ist rechtzeitig und deutlich anzukündigen; dabei sind die Fahrtrichtungsanzeiger zu benutzen.“ Feld- oder Waldweg: § 8 Abs. 1 Satz 2 Nr. 2 StVO, rechts vor links gilt nicht für Fahrzeuge, die aus einem Feld- oder Waldweg auf eine andere Straße kommen. Du bist wartepflichtig nach § 8 Abs. 2 StVO.', en: '§ 10 sentences 1 and 2 StVO: whoever wants to drive out of a property, a pedestrian zone (signs 242.1 and 242.2) or a traffic-calmed area (signs 325.1 and 325.2) onto the road, or from other parts of the road or over a lowered kerb onto the carriageway, or pull away from the kerb, must behave so that any danger to other road users is ruled out; if necessary, they must have someone guide them. The intention to pull out or pull away must be announced in good time and clearly, using the indicators. Field or forest track: § 8 (1) sentence 2 no. 2 StVO, right before left does not apply to vehicles coming from a field or forest track onto another road. You must give way under § 8 (2) StVO.' },
+    miniTest: {
+      question: { de: 'Du kommst aus einem Feldweg auf eine Landstraße. Von rechts nähert sich ein Auto. Wer hat Vorfahrt?', en: 'You come out of a field track onto a country road. A car approaches from the right. Who has priority?' },
+      options: [
+        { de: 'Du, weil du von links kommst', en: 'You, because you come from the left' },
+        { de: 'Das Auto, weil es von rechts kommt', en: 'The car, because it comes from the right' },
+        { de: 'Das Auto auf der Landstraße, denn aus dem Feldweg hast du keine Vorfahrt', en: 'The car on the country road, because coming out of a field track you have no priority' },
+      ],
+      correct: 2,
+      explanation: { de: 'Aus einem Feld- oder Waldweg gilt rechts vor links nicht (§ 8 Abs. 1 Satz 2 Nr. 2 StVO). Der Verkehr auf der Straße hat Vorfahrt, egal aus welcher Richtung er kommt.', en: 'Coming out of a field or forest track right before left does not apply (§ 8 (1) sentence 2 no. 2 StVO). The traffic on the road has priority, whichever direction it comes from.' },
+    },
+  },
+  {
+    id: 'ende-vorfahrtstrasse',
+    free: false,
+    title: { de: 'Ende der Vorfahrtsstraße (Zeichen 307)', en: 'End of priority road (sign 307)' },
+    situation: {
+      de: 'Du fährst auf einer Vorfahrtsstraße. Vor einer Kreuzung steht das Zeichen „Ende der Vorfahrtsstraße“ (Zeichen 307). An der Kreuzung gibt es keine weiteren Schilder und keine Ampel. Von rechts nähert sich ein Auto.',
+      en: 'You drive on a priority road. Before a crossing is the sign “end of priority road” (sign 307). The crossing has no other signs and no traffic light. A car approaches from the right.',
+    },
+    examiner: { de: 'Fahren Sie bitte geradeaus weiter.', en: 'Please continue straight ahead.' },
+    questions: [
+      { de: 'Was bedeutet das Schild?', en: 'What does the sign mean?' },
+      { de: 'Wer hat an dieser Kreuzung Vorfahrt?', en: 'Who has priority at this crossing?' },
+      { de: 'Worauf achtest du?', en: 'What do you watch for?' },
+    ],
+    keyPoints: [
+      { id: 'recognise', area: 'observation', label: { de: 'Zeichen 307 erkennen: Meine Vorfahrt endet', en: 'Spot sign 307: my priority ends' }, patterns: ['zeichen 307', 'ende der vorfahrt', 'vorfahrt endet', 'sign 307', 'end of (the )?priority', 'priority (road )?ends'] },
+      { id: 'speed', area: 'speed', label: { de: 'Tempo reduzieren, bremsbereit heranfahren', en: 'Reduce speed, approach ready to brake' }, patterns: SLOW },
+      { id: 'rule', area: 'observation', label: { de: 'Ab hier gelten die allgemeinen Regeln: rechts vor links, wenn keine Schilder oder Ampel etwas anderes regeln', en: 'From here the general rules apply: right before left, unless signs or lights say otherwise' }, patterns: ['rechts vor links', 'allgemeine\\w* (regel|vorfahrt)', 'right before left', 'general (rule|priority)', 'right[- ]hand rule'] },
+      { id: 'signs', area: 'observation', label: { de: 'An der Kreuzung auf weitere Schilder und Markierungen achten', en: 'Check the crossing for further signs and markings' }, patterns: ['schilder', 'verkehrszeichen', '(weitere|andere)\\w* zeichen', 'markierung', 'ampel', 'signs', 'markings', 'traffic light'] },
+      { id: 'right', area: 'observation', label: { de: 'Nach rechts schauen', en: 'Look right' }, patterns: [...LOOK_RIGHT, 'von rechts', 'from the right'] },
+      { id: 'yield', area: 'speed', severe: true, label: { de: 'Dem Auto von rechts die Vorfahrt lassen', en: 'Give way to the car from the right' }, patterns: ['vorfahrt (lassen|gewaehr)', 'lasse\\w* (\\w+ ){0,6}vorfahrt', 'lasse\\w* (\\w+ ){0,4}(vorbei|durch|zuerst|fahren)', 'gewaehre', 'vorrang', 'give way', 'yield', '(let|wait for) (\\w+ ){0,4}(pass|first|through)', 'from the right .{0,30}(priority|first|goes)'] },
+      { id: 'left', area: 'observation', label: { de: 'Auch nach links schauen', en: 'Look left as well' }, patterns: LOOK_LEFT },
+    ],
+    contradictions: [
+      { patterns: ['ich habe (noch )?(die )?vorfahrt', 'i (still )?have (the )?(priority|right of way)', 'vorfahrt (bleibt|gilt weiter)', 'priority (stays|continues)'], hint: { de: 'Zeichen 307 beendet deine Vorfahrt: Ohne weitere Schilder gilt an der Kreuzung rechts vor links.', en: 'Sign 307 ends your priority: without further signs right before left applies at the crossing.' } },
+      { patterns: ['mit tempo (durch|weiter)', 'gleiche\\w* (tempo|geschwindigkeit)', 'same speed', 'at full speed', 'without slowing'], hint: { de: 'Nach Zeichen 307 verlierst du die Vorfahrt: Fahre langsamer, bremsbereit heran.', en: 'After sign 307 you lose priority: slow down and approach ready to brake.' } },
+    ],
+    steps: [
+      { de: 'Zeichen 307 erkennen: Die Vorfahrt endet', en: 'Spot sign 307: the priority ends' },
+      { de: 'Tempo reduzieren, bremsbereit', en: 'Reduce speed, ready to brake' },
+      { de: 'Kreuzung auf Schilder, Ampel und Markierungen prüfen', en: 'Check the crossing for signs, lights and markings' },
+      { de: 'Nach rechts schauen: Es gilt rechts vor links', en: 'Look right: right before left applies' },
+      { de: 'Auch nach links schauen, Fußgänger und Radfahrer beachten', en: 'Look left as well, watch for pedestrians and cyclists' },
+      { de: 'Dem Auto von rechts die Vorfahrt lassen, dann weiterfahren', en: 'Give way to the car from the right, then drive on' },
+    ],
+    mistakes: [
+      { area: 'speed', severe: true, text: { de: 'Mit unverändertem Tempo durchfahren, ich komme ja von der Vorfahrtsstraße', en: 'Drive through at the same speed, I come from the priority road' }, why: { de: 'Zeichen 307 hebt deine Bevorrechtigung auf. Ab der Kreuzung hat das Auto von rechts Vorfahrt.', en: 'Sign 307 cancels your priority. From the crossing the car from the right has priority.' } },
+      { area: 'observation', text: { de: 'Nur auf Schilder achten und nicht nach rechts schauen', en: 'Only look at signs and not to the right' }, why: { de: 'Ohne weitere Schilder entscheidet der Verkehr von rechts. Du musst ihn sehen, um Vorfahrt zu gewähren.', en: 'Without further signs the traffic from the right decides. You have to see it to give way.' } },
+    ],
+    modelAnswer: {
+      de: 'Ich erkenne das Zeichen 307: Meine Vorfahrt endet. Ich reduziere das Tempo und fahre bremsbereit heran. An der Kreuzung achte ich auf weitere Schilder und Markierungen. Fehlen sie, gilt rechts vor links. Ich schaue nach rechts und schaue auch nach links und lasse dem Auto von rechts die Vorfahrt. Erst danach fahre ich weiter.',
+      en: 'I spot sign 307: my priority ends. I reduce speed and approach ready to brake. At the crossing I check for further signs and markings. If they are missing, right before left applies. I look to the right and I look left as well, and give way to the car from the right. Only then do I drive on.',
+    },
+    law: { de: '§ 42 StVO i. V. m. Anlage 3 lfd. Nr. 3 (Zeichen 307): Ende der Vorfahrtstraße. Anlage 3 lfd. Nr. 2 (Zeichen 306): Vorfahrt besteht bis zum nächsten Zeichen 205, 206 oder 307. Danach gilt § 8 Abs. 1 Satz 1 StVO: „An Kreuzungen und Einmündungen hat die Vorfahrt, wer von rechts kommt.“ Das gilt nicht, wenn die Vorfahrt durch Verkehrszeichen besonders geregelt ist (Zeichen 205, 206, 301, 306, § 8 Abs. 1 Satz 2 Nr. 1 StVO). Eine Ampel geht allem vor (§ 37 Abs. 1 StVO).', en: '§ 42 StVO with annex 3 no. 3 (sign 307): end of priority road. Annex 3 no. 2 (sign 306): priority lasts until the next sign 205, 206 or 307. After that § 8 (1) sentence 1 StVO applies: at crossings and junctions, whoever comes from the right has priority. This does not apply when priority is specially regulated by signs (signs 205, 206, 301, 306, § 8 (1) sentence 2 no. 1 StVO). A traffic light takes precedence over all of these (§ 37 (1) StVO).' },
+    miniTest: {
+      question: { de: 'Nach Zeichen 307 erkennst du an der Querstraße die Rückseite eines Zeichens 205 (auf der Spitze stehendes Dreieck). Ein Auto kommt von rechts. Wer fährt zuerst?', en: 'After sign 307 you recognise the back of a sign 205 (triangle standing on its point) on the cross road. A car comes from the right. Who goes first?' },
+      options: [
+        { de: 'Du, weil die Querstraße Vorfahrt gewähren muss', en: 'You, because the cross road has to give way' },
+        { de: 'Das Auto von rechts', en: 'The car from the right' },
+        { de: 'Wer zuerst da ist', en: 'Whoever arrives first' },
+      ],
+      correct: 0,
+      explanation: { de: 'Schilder gehen rechts vor links vor (§ 8 Abs. 1 Satz 2 Nr. 1 StVO). Muss die Querstraße nach Zeichen 205 warten, hast du Vorfahrt, auch wenn das Zeichen 307 davorsteht. Du bleibst trotzdem bremsbereit. Prüfe immer die Schilder an der Kreuzung selbst.', en: 'Signs take precedence over right before left (§ 8 (1) sentence 2 no. 1 StVO). If the cross road must wait under sign 205, you have priority, even with sign 307 before it. You still stay ready to brake. Always check the signs at the crossing itself.' },
+    },
+  },
+  {
+    id: 'linksabbieger-gegenueber',
+    free: false,
+    title: { de: 'Zwei Linksabbieger gegenüber', en: 'Two left-turners facing each other' },
+    situation: {
+      de: 'Ampelkreuzung ohne Linksabbiegerpfeil, beide Richtungen haben Grün. Du willst links abbiegen. Dir gegenüber wartet ein zweites Auto, das ebenfalls links abbiegen will. Hinter ihm fährt weiterer Gegenverkehr geradeaus. In der Zielstraße queren Fußgänger.',
+      en: 'Junction with traffic lights and no left-turn arrow, both directions have green. You want to turn left. Opposite you waits a second car that also wants to turn left. Behind it more oncoming traffic goes straight on. Pedestrians cross in the target road.',
+    },
+    examiner: { de: 'Biegen Sie an der Ampel bitte links ab.', en: 'Please turn left at the lights.' },
+    questions: [
+      { de: 'Wie biegst du ab, wenn dir ein Linksabbieger gegenübersteht?', en: 'How do you turn when a left-turner faces you?' },
+      { de: 'Wann biegst du anders ab?', en: 'When do you turn differently?' },
+      { de: 'Auf wen wartest du?', en: 'Who do you wait for?' },
+    ],
+    keyPoints: [
+      { id: 'prepare', area: 'communication', label: { de: 'Innenspiegel, linker Außenspiegel, rechtzeitig links blinken', en: 'Interior mirror, left mirror, indicate left in good time' }, patterns: [...MIRROR, 'blink', 'indicat'] },
+      { id: 'position', area: 'position', label: { de: 'Zur Mitte hin einordnen', en: 'Move over towards the centre' }, patterns: ['einordn', '(zur|in der|an die|an der) mitte', 'mittig', 'move (over )?(to|towards) the (centre|center|middle)', 'centre line', 'center line', 'middle of'] },
+      { id: 'shoulder', area: 'observation', label: { de: 'Vor dem Abbiegen Schulterblick links', en: 'Shoulder check left before turning' }, patterns: SHOULDER },
+      { id: 'tangent', area: 'position', label: { de: 'Voreinander (tangential) abbiegen, ohne die Kreuzungsmitte zu umfahren', en: 'Turn in front of each other (tangentially), without going round the centre of the junction' }, patterns: ['voreinander', 'tangential', 'in front of each other', 'tangent'] },
+      { id: 'exception', area: 'position', label: { de: 'Erfordern Verkehrslage oder Gestaltung der Kreuzung (etwa Markierungen) es, biege ich erst ab, wenn wir aneinander vorbeigefahren sind (hintereinander)', en: 'If the traffic situation or the layout of the junction (such as markings) requires it, I only turn once we have passed each other (behind each other)' }, patterns: ['markierung', 'verkehrslage', 'gestaltung', 'hintereinander', 'aneinander vorbei', 'kreuzungsmitte', 'marking', 'traffic situation', 'layout', 'behind each other', 'one behind the other', 'passed each other', '(round|around) the (centre|center)'] },
+      { id: 'oncoming', area: 'speed', severe: true, label: { de: 'Gegenverkehr geradeaus durchfahren lassen, auch den hinter dem Gegenüber', en: 'Let oncoming traffic going straight on through, also the traffic behind the other car' }, patterns: ['gegenverkehr .{0,40}(vorrang|vorfahrt|zuerst|durch|lass|vor\\b|warte)', '(lasse|warte) .{0,40}(gegenverkehr|entgegen)', 'oncoming .{0,40}(first|priority|go|pass|through|right of way)', '(let|wait for) .{0,30}oncoming'] },
+      { id: 'pedestrians', area: 'observation', severe: true, label: { de: 'Fußgängern in der Zielstraße Vorrang lassen', en: 'Let pedestrians in the target road go first' }, patterns: ['fussgaeng\\w* .{0,40}(vorrang|vortritt|zuerst|lass|warte|gehen)', '(warte|lasse) .{0,40}fussgaeng', 'pedestrian\\w* .{0,40}(priority|first|right of way|cross|go)', '(wait for|let) .{0,30}pedestrian'] },
+    ],
+    contradictions: [
+      { patterns: ['ich habe (die )?vorfahrt', 'i have (the )?(priority|right of way)', 'ich (fahre|biege) zuerst', 'i (go|turn) first'], hint: { de: 'Gegenüber stehende Linksabbieger haben gleichen Rang: Sie müssen aufeinander achten und dürfen den Gegenverkehr nicht behindern.', en: 'Facing left-turners have equal rank: they must watch each other and not hinder oncoming traffic.' } },
+      { patterns: ['hupe', 'hupen', 'honk', 'horn'], hint: { de: 'Hupen löst die Situation nicht: Verständigt euch durch Fahrverhalten und Blickkontakt.', en: 'Honking does not solve the situation: communicate by how you drive and by eye contact.' } },
+    ],
+    steps: [
+      { de: 'Spiegel, rechtzeitig links blinken, zur Mitte hin einordnen', en: 'Mirrors, indicate left in good time, move over towards the centre' },
+      { de: 'Bei Grün in die Kreuzung einfahren und warten, Räder gerade', en: 'At green, enter the junction and wait, wheels straight' },
+      { de: 'Gegenverkehr geradeaus durchfahren lassen, auch den hinter dem Gegenüber', en: 'Let oncoming traffic going straight on through, also the traffic behind the other car' },
+      { de: 'Mit dem Gegenüber Blickkontakt suchen, voreinander (tangential) abbiegen', en: 'Seek eye contact with the other driver, turn in front of each other (tangentially)' },
+      { de: 'Schulterblick links, Fußgänger in der Zielstraße gehen lassen', en: 'Shoulder check left, let pedestrians in the target road go' },
+      { de: 'Erfordern Verkehrslage oder Gestaltung der Kreuzung es, erst nach dem Vorbeifahren (hintereinander) abbiegen', en: 'If the traffic situation or the junction layout requires it, turn only after passing each other (behind each other)' },
+    ],
+    mistakes: [
+      { area: 'position', text: { de: 'Immer die Kreuzungsmitte umfahren, damit es sicher ist', en: 'Always drive round the centre of the junction to be safe' }, why: { de: 'Die Regel ist voreinander abbiegen. Hintereinander ist die Ausnahme, wenn Verkehrslage oder Gestaltung der Kreuzung es erfordern.', en: 'The rule is to turn in front of each other. Behind each other is the exception, when the traffic situation or the junction layout requires it.' } },
+      { area: 'speed', severe: true, text: { de: 'Schnell abbiegen, weil das Gegenüber verdeckt, was hinter ihm kommt', en: 'Turn quickly because the other car hides what comes behind it' }, why: { de: 'Verdeckter Gegenverkehr hat Vorrang. Biege erst ab, wenn du ihn siehst und niemanden gefährdest.', en: 'Hidden oncoming traffic has priority. Only turn once you can see it and endanger nobody.' } },
+    ],
+    modelAnswer: {
+      de: 'Ich schaue in den Innenspiegel und den linken Außenspiegel, blinke rechtzeitig links und ordne mich zur Mitte hin ein. Bei Grün fahre ich in die Kreuzung ein und warte mit geraden Rädern. Ich lasse den Gegenverkehr geradeaus durchfahren, auch den hinter dem Gegenüber. Der andere Linksabbieger und ich biegen voreinander ab, also tangential, ohne die Kreuzungsmitte zu umfahren. Erfordern die Verkehrslage oder die Gestaltung der Kreuzung, etwa eine Markierung, etwas anderes, biege ich hintereinander ab. Nach einem Schulterblick nach links lasse ich die Fußgänger in der Zielstraße zuerst gehen.',
+      en: 'I check the interior mirror and the left mirror, indicate left in good time and move over towards the centre. At green I enter the junction and wait with the wheels straight. I let the oncoming traffic going straight on through, also the traffic behind the other car. The other left-turner and I turn in front of each other, tangentially, without going round the centre of the junction. If the traffic situation or the junction layout, such as a marking, requires otherwise, I turn behind each other. After a shoulder check to the left I let the pedestrians in the target road go first.',
+    },
+    law: { de: '§ 9 Abs. 1 StVO: Wer links abbiegen will, ordnet sich bis zur Mitte ein und achtet vor dem Einordnen und nochmals vor dem Abbiegen auf den nachfolgenden Verkehr. § 9 Abs. 3 StVO: Entgegenkommende Fahrzeuge durchfahren lassen (Satz 1); „auf zu Fuß Gehende ist besondere Rücksicht zu nehmen; wenn nötig, ist zu warten“ (Satz 3). § 9 Abs. 4 Satz 1 StVO: Auch entgegenkommende Rechtsabbieger durchfahren lassen. § 9 Abs. 4 Satz 2 StVO: „Einander entgegenkommende Fahrzeuge, die jeweils nach links abbiegen wollen, müssen voreinander abbiegen, es sei denn, die Verkehrslage oder die Gestaltung der Kreuzung erfordern, erst dann abzubiegen, wenn die Fahrzeuge aneinander vorbeigefahren sind.“', en: '§ 9 (1) StVO: whoever turns left moves over towards the centre and watches the traffic behind before moving over and again before turning. § 9 (3) StVO: let oncoming vehicles through (sentence 1); take special care of pedestrians, wait if necessary (sentence 3). § 9 (4) sentence 1 StVO: also let oncoming right-turners through. § 9 (4) sentence 2 StVO: oncoming vehicles that each want to turn left must turn in front of each other, unless the traffic situation or the layout of the junction requires them to turn only once they have passed each other.' },
+    miniTest: {
+      question: { de: 'Du und ein Gegenüber wollt beide links abbiegen. Auf der Fahrbahn ist eine Markierung, die zum Umfahren der Kreuzungsmitte zwingt. Wie biegst du ab?', en: 'You and an oncoming driver both want to turn left. A marking on the road forces you to go round the centre of the junction. How do you turn?' },
+      options: [
+        { de: 'Trotzdem voreinander, die Regel gilt immer', en: 'In front of each other anyway, the rule always applies' },
+        { de: 'Hintereinander, der Markierung folgend', en: 'Behind each other, following the marking' },
+        { de: 'Gar nicht, du wartest auf Rot', en: 'Not at all, you wait for red' },
+      ],
+      correct: 1,
+      explanation: { de: 'Die Gestaltung der Kreuzung, hier die Markierung, ist die Ausnahme von der Regel: Du folgst ihr und biegst hintereinander ab.', en: 'The junction layout, here the marking, is the exception to the rule: you follow it and turn behind each other.' },
     },
   },
 ];
