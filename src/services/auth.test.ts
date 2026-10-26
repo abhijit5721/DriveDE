@@ -14,7 +14,9 @@ const mock = vi.hoisted(() => ({
 
 vi.mock('../lib/supabase', () => ({
   get isSupabaseConfigured() { return mock.isSupabaseConfigured; },
-  get supabase() { return mock.isSupabaseConfigured ? { auth: { signInAnonymously: mock.signInAnonymously } } : null; },
+  getSupabase: () => Promise.resolve(mock.isSupabaseConfigured ? { auth: { signInAnonymously: mock.signInAnonymously } } : null),
+  onSupabaseLoaded: () => () => undefined,
+  mayHaveSupabaseSession: () => false,
 }));
 
 import { isAnonymousUser, signInAnonymously } from './auth';

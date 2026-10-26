@@ -11,7 +11,7 @@
  */
 
 import type { LicenseType, AppState, DrivingSession, LearningPathType, TransmissionType } from '../types';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 import { deriveIsPremium } from '../utils/entitlement';
 import { get as getIDB, set as setIDB, del as delIDB } from 'idb-keyval';
 
@@ -172,6 +172,7 @@ export async function processSyncQueue() {
 // --- CORE SYNC FUNCTIONS ---
 
 export async function getCurrentUserId() {
+  const supabase = await getSupabase();
   if (!supabase) return null;
   const {
     data: { user },
@@ -220,7 +221,8 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
 
   return new Promise<{ error: any }>((resolve) => {
     const performSync = async () => {
-      if (!isSupabaseConfigured || !supabase) {
+      const supabase = await getSupabase();
+      if (!supabase) {
         resolve({ error: new Error('Supabase not configured') });
         return;
       }
@@ -277,7 +279,8 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
 }
 
 export async function syncCompletedLesson(lessonId: string, isRetry = false): Promise<{ error: any }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   
   if (!userId) {
@@ -302,7 +305,8 @@ export async function syncCompletedLesson(lessonId: string, isRetry = false): Pr
 }
 
 export async function syncDrivingSession(session: DrivingSession, transmissionType: TransmissionType, isRetry = false): Promise<{ error: any }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -344,7 +348,8 @@ export async function syncDrivingSession(session: DrivingSession, transmissionTy
 }
 
 export async function syncQuizAttempt(quizId: string, score: number, isRetry = false): Promise<{ error: any }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -369,7 +374,8 @@ export async function syncQuizAttempt(quizId: string, score: number, isRetry = f
 }
 
 export async function hydrateFromSupabase() {
-  if (!isSupabaseConfigured || !supabase) return null;
+  const supabase = await getSupabase();
+  if (!supabase) return null;
   const userId = await getCurrentUserId();
   if (!userId) return null;
 
@@ -481,7 +487,8 @@ export async function pushTrialToSupabase(trial: {
   intendedPlan?: string | null;
 }): Promise<void> {
   // Guard defensively: under test/offline the client can be a stub without .auth
-  if (!isSupabaseConfigured || !supabase?.auth?.getUser) return;
+  const supabase = await getSupabase();
+  if (!supabase?.auth?.getUser) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
@@ -499,7 +506,8 @@ export async function pushTrialToSupabase(trial: {
 }
 
 export async function syncAllData(state: AppState) {
-  if (!isSupabaseConfigured || !supabase) return;
+  const supabase = await getSupabase();
+  if (!supabase) return;
   
   // First process any pending offline tasks
   await processSyncQueue();
@@ -554,7 +562,8 @@ export async function syncAllData(state: AppState) {
 }
 
 export async function deleteDrivingSessionFromCloud(sessionId: string, isRetry = false): Promise<{ error: any }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   if (!userId) {
     if (!isRetry) await addToQueue('delete_session', { sessionId });
@@ -570,7 +579,8 @@ export async function deleteDrivingSessionFromCloud(sessionId: string, isRetry =
 }
 
 export async function clearDrivingHistoryFromCloud(isRetry = false): Promise<{ error: any }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('Supabase not configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('Supabase not configured') };
   const userId = await getCurrentUserId();
   if (!userId) {
     if (!isRetry) await addToQueue('clear_history', {});
@@ -586,7 +596,8 @@ export async function clearDrivingHistoryFromCloud(isRetry = false): Promise<{ e
 }
 
 export async function resetAllDataFromCloud() {
-  if (!isSupabaseConfigured || !supabase) return;
+  const supabase = await getSupabase();
+  if (!supabase) return;
   const userId = await getCurrentUserId();
   if (!userId) return;
 

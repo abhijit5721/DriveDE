@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -87,7 +88,9 @@ export default defineConfig({
           }
         ]
       }
-    })
+    }),
+    // opt-in bundle report: ANALYZE=1 vite build writes dist/stats.json
+    ...(process.env.ANALYZE ? [visualizer({ filename: 'dist/stats.json', template: 'raw-data', gzipSize: true })] : []),
   ],
   build: {
     sourcemap: false,

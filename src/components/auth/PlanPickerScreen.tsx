@@ -16,7 +16,7 @@ import { Clock, Calendar, Crown, Check, ArrowRight, ShieldCheck, Zap, X, Mail, L
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { Logo } from '../common/Logo';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
@@ -261,7 +261,8 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
     setLoading(true);
 
     try {
-      if (isSupabaseConfigured && supabase) {
+      const supabase = await getSupabase();
+      if (supabase) {
         if (isExistingUser) {
           // Signing in existing confirmed user
           const { data, error: signInErr } = await supabase.auth.signInWithPassword({
@@ -353,7 +354,8 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
   const handleResendConfirmation = async () => {
     setError(null);
     setInfoMessage(null);
-    if (isSupabaseConfigured && supabase && pendingConfirmEmail) {
+    const supabase = await getSupabase();
+    if (supabase && pendingConfirmEmail) {
       try {
         const { error: resendErr } = await supabase.auth.resend({
           type: 'signup',
@@ -371,7 +373,8 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
 
   const handleGoogleAuth = async () => {
     setError(null);
-    if (!isSupabaseConfigured || !supabase) {
+    const supabase = await getSupabase();
+    if (!supabase) {
       // Offline fallback
       const mockEmail = 'google-user@drivede.de';
       registerEmailLocally(mockEmail);
@@ -824,7 +827,7 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               )}
 
               <div className="space-y-3">
-                {isSupabaseConfigured && supabase ? (
+                {isSupabaseConfigured ? (
                   <button
                     type="button"
                     onClick={() => {

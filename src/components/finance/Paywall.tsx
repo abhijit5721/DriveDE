@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { Check, X, Clock, Calendar, Crown, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '../../utils/cn';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { startCheckout } from '../../services/checkout';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,7 +35,8 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   const handleSubscribe = async () => {
-    if (!isSupabaseConfigured || !supabase) {
+    const supabase = await getSupabase();
+    if (!supabase) {
       setIsLoading(true);
       setTimeout(() => {
         setPremium(true);

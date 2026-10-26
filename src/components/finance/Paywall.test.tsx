@@ -21,17 +21,20 @@ vi.mock('react-hot-toast', () => ({
   },
 }));
 
-vi.mock('../../lib/supabase', () => ({
-  supabase: {
+vi.mock('../../lib/supabase', () => {
+  const supabase = {
     auth: {
       getUser: vi.fn(),
     },
     functions: {
       invoke: vi.fn(),
     },
-  },
-  isSupabaseConfigured: true,
-}));
+  };
+  return {
+    getSupabase: vi.fn(() => Promise.resolve(supabase)),
+    isSupabaseConfigured: true,
+  };
+});
 
 describe('Paywall Component', () => {
   const mockSetPremium = vi.fn();
@@ -67,7 +70,7 @@ describe('Paywall Component', () => {
       error: null 
     });
     
-    const mockedSupabase = supabaseModule.supabase as unknown as {
+    const mockedSupabase = (await supabaseModule.getSupabase()) as unknown as {
       functions: { invoke: ReturnType<typeof vi.fn> };
       auth: { getUser: ReturnType<typeof vi.fn> };
     };

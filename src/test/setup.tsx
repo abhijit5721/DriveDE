@@ -18,14 +18,18 @@ vi.mock('../lib/supabase', () => {
       Promise.resolve({ data, error: null }).then(resolve),
   });
 
+  const supabase = {
+    from: vi.fn().mockImplementation((table: string) => {
+      if (table === 'profiles') return createMockQuery({ display_name: 'Test Student' });
+      return createMockQuery([]);
+    })
+  };
+
   return {
     isSupabaseConfigured: true,
-    supabase: {
-      from: vi.fn().mockImplementation((table: string) => {
-        if (table === 'profiles') return createMockQuery({ display_name: 'Test Student' });
-        return createMockQuery([]);
-      })
-    }
+    getSupabase: vi.fn(() => Promise.resolve(supabase)),
+    onSupabaseLoaded: vi.fn(() => () => undefined),
+    mayHaveSupabaseSession: vi.fn(() => false),
   };
 });
 

@@ -5,13 +5,13 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ensureProfileFromState, processSyncQueue } from './supabaseSync';
-import { supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 import { get as getIDB, set as setIDB } from 'idb-keyval';
 import type { AppState } from '../types';
 
 // Mock Supabase
-vi.mock('../lib/supabase', () => ({
-  supabase: {
+vi.mock('../lib/supabase', () => {
+  const supabase = {
     from: vi.fn(() => ({
       upsert: vi.fn(),
       select: vi.fn(),
@@ -20,9 +20,12 @@ vi.mock('../lib/supabase', () => ({
     auth: {
       getUser: vi.fn(),
     },
-  },
-  isSupabaseConfigured: true,
-}));
+  };
+  return {
+    getSupabase: vi.fn(() => Promise.resolve(supabase)),
+    isSupabaseConfigured: true,
+  };
+});
 
 // Mock idb-keyval
 vi.mock('idb-keyval', () => ({
@@ -44,8 +47,11 @@ describe('supabaseSync', () => {
     },
   } as unknown as AppState;
 
-  beforeEach(() => {
+  let supabase: Awaited<ReturnType<typeof getSupabase>>;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
+    supabase = await getSupabase();
     // Default mock for navigator.onLine
     Object.defineProperty(navigator, 'onLine', {
       configurable: true,

@@ -16,7 +16,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp, AppLaunchUrl } from '@capacitor/app';
 import { useAppStore } from './store/useAppStore';
-import { supabase } from './lib/supabase';
+import { getSupabase } from './lib/supabase';
 import { hydrateFromSupabase, syncDrivingSession, syncCompletedLesson, ensureProfileFromState } from './services/supabaseSync';
 import { checkAndUnlockAchievements } from './utils/achievements';
 import { resolveTrial } from './utils/trialSync';
@@ -279,6 +279,7 @@ export default function App() {
           const accessToken = hashParams.get('access_token') || url.searchParams.get('access_token');
           const refreshToken = hashParams.get('refresh_token') || url.searchParams.get('refresh_token');
           const error = hashParams.get('error') || url.searchParams.get('error');
+          let supabase: Awaited<ReturnType<typeof getSupabase>> = null;
           const errorDescription = hashParams.get('error_description') || url.searchParams.get('error_description');
 
           console.log('[DeepLink] Extracted params:', { 
@@ -290,7 +291,7 @@ export default function App() {
           if (error) {
             console.error('[DeepLink] OAuth error from provider:', error, errorDescription);
             toast.error(`Login error: ${errorDescription || error}`);
-          } else if (accessToken && refreshToken && supabase) {
+          } else if (accessToken && refreshToken && (supabase = await getSupabase())) {
             console.log('[DeepLink] Tokens found. Setting Supabase session...');
             const { data, error: sessionError } = await supabase.auth.setSession({
               access_token: accessToken,

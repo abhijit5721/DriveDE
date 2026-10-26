@@ -4,32 +4,36 @@
  */
 
 import type { Provider, Session, User } from '@supabase/supabase-js';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { isSupabaseConfigured, getSupabase, onSupabaseLoaded, mayHaveSupabaseSession } from '../lib/supabase';
 import { Capacitor } from '@capacitor/core';
 import { toast } from 'react-hot-toast';
 import { isInternalHost, isOwnTraffic } from '../utils/ownTraffic';
 
 export async function getCurrentSession(): Promise<Session | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+  const supabase = await getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase.auth.getSession();
   if (error) return null;
   return data.session ?? null;
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-  if (!isSupabaseConfigured || !supabase) return null;
+  const supabase = await getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase.auth.getUser();
   if (error) return null;
   return data.user ?? null;
 }
 
 export async function signOut(): Promise<void> {
-  if (!isSupabaseConfigured || !supabase) return;
+  const supabase = await getSupabase();
+  if (!supabase) return;
   await supabase.auth.signOut();
 }
 
 export async function signInWithProvider(provider: Provider): Promise<void> {
-  if (!isSupabaseConfigured || !supabase) {
+  const supabase = await getSupabase();
+  if (!supabase) {
     throw new Error('Supabase is not configured yet.');
   }
 
@@ -109,21 +113,59 @@ export async function signInWithProvider(provider: Provider): Promise<void> {
   // For now, we focus on the Native Google flow which is browser-less.
 }
 
+/**
+ * The client is lazy (see lib/supabase.ts). With a stored session or an auth redirect in
+ * the URL it loads right away so the session is restored as before; for a plain visitor it
+ * is attached once the first auth call creates the client, so a later sign-in still reaches
+ * the listener.
+ */
 export function subscribeToAuthChanges(callback: (session: Session | null) => void) {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!isSupabaseConfigured) {
     return () => undefined;
   }
 
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    if (session?.user?.email) {
-      registerEmailLocally(session.user.email);
-    }
-    callback(session ?? null);
-  });
+  let cancelled = false;
+  let attached = false;
+  let unsubscribeAuth: (() => void) | null = null;
+  let stopWaiting: (() => void) | null = null;
 
-  return () => subscription.unsubscribe();
+  const attach = async () => {
+    if (attached || cancelled) return;
+    attached = true;
+    try {
+      const supabase = await getSupabase();
+      if (!supabase) return;
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user?.email) {
+          registerEmailLocally(session.user.email);
+        }
+        callback(session ?? null);
+      });
+      if (cancelled) subscription.unsubscribe();
+      else unsubscribeAuth = () => subscription.unsubscribe();
+    } catch (err) {
+      attached = false;
+      console.warn('[Auth] Supabase client failed to load:', err);
+    }
+  };
+
+  if (mayHaveSupabaseSession()) {
+    void attach();
+  } else {
+    // nothing to restore: report the guest state now, as the client's initial null session would
+    queueMicrotask(() => {
+      if (!cancelled) callback(null);
+    });
+    stopWaiting = onSupabaseLoaded(() => void attach());
+  }
+
+  return () => {
+    cancelled = true;
+    stopWaiting?.();
+    unsubscribeAuth?.();
+  };
 }
 
 const REGISTERED_EMAILS_KEY = 'drivede_registered_emails';
@@ -164,7 +206,8 @@ export function registerEmailLocally(email: string): void {
  * fails. Callers fall back to the account form on error.
  */
 export async function signInAnonymously(): Promise<{ user: User; error?: undefined } | { user?: undefined; error: Error }> {
-  if (!isSupabaseConfigured || !supabase) return { error: new Error('supabase-not-configured') };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: new Error('supabase-not-configured') };
   // Accounts from the founder's marked devices (?noanalytics), staging/preview links and
   // local test runs carry own_traffic, so the account
   // report can leave them out (27 Sep: test runs and staging reviews had created
@@ -187,14 +230,16 @@ export function isAnonymousUser(user: User | null | undefined): boolean {
  * required because the app signs people in with email + password only.
  */
 export async function secureAnonymousAccount(email: string, password: string): Promise<{ error?: string }> {
-  if (!isSupabaseConfigured || !supabase) return { error: 'unavailable' };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: 'unavailable' };
   const { error } = await supabase.auth.updateUser({ email: email.trim().toLowerCase(), password });
   return error ? { error: error.message } : {};
 }
 
 /** Same, through Google: links the Google identity to the anonymous user (manual linking must be on). */
 export async function secureAnonymousWithGoogle(): Promise<{ error?: string }> {
-  if (!isSupabaseConfigured || !supabase) return { error: 'unavailable' };
+  const supabase = await getSupabase();
+  if (!supabase) return { error: 'unavailable' };
   const { error } = await supabase.auth.linkIdentity({ provider: 'google', options: { redirectTo: window.location.origin } });
   return error ? { error: error.message } : {};
 }

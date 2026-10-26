@@ -36,7 +36,7 @@ import {
   Gauge,
   Moon
 } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabase } from '../../lib/supabase';
 import { DrivingSession } from '../../types';
 import { Skeleton } from '../common/Skeleton';
 import { getAllLessons } from '../../data/curriculum';
@@ -72,7 +72,8 @@ export const PublicReport: React.FC<PublicReportProps> = ({ userId, onBack }) =>
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isSupabaseConfigured || !supabase) {
+      const supabase = await getSupabase();
+      if (!supabase) {
         setLoading(false);
         return;
       }

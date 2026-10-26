@@ -5,7 +5,7 @@
 
 import { useMemo, useState } from 'react';
 import { LogIn, Mail, Lock, UserPlus, Loader2, AlertCircle } from 'lucide-react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabase, isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { useAppStore } from '../../store/useAppStore';
@@ -73,7 +73,8 @@ export function AuthModal({ onClose }: AuthModalProps) {
     setError(null);
     setSuccess(null);
 
-    if (!isSupabaseConfigured || !supabase) {
+    const supabase = await getSupabase();
+    if (!supabase) {
       setError(copy.notConfigured);
       return;
     }
@@ -97,7 +98,8 @@ export function AuthModal({ onClose }: AuthModalProps) {
     setError(null);
     setSuccess(null);
 
-    if (!isSupabaseConfigured || !supabase) {
+    const supabase = await getSupabase();
+    if (!supabase) {
       setError(copy.notConfigured);
       return;
     }

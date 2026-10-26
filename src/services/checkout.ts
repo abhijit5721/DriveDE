@@ -11,7 +11,7 @@
  * Stripe on success; the caller decides what to do with a failure.
  */
 
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 
 export type Tier = '30-days' | '90-days' | 'lifetime';
 
@@ -46,7 +46,8 @@ export type CheckoutResult =
   | { ok: false; reason: 'not-configured' | 'no-user' | 'no-url' | 'error'; error?: unknown };
 
 export async function startCheckout(tier: Tier, language: string): Promise<CheckoutResult> {
-  if (!isSupabaseConfigured || !supabase) return { ok: false, reason: 'not-configured' };
+  const supabase = await getSupabase();
+  if (!supabase) return { ok: false, reason: 'not-configured' };
 
   try {
     const { data: { user } } = await supabase.auth.getUser();
