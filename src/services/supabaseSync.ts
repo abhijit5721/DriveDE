@@ -220,7 +220,7 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
   }
 
   return new Promise<{ error: any }>((resolve) => {
-    const performSync = async () => {
+    const runSync = async () => {
       const supabase = await getSupabase();
       if (!supabase) {
         resolve({ error: new Error('Supabase not configured') });
@@ -267,6 +267,12 @@ export async function ensureProfileFromState(state: AppState, isRetry: boolean =
         resolve({ error: null });
       }
     };
+
+    // a throw (client chunk load, session lookup) must still settle the promise
+    const performSync = () => runSync().catch((err) => {
+      console.error('[DB-Sync] Profile sync threw:', err);
+      resolve({ error: err });
+    });
 
     if (isRetry) {
       void performSync();

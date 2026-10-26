@@ -311,6 +311,7 @@ export default function App() {
           }
         } catch (err) {
           console.error('[DeepLink] URL processing failed unexpectedly:', err);
+          toast.error('Failed to restore session');
         } finally {
           setIsAuthLoading(false);
         }
@@ -341,7 +342,8 @@ export default function App() {
       setIsAuthLoading((prev) => {
         if (prev) {
           console.warn('[App] Auth callback did not fire within 4s — Supabase may be paused. Falling back to guest mode.');
-          setAuthState(null, 'guest', null, null);
+          // keep authUserId so a late session is not treated as a new user
+          setAuthState(null, 'guest', null, useAppStore.getState().authUserId);
           return false;
         }
         return prev;

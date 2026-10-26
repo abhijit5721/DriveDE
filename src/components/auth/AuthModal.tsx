@@ -73,7 +73,13 @@ export function AuthModal({ onClose }: AuthModalProps) {
     setError(null);
     setSuccess(null);
 
-    const supabase = await getSupabase();
+    let supabase: Awaited<ReturnType<typeof getSupabase>>;
+    try {
+      supabase = await getSupabase();
+    } catch {
+      setError(copy.genericError);
+      return;
+    }
     if (!supabase) {
       setError(copy.notConfigured);
       return;
@@ -98,7 +104,13 @@ export function AuthModal({ onClose }: AuthModalProps) {
     setError(null);
     setSuccess(null);
 
-    const supabase = await getSupabase();
+    let supabase: Awaited<ReturnType<typeof getSupabase>>;
+    try {
+      supabase = await getSupabase();
+    } catch {
+      setError(copy.genericError);
+      return;
+    }
     if (!supabase) {
       setError(copy.notConfigured);
       return;

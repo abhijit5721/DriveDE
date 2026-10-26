@@ -153,6 +153,8 @@ export function subscribeToAuthChanges(callback: (session: Session | null) => vo
 
   if (mayHaveSupabaseSession()) {
     void attach();
+    // a failed chunk load is retried when the client loads again
+    stopWaiting = onSupabaseLoaded(() => void attach());
   } else {
     // nothing to restore: report the guest state now, as the client's initial null session would
     queueMicrotask(() => {

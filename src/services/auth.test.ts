@@ -10,16 +10,26 @@ import type { User } from '@supabase/supabase-js';
 const mock = vi.hoisted(() => ({
   isSupabaseConfigured: true,
   signInAnonymously: vi.fn(),
+  mayHaveSession: false,
+  getSupabaseFail: false,
+  loadedCbs: [] as Array<() => void>,
+  onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
 }));
 
 vi.mock('../lib/supabase', () => ({
   get isSupabaseConfigured() { return mock.isSupabaseConfigured; },
-  getSupabase: () => Promise.resolve(mock.isSupabaseConfigured ? { auth: { signInAnonymously: mock.signInAnonymously } } : null),
-  onSupabaseLoaded: () => () => undefined,
-  mayHaveSupabaseSession: () => false,
+  getSupabase: () => {
+    if (mock.getSupabaseFail) return Promise.reject(new Error('chunk load failed'));
+    return Promise.resolve(mock.isSupabaseConfigured ? { auth: { signInAnonymously: mock.signInAnonymously, onAuthStateChange: mock.onAuthStateChange } } : null);
+  },
+  onSupabaseLoaded: (cb: () => void) => {
+    mock.loadedCbs.push(cb);
+    return () => { mock.loadedCbs = mock.loadedCbs.filter((c) => c !== cb); };
+  },
+  mayHaveSupabaseSession: () => mock.mayHaveSession,
 }));
 
-import { isAnonymousUser, signInAnonymously } from './auth';
+import { isAnonymousUser, signInAnonymously, subscribeToAuthChanges } from './auth';
 
 const user = (extra: Partial<User>): User => ({
   id: 'u1', aud: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '2026-09-22T00:00:00Z', ...extra,
@@ -32,6 +42,32 @@ describe('isAnonymousUser', () => {
     expect(isAnonymousUser(user({ email: 'a@b.de' }))).toBe(false);
     expect(isAnonymousUser(null)).toBe(false);
     expect(isAnonymousUser(undefined)).toBe(false);
+  });
+});
+
+describe('subscribeToAuthChanges', () => {
+  beforeEach(() => {
+    mock.isSupabaseConfigured = true;
+    mock.mayHaveSession = true;
+    mock.getSupabaseFail = false;
+    mock.loadedCbs = [];
+    mock.onAuthStateChange.mockClear();
+  });
+
+  it('retries attach when the client loads after a failed first attempt', async () => {
+    mock.getSupabaseFail = true;
+    const stop = subscribeToAuthChanges(() => undefined);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(mock.onAuthStateChange).not.toHaveBeenCalled();
+    expect(mock.loadedCbs).toHaveLength(1);
+
+    mock.getSupabaseFail = false;
+    mock.loadedCbs.forEach((cb) => cb());
+    await new Promise((r) => setTimeout(r, 0));
+    expect(mock.onAuthStateChange).toHaveBeenCalledTimes(1);
+
+    stop();
+    expect(mock.loadedCbs).toHaveLength(0);
   });
 });
 

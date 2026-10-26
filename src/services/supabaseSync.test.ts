@@ -60,6 +60,16 @@ describe('supabaseSync', () => {
     });
   });
 
+  it('resolves with an error when getSupabase rejects', async () => {
+    vi.mocked(getSupabase).mockRejectedValueOnce(new Error('chunk load failed'));
+    vi.useFakeTimers();
+    const syncPromise = ensureProfileFromState(mockState);
+    vi.runAllTimers();
+    const result = await syncPromise;
+    vi.useRealTimers();
+    expect(result.error).toBeInstanceOf(Error);
+  });
+
   it('should add to queue when sync fails', async () => {
     // Mock user ID
     vi.mocked(supabase!.auth.getUser).mockResolvedValue({ data: { user: { id: 'user_123' } }, error: null } as any);
