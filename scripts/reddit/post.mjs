@@ -1,6 +1,7 @@
 // Post approved replies from content/social-media/outreach-2026-09-08.md as
 // the logged-in DriveDE account via CDP Chrome. Usage: node reddit-post.tmp.mjs A B F
 import { chromium } from 'playwright';
+import { findOwnComment } from './own-comment.mjs';
 
 const OVERVIEW = 'https://www.drivede.app/blog/convert-foreign-licence-germany-overview/?utm_source=reddit&utm_medium=comment&utm_campaign=umschreibung-2026-08';
 const FAILED = 'https://www.drivede.app/blog/failed-german-driving-test/?utm_source=reddit&utm_medium=comment&utm_campaign=failed-test';
@@ -103,8 +104,11 @@ for (const k of keys) {
     await page.goto(r.url, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(3500);
     // Duplicate guard: skip if this account already has any comment in the thread (the founder may have answered by hand).
-    const already = await page.locator(`shreddit-comment[author="${ME}"]`).count();
-    if (already > 0 && !allowDup) { console.log(`${k}: SKIPPED, ${ME} already commented in ${r.url} (use --allow-duplicate to override)`); continue; }
+    // Shared lookup checks ?sort=new and the own profile, because big threads do not render older comments.
+    if (!allowDup) {
+      const dup = await findOwnComment(ctx, { me: ME, url: r.url });
+      if (dup.found) { console.log(`${k}: SKIPPED, ${ME} already commented in ${r.url} (comment ${dup.commentId} via ${dup.via}; use --allow-duplicate to override)`); continue; }
+    }
     // Open the top-level comment composer (new reddit). The collapsed host
     // renders no editable until clicked; the editor then lives in shadow DOM,
     // which Playwright CSS locators pierce.
@@ -145,19 +149,15 @@ for (const k of keys) {
     await submit.first().click();
     await page.waitForTimeout(6000);
     await page.screenshot({ path: `c:/Users/abhij/Downloads/DriveDE/demo-video/reddit-${k}-after.png`, timeout: 15000 }).catch(() => {});
-    // Verify against the rendered comment tree after a reload, not the editor.
-    // The tree hydrates late on big threads, so poll a few times before
-    // declaring failure (a false "NOT POSTED" once caused a near-duplicate).
+    // Verify via the shared lookup (thread ?sort=new, then own profile) matching the draft text. The tree
+    // hydrates late on big threads, so poll a few times before declaring failure (a false "NOT POSTED"
+    // once caused a near-duplicate).
     let posted = false;
     for (let attempt = 0; attempt < 3 && !posted; attempt++) {
-      await page.reload({ waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(5000 + attempt * 3000);
-      posted = await page.evaluate((needle) => {
-        const tree = [...document.querySelectorAll('shreddit-comment')].map((c) => c.innerText || '').join('\n');
-        return tree.includes(needle);
-      }, r.text.slice(0, 50));
+      await page.waitForTimeout(3000 + attempt * 3000);
+      posted = (await findOwnComment(ctx, { me: ME, url: r.url, needle: r.text.slice(0, 50) })).found;
     }
-    console.log(`${k}: ${posted ? 'POSTED (verified in comment tree)' : 'NOT POSTED (not in comment tree after reload)'} ${r.url}`);
+    console.log(`${k}: ${posted ? 'POSTED (verified)' : 'NOT POSTED (not found in thread ?sort=new or own profile)'} ${r.url}`);
     await page.waitForTimeout(8000);
   } catch (e) {
     console.log(`${k}: ERROR ${e.message.slice(0, 160)}`);
