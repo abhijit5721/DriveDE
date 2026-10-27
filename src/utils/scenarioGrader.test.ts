@@ -7,7 +7,8 @@ const status = (r: ReturnType<typeof gradeAnswer>, id: string) => r.points.find(
 
 describe('normalize', () => {
   it('folds umlauts and punctuation', () => {
-    expect(normalize('Ich überprüfe, ob der Überweg frei ist!')).toBe('ich ueberpruefe ob der ueberweg frei ist');
+    expect(normalize('Ich überprüfe, ob der Überweg frei ist!')).toBe('ich ueberpruefe , ob der ueberweg frei ist');
+    expect(normalize('Innerorts 1,5 m, sonst 2 m.')).toBe('innerorts 1 5 m , sonst 2 m');
     expect(normalize('I don\'t stop')).toBe('i don t stop');
     expect(normalize('Ich winke nicht. Erst dann!')).toBe('ich winke nicht . erst dann');
   });
@@ -74,6 +75,30 @@ describe('gradeAnswer', () => {
     expect(late.hints).toHaveLength(0);
   });
 
+
+  it('a conditional "wenn nicht" / "if not" does not negate the rule that follows', () => {
+    expect(status(gradeAnswer(scenario('ampel-ausgefallen'), 'Wenn nicht, rechts vor links.'), 'fallback')).toBe('covered');
+    expect(status(gradeAnswer(scenario('ampel-ausgefallen'), 'Falls nicht, gilt rechts vor links.'), 'fallback')).toBe('covered');
+    expect(status(gradeAnswer(scenario('ampel-ausgefallen'), 'Signs first. If not, right before left.'), 'fallback')).toBe('covered');
+    expect(status(gradeAnswer(scenario('zebrastreifen'), 'Ich halte an, sonst nicht.'), 'yield')).toBe('covered');
+  });
+
+  it('a negation in a preceding clause stops at the comma, a negation in the same clause still counts', () => {
+    expect(status(gradeAnswer(scenario('ende-vorfahrtstrasse'), 'If there are no signs, right before left applies.'), 'rule')).toBe('covered');
+    expect(status(gradeAnswer(scenario('ende-vorfahrtstrasse'), 'Ich habe keine Vorfahrt, ich lasse dem Auto von rechts die Vorfahrt.'), 'yield')).toBe('covered');
+    expect(status(gradeAnswer(scenario('ende-vorfahrtstrasse'), 'Ich lasse ihm keine Vorfahrt.'), 'yield')).toBe('negated');
+    expect(status(gradeAnswer(scenario('zebrastreifen'), 'Ich halte nicht an, sie steht noch auf dem Gehweg.'), 'yield')).toBe('negated');
+    expect(status(gradeAnswer(scenario('zebrastreifen'), 'I would not stop.'), 'yield')).toBe('negated');
+    expect(status(gradeAnswer(scenario('radfahrer-ueberholen'), 'Innerorts halte ich 1,5 m Abstand.'), 'distance')).toBe('covered');
+  });
+
+  it('a pattern that spells out its own negation matches, for key points and contradictions', () => {
+    expect(status(gradeAnswer(scenario('ueberholen-landstrasse'), 'Ich fahre nicht zu dicht auf.'), 'keepBack')).toBe('covered');
+    expect(gradeAnswer(scenario('gruenpfeil'), 'Ich muss nicht anhalten, ich biege einfach ab.').hints.length).toBeGreaterThan(0);
+    expect(gradeAnswer(scenario('abknickende-vorfahrt'), 'Ich blinke nicht, ich folge nur der Straße.').hints.length).toBeGreaterThan(0);
+    // an extra negation the pattern does not contain still negates
+    expect(status(gradeAnswer(scenario('reissverschluss'), 'Ich wechsle nicht nicht zu früh.'), 'late')).toBe('negated');
+  });
   it('an empty answer covers nothing', () => {
     const r = gradeAnswer(scenario('rechts-vor-links'), '');
     expect(r.covered).toBe(0);
@@ -119,7 +144,8 @@ describe('competence areas', () => {
     const areas = new Set(['observation', 'position', 'speed', 'communication', 'handling']);
     for (const s of EXAM_SCENARIOS) {
       for (const p of s.keyPoints) expect(areas.has(p.area), `${s.id}/${p.id}`).toBe(true);
-      expect(s.keyPoints.some((p) => p.severe), s.id).toBe(true);
+      // gelb-vor-kreuzung has none: at amber stop or drive through depends on distance; red-light running is caught by a contradiction
+      if (s.id !== 'gelb-vor-kreuzung') expect(s.keyPoints.some((p) => p.severe), s.id).toBe(true);
     }
   });
 });
