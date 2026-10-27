@@ -3,15 +3,16 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { User, LogIn, LogOut, Cloud, Globe, Moon, Sun, RefreshCcw, FileText, RotateCcw, AlertCircle, CheckCircle2, Crown, ChevronRight, Zap, Share2, X, Shield, Download, Trophy, Wallet } from 'lucide-react';
 import type { TabType } from '../../types';
 import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
 import { isSupabaseConfigured } from '../../lib/supabase';
-import { signInWithProvider, secureAnonymousAccount, secureAnonymousWithGoogle } from '../../services/auth';
+import { signInWithProvider } from '../../services/auth';
 import { trackFunnel } from '../../services/AnalyticsService';
 import GoogleLogo from '../../assets/google-logo.svg';
+import { SecureAccountForm } from './SecureAccountForm';
 import { syncAllData } from '../../services/supabaseSync';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -91,34 +92,6 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
     }
 
     setAuthLoading(false);
-  };
-
-  // DRI-60: turn an anonymous account into a real one. Supabase treats an email set
-  // on an anonymous user as an email change, so a confirmation link goes out and the
-  // account becomes permanent once it is clicked.
-  const [secureEmail, setSecureEmail] = useState('');
-  const [securePassword, setSecurePassword] = useState('');
-  const [secureSent, setSecureSent] = useState(false);
-
-  const handleSecureAccount = async (e: FormEvent) => {
-    e.preventDefault();
-    setAuthError(null);
-    setAuthLoading(true);
-    const { error } = await secureAnonymousAccount(secureEmail, securePassword);
-    setAuthLoading(false);
-    if (error) { setAuthError(error === 'unavailable' ? t.secureUnavailable : error); return; }
-    trackFunnel('email_added', { via: 'email', from: 'account' });
-    setSecureSent(true);
-  };
-
-  const handleSecureWithGoogle = async () => {
-    setAuthError(null);
-    setAuthLoading(true);
-    trackFunnel('google_started', { from: 'secure_account' });
-    const { error } = await secureAnonymousWithGoogle();
-    if (error) { setAuthError(error === 'unavailable' ? t.secureUnavailable : error); setAuthLoading(false); return; }
-    trackFunnel('email_added', { via: 'google', from: 'account' });
-    // the browser is now redirecting to Google
   };
 
   const handleOpenShare = async () => {
@@ -228,53 +201,9 @@ export function Account({ onOpenAuth, onSignOut, onDeleteAccount, onChangePath, 
         {authStatus === 'signed_in' && authIsAnonymous && (
           <div className="mt-4 rounded-2xl border border-white/10 bg-white/10 p-4" data-testid="account-secure-panel">
             <p className="text-sm font-bold text-white">{t.secureTitle}</p>
-            {secureSent ? (
-              <p className="mt-2 text-sm text-slate-200" data-testid="account-secure-sent">{t.secureSent}</p>
-            ) : (
-              <>
-                <form onSubmit={handleSecureAccount} className="mt-3 space-y-2">
-                  <label className="block text-xs font-semibold text-slate-300">
-                    {t.secureEmailLabel}
-                    <input
-                      type="email"
-                      required
-                      autoComplete="email"
-                      value={secureEmail}
-                      onChange={(e) => setSecureEmail(e.target.value)}
-                      data-testid="account-secure-email"
-                      className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-blue-400"
-                    />
-                  </label>
-                  <label className="block text-xs font-semibold text-slate-300">
-                    {t.securePasswordLabel}
-                    <input
-                      type="password"
-                      required
-                      minLength={8}
-                      autoComplete="new-password"
-                      value={securePassword}
-                      onChange={(e) => setSecurePassword(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-blue-400"
-                    />
-                  </label>
-                  <button
-                    type="submit"
-                    disabled={authLoading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {t.secureCta}
-                  </button>
-                </form>
-                <button
-                  onClick={handleSecureWithGoogle}
-                  disabled={authLoading}
-                  className="mt-2 inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:opacity-70"
-                >
-                  <img src={GoogleLogo} alt="Google" className="h-5 w-5" />
-                  {t.secureGoogle}
-                </button>
-              </>
-            )}
+            <div className="mt-3">
+              <SecureAccountForm trigger="account" tone="dark" testPrefix="account-secure" />
+            </div>
           </div>
         )}
 

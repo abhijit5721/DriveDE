@@ -225,23 +225,67 @@ export function isAnonymousUser(user: User | null | undefined): boolean {
   return user?.is_anonymous === true;
 }
 
+/** Stable error keys for the secure / email-code flows; the UI maps each to its own copy. */
+export type SecureErrorKey = 'email_exists' | 'identity_already_exists' | 'rate_limited' | 'invalid_code' | 'unavailable' | 'other';
+
+function mapSecureError(error: { message?: string; code?: string; status?: number }): SecureErrorKey {
+  const code = (error.code || '').toLowerCase();
+  const msg = (error.message || '').toLowerCase();
+  if (code === 'email_exists' || msg.includes('already been registered') || msg.includes('email address is already')) return 'email_exists';
+  if (code === 'identity_already_exists' || msg.includes('identity is already linked')) return 'identity_already_exists';
+  if (code.includes('rate_limit') || error.status === 429 || msg.includes('rate limit') || msg.includes('security purposes')) return 'rate_limited';
+  if (code === 'otp_expired' || code === 'invalid_otp' || msg.includes('token has expired') || msg.includes('invalid') && msg.includes('token')) return 'invalid_code';
+  return 'other';
+}
+
 /**
- * DRI-60: turn the anonymous account into a permanent one. Supabase treats an email
- * set on an anonymous user as an email change: a confirmation link goes out and the
- * account keeps its id, progress and trial once the link is clicked. The password is
- * required because the app signs people in with email + password only.
+ * Turn the anonymous account into a permanent one, in place (same auth.users.id, so
+ * progress and the trial stay). Supabase treats an email set on an anonymous user as an
+ * email change: a mail goes out with a link and an 8-digit code (the code needs
+ * {{ .Token }} in the "Change email" template). The password is optional and no longer
+ * asked here; sign-in works with a mailed code (signInWithEmailCode) or Google.
  */
-export async function secureAnonymousAccount(email: string, password: string): Promise<{ error?: string }> {
+export async function secureAnonymousAccount(email: string): Promise<{ error?: SecureErrorKey }> {
   const supabase = await getSupabase();
   if (!supabase) return { error: 'unavailable' };
-  const { error } = await supabase.auth.updateUser({ email: email.trim().toLowerCase(), password });
-  return error ? { error: error.message } : {};
+  const { error } = await supabase.auth.updateUser({ email: email.trim().toLowerCase() }, { emailRedirectTo: window.location.origin });
+  return error ? { error: mapSecureError(error) } : {};
+}
+
+/** Confirms the emailed code for secureAnonymousAccount. A wrong or expired code gives invalid_code. */
+export async function verifySecureCode(email: string, token: string): Promise<{ error?: SecureErrorKey }> {
+  const supabase = await getSupabase();
+  if (!supabase) return { error: 'unavailable' };
+  const { error } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token: token.trim(), type: 'email_change' });
+  return error ? { error: mapSecureError(error) } : {};
+}
+
+/** Picks up a confirmation link that was opened in another browser or tab. */
+export async function refreshIfPending(): Promise<void> {
+  const supabase = await getSupabase();
+  if (!supabase) return;
+  try { await supabase.auth.refreshSession(); } catch { /* offline or no session: nothing to pick up */ }
+}
+
+/** Sign in to an existing account with a mailed code (no password). Never creates an account. */
+export async function signInWithEmailCode(email: string): Promise<{ error?: SecureErrorKey }> {
+  const supabase = await getSupabase();
+  if (!supabase) return { error: 'unavailable' };
+  const { error } = await supabase.auth.signInWithOtp({ email: email.trim().toLowerCase(), options: { shouldCreateUser: false } });
+  return error ? { error: mapSecureError(error) } : {};
+}
+
+export async function verifyEmailCode(email: string, token: string): Promise<{ error?: SecureErrorKey }> {
+  const supabase = await getSupabase();
+  if (!supabase) return { error: 'unavailable' };
+  const { error } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token: token.trim(), type: 'email' });
+  return error ? { error: mapSecureError(error) } : {};
 }
 
 /** Same, through Google: links the Google identity to the anonymous user (manual linking must be on). */
-export async function secureAnonymousWithGoogle(): Promise<{ error?: string }> {
+export async function secureAnonymousWithGoogle(): Promise<{ error?: SecureErrorKey }> {
   const supabase = await getSupabase();
   if (!supabase) return { error: 'unavailable' };
   const { error } = await supabase.auth.linkIdentity({ provider: 'google', options: { redirectTo: window.location.origin } });
-  return error ? { error: error.message } : {};
+  return error ? { error: mapSecureError(error) } : {};
 }

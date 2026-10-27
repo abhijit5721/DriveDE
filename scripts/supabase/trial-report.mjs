@@ -7,7 +7,8 @@
  * Counts anonymous vs. secured accounts, trials running / expired, and how many
  * anonymous accounts expired without ever adding an email. Runs one SQL query
  * through the Management API with the CLI login token (~/.supabase/access-token
- * or SUPABASE_ACCESS_TOKEN). Accounts tagged own_traffic (founder devices marked with
+ * or SUPABASE_ACCESS_TOKEN). secured_before_expiry / secured_after_expiry split the
+ * accounts with an email by whether it was confirmed before or after trial_ends_at. Accounts tagged own_traffic (founder devices marked with
  * ?noanalytics, local test runs) are left out. Decision rule agreed 22 Sep: stay with the plain
  * 7-day anonymous trial (option A) unless expired-without-email accounts pile
  * up week over week, then switch to the two-stage trial (option B).
@@ -23,7 +24,7 @@ if (!token) { console.error('no Supabase access token found'); process.exit(2); 
 
 const sql = `
 with acc as (
-  select u.id, u.is_anonymous, u.created_at, u.last_sign_in_at,
+  select u.id, u.is_anonymous, u.created_at, u.last_sign_in_at, u.email_confirmed_at,
          p.trial_started_at, p.trial_ends_at, p.is_premium
   from auth.users u
   left join public.profiles_secure p on p.id = u.id
@@ -40,6 +41,8 @@ select
   count(*) filter (where trial_ends_at <= now())                    as trials_expired,
   count(*) filter (where is_anonymous and trial_ends_at <= now())   as expired_without_email,
   count(*) filter (where is_anonymous and last_sign_in_at < now() - interval '30 days') as anonymous_idle_30d,
+  count(*) filter (where not is_anonymous and email_confirmed_at <= trial_ends_at) as secured_before_expiry,
+  count(*) filter (where not is_anonymous and email_confirmed_at > trial_ends_at)  as secured_after_expiry,
   count(*) filter (where is_premium)                                as premium
 from acc;`;
 

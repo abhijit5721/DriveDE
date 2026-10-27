@@ -19,6 +19,7 @@ import { CompetenceGrid, ExamEvaluationInfo, ProtocolRatings } from './ExamEvalu
 import { areaRatings, bestRatios, recordAttempt, type Protocol } from '../../utils/examProtocol';
 import { useAppStore } from '../../store/useAppStore';
 import { trackFunnel } from '../../services/AnalyticsService';
+import { SecureInlineCard } from '../auth/SecureAccountSheet';
 import { cn } from '../../utils/cn';
 
 interface ExamSimulationProps {
@@ -668,6 +669,9 @@ function ScenarioView({ scenario, aiEnabled, de, language, next, nextLocked, onN
           </div>
         </section>
       )}
+
+      {/* DRI-78: once, under the first result of an anonymous user; the exam log itself stays in this browser */}
+      {(result || stepResult) && <SecureInlineCard />}
     </div>
   );
 }

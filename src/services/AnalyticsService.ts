@@ -20,14 +20,18 @@
  *   google_started       a "Mit Google" button was tapped (props: from)
  *   google_completed     back from Google and signed in (props: new_account)
  *   auth_error           Google/Supabase returned an error in the URL (props: code, from)
- *   account_secured      an anonymous account now has an email or Google identity (props: via)
+ *   secure_prompt_shown  the add-an-email ask appeared (props: trigger, placement: sheet|inline|paywall)
+ *   secure_prompt_dismissed the ask was closed with "Später" (props: trigger)
+ *   secure_code_submitted an emailed 8-digit code was entered (props: ok)
+ *   secure_email_error   adding the email failed (props: trigger, code)
+ *   account_secured      an anonymous account now has an email or Google identity (props: via, trigger, trial_state: running|expired, trial_day)
  *   first_step_click     a new user used the dashboard's first-step card (props: action, lesson)
  *   scenario_answered    an exam situation answer was checked (props: scenario, covered, total)
  *   scenario_minitest    the quick check after it was answered (props: scenario, correct)
  *   scenario_ai_feedback detailed AI feedback was requested (props: scenario, ok, reason)
  *   scenario_steps       the step order was checked (props: scenario, right, total, mistakes)
  *   exam_deeplink        the app opened a situation from its public page /pruefung/<id>/ (props: scenario)
- *   email_added          an anonymous account was secured with an email (props: via)
+ *   email_added          an anonymous user asked to add an email or Google: the code or link was requested, not yet confirmed (props: via, from)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
 
@@ -301,6 +305,8 @@ export type FunnelEvent =
   | 'anonymous_blocked'
   | 'secure_prompt_shown'
   | 'secure_prompt_dismissed'
+  | 'secure_code_submitted'
+  | 'secure_email_error'
   | 'email_added'
   | 'google_started'
   | 'google_completed'

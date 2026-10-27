@@ -3,7 +3,7 @@
  * This source code is proprietary and protected under international copyright law.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { Check, X, Clock, Calendar, Crown, ArrowRight, CreditCard, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '../../utils/cn';
@@ -12,6 +12,7 @@ import { startCheckout } from '../../services/checkout';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TRANSLATIONS } from '../../data/translations';
+import { SecureAccountSheet } from '../auth/SecureAccountSheet';
 
 type Tier = '30-days' | '90-days' | 'lifetime';
 
@@ -19,6 +20,9 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { language, setPremium, intendedPlan, authIsAnonymous } = useAppStore();
   const [selectedTier, setSelectedTier] = useState<Tier>(intendedPlan ?? '90-days');
   const [isLoading, setIsLoading] = useState(false);
+  // DRI-60: the sheet that links the pass to an email or Google; checkout continues once it is done
+  const [secureOpen, setSecureOpen] = useState(false);
+  const [continueAfterSecure, setContinueAfterSecure] = useState(false);
 
   const t = TRANSLATIONS[language]?.instructor?.paywall || TRANSLATIONS['de'].instructor.paywall;
 
@@ -50,9 +54,8 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     // DRI-60: a pass bought on an anonymous account would be lost with the browser
     // storage, because there is no way to sign back in. Ask for the email first.
     if (authIsAnonymous) {
-      toast.error(language === 'de'
-        ? 'Sichere dein Konto zuerst mit einer E-Mail (unter Konto), damit dein Pass nicht verloren geht.'
-        : 'Secure your account with an email first (under Account), so your pass cannot be lost.');
+      setContinueAfterSecure(true);
+      setSecureOpen(true);
       return;
     }
 
@@ -67,6 +70,16 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
     setIsLoading(false);
   };
+
+  // account_secured: the auth listener flipped authIsAnonymous, carry on to the payment
+  useEffect(() => {
+    if (continueAfterSecure && !authIsAnonymous) {
+      setContinueAfterSecure(false);
+      setSecureOpen(false);
+      void handleSubscribe();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [continueAfterSecure, authIsAnonymous]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl overflow-hidden">
@@ -287,6 +300,14 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           scrollbar-width: none;
         }
       `}</style>
+
+      {secureOpen && (
+        <SecureAccountSheet
+          trigger="checkout"
+          placement="paywall"
+          onClose={() => { setSecureOpen(false); setContinueAfterSecure(false); }}
+        />
+      )}
     </div>
   );
 };

@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { LogIn, Mail, Lock, UserPlus, Loader2, AlertCircle } from 'lucide-react';
 import { getSupabase, isSupabaseConfigured } from '../../lib/supabase';
-import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally } from '../../services/auth';
+import { signInWithProvider, isEmailRegisteredLocally, registerEmailLocally, signInWithEmailCode, verifyEmailCode } from '../../services/auth';
 import { trackFunnel } from '../../services/AnalyticsService';
 import { useAppStore } from '../../store/useAppStore';
 import { validatePassword, getPasswordErrorMessage } from '../../utils/validation';
@@ -27,6 +27,9 @@ export function AuthModal({ onClose }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  // "Mit E-Mail-Code anmelden": email, then the 8-digit code from the mail (no password)
+  const [codeStep, setCodeStep] = useState<null | 'ask' | 'enter'>(null);
+  const [code, setCode] = useState('');
 
   const copy = useMemo(() => {
     const isDe = language === 'de';
@@ -66,6 +69,15 @@ export function AuthModal({ onClose }: AuthModalProps) {
         ? 'Dieser E-Mail-Anbieter ist nicht zugelassen. Bitte verwende einen bekannten Anbieter (z.B. Gmail, Yahoo, GMX).' 
         : 'This email provider is not allowed. Please use a well-known provider (e.g., Gmail, Yahoo, Outlook).',
       genericError: isDe ? 'Anmeldung fehlgeschlagen.' : 'Authentication failed.',
+      useCode: isDe ? 'Mit E-Mail-Code anmelden' : 'Sign in with email code',
+      usePassword: isDe ? 'Lieber mit Passwort anmelden' : 'Sign in with password instead',
+      sendCode: isDe ? 'Code schicken' : 'Send code',
+      codeLabel: isDe ? 'Code aus der Mail' : 'Code from the mail',
+      codeSent: isDe ? 'Wir haben dir einen Code geschickt. Gib ihn hier ein.' : 'We sent you a code. Enter it here.',
+      confirmCode: isDe ? 'Code bestätigen' : 'Confirm code',
+      codeNoAccount: isDe ? 'Zu dieser E-Mail gibt es kein Konto. Registriere dich zuerst.' : 'There is no account for this email. Sign up first.',
+      codeWrong: isDe ? 'Der Code stimmt nicht oder ist abgelaufen.' : 'The code is wrong or expired.',
+      codeRate: isDe ? 'Zu viele Versuche. Warte eine Minute und versuch es noch einmal.' : 'Too many attempts. Wait a minute and try again.',
     };
   }, [language, mode]);
 
@@ -98,6 +110,36 @@ export function AuthModal({ onClose }: AuthModalProps) {
       setError(message || copy.genericError);
       setLoading(false);
     }
+  };
+
+  const handleSendCode = async () => {
+    setError(null);
+    setSuccess(null);
+    const cleanEmail = email.toLowerCase().trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) { setError(copy.emailInvalid); return; }
+    setLoading(true);
+    const { error: sendError } = await signInWithEmailCode(cleanEmail);
+    setLoading(false);
+    if (sendError === 'unavailable') { setError(copy.notConfigured); return; }
+    if (sendError === 'rate_limited') { setError(copy.codeRate); return; }
+    // shouldCreateUser is off, so an unknown address is refused here
+    if (sendError) { setError(copy.codeNoAccount); return; }
+    setCode('');
+    setCodeStep('enter');
+    setSuccess(copy.codeSent);
+  };
+
+  const handleVerifyCode = async () => {
+    setError(null);
+    setSuccess(null);
+    const cleanEmail = email.toLowerCase().trim();
+    setLoading(true);
+    const { error: verifyError } = await verifyEmailCode(cleanEmail, code);
+    setLoading(false);
+    if (verifyError) { setError(verifyError === 'rate_limited' ? copy.codeRate : copy.codeWrong); return; }
+    registerEmailLocally(cleanEmail);
+    startFreeTrial(intendedPlan || '90-days');
+    onClose();
   };
 
   const handleSubmit = async () => {
@@ -297,6 +339,23 @@ export function AuthModal({ onClose }: AuthModalProps) {
             </div>
           </label>
 
+          {codeStep ? (
+            codeStep === 'enter' && (
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{copy.codeLabel}</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={8}
+                  autoComplete="one-time-code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm tracking-[0.3em] text-slate-900 outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </label>
+            )
+          ) : (
+            <>
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{copy.password}</span>
             <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
@@ -348,6 +407,8 @@ export function AuthModal({ onClose }: AuthModalProps) {
               </div>
             </>
           )}
+            </>
+          )}
         </div>
 
         {error && (
@@ -363,6 +424,25 @@ export function AuthModal({ onClose }: AuthModalProps) {
         )}
 
         <div className="mt-6 space-y-3">
+          {codeStep ? (
+            <>
+              <button
+                onClick={codeStep === 'ask' ? handleSendCode : handleVerifyCode}
+                disabled={loading || (codeStep === 'enter' && code.length !== 8)}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
+                {codeStep === 'ask' ? copy.sendCode : copy.confirmCode}
+              </button>
+              <button
+                onClick={() => { setError(null); setSuccess(null); setCodeStep(null); }}
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                {copy.usePassword}
+              </button>
+            </>
+          ) : (
+            <>
           <button
             onClick={handleSubmit}
             disabled={loading}
@@ -385,6 +465,18 @@ export function AuthModal({ onClose }: AuthModalProps) {
           >
             {mode === 'signin' ? copy.switchToSignup : copy.switchToSignin}
           </button>
+
+              {mode === 'signin' && (
+                <button
+                  onClick={() => { setError(null); setSuccess(null); setCodeStep('ask'); }}
+                  data-testid="auth-use-code"
+                  className="w-full rounded-2xl px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-slate-50 dark:text-blue-400 dark:hover:bg-slate-800"
+                >
+                  {copy.useCode}
+                </button>
+              )}
+            </>
+          )}
 
           <button
             onClick={onClose}

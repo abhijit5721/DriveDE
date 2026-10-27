@@ -23,7 +23,8 @@ import { resolveTrial } from './utils/trialSync';
 import { recordDeviceTrial } from './utils/deviceTrial';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
-import { signOut, subscribeToAuthChanges, isAnonymousUser } from './services/auth';
+import { signOut, subscribeToAuthChanges, isAnonymousUser, refreshIfPending } from './services/auth';
+import { readPromptState, setPendingSecure, setPendingTrigger } from './utils/securePrompt';
 import { analyticsService, trackFunnel } from './services/AnalyticsService';
 
 // A failed Google/email sign-in comes back as #error=...&error_code=... (or ?error=).
@@ -221,8 +222,19 @@ export default function App() {
       }
     };
 
+    // An anonymous user who asked for an email and opened the link in another browser or
+    // app: pick the confirmed account up when they come back (the auth listener sees USER_UPDATED).
+    const pickUpPendingEmail = () => {
+      if (document.visibilityState !== 'visible') return;
+      if (useAppStore.getState().authIsAnonymous && readPromptState().pendingEmail) void refreshIfPending();
+    };
+    const openAuthFromSecure = () => setShowAuthModal(true);
+
     window.addEventListener('online', handleOnline);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', pickUpPendingEmail);
+    window.addEventListener('focus', pickUpPendingEmail);
+    window.addEventListener('drivede:open-auth', openAuthFromSecure);
 
     // dedicated OTA update check
     if (Capacitor.isNativePlatform()) {
@@ -323,6 +335,9 @@ export default function App() {
     return () => {
       window.removeEventListener('online', handleOnline);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('visibilitychange', pickUpPendingEmail);
+      window.removeEventListener('focus', pickUpPendingEmail);
+      window.removeEventListener('drivede:open-auth', openAuthFromSecure);
       if (urlListener) urlListener.remove();
     };
   }, []);
@@ -368,7 +383,19 @@ export default function App() {
             trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000 });
           }
           if (wasAnonymous && !isAnonymousUser(user) && !isNewUser) {
-            trackFunnel('account_secured', { via: hasGoogle ? 'google' : 'email' });
+            const { trialStartedAt, trialEndsAt } = useAppStore.getState();
+            const running = !!trialEndsAt && new Date(trialEndsAt).getTime() > Date.now();
+            const trialDay = trialStartedAt ? Math.max(1, Math.floor((Date.now() - new Date(trialStartedAt).getTime()) / 86_400_000) + 1) : 0;
+            trackFunnel('account_secured', {
+              via: hasGoogle ? 'google' : 'email',
+              trigger: readPromptState().pendingTrigger ?? 'unknown',
+              trial_state: running ? 'running' : 'expired',
+              trial_day: trialDay,
+            });
+          }
+          if (!isAnonymousUser(user) && (readPromptState().pendingEmail || readPromptState().pendingTrigger)) {
+            setPendingSecure(null, null);
+            setPendingTrigger(null);
           }
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
