@@ -402,15 +402,16 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
       {/* Header */}
       <div className="relative flex items-center justify-between px-4 sm:px-8 py-5 shrink-0 z-10">
         <Logo size="sm" />
-        {/* On the free path there is no plan to change yet, so this offers to look at
-            the passes rather than telling someone to change one they never picked. */}
-        {step !== 'plan' ? (
+        {/* Only the buy path has a plan to change. On the free path and on sign-in a
+            back arrow that opened the price list sent people to prices instead of back,
+            so there the header only offers the real way back. */}
+        {step !== 'plan' && intent === 'buy' ? (
           <button
             onClick={() => setStep('plan')}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-line text-muted hover:text-slate-900 dark:hover:text-white text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            {intent === 'buy' ? t.changePlan : t.seePasses}
+            {t.changePlan}
           </button>
         ) : (
           <motion.button
@@ -613,7 +614,8 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
               exit={{ opacity: 0, scale: 0.96 }}
               className="w-full max-w-md bg-surface border border-line rounded-3xl p-6 sm:p-8 shadow-xl"
             >
-              {/* Plan badge summary */}
+              {/* Plan badge summary; sign-in starts no trial and buys nothing, so it has none */}
+              {(intent === 'buy' || !isExistingUser) && (
               <div className="flex items-center justify-between p-3.5 mb-6 rounded-2xl bg-surface-raised border border-line">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold">
@@ -634,14 +636,17 @@ export function PlanPickerScreen({ initialPlan = '90-days', initialStep = 'signu
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setStep('plan')}
-                  className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline uppercase"
-                >
-                  {intent === 'buy' ? t.changePlan : t.seePasses}
-                </button>
+                {intent === 'buy' && (
+                  <button
+                    type="button"
+                    onClick={() => setStep('plan')}
+                    className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline uppercase"
+                  >
+                    {t.changePlan}
+                  </button>
+                )}
               </div>
+              )}
 
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
