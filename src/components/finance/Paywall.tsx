@@ -9,6 +9,7 @@ import { Check, X, Clock, Calendar, Crown, ArrowRight, CreditCard, ShieldCheck, 
 import { cn } from '../../utils/cn';
 import { getSupabase } from '../../lib/supabase';
 import { startCheckout } from '../../services/checkout';
+import { trackFunnel } from '../../services/AnalyticsService';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TRANSLATIONS } from '../../data/translations';
@@ -17,7 +18,7 @@ import { SecureAccountSheet } from '../auth/SecureAccountSheet';
 type Tier = '30-days' | '90-days' | 'lifetime';
 
 export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { language, setPremium, intendedPlan, authIsAnonymous } = useAppStore();
+  const { language, setPremium, intendedPlan, authIsAnonymous, trialEndsAt } = useAppStore();
   const [selectedTier, setSelectedTier] = useState<Tier>(intendedPlan ?? '90-days');
   const [isLoading, setIsLoading] = useState(false);
   // DRI-60: the sheet that links the pass to an email or Google; checkout continues once it is done
@@ -70,6 +71,13 @@ export const Paywall: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
     setIsLoading(false);
   };
+
+  // paywall_shown: once per mount
+  useEffect(() => {
+    const trial_state = trialEndsAt ? (new Date(trialEndsAt) > new Date() ? 'running' : 'expired') : 'none';
+    trackFunnel('paywall_shown', { anonymous: authIsAnonymous, trial_state });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // account_secured: the auth listener flipped authIsAnonymous, carry on to the payment
   useEffect(() => {

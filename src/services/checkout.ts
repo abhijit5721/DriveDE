@@ -12,6 +12,7 @@
  */
 
 import { getSupabase } from '../lib/supabase';
+import { trackFunnel } from './AnalyticsService';
 
 export type Tier = '30-days' | '90-days' | 'lifetime';
 
@@ -53,6 +54,8 @@ export async function startCheckout(tier: Tier, language: string): Promise<Check
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { ok: false, reason: 'no-user' };
 
+    // every checkout path (paywall, landing buy, OAuth resume) goes through here, so it is counted once
+    trackFunnel('checkout_started', { tier });
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { tier, language },
     });

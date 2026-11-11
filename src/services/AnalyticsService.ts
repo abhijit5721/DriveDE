@@ -32,6 +32,9 @@
  *   scenario_steps       the step order was checked (props: scenario, right, total, mistakes)
  *   exam_deeplink        the app opened a situation from its public page /pruefung/<id>/ (props: scenario)
  *   email_added          an anonymous user asked to add an email or Google: the code or link was requested, not yet confirmed (props: via, from)
+ *   paywall_shown        the paywall opened (props: anonymous, trial_state: running|expired|none)
+ *   checkout_started     a Stripe checkout session is being requested, once per startCheckout call (props: tier)
+ *   purchase_completed   back from Stripe and the account is now premium (no props)
  * Every event carries utm_source / utm_campaign from the landing URL.
  */
 
@@ -317,7 +320,10 @@ export type FunnelEvent =
   | 'scenario_minitest'
   | 'scenario_ai_feedback'
   | 'scenario_steps'
-  | 'exam_deeplink';
+  | 'exam_deeplink'
+  | 'paywall_shown'
+  | 'checkout_started'
+  | 'purchase_completed';
 
 /**
  * Landing-page funnel event. Vercel Web Analytics needs no consent (no cookies,

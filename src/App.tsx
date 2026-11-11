@@ -577,6 +577,8 @@ export default function App() {
       const remoteData = await hydrateFromSupabase();
       if (remoteData?.profile?.is_premium) {
         useAppStore.setState({ isPremium: true });
+        // the URL param is cleared right below, so a reload cannot count this twice
+        trackFunnel('purchase_completed');
         // Clear the URL param without refreshing (Web)
         if (typeof window !== 'undefined' && window.location.search) {
           window.history.replaceState({}, document.title, window.location.pathname);
