@@ -19,8 +19,10 @@ import { ShieldCheck, X } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TRANSLATIONS } from '../../data/translations';
 import { trackFunnel } from '../../services/AnalyticsService';
-import { markPromptDismissed, markPromptShown, pickTrigger, readPromptState, type SecureTrigger } from '../../utils/securePrompt';
+import { signInWithProvider } from '../../services/auth';
+import { markPromptDismissed, markPromptShown, pickTrigger, readPromptState, setLinkConflict, type SecureTrigger } from '../../utils/securePrompt';
 import { SecureAccountForm } from './SecureAccountForm';
+import GoogleLogo from '../../assets/google-logo.svg';
 
 interface SheetProps {
   trigger: SecureTrigger;
@@ -93,6 +95,98 @@ export function SecureAccountSheet({ trigger, onClose, onSecured, placement = 's
 }
 
 /**
+ * Shown after linking Google failed with identity_already_exists: that Google account
+ * already belongs to another DriveDE user. Offers to sign in with it, or to stay a guest.
+ * No quiet period and no cap, it answers the user's own tap.
+ */
+export function SecureConflictSheet({ onClose }: { onClose: () => void }) {
+  const language = useAppStore((s) => s.language);
+  const t = TRANSLATIONS[language].account;
+  const copy = t.secureConflict;
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const props = { via: 'google', trigger: readPromptState().pendingTrigger ?? 'unknown' };
+
+  useEffect(() => {
+    trackFunnel('secure_conflict_shown', props);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const signIn = async () => {
+    setError(false);
+    setLoading(true);
+    trackFunnel('secure_conflict_signin', props);
+    try {
+      await signInWithProvider('google');
+      // the browser is now redirecting to Google
+    } catch {
+      setError(true);
+      setLoading(false);
+    }
+  };
+
+  const stay = () => {
+    setLinkConflict(false);
+    trackFunnel('secure_conflict_dismissed', props);
+    onClose();
+  };
+
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="false"
+      aria-labelledby="secure-conflict-title"
+      data-testid="secure-conflict-sheet"
+      initial={{ y: 40, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 40, opacity: 0 }}
+      className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-h-[80vh] max-w-md overflow-y-auto rounded-3xl border border-line bg-surface p-5 shadow-2xl lg:bottom-6"
+    >
+      <button
+        type="button"
+        onClick={stay}
+        aria-label={t.securePrompt.close}
+        className="absolute right-3 top-3 rounded-full p-2 text-muted hover:bg-surface-raised"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      <div className="flex items-start gap-3 pr-8">
+        <div className="rounded-2xl bg-amber-100 p-2.5 dark:bg-amber-900/40">
+          <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+        </div>
+        <div>
+          <h3 id="secure-conflict-title" className="text-base font-bold text-slate-900 dark:text-white">{copy.title}</h3>
+          <p className="mt-1 text-sm text-muted">{copy.body}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-2">
+        <button
+          type="button"
+          onClick={signIn}
+          disabled={loading}
+          data-testid="secure-conflict-signin"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 disabled:opacity-70"
+        >
+          <img src={GoogleLogo} alt="" className="h-4 w-4" />
+          {copy.signIn}
+        </button>
+        {error && <p className="text-xs text-red-600 dark:text-red-400" data-testid="secure-conflict-error">{t.secureUnavailable}</p>}
+      </div>
+      <button
+        type="button"
+        onClick={stay}
+        data-testid="secure-conflict-stay"
+        className="mt-2 w-full rounded-2xl px-3 py-2.5 text-sm font-semibold text-muted hover:bg-surface-raised"
+      >
+        {copy.stay}
+      </button>
+    </motion.div>
+  );
+}
+
+/**
  * Inline card for the exam simulation, shown under the first result of an anonymous
  * user (trigger 'first_situation'). Not a floating sheet: it sits in the page flow and
  * is only decided once, when it mounts, so answering again does not bring it back.
@@ -159,8 +253,12 @@ export function SecureAccountPrompt() {
   const trialEndsAt = useAppStore((s) => s.trialEndsAt);
   const isPremium = useAppStore((s) => s.isPremium);
   const [open, setOpen] = useState<SecureTrigger | null>(null);
+  const [conflict, setConflict] = useState(() => readPromptState().linkConflict);
+  // Google linking hit an existing account: shown at once, no delay and no cap, and the normal ask waits.
+  // Never on top of the consent screen or the tour.
+  const showConflict = conflict && authStatus === 'signed_in' && isAnonymous && acceptedPrivacy && onboarded && !activeSession;
 
-  const quiet = authStatus === 'signed_in' && isAnonymous && acceptedPrivacy && onboarded && !activeSession && !achievementPending;
+  const quiet = authStatus === 'signed_in' && isAnonymous && acceptedPrivacy && onboarded && !activeSession && !achievementPending && !showConflict;
   // A trial that ran out (never reset or extended here); 'first_situation' is left to the inline card in the exam simulation.
   const trialExpired = !!trialEndsAt && !onTrial && !isPremium;
   const due = quiet ? pickTrigger({ isAnonymous, lessons, drives, onTrial, trialDaysLeft, trialExpired }, readPromptState()) : null;
@@ -179,5 +277,6 @@ export function SecureAccountPrompt() {
     if (open && (!isAnonymous || activeSession)) setOpen(null);
   }, [open, isAnonymous, activeSession]);
 
+  if (showConflict) return <SecureConflictSheet onClose={() => setConflict(false)} />;
   return open ? <SecureAccountSheet trigger={open} onClose={() => setOpen(null)} /> : null;
 }

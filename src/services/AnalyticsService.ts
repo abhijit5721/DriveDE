@@ -18,7 +18,10 @@
  *   secure_prompt_shown  the "add an email" sheet appeared for an anonymous user (props: trigger)
  *   secure_prompt_dismissed  it was closed with "Später" or the X (props: trigger)
  *   google_started       a "Mit Google" button was tapped (props: from)
- *   google_completed     back from Google and signed in (props: new_account, flow: sign_in for a new sign-in, link for an anonymous account that linked Google)
+ *   google_completed     back from Google and signed in (props: new_account, flow: sign_in for a new sign-in, link for an anonymous account that linked Google, after_conflict: true when it follows a secure_conflict_shown)
+ *   secure_conflict_shown  linking Google failed because that Google account already has a DriveDE account, the sheet appeared (props: via, trigger)
+ *   secure_conflict_signin the conflict sheet's "Sign in with Google" was tapped (props: via, trigger)
+ *   secure_conflict_dismissed the conflict sheet was closed to continue as guest (props: via, trigger)
  *   auth_error           Google/Supabase returned an error in the URL (props: code, description, replay: true when code is bad_oauth_state)
  *   secure_prompt_shown  the add-an-email ask appeared (props: trigger, placement: sheet|inline|paywall)
  *   secure_prompt_dismissed the ask was closed with "Später" (props: trigger)
@@ -423,6 +426,9 @@ export type FunnelEvent =
   | 'email_added'
   | 'google_started'
   | 'google_completed'
+  | 'secure_conflict_shown'
+  | 'secure_conflict_signin'
+  | 'secure_conflict_dismissed'
   | 'auth_error'
   | 'account_secured'
   | 'first_step_click'

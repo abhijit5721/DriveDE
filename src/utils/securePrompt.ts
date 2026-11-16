@@ -30,6 +30,8 @@ export interface SecurePromptState {
   pendingEmail: string | null;
   /** Where the pending ask came from, read back for account_secured after a Google redirect or a link. */
   pendingTrigger: SecureSource | null;
+  /** Google came back with identity_already_exists: that Google account belongs to another DriveDE user. */
+  linkConflict: boolean;
 }
 
 export interface SecurePromptInput {
@@ -48,7 +50,7 @@ export const SECURE_PROMPT_KEY = 'drivede_secure_prompt';
 export const MAX_PROMPTS = 4;
 export const QUIET_AFTER_DISMISS_MS = 3 * 24 * 60 * 60 * 1000;
 
-const EMPTY: SecurePromptState = { shown: [], lastDismissedAt: null, pendingEmail: null, pendingTrigger: null };
+const EMPTY: SecurePromptState = { shown: [], lastDismissedAt: null, pendingEmail: null, pendingTrigger: null, linkConflict: false };
 
 export function readPromptState(): SecurePromptState {
   try {
@@ -60,6 +62,7 @@ export function readPromptState(): SecurePromptState {
       lastDismissedAt: typeof v.lastDismissedAt === 'string' ? v.lastDismissedAt : null,
       pendingEmail: typeof v.pendingEmail === 'string' && v.pendingEmail ? v.pendingEmail : null,
       pendingTrigger: typeof v.pendingTrigger === 'string' && SOURCES.includes(v.pendingTrigger) ? v.pendingTrigger as SecureSource : null,
+      linkConflict: v.linkConflict === true,
     };
   } catch {
     return { ...EMPTY };
@@ -109,4 +112,9 @@ export function setPendingSecure(email: string | null, trigger: SecureSource | n
 /** Remember the source of an ask that leaves the page (Google redirect). */
 export function setPendingTrigger(trigger: SecureSource | null): void {
   writePromptState({ ...readPromptState(), pendingTrigger: trigger });
+}
+
+/** Remember that linking Google hit an account that already exists (survives the redirect's URL cleanup). */
+export function setLinkConflict(v: boolean): void {
+  writePromptState({ ...readPromptState(), linkConflict: v });
 }

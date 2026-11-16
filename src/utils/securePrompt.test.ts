@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { MAX_PROMPTS, SECURE_PROMPT_KEY, markPromptDismissed, markPromptShown, pickTrigger, readPromptState, setPendingSecure, setPendingTrigger, type SecurePromptState } from './securePrompt';
+import { MAX_PROMPTS, SECURE_PROMPT_KEY, markPromptDismissed, markPromptShown, pickTrigger, readPromptState, setLinkConflict, setPendingSecure, setPendingTrigger, type SecurePromptState } from './securePrompt';
 
 // Node's experimental localStorage global shadows jsdom's here (no clear()), so use a plain map.
 const memoryStorage = (): Storage => {
@@ -15,7 +15,7 @@ const memoryStorage = (): Storage => {
 };
 
 const base = { isAnonymous: true, lessons: 0, drives: 0, onTrial: true, trialDaysLeft: 6 };
-const fresh: SecurePromptState = { shown: [], lastDismissedAt: null, pendingEmail: null, pendingTrigger: null };
+const fresh: SecurePromptState = { shown: [], lastDismissedAt: null, pendingEmail: null, pendingTrigger: null, linkConflict: false };
 const st = (o: Partial<SecurePromptState>): SecurePromptState => ({ ...fresh, ...o });
 
 describe('pickTrigger', () => {
@@ -81,6 +81,24 @@ describe('prompt bookkeeping', () => {
     expect(readPromptState().pendingTrigger).toBe('checkout');
     setPendingTrigger(null);
     expect(readPromptState()).toEqual(fresh);
+  });
+
+  it('keeps the link conflict flag and survives other setters', () => {
+    setLinkConflict(true);
+    expect(readPromptState().linkConflict).toBe(true);
+    setPendingTrigger('first_drive');
+    markPromptShown('first_lesson');
+    expect(readPromptState().linkConflict).toBe(true);
+    setLinkConflict(false);
+    expect(readPromptState().linkConflict).toBe(false);
+    expect(readPromptState().pendingTrigger).toBe('first_drive');
+  });
+
+  it('reads a non-boolean link conflict as false', () => {
+    localStorage.setItem(SECURE_PROMPT_KEY, '{"linkConflict":"true"}');
+    expect(readPromptState().linkConflict).toBe(false);
+    localStorage.setItem(SECURE_PROMPT_KEY, '{"linkConflict":1}');
+    expect(readPromptState().linkConflict).toBe(false);
   });
 
   it('knows the new triggers in storage', () => {

@@ -24,7 +24,7 @@ import { recordDeviceTrial } from './utils/deviceTrial';
 import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
 import { signOut, subscribeToAuthChanges, isAnonymousUser, refreshIfPending } from './services/auth';
-import { readPromptState, setPendingSecure, setPendingTrigger } from './utils/securePrompt';
+import { readPromptState, setLinkConflict, setPendingSecure, setPendingTrigger } from './utils/securePrompt';
 import { analyticsService, trackFunnel, scrubAuthUrl } from './services/AnalyticsService';
 
 // A failed Google/email sign-in comes back as #error=...&error_code=... (or ?error=).
@@ -34,6 +34,10 @@ const initialAuthError = (() => {
   const params = new URLSearchParams(window.location.hash.replace(/^#/, '') || window.location.search);
   const code = params.get('error_code') || params.get('error');
   // Clear it so a reload does not report the same error again.
+  // The Google account already belongs to another user: the URL is cleaned below, so keep it for the conflict sheet.
+  if (code === 'identity_already_exists') {
+    try { setLinkConflict(true); } catch { /* ignore */ }
+  }
   if (code) {
     try { history.replaceState(history.state, '', scrubAuthUrl(window.location.href)); } catch { /* ignore */ }
   }
@@ -415,7 +419,7 @@ export default function App() {
           const hasGoogle = (user.identities || []).some((i) => i.provider === 'google');
           if (hasGoogle && (isNewUser || securedNow)) {
             const ageMs = Date.now() - new Date(user.created_at).getTime();
-            trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000, flow: isNewUser ? 'sign_in' : 'link' });
+            trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000, flow: isNewUser ? 'sign_in' : 'link', after_conflict: readPromptState().linkConflict });
           }
           if (securedNow) {
             const { trialStartedAt, trialEndsAt } = useAppStore.getState();
@@ -428,9 +432,10 @@ export default function App() {
               trial_day: trialDay,
             });
           }
-          if (!isAnonymousUser(user) && (readPromptState().pendingEmail || readPromptState().pendingTrigger)) {
+          if (!isAnonymousUser(user) && (readPromptState().pendingEmail || readPromptState().pendingTrigger || readPromptState().linkConflict)) {
             setPendingSecure(null, null);
             setPendingTrigger(null);
+            setLinkConflict(false);
           }
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
@@ -572,13 +577,20 @@ export default function App() {
           (async () => {
             try {
               const currentState = useAppStore.getState();
-              await ensureProfileFromState(currentState);
-              
+              // null = hydration failed as a whole (no client, no user, or it threw): local defaults
+              // must not overwrite the remote profile then. An absent profile row still returns an
+              // object, so a new account gets one. Not covered: a failed profile query alone, which
+              // hydrateFromSupabase only logs.
+              if (remoteData) await ensureProfileFromState(currentState);
+
               if (isNewUser) {
                 console.log('[App] New user detected, migrating local progress to cloud in background...');
                 const localProgress = currentState.userProgress;
+                // Only lessons the account does not have yet, so existing ones keep their completed_at
+                const remoteIds = new Set((remoteData?.lessons ?? []).map(l => l.lesson_id));
+                const localOnlyLessons = localProgress.completedLessons.filter(id => !remoteIds.has(id));
                 // Run syncs concurrently instead of serially
-                const lessonSyncs = localProgress.completedLessons.map(lessonId => syncCompletedLesson(lessonId));
+                const lessonSyncs = localOnlyLessons.map(lessonId => syncCompletedLesson(lessonId));
                 const sessionSyncs = localProgress.drivingSessions.map(session => syncDrivingSession(session, currentState.transmissionType));
                 
                 await Promise.all([...lessonSyncs, ...sessionSyncs]);
