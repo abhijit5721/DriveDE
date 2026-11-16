@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { analyticsService } from './services/AnalyticsService';
+import { analyticsService, scrubAuthUrl } from './services/AnalyticsService';
 import { Analytics } from '@vercel/analytics/react';
 import { applyOwnTrafficFlagFromUrl, isInternalHost, isOwnTraffic } from './utils/ownTraffic';
 import { initMonitoring } from './lib/monitoring';
@@ -50,7 +50,7 @@ const Root = () => (
     {/* Cookie-free page counter so we can see traffic without waiting for
         the consent banner. Consent-gated GA4/PostHog stay in AnalyticsService.
         beforeSend covers page views and the funnel's track() calls alike. */}
-    <Analytics beforeSend={(event) => (isOwnTraffic() || isInternalHost() ? null : event)} />
+    <Analytics beforeSend={(event) => (isOwnTraffic() || isInternalHost() ? null : { ...event, url: scrubAuthUrl(event.url) })} />
   </ErrorBoundary>
 );
 

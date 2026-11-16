@@ -25,7 +25,7 @@ import { startCheckout, consumePendingPurchase } from './services/checkout';
 import { syncStructuredData } from './utils/seoSchema';
 import { signOut, subscribeToAuthChanges, isAnonymousUser, refreshIfPending } from './services/auth';
 import { readPromptState, setPendingSecure, setPendingTrigger } from './utils/securePrompt';
-import { analyticsService, trackFunnel } from './services/AnalyticsService';
+import { analyticsService, trackFunnel, scrubAuthUrl } from './services/AnalyticsService';
 
 // A failed Google/email sign-in comes back as #error=...&error_code=... (or ?error=).
 // Read it at load, before Supabase cleans the URL, and report it once analytics is up.
@@ -33,6 +33,10 @@ const initialAuthError = (() => {
   if (typeof window === 'undefined') return null;
   const params = new URLSearchParams(window.location.hash.replace(/^#/, '') || window.location.search);
   const code = params.get('error_code') || params.get('error');
+  // Clear it so a reload does not report the same error again.
+  if (code) {
+    try { history.replaceState(history.state, '', scrubAuthUrl(window.location.href)); } catch { /* ignore */ }
+  }
   return code ? { code, description: (params.get('error_description') || '').slice(0, 120) } : null;
 })();
 import { chapters } from './data/curriculum';
@@ -78,6 +82,29 @@ import { TRANSLATIONS } from './data/translations';
 const HotspotMap = lazy(() => import('./components/dashboard/HotspotMap').then(m => ({ default: m.HotspotMap })));
 import { OnboardingTour } from './components/onboarding/OnboardingTour';
 import { SecureAccountPrompt } from './components/auth/SecureAccountSheet';
+
+// The persisted store hydrates asynchronously (IndexedDB). The auth callback reads
+// authUserId and authIsAnonymous, so it waits for hydration, capped so a failed
+// storage read (isHydrated may never turn true) cannot block sign-in.
+function waitForStoreHydration(maxMs = 3000): Promise<void> {
+  if (useAppStore.getState().isHydrated) return Promise.resolve();
+  return new Promise<void>((resolve) => {
+    // done only runs later (timer or store callback), after both consts below exist
+    const done = () => {
+      clearTimeout(timer);
+      unsub();
+      resolve();
+    };
+    const timer = setTimeout(done, maxMs);
+    const unsub = useAppStore.subscribe((state) => state.isHydrated, (hydrated) => { if (hydrated) done(); });
+    // hydrated between the check above and the subscribe
+    if (useAppStore.getState().isHydrated) done();
+  });
+}
+
+// Auth callbacks run one after another up to and including setAuthState, so the
+// SIGNED_IN then INITIAL_SESSION pair keeps its order and the second sees the first's state.
+let authTurn: Promise<void> = Promise.resolve();
 
 
 export default function App() {
@@ -345,7 +372,7 @@ export default function App() {
 
   useEffect(() => {
     if (!initialAuthError) return;
-    const timer = window.setTimeout(() => trackFunnel('auth_error', initialAuthError), 2000);
+    const timer = window.setTimeout(() => trackFunnel('auth_error', { ...initialAuthError, replay: initialAuthError.code === 'bad_oauth_state' }), 2000);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -367,7 +394,12 @@ export default function App() {
 
     const unsubscribe = subscribeToAuthChanges(async (session) => {
       clearTimeout(fallbackTimer);
+      const prevTurn = authTurn;
+      let releaseTurn: () => void = () => undefined;
+      authTurn = new Promise<void>((resolve) => { releaseTurn = resolve; });
       try {
+        await prevTurn;
+        await waitForStoreHydration();
         // Decided by user id, not by a missing email: an anonymous user (DRI-60) never
         // has an email, and would otherwise re-run the local-to-cloud migration on every load.
         const isNewUser = !!session?.user && useAppStore.getState().authUserId !== session.user.id;
@@ -376,13 +408,16 @@ export default function App() {
           const { user } = session;
           // Sign-in funnel: count who actually comes back from Google, and anonymous
           // accounts that really got an email or Google identity (not just a tap).
-          const wasAnonymous = useAppStore.getState().authIsAnonymous;
+          // authIsAnonymous is persisted and the pending trigger survives the redirect, so a
+          // full-page Google link still counts as "was anonymous" after the reload.
+          const wasAnonymous = useAppStore.getState().authIsAnonymous || (!!readPromptState().pendingTrigger && !isNewUser);
+          const securedNow = wasAnonymous && !isAnonymousUser(user) && !isNewUser;
           const hasGoogle = (user.identities || []).some((i) => i.provider === 'google');
-          if (hasGoogle && isNewUser) {
+          if (hasGoogle && (isNewUser || securedNow)) {
             const ageMs = Date.now() - new Date(user.created_at).getTime();
-            trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000 });
+            trackFunnel('google_completed', { new_account: ageMs < 15 * 60 * 1000, flow: isNewUser ? 'sign_in' : 'link' });
           }
-          if (wasAnonymous && !isAnonymousUser(user) && !isNewUser) {
+          if (securedNow) {
             const { trialStartedAt, trialEndsAt } = useAppStore.getState();
             const running = !!trialEndsAt && new Date(trialEndsAt).getTime() > Date.now();
             const trialDay = trialStartedAt ? Math.max(1, Math.floor((Date.now() - new Date(trialStartedAt).getTime()) / 86_400_000) + 1) : 0;
@@ -400,6 +435,7 @@ export default function App() {
           const displayName = user.user_metadata?.full_name || user.email || null;
           console.log(`[App] Auth state changed: ${user.email} (ID: ${user.id})`);
           setAuthState(user.email || null, 'signed_in', displayName, user.id, isAnonymousUser(user));
+          releaseTurn();
           setShowAuthModal(false); // Close modal on success
           // Identify user in PostHog so sessions are linked to their account
           analyticsService.identifyUser(user.id, user.email || '');
@@ -562,6 +598,8 @@ export default function App() {
         console.error('[App] Auth subscription error:', error);
         setAuthState(null, 'guest', null, null);
         setIsAuthLoading(false);
+      } finally {
+        releaseTurn();
       }
     });
 

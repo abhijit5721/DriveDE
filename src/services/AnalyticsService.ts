@@ -18,8 +18,8 @@
  *   secure_prompt_shown  the "add an email" sheet appeared for an anonymous user (props: trigger)
  *   secure_prompt_dismissed  it was closed with "Später" or the X (props: trigger)
  *   google_started       a "Mit Google" button was tapped (props: from)
- *   google_completed     back from Google and signed in (props: new_account)
- *   auth_error           Google/Supabase returned an error in the URL (props: code, from)
+ *   google_completed     back from Google and signed in (props: new_account, flow: sign_in for a new sign-in, link for an anonymous account that linked Google)
+ *   auth_error           Google/Supabase returned an error in the URL (props: code, description, replay: true when code is bad_oauth_state)
  *   secure_prompt_shown  the add-an-email ask appeared (props: trigger, placement: sheet|inline|paywall)
  *   secure_prompt_dismissed the ask was closed with "Später" (props: trigger)
  *   secure_code_submitted an emailed 8-digit code was entered (props: ok)
@@ -51,6 +51,98 @@ const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID;
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com';
 
+// Keys a Supabase auth redirect puts in the URL fragment or query. Session tokens must never
+// reach an analytics tool, so every outgoing URL goes through scrubAuthUrl.
+const AUTH_URL_KEYS = new Set([
+  'access_token', 'refresh_token', 'provider_token', 'provider_refresh_token',
+  'expires_in', 'expires_at', 'token_type', 'token_hash',
+  'code', 'error', 'error_code', 'error_description',
+]);
+
+function isAuthKey(seg: string): boolean {
+  const raw = seg.split('=')[0];
+  let key = raw;
+  try { key = decodeURIComponent(raw); } catch { /* keep raw */ }
+  return AUTH_URL_KEYS.has(key);
+}
+
+function hasAuthKey(part: string): boolean {
+  return part.split('&').some(isAuthKey);
+}
+
+/** True when the URL carries auth redirect params in its fragment or query. */
+export function hasAuthUrlParams(url: string): boolean {
+  const hashIdx = url.indexOf('#');
+  const hash = hashIdx >= 0 ? url.slice(hashIdx + 1) : '';
+  const beforeHash = hashIdx >= 0 ? url.slice(0, hashIdx) : url;
+  const qIdx = beforeHash.indexOf('?');
+  const query = qIdx >= 0 ? beforeHash.slice(qIdx + 1) : '';
+  return hasAuthKey(hash) || hasAuthKey(query);
+}
+
+/**
+ * Drops auth redirect params from a URL: the whole fragment when it holds any of them
+ * (a plain #plan survives), and those keys from the query. Never throws.
+ */
+export function scrubAuthUrl(url: string): string {
+  try {
+    if (!hasAuthUrlParams(url)) return url;
+    const hashIdx = url.indexOf('#');
+    let hash = hashIdx >= 0 ? url.slice(hashIdx) : '';
+    let rest = hashIdx >= 0 ? url.slice(0, hashIdx) : url;
+    if (hash && hasAuthKey(hash.slice(1))) hash = '';
+    const qIdx = rest.indexOf('?');
+    if (qIdx >= 0) {
+      const kept = rest.slice(qIdx + 1).split('&').filter((seg) => seg && !isAuthKey(seg));
+      rest = rest.slice(0, qIdx) + (kept.length ? `?${kept.join('&')}` : '');
+    }
+    return rest + hash;
+  } catch {
+    const idx = url.indexOf('#');
+    return idx >= 0 && /access_token=|refresh_token=/.test(url) ? url.slice(0, idx) : url;
+  }
+}
+
+/** Scrubs one analytics string value: auth URL params are dropped, bare tokens are redacted. */
+export function scrubAnalyticsValue(value: string): string {
+  let out = value;
+  if (hasAuthUrlParams(out)) out = scrubAuthUrl(out);
+  if (/access_token=|refresh_token=|provider_token=|token_hash=/.test(out)) return '[redacted]';
+  return out;
+}
+
+// Initial tracking waits on this when the page loads from an auth redirect, so the
+// first $pageview never sees the token fragment. Resolved at once otherwise.
+let authUrlGate: Promise<void> = Promise.resolve();
+
+async function waitForAuthUrlCleanup(): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let sessionRead = false;
+  try {
+    await Promise.race([
+      (async () => {
+        // dynamic: supabase.ts stays out of the entry chunk
+        const { getSupabase } = await import('../lib/supabase');
+        const client = await getSupabase();
+        // null client: Supabase is not configured, nothing will read the URL
+        await client?.auth.getSession();
+        sessionRead = true;
+      })().catch(() => undefined),
+      new Promise<void>((resolve) => { timer = setTimeout(resolve, 8000); }),
+    ]);
+  } catch { /* gate still resolves below */ }
+  if (timer) clearTimeout(timer);
+  // Only clean the URL once Supabase has read the tokens. On timeout or failure the URL is
+  // left alone (stripping it would lose the sign-in); the gate still resolves so analytics
+  // can start, and each sink scrubs its own URL.
+  if (!sessionRead) return;
+  try {
+    if (hasAuthUrlParams(window.location.href)) {
+      history.replaceState(history.state, '', scrubAuthUrl(window.location.href));
+    }
+  } catch { /* history unavailable */ }
+}
+
 declare global {
   interface Window {
     dataLayer: any[];
@@ -79,6 +171,8 @@ class AnalyticsService {
     }
     if (typeof window === 'undefined') return;
 
+    if (hasAuthUrlParams(window.location.href)) authUrlGate = waitForAuthUrlCleanup();
+
     // Wait for store hydration before initial check
     const unsubHydration = useAppStore.subscribe(
       (state) => state.isHydrated,
@@ -86,7 +180,7 @@ class AnalyticsService {
         if (isHydrated) {
           console.log('[AnalyticsService] Store hydrated, running initial sync...');
           const settings = useAppStore.getState().cookieSettings;
-          this.syncTracking(settings);
+          void authUrlGate.then(() => this.syncTracking(settings));
           unsubHydration(); // Only need this once
         }
       },
@@ -98,7 +192,7 @@ class AnalyticsService {
       (state) => state.cookieSettings,
       (settings) => {
         console.log('[AnalyticsService] Consent changed:', settings);
-        this.syncTracking(settings);
+        void authUrlGate.then(() => this.syncTracking(settings));
       }
     );
   }
@@ -147,6 +241,21 @@ class AnalyticsService {
           maskTextSelector: '.ph-mask', // Allow masking specific elements with class
         },
         persistence: 'localStorage+cookie',
+        // Keep session tokens from an auth redirect URL out of every captured event.
+        before_send: (event) => {
+          if (!event) return event;
+          for (const bag of [event.properties, event.$set, event.$set_once] as Array<Record<string, unknown> | undefined>) {
+            if (!bag || typeof bag !== 'object') continue;
+            for (const k of Object.keys(bag)) {
+              const v = bag[k];
+              if (typeof v === 'string') {
+                const clean = scrubAnalyticsValue(v);
+                if (clean !== v) bag[k] = clean;
+              }
+            }
+          }
+          return event;
+        },
         loaded: (instance) => {
           // In development, disable sending events to keep data clean
           if (import.meta.env.DEV) {
@@ -211,6 +320,7 @@ class AnalyticsService {
     
     window.gtag('js', new Date());
     window.gtag('config', GA4_MEASUREMENT_ID, {
+      page_location: scrubAuthUrl(window.location.href),
       anonymize_ip: true,
       cookie_flags: 'SameSite=None;Secure'
     });

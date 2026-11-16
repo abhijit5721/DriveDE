@@ -880,6 +880,7 @@ export const useAppStore = create<AppState>()(
           authEmail: state.authEmail,
           authDisplayName: state.authDisplayName,
           authUserId: state.authUserId,
+          authIsAnonymous: state.authIsAnonymous,
           userProgress: state.userProgress,
           activeSession: state.activeSession,
           isPublicReportEnabled: state.isPublicReportEnabled,
