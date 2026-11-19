@@ -1675,22 +1675,28 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
     setSuggestions([]);
     if (simulationIntervalRef.current) clearInterval(simulationIntervalRef.current);
     const durationInMinutes = Math.max(1, Math.round(elapsedTime / 60));
-    
-    setNewSession(prev => ({
-      ...prev,
+
+    // Store the drive right away; the form that opens next edits this saved drive,
+    // so closing it no longer throws the recorded drive away.
+    const recorded = {
+      ...newSession,
       duration: durationInMinutes,
       date: (activeSession?.startTime ? new Date(activeSession.startTime) : new Date()).toISOString().split('T')[0],
       totalDistance: Math.round(currentDistance * 10) / 10,
       route: cumulativeRouteRef.current,
       mistakes: cumulativeMistakesRef.current,
       isSimulation: activeSession?.isSimulation ?? isSimulationMode
-    }));
+    };
+    addDrivingSession(recorded as Omit<DrivingSession, 'id'>);
+    const savedId = useAppStore.getState?.().userProgress.drivingSessions[0]?.id ?? null;
+    setNewSession(recorded);
+    setEditingSessionId(savedId);
     setShowAddForm(true);
     setShowManualLog(false);
     setElapsedTime(0);
     stopActiveSession();
     releaseWakeLock();
-    toast.success(t.tracker.readyToSave);
+    toast.success(t.tracker.sessionSaved);
 
     if (gpsPoints.length > 0) {
       try {
@@ -1717,6 +1723,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
               ...prev,
               locationSummary
             }));
+            if (savedId) updateDrivingSession(savedId, { locationSummary });
           }
         }).catch(e => console.error('[Tracker] Geocoding background failed:', e));
       } catch (e) {

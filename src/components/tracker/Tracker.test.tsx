@@ -13,7 +13,8 @@ const { sharedState } = vi.hoisted(() => ({
   sharedState: {
     currentActiveTab: 'tracker',
     currentAcceptedPrivacy: true,
-    currentIsPremium: true
+    currentIsPremium: true,
+    addDrivingSessionMock: vi.fn()
   }
 }));
 
@@ -31,7 +32,7 @@ vi.mock('../../store/useAppStore', () => {
       specialDrivingMinutes: { ueberland: 0, autobahn: 0, nacht: 0 },
       hasAcceptedPrivacy: sharedState.currentAcceptedPrivacy
     },
-    addDrivingSession: vi.fn(),
+    addDrivingSession: sharedState.addDrivingSessionMock,
     updateDrivingSession: vi.fn(),
     removeDrivingSession: vi.fn(),
     clearDrivingHistory: vi.fn(),
@@ -221,5 +222,23 @@ describe('Tracker Component', () => {
 
     expect(clickSpy).toHaveBeenCalled();
     clickSpy.mockRestore();
+  });
+
+  it('should save the drive as soon as Stop is clicked, before any save button', async () => {
+    render(<Tracker />);
+
+    // Start a live drive: safety modal, mount checkbox, confirm
+    const startBtn = await screen.findByRole('button', { name: /Start Live/i });
+    fireEvent.click(startBtn);
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByTestId('confirm-mount-btn'));
+
+    // Stop & Save: the drive must be stored immediately, exactly once, no save click yet
+    const stopBtn = await screen.findByTestId('stop-tracking-btn');
+    fireEvent.click(stopBtn);
+
+    expect(sharedState.addDrivingSessionMock).toHaveBeenCalledTimes(1);
+    expect(toast.success).toHaveBeenCalledWith(expect.any(String));
+    expect(await screen.findByTestId('save-session-btn')).toBeInTheDocument();
   });
 });
