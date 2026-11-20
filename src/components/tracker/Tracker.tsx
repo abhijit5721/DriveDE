@@ -399,13 +399,18 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
       return dateStr.split('T')[0];
     }
 
+    // Date-only values (saved as YYYY-MM-DD) come back from timestamptz as exactly midnight UTC
+    const isDateOnly = d.getUTCHours() === 0 && d.getUTCMinutes() === 0 &&
+      d.getUTCSeconds() === 0 && d.getUTCMilliseconds() === 0;
+
     const datePart = d.toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      ...(isDateOnly ? { timeZone: 'UTC' } : {})
     });
 
-    if (showTime && dateStr.includes('T')) {
+    if (showTime && dateStr.includes('T') && !isDateOnly) {
       const timePart = d.toLocaleTimeString(language === 'de' ? 'de-DE' : 'en-US', {
         hour: '2-digit',
         minute: '2-digit'
@@ -1596,7 +1601,7 @@ export function Tracker({ onOpenPaywall }: TrackerProps) {
           if (currentStep > 0) {
             const prev = mockPoints[currentStep - 1];
             const dist = calculateDistance(prev.lat, prev.lng, point.lat, point.lng);
-            setCurrentDistance(d => d + (dist * 100));
+            setCurrentDistance(d => d + dist);
           }
 
           // Mock Navigation Updates

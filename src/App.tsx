@@ -469,8 +469,12 @@ export default function App() {
                     : state.userProgress.completedLessons;
 
                 // For sessions: remote is truth. Deduplicate by session ID.
+                // isSimulation has no DB column, so carry it over from the local copy.
+                const localSessionsById = new Map(state.userProgress.drivingSessions.map(s => [s.id, s]));
                 const remoteSessions = (remoteData.sessions || []).map(s => ({
                     id: s.id,
+                    syncStatus: 'synced' as const,
+                    ...(localSessionsById.get(s.id)?.isSimulation ? { isSimulation: true } : {}),
                     date: s.date,
                     duration: s.duration,
                     type: s.type,
